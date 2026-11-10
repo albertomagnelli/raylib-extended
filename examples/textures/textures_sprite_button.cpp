@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ int main(void)
 
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(button, sourceRec, (Vector2){ btnBounds.x, btnBounds.y }, WHITE); // Draw button frame
+            DrawTextureRec(button, sourceRec, Vector2{ btnBounds.x, btnBounds.y }, WHITE); // Draw button frame
 
         EndDrawing();
         //----------------------------------------------------------------------------------

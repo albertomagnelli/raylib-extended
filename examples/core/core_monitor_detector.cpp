@@ -33,7 +33,7 @@ typedef struct MonitorInfo {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - monitor detector");
 
-    MonitorInfo monitors[MAX_MONITORS] = { 0 };
+    MonitorInfo monitors[MAX_MONITORS] = {};
     int currentMonitorIndex = GetCurrentMonitor();
     int monitorCount = 0;
 
@@ -115,7 +115,7 @@ int main(void)
             for (int i = 0; i < monitorCount; i++)
             {
                 // Calculate retangle position and size using monitorScale
-                const Rectangle rec = (Rectangle){
+                const Rectangle rec = Rectangle{
                     (monitors[i].position.x + monitorOffsetX)*monitorScale + 140,
                     monitors[i].position.y*monitorScale + 80,
                     monitors[i].width*monitorScale,
@@ -139,10 +139,10 @@ int main(void)
                 if (i == currentMonitorIndex)
                 {
                     DrawRectangleLinesEx(rec, 5, RED);
-                    Vector2 windowPosition = (Vector2){ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
+                    Vector2 windowPosition = Vector2{ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
 
                     // Draw window position based on monitors
-                    DrawRectangleV(windowPosition, (Vector2){screenWidth*monitorScale, screenHeight*monitorScale}, Fade(GREEN, 0.5));
+                    DrawRectangleV(windowPosition, Vector2{screenWidth*monitorScale, screenHeight*monitorScale}, Fade(GREEN, 0.5));
                 }
                 else DrawRectangleLinesEx(rec, 5, GRAY);
             }

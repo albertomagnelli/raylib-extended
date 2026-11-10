@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -68,15 +68,15 @@ int main(void)
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            GuiSliderBar((Rectangle){ 640, 40, 105, 20 }, "Width", TextFormat("%.2f", width), &width, 0, (float)GetScreenWidth() - 300);
-            GuiSliderBar((Rectangle){ 640, 70, 105, 20 }, "Height", TextFormat("%.2f", height), &height, 0, (float)GetScreenHeight() - 50);
-            GuiSliderBar((Rectangle){ 640, 140, 105, 20 }, "Roundness", TextFormat("%.2f", roundness), &roundness, 0.0f, 1.0f);
-            GuiSliderBar((Rectangle){ 640, 170, 105, 20 }, "Thickness", TextFormat("%.2f", lineThick), &lineThick, 0, 20);
-            GuiSliderBar((Rectangle){ 640, 240, 105, 20}, "Segments", TextFormat("%.2f", segments), &segments, 0, 60);
+            GuiSliderBar(Rectangle{ 640, 40, 105, 20 }, "Width", TextFormat("%.2f", width), &width, 0, (float)GetScreenWidth() - 300);
+            GuiSliderBar(Rectangle{ 640, 70, 105, 20 }, "Height", TextFormat("%.2f", height), &height, 0, (float)GetScreenHeight() - 50);
+            GuiSliderBar(Rectangle{ 640, 140, 105, 20 }, "Roundness", TextFormat("%.2f", roundness), &roundness, 0.0f, 1.0f);
+            GuiSliderBar(Rectangle{ 640, 170, 105, 20 }, "Thickness", TextFormat("%.2f", lineThick), &lineThick, 0, 20);
+            GuiSliderBar(Rectangle{ 640, 240, 105, 20}, "Segments", TextFormat("%.2f", segments), &segments, 0, 60);
 
-            GuiCheckBox((Rectangle){ 640, 320, 20, 20 }, "DrawRoundedRect", &drawRoundedRect);
-            GuiCheckBox((Rectangle){ 640, 350, 20, 20 }, "DrawRoundedLines", &drawRoundedLines);
-            GuiCheckBox((Rectangle){ 640, 380, 20, 20}, "DrawRect", &drawRect);
+            GuiCheckBox(Rectangle{ 640, 320, 20, 20 }, "DrawRoundedRect", &drawRoundedRect);
+            GuiCheckBox(Rectangle{ 640, 350, 20, 20 }, "DrawRoundedLines", &drawRoundedLines);
+            GuiCheckBox(Rectangle{ 640, 380, 20, 20}, "DrawRect", &drawRect);
             //------------------------------------------------------------------------------
 
             DrawText(TextFormat("MODE: %s", (segments >= 4)? "MANUAL" : "AUTO"), 640, 280, 10, (segments >= 4)? MAROON : DARKGRAY);

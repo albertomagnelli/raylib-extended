@@ -43,7 +43,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -53,10 +53,10 @@ int main(void)
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lights bloom");
 
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 5.0f, 9.0f };
-    camera.target = (Vector3){ 0.0f, 0.5f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera3D camera = {};
+    camera.position = Vector3{ 0.0f, 5.0f, 9.0f };
+    camera.target = Vector3{ 0.0f, 0.5f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -83,7 +83,7 @@ int main(void)
     int lightColLoc = GetShaderLocation(lightShader, "lightColors");
     int viewPosLoc = GetShaderLocation(lightShader, "viewPos");
 
-    Vector3 lightPositions[MAX_LIGHTS] = { 0 };
+    Vector3 lightPositions[MAX_LIGHTS] = {};
     Vector3 lightColors[MAX_LIGHTS] = {
         { 1.0f, 0.2f, 0.2f },   // Red
         { 0.2f, 1.0f, 0.3f },   // Green
@@ -116,7 +116,7 @@ int main(void)
             float radius = 4.2f + sinf(time*1.2f + i)*0.4f;
             float height = 1.0f + sinf(time*1.8f + i)*0.6f;
 
-            lightPositions[i] = (Vector3){ sinf(angle)*radius, height, cosf(angle)*radius };
+            lightPositions[i] = Vector3{ sinf(angle)*radius, height, cosf(angle)*radius };
         }
 
         SetShaderValueV(lightShader, lightPosLoc, lightPositions, SHADER_UNIFORM_VEC3, MAX_LIGHTS);
@@ -128,18 +128,18 @@ int main(void)
         // Render the lit scene to an offscreen texture
         BeginTextureMode(target);
 
-            ClearBackground((Color){ 12, 12, 18, 255 });
+            ClearBackground(Color{ 12, 12, 18, 255 });
 
             BeginMode3D(camera);
 
-                DrawModel(cube, (Vector3){ 0.0f, 1.0f, 0.0f }, 1.0f, GRAY);
-                DrawModel(floor, (Vector3){ 0.0f, 0.0f, 0.0f }, 1.0f, DARKGRAY);
+                DrawModel(cube, Vector3{ 0.0f, 1.0f, 0.0f }, 1.0f, GRAY);
+                DrawModel(floor, Vector3{ 0.0f, 0.0f, 0.0f }, 1.0f, DARKGRAY);
                 DrawGrid(10, 1.0f);
 
                 // Glowing bulbs mark each light's position
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
-                    Color bulbColor = (Color){
+                    Color bulbColor = Color{
                         (unsigned char)(lightColors[i].x*255),
                         (unsigned char)(lightColors[i].y*255),
                         (unsigned char)(lightColors[i].z*255),
@@ -161,7 +161,7 @@ int main(void)
 
             BeginShaderMode(bloomShader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, srcRec, (Vector2){ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, srcRec, Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             DrawText("BALANCED MULTI-LIGHT + REINHARD TONE MAPPED BLOOM", 20, 20, 20, GREEN);

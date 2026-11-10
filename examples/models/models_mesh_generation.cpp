@@ -25,7 +25,7 @@ static Mesh GenMeshCustom(void);    // Generate a simple triangle mesh from code
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ int main(void)
     Texture2D texture = LoadTextureFromImage(checked);
     UnloadImage(checked);
 
-    Model models[NUM_MODELS] = { 0 };
+    Model models[NUM_MODELS] = {};
 
     models[0] = LoadModelFromMesh(GenMeshPlane(2, 2, 4, 3));
     models[1] = LoadModelFromMesh(GenMeshCube(2.0f, 1.0f, 2.0f));
@@ -145,7 +145,7 @@ int main(void)
 // Generate a simple triangle mesh from code
 static Mesh GenMeshCustom(void)
 {
-    Mesh mesh = { 0 };
+    Mesh mesh = {};
     mesh.triangleCount = 1;
     mesh.vertexCount = mesh.triangleCount*3;
     mesh.vertices = (float *)MemAlloc(mesh.vertexCount*3*sizeof(float));    // 3 vertices, 3 coordinates each (x, y, z)

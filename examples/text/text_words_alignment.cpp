@@ -31,7 +31,7 @@ typedef enum TextAlignment {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [text] example - words alignment");
 
     // Define the rectangle we will draw the text in
-    Rectangle textContainerRect = (Rectangle){ (float)screenWidth/2-(float)screenWidth/4, (float)screenHeight/2-(float)screenHeight/3, (float)screenWidth/2, (float)screenHeight*2/3 };
+    Rectangle textContainerRect = Rectangle{ (float)screenWidth/2-(float)screenWidth/4, (float)screenHeight/2-(float)screenHeight/3, (float)screenWidth/2, (float)screenHeight*2/3 };
 
     // Some text to display the current alignment
     const char *textAlignNameH[] = { "Left", "Centre", "Right" };
@@ -59,8 +59,8 @@ int main(void)
     Font font = GetFontDefault();
 
     // Initialize the alignment variables
-    TextAlignment hAlign = TEXT_ALIGN_CENTRE;
-    TextAlignment vAlign = TEXT_ALIGN_MIDDLE;
+    int hAlign = TEXT_ALIGN_CENTRE;
+    int vAlign = TEXT_ALIGN_MIDDLE;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ int main(void)
             Vector2 textSize = MeasureTextEx(font, words[wordIndex], (float)fontSize, fontSize*.1f);
 
             // Calculate the top-left text position based on the rectangle and alignment
-            Vector2 textPos = (Vector2){
+            Vector2 textPos = Vector2{
                 textContainerRect.x + Lerp(0.0f, textContainerRect.width  - textSize.x, ((float)hAlign)*0.5f),
                 textContainerRect.y + Lerp(0.0f, textContainerRect.height - textSize.y, ((float)vAlign)*0.5f)
             };

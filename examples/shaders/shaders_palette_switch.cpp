@@ -79,7 +79,7 @@ static const char *paletteText[] = {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ int main(void)
                 {
                     // Draw horizontal screen-wide rectangles with increasing "palette index"
                     // The used palette index is encoded in the RGB components of the pixel
-                    DrawRectangle(0, lineHeight*i, GetScreenWidth(), lineHeight, (Color){ i, i, i, 255 });
+                    DrawRectangle(0, lineHeight*i, GetScreenWidth(), lineHeight, Color{ (unsigned char)i, (unsigned char)i, (unsigned char)i, 255 });
                 }
 
             EndShaderMode();

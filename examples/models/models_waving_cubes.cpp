@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -32,10 +32,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - waving cubes");
 
     // Initialize the camera
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ 30.0f, 20.0f, 30.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera3D camera = {};
+    camera.position = Vector3{ 30.0f, 20.0f, 30.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 70.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 

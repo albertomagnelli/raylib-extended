@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - mouse trail");
 
     // Array to store the history of mouse positions (our fixed-size queue)
-    Vector2 trailPositions[MAX_TRAIL_LENGTH] = { 0 };
+    Vector2 trailPositions[MAX_TRAIL_LENGTH] = {};
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

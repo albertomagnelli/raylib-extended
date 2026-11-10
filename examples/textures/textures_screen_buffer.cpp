@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -38,9 +38,9 @@ int main(void)
     int imageHeight = screenHeight/SCALE_FACTOR;
     int flameWidth = screenWidth/SCALE_FACTOR;
 
-    Color palette[MAX_COLORS] = { 0 };
-    unsigned char *indexBuffer = RL_CALLOC(imageWidth*imageWidth, sizeof(unsigned char));
-    unsigned char *flameRootBuffer = RL_CALLOC(flameWidth, sizeof(unsigned char));
+    Color palette[MAX_COLORS] = {};
+    unsigned char *indexBuffer = (unsigned char *)RL_CALLOC(imageWidth*imageWidth, sizeof(unsigned char));
+    unsigned char *flameRootBuffer = (unsigned char *)RL_CALLOC(flameWidth, sizeof(unsigned char));
 
     Image screenImage = GenImageColor(imageWidth, imageHeight, BLACK);
     Texture screenTexture = LoadTextureFromImage(screenImage);
@@ -133,7 +133,7 @@ int main(void)
 
             ClearBackground(RAYWHITE);
 
-            DrawTextureEx(screenTexture, (Vector2){ 0, 0 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(screenTexture, Vector2{ 0, 0 }, 0.0f, 2.0f, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

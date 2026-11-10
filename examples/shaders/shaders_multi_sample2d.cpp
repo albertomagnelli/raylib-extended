@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -40,11 +40,11 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - multi sample2d");
 
-    Image imRed = GenImageColor(800, 450, (Color){ 255, 0, 0, 255 });
+    Image imRed = GenImageColor(800, 450, Color{ 255, 0, 0, 255 });
     Texture texRed = LoadTextureFromImage(imRed);
     UnloadImage(imRed);
 
-    Image imBlue = GenImageColor(800, 450, (Color){ 0, 0, 255, 255 });
+    Image imBlue = GenImageColor(800, 450, Color{ 0, 0, 255, 255 });
     Texture texBlue = LoadTextureFromImage(imBlue);
     UnloadImage(imBlue);
 

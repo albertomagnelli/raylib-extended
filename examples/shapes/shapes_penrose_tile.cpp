@@ -63,7 +63,7 @@ static void DrawPenroseLSystem(PenroseLSystem *ls);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ static TurtleState PopTurtleState(void)
     if (turtleTop >= 0) return turtleStack[turtleTop--];
     else TraceLog(LOG_WARNING, "TURTLE STACK UNDERFLOW!");
 
-    return (TurtleState){ 0 };
+    return {};
 }
 
 // Load a new penrose tile structure
@@ -229,7 +229,7 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
     Vector2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
     TurtleState turtle = {
-        .origin = { 0 },
+        .origin = {},
         .angle = -90.0f
     };
 

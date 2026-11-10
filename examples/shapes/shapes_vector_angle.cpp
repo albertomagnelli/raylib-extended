@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -31,8 +31,8 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - vector angle");
 
     Vector2 v0 = { screenWidth/2.0f, screenHeight/2.0f };
-    Vector2 v1 = Vector2Add(v0, (Vector2){ 100.0f, 80.0f });
-    Vector2 v2 = { 0 };             // Updated with mouse position
+    Vector2 v1 = ((v0) + (Vector2{ 100.0f, 80.0f }));
+    Vector2 v2 = {};             // Updated with mouse position
 
     float angle = 0.0f;             // Angle in degrees
     int angleMode = 0;              // 0-Vector2Angle(), 1-Vector2LineAngle()
@@ -59,8 +59,8 @@ int main(void)
         if (angleMode == 0)
         {
             // Calculate angle between two vectors, considering a common origin (v0)
-            Vector2 v1Normal = Vector2Normalize(Vector2Subtract(v1, v0));
-            Vector2 v2Normal = Vector2Normalize(Vector2Subtract(v2, v0));
+            Vector2 v1Normal = glm::normalize(((v1) - (v0)));
+            Vector2 v2Normal = glm::normalize(((v2) - (v0)));
 
             angle = Vector2Angle(v1Normal, v2Normal)*RAD2DEG;
         }
@@ -100,8 +100,8 @@ int main(void)
             DrawText("v0", (int)v0.x, (int)v0.y, 10, DARKGRAY);
 
             // If the line from v0 to v1 would overlap the text, move it's position up 10
-            if (angleMode == 0 && Vector2Subtract(v0, v1).y > 0.0f) DrawText("v1", (int)v1.x, (int)v1.y-10, 10, DARKGRAY);
-            if (angleMode == 0 && Vector2Subtract(v0, v1).y < 0.0f) DrawText("v1", (int)v1.x, (int)v1.y, 10, DARKGRAY);
+            if (angleMode == 0 && ((v0) - (v1)).y > 0.0f) DrawText("v1", (int)v1.x, (int)v1.y-10, 10, DARKGRAY);
+            if (angleMode == 0 && ((v0) - (v1)).y < 0.0f) DrawText("v1", (int)v1.x, (int)v1.y, 10, DARKGRAY);
 
             // If angle mode 1, use v1 to emphasize the horizontal line
             if (angleMode == 1) DrawText("v1", (int)v0.x + 40, (int)v0.y, 10, DARKGRAY);

@@ -32,7 +32,7 @@ struct {
     int index;      // Index inside `emojiCodepoints`
     int message;    // Message index
     Color color;    // Emoji color
-} emoji[EMOJI_PER_WIDTH*EMOJI_PER_HEIGHT] = { 0 };
+} emoji[EMOJI_PER_WIDTH*EMOJI_PER_HEIGHT] = {};
 
 static int hovered = -1;
 static int selected = -1;
@@ -63,8 +63,8 @@ const char *const emojiCodepoints = "\xF0\x9F\x8C\x80\x00\xF0\x9F\x98\x80\x00\xF
     "\xF0\x9F\x92\x9F\x00\xF0\x9F\x92\x8C\x00\xF0\x9F\x92\xA4\x00\xF0\x9F\x92\xA2\x00\xF0\x9F\x92\xA3\x00";
 
 struct {
-    char *text;
-    char *language;
+    const char *text;
+    const char *language;
 } const messages[] = { // Array containing all of the emojis messages
     {"\x46\x61\x6C\x73\x63\x68\x65\x73\x20\xC3\x9C\x62\x65\x6E\x20\x76\x6F\x6E\x20\x58\x79\x6C\x6F\x70\x68\x6F\x6E\x6D\x75\x73\x69\x6B\x20\x71\x75\xC3\xA4\x6C"
     "\x74\x20\x6A\x65\x64\x65\x6E\x20\x67\x72\xC3\xB6\xC3\x9F\x65\x72\x65\x6E\x20\x5A\x77\x65\x72\x67", "German"},
@@ -156,7 +156,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -440,14 +440,14 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 bool isGlyphSelected = false;
                 if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
                 {
-                    DrawRectangleRec((Rectangle){ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, (float)font.baseSize*scaleFactor }, selectBackTint);
+                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, (float)font.baseSize*scaleFactor }, selectBackTint);
                     isGlyphSelected = true;
                 }
 
                 // Draw current character glyph
                 if ((codepoint != ' ') && (codepoint != '\t'))
                 {
-                    DrawTextCodepoint(font, codepoint, (Vector2){ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
+                    DrawTextCodepoint(font, codepoint, Vector2{ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
                 }
             }
 

@@ -49,7 +49,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim1, 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -59,10 +59,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blend custom");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 4.0f, 4.0f, 4.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 1.0f, 0.0f };  // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };      // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 4.0f, 4.0f, 4.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 1.0f, 0.0f };  // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };      // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                            // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
@@ -240,25 +240,19 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             Transform *animTransform1 = &anim1->keyframePoses[frame1][boneIndex];
 
             // Blend the transforms
-            Transform blended = { 0 };
-            blended.translation = Vector3Lerp(animTransform0->translation, animTransform1->translation, boneBlendFactor);
-            blended.rotation = QuaternionSlerp(animTransform0->rotation, animTransform1->rotation, boneBlendFactor);
-            blended.scale = Vector3Lerp(animTransform0->scale, animTransform1->scale, boneBlendFactor);
+            Transform blended = {};
+            blended.translation = glm::mix(animTransform0->translation, animTransform1->translation, boneBlendFactor);
+            blended.rotation = glm::slerp(animTransform0->rotation, animTransform1->rotation, boneBlendFactor);
+            blended.scale = glm::mix(animTransform0->scale, animTransform1->scale, boneBlendFactor);
 
             // Convert bind pose to matrix
-            Matrix bindMatrix = MatrixMultiply(MatrixMultiply(
-                MatrixScale(bindTransform->scale.x, bindTransform->scale.y, bindTransform->scale.z),
-                QuaternionToMatrix(bindTransform->rotation)),
-                MatrixTranslate(bindTransform->translation.x, bindTransform->translation.y, bindTransform->translation.z));
+            Matrix bindMatrix = ((glm::translate(Matrix(1.0f), Vector3{bindTransform->translation.x, bindTransform->translation.y, bindTransform->translation.z})) * (((glm::mat4_cast(bindTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{bindTransform->scale.x, bindTransform->scale.y, bindTransform->scale.z})))));
 
             // Convert blended transform to matrix
-            Matrix blendedMatrix = MatrixMultiply(MatrixMultiply(
-                MatrixScale(blended.scale.x, blended.scale.y, blended.scale.z),
-                QuaternionToMatrix(blended.rotation)),
-                MatrixTranslate(blended.translation.x, blended.translation.y, blended.translation.z));
+            Matrix blendedMatrix = ((glm::translate(Matrix(1.0f), Vector3{blended.translation.x, blended.translation.y, blended.translation.z})) * (((glm::mat4_cast(blended.rotation)) * (glm::scale(Matrix(1.0f), Vector3{blended.scale.x, blended.scale.y, blended.scale.z})))));
 
             // Calculate final bone matrix (similar to UpdateModelAnimationBones)
-            model->boneMatrices[boneIndex] = MatrixMultiply(MatrixInvert(bindMatrix), blendedMatrix);
+            model->boneMatrices[boneIndex] = ((blendedMatrix) * (glm::inverse(bindMatrix)));
         }
 
         // CPU skinning, updates CPU buffers and uploads them to GPU (if available)
@@ -266,8 +260,8 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
         for (int m = 0; m < model->meshCount; m++)
         {
             Mesh mesh = model->meshes[m];
-            Vector3 animVertex = { 0 };
-            Vector3 animNormal = { 0 };
+            Vector3 animVertex = {};
+            Vector3 animNormal = {};
             const int vertexValuesCount = mesh.vertexCount*3;
 
             int boneIndex = 0;
@@ -299,8 +293,8 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
 
                     // Early stop when no transformation will be applied
                     if (boneWeight == 0.0f) continue;
-                    animVertex = (Vector3){ mesh.vertices[vCounter], mesh.vertices[vCounter + 1], mesh.vertices[vCounter + 2] };
-                    animVertex = Vector3Transform(animVertex, model->boneMatrices[boneIndex]);
+                    animVertex = Vector3{ mesh.vertices[vCounter], mesh.vertices[vCounter + 1], mesh.vertices[vCounter + 2] };
+                    animVertex = Vector3((model->boneMatrices[boneIndex])*Vector4(animVertex, 1.0f));
                     mesh.animVertices[vCounter] += animVertex.x*boneWeight;
                     mesh.animVertices[vCounter + 1] += animVertex.y*boneWeight;
                     mesh.animVertices[vCounter + 2] += animVertex.z*boneWeight;
@@ -310,8 +304,8 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
                     // NOTE: We use meshes.baseNormals (default normal) to calculate meshes.normals (animated normals)
                     if ((mesh.normals != NULL) && (mesh.animNormals != NULL ))
                     {
-                        animNormal = (Vector3){ mesh.normals[vCounter], mesh.normals[vCounter + 1], mesh.normals[vCounter + 2] };
-                        animNormal = Vector3Transform(animNormal, MatrixTranspose(MatrixInvert(model->boneMatrices[boneIndex])));
+                        animNormal = Vector3{ mesh.normals[vCounter], mesh.normals[vCounter + 1], mesh.normals[vCounter + 2] };
+                        animNormal = Vector3((glm::transpose(glm::inverse(model->boneMatrices[boneIndex])))*Vector4(animNormal, 1.0f));
                         mesh.animNormals[vCounter] += animNormal.x*boneWeight;
                         mesh.animNormals[vCounter + 1] += animNormal.y*boneWeight;
                         mesh.animNormals[vCounter + 2] += animNormal.z*boneWeight;

@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -127,28 +127,28 @@ int main(void)
         ClearBackground(RAYWHITE);
 
         // Draw instructions
-        GuiLabel((Rectangle){ 50, 20, 700, 36 }, "Use the BUTTONS or KEY SHORTCUTS:");
+        GuiLabel(Rectangle{ 50, 20, 700, 36 }, "Use the BUTTONS or KEY SHORTCUTS:");
         DrawText("[CTRL+X] - CUT | [CTRL+C] COPY | [CTRL+V] | PASTE", 50, 60, 20, MAROON);
 
         // Draw text box
-        if (GuiTextBox((Rectangle){ 50, 120, 652, 40 }, inputBuffer, 256, textBoxEditMode)) textBoxEditMode = !textBoxEditMode;
+        if (GuiTextBox(Rectangle{ 50, 120, 652, 40 }, inputBuffer, 256, textBoxEditMode)) textBoxEditMode = !textBoxEditMode;
 
         // Random text button
-        btnRandomPressed = GuiButton((Rectangle){ 50 + 652 + 8, 120, 40, 40 }, "#77#");
+        btnRandomPressed = GuiButton(Rectangle{ 50 + 652 + 8, 120, 40, 40 }, "#77#");
 
         // Draw buttons
-        btnCutPressed = GuiButton((Rectangle){ 50, 180, 158, 40 }, "#17#CUT");
-        btnCopyPressed = GuiButton((Rectangle){ 50 + 165, 180, 158, 40 }, "#16#COPY");
-        btnPastePressed = GuiButton((Rectangle){ 50 + 165*2, 180, 158, 40 }, "#18#PASTE");
-        btnClearPressed = GuiButton((Rectangle){ 50 + 165*3, 180, 158, 40 }, "#143#CLEAR");
+        btnCutPressed = GuiButton(Rectangle{ 50, 180, 158, 40 }, "#17#CUT");
+        btnCopyPressed = GuiButton(Rectangle{ 50 + 165, 180, 158, 40 }, "#16#COPY");
+        btnPastePressed = GuiButton(Rectangle{ 50 + 165*2, 180, 158, 40 }, "#18#PASTE");
+        btnClearPressed = GuiButton(Rectangle{ 50 + 165*3, 180, 158, 40 }, "#143#CLEAR");
 
         // Draw clipboard status
         GuiSetState(STATE_DISABLED);
-        GuiLabel((Rectangle){ 50, 260, 700, 40 }, "Clipboard current text data:");
+        GuiLabel(Rectangle{ 50, 260, 700, 40 }, "Clipboard current text data:");
         GuiSetStyle(TEXTBOX, TEXT_READONLY, 1);
-        GuiTextBox((Rectangle){ 50, 300, 700, 40 }, (char *)clipboardText, 256, false);
+        GuiTextBox(Rectangle{ 50, 300, 700, 40 }, (char *)clipboardText, 256, false);
         GuiSetStyle(TEXTBOX, TEXT_READONLY, 0);
-        GuiLabel((Rectangle){ 50, 360, 700, 40 }, "Try copying text from other applications and pasting here!");
+        GuiLabel(Rectangle{ 50, 360, 700, 40 }, "Try copying text from other applications and pasting here!");
         GuiSetState(STATE_NORMAL);
 
         EndDrawing();

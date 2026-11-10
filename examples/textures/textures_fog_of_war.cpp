@@ -35,7 +35,7 @@ typedef struct Map {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - fog of war");
 
-    Map map = { 0 };
+    Map map = {};
     map.tilesX = 25;
     map.tilesY = 15;
 
@@ -131,13 +131,13 @@ int main(void)
             }
 
             // Draw player
-            DrawRectangleV(playerPosition, (Vector2){ PLAYER_SIZE, PLAYER_SIZE }, RED);
+            DrawRectangleV(playerPosition, Vector2{ PLAYER_SIZE, PLAYER_SIZE }, RED);
 
 
             // Draw fog of war (scaled to full map, bilinear filtering)
-            DrawTexturePro(fogOfWar.texture, (Rectangle){ 0, 0, (float)fogOfWar.texture.width, (float)-fogOfWar.texture.height },
-                           (Rectangle){ 0, 0, (float)map.tilesX*MAP_TILE_SIZE, (float)map.tilesY*MAP_TILE_SIZE },
-                           (Vector2){ 0, 0 }, 0.0f, WHITE);
+            DrawTexturePro(fogOfWar.texture, Rectangle{ 0, 0, (float)fogOfWar.texture.width, (float)-fogOfWar.texture.height },
+                           Rectangle{ 0, 0, (float)map.tilesX*MAP_TILE_SIZE, (float)map.tilesY*MAP_TILE_SIZE },
+                           Vector2{ 0, 0 }, 0.0f, WHITE);
 
             // Draw player current tile
             DrawText(TextFormat("Current tile: [%i,%i]", playerTileX, playerTileY), 10, 10, 20, RAYWHITE);

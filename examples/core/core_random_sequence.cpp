@@ -39,7 +39,7 @@ static void ShuffleColorRectSequence(ColorRect *rectangles, int rectCount);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -124,9 +124,9 @@ int main(void)
 static Color GenerateRandomColor(void)
 {
     Color color = {
-        GetRandomValue(0, 255),
-        GetRandomValue(0, 255),
-        GetRandomValue(0, 255),
+        (unsigned char)GetRandomValue(0, 255),
+        (unsigned char)GetRandomValue(0, 255),
+        (unsigned char)GetRandomValue(0, 255),
         255
     };
 

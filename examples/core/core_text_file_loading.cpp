@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -97,10 +97,8 @@ int main(void)
 
     // A simple scrollbar on the side to show how far we have read into the file
     Rectangle scrollBar = {
-        .x = (float)screenWidth - 5,
-        .y = 0,
-        .width = 5,
-        .height = screenHeight*100.0f/(textHeight - screenHeight) // Scrollbar height is just a percentage
+        (float)screenWidth - 5, 0, 5,
+        screenHeight*100.0f/(textHeight - screenHeight) // Scrollbar height is just a percentage
     };
 
     SetTargetFPS(60);

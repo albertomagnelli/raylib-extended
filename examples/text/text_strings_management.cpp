@@ -53,7 +53,7 @@ void RealocateTextParticles(TextParticle *tps, int particlePos, int *particleCou
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -62,10 +62,10 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - strings management");
 
-    TextParticle textParticles[MAX_TEXT_PARTICLES] = { 0 };
+    TextParticle textParticles[MAX_TEXT_PARTICLES] = {};
     int particleCount = 0;
     TextParticle *grabbedTextParticle = NULL;
-    Vector2 pressOffset = { 0 };
+    Vector2 pressOffset = {};
 
     PrepareFirstTextParticle("raylib => fun videogames programming!", textParticles, &particleCount);
 
@@ -133,7 +133,7 @@ int main(void)
         {
             for (int i = 0; i < particleCount; i++)
             {
-                if (!textParticles[i].grabbed) textParticles[i].vel = (Vector2){ (float)GetRandomValue(-2000, 2000), (float)GetRandomValue(-2000, 2000) };
+                if (!textParticles[i].grabbed) textParticles[i].vel = Vector2{ (float)GetRandomValue(-2000, 2000), (float)GetRandomValue(-2000, 2000) };
             }
         }
 
@@ -233,7 +233,7 @@ int main(void)
             for (int i = 0; i < particleCount; i++)
             {
                 TextParticle *tp = &textParticles[i];
-                DrawRectangleRec((Rectangle) { tp->rect.x - tp->borderWidth, tp->rect.y - tp->borderWidth, tp->rect.width + tp->borderWidth * 2, tp->rect.height + tp->borderWidth * 2 }, BLACK);
+                DrawRectangleRec(Rectangle{ tp->rect.x - tp->borderWidth, tp->rect.y - tp->borderWidth, tp->rect.width + tp->borderWidth * 2, tp->rect.height + tp->borderWidth * 2 }, BLACK);
                 DrawRectangleRec(tp->rect, tp->color);
                 DrawText(tp->text, (int)(tp->rect.x+tp->padding), (int)(tp->rect.y+tp->padding), FONT_SIZE, BLACK);
             }
@@ -278,7 +278,7 @@ TextParticle CreateTextParticle(const char *text, float x, float y, Color color)
         .text = "",
         .rect = { x, y, 30, 30 },
         .vel = { (float)GetRandomValue(-200, 200), (float)GetRandomValue(-200, 200) },
-        .ppos = { 0 },
+        .ppos = {},
         .padding = 5.0f,
         .borderWidth = 5.0f,
         .friction = 0.99f,
@@ -306,7 +306,7 @@ void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextP
                 text,
                 tp->rect.x + i * tp->rect.width/length,
                 tp->rect.y,
-                (Color) { GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 255 }
+                Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 }
             );
         }
         RealocateTextParticles(tps, particlePos, particleCount);
@@ -329,7 +329,7 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
                     TextFormat("%c", charToSlice),
                     tp->rect.x,
                     tp->rect.y,
-                    (Color) { GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 255 }
+                    Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 }
                 );
             }
         }
@@ -340,7 +340,7 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
                 TextFormat("%s", tokens[i]),
                 tp->rect.x + i * tp->rect.width/tokenLength,
                 tp->rect.y,
-                (Color) { GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 255 }
+                Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 }
             );
         }
         if (tokenCount)

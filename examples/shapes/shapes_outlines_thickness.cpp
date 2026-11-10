@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -51,18 +51,18 @@ int main(void)
 
             ClearBackground(RAYWHITE);
 
-            GuiSliderBar((Rectangle){ 290, 50, 220, 24 }, "Thickness", TextFormat("%.2f", thick), &thick, -30.0f, 30.0f);
+            GuiSliderBar(Rectangle{ 290, 50, 220, 24 }, "Thickness", TextFormat("%.2f", thick), &thick, -30.0f, 30.0f);
 
             DrawRectangle(35, 180, 220, 220, LIGHTGRAY);
-            DrawRectangleLinesEx((Rectangle){ 35, 180, 220, 220 }, thick, BLUE);
+            DrawRectangleLinesEx(Rectangle{ 35, 180, 220, 220 }, thick, BLUE);
             DrawText("DrawRectangleLinesEx()", 35, 160, 10, BLACK);
 
-            DrawRectangleRounded((Rectangle){ 290, 180, 220, 220 }, 0.2f, 9, LIGHTGRAY);
-            DrawRectangleRoundedLinesEx((Rectangle){ 290, 180, 220, 220 }, 0.2f, 9, thick, BLUE);
+            DrawRectangleRounded(Rectangle{ 290, 180, 220, 220 }, 0.2f, 9, LIGHTGRAY);
+            DrawRectangleRoundedLinesEx(Rectangle{ 290, 180, 220, 220 }, 0.2f, 9, thick, BLUE);
             DrawText("DrawRectangleRoundedLinesEx()", 290, 160, 10, BLACK);
 
             DrawCircle(655, 290, 110, LIGHTGRAY);
-            DrawCircleLinesEx((Vector2){ 655, 290 }, 110, thick, BLUE);
+            DrawCircleLinesEx(Vector2{ 655, 290 }, 110, thick, BLUE);
             DrawText("DrawCircleLinesEx()", 545, 160, 10, BLACK);
 
         EndDrawing();

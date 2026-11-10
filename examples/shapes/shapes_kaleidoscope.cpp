@@ -32,12 +32,12 @@ typedef struct {
 
 // Lines array as a global static variable to be stored
 // in heap and avoid potential stack overflow (on Web platform)
-static Line lines[MAX_DRAW_LINES] = { 0 };
+static Line lines[MAX_DRAW_LINES] = {};
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -53,13 +53,13 @@ int main(void)
     Rectangle resetButtonRec = { screenWidth - 55.0f, 5.0f, 50, 25 };
     Rectangle backButtonRec = { screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };
     Rectangle nextButtonRec = { screenWidth - 30.0f, screenHeight - 30.0f, 25, 25 };
-    Vector2 mousePos = { 0 };
-    Vector2 prevMousePos = { 0 };
+    Vector2 mousePos = {};
+    Vector2 prevMousePos = {};
     Vector2 scaleVector = { 1.0f, -1.0f };
     Vector2 offset = { GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
 
-    Camera2D camera = { 0 };
-    camera.target = (Vector2){ 0 };
+    Camera2D camera = {};
+    camera.target = Vector2{};
     camera.offset = offset;
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
@@ -81,8 +81,8 @@ int main(void)
         prevMousePos = mousePos;
         mousePos = GetMousePosition();
 
-        Vector2 lineStart = Vector2Subtract(mousePos, offset);
-        Vector2 lineEnd = Vector2Subtract(prevMousePos, offset);
+        Vector2 lineStart = ((mousePos) - (offset));
+        Vector2 lineEnd = ((prevMousePos) - (offset));
 
         if (
             IsMouseButtonDown(MOUSE_LEFT_BUTTON)
@@ -101,8 +101,8 @@ int main(void)
                 lines[totalLineCounter].end = lineEnd;
 
                 // Store reflective line
-                lines[totalLineCounter + 1].start = Vector2Multiply(lineStart, scaleVector);
-                lines[totalLineCounter + 1].end = Vector2Multiply(lineEnd, scaleVector);
+                lines[totalLineCounter + 1].start = ((lineStart) * (scaleVector));
+                lines[totalLineCounter + 1].end = ((lineEnd) * (scaleVector));
 
                 totalLineCounter += 2;
                 currentLineCounter = totalLineCounter;

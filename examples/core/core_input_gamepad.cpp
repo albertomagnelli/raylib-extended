@@ -30,7 +30,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ int main(void)
     const float leftTriggerDeadzone = -0.9f;
     const float rightTriggerDeadzone = -0.9f;
 
-    Rectangle vibrateButton = { 0 };
+    Rectangle vibrateButton = {};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ int main(void)
         if (IsKeyPressed(KEY_RIGHT)) gamepad++;
         Vector2 mousePosition = GetMousePosition();
 
-        vibrateButton = (Rectangle){ 10, 70.0f + 20*GetGamepadAxisCount(gamepad) + 20, 75, 24 };
+        vibrateButton = Rectangle{ 10, 70.0f + 20*GetGamepadAxisCount(gamepad) + 20, 75, 24 };
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, vibrateButton)) SetGamepadVibration(gamepad, 1.0, 1.0, 1.0);
         //----------------------------------------------------------------------------------
 
@@ -159,7 +159,7 @@ int main(void)
 
                     // Draw buttons: basic
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_MIDDLE_LEFT)) DrawRectangle(328, 170, 32, 13, RED);
-                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_MIDDLE_RIGHT)) DrawTriangle((Vector2){ 436, 168 }, (Vector2){ 436, 185 }, (Vector2){ 464, 177 }, RED);
+                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_MIDDLE_RIGHT)) DrawTriangle(Vector2{ 436, 168 }, Vector2{ 436, 185 }, Vector2{ 464, 177 }, RED);
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_UP)) DrawCircle(557, 144, 13, LIME);
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) DrawCircle(586, 173, 13, RED);
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) DrawCircle(557, 203, 13, VIOLET);
@@ -200,7 +200,7 @@ int main(void)
                 else
                 {
                     // Draw background: generic
-                    DrawRectangleRounded((Rectangle){ 175, 110, 460, 220}, 0.3f, 16, DARKGRAY);
+                    DrawRectangleRounded(Rectangle{ 175, 110, 460, 220}, 0.3f, 16, DARKGRAY);
 
                     // Draw buttons: basic
                     DrawCircle(365, 170, 12, RAYWHITE);
@@ -229,10 +229,10 @@ int main(void)
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) DrawRectangle(217 + 54, 176, 30, 25, RED);
 
                     // Draw buttons: left-right back
-                    DrawRectangleRounded((Rectangle){ 215, 98, 100, 10}, 0.5f, 16, DARKGRAY);
-                    DrawRectangleRounded((Rectangle){ 495, 98, 100, 10}, 0.5f, 16, DARKGRAY);
-                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_LEFT_TRIGGER_1)) DrawRectangleRounded((Rectangle){ 215, 98, 100, 10}, 0.5f, 16, RED);
-                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_TRIGGER_1)) DrawRectangleRounded((Rectangle){ 495, 98, 100, 10}, 0.5f, 16, RED);
+                    DrawRectangleRounded(Rectangle{ 215, 98, 100, 10}, 0.5f, 16, DARKGRAY);
+                    DrawRectangleRounded(Rectangle{ 495, 98, 100, 10}, 0.5f, 16, DARKGRAY);
+                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_LEFT_TRIGGER_1)) DrawRectangleRounded(Rectangle{ 215, 98, 100, 10}, 0.5f, 16, RED);
+                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_TRIGGER_1)) DrawRectangleRounded(Rectangle{ 495, 98, 100, 10}, 0.5f, 16, RED);
 
                     // Draw axis: left joystick
                     Color leftGamepadColor = BLACK;

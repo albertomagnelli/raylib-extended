@@ -27,7 +27,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,10 +37,10 @@ int main(void)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - raymarching rendering");
 
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 2.5f, 2.5f, 3.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.7f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 2.5f, 2.5f, 3.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.7f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 65.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 

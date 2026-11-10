@@ -32,7 +32,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -42,10 +42,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blending");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 6.0f, 6.0f, 6.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };  // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };      // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 6.0f, 6.0f, 6.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 2.0f, 0.0f };  // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };      // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                            // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
@@ -93,7 +93,7 @@ int main(void)
     bool animPause = false;             // Pause animation
 
     // UI required variables
-    char *animNames[64] = { 0 };        // Pointers to animation names for dropdown box
+    char *animNames[64] = {};        // Pointers to animation names for dropdown box
     for (int i = 0; i < animCount; i++) animNames[i] = anims[i].name;
 
     bool dropdownEditMode0 = false;
@@ -227,39 +227,39 @@ int main(void)
             // Draw UI elements
             //---------------------------------------------------------------------------------------------
             if (dropdownEditMode0) GuiDisable();
-            GuiSlider((Rectangle){ 10, 38, 160, 12 },
+            GuiSlider(Rectangle{ 10, 38, 160, 12 },
                 NULL, TextFormat("x%.1f", animFrameSpeed0), &animFrameSpeed0, 0.1f, 2.0f);
             GuiEnable();
             if (dropdownEditMode1) GuiDisable();
-            GuiSlider((Rectangle){ GetScreenWidth() - 170.0f, 38, 160, 12 },
+            GuiSlider(Rectangle{ GetScreenWidth() - 170.0f, 38, 160, 12 },
                 TextFormat("%.1fx", animFrameSpeed1), NULL, &animFrameSpeed1, 0.1f, 2.0f);
             GuiEnable();
 
             // Draw animation selectors for blending transition
             // NOTE: Transition does not start until requested
             GuiSetStyle(DROPDOWNBOX, DROPDOWN_ITEMS_SPACING, 1);
-            if (GuiDropdownBox((Rectangle){ 10, 10, 160, 24 }, TextJoin(animNames, animCount, ";"),
+            if (GuiDropdownBox(Rectangle{ 10, 10, 160, 24 }, TextJoin(animNames, animCount, ";"),
                 &animIndex0, dropdownEditMode0)) dropdownEditMode0 = !dropdownEditMode0;
 
             // Blending process progress bar
             if (nextAnimToPlay == 1) GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 0); // Left-->Right
             else GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 1); // Right-->Left
-            GuiProgressBar((Rectangle){ 180, 14, 440, 16 }, NULL, NULL, &animBlendProgress, 0.0f, 1.0f);
+            GuiProgressBar(Rectangle{ 180, 14, 440, 16 }, NULL, NULL, &animBlendProgress, 0.0f, 1.0f);
             GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 0); // Reset to Left-->Right
 
-            if (GuiDropdownBox((Rectangle){ GetScreenWidth() - 170.0f, 10, 160, 24 }, TextJoin(animNames, animCount, ";"),
+            if (GuiDropdownBox(Rectangle{ GetScreenWidth() - 170.0f, 10, 160, 24 }, TextJoin(animNames, animCount, ";"),
                 &animIndex1, dropdownEditMode1)) dropdownEditMode1 = !dropdownEditMode1;
 
             GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
             GuiSetStyle(DEFAULT, TEXT_SIZE, GuiGetFont().baseSize*2);
-            GuiLabel((Rectangle){ 0, GetScreenHeight() - 100.0f, (float)GetScreenWidth(), 40 }, "PRESS SPACE to START BLENDING");
+            GuiLabel(Rectangle{ 0, GetScreenHeight() - 100.0f, (float)GetScreenWidth(), 40 }, "PRESS SPACE to START BLENDING");
             GuiSetStyle(DEFAULT, TEXT_SIZE, GuiGetFont().baseSize);
             GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
 
             if (animCount > 0)
             {
                 // Draw playing timeline with keyframes for anim0[]
-                GuiProgressBar((Rectangle){ 60, GetScreenHeight() - 60.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 0",
+                GuiProgressBar(Rectangle{ 60, GetScreenHeight() - 60.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 0",
                     TextFormat("FRAME: %.2f / %i", animFrameProgress0, anims[animIndex0].keyframeCount),
                     &animFrameProgress0, 0.0f, (float)anims[animIndex0].keyframeCount);
                 for (int i = 0; i < anims[animIndex0].keyframeCount; i++)
@@ -267,7 +267,7 @@ int main(void)
                         GetScreenHeight() - 60, 1, 20, BLUE);
 
                 // Draw playing timeline with keyframes for anim1[]
-                GuiProgressBar((Rectangle){ 60, GetScreenHeight() - 30.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 1",
+                GuiProgressBar(Rectangle{ 60, GetScreenHeight() - 30.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 1",
                     TextFormat("FRAME: %.2f / %i", animFrameProgress1, anims[animIndex1].keyframeCount),
                     &animFrameProgress1, 0.0f, (float)anims[animIndex1].keyframeCount);
                 for (int i = 0; i < anims[animIndex1].keyframeCount; i++)

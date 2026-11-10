@@ -74,7 +74,7 @@ static void ResetStar(Star *star);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ int main(void)
 
     Texture texRay = LoadTexture("resources/raysan.png");
 
-    Star stars[MAX_STARS] = { 0 };
+    Star stars[MAX_STARS] = {};
 
     for (int n = 0; n < MAX_STARS; n++) ResetStar(&stars[n]);
 
@@ -131,7 +131,7 @@ int main(void)
     {
         spots[i].position.x = (float)GetRandomValue(64, screenWidth - 64);
         spots[i].position.y = (float)GetRandomValue(64, screenHeight - 64);
-        spots[i].speed = (Vector2){ 0, 0 };
+        spots[i].speed = Vector2{ 0, 0 };
 
         while ((fabs(spots[i].speed.x) + fabs(spots[i].speed.y)) < 2)
         {
@@ -238,7 +238,7 @@ int main(void)
 //--------------------------------------------------------------------------------------
 static void ResetStar(Star *star)
 {
-    star->position = (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    star->position = Vector2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
     star->speed.x = (float)GetRandomValue(-1000, 1000)/100.0f;
     star->speed.y = (float)GetRandomValue(-1000, 1000)/100.0f;
@@ -249,12 +249,12 @@ static void ResetStar(Star *star)
         star->speed.y = (float)GetRandomValue(-1000, 1000)/100.0f;
     }
 
-    star->position = Vector2Add(star->position, Vector2Multiply(star->speed, (Vector2){ 8.0f, 8.0f }));
+    star->position = ((star->position) + (((star->speed) * (Vector2{ 8.0f, 8.0f }))));
 }
 
 static void UpdateStar(Star *star)
 {
-    star->position = Vector2Add(star->position, star->speed);
+    star->position = ((star->position) + (star->speed));
 
     if ((star->position.x < 0) || (star->position.x > GetScreenWidth()) ||
         (star->position.y < 0) || (star->position.y > GetScreenHeight())) ResetStar(star);

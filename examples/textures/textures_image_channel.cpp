@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -85,12 +85,12 @@ int main(void)
         BeginDrawing();
 
             DrawTexture(backgroundTexture, 0, 0, WHITE);
-            DrawTexturePro(fudesumiTexture, fudesumiRec, fudesumiPos, (Vector2) {0, 0}, 0, WHITE);
+            DrawTexturePro(fudesumiTexture, fudesumiRec, fudesumiPos, Vector2{0, 0}, 0, WHITE);
 
-            DrawTexturePro(textureRed, fudesumiRec, redPos, (Vector2) {0, 0}, 0, RED);
-            DrawTexturePro(textureGreen, fudesumiRec, greenPos, (Vector2) {0, 0}, 0, GREEN);
-            DrawTexturePro(textureBlue, fudesumiRec, bluePos, (Vector2) {0, 0}, 0, BLUE);
-            DrawTexturePro(textureAlpha, fudesumiRec, alphaPos, (Vector2) {0, 0}, 0, WHITE);
+            DrawTexturePro(textureRed, fudesumiRec, redPos, Vector2{0, 0}, 0, RED);
+            DrawTexturePro(textureGreen, fudesumiRec, greenPos, Vector2{0, 0}, 0, GREEN);
+            DrawTexturePro(textureBlue, fudesumiRec, bluePos, Vector2{0, 0}, 0, BLUE);
+            DrawTexturePro(textureAlpha, fudesumiRec, alphaPos, Vector2{0, 0}, 0, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

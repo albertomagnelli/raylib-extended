@@ -71,7 +71,7 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //-----------------------------------------------------------------------------------     ---
@@ -105,10 +105,10 @@ int main(void)
     int fftHistoryLen = (int)ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME) + 1;
 
     FFTData fft = {
-        .spectrum = RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE),
-        .workBuffer = RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE),
-        .prevMagnitudes = RL_CALLOC(BUFFER_SIZE, sizeof(float)),
-        .fftHistory = RL_CALLOC(fftHistoryLen, sizeof(float[BUFFER_SIZE])),
+        .spectrum = (FFTComplex *)RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE),
+        .workBuffer = (FFTComplex *)RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE),
+        .prevMagnitudes = (float *)RL_CALLOC(BUFFER_SIZE, sizeof(float)),
+        .fftHistory = (float (*)[BUFFER_SIZE])RL_CALLOC(fftHistoryLen, sizeof(float[BUFFER_SIZE])),
         .fftHistoryLen = fftHistoryLen,
         .historyPos = 0,
         .lastFftTime = 0.0,
@@ -116,10 +116,10 @@ int main(void)
     };
 
     unsigned int wavCursor = 0;
-    const short *wavPCM16 = wav.data;
+    const short *wavPCM16 = (const short *)wav.data;
 
-    short chunkSamples[AUDIO_STREAM_RING_BUFFER_SIZE] = { 0 };
-    float audioSamples[FFT_WINDOW_SIZE] = { 0 };
+    short chunkSamples[AUDIO_STREAM_RING_BUFFER_SIZE] = {};
+    float audioSamples[FFT_WINDOW_SIZE] = {};
 
     SetTargetFPS(60);
     //----------------------------------------------------------------------------------
@@ -159,8 +159,8 @@ int main(void)
             BeginShaderMode(shader);
                 SetShaderValueTexture(shader, iChannel0Location, fftTexture);
                 DrawTextureRec(bufferA.texture,
-                    (Rectangle){ 0, 0, (float)screenWidth, (float)-screenHeight },
-                    (Vector2){ 0, 0 }, WHITE);
+                    Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight },
+                    Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 
         EndDrawing();
@@ -281,5 +281,5 @@ static void RenderFrame(const FFTData *fftData, Image *fftImage)
     if (historyPosition < 0) historyPosition += fftData->fftHistoryLen;
 
     const float *amplitude = fftData->fftHistory[historyPosition];
-    for (int bin = 0; bin < BUFFER_SIZE; bin++) ImageDrawPixel(fftImage, bin, FFT_ROW, ColorFromNormalized((Vector4){ amplitude[bin], UNUSED_CHANNEL, UNUSED_CHANNEL, UNUSED_CHANNEL }));
+    for (int bin = 0; bin < BUFFER_SIZE; bin++) ImageDrawPixel(fftImage, bin, FFT_ROW, ColorFromNormalized(Vector4{ amplitude[bin], UNUSED_CHANNEL, UNUSED_CHANNEL, UNUSED_CHANNEL }));
 }

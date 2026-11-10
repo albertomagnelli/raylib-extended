@@ -28,7 +28,7 @@ void DrawSphereBasic(Color color);      // Draw sphere without any matrix transf
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -44,10 +44,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - rlgl solar system");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 16.0f, 16.0f, 16.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 16.0f, 16.0f, 16.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -105,7 +105,7 @@ int main(void)
                 rlPopMatrix();
 
                 // Some reference elements (not affected by previous matrix transformations)
-                DrawCircle3D((Vector3){ 0.0f, 0.0f, 0.0f }, earthOrbitRadius, (Vector3){ 1, 0, 0 }, 90.0f, Fade(RED, 0.5f));
+                DrawCircle3D(Vector3{ 0.0f, 0.0f, 0.0f }, earthOrbitRadius, Vector3{ 1, 0, 0 }, 90.0f, Fade(RED, 0.5f));
                 DrawGrid(20, 1.0f);
 
             EndMode3D();

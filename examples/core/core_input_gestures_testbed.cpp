@@ -31,7 +31,7 @@ static Color GetGestureColor(int gesture); // Get color for gesture value
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -154,12 +154,12 @@ int main(void)
 
         float currentAngleRadians = ((currentAngleDegrees + 90.0f)*PI/180); // Convert the current angle to Radians
         // Calculate the final vector for display
-        finalVector = (Vector2){ (angleLength*sinf(currentAngleRadians)) + protractorPosition.x,
+        finalVector = Vector2{ (angleLength*sinf(currentAngleRadians)) + protractorPosition.x,
             (angleLength*cosf(currentAngleRadians)) + protractorPosition.y };
 
         // Handle touch and mouse pointer points
-        Vector2 touchPosition[MAX_TOUCH_COUNT] = { 0 };
-        Vector2 mousePosition = { 0 };
+        Vector2 touchPosition[MAX_TOUCH_COUNT] = {};
+        Vector2 mousePosition = {};
         if (currentGesture != GESTURE_NONE)
         {
             if (touchCount != 0)
@@ -189,13 +189,13 @@ int main(void)
             DrawRectangle((int)lastGesturePosition.x + 40, (int)lastGesturePosition.y + 20, 20, 20, lastGesture == GESTURE_SWIPE_RIGHT ? RED : LIGHTGRAY);
             DrawRectangle((int)lastGesturePosition.x + 20, (int)lastGesturePosition.y + 40, 20, 20, lastGesture == GESTURE_SWIPE_DOWN ? RED : LIGHTGRAY);
             DrawCircle((int)lastGesturePosition.x + 80, (int)lastGesturePosition.y + 16, 10, lastGesture == GESTURE_TAP ? BLUE : LIGHTGRAY);
-            DrawRing( (Vector2){lastGesturePosition.x + 103, lastGesturePosition.y + 16}, 6.0f, 11.0f, 0.0f, 360.0f, 0, lastGesture == GESTURE_DRAG ? LIME : LIGHTGRAY);
+            DrawRing( Vector2{lastGesturePosition.x + 103, lastGesturePosition.y + 16}, 6.0f, 11.0f, 0.0f, 360.0f, 0, lastGesture == GESTURE_DRAG ? LIME : LIGHTGRAY);
             DrawCircle((int)lastGesturePosition.x + 80, (int)lastGesturePosition.y + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
             DrawCircle((int)lastGesturePosition.x + 103, (int)lastGesturePosition.y + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
-            DrawTriangle((Vector2){ lastGesturePosition.x + 122, lastGesturePosition.y + 16 }, (Vector2){ lastGesturePosition.x + 137, lastGesturePosition.y + 26 }, (Vector2){lastGesturePosition.x + 137, lastGesturePosition.y + 6 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
-            DrawTriangle((Vector2){ lastGesturePosition.x + 147, lastGesturePosition.y + 6 }, (Vector2){ lastGesturePosition.x + 147, lastGesturePosition.y + 26 }, (Vector2){ lastGesturePosition.x + 162, lastGesturePosition.y + 16 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
-            DrawTriangle((Vector2){ lastGesturePosition.x + 125, lastGesturePosition.y + 33 }, (Vector2){ lastGesturePosition.x + 125, lastGesturePosition.y + 53 }, (Vector2){ lastGesturePosition.x + 140, lastGesturePosition.y + 43 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
-            DrawTriangle((Vector2){ lastGesturePosition.x + 144, lastGesturePosition.y + 43 }, (Vector2){ lastGesturePosition.x + 159, lastGesturePosition.y + 53 }, (Vector2){ lastGesturePosition.x + 159, lastGesturePosition.y + 33 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
+            DrawTriangle(Vector2{ lastGesturePosition.x + 122, lastGesturePosition.y + 16 }, Vector2{ lastGesturePosition.x + 137, lastGesturePosition.y + 26 }, Vector2{lastGesturePosition.x + 137, lastGesturePosition.y + 6 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
+            DrawTriangle(Vector2{ lastGesturePosition.x + 147, lastGesturePosition.y + 6 }, Vector2{ lastGesturePosition.x + 147, lastGesturePosition.y + 26 }, Vector2{ lastGesturePosition.x + 162, lastGesturePosition.y + 16 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
+            DrawTriangle(Vector2{ lastGesturePosition.x + 125, lastGesturePosition.y + 33 }, Vector2{ lastGesturePosition.x + 125, lastGesturePosition.y + 53 }, Vector2{ lastGesturePosition.x + 140, lastGesturePosition.y + 43 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
+            DrawTriangle(Vector2{ lastGesturePosition.x + 144, lastGesturePosition.y + 43 }, Vector2{ lastGesturePosition.x + 159, lastGesturePosition.y + 53 }, Vector2{ lastGesturePosition.x + 159, lastGesturePosition.y + 33 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
             for (i = 0; i < 4; i++) DrawCircle((int)lastGesturePosition.x + 180, (int)lastGesturePosition.y + 7 + i*15, 5, touchCount <= i? LIGHTGRAY : gestureColor);
 
             // Draw gesture log
@@ -225,10 +225,10 @@ int main(void)
             const char *angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
             DrawText( angleStringTrim, (int)protractorPosition.x + 55, (int)protractorPosition.y + 92, 20, gestureColor);
             DrawCircleV(protractorPosition, 80.0f, WHITE);
-            DrawLineEx((Vector2){ protractorPosition.x - 90, protractorPosition.y }, (Vector2){ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);
-            DrawLineEx((Vector2){ protractorPosition.x, protractorPosition.y - 90 }, (Vector2){ protractorPosition.x, protractorPosition.y + 90 }, 3.0f, LIGHTGRAY);
-            DrawLineEx((Vector2){ protractorPosition.x - 80, protractorPosition.y - 45 }, (Vector2){ protractorPosition.x + 80, protractorPosition.y + 45 }, 3.0f, GREEN);
-            DrawLineEx((Vector2){ protractorPosition.x - 80, protractorPosition.y + 45 }, (Vector2){ protractorPosition.x + 80, protractorPosition.y - 45 }, 3.0f, GREEN);
+            DrawLineEx(Vector2{ protractorPosition.x - 90, protractorPosition.y }, Vector2{ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);
+            DrawLineEx(Vector2{ protractorPosition.x, protractorPosition.y - 90 }, Vector2{ protractorPosition.x, protractorPosition.y + 90 }, 3.0f, LIGHTGRAY);
+            DrawLineEx(Vector2{ protractorPosition.x - 80, protractorPosition.y - 45 }, Vector2{ protractorPosition.x + 80, protractorPosition.y + 45 }, 3.0f, GREEN);
+            DrawLineEx(Vector2{ protractorPosition.x - 80, protractorPosition.y + 45 }, Vector2{ protractorPosition.x + 80, protractorPosition.y - 45 }, 3.0f, GREEN);
             DrawText("0", (int)protractorPosition.x + 96, (int)protractorPosition.y - 9, 20, BLACK);
             DrawText("30", (int)protractorPosition.x + 74, (int)protractorPosition.y - 68, 20, BLACK);
             DrawText("90", (int)protractorPosition.x - 11, (int)protractorPosition.y - 110, 20, BLACK);

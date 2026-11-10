@@ -27,7 +27,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,10 +37,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - bone socket");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 5.0f, 5.0f, 5.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };  // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };      // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 5.0f, 5.0f, 5.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 2.0f, 0.0f };  // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };      // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                            // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
@@ -127,8 +127,8 @@ int main(void)
 
             BeginMode3D(camera);
                 // Draw character
-                Quaternion characterRotate = QuaternionFromAxisAngle((Vector3){ 0.0f, 1.0f, 0.0f }, angle*DEG2RAD);
-                characterModel.transform = MatrixMultiply(QuaternionToMatrix(characterRotate), MatrixTranslate(position.x, position.y, position.z));
+                Quaternion characterRotate = glm::angleAxis(angle*DEG2RAD, glm::normalize(Vector3{ 0.0f, 1.0f, 0.0f }));
+                characterModel.transform = ((glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z})) * (glm::mat4_cast(characterRotate)));
                 UpdateModelAnimation(characterModel, anim, (float)animCurrentFrame);
                 DrawMesh(characterModel.meshes[0], characterModel.materials[1], characterModel.transform);
 
@@ -142,12 +142,12 @@ int main(void)
                     Quaternion outRotation = transform->rotation;
 
                     // Calculate socket rotation (angle between bone in initial pose and same bone in current animation frame)
-                    Quaternion rotate = QuaternionMultiply(outRotation, QuaternionInvert(inRotation));
-                    Matrix matrixTransform = QuaternionToMatrix(rotate);
+                    Quaternion rotate = ((outRotation) * (glm::inverse(inRotation)));
+                    Matrix matrixTransform = glm::mat4_cast(rotate);
                     // Translate socket to its position in the current animation
-                    matrixTransform = MatrixMultiply(matrixTransform, MatrixTranslate(transform->translation.x, transform->translation.y, transform->translation.z));
+                    matrixTransform = ((glm::translate(Matrix(1.0f), Vector3{transform->translation.x, transform->translation.y, transform->translation.z})) * (matrixTransform));
                     // Transform the socket using the transform of the character (angle and translate)
-                    matrixTransform = MatrixMultiply(matrixTransform, characterModel.transform);
+                    matrixTransform = ((characterModel.transform) * (matrixTransform));
 
                     // Draw mesh at socket position with socket angle rotation
                     DrawMesh(equipModel[i].meshes[0], equipModel[i].materials[1], matrixTransform);

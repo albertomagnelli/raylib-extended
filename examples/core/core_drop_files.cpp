@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [core] example - drop files");
 
     int filePathCounter = 0;
-    char *filePaths[MAX_FILEPATH_RECORDED] = { 0 }; // We will register a maximum of filepaths
+    char *filePaths[MAX_FILEPATH_RECORDED] = {}; // We will register a maximum of filepaths
 
     // Allocate space for the required file paths
     for (int i = 0; i < MAX_FILEPATH_RECORDED; i++)

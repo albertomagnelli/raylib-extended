@@ -26,18 +26,18 @@
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static Texture texRoad = { 0 };
+static Texture texRoad = {};
 
 static bool showCurve = false;
 
 static float curveWidth = 50;
 static int curveSegments = 24;
 
-static Vector2 curveStartPosition = { 0 };
-static Vector2 curveStartPositionTangent = { 0 };
+static Vector2 curveStartPosition = {};
+static Vector2 curveStartPositionTangent = {};
 
-static Vector2 curveEndPosition = { 0 };
-static Vector2 curveEndPositionTangent = { 0 };
+static Vector2 curveEndPosition = {};
+static Vector2 curveEndPositionTangent = {};
 
 static Vector2 *curveSelectedPoint = NULL;
 
@@ -49,7 +49,7 @@ static void DrawTexturedCurve(void);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -64,11 +64,11 @@ int main(void)
     SetTextureFilter(texRoad, TEXTURE_FILTER_BILINEAR);
 
     // Setup the curve
-    curveStartPosition = (Vector2){ 80, 100 };
-    curveStartPositionTangent = (Vector2){ 100, 300 };
+    curveStartPosition = Vector2{ 80, 100 };
+    curveStartPositionTangent = Vector2{ 100, 300 };
 
-    curveEndPosition = (Vector2){ 700, 350 };
-    curveEndPositionTangent = (Vector2){ 600, 100 };
+    curveEndPosition = Vector2{ 700, 350 };
+    curveEndPositionTangent = Vector2{ 600, 100 };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ int main(void)
         if (!IsMouseButtonDown(MOUSE_LEFT_BUTTON))  curveSelectedPoint = NULL;
 
         // If a point was selected, move it
-        if (curveSelectedPoint != NULL) *curveSelectedPoint = Vector2Add(*curveSelectedPoint, GetMouseDelta());
+        if (curveSelectedPoint != NULL) *curveSelectedPoint = ((*curveSelectedPoint) + (GetMouseDelta()));
 
         // The mouse is down, and nothing was selected, so see if anything was picked
         Vector2 mouse = GetMousePosition();
@@ -161,13 +161,13 @@ static void DrawTexturedCurve(void)
     const float step = 1.0f/curveSegments;
 
     Vector2 previous = curveStartPosition;
-    Vector2 previousTangent = { 0 };
+    Vector2 previousTangent = {};
     float previousV = 0;
 
     // We can't compute a tangent for the first point, so we need to reuse the tangent from the first segment
     bool tangentSet = false;
 
-    Vector2 current = { 0 };
+    Vector2 current = {};
     float t = 0.0f;
 
     for (int i = 1; i <= curveSegments; i++)
@@ -187,10 +187,10 @@ static void DrawTexturedCurve(void)
         Vector2 delta = { current.x - previous.x, current.y - previous.y };
 
         // The right hand normal to the delta vector
-        Vector2 normal = Vector2Normalize((Vector2){ -delta.y, delta.x });
+        Vector2 normal = glm::normalize(Vector2{ -delta.y, delta.x });
 
         // The v texture coordinate of the segment (add up the length of all the segments so far)
-        float v = previousV + Vector2Length(delta) / (float)(texRoad.height * 2);
+        float v = previousV + glm::length(delta) / (float)(texRoad.height * 2);
 
         // Make sure the start point has a normal
         if (!tangentSet)
@@ -200,11 +200,11 @@ static void DrawTexturedCurve(void)
         }
 
         // Extend out the normals from the previous and current points to get the quad for this segment
-        Vector2 prevPosNormal = Vector2Add(previous, Vector2Scale(previousTangent, curveWidth));
-        Vector2 prevNegNormal = Vector2Add(previous, Vector2Scale(previousTangent, -curveWidth));
+        Vector2 prevPosNormal = ((previous) + (((previousTangent) * (curveWidth))));
+        Vector2 prevNegNormal = ((previous) + (((previousTangent) * (-curveWidth))));
 
-        Vector2 currentPosNormal = Vector2Add(current, Vector2Scale(normal, curveWidth));
-        Vector2 currentNegNormal = Vector2Add(current, Vector2Scale(normal, -curveWidth));
+        Vector2 currentPosNormal = ((current) + (((normal) * (curveWidth))));
+        Vector2 currentNegNormal = ((current) + (((normal) * (-curveWidth))));
 
         // Draw the segment as a quad
         rlSetTexture(texRoad.id);

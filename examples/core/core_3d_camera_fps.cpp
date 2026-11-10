@@ -56,12 +56,12 @@ typedef struct {
 //----------------------------------------------------------------------------------
 static Vector2 sensitivity = { 0.001f, 0.001f };
 
-static Body player = { 0 };
-static Vector2 lookRotation = { 0 };
+static Body player = {};
+static Vector2 lookRotation = {};
 static float headTimer = 0.0f;
 static float walkLerp = 0.0f;
 static float headLerp = STAND_HEIGHT;
-static Vector2 lean = { 0 };
+static Vector2 lean = {};
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -73,7 +73,7 @@ static void UpdateBody(Body *body, float rot, char side, char forward, bool jump
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -84,10 +84,10 @@ int main(void)
 
     // Initialize camera variables
     // NOTE: UpdateCameraFPS() takes care of the rest
-    Camera camera = { 0 };
+    Camera camera = {};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
-    camera.position = (Vector3){
+    camera.position = Vector3{
         player.position.x,
         player.position.y + (BOTTOM_HEIGHT + headLerp),
         player.position.z,
@@ -116,7 +116,7 @@ int main(void)
 
         float delta = GetFrameTime();
         headLerp = Lerp(headLerp, (crouching ? CROUCH_HEIGHT : STAND_HEIGHT), 20.0f*delta);
-        camera.position = (Vector3){
+        camera.position = Vector3{
             player.position.x,
             player.position.y + (BOTTOM_HEIGHT + headLerp),
             player.position.z,
@@ -157,7 +157,7 @@ int main(void)
             DrawText("Camera controls:", 15, 15, 10, BLACK);
             DrawText("- Move keys: W, A, S, D, Space, Left-Ctrl", 15, 30, 10, BLACK);
             DrawText("- Look around: arrow keys or mouse", 15, 45, 10, BLACK);
-            DrawText(TextFormat("- Velocity Len: (%06.3f)", Vector2Length((Vector2){ player.velocity.x, player.velocity.z })), 15, 60, 10, BLACK);
+            DrawText(TextFormat("- Velocity Len: (%06.3f)", glm::length(Vector2{ player.velocity.x, player.velocity.z })), 15, 60, 10, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -177,11 +177,11 @@ int main(void)
 // Update body considering current world state
 void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed, bool crouchHold)
 {
-    Vector2 input = (Vector2){ (float)side, (float)-forward };
+    Vector2 input = Vector2{ (float)side, (float)-forward };
 
 #if defined(NORMALIZE_INPUT)
     // Slow down diagonal movement
-    if ((side != 0) && (forward != 0)) input = Vector2Normalize(input);
+    if ((side != 0) && (forward != 0)) input = glm::normalize(input);
 #endif
 
     float delta = GetFrameTime();
@@ -198,20 +198,20 @@ void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed
         //PlaySound(fxJump);
     }
 
-    Vector3 front = (Vector3){ sinf(rot), 0.f, cosf(rot) };
-    Vector3 right = (Vector3){ cosf(-rot), 0.f, sinf(-rot) };
+    Vector3 front = Vector3{ sinf(rot), 0.f, cosf(rot) };
+    Vector3 right = Vector3{ cosf(-rot), 0.f, sinf(-rot) };
 
-    Vector3 desiredDir = (Vector3){ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
-    body->dir = Vector3Lerp(body->dir, desiredDir, CONTROL*delta);
+    Vector3 desiredDir = Vector3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
+    body->dir = glm::mix(body->dir, desiredDir, CONTROL*delta);
 
     float decel = (body->isGrounded ? FRICTION : AIR_DRAG);
-    Vector3 hvel = (Vector3){ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
+    Vector3 hvel = Vector3{ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
 
-    float hvelLength = Vector3Length(hvel); // Magnitude
-    if (hvelLength < (MAX_SPEED*0.01f)) hvel = (Vector3){ 0 };
+    float hvelLength = glm::length(hvel); // Magnitude
+    if (hvelLength < (MAX_SPEED*0.01f)) hvel = Vector3{};
 
     // This is what creates strafing
-    float speed = Vector3DotProduct(hvel, body->dir);
+    float speed = glm::dot(hvel, body->dir);
 
     // Whenever the amount of acceleration to add is clamped by the maximum acceleration constant,
     // a Player can make the speed faster by bringing the direction closer to horizontal velocity angle
@@ -240,8 +240,8 @@ void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed
 // Update camera for FPS behaviour
 static void UpdateCameraFPS(Camera *camera)
 {
-    const Vector3 up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    const Vector3 targetOffset = (Vector3){ 0.0f, 0.0f, -1.0f };
+    const Vector3 up = Vector3{ 0.0f, 1.0f, 0.0f };
+    const Vector3 targetOffset = Vector3{ 0.0f, 0.0f, -1.0f };
 
     // Left and right
     Vector3 yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
@@ -252,13 +252,13 @@ static void UpdateCameraFPS(Camera *camera)
     if ( -(lookRotation.y) > maxAngleUp) { lookRotation.y = -maxAngleUp; }
 
     // Clamp view down
-    float maxAngleDown = Vector3Angle(Vector3Negate(up), yaw);
+    float maxAngleDown = Vector3Angle((-(up)), yaw);
     maxAngleDown *= -1.0f; // Downwards angle is negative
     maxAngleDown += 0.001f; // Avoid numerical errors
     if ( -(lookRotation.y) < maxAngleDown) { lookRotation.y = -maxAngleDown; }
 
     // Up and down
-    Vector3 right = Vector3Normalize(Vector3CrossProduct(yaw, up));
+    Vector3 right = glm::normalize(glm::cross(yaw, up));
 
     // Rotate view vector around right axis
     float pitchAngle = -lookRotation.y - lean.y;
@@ -275,11 +275,11 @@ static void UpdateCameraFPS(Camera *camera)
     // Camera BOB
     const float bobSide = 0.1f;
     const float bobUp = 0.15f;
-    Vector3 bobbing = Vector3Scale(right, headSin*bobSide);
+    Vector3 bobbing = ((right) * (headSin*bobSide));
     bobbing.y = fabsf(headCos*bobUp);
 
-    camera->position = Vector3Add(camera->position, Vector3Scale(bobbing, walkLerp));
-    camera->target = Vector3Add(camera->position, pitch);
+    camera->position = ((camera->position) + (((bobbing) * (walkLerp))));
+    camera->target = ((camera->position) + (pitch));
 }
 
 // Draw game level
@@ -287,7 +287,7 @@ static void DrawLevel(void)
 {
     const int floorExtent = 25;
     const float tileSize = 5.0f;
-    const Color tileColor1 = (Color){ 150, 200, 200, 255 };
+    const Color tileColor1 = Color{ 150, 200, 200, 255 };
 
     // Floor tiles
     for (int y = -floorExtent; y < floorExtent; y++)
@@ -296,19 +296,19 @@ static void DrawLevel(void)
         {
             if ((y & 1) && (x & 1))
             {
-                DrawPlane((Vector3){ x*tileSize, 0.0f, y*tileSize}, (Vector2){ tileSize, tileSize }, tileColor1);
+                DrawPlane(Vector3{ x*tileSize, 0.0f, y*tileSize}, Vector2{ tileSize, tileSize }, tileColor1);
             }
             else if (!(y & 1) && !(x & 1))
             {
-                DrawPlane((Vector3){ x*tileSize, 0.0f, y*tileSize}, (Vector2){ tileSize, tileSize }, LIGHTGRAY);
+                DrawPlane(Vector3{ x*tileSize, 0.0f, y*tileSize}, Vector2{ tileSize, tileSize }, LIGHTGRAY);
             }
         }
     }
 
-    const Vector3 towerSize = (Vector3){ 16.0f, 32.0f, 16.0f };
-    const Color towerColor = (Color){ 150, 200, 200, 255 };
+    const Vector3 towerSize = Vector3{ 16.0f, 32.0f, 16.0f };
+    const Color towerColor = Color{ 150, 200, 200, 255 };
 
-    Vector3 towerPos = (Vector3){ 16.0f, 16.0f, 16.0f };
+    Vector3 towerPos = Vector3{ 16.0f, 16.0f, 16.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
@@ -325,5 +325,5 @@ static void DrawLevel(void)
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
     // Red sun
-    DrawSphere((Vector3){ 300.0f, 300.0f, 0.0f }, 100.0f, (Color){ 255, 0, 0, 255 });
+    DrawSphere(Vector3{ 300.0f, 300.0f, 0.0f }, 100.0f, Color{ 255, 0, 0, 255 });
 }

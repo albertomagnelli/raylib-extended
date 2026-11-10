@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //---------------------------------------------------------
@@ -153,7 +153,7 @@ int main(void)
         else ClearBackground(RAYWHITE);
 
         DrawCircleV(ballPosition, ballRadius, MAROON);
-        DrawRectangleLinesEx((Rectangle) { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, 4, RAYWHITE);
+        DrawRectangleLinesEx(Rectangle{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, 4, RAYWHITE);
 
         DrawCircleV(GetMousePosition(), 10, DARKBLUE);
 

@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -28,17 +28,17 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - cubicmap rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 16.0f, 14.0f, 16.0f };     // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };          // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };              // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 16.0f, 14.0f, 16.0f };     // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };          // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };              // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                    // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
     Image image = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
     Texture2D cubicmap = LoadTextureFromImage(image);       // Convert image to texture to display (VRAM)
 
-    Mesh mesh = GenMeshCubicmap(image, (Vector3){ 1.0f, 1.0f, 1.0f });
+    Mesh mesh = GenMeshCubicmap(image, Vector3{ 1.0f, 1.0f, 1.0f });
     Model model = LoadModelFromMesh(mesh);
 
     // NOTE: By default each cube is mapped to one part of texture atlas
@@ -76,7 +76,7 @@ int main(void)
 
             EndMode3D();
 
-            DrawTextureEx(cubicmap, (Vector2){ screenWidth - cubicmap.width*4.0f - 20, 20.0f }, 0.0f, 4.0f, WHITE);
+            DrawTextureEx(cubicmap, Vector2{ screenWidth - cubicmap.width*4.0f - 20, 20.0f }, 0.0f, 4.0f, WHITE);
             DrawRectangleLines(screenWidth - cubicmap.width*4 - 20, 20, cubicmap.width*4, cubicmap.height*4, GREEN);
 
             DrawText("cubicmap image used to", 658, 90, 10, GRAY);

@@ -28,7 +28,7 @@ void DrawTexturePoly(Texture2D texture, Vector2 center, Vector2 *points, Vector2
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -39,22 +39,22 @@ int main(void)
 
     // Define texture coordinates to map our texture to poly
     Vector2 texcoords[MAX_POINTS] = {
-        (Vector2){ 0.75f, 0.0f },
-        (Vector2){ 0.25f, 0.0f },
-        (Vector2){ 0.0f, 0.5f },
-        (Vector2){ 0.0f, 0.75f },
-        (Vector2){ 0.25f, 1.0f},
-        (Vector2){ 0.375f, 0.875f},
-        (Vector2){ 0.625f, 0.875f},
-        (Vector2){ 0.75f, 1.0f},
-        (Vector2){ 1.0f, 0.75f},
-        (Vector2){ 1.0f, 0.5f},
-        (Vector2){ 0.75f, 0.0f}  // Close the poly
+        Vector2{ 0.75f, 0.0f },
+        Vector2{ 0.25f, 0.0f },
+        Vector2{ 0.0f, 0.5f },
+        Vector2{ 0.0f, 0.75f },
+        Vector2{ 0.25f, 1.0f},
+        Vector2{ 0.375f, 0.875f},
+        Vector2{ 0.625f, 0.875f},
+        Vector2{ 0.75f, 1.0f},
+        Vector2{ 1.0f, 0.75f},
+        Vector2{ 1.0f, 0.5f},
+        Vector2{ 0.75f, 0.0f}  // Close the poly
     };
 
     // Define the base poly vertices from the UV's
     // NOTE: They can be specified in any other way
-    Vector2 points[MAX_POINTS] = { 0 };
+    Vector2 points[MAX_POINTS] = {};
     for (int i = 0; i < MAX_POINTS; i++)
     {
         points[i].x = (texcoords[i].x - 0.5f)*256.0f;
@@ -63,7 +63,7 @@ int main(void)
 
     // Define the vertices drawing position
     // NOTE: Initially same as points but updated every frame
-    Vector2 positions[MAX_POINTS] = { 0 };
+    Vector2 positions[MAX_POINTS] = {};
     for (int i = 0; i < MAX_POINTS; i++) positions[i] = points[i];
 
     // Load texture to be mapped to poly
@@ -93,7 +93,7 @@ int main(void)
 
             DrawText("textured polygon", 20, 20, 20, DARKGRAY);
 
-            DrawTexturePoly(texture, (Vector2){ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f },
+            DrawTexturePoly(texture, Vector2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f },
                             positions, texcoords, MAX_POINTS, WHITE);
 
         EndDrawing();

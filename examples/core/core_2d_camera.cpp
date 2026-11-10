@@ -21,7 +21,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -31,8 +31,8 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera");
 
     Rectangle player = { 400, 280, 40, 40 };
-    Rectangle buildings[MAX_BUILDINGS] = { 0 };
-    Color buildColors[MAX_BUILDINGS] = { 0 };
+    Rectangle buildings[MAX_BUILDINGS] = {};
+    Color buildColors[MAX_BUILDINGS] = {};
 
     int spacing = 0;
 
@@ -45,16 +45,16 @@ int main(void)
 
         spacing += (int)buildings[i].width;
 
-        buildColors[i] = (Color){
+        buildColors[i] = Color{
             (unsigned char)GetRandomValue(200, 240),
             (unsigned char)GetRandomValue(200, 240),
             (unsigned char)GetRandomValue(200, 250),
             255};
     }
 
-    Camera2D camera = { 0 };
-    camera.target = (Vector2){ player.x + 20.0f, player.y + 20.0f };
-    camera.offset = (Vector2){ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    Camera2D camera = {};
+    camera.target = Vector2{ player.x + 20.0f, player.y + 20.0f };
+    camera.offset = Vector2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -71,7 +71,7 @@ int main(void)
         else if (IsKeyDown(KEY_LEFT)) player.x -= 2;
 
         // Camera target follows player
-        camera.target = (Vector2){ player.x + 20, player.y + 20 };
+        camera.target = Vector2{ player.x + 20, player.y + 20 };
 
         // Camera rotation controls
         if (IsKeyDown(KEY_A)) camera.rotation--;

@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -34,14 +34,14 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh picking");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 20.0f, 20.0f, 20.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 8.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.6f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 20.0f, 20.0f, 20.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 8.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.6f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Ray ray = { 0 };        // Picking ray
+    Ray ray = {};        // Picking ray
 
     Model tower = LoadModel("resources/models/obj/turret.obj");                 // Load OBJ model
     Texture2D texture = LoadTexture("resources/models/obj/turret_diffuse.png"); // Load model texture
@@ -51,20 +51,20 @@ int main(void)
     BoundingBox towerBBox = GetMeshBoundingBox(tower.meshes[0]);    // Get mesh bounding box
 
     // Ground quad
-    Vector3 g0 = (Vector3){ -50.0f, 0.0f, -50.0f };
-    Vector3 g1 = (Vector3){ -50.0f, 0.0f,  50.0f };
-    Vector3 g2 = (Vector3){  50.0f, 0.0f,  50.0f };
-    Vector3 g3 = (Vector3){  50.0f, 0.0f, -50.0f };
+    Vector3 g0 = Vector3{ -50.0f, 0.0f, -50.0f };
+    Vector3 g1 = Vector3{ -50.0f, 0.0f,  50.0f };
+    Vector3 g2 = Vector3{  50.0f, 0.0f,  50.0f };
+    Vector3 g3 = Vector3{  50.0f, 0.0f, -50.0f };
 
     // Test triangle
-    Vector3 ta = (Vector3){ -25.0f, 0.5f, 0.0f };
-    Vector3 tb = (Vector3){ -4.0f, 2.5f, 1.0f };
-    Vector3 tc = (Vector3){ -8.0f, 6.5f, 0.0f };
+    Vector3 ta = Vector3{ -25.0f, 0.5f, 0.0f };
+    Vector3 tb = Vector3{ -4.0f, 2.5f, 1.0f };
+    Vector3 tc = Vector3{ -8.0f, 6.5f, 0.0f };
 
     Vector3 bary = { 0.0f, 0.0f, 0.0f };
 
     // Test sphere
-    Vector3 sp = (Vector3){ -30.0f, 5.0f, 5.0f };
+    Vector3 sp = Vector3{ -30.0f, 5.0f, 5.0f };
     float sr = 4.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
@@ -84,7 +84,7 @@ int main(void)
         }
 
         // Display information about closest hit
-        RayCollision collision = { 0 };
+        RayCollision collision = {};
         const char *hitObjectName = "None";
         collision.distance = FLT_MAX;
         collision.hit = false;
@@ -135,7 +135,7 @@ int main(void)
             hitObjectName = "Box";
 
             // Check ray collision against model meshes
-            RayCollision meshHitInfo = { 0 };
+            RayCollision meshHitInfo = {};
             for (int m = 0; m < tower.meshCount; m++)
             {
                 // NOTE: We consider the model.transform for the collision check but

@@ -37,7 +37,7 @@ static void EndPortalMode3D(void);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -47,10 +47,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - portal window");
 
     // Camera to navigate the "real world" (Dimension A)
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 2.5f, 7.0f };
-    camera.target = (Vector3){ 0.0f, 1.8f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera3D camera = {};
+    camera.position = Vector3{ 0.0f, 2.5f, 7.0f };
+    camera.target = Vector3{ 0.0f, 1.8f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -81,11 +81,11 @@ int main(void)
 
         // Eye and window corners, shifted into Dimension B so they match the player's
         // actual position and viewing angle relative to the archway
-        Vector3 offset = Vector3Subtract(portalB, portalA);
-        Vector3 eyeInB = Vector3Add(camera.position, offset);
-        Vector3 blInB = Vector3Add(archBottomLeft, offset);
-        Vector3 brInB = Vector3Add(archBottomRight, offset);
-        Vector3 tlInB = Vector3Add(archTopLeft, offset);
+        Vector3 offset = ((portalB) - (portalA));
+        Vector3 eyeInB = ((camera.position) + (offset));
+        Vector3 blInB = ((archBottomLeft) + (offset));
+        Vector3 brInB = ((archBottomRight) + (offset));
+        Vector3 tlInB = ((archTopLeft) + (offset));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -94,14 +94,14 @@ int main(void)
         // its perspective lines up with the archway exactly as the real camera sees it
         BeginTextureMode(portalView);
 
-            ClearBackground((Color){ 10, 5, 20, 255 });
+            ClearBackground(Color{ 10, 5, 20, 255 });
 
             BeginPortalMode3D(eyeInB, blInB, brInB, tlInB, 0.05f, 100.0f);
 
                 DrawGrid(30, 0.8f);
 
                 // Floating pulsing core sphere
-                Vector3 corePos = Vector3Add(portalB, (Vector3){ 0.0f, 2.0f + sinf(time * 2.5f) * 0.4f, -4.0f });
+                Vector3 corePos = ((portalB) + (Vector3{ 0.0f, 2.0f + sinf(time * 2.5f) * 0.4f, -4.0f }));
                 DrawSphere(corePos, 1.2f, PURPLE);
                 DrawSphereWires(corePos, 1.25f, 16, 16, MAGENTA);
 
@@ -109,10 +109,10 @@ int main(void)
                 for (int i = 0; i < 4; i++)
                 {
                     float angle = time * 1.5f + i * (PI / 2.0f);
-                    Vector3 pos = Vector3Add(portalB, (Vector3){
+                    Vector3 pos = ((portalB) + (Vector3{
                         sinf(angle) * 2.5f,
                         2.0f + cosf(time * 3.0f + i) * 0.5f,
-                        -4.0f + cosf(angle) * 2.5f });
+                        -4.0f + cosf(angle) * 2.5f }));
 
                     DrawCube(pos, 0.5f, 0.5f, 0.5f, LIME);
                     DrawCubeWires(pos, 0.52f, 0.52f, 0.52f, DARKGREEN);
@@ -131,17 +131,17 @@ int main(void)
                 DrawGrid(20, 1.0f);
 
                 // Side pillars
-                DrawCube((Vector3){ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
-                DrawCubeWires((Vector3){ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
-                DrawCube((Vector3){ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
-                DrawCubeWires((Vector3){ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
+                DrawCube(Vector3{ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
+                DrawCubeWires(Vector3{ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
+                DrawCube(Vector3{ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
+                DrawCubeWires(Vector3{ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
 
                 // Golden archway frame and solid base
-                DrawCubeWires((Vector3){ 0.0f, 2.0f, 0.0f }, 3.2f, 4.2f, 0.2f, GOLD);
-                DrawCube((Vector3){ 0.0f, 0.05f, 0.0f }, 3.4f, 0.1f, 0.6f, MAROON);
+                DrawCubeWires(Vector3{ 0.0f, 2.0f, 0.0f }, 3.2f, 4.2f, 0.2f, GOLD);
+                DrawCube(Vector3{ 0.0f, 0.05f, 0.0f }, 3.4f, 0.1f, 0.6f, MAROON);
 
                 // Solid backing wall, only ever seen if looking at the archway from behind
-                DrawCube((Vector3){ 0.0f, 2.0f, -0.05f }, 3.1f, 4.1f, 0.05f, MAROON);
+                DrawCube(Vector3{ 0.0f, 2.0f, -0.05f }, 3.1f, 4.1f, 0.05f, MAROON);
 
                 // The portal opening itself: a plain quad textured with the Dimension B
                 // render, filling the archway exactly, so nothing "leaks" outside its shape
@@ -192,17 +192,17 @@ int main(void)
 // eye position, instead of behaving like a flat image pasted onto the window
 static void BeginPortalMode3D(Vector3 eye, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topLeft, float nearPlane, float farPlane)
 {
-    Vector3 right = Vector3Normalize(Vector3Subtract(bottomRight, bottomLeft));
-    Vector3 up = Vector3Normalize(Vector3Subtract(topLeft, bottomLeft));
-    Vector3 normal = Vector3Normalize(Vector3CrossProduct(right, up));
+    Vector3 right = glm::normalize(((bottomRight) - (bottomLeft)));
+    Vector3 up = glm::normalize(((topLeft) - (bottomLeft)));
+    Vector3 normal = glm::normalize(glm::cross(right, up));
 
     // Vectors from the eye to 3 corners of the window, used to project the window onto
     // the near plane and read off how far it extends left/right/bottom/top of the eye
-    Vector3 toBL = Vector3Subtract(bottomLeft, eye);
-    Vector3 toBR = Vector3Subtract(bottomRight, eye);
-    Vector3 toTL = Vector3Subtract(topLeft, eye);
+    Vector3 toBL = ((bottomLeft) - (eye));
+    Vector3 toBR = ((bottomRight) - (eye));
+    Vector3 toTL = ((topLeft) - (eye));
 
-    float dist = -Vector3DotProduct(toBL, normal);
+    float dist = -glm::dot(toBL, normal);
     if (dist < 0.01f) dist = 0.01f; // Keep the eye from crossing the window plane
 
     float scale = nearPlane/dist;
@@ -211,17 +211,14 @@ static void BeginPortalMode3D(Vector3 eye, Vector3 bottomLeft, Vector3 bottomRig
 
     rlMatrixMode(RL_PROJECTION);
     rlPushMatrix();
-    rlSetMatrixProjection(MatrixFrustum(
-        Vector3DotProduct(right, toBL)*scale, Vector3DotProduct(right, toBR)*scale,
-        Vector3DotProduct(up, toBL)*scale, Vector3DotProduct(up, toTL)*scale,
-        nearPlane, farPlane));
+    rlSetMatrixProjection(glm::frustum(glm::dot(right, toBL)*scale, glm::dot(right, toBR)*scale, glm::dot(up, toBL)*scale, glm::dot(up, toTL)*scale, nearPlane, farPlane));
 
     // View orientation is fixed to the window's own plane (looking straight through it
     // along its normal), NOT aimed at any target - that's what the asymmetric frustum
     // above is for, and is what lets the eye move off to one side without distorting
     rlMatrixMode(RL_MODELVIEW);
     rlLoadIdentity();
-    rlMultMatrixf(MatrixToFloat(MatrixLookAt(eye, Vector3Subtract(eye, normal), up)));
+    rlMultMatrixf(MatrixToFloat(glm::lookAt(eye, ((eye) - (normal)), up)));
 
     rlEnableDepthTest();
 }

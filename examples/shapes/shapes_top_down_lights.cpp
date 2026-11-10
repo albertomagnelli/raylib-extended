@@ -54,7 +54,7 @@ typedef struct LightInfo {
 //------------------------------------------------------------------------------------
 // Global Variables Definition
 //------------------------------------------------------------------------------------
-static LightInfo lights[MAX_LIGHTS] = { 0 };
+static LightInfo lights[MAX_LIGHTS] = {};
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -75,7 +75,7 @@ static void SetupBoxes(Rectangle *boxes, int *count);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ int main(void)
 
     // Initialize our 'world' of boxes
     int boxCount = 0;
-    Rectangle boxes[MAX_BOXES] = { 0 };
+    Rectangle boxes[MAX_BOXES] = {};
     SetupBoxes(boxes, &boxCount);
 
     // Create a checkerboard ground texture
@@ -146,7 +146,7 @@ int main(void)
                 // Merge in all the light masks
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
-                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, (Rectangle){ 0, 0, (float)GetScreenWidth(), -(float)GetScreenHeight() }, Vector2Zero(), WHITE);
+                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, Rectangle{ 0, 0, (float)GetScreenWidth(), -(float)GetScreenHeight() }, Vector2{}, WHITE);
                 }
 
                 rlDrawRenderBatchActive();
@@ -164,10 +164,10 @@ int main(void)
             ClearBackground(BLACK);
 
             // Draw the tile background
-            DrawTextureRec(backgroundTexture, (Rectangle){ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, Vector2Zero(), WHITE);
+            DrawTextureRec(backgroundTexture, Rectangle{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, Vector2{}, WHITE);
 
             // Overlay the shadows from all the lights
-            DrawTextureRec(lightMask.texture, (Rectangle){ 0, 0, (float)GetScreenWidth(), -(float)GetScreenHeight() }, Vector2Zero(), ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
+            DrawTextureRec(lightMask.texture, Rectangle{ 0, 0, (float)GetScreenWidth(), -(float)GetScreenHeight() }, Vector2{}, ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
 
             // Draw the lights
             for (int i = 0; i < MAX_LIGHTS; i++)
@@ -242,11 +242,11 @@ static void ComputeShadowVolumeForEdge(int slot, Vector2 sp, Vector2 ep)
 
     float extension = lights[slot].outerRadius*2;
 
-    Vector2 spVector = Vector2Normalize(Vector2Subtract(sp, lights[slot].position));
-    Vector2 spProjection = Vector2Add(sp, Vector2Scale(spVector, extension));
+    Vector2 spVector = glm::normalize(((sp) - (lights[slot].position)));
+    Vector2 spProjection = ((sp) + (((spVector) * (extension))));
 
-    Vector2 epVector = Vector2Normalize(Vector2Subtract(ep, lights[slot].position));
-    Vector2 epProjection = Vector2Add(ep, Vector2Scale(epVector, extension));
+    Vector2 epVector = glm::normalize(((ep) - (lights[slot].position)));
+    Vector2 epProjection = ((ep) + (((epVector) * (extension))));
 
     lights[slot].shadows[lights[slot].shadowCount].vertices[0] = sp;
     lights[slot].shadows[lights[slot].shadowCount].vertices[1] = ep;
@@ -293,8 +293,8 @@ static bool UpdateLight(int slot, Rectangle* boxes, int count)
         // Check the edges that are on the same side we are, and cast shadow volumes out from them
 
         // Top
-        Vector2 sp = (Vector2){ boxes[i].x, boxes[i].y };
-        Vector2 ep = (Vector2){ boxes[i].x + boxes[i].width, boxes[i].y };
+        Vector2 sp = Vector2{ boxes[i].x, boxes[i].y };
+        Vector2 ep = Vector2{ boxes[i].x + boxes[i].width, boxes[i].y };
 
         if (lights[slot].position.y > ep.y) ComputeShadowVolumeForEdge(slot, sp, ep);
 
@@ -314,10 +314,10 @@ static bool UpdateLight(int slot, Rectangle* boxes, int count)
         if (lights[slot].position.x > ep.x) ComputeShadowVolumeForEdge(slot, sp, ep);
 
         // The box itself
-        lights[slot].shadows[lights[slot].shadowCount].vertices[0] = (Vector2){ boxes[i].x, boxes[i].y };
-        lights[slot].shadows[lights[slot].shadowCount].vertices[1] = (Vector2){ boxes[i].x, boxes[i].y + boxes[i].height };
-        lights[slot].shadows[lights[slot].shadowCount].vertices[2] = (Vector2){ boxes[i].x + boxes[i].width, boxes[i].y + boxes[i].height };
-        lights[slot].shadows[lights[slot].shadowCount].vertices[3] = (Vector2){ boxes[i].x + boxes[i].width, boxes[i].y };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[0] = Vector2{ boxes[i].x, boxes[i].y };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[1] = Vector2{ boxes[i].x, boxes[i].y + boxes[i].height };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[2] = Vector2{ boxes[i].x + boxes[i].width, boxes[i].y + boxes[i].height };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[3] = Vector2{ boxes[i].x + boxes[i].width, boxes[i].y };
         lights[slot].shadowCount++;
     }
 
@@ -367,15 +367,15 @@ static void DrawLightMask(int slot)
 // Set up some boxes
 static void SetupBoxes(Rectangle *boxes, int *count)
 {
-    boxes[0] = (Rectangle){ 150,80, 40, 40 };
-    boxes[1] = (Rectangle){ 1200, 700, 40, 40 };
-    boxes[2] = (Rectangle){ 200, 600, 40, 40 };
-    boxes[3] = (Rectangle){ 1000, 50, 40, 40 };
-    boxes[4] = (Rectangle){ 500, 350, 40, 40 };
+    boxes[0] = Rectangle{ 150,80, 40, 40 };
+    boxes[1] = Rectangle{ 1200, 700, 40, 40 };
+    boxes[2] = Rectangle{ 200, 600, 40, 40 };
+    boxes[3] = Rectangle{ 1000, 50, 40, 40 };
+    boxes[4] = Rectangle{ 500, 350, 40, 40 };
 
     for (int i = 5; i < MAX_BOXES; i++)
     {
-        boxes[i] = (Rectangle){(float)GetRandomValue(0,GetScreenWidth()), (float)GetRandomValue(0,GetScreenHeight()), (float)GetRandomValue(10,100), (float)GetRandomValue(10,100) };
+        boxes[i] = Rectangle{(float)GetRandomValue(0,GetScreenWidth()), (float)GetRandomValue(0,GetScreenHeight()), (float)GetRandomValue(10,100), (float)GetRandomValue(10,100) };
     }
 
     *count = MAX_BOXES;

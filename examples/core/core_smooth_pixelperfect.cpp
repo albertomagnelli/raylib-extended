@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,10 +37,10 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - smooth pixelperfect");
 
-    Camera2D worldSpaceCamera = { 0 };  // Game world camera
+    Camera2D worldSpaceCamera = {};  // Game world camera
     worldSpaceCamera.zoom = 1.0f;
 
-    Camera2D screenSpaceCamera = { 0 }; // Smoothing camera
+    Camera2D screenSpaceCamera = {}; // Smoothing camera
     screenSpaceCamera.zoom = 1.0f;
 
     // Load render texture to draw all our objects
@@ -79,7 +79,7 @@ int main(void)
         cameraY = cosf((float)GetTime())*30.0f;
 
         // Set the camera's target to the values computed above
-        screenSpaceCamera.target = (Vector2){ cameraX, cameraY };
+        screenSpaceCamera.target = Vector2{ cameraX, cameraY };
 
         // Round worldSpace coordinates, keep decimals into screenSpace coordinates
         worldSpaceCamera.target.x = truncf(screenSpaceCamera.target.x);
@@ -95,11 +95,11 @@ int main(void)
 
         if (overscan)
         {
-            destRec = (Rectangle) { -virtualRatio, -virtualRatio, screenWidth + (virtualRatio*2), screenHeight + (virtualRatio*2) };
+            destRec = Rectangle{ -virtualRatio, -virtualRatio, screenWidth + (virtualRatio*2), screenHeight + (virtualRatio*2) };
         }
         else
         {
-            destRec = (Rectangle) { (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
+            destRec = Rectangle{ (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
         }
         //----------------------------------------------------------------------------------
 

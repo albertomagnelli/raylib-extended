@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -40,13 +40,13 @@ int main(void)
     const float clockFaceSpacing = 8.0f;
     const float sectionSpacing = 16.0f;
 
-    const Vector2 TL = (Vector2){   0.0f,  90.0f }; // Top-left corner
-    const Vector2 TR = (Vector2){  90.0f, 180.0f }; // Top-right corner
-    const Vector2 BR = (Vector2){ 180.0f, 270.0f }; // Bottom-right corner
-    const Vector2 BL = (Vector2){   0.0f, 270.0f }; // Bottom-left corner
-    const Vector2 HH = (Vector2){   0.0f, 180.0f }; // Horizontal line
-    const Vector2 VV = (Vector2){  90.0f, 270.0f }; // Vertical line
-    const Vector2 ZZ = (Vector2){ 135.0f, 135.0f }; // Not relevant
+    const Vector2 TL = Vector2{   0.0f,  90.0f }; // Top-left corner
+    const Vector2 TR = Vector2{  90.0f, 180.0f }; // Top-right corner
+    const Vector2 BR = Vector2{ 180.0f, 270.0f }; // Bottom-right corner
+    const Vector2 BL = Vector2{   0.0f, 270.0f }; // Bottom-left corner
+    const Vector2 HH = Vector2{   0.0f, 180.0f }; // Horizontal line
+    const Vector2 VV = Vector2{  90.0f, 270.0f }; // Vertical line
+    const Vector2 ZZ = Vector2{ 135.0f, 135.0f }; // Not relevant
 
     const Vector2 digitAngles[10][24] = {
         /* 0 */ { TL,HH,HH,TR, /* */ VV,TL,TR,VV,/* */ VV,VV,VV,VV,/* */ VV,VV,VV,VV,/* */ VV,BL,BR,VV,/* */ BL,HH,HH,BR },
@@ -65,9 +65,9 @@ int main(void)
     const float handsMoveDuration = 0.5f;
 
     int prevSeconds = -1;
-    Vector2 currentAngles[6][24] = { 0 };
-    Vector2 srcAngles[6][24] = { 0 };
-    Vector2 dstAngles[6][24] = { 0 };
+    Vector2 currentAngles[6][24] = {};
+    Vector2 srcAngles[6][24] = {};
+    Vector2 dstAngles[6][24] = {};
 
     float handsMoveTimer = 0.0f;
     int hourMode = 24;
@@ -156,7 +156,7 @@ int main(void)
                 {
                     for (int col = 0; col < 4; col++)
                     {
-                        Vector2 centre = (Vector2){
+                        Vector2 centre = Vector2{
                             xOffset + col*(clockFaceSize+clockFaceSpacing) + clockFaceSize*0.5f,
                             100 + row*(clockFaceSize+clockFaceSpacing) + clockFaceSize*0.5f
                         };
@@ -165,16 +165,16 @@ int main(void)
 
                         // Big hand
                         DrawRectanglePro(
-                            (Rectangle){centre.x, centre.y, clockFaceSize*0.5f + 4.0f, 4.0f},
-                            (Vector2){ 2.0f, 2.0f },
+                            Rectangle{centre.x, centre.y, clockFaceSize*0.5f + 4.0f, 4.0f},
+                            Vector2{ 2.0f, 2.0f },
                             currentAngles[digit][row*4+col].x,
                             handsColor
                         );
 
                         // Little hand
                         DrawRectanglePro(
-                            (Rectangle){centre.x, centre.y, clockFaceSize*0.5f + 2.0f, 4.0f},
-                            (Vector2){ 2.0f, 2.0f },
+                            Rectangle{centre.x, centre.y, clockFaceSize*0.5f + 2.0f, 4.0f},
+                            Vector2{ 2.0f, 2.0f },
                             currentAngles[digit][row*4 + col].y,
                             handsColor
                         );
@@ -184,8 +184,8 @@ int main(void)
                 xOffset += (clockFaceSize+clockFaceSpacing)*4;
                 if ((digit%2) == 1)
                 {
-                    DrawRing((Vector2){xOffset + 4.0f, 160.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
-                    DrawRing((Vector2){xOffset + 4.0f, 225.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
+                    DrawRing(Vector2{xOffset + 4.0f, 160.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
+                    DrawRing(Vector2{xOffset + 4.0f, 225.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
                     xOffset += sectionSpacing;
                 }
             }

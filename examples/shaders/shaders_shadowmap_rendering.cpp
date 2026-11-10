@@ -35,7 +35,7 @@ static void DrawScene(Model cube, Model robot);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -49,18 +49,18 @@ int main(void)
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - shadowmap rendering");
 
-    Camera3D camera = (Camera3D){ 0 };
-    camera.position = (Vector3){ 10.0f, 10.0f, 10.0f };
-    camera.target = Vector3Zero();
+    Camera3D camera = {};
+    camera.position = Vector3{ 10.0f, 10.0f, 10.0f };
+    camera.target = Vector3{};
     camera.projection = CAMERA_PERSPECTIVE;
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
 
     Shader shadowShader = LoadShader(TextFormat("resources/shaders/glsl%i/shadowmap.vs", GLSL_VERSION),
                                      TextFormat("resources/shaders/glsl%i/shadowmap.fs", GLSL_VERSION));
     shadowShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shadowShader, "viewPos");
 
-    Vector3 lightDir = Vector3Normalize((Vector3){ 0.35f, -1.0f, -0.35f });
+    Vector3 lightDir = glm::normalize(Vector3{ 0.35f, -1.0f, -0.35f });
     Color lightColor = WHITE;
     Vector4 lightColorNormalized = ColorNormalize(lightColor);
     int lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
@@ -86,19 +86,19 @@ int main(void)
     RenderTexture2D shadowMap = LoadShadowmapRenderTexture(SHADOWMAP_RESOLUTION, SHADOWMAP_RESOLUTION);
 
     // For the shadowmapping algorithm, we will be rendering everything from the light's point of view
-    Camera3D lightCamera = { 0 };
-    lightCamera.position = Vector3Scale(lightDir, -15.0f);
-    lightCamera.target = Vector3Zero();
+    Camera3D lightCamera = {};
+    lightCamera.position = ((lightDir) * (-15.0f));
+    lightCamera.target = Vector3{};
     lightCamera.projection = CAMERA_ORTHOGRAPHIC; // Use an orthographic projection for directional lights
-    lightCamera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    lightCamera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     lightCamera.fovy = 20.0f;
 
     int frameCounter = 0;
 
     // Store the light matrices
-    Matrix lightView = { 0 };
-    Matrix lightProj = { 0 };
-    Matrix lightViewProj = { 0 };
+    Matrix lightView = {};
+    Matrix lightProj = {};
+    Matrix lightViewProj = {};
     int textureActiveSlot = 10; // Can be anything 0 to 15, but 0 will probably be taken up
 
     SetTargetFPS(60);
@@ -140,8 +140,8 @@ int main(void)
             if (lightDir.z > -0.6f) lightDir.z -= cameraSpeed*60.0f*deltaTime;
         }
 
-        lightDir = Vector3Normalize(lightDir);
-        lightCamera.position = Vector3Scale(lightDir, -15.0f);
+        lightDir = glm::normalize(lightDir);
+        lightCamera.position = ((lightDir) * (-15.0f));
         SetShaderValue(shadowShader, lightDirLoc, &lightDir, SHADER_UNIFORM_VEC3);
         //----------------------------------------------------------------------------------
 
@@ -163,7 +163,7 @@ int main(void)
 
         EndTextureMode();
 
-        lightViewProj = MatrixMultiply(lightView, lightProj);
+        lightViewProj = ((lightProj) * (lightView));
 
         // PASS 02: Draw the scene into main framebuffer, using the generated shadowmap
         BeginDrawing();
@@ -211,7 +211,7 @@ int main(void)
 // no color attachment required for shadowmap
 static RenderTexture2D LoadShadowmapRenderTexture(int width, int height)
 {
-    RenderTexture2D target = { 0 };
+    RenderTexture2D target = {};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
     target.texture.width = width;
@@ -257,7 +257,7 @@ static void UnloadShadowmapRenderTexture(RenderTexture2D target)
 // NOTE: Required  to be called several time to generate shadowmap
 static void DrawScene(Model cube, Model robot)
 {
-    DrawModelEx(cube, Vector3Zero(), (Vector3) { 0.0f, 1.0f, 0.0f }, 0.0f, (Vector3) { 10.0f, 1.0f, 10.0f }, BLUE);
-    DrawModelEx(cube, (Vector3) { 1.5f, 1.0f, -1.5f }, (Vector3) { 0.0f, 1.0f, 0.0f }, 0.0f, Vector3One(), WHITE);
-    DrawModelEx(robot, (Vector3) { 0.0f, 0.5f, 0.0f }, (Vector3) { 0.0f, 1.0f, 0.0f }, 0.0f, (Vector3) { 1.0f, 1.0f, 1.0f }, RED);
+    DrawModelEx(cube, Vector3{}, Vector3{ 0.0f, 1.0f, 0.0f }, 0.0f, Vector3{ 10.0f, 1.0f, 10.0f }, BLUE);
+    DrawModelEx(cube, Vector3{ 1.5f, 1.0f, -1.5f }, Vector3{ 0.0f, 1.0f, 0.0f }, 0.0f, Vector3(1.0f), WHITE);
+    DrawModelEx(robot, Vector3{ 0.0f, 0.5f, 0.0f }, Vector3{ 0.0f, 1.0f, 0.0f }, 0.0f, Vector3{ 1.0f, 1.0f, 1.0f }, RED);
 }

@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -32,10 +32,10 @@ int main(void)
     //SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [models] example - yaw pitch roll");
 
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 50.0f, -120.0f };// Camera position perspective
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 0.0f, 50.0f, -120.0f };// Camera position perspective
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 30.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera type
 
@@ -86,7 +86,7 @@ int main(void)
         }
 
         // Tranformation matrix for rotations
-        model.transform = MatrixRotateXYZ((Vector3){ DEG2RAD*pitch, DEG2RAD*yaw, DEG2RAD*roll });
+        model.transform = MatrixRotateXYZ(Vector3{ DEG2RAD*pitch, DEG2RAD*yaw, DEG2RAD*roll });
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -98,7 +98,7 @@ int main(void)
             // Draw 3D model (recomended to draw 3D always before 2D)
             BeginMode3D(camera);
 
-                DrawModel(model, (Vector3){ 0.0f, -8.0f, 0.0f }, 1.0f, WHITE);   // Draw 3d model with texture
+                DrawModel(model, Vector3{ 0.0f, -8.0f, 0.0f }, 1.0f, WHITE);   // Draw 3d model with texture
                 DrawGrid(10, 10.0f);
 
             EndMode3D();

@@ -49,7 +49,7 @@ const float startingZoom = 0.75f;
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ int main(void)
             BeginShaderMode(shader);
                 // WARNING: If FLAG_WINDOW_HIGHDPI is enabled, HighDPI monitor scaling should be considered
                 // when rendering the RenderTexture2D to fit in the HighDPI scaled Window
-                DrawTextureEx(target.texture, (Vector2){ 0.0f, 0.0f }, 0.0f, 1.0f, WHITE);
+                DrawTextureEx(target.texture, Vector2{ 0.0f, 0.0f }, 0.0f, 1.0f, WHITE);
             EndShaderMode();
 
             if (showControls)

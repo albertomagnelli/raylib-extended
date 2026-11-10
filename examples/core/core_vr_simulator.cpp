@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,24 +37,18 @@ int main(void)
     // VR device parameters definition
     VrDeviceInfo device = {
         // Oculus Rift CV1 parameters for simulator
-        .hResolution = 2160,                 // Horizontal resolution in pixels
-        .vResolution = 1200,                 // Vertical resolution in pixels
-        .hScreenSize = 0.133793f,            // Horizontal size in meters
-        .vScreenSize = 0.0669f,              // Vertical size in meters
-        .eyeToScreenDistance = 0.041f,       // Distance between eye and display in meters
-        .lensSeparationDistance = 0.07f,     // Lens separation distance in meters
-        .interpupillaryDistance = 0.07f,     // IPD (distance between pupils) in meters
+        2160,                                // Horizontal resolution in pixels
+        1200,                                // Vertical resolution in pixels
+        0.133793f,                           // Horizontal size in meters
+        0.0669f,                             // Vertical size in meters
+        0.041f,                              // Distance between eye and display in meters
+        0.07f,                               // Lens separation distance in meters
+        0.07f,                               // IPD (distance between pupils) in meters
 
         // NOTE: CV1 uses fresnel-hybrid-asymmetric lenses with specific compute shaders
         // Following parameters are just an approximation to CV1 distortion stereo rendering
-        .lensDistortionValues[0] = 1.0f,     // Lens distortion constant parameter 0
-        .lensDistortionValues[1] = 0.22f,    // Lens distortion constant parameter 1
-        .lensDistortionValues[2] = 0.24f,    // Lens distortion constant parameter 2
-        .lensDistortionValues[3] = 0.0f,     // Lens distortion constant parameter 3
-        .chromaAbCorrection[0] = 0.996f,     // Chromatic aberration correction parameter 0
-        .chromaAbCorrection[1] = -0.004f,    // Chromatic aberration correction parameter 1
-        .chromaAbCorrection[2] = 1.014f,     // Chromatic aberration correction parameter 2
-        .chromaAbCorrection[3] = 0.0f,       // Chromatic aberration correction parameter 3
+        { 1.0f, 0.22f, 0.24f, 0.0f },        // Lens distortion constant parameters
+        { 0.996f, -0.004f, 1.014f, 0.0f }    // Chromatic aberration correction parameters
     };
 
     // Load VR stereo config for VR device parameteres (Oculus Rift CV1 parameters)
@@ -91,10 +85,10 @@ int main(void)
     Rectangle destRec = { 0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight() };
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 5.0f, 2.0f, 5.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector
+    Camera camera = {};
+    camera.position = Vector3{ 5.0f, 2.0f, 5.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 2.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -131,7 +125,7 @@ int main(void)
         BeginDrawing();
             ClearBackground(RAYWHITE);
             BeginShaderMode(distortion);
-                DrawTexturePro(target.texture, sourceRec, destRec, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+                DrawTexturePro(target.texture, sourceRec, destRec, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
             EndShaderMode();
             DrawFPS(10, 10);
         EndDrawing();

@@ -17,7 +17,9 @@
 
 #include "raylib.h"
 
-#include "raymath.h"        // Required for: MatrixTranslate()
+#include "raymath.h"
+
+#include <initializer_list>        // Required for: MatrixTranslate()
 
 #define MAX_VOX_FILES  4
 
@@ -33,7 +35,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -50,15 +52,15 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading vox");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 10.0f, 10.0f, 10.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 10.0f, 10.0f, 10.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load MagicaVoxel files
-    Model models[MAX_VOX_FILES] = { 0 };
+    Model models[MAX_VOX_FILES] = {};
 
     for (int i = 0; i < MAX_VOX_FILES; i++)
     {
@@ -71,17 +73,17 @@ int main(void)
 
         // Compute model translation matrix to center model on draw position (0, 0 , 0)
         BoundingBox bb = GetModelBoundingBox(models[i]);
-        Vector3 center = { 0 };
+        Vector3 center = {};
         center.x = bb.min.x + (((bb.max.x - bb.min.x)/2));
         center.z = bb.min.z + (((bb.max.z - bb.min.z)/2));
 
-        Matrix matTranslate = MatrixTranslate(-center.x, 0, -center.z);
+        Matrix matTranslate = glm::translate(Matrix(1.0f), Vector3{-center.x, 0, -center.z});
         models[i].transform = matTranslate;
     }
 
     int currentModel = 0;
-    Vector3 modelpos = { 0 };
-    Vector3 camerarot = { 0 };
+    Vector3 modelpos = {};
+    Vector3 camerarot = {};
 
     // Load voxel shader
     Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/voxel_lighting.vs", GLSL_VERSION),
@@ -95,7 +97,7 @@ int main(void)
 
     // Ambient light level (some basic lighting)
     int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, (float[4]) { 0.1f, 0.1f, 0.1f, 1.0f }, SHADER_UNIFORM_VEC4);
+    SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.1f, 0.1f, 0.1f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Assign out lighting shader to model
     for (int i = 0; i < MAX_VOX_FILES; i++)
@@ -104,11 +106,11 @@ int main(void)
     }
 
     // Create lights
-    Light lights[MAX_LIGHTS] = { 0 };
-    lights[0] = CreateLight(LIGHT_POINT, (Vector3) { -20, 20, -20 }, Vector3Zero(), GRAY, shader);
-    lights[1] = CreateLight(LIGHT_POINT, (Vector3) { 20, -20, 20 }, Vector3Zero(), GRAY, shader);
-    lights[2] = CreateLight(LIGHT_POINT, (Vector3) { -20, 20, 20 }, Vector3Zero(), GRAY, shader);
-    lights[3] = CreateLight(LIGHT_POINT, (Vector3) { 20, -20, -20 }, Vector3Zero(), GRAY, shader);
+    Light lights[MAX_LIGHTS] = {};
+    lights[0] = CreateLight(LIGHT_POINT, Vector3{ -20, 20, -20 }, Vector3{}, GRAY, shader);
+    lights[1] = CreateLight(LIGHT_POINT, Vector3{ 20, -20, 20 }, Vector3{}, GRAY, shader);
+    lights[2] = CreateLight(LIGHT_POINT, Vector3{ -20, 20, 20 }, Vector3{}, GRAY, shader);
+    lights[3] = CreateLight(LIGHT_POINT, Vector3{ 20, -20, -20 }, Vector3{}, GRAY, shader);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -132,7 +134,7 @@ int main(void)
 
         // Update camere movement, custom controls
         UpdateCameraPro(&camera,
-            (Vector3){ (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))*0.1f - (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))*0.1f, // Move forward-backward
+            Vector3{ (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))*0.1f - (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))*0.1f, // Move forward-backward
                        (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))*0.1f - (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))*0.1f, // Move right-left
                        0.0f }, // Move up-down
             camerarot, // Camera rotation

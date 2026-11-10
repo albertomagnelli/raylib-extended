@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input multitouch");
 
-    Vector2 touchPositions[MAX_TOUCH_POINTS] = { 0 };
+    Vector2 touchPositions[MAX_TOUCH_POINTS] = {};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------

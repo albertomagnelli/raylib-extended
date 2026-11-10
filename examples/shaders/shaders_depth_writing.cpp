@@ -37,7 +37,7 @@ static void UnloadRenderTextureDepthTex(RenderTexture2D target);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -48,9 +48,9 @@ int main(void)
 
     // Define the camera to look into our 3d world
     Camera camera = {
-        .position = (Vector3){ 2.0f, 2.0f, 3.0f },    // Camera position
-        .target = (Vector3){ 0.0f, 0.5f, 0.0f },      // Camera looking at point
-        .up = (Vector3){ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
+        .position = Vector3{ 2.0f, 2.0f, 3.0f },    // Camera position
+        .target = Vector3{ 0.0f, 0.5f, 0.0f },      // Camera looking at point
+        .up = Vector3{ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
         .fovy = 45.0f,                                // Camera field-of-view Y
         .projection = CAMERA_PERSPECTIVE              // Camera projection type
     };
@@ -80,10 +80,10 @@ int main(void)
 
             BeginMode3D(camera);
                 BeginShaderMode(shader);
-                    DrawCubeWiresV((Vector3){ 0.0f, 0.5f, 1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, RED);
-                    DrawCubeV((Vector3){ 0.0f, 0.5f, 1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, PURPLE);
-                    DrawCubeWiresV((Vector3){ 0.0f, 0.5f, -1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, DARKGREEN);
-                    DrawCubeV((Vector3) { 0.0f, 0.5f, -1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, YELLOW);
+                    DrawCubeWiresV(Vector3{ 0.0f, 0.5f, 1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, RED);
+                    DrawCubeV(Vector3{ 0.0f, 0.5f, 1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, PURPLE);
+                    DrawCubeWiresV(Vector3{ 0.0f, 0.5f, -1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, DARKGREEN);
+                    DrawCubeV(Vector3{ 0.0f, 0.5f, -1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, YELLOW);
                     DrawGrid(10, 1.0f);
                 EndShaderMode();
             EndMode3D();
@@ -93,7 +93,7 @@ int main(void)
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(target.texture, (Rectangle) { 0, 0, (float)screenWidth, (float)-screenHeight }, (Vector2) { 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight }, Vector2{ 0, 0 }, WHITE);
 
             DrawFPS(10, 10);
         EndDrawing();
@@ -117,7 +117,7 @@ int main(void)
 // Load custom render texture, create a writable depth texture buffer
 static RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
 {
-    RenderTexture2D target = { 0 };
+    RenderTexture2D target = {};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
 

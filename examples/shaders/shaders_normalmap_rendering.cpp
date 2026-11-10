@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -41,10 +41,10 @@ int main(void)
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - normalmap rendering");
 
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 2.0f, -4.0f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera camera = {};
+    camera.position = Vector3{ 0.0f, 2.0f, -4.0f };
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -96,14 +96,14 @@ int main(void)
         // Update
         //----------------------------------------------------------------------------------
         // Move the light around on the X and Z axis using WASD keys
-        Vector3 direction = { 0 };
-        if (IsKeyDown(KEY_W)) direction = Vector3Add(direction, (Vector3){ 0.0f, 0.0f, 1.0f });
-        if (IsKeyDown(KEY_S)) direction = Vector3Add(direction, (Vector3){ 0.0f, 0.0f, -1.0f });
-        if (IsKeyDown(KEY_D)) direction = Vector3Add(direction, (Vector3){ -1.0f, 0.0f, 0.0f });
-        if (IsKeyDown(KEY_A)) direction = Vector3Add(direction, (Vector3){ 1.0f, 0.0f, 0.0f });
+        Vector3 direction = {};
+        if (IsKeyDown(KEY_W)) direction = ((direction) + (Vector3{ 0.0f, 0.0f, 1.0f }));
+        if (IsKeyDown(KEY_S)) direction = ((direction) + (Vector3{ 0.0f, 0.0f, -1.0f }));
+        if (IsKeyDown(KEY_D)) direction = ((direction) + (Vector3{ -1.0f, 0.0f, 0.0f }));
+        if (IsKeyDown(KEY_A)) direction = ((direction) + (Vector3{ 1.0f, 0.0f, 0.0f }));
 
-        direction = Vector3Normalize(direction);
-        lightPosition = Vector3Add(lightPosition, Vector3Scale(direction, GetFrameTime()*3.0f));
+        direction = glm::normalize(direction);
+        lightPosition = ((lightPosition) + (((direction) * (GetFrameTime()*3.0f))));
 
         // Increase/Decrease the specular exponent(shininess)
         if (IsKeyDown(KEY_UP)) specularExponent = Clamp(specularExponent + 40.0f*GetFrameTime(), 2.0f, 128.0f);
@@ -113,7 +113,7 @@ int main(void)
         if (IsKeyPressed(KEY_N)) useNormalMap = !useNormalMap;
 
         // Spin plane model at a constant rate
-        plane.transform = MatrixRotateY((float)GetTime()*0.5f);
+        plane.transform = glm::rotate(Matrix(1.0f), (float)GetTime()*0.5f, Vector3{0.0f, 1.0f, 0.0f});
 
         // Update shader values
         float lightPos[3] = {lightPosition.x, lightPosition.y, lightPosition.z};
@@ -137,7 +137,7 @@ int main(void)
 
                 BeginShaderMode(shader);
 
-                    DrawModel(plane, Vector3Zero(), 2.0f, WHITE);
+                    DrawModel(plane, Vector3{}, 2.0f, WHITE);
 
                 EndShaderMode();
 

@@ -59,7 +59,7 @@ static Vector2 Screen2RenderTexturePosition(Vector2 point, Rectangle *textureRec
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //---------------------------------------------------------
@@ -71,29 +71,29 @@ int main(void)
 
     // Preset resolutions that could be created by subdividing screen resolution
     Vector2 resolutionList[RESOLUTION_COUNT] = {
-        (Vector2){ 64, 64 },
-        (Vector2){ 256, 240 },
-        (Vector2){ 320, 180 },
+        Vector2{ 64, 64 },
+        Vector2{ 256, 240 },
+        Vector2{ 320, 180 },
         // 4K doesn't work with integer scaling but included for example purposes with non-integer scaling
-        (Vector2){ 3840, 2160 },
+        Vector2{ 3840, 2160 },
     };
 
     int resolutionIndex = 0;
     int gameWidth = 64;
     int gameHeight = 64;
 
-    RenderTexture2D target = (RenderTexture2D){ 0 };
-    Rectangle sourceRect = (Rectangle){ 0 };
-    Rectangle destRect = (Rectangle){ 0 };
+    RenderTexture2D target = {};
+    Rectangle sourceRect = Rectangle{};
+    Rectangle destRect = Rectangle{};
 
     ViewportType viewportType = KEEP_ASPECT_INTEGER;
     ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
 
     // Button rectangles
-    Rectangle decreaseResolutionButton = (Rectangle){ 200, 30, 10, 10 };
-    Rectangle increaseResolutionButton = (Rectangle){ 215, 30, 10, 10 };
-    Rectangle decreaseTypeButton = (Rectangle){ 200, 45, 10, 10 };
-    Rectangle increaseTypeButton = (Rectangle){ 215, 45, 10, 10 };
+    Rectangle decreaseResolutionButton = Rectangle{ 200, 30, 10, 10 };
+    Rectangle increaseResolutionButton = Rectangle{ 215, 30, 10, 10 };
+    Rectangle decreaseTypeButton = Rectangle{ 200, 45, 10, 10 };
+    Rectangle increaseTypeButton = Rectangle{ 215, 45, 10, 10 };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------
@@ -127,13 +127,13 @@ int main(void)
 
         if (CheckCollisionPointRec(mousePosition, decreaseTypeButton) && mousePressed)
         {
-            viewportType = (viewportType + VIEWPORT_TYPE_COUNT - 1)%VIEWPORT_TYPE_COUNT;
+            viewportType = (ViewportType)(((int)viewportType + VIEWPORT_TYPE_COUNT - 1)%VIEWPORT_TYPE_COUNT);
             ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
         }
 
         if (CheckCollisionPointRec(mousePosition, increaseTypeButton) && mousePressed)
         {
-            viewportType = (viewportType + 1)%VIEWPORT_TYPE_COUNT;
+            viewportType = (ViewportType)(((int)viewportType + 1)%VIEWPORT_TYPE_COUNT);
             ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
         }
 
@@ -153,11 +153,11 @@ int main(void)
             ClearBackground(BLACK);
 
             // Draw our render texture with rotation applied
-            DrawTexturePro(target.texture, sourceRect, destRect, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(target.texture, sourceRect, destRect, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
 
             // Draw Native resolution (GUI or anything)
             // Draw info box
-            Rectangle infoRect = (Rectangle){5, 5, 330, 105};
+            Rectangle infoRect = Rectangle{5, 5, 330, 105};
             DrawRectangleRec(infoRect, Fade(LIGHTGRAY, 0.7f));
             DrawRectangleLinesEx(infoRect, 1, BLUE);
 
@@ -165,7 +165,7 @@ int main(void)
             DrawText(TextFormat("Game Resolution: %d x %d", gameWidth, gameHeight), 15, 30, 10, BLACK);
 
             DrawText(TextFormat("Type: %s", ViewportTypeNames[viewportType]), 15, 45, 10, BLACK);
-            Vector2 scaleRatio = (Vector2){destRect.width/sourceRect.width, -destRect.height/sourceRect.height};
+            Vector2 scaleRatio = Vector2{destRect.width/sourceRect.width, -destRect.height/sourceRect.height};
             if (scaleRatio.x < 0.001f || scaleRatio.y < 0.001f) DrawText(TextFormat("Scale ratio: INVALID"), 15, 60, 10, BLACK);
             else DrawText(TextFormat("Scale ratio: %.2f x %.2f", scaleRatio.x, scaleRatio.y), 15, 60, 10, BLACK);
 
@@ -317,5 +317,5 @@ static Vector2 Screen2RenderTexturePosition(Vector2 point, Rectangle *textureRec
     Vector2 relativePosition = {point.x - scaledRect->x, point.y - scaledRect->y};
     Vector2 ratio = {textureRect->width/scaledRect->width, -textureRect->height/scaledRect->height};
 
-    return (Vector2){relativePosition.x*ratio.x, relativePosition.y*ratio.x};
+    return Vector2{relativePosition.x*ratio.x, relativePosition.y*ratio.x};
 }

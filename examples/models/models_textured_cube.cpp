@@ -26,7 +26,7 @@ void DrawCubeTextureRec(Texture2D texture, Rectangle source, Vector3 position, f
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -36,10 +36,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - textured cube");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 10.0f, 10.0f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera camera = {};
+    camera.position = Vector3{ 0.0f, 10.0f, 10.0f };
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -66,11 +66,11 @@ int main(void)
             BeginMode3D(camera);
 
                 // Draw cube with an applied texture
-                DrawCubeTexture(texture, (Vector3){ -2.0f, 2.0f, 0.0f }, 2.0f, 4.0f, 2.0f, WHITE);
+                DrawCubeTexture(texture, Vector3{ -2.0f, 2.0f, 0.0f }, 2.0f, 4.0f, 2.0f, WHITE);
 
                 // Draw cube with an applied texture, but only a defined rectangle piece of the texture
-                DrawCubeTextureRec(texture, (Rectangle){ 0.0f, texture.height/2.0f, texture.width/2.0f, texture.height/2.0f },
-                    (Vector3){ 2.0f, 1.0f, 0.0f }, 2.0f, 2.0f, 2.0f, WHITE);
+                DrawCubeTextureRec(texture, Rectangle{ 0.0f, texture.height/2.0f, texture.width/2.0f, texture.height/2.0f },
+                    Vector3{ 2.0f, 1.0f, 0.0f }, 2.0f, 2.0f, 2.0f, WHITE);
 
                 DrawGrid(10, 1.0f);        // Draw a grid
 

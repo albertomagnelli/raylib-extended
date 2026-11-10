@@ -28,7 +28,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -38,10 +38,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture tiling");
 
     // Define the camera to look into our 3d world
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ 4.0f, 4.0f, 4.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 0.5f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera3D camera = {};
+    camera.position = Vector3{ 4.0f, 4.0f, 4.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 0.5f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -72,7 +72,7 @@ int main(void)
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
 
-        if (IsKeyPressed('Z')) camera.target = (Vector3){ 0.0f, 0.5f, 0.0f };
+        if (IsKeyPressed('Z')) camera.target = Vector3{ 0.0f, 0.5f, 0.0f };
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -84,7 +84,7 @@ int main(void)
             BeginMode3D(camera);
 
                 BeginShaderMode(shader);
-                    DrawModel(model, (Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
+                    DrawModel(model, Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, WHITE);
                 EndShaderMode();
 
                 DrawGrid(10, 1.0f);

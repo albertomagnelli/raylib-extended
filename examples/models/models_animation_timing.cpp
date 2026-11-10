@@ -21,7 +21,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -31,10 +31,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation timing");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 6.0f, 6.0f, 6.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 6.0f, 6.0f, 6.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 2.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -53,7 +53,7 @@ int main(void)
     bool animPause = false;             // Pause animation
 
     // UI required variables
-    char *animNames[64] = { 0 };
+    char *animNames[64] = {};
     for (int i = 0; i < animCount; i++) animNames[i] = anims[i].name;
 
     bool dropdownEditMode = false;
@@ -101,16 +101,16 @@ int main(void)
 
             // Draw UI, select anim and playing speed
             GuiSetStyle(DROPDOWNBOX, DROPDOWN_ITEMS_SPACING, 1);
-            if (GuiDropdownBox((Rectangle){ 10, 10, 140, 24 }, TextJoin(animNames, animCount, ";"),
+            if (GuiDropdownBox(Rectangle{ 10, 10, 140, 24 }, TextJoin(animNames, animCount, ";"),
                 &animIndex, dropdownEditMode)) dropdownEditMode = !dropdownEditMode;
 
-            GuiSlider((Rectangle){ 260, 10, 500, 24 }, "FRAME SPEED: ", TextFormat("x%.1f", animFrameSpeed),
+            GuiSlider(Rectangle{ 260, 10, 500, 24 }, "FRAME SPEED: ", TextFormat("x%.1f", animFrameSpeed),
                 &animFrameSpeed, 0.1f, 2.0f);
 
             // Draw playing timeline with keyframes
-            GuiLabel((Rectangle){ 10, GetScreenHeight() - 64.0f, GetScreenWidth() - 20.0f, 24 },
+            GuiLabel(Rectangle{ 10, GetScreenHeight() - 64.0f, GetScreenWidth() - 20.0f, 24 },
                 TextFormat("CURRENT FRAME: %.2f / %i", animFrameProgress, anims[animIndex].keyframeCount));
-            GuiProgressBar((Rectangle){ 10, GetScreenHeight() - 40.0f, GetScreenWidth() - 20.0f, 24 }, NULL, NULL,
+            GuiProgressBar(Rectangle{ 10, GetScreenHeight() - 40.0f, GetScreenWidth() - 20.0f, 24 }, NULL, NULL,
                 &animFrameProgress, 0.0f, (float)anims[animIndex].keyframeCount);
             for (int i = 0; i < anims[animIndex].keyframeCount; i++)
                 DrawRectangle(10 + (int)(((float)(GetScreenWidth() - 20)/(float)anims[animIndex].keyframeCount)*(float)i),

@@ -38,7 +38,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -49,10 +49,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lightmap rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 4.0f, 6.0f, 8.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 4.0f, 6.0f, 8.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -100,25 +100,25 @@ int main(void)
         BeginBlendMode(BLEND_ADDITIVE);
             DrawTexturePro(
                 light,
-                (Rectangle){ 0, 0, (float)light.width, (float)light.height },
-                (Rectangle){ 0, 0, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
-                (Vector2){ (float)MAP_SIZE, (float)MAP_SIZE },
+                Rectangle{ 0, 0, (float)light.width, (float)light.height },
+                Rectangle{ 0, 0, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
+                Vector2{ (float)MAP_SIZE, (float)MAP_SIZE },
                 0.0,
                 RED
             );
             DrawTexturePro(
                 light,
-                (Rectangle){ 0, 0, (float)light.width, (float)light.height },
-                (Rectangle){ (float)MAP_SIZE*0.8f, (float)MAP_SIZE/2.0f, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
-                (Vector2){ (float)MAP_SIZE, (float)MAP_SIZE },
+                Rectangle{ 0, 0, (float)light.width, (float)light.height },
+                Rectangle{ (float)MAP_SIZE*0.8f, (float)MAP_SIZE/2.0f, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
+                Vector2{ (float)MAP_SIZE, (float)MAP_SIZE },
                 0.0,
                 BLUE
             );
             DrawTexturePro(
                 light,
-                (Rectangle){ 0, 0, (float)light.width, (float)light.height },
-                (Rectangle){ (float)MAP_SIZE*0.8f, (float)MAP_SIZE*0.8f, (float)MAP_SIZE, (float)MAP_SIZE },
-                (Vector2){ (float)MAP_SIZE/2.0f, (float)MAP_SIZE/2.0f },
+                Rectangle{ 0, 0, (float)light.width, (float)light.height },
+                Rectangle{ (float)MAP_SIZE*0.8f, (float)MAP_SIZE*0.8f, (float)MAP_SIZE, (float)MAP_SIZE },
+                Vector2{ (float)MAP_SIZE/2.0f, (float)MAP_SIZE/2.0f },
                 0.0,
                 GREEN
             );
@@ -147,12 +147,12 @@ int main(void)
             ClearBackground(RAYWHITE);
 
             BeginMode3D(camera);
-                DrawMesh(mesh, material, MatrixIdentity());
+                DrawMesh(mesh, material, Matrix(1.0f));
             EndMode3D();
 
-            DrawTexturePro(lightmap.texture, (Rectangle){ 0, 0, -MAP_SIZE, -MAP_SIZE },
-                (Rectangle){ (float)GetRenderWidth() - MAP_SIZE*8 - 10, 10, (float)MAP_SIZE*8, (float)MAP_SIZE*8 },
-                (Vector2){ 0.0, 0.0 }, 0.0, WHITE);
+            DrawTexturePro(lightmap.texture, Rectangle{ 0, 0, -MAP_SIZE, -MAP_SIZE },
+                Rectangle{ (float)GetRenderWidth() - MAP_SIZE*8 - 10, 10, (float)MAP_SIZE*8, (float)MAP_SIZE*8 },
+                Vector2{ 0.0, 0.0 }, 0.0, WHITE);
 
             DrawText(TextFormat("LIGHTMAP: %ix%i pixels", MAP_SIZE, MAP_SIZE), GetRenderWidth() - 130, 20 + MAP_SIZE*8, 10, GREEN);
 

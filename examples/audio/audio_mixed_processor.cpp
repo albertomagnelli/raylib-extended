@@ -18,7 +18,7 @@
 #include <math.h>
 
 static float exponent = 1.0f;                 // Audio exponentiation value
-static float averageVolume[400] = { 0.0f };   // Average volume history
+static float averageVolume[400] = {};   // Average volume history
 
 //------------------------------------------------------------------------------------
 // Audio processing function
@@ -48,7 +48,7 @@ void ProcessAudio(void *buffer, unsigned int frames)
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------

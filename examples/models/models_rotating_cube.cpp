@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -30,17 +30,17 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - rotating cube");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 3.0f, 3.0f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera camera = {};
+    camera.position = Vector3{ 0.0f, 3.0f, 3.0f };
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load image to create texture for the cube
     Model model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
     Image img = LoadImage("resources/cubicmap_atlas.png");
-    Image crop = ImageFromImage(img, (Rectangle){0, img.height/2.0f, img.width/2.0f, img.height/2.0f});
+    Image crop = ImageFromImage(img, Rectangle{0, img.height/2.0f, img.width/2.0f, img.height/2.0f});
     Texture2D texture = LoadTextureFromImage(crop);
     UnloadImage(img);
     UnloadImage(crop);
@@ -69,8 +69,8 @@ int main(void)
             BeginMode3D(camera);
 
                 // Draw model defining: position, size, rotation-axis, rotation (degrees), size, and tint-color
-                DrawModelEx(model, (Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){ 0.5f, 1.0f, 0.0f },
-                    rotation, (Vector3){ 1.0f, 1.0f, 1.0f }, WHITE);
+                DrawModelEx(model, Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{ 0.5f, 1.0f, 0.0f },
+                    rotation, Vector3{ 1.0f, 1.0f, 1.0f }, WHITE);
 
                 DrawGrid(10, 1.0f);
 

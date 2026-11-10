@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     const int screenWidth = 800;
     const int screenHeight = 450;
@@ -42,8 +42,8 @@ int main(void)
     RenderTexture2D target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);  // Texture scale filter to use
 
-    Color colors[10] = { 0 };
-    for (int i = 0; i < 10; i++) colors[i] = (Color){ GetRandomValue(100, 250), GetRandomValue(50, 150), GetRandomValue(10, 100), 255 };
+    Color colors[10] = {};
+    for (int i = 0; i < 10; i++) colors[i] = Color{ (unsigned char)GetRandomValue(100, 250), (unsigned char)GetRandomValue(50, 150), (unsigned char)GetRandomValue(10, 100), 255 };
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -59,15 +59,15 @@ int main(void)
         if (IsKeyPressed(KEY_SPACE))
         {
             // Recalculate random colors for the bars
-            for (int i = 0; i < 10; i++) colors[i] = (Color){ GetRandomValue(100, 250), GetRandomValue(50, 150), GetRandomValue(10, 100), 255 };
+            for (int i = 0; i < 10; i++) colors[i] = Color{ (unsigned char)GetRandomValue(100, 250), (unsigned char)GetRandomValue(50, 150), (unsigned char)GetRandomValue(10, 100), 255 };
         }
 
         // Update virtual mouse (clamped mouse value behind game screen)
         Vector2 mouse = GetMousePosition();
-        Vector2 virtualMouse = { 0 };
+        Vector2 virtualMouse = {};
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.5f)/scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.5f)/scale;
-        virtualMouse = Vector2Clamp(virtualMouse, (Vector2){ 0, 0 }, (Vector2){ (float)gameScreenWidth, (float)gameScreenHeight });
+        virtualMouse = glm::clamp(virtualMouse, Vector2{ 0, 0 }, Vector2{ (float)gameScreenWidth, (float)gameScreenHeight });
 
         // Apply the same transformation as the virtual mouse to the real mouse (i.e. to work with raygui)
         //SetMouseOffset(-(GetScreenWidth() - (gameScreenWidth*scale))*0.5f, -(GetScreenHeight() - (gameScreenHeight*scale))*0.5f);
@@ -91,9 +91,9 @@ int main(void)
             ClearBackground(BLACK);     // Clear screen background
 
             // Draw render texture to screen, properly scaled
-            DrawTexturePro(target.texture, (Rectangle){ 0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height },
-                           (Rectangle){ (GetScreenWidth() - ((float)gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float)gameScreenHeight*scale))*0.5f,
-                           (float)gameScreenWidth*scale, (float)gameScreenHeight*scale }, (Vector2){ 0, 0 }, 0.0f, WHITE);
+            DrawTexturePro(target.texture, Rectangle{ 0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height },
+                           Rectangle{ (GetScreenWidth() - ((float)gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float)gameScreenHeight*scale))*0.5f,
+                           (float)gameScreenWidth*scale, (float)gameScreenHeight*scale }, Vector2{ 0, 0 }, 0.0f, WHITE);
         EndDrawing();
         //--------------------------------------------------------------------------------------
     }

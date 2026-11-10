@@ -44,7 +44,7 @@ typedef struct ActionInput {
 // Global Variables Definition
 //----------------------------------------------------------------------------------
 static int gamepadIndex = 0; // Gamepad default index
-static ActionInput actionInputs[MAX_ACTION] = { 0 };
+static ActionInput actionInputs[MAX_ACTION] = {};
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -59,7 +59,7 @@ static void SetActionsCursor(void);         // Set the "alternate" keyset
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -73,8 +73,8 @@ int main(void)
     SetActionsDefault();
     bool releaseAction = false;
 
-    Vector2 position = (Vector2){ 400.0f, 200.0f };
-    Vector2 size = (Vector2){ 40.0f, 40.0f };
+    Vector2 position = Vector2{ 400.0f, 200.0f };
+    Vector2 size = Vector2{ 40.0f, 40.0f };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

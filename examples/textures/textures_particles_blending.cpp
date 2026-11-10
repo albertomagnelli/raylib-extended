@@ -33,7 +33,7 @@ typedef struct {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -43,13 +43,13 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - particles blending");
 
     // Particles pool, reuse them!
-    Particle mouseTail[MAX_PARTICLES] = { 0 };
+    Particle mouseTail[MAX_PARTICLES] = {};
 
     // Initialize particles
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
-        mouseTail[i].position = (Vector2){ 0, 0 };
-        mouseTail[i].color = (Color){ GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 255 };
+        mouseTail[i].position = Vector2{ 0, 0 };
+        mouseTail[i].color = Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 };
         mouseTail[i].alpha = 1.0f;
         mouseTail[i].size = (float)GetRandomValue(1, 30)/20.0f;
         mouseTail[i].rotation = (float)GetRandomValue(0, 360);
@@ -117,9 +117,9 @@ int main(void)
                 // Draw active particles
                 for (int i = 0; i < MAX_PARTICLES; i++)
                 {
-                    if (mouseTail[i].active) DrawTexturePro(smoke, (Rectangle){ 0.0f, 0.0f, (float)smoke.width, (float)smoke.height },
-                                                           (Rectangle){ mouseTail[i].position.x, mouseTail[i].position.y, smoke.width*mouseTail[i].size, smoke.height*mouseTail[i].size },
-                                                           (Vector2){ (float)(smoke.width*mouseTail[i].size/2.0f), (float)(smoke.height*mouseTail[i].size/2.0f) }, mouseTail[i].rotation,
+                    if (mouseTail[i].active) DrawTexturePro(smoke, Rectangle{ 0.0f, 0.0f, (float)smoke.width, (float)smoke.height },
+                                                           Rectangle{ mouseTail[i].position.x, mouseTail[i].position.y, smoke.width*mouseTail[i].size, smoke.height*mouseTail[i].size },
+                                                           Vector2{ (float)(smoke.width*mouseTail[i].size/2.0f), (float)(smoke.height*mouseTail[i].size/2.0f) }, mouseTail[i].rotation,
                                                            Fade(mouseTail[i].color, mouseTail[i].alpha));
                 }
 

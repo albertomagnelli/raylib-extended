@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera split screen");
 
     // Setup player 1 camera and screen
-    Camera cameraPlayer1 = { 0 };
+    Camera cameraPlayer1 = {};
     cameraPlayer1.fovy = 45.0f;
     cameraPlayer1.up.y = 1.0f;
     cameraPlayer1.target.y = 1.0f;
@@ -40,7 +40,7 @@ int main(void)
     RenderTexture screenPlayer1 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Setup player two camera and screen
-    Camera cameraPlayer2 = { 0 };
+    Camera cameraPlayer2 = {};
     cameraPlayer2.fovy = 45.0f;
     cameraPlayer2.up.y = 1.0f;
     cameraPlayer2.target.y = 3.0f;
@@ -102,14 +102,14 @@ int main(void)
             BeginMode3D(cameraPlayer1);
 
                 // Draw scene: grid of cube trees on a plane to make a "world"
-                DrawPlane((Vector3){ 0, 0, 0 }, (Vector2){ 50, 50 }, BEIGE); // Simple world plane
+                DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // Simple world plane
 
                 for (float x = -count*spacing; x <= count*spacing; x += spacing)
                 {
                     for (float z = -count*spacing; z <= count*spacing; z += spacing)
                     {
-                        DrawCube((Vector3) { x, 1.5f, z }, 1, 1, 1, LIME);
-                        DrawCube((Vector3) { x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
+                        DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, LIME);
+                        DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
                     }
                 }
 
@@ -131,14 +131,14 @@ int main(void)
             BeginMode3D(cameraPlayer2);
 
                 // Draw scene: grid of cube trees on a plane to make a "world"
-                DrawPlane((Vector3){ 0, 0, 0 }, (Vector2){ 50, 50 }, BEIGE); // Simple world plane
+                DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // Simple world plane
 
                 for (float x = -count*spacing; x <= count*spacing; x += spacing)
                 {
                     for (float z = -count*spacing; z <= count*spacing; z += spacing)
                     {
-                        DrawCube((Vector3) { x, 1.5f, z }, 1, 1, 1, LIME);
-                        DrawCube((Vector3) { x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
+                        DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, LIME);
+                        DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
                     }
                 }
 
@@ -157,8 +157,8 @@ int main(void)
         BeginDrawing();
             ClearBackground(BLACK);
 
-            DrawTextureRec(screenPlayer1.texture, splitScreenRect, (Vector2){ 0, 0 }, WHITE);
-            DrawTextureRec(screenPlayer2.texture, splitScreenRect, (Vector2){ screenWidth/2.0f, 0 }, WHITE);
+            DrawTextureRec(screenPlayer1.texture, splitScreenRect, Vector2{ 0, 0 }, WHITE);
+            DrawTextureRec(screenPlayer2.texture, splitScreenRect, Vector2{ screenWidth/2.0f, 0 }, WHITE);
 
             DrawRectangle(GetScreenWidth()/2 - 2, 0, 4, GetScreenHeight(), LIGHTGRAY);
         EndDrawing();

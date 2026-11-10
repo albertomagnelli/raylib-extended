@@ -28,7 +28,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -106,13 +106,13 @@ tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet ris
             DrawRectangleLinesEx(container, 3, borderColor);    // Draw container border
 
             // Draw text in container (add some padding)
-            DrawTextBoxed(font, text, (Rectangle){ container.x + 4, container.y + 4, container.width - 4, container.height - 4 }, 20.0f, 2.0f, wordWrap, GRAY);
+            DrawTextBoxed(font, text, Rectangle{ container.x + 4, container.y + 4, container.width - 4, container.height - 4 }, 20.0f, 2.0f, wordWrap, GRAY);
 
             DrawRectangleRec(resizer, borderColor);             // Draw the resize box
 
             // Draw bottom info
             DrawRectangle(0, screenHeight - 54, screenWidth, 54, GRAY);
-            DrawRectangleRec((Rectangle){ 382.0f, screenHeight - 34.0f, 12.0f, 12.0f }, MAROON);
+            DrawRectangleRec(Rectangle{ 382.0f, screenHeight - 34.0f, 12.0f, 12.0f }, MAROON);
 
             DrawText("Word Wrap: ", 313, screenHeight-115, 20, BLACK);
             if (wordWrap) DrawText("ON", 447, screenHeight - 115, 20, RED);
@@ -245,14 +245,14 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 bool isGlyphSelected = false;
                 if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
                 {
-                    DrawRectangleRec((Rectangle){ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, (float)font.baseSize*scaleFactor }, selectBackTint);
+                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, (float)font.baseSize*scaleFactor }, selectBackTint);
                     isGlyphSelected = true;
                 }
 
                 // Draw current character glyph
                 if ((codepoint != ' ') && (codepoint != '\t'))
                 {
-                    DrawTextCodepoint(font, codepoint, (Vector2){ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
+                    DrawTextCodepoint(font, codepoint, Vector2{ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
                 }
             }
 

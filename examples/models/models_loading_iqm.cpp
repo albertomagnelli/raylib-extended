@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -36,10 +36,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading iqm");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 10.0f, 10.0f, 10.0f }; // Camera position
-    camera.target = (Vector3){ 0.0f, 4.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 10.0f, 10.0f, 10.0f }; // Camera position
+    camera.target = Vector3{ 0.0f, 4.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 
@@ -94,7 +94,7 @@ int main(void)
 
             BeginMode3D(camera);
 
-                DrawModelEx(model, position, (Vector3){ 1.0f, 0.0f, 0.0f }, -90.0f, (Vector3){ 1.0f, 1.0f, 1.0f }, WHITE);
+                DrawModelEx(model, position, Vector3{ 1.0f, 0.0f, 0.0f }, -90.0f, Vector3{ 1.0f, 1.0f, 1.0f }, WHITE);
 
                 DrawGrid(10, 1.0f);
 

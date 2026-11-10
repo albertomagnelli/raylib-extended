@@ -68,7 +68,7 @@ static const char *postproShaderText[] = {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -80,10 +80,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - postprocessing");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 2.0f, 3.0f, 2.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 1.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 2.0f, 3.0f, 2.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 1.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -96,7 +96,7 @@ int main(void)
     // Load all postpro shaders
     // NOTE 1: All postpro shader use the base vertex shader (DEFAULT_VERTEX_SHADER)
     // NOTE 2: We load the correct shader depending on GLSL version
-    Shader shaders[MAX_POSTPRO_SHADERS] = { 0 };
+    Shader shaders[MAX_POSTPRO_SHADERS] = {};
 
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
     shaders[FX_GRAYSCALE] = LoadShader(0, TextFormat("resources/shaders/glsl%i/grayscale.fs", GLSL_VERSION));
@@ -151,7 +151,7 @@ int main(void)
             // Render generated texture using selected postprocessing shader
             BeginShaderMode(shaders[currentShader]);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, (Rectangle){ 0, 0, (float)target.texture.width, (float)-target.texture.height }, (Vector2){ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, (float)target.texture.width, (float)-target.texture.height }, Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw 2d shapes and text over drawn texture

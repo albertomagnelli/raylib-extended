@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,11 +37,11 @@ int main(void)
     // Loaded in CPU memory (RAM) from header file (audio_data.h)
     // Same as: Wave wave = LoadWave("sound.wav");
     Wave wave = {
-        .data = AUDIO_DATA,
-        .frameCount = AUDIO_FRAME_COUNT,
-        .sampleRate = AUDIO_SAMPLE_RATE,
-        .sampleSize = AUDIO_SAMPLE_SIZE,
-        .channels = AUDIO_CHANNELS
+        AUDIO_FRAME_COUNT,
+        AUDIO_SAMPLE_RATE,
+        AUDIO_SAMPLE_SIZE,
+        AUDIO_CHANNELS,
+        AUDIO_DATA
     };
 
     // Wave converted to Sound to be played
@@ -55,11 +55,11 @@ int main(void)
     // Loaded in CPU memory (RAM) from header file (image_data.h)
     // Same as: Image image = LoadImage("raylib_logo.png");
     Image image = {
-        .data = IMAGE_DATA,
-        .width = IMAGE_WIDTH,
-        .height = IMAGE_HEIGHT,
-        .format = IMAGE_FORMAT,
-        .mipmaps = 1
+        IMAGE_DATA,
+        IMAGE_WIDTH,
+        IMAGE_HEIGHT,
+        1,
+        IMAGE_FORMAT
     };
 
     // Image converted to Texture (VRAM) to be drawn

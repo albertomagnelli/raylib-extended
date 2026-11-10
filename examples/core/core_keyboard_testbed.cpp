@@ -29,7 +29,7 @@ static void GuiKeyboardKey(Rectangle bounds, int key);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ int main(void)
     SetExitKey(KEY_NULL); // Avoid exit on KEY_ESCAPE
 
     // Keyboard line 01
-    int line01KeyWidths[15] = { 0 };
+    int line01KeyWidths[15] = {};
     for (int i = 0; i < 15; i++) line01KeyWidths[i] = 45;
     line01KeyWidths[13] = 62;   // PRINTSCREEN
     int line01Keys[15] = {
@@ -50,7 +50,7 @@ int main(void)
     };
 
     // Keyboard line 02
-    int line02KeyWidths[15] = { 0 };
+    int line02KeyWidths[15] = {};
     for (int i = 0; i < 15; i++) line02KeyWidths[i] = 45;
     line02KeyWidths[0] = 25;    // GRAVE
     line02KeyWidths[13] = 82;   // BACKSPACE
@@ -60,7 +60,7 @@ int main(void)
         KEY_ZERO, KEY_MINUS, KEY_EQUAL, KEY_BACKSPACE, KEY_DELETE };
 
     // Keyboard line 03
-    int line03KeyWidths[15] = { 0 };
+    int line03KeyWidths[15] = {};
     for (int i = 0; i < 15; i++) line03KeyWidths[i] = 45;
     line03KeyWidths[0] = 50;    // TAB
     line03KeyWidths[13] = 57;   // BACKSLASH
@@ -71,7 +71,7 @@ int main(void)
     };
 
     // Keyboard line 04
-    int line04KeyWidths[14] = { 0 };
+    int line04KeyWidths[14] = {};
     for (int i = 0; i < 14; i++) line04KeyWidths[i] = 45;
     line04KeyWidths[0] = 68;    // CAPS
     line04KeyWidths[12] = 88;   // ENTER
@@ -82,7 +82,7 @@ int main(void)
     };
 
     // Keyboard line 05
-    int line05KeyWidths[14] = { 0 };
+    int line05KeyWidths[14] = {};
     for (int i = 0; i < 14; i++) line05KeyWidths[i] = 45;
     line05KeyWidths[0] = 80;    // LSHIFT
     line05KeyWidths[11] = 76;   // RSHIFT
@@ -93,7 +93,7 @@ int main(void)
     };
 
     // Keyboard line 06
-    int line06KeyWidths[11] = { 0 };
+    int line06KeyWidths[11] = {};
     for (int i = 0; i < 11; i++) line06KeyWidths[i] = 45;
     line06KeyWidths[0] = 80;    // LCTRL
     line06KeyWidths[3] = 208;   // SPACE
@@ -133,7 +133,7 @@ int main(void)
             // ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, IMP, CLOSE
             for (int i = 0, recOffsetX = 0; i < 15; i++)
             {
-                GuiKeyboardKey((Rectangle){ keyboardOffset.x + recOffsetX, keyboardOffset.y, (float)line01KeyWidths[i], 30.0f }, line01Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y, (float)line01KeyWidths[i], 30.0f }, line01Keys[i]);
                 recOffsetX += line01KeyWidths[i] + KEY_REC_SPACING;
             }
 
@@ -141,7 +141,7 @@ int main(void)
             // `, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -, =, BACKSPACE, DEL
             for (int i = 0, recOffsetX = 0; i < 15; i++)
             {
-                GuiKeyboardKey((Rectangle){ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + KEY_REC_SPACING, (float)line02KeyWidths[i], 38.0f }, line02Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + KEY_REC_SPACING, (float)line02KeyWidths[i], 38.0f }, line02Keys[i]);
                 recOffsetX += line02KeyWidths[i] + KEY_REC_SPACING;
             }
 
@@ -149,7 +149,7 @@ int main(void)
             // TAB, Q, W, E, R, T, Y, U, I, O, P, [, ], \, INS
             for (int i = 0, recOffsetX = 0; i < 15; i++)
             {
-                GuiKeyboardKey((Rectangle){ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38 + KEY_REC_SPACING*2, (float)line03KeyWidths[i], 38.0f }, line03Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38 + KEY_REC_SPACING*2, (float)line03KeyWidths[i], 38.0f }, line03Keys[i]);
                 recOffsetX += line03KeyWidths[i] + KEY_REC_SPACING;
             }
 
@@ -157,7 +157,7 @@ int main(void)
             // MAYUS, A, S, D, F, G, H, J, K, L, ;, ', ENTER, REPAG
             for (int i = 0, recOffsetX = 0; i < 14; i++)
             {
-                GuiKeyboardKey((Rectangle){ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*2 + KEY_REC_SPACING*3, (float)line04KeyWidths[i], 38.0f }, line04Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*2 + KEY_REC_SPACING*3, (float)line04KeyWidths[i], 38.0f }, line04Keys[i]);
                 recOffsetX += line04KeyWidths[i] + KEY_REC_SPACING;
             }
 
@@ -165,7 +165,7 @@ int main(void)
             // LSHIFT, Z, X, C, V, B, N, M, ,, ., /, RSHIFT, UP, AVPAG
             for (int i = 0, recOffsetX = 0; i < 14; i++)
             {
-                GuiKeyboardKey((Rectangle){ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*3 + KEY_REC_SPACING*4, (float)line05KeyWidths[i], 38.0f }, line05Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*3 + KEY_REC_SPACING*4, (float)line05KeyWidths[i], 38.0f }, line05Keys[i]);
                 recOffsetX += line05KeyWidths[i] + KEY_REC_SPACING;
             }
 
@@ -173,7 +173,7 @@ int main(void)
             // LCTRL, WIN, LALT, SPACE, ALTGR, \, FN, RCTRL, LEFT, DOWN, RIGHT
             for (int i = 0, recOffsetX = 0; i < 11; i++)
             {
-                GuiKeyboardKey((Rectangle){ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*4 + KEY_REC_SPACING*5, (float)line06KeyWidths[i], 38.0f }, line06Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*4 + KEY_REC_SPACING*5, (float)line06KeyWidths[i], 38.0f }, line06Keys[i]);
                 recOffsetX += line06KeyWidths[i] + KEY_REC_SPACING;
             }
 

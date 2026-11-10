@@ -43,7 +43,7 @@ typedef enum {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ int main(void)
 
     // Array required for spline bezier-cubic,
     // including control points interleaved with start-end segment points
-    Vector2 pointsInterleaved[3*(MAX_SPLINE_POINTS - 1) + 1] = { 0 };
+    Vector2 pointsInterleaved[3*(MAX_SPLINE_POINTS - 1) + 1] = {};
 
     int pointCount = 5;
     int selectedPoint = -1;
@@ -72,11 +72,11 @@ int main(void)
     Vector2 *focusedControlPoint = NULL;
 
     // Cubic Bezier control points initialization
-    ControlPoint control[MAX_SPLINE_POINTS-1] = { 0 };
+    ControlPoint control[MAX_SPLINE_POINTS-1] = {};
     for (int i = 0; i < pointCount - 1; i++)
     {
-        control[i].start = (Vector2){ points[i].x + 50, points[i].y };
-        control[i].end = (Vector2){ points[i + 1].x - 50, points[i + 1].y };
+        control[i].start = Vector2{ points[i].x + 50, points[i].y };
+        control[i].end = Vector2{ points[i + 1].x - 50, points[i + 1].y };
     }
 
     // Spline config variables
@@ -98,8 +98,8 @@ int main(void)
         {
             points[pointCount] = GetMousePosition();
             int i = pointCount - 1;
-            control[i].start = (Vector2){ points[i].x + 50, points[i].y };
-            control[i].end = (Vector2){ points[i + 1].x - 50, points[i + 1].y };
+            control[i].start = Vector2{ points[i].x + 50, points[i].y };
+            control[i].end = Vector2{ points[i + 1].x - 50, points[i + 1].y };
             pointCount++;
         }
 
@@ -263,15 +263,15 @@ int main(void)
             if (splineTypeEditMode || (selectedPoint != -1) || (selectedControlPoint != NULL)) GuiLock();
 
             // Draw spline config
-            GuiLabel((Rectangle){ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", (int)splineThickness));
-            GuiSliderBar((Rectangle){ 12, 60 + 24, 140, 16 }, NULL, NULL, &splineThickness, 1.0f, 40.0f);
+            GuiLabel(Rectangle{ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", (int)splineThickness));
+            GuiSliderBar(Rectangle{ 12, 60 + 24, 140, 16 }, NULL, NULL, &splineThickness, 1.0f, 40.0f);
 
-            GuiCheckBox((Rectangle){ 12, 110, 20, 20 }, "Show point helpers", &splineHelpersActive);
+            GuiCheckBox(Rectangle{ 12, 110, 20, 20 }, "Show point helpers", &splineHelpersActive);
 
             if (splineTypeEditMode) GuiUnlock();
 
-            GuiLabel((Rectangle){ 12, 10, 140, 24 }, "Spline type:");
-            if (GuiDropdownBox((Rectangle){ 12, 8 + 24, 140, 28 }, "LINEAR;BSPLINE;CATMULLROM;BEZIER", &splineTypeActive, splineTypeEditMode)) splineTypeEditMode = !splineTypeEditMode;
+            GuiLabel(Rectangle{ 12, 10, 140, 24 }, "Spline type:");
+            if (GuiDropdownBox(Rectangle{ 12, 8 + 24, 140, 28 }, "LINEAR;BSPLINE;CATMULLROM;BEZIER", &splineTypeActive, splineTypeEditMode)) splineTypeEditMode = !splineTypeEditMode;
 
             GuiUnlock();
 

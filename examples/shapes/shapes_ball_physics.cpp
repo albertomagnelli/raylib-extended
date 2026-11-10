@@ -42,7 +42,7 @@ typedef struct Ball {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ int main(void)
     balls[0] = (Ball){
         .position = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f },
         .speed = { 200, 200 },
-        .prevPosition = { 0 },
+        .prevPosition = {},
         .radius = 40,
         .friction = 0.99f,
         .elasticity = 0.9f,
@@ -67,7 +67,7 @@ int main(void)
 
     int ballCount = 1;
     Ball *grabbedBall = NULL;       // A pointer to the current ball that is grabbed
-    Vector2 pressOffset = { 0 };    // Mouse press offset relative to the ball that grabbedd
+    Vector2 pressOffset = {};    // Mouse press offset relative to the ball that grabbedd
 
     float gravity = 100;            // World gravity
     
@@ -122,24 +122,24 @@ int main(void)
                 balls[ballCount++] = (Ball){
                     .position = mousePos,
                     .speed = { (float)GetRandomValue(-300, 300), (float)GetRandomValue(-300, 300) },
-                    .prevPosition = { 0 },
+                    .prevPosition = {},
                     .radius = 20.0f + (float)GetRandomValue(0, 30),
                     .friction = 0.99f,
                     .elasticity = 0.9f,
-                    .color = { GetRandomValue(0, 255), GetRandomValue(0, 255), GetRandomValue(0, 255), 255 },
+                    .color = { (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 },
                     .grabbed = false
                 };
             }
         }
 
         // Get window position change for shaking
-        Vector2 windowPositionDelta = Vector2Subtract(windowPosition, GetWindowPosition());
+        Vector2 windowPositionDelta = ((windowPosition) - (GetWindowPosition()));
         
-        if (Vector2Length(windowPositionDelta) > 5.0f)
+        if (glm::length(windowPositionDelta) > 5.0f)
         {
             for (int i = 0; i < ballCount; i++)
             {
-                if (!balls[i].grabbed) balls[i].speed = Vector2Add(balls[i].speed, Vector2Scale(windowPositionDelta, 10.0f));
+                if (!balls[i].grabbed) balls[i].speed = ((balls[i].speed) + (((windowPositionDelta) * (10.0f))));
             }
         }
 
@@ -148,7 +148,7 @@ int main(void)
         {
             for (int i = 0; i < ballCount; i++)
             {
-                if (!balls[i].grabbed) balls[i].speed = (Vector2){ (float)GetRandomValue(-2000, 2000), (float)GetRandomValue(-2000, 2000) };
+                if (!balls[i].grabbed) balls[i].speed = Vector2{ (float)GetRandomValue(-2000, 2000), (float)GetRandomValue(-2000, 2000) };
             }
         }
 

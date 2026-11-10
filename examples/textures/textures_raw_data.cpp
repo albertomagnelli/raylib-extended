@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -59,11 +59,11 @@ int main(void)
     // NOTE: We can assign pixels directly to data because Color is R8G8B8A8
     // data structure defining that pixelformat, format must be set properly
     Image checkedIm = {
-        .data = pixels,
-        .width = imWidth,
-        .height = imHeight,
-        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
-        .mipmaps = 1
+        pixels,
+        imWidth,
+        imHeight,
+        1,
+        PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
     };
 
     Texture2D checked = LoadTextureFromImage(checkedIm);

@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -36,10 +36,10 @@ int main(void)
     DisableCursor(); // Lock mouse to window center
 
     // Define the camera to look into our 3d world (first person)
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ -2.0f, 0.0f, -2.0f };  // Camera position at ground level
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector
+    Camera3D camera = {};
+    camera.position = Vector3{ -2.0f, 0.0f, -2.0f };  // Camera position at ground level
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector
     camera.fovy = 45.0f;                                 // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;              // Camera projection type
 
@@ -94,8 +94,8 @@ int main(void)
                         // Build a bounding box for this voxel
                         Vector3 position = { (float)x, (float)y, (float)z };
                         BoundingBox box = {
-                            (Vector3){ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
-                            (Vector3){ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
+                            Vector3{ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
+                            Vector3{ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
                         };
 
                         // Check ray-box collision
@@ -103,7 +103,7 @@ int main(void)
                         if (collision.hit && (collision.distance < closestDistance))
                         {
                             closestDistance = collision.distance;
-                            closestVoxelPosition = (Vector3){ (float)x, (float)y, (float)z };
+                            closestVoxelPosition = Vector3{ (float)x, (float)y, (float)z };
                             voxelFound = true;
                         }
                     }

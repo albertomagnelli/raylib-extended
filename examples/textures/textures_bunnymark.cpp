@@ -35,7 +35,7 @@ typedef struct Bunny {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -71,9 +71,9 @@ int main(void)
                     bunnies[bunniesCount].position = GetMousePosition();
                     bunnies[bunniesCount].speed.x = (float)GetRandomValue(-250, 250);
                     bunnies[bunniesCount].speed.y = (float)GetRandomValue(-250, 250);
-                    bunnies[bunniesCount].color = (Color){ GetRandomValue(50, 240),
-                                                       GetRandomValue(80, 240),
-                                                       GetRandomValue(100, 240), 255 };
+                    bunnies[bunniesCount].color = Color{ (unsigned char)GetRandomValue(50, 240),
+                                                       (unsigned char)GetRandomValue(80, 240),
+                                                       (unsigned char)GetRandomValue(100, 240), 255 };
                     bunniesCount++;
                 }
             }

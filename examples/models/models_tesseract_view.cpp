@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -34,10 +34,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - tesseract view");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 4.0f, 4.0f, 4.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 0.0f, 1.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 4.0f, 4.0f, 4.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 0.0f, 1.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 50.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 
@@ -54,8 +54,8 @@ int main(void)
     };
 
     float rotation = 0.0f;
-    Vector3 transformed[16] = { 0 };
-    float wValues[16] = { 0 };
+    Vector3 transformed[16] = {};
+    float wValues[16] = {};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ int main(void)
             Vector4 p = tesseract[i];
 
             // Rotate the XW part of the vector
-            Vector2 rotXW = Vector2Rotate((Vector2){ p.x, p.w }, rotation);
+            Vector2 rotXW = Vector2Rotate(Vector2{ p.x, p.w }, rotation);
             p.x = rotXW.x;
             p.w = rotXW.y;
 
@@ -84,7 +84,7 @@ int main(void)
             p.z = c*p.z;
 
             // Split XYZ coordinate and W values later for drawing
-            transformed[i] = (Vector3){ p.x, p.y, p.z };
+            transformed[i] = Vector3{ p.x, p.y, p.z };
             wValues[i] = p.w;
         }
         //----------------------------------------------------------------------------------

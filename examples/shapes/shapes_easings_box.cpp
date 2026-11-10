@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ int main(void)
         // Reset animation at any moment
         if (IsKeyPressed(KEY_SPACE))
         {
-            rec = (Rectangle){ GetScreenWidth()/2.0f, -100, 100, 100 };
+            rec = Rectangle{ GetScreenWidth()/2.0f, -100, 100, 100 };
             rotation = 0.0f;
             alpha = 1.0f;
             state = 0;
@@ -126,7 +126,7 @@ int main(void)
 
             ClearBackground(RAYWHITE);
 
-            DrawRectanglePro(rec, (Vector2){ rec.width/2, rec.height/2 }, rotation, Fade(BLACK, alpha));
+            DrawRectanglePro(rec, Vector2{ rec.width/2, rec.height/2 }, rotation, Fade(BLACK, alpha));
 
             DrawText("PRESS [SPACE] TO RESET BOX ANIMATION!", 10, GetScreenHeight() - 25, 20, LIGHTGRAY);
 

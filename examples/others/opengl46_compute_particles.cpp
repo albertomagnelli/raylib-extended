@@ -73,7 +73,7 @@ static void InitParticles(Particle *particles);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ int main(void)
 
     if (computeLinked == GL_FALSE)
     {
-        char log[1024] = { 0 };
+        char log[1024] = {};
         glGetProgramInfoLog(computeProgram, sizeof(log), NULL, log);
 
         TraceLog(LOG_ERROR, "EXAMPLE: Compute program link failed");
@@ -232,7 +232,7 @@ int main(void)
     //----------------------------------------------------------------------------------
     // Keep the particle array out of the stack (20000 * 32 bytes), it can be
     // re-uploaded to the SSBO at any time (for example when resetting)
-    static Particle particles[MAX_PARTICLES] = { 0 };
+    static Particle particles[MAX_PARTICLES] = {};
     InitParticles(particles);
 
     // Create the SSBO that holds all particles (Direct State Access, OpenGL 4.5+)
@@ -243,7 +243,7 @@ int main(void)
 
     // Indirect draw commands: PARTICLE_BATCHES draws, one per palette color
     // NOTE: All batches read from the same SSBO, each one starting at a different particle
-    DrawArraysIndirectCommand drawCommands[PARTICLE_BATCHES] = { 0 };
+    DrawArraysIndirectCommand drawCommands[PARTICLE_BATCHES] = {};
     unsigned int particlesPerBatch = MAX_PARTICLES/PARTICLE_BATCHES;
 
     for (int i = 0; i < PARTICLE_BATCHES; i++)
@@ -301,7 +301,7 @@ int main(void)
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
-            ClearBackground((Color){ 10, 12, 24, 255 });
+            ClearBackground(Color{ 10, 12, 24, 255 });
 
             DrawText("OpenGL 4.6 compute shader particles", 20, 20, 20, RAYWHITE);
             DrawText(TextFormat("%i particles, %i indirect draws", MAX_PARTICLES, PARTICLE_BATCHES), 20, 46, 10, GRAY);
@@ -368,7 +368,7 @@ static GLuint CompileShader(GLenum type, const char *code)
 
     if (success == GL_FALSE)
     {
-        char log[1024] = { 0 };
+        char log[1024] = {};
         glGetShaderInfoLog(shaderId, sizeof(log), NULL, log);
 
         TraceLog(LOG_ERROR, "SHADER: Failed to compile shader (type: 0x%04X)", type);
@@ -395,7 +395,7 @@ static GLuint LinkProgram(GLuint vertexShader, GLuint fragmentShader)
 
     if (success == GL_FALSE)
     {
-        char log[1024] = { 0 };
+        char log[1024] = {};
         glGetProgramInfoLog(programId, sizeof(log), NULL, log);
 
         TraceLog(LOG_ERROR, "SHADER: Failed to link program");

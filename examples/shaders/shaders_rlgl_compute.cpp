@@ -51,7 +51,7 @@ typedef struct GolUpdateSSBO {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ int main(void)
     unsigned int ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), NULL, RL_DYNAMIC_COPY);
     unsigned int ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), NULL, RL_DYNAMIC_COPY);
 
-    GolUpdateSSBO transfertBuffer = { 0 };
+    GolUpdateSSBO transfertBuffer = {};
 
     // Create a white texture of the size of the window to update
     // each pixel of the window using the fragment shader: golRenderShader

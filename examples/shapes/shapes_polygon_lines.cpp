@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -64,46 +64,46 @@ int main(void)
 
             // Outline pair 1
             DrawRectangle(10, 40, 50, 50, LIGHTGRAY);
-            DrawRectangleLinesEx((Rectangle){ 10, 40, 50, 50 }, (float)thick, RED);
+            DrawRectangleLinesEx(Rectangle{ 10, 40, 50, 50 }, (float)thick, RED);
 
             DrawCircle(95, 65, 25, LIGHTGRAY);
-            DrawCircleLinesEx((Vector2){ 95, 65 }, 25, (float)thick, RED);
+            DrawCircleLinesEx(Vector2{ 95, 65 }, 25, (float)thick, RED);
 
             DrawText("DrawRectangleLinesEx() and DrawCircleLinesEx()", 130, 60, 10, BLACK);
 
             // Outline pair 2
-            DrawPoly((Vector2){ 35, 125 }, 4, 35.355f, 45, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 35, 125 }, 4, 35.355f, 45, (float)thick, RED);
+            DrawPoly(Vector2{ 35, 125 }, 4, 35.355f, 45, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 35, 125 }, 4, 35.355f, 45, (float)thick, RED);
 
-            DrawPoly((Vector2){ 95, 125 }, 36, 25, 0, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 95, 125 }, 36, 25, 0, (float)thick, RED);
+            DrawPoly(Vector2{ 95, 125 }, 36, 25, 0, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 95, 125 }, 36, 25, 0, (float)thick, RED);
 
             DrawText("DrawPolyLinesEx()", 130, 120, 10, BLACK);
 
             // Some other shapes, all of these outlines should have the same looking thickness
-            DrawPoly((Vector2){ 290, 220 }, 3, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 290, 220 }, 3, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 290, 220 }, 3, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 290, 220 }, 3, 60, rotation, (float)thick, BLUE);
 
-            DrawPoly((Vector2){ 430, 220 }, 4, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 430, 220 }, 4, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 430, 220 }, 4, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 430, 220 }, 4, 60, rotation, (float)thick, BLUE);
 
-            DrawPoly((Vector2){ 570, 220 }, 5, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 570, 220 }, 5, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 570, 220 }, 5, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 570, 220 }, 5, 60, rotation, (float)thick, BLUE);
 
-            DrawPoly((Vector2){ 710, 220 }, 6, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 710, 220 }, 6, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 710, 220 }, 6, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 710, 220 }, 6, 60, rotation, (float)thick, BLUE);
 
-            DrawPoly((Vector2){ 290, 360 }, 7, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 290, 360 }, 7, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 290, 360 }, 7, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 290, 360 }, 7, 60, rotation, (float)thick, BLUE);
 
-            DrawPoly((Vector2){ 430, 360 }, 8, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 430, 360 }, 8, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 430, 360 }, 8, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 430, 360 }, 8, 60, rotation, (float)thick, BLUE);
 
-            DrawPoly((Vector2){ 570, 360 }, 9, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 570, 360 }, 9, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 570, 360 }, 9, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 570, 360 }, 9, 60, rotation, (float)thick, BLUE);
 
-            DrawPoly((Vector2){ 710, 360 }, 10, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx((Vector2){ 710, 360 }, 10, 60, rotation, (float)thick, BLUE);
+            DrawPoly(Vector2{ 710, 360 }, 10, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(Vector2{ 710, 360 }, 10, 60, rotation, (float)thick, BLUE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera mouse zoom");
 
-    Camera2D camera = { 0 };
+    Camera2D camera = {};
     camera.zoom = 1.0f;
 
     int zoomMode = 0;       // 0-Mouse Wheel, 1-Mouse Move
@@ -52,8 +52,8 @@ int main(void)
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             Vector2 delta = GetMouseDelta();
-            delta = Vector2Scale(delta, -1.0f/camera.zoom);
-            camera.target = Vector2Add(camera.target, delta);
+            delta = ((delta) * (-1.0f/camera.zoom));
+            camera.target = ((camera.target) + (delta));
         }
 
         Vector2 renderScale = { (float)GetRenderWidth()/GetScreenWidth(), (float)GetRenderHeight()/GetScreenHeight() };
@@ -68,7 +68,7 @@ int main(void)
                 Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
-                camera.offset = Vector2Multiply(GetMousePosition(), renderScale);
+                camera.offset = ((GetMousePosition()) * (renderScale));
 
                 // Set the target to match, so that the camera maps the world space point
                 // under the cursor to the screen space point under the cursor at any zoom
@@ -89,7 +89,7 @@ int main(void)
                 Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
-                camera.offset = Vector2Multiply(GetMousePosition(), renderScale);
+                camera.offset = ((GetMousePosition()) * (renderScale));
 
                 // Set the target to match, so that the camera maps the world space point
                 // under the cursor to the screen space point under the cursor at any zoom
@@ -129,7 +129,7 @@ int main(void)
             //Vector2 mousePos = GetWorldToScreen2D(GetMousePosition(), camera)
             DrawCircleV(GetMousePosition(), 4, DARKGRAY);
             DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
-                Vector2Add(GetMousePosition(), (Vector2){ -44, -24 }), 20, 2, BLACK);
+                ((GetMousePosition()) + (Vector2{ -44, -24 })), 20, 2, BLACK);
 
             DrawText("[1][2] Select mouse zoom mode (Wheel or Move)", 20, 20, 20, DARKGRAY);
             if (zoomMode == 0) DrawText("Mouse left button drag to move, mouse wheel to zoom", 20, 50, 20, DARKGRAY);

@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ int main(void)
         "DARKBROWN", "GRAY", "RED", "GOLD", "LIME", "BLUE", "VIOLET", "BROWN",
         "LIGHTGRAY", "PINK", "YELLOW", "GREEN", "SKYBLUE", "PURPLE", "BEIGE" };
 
-    Rectangle colorsRecs[MAX_COLORS_COUNT] = { 0 };     // Rectangles array
+    Rectangle colorsRecs[MAX_COLORS_COUNT] = {};     // Rectangles array
 
     // Fills colorsRecs data (for every rectangle)
     for (int i = 0; i < MAX_COLORS_COUNT; i++)
@@ -50,7 +50,7 @@ int main(void)
         colorsRecs[i].height = 100.0f;
     }
 
-    int colorState[MAX_COLORS_COUNT] = { 0 };           // Color state: 0-DEFAULT, 1-MOUSE_HOVER
+    int colorState[MAX_COLORS_COUNT] = {};           // Color state: 0-DEFAULT, 1-MOUSE_HOVER
 
     Vector2 mousePoint = { 0.0f, 0.0f };
 

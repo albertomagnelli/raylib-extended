@@ -34,7 +34,7 @@ void DrawModelPointsEx(Model model, Vector3 position, Vector3 rotationAxis, floa
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -106,15 +106,15 @@ int main(void)
                     for (int i = 0; i < numPoints; i++)
                     {
                         Vector3 pos = {
-                            .x = mesh.vertices[i*3 + 0],
-                            .y = mesh.vertices[i*3 + 1],
-                            .z = mesh.vertices[i*3 + 2],
+                            mesh.vertices[i*3 + 0],
+                            mesh.vertices[i*3 + 1],
+                            mesh.vertices[i*3 + 2],
                         };
                         Color color = {
-                            .r = mesh.colors[i*4 + 0],
-                            .g = mesh.colors[i*4 + 1],
-                            .b = mesh.colors[i*4 + 2],
-                            .a = mesh.colors[i*4 + 3],
+                            mesh.colors[i*4 + 0],
+                            mesh.colors[i*4 + 1],
+                            mesh.colors[i*4 + 2],
+                            mesh.colors[i*4 + 3],
                         };
 
                         DrawPoint3D(pos, color);
@@ -155,12 +155,11 @@ int main(void)
 // Generate a spherical point cloud
 static Mesh GenMeshPoints(int numPoints)
 {
-    Mesh mesh = {
-        .triangleCount = 1,
-        .vertexCount = numPoints,
-        .vertices = (float *)MemAlloc(numPoints*3*sizeof(float)),
-        .colors = (unsigned char*)MemAlloc(numPoints*4*sizeof(unsigned char)),
-    };
+    Mesh mesh{};
+    mesh.vertexCount = numPoints;
+    mesh.triangleCount = 1;
+    mesh.vertices = (float *)MemAlloc(numPoints*3*sizeof(float));
+    mesh.colors = (unsigned char *)MemAlloc(numPoints*4*sizeof(unsigned char));
 
     // REF: https://en.wikipedia.org/wiki/Spherical_coordinate_system
     for (int i = 0; i < numPoints; i++)

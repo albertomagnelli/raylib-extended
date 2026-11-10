@@ -24,6 +24,8 @@
 
 #include "raymath.h"
 
+#include <initializer_list>
+
 #define RLIGHTS_IMPLEMENTATION
 #include "rlights.h"
 
@@ -36,7 +38,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -47,10 +49,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - basic lighting");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 2.0f, 4.0f, 6.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 0.5f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 2.0f, 4.0f, 6.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 0.5f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -65,14 +67,14 @@ int main(void)
 
     // Ambient light level (some basic lighting)
     int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, (float[4]){ 0.1f, 0.1f, 0.1f, 1.0f }, SHADER_UNIFORM_VEC4);
+    SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.1f, 0.1f, 0.1f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Create lights
-    Light lights[MAX_LIGHTS] = { 0 };
-    lights[0] = CreateLight(LIGHT_POINT, (Vector3){ -2, 1, -2 }, Vector3Zero(), YELLOW, shader);
-    lights[1] = CreateLight(LIGHT_POINT, (Vector3){ 2, 1, 2 }, Vector3Zero(), RED, shader);
-    lights[2] = CreateLight(LIGHT_POINT, (Vector3){ -2, 1, 2 }, Vector3Zero(), GREEN, shader);
-    lights[3] = CreateLight(LIGHT_POINT, (Vector3){ 2, 1, -2 }, Vector3Zero(), BLUE, shader);
+    Light lights[MAX_LIGHTS] = {};
+    lights[0] = CreateLight(LIGHT_POINT, Vector3{ -2, 1, -2 }, Vector3{}, YELLOW, shader);
+    lights[1] = CreateLight(LIGHT_POINT, Vector3{ 2, 1, 2 }, Vector3{}, RED, shader);
+    lights[2] = CreateLight(LIGHT_POINT, Vector3{ -2, 1, 2 }, Vector3{}, GREEN, shader);
+    lights[3] = CreateLight(LIGHT_POINT, Vector3{ 2, 1, -2 }, Vector3{}, BLUE, shader);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -108,8 +110,8 @@ int main(void)
 
                 BeginShaderMode(shader);
 
-                    DrawPlane(Vector3Zero(), (Vector2) { 10.0, 10.0 }, WHITE);
-                    DrawCube(Vector3Zero(), 2.0, 4.0, 2.0, WHITE);
+                    DrawPlane(Vector3{}, Vector2{ 10.0, 10.0 }, WHITE);
+                    DrawCube(Vector3{}, 2.0, 4.0, 2.0, WHITE);
 
                 EndShaderMode();
 

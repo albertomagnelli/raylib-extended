@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -65,11 +65,11 @@ int main(void)
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            GuiSliderBar((Rectangle){ 600, 40, 120, 20}, "StartAngle", TextFormat("%.2f", startAngle), &startAngle, 0, 720);
-            GuiSliderBar((Rectangle){ 600, 70, 120, 20}, "EndAngle", TextFormat("%.2f", endAngle), &endAngle, 0, 720);
+            GuiSliderBar(Rectangle{ 600, 40, 120, 20}, "StartAngle", TextFormat("%.2f", startAngle), &startAngle, 0, 720);
+            GuiSliderBar(Rectangle{ 600, 70, 120, 20}, "EndAngle", TextFormat("%.2f", endAngle), &endAngle, 0, 720);
 
-            GuiSliderBar((Rectangle){ 600, 140, 120, 20}, "Radius", TextFormat("%.2f", outerRadius), &outerRadius, 0, 200);
-            GuiSliderBar((Rectangle){ 600, 170, 120, 20}, "Segments", TextFormat("%.2f", segments), &segments, 0, 100);
+            GuiSliderBar(Rectangle{ 600, 140, 120, 20}, "Radius", TextFormat("%.2f", outerRadius), &outerRadius, 0, 200);
+            GuiSliderBar(Rectangle{ 600, 170, 120, 20}, "Segments", TextFormat("%.2f", segments), &segments, 0, 100);
             //------------------------------------------------------------------------------
 
             minSegments = truncf(ceilf((endAngle - startAngle)/90));

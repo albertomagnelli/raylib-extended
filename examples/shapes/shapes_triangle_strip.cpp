@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - triangle strip");
 
-    Vector2 points[122] = { 0 };
+    Vector2 points[122] = {};
     Vector2 center = { (screenWidth/2.0f) - 125.0f, screenHeight/2.0f };
     float segments = 6.0f;
     float insideRadius = 100.0f;
@@ -54,9 +54,9 @@ int main(void)
         for (int i = 0, i2 = 0; i < pointCount; i++, i2 += 2)
         {
             float angle1 = i*angleStep;
-            points[i2] = (Vector2){ center.x + cosf(angle1)*insideRadius, center.y + sinf(angle1)*insideRadius };
+            points[i2] = Vector2{ center.x + cosf(angle1)*insideRadius, center.y + sinf(angle1)*insideRadius };
             float angle2 = angle1 + angleStep/2.0f;
-            points[i2 + 1] = (Vector2){ center.x + cosf(angle2)*outsideRadius, center.y + sinf(angle2)*outsideRadius };
+            points[i2 + 1] = Vector2{ center.x + cosf(angle2)*outsideRadius, center.y + sinf(angle2)*outsideRadius };
         }
 
         points[pointCount*2] = points[0];
@@ -87,13 +87,13 @@ int main(void)
                 }
             }
 
-            DrawLine(580, 0, 580, GetScreenHeight(), (Color){ 218, 218, 218, 255 });
-            DrawRectangle(580, 0, GetScreenWidth(), GetScreenHeight(), (Color){ 232, 232, 232, 255 });
+            DrawLine(580, 0, 580, GetScreenHeight(), Color{ 218, 218, 218, 255 });
+            DrawRectangle(580, 0, GetScreenWidth(), GetScreenHeight(), Color{ 232, 232, 232, 255 });
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            GuiSliderBar((Rectangle){ 640, 40, 120, 20}, "Segments", TextFormat("%.0f", segments), &segments, 6.0f, 60.0f);
-            GuiCheckBox((Rectangle){ 640, 70, 20, 20 }, "Outline", &outline);
+            GuiSliderBar(Rectangle{ 640, 40, 120, 20}, "Segments", TextFormat("%.0f", segments), &segments, 6.0f, 60.0f);
+            GuiCheckBox(Rectangle{ 640, 70, 20, 20 }, "Outline", &outline);
             //------------------------------------------------------------------------------
 
             DrawFPS(10, 10);

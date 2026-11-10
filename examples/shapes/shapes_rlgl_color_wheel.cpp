@@ -27,7 +27,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ int main(void)
             }
             else
             {
-                circlePosition = Vector2Add(Vector2Multiply(Vector2Subtract(circlePosition, center), (Vector2){ 1.025f, 1.025f }), center);
+                circlePosition = ((((((circlePosition) - (center))) * (Vector2{ 1.025f, 1.025f }))) + (center));
             }
         }
 
@@ -118,20 +118,20 @@ int main(void)
             }
             else
             {
-                circlePosition = Vector2Add(Vector2Multiply(Vector2Subtract(circlePosition, center), (Vector2){ 0.975f, 0.975f }), center);
+                circlePosition = ((((((circlePosition) - (center))) * (Vector2{ 0.975f, 0.975f }))) + (center));
             }
 
-            float distance = Vector2Distance(center, circlePosition)/pointScale;
-            float angle = ((Vector2Angle((Vector2){ 0.0f, -pointScale }, Vector2Subtract(center, circlePosition))/PI + 1.0f)/2.0f);
+            float distance = glm::distance(center, circlePosition)/pointScale;
+            float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
 
             if (distance > 1.0f)
             {
-                circlePosition = Vector2Add((Vector2){ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI*2.0f))*pointScale }, center);
+                circlePosition = ((Vector2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI*2.0f))*pointScale }) + (center));
             }
         }
 
         // Checks if the user clicked on the color wheel
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && Vector2Distance(GetMousePosition(), center) <= pointScale + 10.0f)
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && glm::distance(GetMousePosition(), center) <= pointScale + 10.0f)
         {
             settingColor = true;
         }
@@ -154,14 +154,14 @@ int main(void)
         {
             if (settingColor) circlePosition = GetMousePosition();
 
-            float distance = Vector2Distance(center, circlePosition)/pointScale;
+            float distance = glm::distance(center, circlePosition)/pointScale;
 
-            float angle = ((Vector2Angle((Vector2){ 0.0f, -pointScale }, Vector2Subtract(center, circlePosition))/PI + 1.0f)/2.0f);
-            if (settingColor && distance > 1.0f) circlePosition = Vector2Add((Vector2){ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI* 2.0f))*pointScale }, center);
+            float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
+            if (settingColor && distance > 1.0f) circlePosition = ((Vector2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI* 2.0f))*pointScale }) + (center));
 
             float angle360 = angle*360.0f;
             float valueActual = Clamp(distance, 0.0f, 1.0f);
-            color = ColorLerp((Color){ (int)(value*255.0f), (int)(value*255.0f), (int)(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
+            color = ColorLerp(Color{ (unsigned char)(value*255.0f), (unsigned char)(value*255.0f), (unsigned char)(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
         }
         //----------------------------------------------------------------------------------
 
@@ -178,13 +178,13 @@ int main(void)
             float angleOffset = ((PI*2.0f)/(float)triangleCount);
             float angle = angleOffset*(float)i;
             float angleOffsetCalculated = ((float)i + 1)*angleOffset;
-            Vector2 scale = (Vector2){ pointScale, pointScale };
+            Vector2 scale = Vector2{ pointScale, pointScale };
 
-            Vector2 offset = Vector2Multiply((Vector2){ sinf(angle), -cosf(angle) }, scale);
-            Vector2 offset2 = Vector2Multiply((Vector2){ sinf(angleOffsetCalculated), -cosf(angleOffsetCalculated) }, scale);
+            Vector2 offset = ((Vector2{ sinf(angle), -cosf(angle) }) * (scale));
+            Vector2 offset2 = ((Vector2{ sinf(angleOffsetCalculated), -cosf(angleOffsetCalculated) }) * (scale));
 
-            Vector2 position = Vector2Add(center, offset);
-            Vector2 position2 = Vector2Add(center, offset2);
+            Vector2 position = ((center) + (offset));
+            Vector2 position2 = ((center) + (offset2));
 
             float angleNonRadian = (angle/(2.0f*PI))*360.0f;
             float angleNonRadianOffset = (angleOffset/(2.0f*PI))*360.0f;
@@ -225,7 +225,7 @@ int main(void)
         // Make the handle slightly more visible overtop darker colors
         Color handleColor = BLACK;
 
-        if (Vector2Distance(center, circlePosition)/pointScale <= 0.5f && value <= 0.5f)
+        if (glm::distance(center, circlePosition)/pointScale <= 0.5f && value <= 0.5f)
         {
             handleColor = DARKGRAY;
         }
@@ -234,8 +234,8 @@ int main(void)
         DrawCircleLinesV(circlePosition, 4.0f, handleColor);
 
         // Draw the color in a preview, with a darkened outline.
-        DrawRectangleV((Vector2){ 8.0f, 8.0f }, (Vector2){ 64.0f, 64.0f }, color);
-        DrawRectangleLinesEx((Rectangle){ 8.0f, 8.0f, 64.0f, 64.0f }, 2.0f, ColorLerp(color, BLACK, 0.5f));
+        DrawRectangleV(Vector2{ 8.0f, 8.0f }, Vector2{ 64.0f, 64.0f }, color);
+        DrawRectangleLinesEx(Rectangle{ 8.0f, 8.0f, 64.0f, 64.0f }, 2.0f, ColorLerp(color, BLACK, 0.5f));
 
         // Draw current color as hex and decimal
         DrawText(TextFormat("#%02X%02X%02X\n(%d, %d, %d)", color.r, color.g, color.b, color.r, color.g, color.b), 8, 8 + 64 + 8, 20, DARKGRAY);

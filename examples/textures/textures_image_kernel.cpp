@@ -27,7 +27,7 @@ static void NormalizeKernel(float *kernel, int size);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -73,10 +73,10 @@ int main(void)
         ImageKernelConvolution(&catGaussian, gaussiankernel, 9);
     }
 
-    ImageCrop(&image, (Rectangle){ 0, 0, (float)200, (float)450 });
-    ImageCrop(&catGaussian, (Rectangle){ 0, 0, (float)200, (float)450 });
-    ImageCrop(&catSobel, (Rectangle){ 0, 0, (float)200, (float)450 });
-    ImageCrop(&catSharpend, (Rectangle){ 0, 0, (float)200, (float)450 });
+    ImageCrop(&image, Rectangle{ 0, 0, (float)200, (float)450 });
+    ImageCrop(&catGaussian, Rectangle{ 0, 0, (float)200, (float)450 });
+    ImageCrop(&catSobel, Rectangle{ 0, 0, (float)200, (float)450 });
+    ImageCrop(&catSharpend, Rectangle{ 0, 0, (float)200, (float)450 });
 
     // Images converted to texture, GPU memory (VRAM)
     Texture2D texture = LoadTextureFromImage(image);

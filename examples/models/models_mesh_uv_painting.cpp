@@ -50,7 +50,7 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -59,10 +59,10 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh uv painting");
 
-    Camera3D camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 3.5f, 6.5f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera3D camera = {};
+    camera.position = Vector3{ 0.0f, 3.5f, 6.5f };
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -71,15 +71,15 @@ int main(void)
     Texture2D canvasTexture = LoadTextureFromImage(canvasImage);
     SetTextureFilter(canvasTexture, TEXTURE_FILTER_BILINEAR);
 
-    Model model = { 0 };
-    BoundingBox modelBBox = { 0 };
+    Model model = {};
+    BoundingBox modelBBox = {};
     ShapeType currentShape = SHAPE_SPHERE;
     ChangeShape(&model, &modelBBox, &currentShape, SHAPE_SPHERE, canvasTexture);
 
     ToolMode currentTool = TOOL_PAINT;
     Color activeColor = RED;
     int brushRadius = 12;
-    Vector2 lastHitUV = { 0 };
+    Vector2 lastHitUV = {};
     bool hasLastHit = false;
 
     Color palette[PALETTE_COUNT] = { RED, ORANGE, GOLD, LIME, SKYBLUE, PURPLE, DARKGRAY, WHITE };
@@ -101,7 +101,7 @@ int main(void)
         if (!isMouseOverUI && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             Ray ray = GetScreenToWorldRay(mousePos, camera);
-            Vector2 hitUV = { 0 };
+            Vector2 hitUV = {};
 
             if (GetMeshHitUV(ray, model, modelBBox, &hitUV))
             {
@@ -115,7 +115,7 @@ int main(void)
                     {
                         int lastPx = (int)(lastHitUV.x * CANVAS_SIZE);
                         int lastPy = (int)(lastHitUV.y * CANVAS_SIZE);
-                        float dist = Vector2Distance((Vector2){ (float)lastPx, (float)lastPy }, (Vector2){ (float)px, (float)py });
+                        float dist = glm::distance(Vector2{ (float)lastPx, (float)lastPy }, Vector2{ (float)px, (float)py });
                         int steps = (int)(dist / 2.0f) + 1;
 
                         for (int i = 0; i <= steps; i++)
@@ -147,10 +147,10 @@ int main(void)
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            ClearBackground((Color){ 30, 32, 40, 255 });
+            ClearBackground(Color{ 30, 32, 40, 255 });
 
             BeginMode3D(camera);
-                DrawModel(model, Vector3Zero(), 1.0f, WHITE);
+                DrawModel(model, Vector3{}, 1.0f, WHITE);
                 DrawGrid(10, 1.0f);
             EndMode3D();
 
@@ -162,8 +162,8 @@ int main(void)
             // Tool selection toggles
             bool paintActive = (currentTool == TOOL_PAINT);
             bool pickerActive = (currentTool == TOOL_PICKER);
-            if (GuiToggle((Rectangle){ 25, 55, 95, 32 }, "PAINT", &paintActive)) currentTool = TOOL_PAINT;
-            if (GuiToggle((Rectangle){ 125, 55, 95, 32 }, "PICKER", &pickerActive)) currentTool = TOOL_PICKER;
+            if (GuiToggle(Rectangle{ 25, 55, 95, 32 }, "PAINT", &paintActive)) currentTool = TOOL_PAINT;
+            if (GuiToggle(Rectangle{ 125, 55, 95, 32 }, "PICKER", &pickerActive)) currentTool = TOOL_PICKER;
 
             // Shape selection toggles
             DrawText("Mesh Shape:", 25, 100, 10, LIGHTGRAY);
@@ -172,13 +172,13 @@ int main(void)
             bool cylinderActive = (currentShape == SHAPE_CYLINDER);
             bool torusActive = (currentShape == SHAPE_TORUS);
 
-            if (GuiToggle((Rectangle){ 25, 120, 95, 28 }, "SPHERE", &sphereActive))
+            if (GuiToggle(Rectangle{ 25, 120, 95, 28 }, "SPHERE", &sphereActive))
                 ChangeShape(&model, &modelBBox, &currentShape, SHAPE_SPHERE, canvasTexture);
-            if (GuiToggle((Rectangle){ 125, 120, 95, 28 }, "CUBE", &cubeActive))
+            if (GuiToggle(Rectangle{ 125, 120, 95, 28 }, "CUBE", &cubeActive))
                 ChangeShape(&model, &modelBBox, &currentShape, SHAPE_CUBE, canvasTexture);
-            if (GuiToggle((Rectangle){ 25, 153, 95, 28 }, "CYLINDER", &cylinderActive))
+            if (GuiToggle(Rectangle{ 25, 153, 95, 28 }, "CYLINDER", &cylinderActive))
                 ChangeShape(&model, &modelBBox, &currentShape, SHAPE_CYLINDER, canvasTexture);
-            if (GuiToggle((Rectangle){ 125, 153, 95, 28 }, "TORUS", &torusActive))
+            if (GuiToggle(Rectangle{ 125, 153, 95, 28 }, "TORUS", &torusActive))
                 ChangeShape(&model, &modelBBox, &currentShape, SHAPE_TORUS, canvasTexture);
 
             // Color display
@@ -198,16 +198,16 @@ int main(void)
 
             // Brush size buttons
             DrawText(TextFormat("Brush Size: %dpx", brushRadius), 25, 345, 10, LIGHTGRAY);
-            if (GuiButton((Rectangle){ 25, 365, 95, 30 }, "SIZE -") && (brushRadius > 2)) brushRadius -= 2;
-            if (GuiButton((Rectangle){ 125, 365, 95, 30 }, "SIZE +") && (brushRadius < 64)) brushRadius += 2;
+            if (GuiButton(Rectangle{ 25, 365, 95, 30 }, "SIZE -") && (brushRadius > 2)) brushRadius -= 2;
+            if (GuiButton(Rectangle{ 125, 365, 95, 30 }, "SIZE +") && (brushRadius < 64)) brushRadius += 2;
 
             // Canvas action buttons
-            if (GuiButton((Rectangle){ 25, 410, 95, 30 }, "CLEAR"))
+            if (GuiButton(Rectangle{ 25, 410, 95, 30 }, "CLEAR"))
             {
                 ImageClearBackground(&canvasImage, RAYWHITE);
                 UpdateTexture(canvasTexture, canvasImage.data);
             }
-            if (GuiButton((Rectangle){ 125, 410, 95, 30 }, "FILL"))
+            if (GuiButton(Rectangle{ 125, 410, 95, 30 }, "FILL"))
             {
                 ImageClearBackground(&canvasImage, activeColor);
                 UpdateTexture(canvasTexture, canvasImage.data);
@@ -242,7 +242,7 @@ static void ChangeShape(Model *model, BoundingBox *bbox, ShapeType *currentShape
 {
     UnloadModel(*model);
 
-    Mesh mesh = { 0 };
+    Mesh mesh = {};
 
     switch (newShape)
     {
@@ -256,13 +256,13 @@ static void ChangeShape(Model *model, BoundingBox *bbox, ShapeType *currentShape
     *model = LoadModelFromMesh(mesh);
 
     // GenMeshCylinder builds upward from y = 0; shift it down to center on the origin
-    if (newShape == SHAPE_CYLINDER) model->transform = MatrixTranslate(0.0f, -1.25f, 0.0f);
+    if (newShape == SHAPE_CYLINDER) model->transform = glm::translate(Matrix(1.0f), Vector3{0.0f, -1.25f, 0.0f});
 
     model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = canvasTexture;
 
     BoundingBox box = GetMeshBoundingBox(model->meshes[0]);
-    box.min = Vector3Transform(box.min, model->transform);
-    box.max = Vector3Transform(box.max, model->transform);
+    box.min = Vector3((model->transform)*Vector4(box.min, 1.0f));
+    box.max = Vector3((model->transform)*Vector4(box.max, 1.0f));
     *bbox = box;
 
     *currentShape = newShape;
@@ -277,7 +277,7 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
     Mesh mesh = model.meshes[0];
     float closestDistance = 1e9f;
     bool found = false;
-    Vector2 hitUV = { 0 };
+    Vector2 hitUV = {};
 
     for (int tri = 0; tri < mesh.triangleCount; tri++)
     {
@@ -291,9 +291,9 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
         }
         else { i0 = 3*tri; i1 = 3*tri + 1; i2 = 3*tri + 2; }
 
-        Vector3 a = Vector3Transform((Vector3){ mesh.vertices[3*i0], mesh.vertices[3*i0 + 1], mesh.vertices[3*i0 + 2] }, model.transform);
-        Vector3 b = Vector3Transform((Vector3){ mesh.vertices[3*i1], mesh.vertices[3*i1 + 1], mesh.vertices[3*i1 + 2] }, model.transform);
-        Vector3 c = Vector3Transform((Vector3){ mesh.vertices[3*i2], mesh.vertices[3*i2 + 1], mesh.vertices[3*i2 + 2] }, model.transform);
+        Vector3 a = Vector3((model.transform)*Vector4(Vector3{ mesh.vertices[3*i0], mesh.vertices[3*i0 + 1], mesh.vertices[3*i0 + 2] }, 1.0f));
+        Vector3 b = Vector3((model.transform)*Vector4(Vector3{ mesh.vertices[3*i1], mesh.vertices[3*i1 + 1], mesh.vertices[3*i1 + 2] }, 1.0f));
+        Vector3 c = Vector3((model.transform)*Vector4(Vector3{ mesh.vertices[3*i2], mesh.vertices[3*i2 + 1], mesh.vertices[3*i2 + 2] }, 1.0f));
 
         RayCollision hit = GetRayCollisionTriangle(ray, a, b, c);
 

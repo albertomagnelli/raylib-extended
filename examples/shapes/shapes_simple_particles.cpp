@@ -62,7 +62,7 @@ static void DrawParticles(CircularBuffer *circularBuffer);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -109,8 +109,16 @@ int main(void)
         if (IsKeyPressed(KEY_DOWN)) emissionRate--;
 
         // Change Particle Type (LEFT/RIGHT arrows)
-        if (IsKeyPressed(KEY_RIGHT)) (currentType == FIRE)? (currentType = WATER) : currentType++;
-        if (IsKeyPressed(KEY_LEFT)) (currentType == WATER)? (currentType = FIRE) : currentType--;
+        if (IsKeyPressed(KEY_RIGHT))
+        {
+            if (currentType == FIRE) currentType = WATER;
+            else currentType = (ParticleType)(currentType + 1);
+        }
+        if (IsKeyPressed(KEY_LEFT))
+        {
+            if (currentType == WATER) currentType = FIRE;
+            else currentType = (ParticleType)(currentType - 1);
+        }
 
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) emitterPosition = GetMousePosition();
         //----------------------------------------------------------------------------------
@@ -189,7 +197,7 @@ static void EmitParticle(CircularBuffer *circularBuffer, Vector2 emitterPosition
         }
 
         float direction = (float)(rand()%360);
-        newParticle->velocity = (Vector2){ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
+        newParticle->velocity = Vector2{ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
     }
 }
 

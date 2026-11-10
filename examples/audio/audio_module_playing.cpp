@@ -28,7 +28,7 @@ typedef struct {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ int main(void)
                          YELLOW, GREEN, SKYBLUE, PURPLE, BEIGE };
 
     // Creates some circles for visual effect
-    CircleWave circles[MAX_CIRCLES] = { 0 };
+    CircleWave circles[MAX_CIRCLES] = {};
 
     for (int i = MAX_CIRCLES - 1; i >= 0; i--)
     {

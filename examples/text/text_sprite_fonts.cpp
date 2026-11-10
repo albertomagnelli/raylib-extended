@@ -23,7 +23,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [text] example - sprite fonts");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    Font fonts[MAX_FONTS] = { 0 };
+    Font fonts[MAX_FONTS] = {};
 
     fonts[0] = LoadFont("resources/sprite_fonts/alagard.png");
     fonts[1] = LoadFont("resources/sprite_fonts/pixelplay.png");
@@ -55,7 +55,7 @@ int main(void)
 
     const int spacings[MAX_FONTS] = { 2, 4, 8, 4, 3, 4, 4, 1 };
 
-    Vector2 positions[MAX_FONTS] = { 0 };
+    Vector2 positions[MAX_FONTS] = {};
 
     for (int i = 0; i < MAX_FONTS; i++)
     {

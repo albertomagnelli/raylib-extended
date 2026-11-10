@@ -41,7 +41,7 @@ typedef enum {
 
 // Struct to store example preset patterns
 typedef struct {
-    char *name;
+    const char *name;
     Vector2 position;
 } PresetPattern;
 
@@ -53,7 +53,7 @@ void FreeImageToDraw(Image **imageToDraw);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ int main(void)
     EndTextureMode();
 
     Image startPattern = LoadImage("resources/game_of_life/r_pentomino.png");
-    UpdateTextureRec(world2.texture, (Rectangle){ worldWidth/2.0f, worldHeight/2.0f, (float)(startPattern.width), (float)(startPattern.height) }, startPattern.data);
+    UpdateTextureRec(world2.texture, Rectangle{ worldWidth/2.0f, worldHeight/2.0f, (float)(startPattern.width), (float)(startPattern.height) }, startPattern.data);
     UnloadImage(startPattern);
 
     // Pointers to the two textures, to be swapped
@@ -180,8 +180,8 @@ int main(void)
             {
                 RenderTexture2D worldOnScreen = LoadRenderTexture(sizeInWorldX, sizeInWorldY);
                 BeginTextureMode(worldOnScreen);
-                    DrawTexturePro(currentWorld->texture, (Rectangle) { floorf(offsetX), floorf(offsetY), (float)(sizeInWorldX), -(float)(sizeInWorldY) },
-                            (Rectangle) { 0, 0, (float)(sizeInWorldX), (float)(sizeInWorldY) }, (Vector2) { 0, 0 }, 0.0f, WHITE);
+                    DrawTexturePro(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), (float)(sizeInWorldX), -(float)(sizeInWorldY) },
+                            Rectangle{ 0, 0, (float)(sizeInWorldX), (float)(sizeInWorldY) }, Vector2{ 0, 0 }, 0.0f, WHITE);
                 EndTextureMode();
                 imageToDraw = (Image*)RL_MALLOC(sizeof(Image));
                 *imageToDraw = LoadImageFromTexture(worldOnScreen.texture);
@@ -202,7 +202,7 @@ int main(void)
 
                 ImageDrawPixel(imageToDraw, mouseX, mouseY, (firstColor) ? BLACK : RAYWHITE);
 
-                if (prevColor != firstColor) UpdateTextureRec(currentWorld->texture, (Rectangle){ floorf(offsetX), floorf(offsetY), (float)(sizeInWorldX), (float)(sizeInWorldY) }, imageToDraw->data);
+                if (prevColor != firstColor) UpdateTextureRec(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), (float)(sizeInWorldX), (float)(sizeInWorldY) }, imageToDraw->data);
             }
             else firstColor = -1;
         }
@@ -229,7 +229,7 @@ int main(void)
                     ClearBackground(RAYWHITE);
                 EndTextureMode();
 
-                UpdateTextureRec(currentWorld->texture, (Rectangle){ worldWidth*presetPatterns[preset].position.x - pattern.width/2.0f,
+                UpdateTextureRec(currentWorld->texture, Rectangle{ worldWidth*presetPatterns[preset].position.x - pattern.width/2.0f,
                                                                      worldHeight*presetPatterns[preset].position.y - pattern.height/2.0f,
                                                                      (float)(pattern.width), (float)(pattern.height) }, pattern.data);
             }
@@ -249,7 +249,7 @@ int main(void)
                             }
                         }
                         UpdateTextureRec(currentWorld->texture,
-                                         (Rectangle){ (float)(pattern.width*i), (float)(pattern.height*j),
+                                         Rectangle{ (float)(pattern.width*i), (float)(pattern.height*j),
                                                       (float)(pattern.width), (float)(pattern.height) }, pattern.data);
                     }
                 }
@@ -284,7 +284,7 @@ int main(void)
             // Draw to texture
             BeginTextureMode(*currentWorld);
                 BeginShaderMode(shdrGameOfLife);
-                    DrawTexturePro(previousWorld->texture, worldRectSource, worldRectDest, (Vector2){ 0, 0 }, 0.0f, RAYWHITE);
+                    DrawTexturePro(previousWorld->texture, worldRectSource, worldRectDest, Vector2{ 0, 0 }, 0.0f, RAYWHITE);
                 EndShaderMode();
             EndTextureMode();
         }
@@ -294,10 +294,10 @@ int main(void)
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            DrawTexturePro(currentWorld->texture, textureSourceToScreen, textureOnScreen, (Vector2){ 0, 0 }, 0.0f, WHITE);
+            DrawTexturePro(currentWorld->texture, textureSourceToScreen, textureOnScreen, Vector2{ 0, 0 }, 0.0f, WHITE);
 
-            DrawLine(windowWidth, 0, windowWidth, screenHeight, (Color){ 218, 218, 218, 255 });
-            DrawRectangle(windowWidth, 0, screenWidth - windowWidth, screenHeight, (Color){ 232, 232, 232, 255 });
+            DrawLine(windowWidth, 0, windowWidth, screenHeight, Color{ 218, 218, 218, 255 });
+            DrawRectangle(windowWidth, 0, screenWidth - windowWidth, screenHeight, Color{ 232, 232, 232, 255 });
 
             DrawText("Conway's", 704, 4, 20, DARKBLUE);
             DrawText(" game of", 704, 19, 20, DARKBLUE);
@@ -307,17 +307,17 @@ int main(void)
             DrawText("Presets", 710, 58, 8, GRAY);
             preset = -1;
             for (int i = 0; i < numberOfPresets; i++)
-                if (GuiButton((Rectangle){ 710.0f, 70.0f + 18*i, 80.0f, 16.0f }, presetPatterns[i].name)) preset = i;
+                if (GuiButton(Rectangle{ 710.0f, 70.0f + 18*i, 80.0f, 16.0f }, presetPatterns[i].name)) preset = i;
 
-            GuiToggleGroup((Rectangle){ 710, 258, 80, 16 }, "Run\nPause\nDraw", &mode);
+            GuiToggleGroup(Rectangle{ 710, 258, 80, 16 }, "Run\nPause\nDraw", &mode);
 
             DrawText(TextFormat("Zoom: %ix", zoom), 710, 316, 8, GRAY);
-            buttonZoomIn = GuiButton((Rectangle){ 710, 328, 80, 16 }, "Zoom in");
-            buttonZomOut = GuiButton((Rectangle){ 710, 346, 80, 16 }, "Zoom out");
+            buttonZoomIn = GuiButton(Rectangle{ 710, 328, 80, 16 }, "Zoom in");
+            buttonZomOut = GuiButton(Rectangle{ 710, 346, 80, 16 }, "Zoom out");
 
             DrawText(TextFormat("Speed: %i frame%s", framesPerStep, (framesPerStep > 1)? "s" : ""), 710, 370, 8, GRAY);
-            buttonFaster = GuiButton((Rectangle){ 710, 382, 80, 16 }, "Faster");
-            buttonSlower = GuiButton((Rectangle){ 710, 400, 80, 16 }, "Slower");
+            buttonFaster = GuiButton(Rectangle{ 710, 382, 80, 16 }, "Faster");
+            buttonSlower = GuiButton(Rectangle{ 710, 400, 80, 16 }, "Slower");
 
             DrawFPS(712, 426);
 

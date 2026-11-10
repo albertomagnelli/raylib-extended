@@ -23,7 +23,7 @@
 // Custom logging function
 void CustomTraceLog(int msgType, const char *text, va_list args)
 {
-    char timeStr[64] = { 0 };
+    char timeStr[64] = {};
     time_t now = time(NULL);
     struct tm *tm_info = localtime(&now);
 
@@ -46,7 +46,7 @@ void CustomTraceLog(int msgType, const char *text, va_list args)
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------

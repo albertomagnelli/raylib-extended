@@ -18,13 +18,13 @@
 #include "raylib.h"
 
 #define MAX_SOUNDS 10
-Sound soundArray[MAX_SOUNDS] = { 0 };
+Sound soundArray[MAX_SOUNDS] = {};
 int currentSound;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------

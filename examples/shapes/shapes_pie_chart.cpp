@@ -28,7 +28,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -40,16 +40,16 @@ int main(void)
     int sliceCount = 7;
     float donutInnerRadius = 25.0f;
     float values[MAX_PIE_SLICES] = { 300.0f, 100.0f, 450.0f, 350.0f, 600.0f, 380.0f, 750.0f }; // Initial slice values
-    bool editingLabel[MAX_PIE_SLICES] = { 0 };
-    char labels[MAX_PIE_SLICES][32] = { 0 }; // Slice label texts, editable
+    bool editingLabel[MAX_PIE_SLICES] = {};
+    char labels[MAX_PIE_SLICES][32] = {}; // Slice label texts, editable
 
     bool showValues = true;
     bool showPercentages = false;
     bool showDonut = false;
     int hoveredSlice = -1;
-    Rectangle scrollPanelBounds = { 0 };
-    Vector2 scrollContentOffset = { 0 };
-    Rectangle view = { 0 };
+    Rectangle scrollPanelBounds = {};
+    Vector2 scrollContentOffset = {};
+    Rectangle view = {};
 
     // UI layout parameters
     const int panelWidth = 270;
@@ -148,7 +148,7 @@ int main(void)
                 // Draw the label for the current slice
                 if (values[i] > 0)
                 {
-                    char labelText[64] = { 0 };
+                    char labelText[64] = {};
                     if (showValues && showPercentages) snprintf(labelText, 64, "%.1f (%.0f%%)", values[i], (values[i]/totalValue)*100.0f);
                     else if (showValues) snprintf(labelText, 64, "%.1f", values[i]);
                     else if (showPercentages) snprintf(labelText, 64, "%.0f%%", (values[i]/totalValue)*100.0f);
@@ -168,20 +168,20 @@ int main(void)
             DrawRectangleRec(panelRect, Fade(LIGHTGRAY, 0.5f));
             DrawRectangleLinesEx(panelRect, 1.0f, GRAY);
 
-            GuiSpinner((Rectangle){ panelPos.x + 95, (float)panelPos.y + 12, 125, 25 }, "Slices ", &sliceCount, 1, MAX_PIE_SLICES, false);
-            GuiCheckBox((Rectangle){ panelPos.x + 20, (float)panelPos.y + 12 + 40, 20, 20 }, "Show Values", &showValues);
-            GuiCheckBox((Rectangle){ panelPos.x + 20, (float)panelPos.y + 12 + 70, 20, 20 }, "Show Percentages", &showPercentages);
-            GuiCheckBox((Rectangle){ panelPos.x + 20, (float)panelPos.y + 12 + 100, 20, 20 }, "Make Donut", &showDonut);
+            GuiSpinner(Rectangle{ panelPos.x + 95, (float)panelPos.y + 12, 125, 25 }, "Slices ", &sliceCount, 1, MAX_PIE_SLICES, false);
+            GuiCheckBox(Rectangle{ panelPos.x + 20, (float)panelPos.y + 12 + 40, 20, 20 }, "Show Values", &showValues);
+            GuiCheckBox(Rectangle{ panelPos.x + 20, (float)panelPos.y + 12 + 70, 20, 20 }, "Show Percentages", &showPercentages);
+            GuiCheckBox(Rectangle{ panelPos.x + 20, (float)panelPos.y + 12 + 100, 20, 20 }, "Make Donut", &showDonut);
 
             if (!showDonut) GuiDisable();
-            GuiSliderBar((Rectangle){ panelPos.x + 80, (float)panelPos.y + 12 + 130, panelRect.width - 100, 30 },
+            GuiSliderBar(Rectangle{ panelPos.x + 80, (float)panelPos.y + 12 + 130, panelRect.width - 100, 30 },
                 "Inner Radius", NULL, & donutInnerRadius, 5.0f, radius - 10.0f);
             GuiEnable();
 
-            GuiLine((Rectangle){ panelPos.x + 10, (float)panelPos.y + 12 + 170, panelRect.width - 20, 1 }, NULL);
+            GuiLine(Rectangle{ panelPos.x + 10, (float)panelPos.y + 12 + 170, panelRect.width - 20, 1 }, NULL);
 
             // Scrollable area for slice editors
-            scrollPanelBounds = (Rectangle){
+            scrollPanelBounds = Rectangle{
                 panelPos.x + panelMargin,
                 (float)panelPos.y + 12 + 190,
                 panelRect.width - panelMargin*2,
@@ -189,7 +189,7 @@ int main(void)
             };
             int contentHeight = sliceCount*35;
 
-            GuiScrollPanel(scrollPanelBounds, NULL, (Rectangle){ 0, 0, panelRect.width - 25, (float)contentHeight },
+            GuiScrollPanel(scrollPanelBounds, NULL, Rectangle{ 0, 0, panelRect.width - 25, (float)contentHeight },
                 &scrollContentOffset, &view);
 
             const float contentX = view.x + scrollContentOffset.x; // Left of content
@@ -206,10 +206,10 @@ int main(void)
                     DrawRectangle((int)(contentX + 15), rowY + 5, 20, 20, color);
 
                     // Label textbox
-                    if (GuiTextBox((Rectangle){ contentX + 45, (float)rowY, 75, 30 }, labels[i], 32, editingLabel[i]))
+                    if (GuiTextBox(Rectangle{ contentX + 45, (float)rowY, 75, 30 }, labels[i], 32, editingLabel[i]))
                         editingLabel[i] = !editingLabel[i];
 
-                    GuiSliderBar((Rectangle){ contentX + 130, (float)rowY, 110, 30 }, NULL, NULL, &values[i], 0.0f, 1000.0f);
+                    GuiSliderBar(Rectangle{ contentX + 130, (float)rowY, 110, 30 }, NULL, NULL, &values[i], 0.0f, 1000.0f);
                 }
 
             EndScissorMode();

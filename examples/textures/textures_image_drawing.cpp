@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -32,16 +32,16 @@ int main(void)
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 
     Image cat = LoadImage("resources/cat.png");             // Load image in CPU memory (RAM)
-    ImageCrop(&cat, (Rectangle){ 100, 10, 280, 380 });      // Crop an image piece
+    ImageCrop(&cat, Rectangle{ 100, 10, 280, 380 });      // Crop an image piece
     ImageFlipHorizontal(&cat);                              // Flip cropped image horizontally
     ImageResize(&cat, 150, 200);                            // Resize flipped-cropped image
 
     Image parrots = LoadImage("resources/parrots.png");     // Load image in CPU memory (RAM)
 
     // Draw one image over the other with a scaling of 1.5f
-    ImageDrawImagePro(&parrots, cat, (Rectangle){ 0, 0, (float)cat.width, (float)cat.height }, 
-        (Rectangle){ 30, 40, cat.width*1.5f, cat.height*1.5f }, (Vector2){ 0 }, 0.0f, WHITE);
-    ImageCrop(&parrots, (Rectangle){ 0, 50, (float)parrots.width, (float)parrots.height - 100 }); // Crop resulting image
+    ImageDrawImagePro(&parrots, cat, Rectangle{ 0, 0, (float)cat.width, (float)cat.height },
+        Rectangle{ 30, 40, cat.width*1.5f, cat.height*1.5f }, Vector2{}, 0.0f, WHITE);
+    ImageCrop(&parrots, Rectangle{ 0, 50, (float)parrots.width, (float)parrots.height - 100 }); // Crop resulting image
 
     // Draw on the image with a few image draw methods
     ImageDrawPixel(&parrots, 10, 10, RAYWHITE);
@@ -54,7 +54,7 @@ int main(void)
     Font font = LoadFont("resources/custom_jupiter_crash.png");
 
     // Draw over image using custom font
-    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", (Vector2){ 300, 230 }, (float)font.baseSize, -2, WHITE);
+    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", Vector2{ 300, 230 }, (float)font.baseSize, -2, WHITE);
 
     UnloadFont(font);       // Unload custom font (already drawn used on image)
 

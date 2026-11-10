@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ int main(void)
     UnloadImage(fgImage);
 
     const int blendCountMax = 4;
-    BlendMode blendMode = 0;
+    BlendMode blendMode = BLEND_ALPHA;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------
@@ -55,8 +55,8 @@ int main(void)
         //----------------------------------------------------------------------------------
         if (IsKeyPressed(KEY_SPACE))
         {
-            if (blendMode >= (blendCountMax - 1)) blendMode = 0;
-            else blendMode++;
+            if (blendMode >= (blendCountMax - 1)) blendMode = BLEND_ALPHA;
+            else blendMode = (BlendMode)(blendMode + 1);
         }
         //----------------------------------------------------------------------------------
 

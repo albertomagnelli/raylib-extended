@@ -50,14 +50,14 @@ static int waveIndex = 0;
 
 // Buffer to keep the last second of uploaded audio,
 // part of which will be drawn on the screen
-static float buffer[SAMPLE_RATE] = { 0 };
+static float buffer[SAMPLE_RATE] = {};
 static AudioCallback waveCallbacks[] = { SineCallback, SquareCallback, TriangleCallback, SawtoothCallback };
-static char *waveTypesAsString[] = { "sine", "square", "triangle", "sawtooth" };
+static const char *waveTypesAsString[] = { "sine", "square", "triangle", "sawtooth" };
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------

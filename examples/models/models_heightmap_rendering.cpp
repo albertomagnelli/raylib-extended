@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -28,17 +28,17 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - heightmap rendering");
 
     // Define our custom camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 18.0f, 21.0f, 18.0f };     // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };          // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };              // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 18.0f, 21.0f, 18.0f };     // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };          // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };              // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                    // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
     Image image = LoadImage("resources/heightmap.png");     // Load heightmap image (RAM)
     Texture2D texture = LoadTextureFromImage(image);        // Convert image to texture (VRAM)
 
-    Mesh mesh = GenMeshHeightmap(image, (Vector3){ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
+    Mesh mesh = GenMeshHeightmap(image, Vector3{ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
     Model model = LoadModelFromMesh(mesh);                  // Load model from generated mesh
 
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Set map diffuse texture

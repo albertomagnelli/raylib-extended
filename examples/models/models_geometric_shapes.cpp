@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -28,10 +28,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - geometric shapes");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 10.0f, 10.0f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera camera = {};
+    camera.position = Vector3{ 0.0f, 10.0f, 10.0f };
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -54,22 +54,22 @@ int main(void)
 
             BeginMode3D(camera);
 
-                DrawCube((Vector3){-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, RED);
-                DrawCubeWires((Vector3){-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, GOLD);
-                DrawCubeWires((Vector3){-4.0f, 0.0f, -2.0f}, 3.0f, 6.0f, 2.0f, MAROON);
+                DrawCube(Vector3{-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, RED);
+                DrawCubeWires(Vector3{-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, GOLD);
+                DrawCubeWires(Vector3{-4.0f, 0.0f, -2.0f}, 3.0f, 6.0f, 2.0f, MAROON);
 
-                DrawSphere((Vector3){-1.0f, 0.0f, -2.0f}, 1.0f, GREEN);
-                DrawSphereWires((Vector3){1.0f, 0.0f, 2.0f}, 2.0f, 16, 16, LIME);
+                DrawSphere(Vector3{-1.0f, 0.0f, -2.0f}, 1.0f, GREEN);
+                DrawSphereWires(Vector3{1.0f, 0.0f, 2.0f}, 2.0f, 16, 16, LIME);
 
-                DrawCylinder((Vector3){4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, SKYBLUE);
-                DrawCylinderWires((Vector3){4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, DARKBLUE);
-                DrawCylinderWires((Vector3){4.5f, -1.0f, 2.0f}, 1.0f, 1.0f, 2.0f, 6, BROWN);
+                DrawCylinder(Vector3{4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, SKYBLUE);
+                DrawCylinderWires(Vector3{4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, DARKBLUE);
+                DrawCylinderWires(Vector3{4.5f, -1.0f, 2.0f}, 1.0f, 1.0f, 2.0f, 6, BROWN);
 
-                DrawCylinder((Vector3){1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, GOLD);
-                DrawCylinderWires((Vector3){1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, PINK);
+                DrawCylinder(Vector3{1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, GOLD);
+                DrawCylinderWires(Vector3{1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, PINK);
 
-                DrawCapsule     ((Vector3){-3.0f, 1.5f, -4.0f}, (Vector3){-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, VIOLET);
-                DrawCapsuleWires((Vector3){-3.0f, 1.5f, -4.0f}, (Vector3){-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, PURPLE);
+                DrawCapsule     (Vector3{-3.0f, 1.5f, -4.0f}, Vector3{-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, VIOLET);
+                DrawCapsuleWires(Vector3{-3.0f, 1.5f, -4.0f}, Vector3{-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, PURPLE);
 
                 DrawGrid(10, 1.0f);        // Draw a grid
 

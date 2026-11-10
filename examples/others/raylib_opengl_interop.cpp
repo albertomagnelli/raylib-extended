@@ -67,7 +67,7 @@ typedef struct Particle {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ int main(void)
     int colorLoc = GetShaderLocation(shader, "color");
 
     // Initialize the vertex buffer for the particles and assign each particle random values
-    Particle particles[MAX_PARTICLES] = { 0 };
+    Particle particles[MAX_PARTICLES] = {};
 
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
@@ -137,11 +137,11 @@ int main(void)
 
                 glUniform1f(currentTimeLoc, GetTime());
 
-                Vector4 color = ColorNormalize((Color){ 255, 0, 0, 128 });
+                Vector4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
                 glUniform4fv(colorLoc, 1, (float *)&color);
 
                 // Get the current modelview and projection matrix so the particle system is displayed and transformed
-                Matrix modelViewProjection = MatrixMultiply(rlGetMatrixModelview(), rlGetMatrixProjection());
+                Matrix modelViewProjection = ((rlGetMatrixProjection()) * (rlGetMatrixModelview()));
 
                 glUniformMatrix4fv(shader.locs[SHADER_LOC_MATRIX_MVP], 1, false, MatrixToFloat(modelViewProjection));
 

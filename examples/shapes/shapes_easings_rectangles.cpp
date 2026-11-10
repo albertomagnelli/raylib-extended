@@ -31,7 +31,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings rectangles");
 
-    Rectangle recs[MAX_RECS_X*MAX_RECS_Y] = { 0 };
+    Rectangle recs[MAX_RECS_X*MAX_RECS_Y] = {};
 
     for (int y = 0; y < MAX_RECS_Y; y++)
     {
@@ -107,7 +107,7 @@ int main(void)
             {
                 for (int i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
                 {
-                    DrawRectanglePro(recs[i], (Vector2){ recs[i].width/2, recs[i].height/2 }, rotation, RED);
+                    DrawRectanglePro(recs[i], Vector2{ recs[i].width/2, recs[i].height/2 }, rotation, RED);
                 }
             }
             else if (state == 1) DrawText("PRESS [SPACE] TO PLAY AGAIN!", 240, 200, 20, GRAY);

@@ -66,15 +66,15 @@
 #include "rlgl.h"               // OpenGL abstraction layer to OpenGL 1.1, 3.3+ or ES2
 
 #define RAYMATH_STATIC_INLINE
-#include "raymath.h"            // Vector2, Vector3, Quaternion and Matrix functionality
+#include "raymath.h"            // Vector2, Vector3, Quaternion and Matrix types/helpers (glm based)
 
 #include "GLFW/glfw3.h"         // Windows/Context and inputs management
 
 #include <stdio.h>              // Required for: printf()
 
-#define RED        (Color){ 230, 41, 55, 255 }     // Red
-#define RAYWHITE   (Color){ 245, 245, 245, 255 }   // My own White (raylib logo)
-#define DARKGRAY   (Color){ 80, 80, 80, 255 }      // Dark Gray
+#define RED        Color{ 230, 41, 55, 255 }     // Red
+#define RAYWHITE   Color{ 245, 245, 245, 255 }   // My own White (raylib logo)
+#define DARKGRAY   Color{ 80, 80, 80, 255 }      // Dark Gray
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -117,7 +117,7 @@ static void DrawRectangleV(Vector2 position, Vector2 size, Color color);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ int main(void)
     glfwSwapInterval(0);
 
     // Load OpenGL 3.3 supported extensions
-    rlLoadExtensions(glfwGetProcAddress);
+    rlLoadExtensions((void *)glfwGetProcAddress);
     //--------------------------------------------------------
 
     // Initialize OpenGL context (states and resources)
@@ -181,10 +181,10 @@ int main(void)
     rlClearColor(245, 245, 245, 255);                   // Define clear color
     rlEnableDepthTest();                                // Enable DEPTH_TEST for 3D
 
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 5.0f, 5.0f, 5.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 5.0f, 5.0f, 5.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
 
     Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };        // Cube default position (center)
@@ -205,8 +205,8 @@ int main(void)
             // Draw '3D' elements in the scene
             //-----------------------------------------------
             // Calculate projection matrix (from perspective) and view matrix from camera look at
-            Matrix matProj = MatrixPerspective((double)(camera.fovy*DEG2RAD), (double)screenWidth/(double)screenHeight, 0.01, 1000.0);
-            Matrix matView = MatrixLookAt(camera.position, camera.target, camera.up);
+            Matrix matProj = glm::perspective(camera.fovy*DEG2RAD, (float)screenWidth/(float)screenHeight, 0.01f, 1000.0f);
+            Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
             rlSetMatrixProjection(matProj);   // Set internal projection matrix (default shader)
@@ -223,8 +223,8 @@ int main(void)
             //-----------------------------------------------
 #define RLGL_SET_MATRIX_MANUALLY
 #if defined(RLGL_SET_MATRIX_MANUALLY)
-            matProj = MatrixOrtho(0.0, screenWidth, screenHeight, 0.0, 0.0, 1.0);
-            matView = MatrixIdentity();
+            matProj = glm::ortho(0.0f, (float)screenWidth, (float)screenHeight, 0.0f, 0.0f, 1.0f);
+            matView = Matrix(1.0f);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
             rlSetMatrixProjection(matProj);   // Set internal projection matrix (default shader)
@@ -237,7 +237,7 @@ int main(void)
             rlMatrixMode(RL_MODELVIEW);                             // Enable internal modelview matrix
             rlLoadIdentity();                                       // Reset internal modelview matrix
 #endif
-            DrawRectangleV((Vector2){ 10.0f, 10.0f }, (Vector2){ 780.0f, 20.0f }, DARKGRAY);
+            DrawRectangleV(Vector2{ 10.0f, 10.0f }, Vector2{ 780.0f, 20.0f }, DARKGRAY);
 
             // Draw internal render batch buffers (2D data)
             rlDrawRenderBatchActive();

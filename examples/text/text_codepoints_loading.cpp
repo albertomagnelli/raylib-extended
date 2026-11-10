@@ -21,7 +21,7 @@
 // Text to be displayed, must be UTF-8 (save this code file as UTF-8)
 // NOTE: It can contain all the required text for the game,
 // this text will be scanned to get all the required codepoints
-static char *text = "いろはにほへと　ちりぬるを\nわかよたれそ　つねならむ\nうゐのおくやま　けふこえて\nあさきゆめみし　ゑひもせす";
+static const char *text = "いろはにほへと　ちりぬるを\nわかよたれそ　つねならむ\nうゐのおくやま　けふこえて\nあさきゆめみし　ゑひもせす";
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -32,7 +32,7 @@ static int *CodepointRemoveDuplicates(int *codepoints, int codepointCount, int *
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ int main(void)
     bool showFontAtlas = false;
 
     int codepointSize = 0;
-    char *ptr = text;
+    const char *ptr = text;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ int main(void)
             else
             {
                 // Draw provided text with loaded font, containing all required codepoint glyphs
-                DrawTextEx(font, text, (Vector2) { 160, 110 }, 48, 5, BLACK);
+                DrawTextEx(font, text, Vector2{ 160, 110 }, 48, 5, BLACK);
             }
 
             DrawText("Press SPACE to toggle font atlas view!", 10, GetScreenHeight() - 30, 20, GRAY);

@@ -35,7 +35,7 @@ typedef struct {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -50,8 +50,8 @@ int main(void)
     bool recPickedUp = false;
 
     // Circle
-    Circle circ = { screenWidth/2, screenHeight/2 + 100, 50.0f };
-    Circle circArea = { screenWidth/2 - 195, screenHeight/2 - 55, 55.0f };
+    Circle circ = { { screenWidth/2.0f, screenHeight/2.0f + 100 }, 50.0f };
+    Circle circArea = { { screenWidth/2.0f - 195, screenHeight/2.0f - 55 }, 55.0f };
     bool circPickedUp = false;
 
     // Triangle
@@ -78,17 +78,17 @@ int main(void)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, rec))
         {
             recPickedUp = true;
-            mouseOffset = (Vector2) { rec.x - mousePosition.x, rec.y - mousePosition.y };
+            mouseOffset = Vector2{ rec.x - mousePosition.x, rec.y - mousePosition.y };
         }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointCircle(mousePosition, circ.center, circ.radius))
         {
             circPickedUp = true;
-            mouseOffset = (Vector2) { circ.center.x - mousePosition.x, circ.center.y - mousePosition.y };
+            mouseOffset = Vector2{ circ.center.x - mousePosition.x, circ.center.y - mousePosition.y };
         }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointTriangle(mousePosition, tri.v1, tri.v2, tri.v3))
         {
             triPickedUp = true;
-            mouseOffset = (Vector2) { tri.v1.x - mousePosition.x, tri.v1.y - mousePosition.y }; // Uses v1 as the pivot point
+            mouseOffset = Vector2{ tri.v1.x - mousePosition.x, tri.v1.y - mousePosition.y }; // Uses v1 as the pivot point
         }
 
         // Detect object drop input
@@ -111,7 +111,7 @@ int main(void)
             circ.center.x = mousePosition.x + mouseOffset.x;
             circ.center.y = mousePosition.y + mouseOffset.y;
         }
-        if (Vector2Distance(circ.center, circArea.center) < circArea.radius - circ.radius) circPlaced = true;
+        if (glm::distance(circ.center, circArea.center) < circArea.radius - circ.radius) circPlaced = true;
 
         // Triangle update
         if (triPickedUp)
@@ -119,9 +119,9 @@ int main(void)
             Vector2 v2Offset = { tri.v2.x - tri.v1.x, tri.v2.y - tri.v1.y };
             Vector2 v3Offset = { tri.v3.x - tri.v1.x, tri.v3.y - tri.v1.y };
 
-            tri.v1 = (Vector2) { mousePosition.x + mouseOffset.x, mousePosition.y + mouseOffset.y };
-            tri.v2 = (Vector2) { tri.v1.x + v2Offset.x, tri.v1.y + v2Offset.y };
-            tri.v3 = (Vector2) { tri.v1.x + v3Offset.x, tri.v1.y + v3Offset.y };
+            tri.v1 = Vector2{ mousePosition.x + mouseOffset.x, mousePosition.y + mouseOffset.y };
+            tri.v2 = Vector2{ tri.v1.x + v2Offset.x, tri.v1.y + v2Offset.y };
+            tri.v3 = Vector2{ tri.v1.x + v3Offset.x, tri.v1.y + v3Offset.y };
         }
         if (
             CheckCollisionPointTriangle(tri.v1, triArea.v1, triArea.v2, triArea.v3) &&

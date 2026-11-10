@@ -34,7 +34,7 @@ typedef struct {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ int main(void)
         //----------------------------------------------------------------------------------
         float theta = angle*DEG2RAD;
         int maxBranches = (int)(powf(2, floorf(treeDepth)));
-        Branch branches[1030] = { 0 };
+        Branch branches[1030] = {};
         int count = 0;
 
         Vector2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
@@ -104,17 +104,17 @@ int main(void)
                 }
             }
 
-            DrawLine(580, 0, 580, GetScreenHeight(), (Color){ 218, 218, 218, 255 });
-            DrawRectangle(580, 0, GetScreenWidth(), GetScreenHeight(), (Color){ 232, 232, 232, 255 });
+            DrawLine(580, 0, 580, GetScreenHeight(), Color{ 218, 218, 218, 255 });
+            DrawRectangle(580, 0, GetScreenWidth(), GetScreenHeight(), Color{ 232, 232, 232, 255 });
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            GuiSliderBar((Rectangle){ 640, 40, 120, 20}, "Angle", TextFormat("%.0f", angle), &angle, 0, 180);
-            GuiSliderBar((Rectangle){ 640, 70, 120, 20 }, "Length", TextFormat("%.0f", length), &length, 12.0f, 240.0f);
-            GuiSliderBar((Rectangle){ 640, 100, 120, 20}, "Decay", TextFormat("%.2f", branchDecay), &branchDecay, 0.1f, 0.78f);
-            GuiSliderBar((Rectangle){ 640, 130, 120, 20 }, "Depth", TextFormat("%.0f", treeDepth), &treeDepth, 1.0f, 10.0f);
-            GuiSliderBar((Rectangle){ 640, 160, 120, 20}, "Thick", TextFormat("%.0f", thick), &thick, 1, 8);
-            GuiCheckBox((Rectangle){ 640, 190, 20, 20 }, "Bezier", &bezier);
+            GuiSliderBar(Rectangle{ 640, 40, 120, 20}, "Angle", TextFormat("%.0f", angle), &angle, 0, 180);
+            GuiSliderBar(Rectangle{ 640, 70, 120, 20 }, "Length", TextFormat("%.0f", length), &length, 12.0f, 240.0f);
+            GuiSliderBar(Rectangle{ 640, 100, 120, 20}, "Decay", TextFormat("%.2f", branchDecay), &branchDecay, 0.1f, 0.78f);
+            GuiSliderBar(Rectangle{ 640, 130, 120, 20 }, "Depth", TextFormat("%.0f", treeDepth), &treeDepth, 1.0f, 10.0f);
+            GuiSliderBar(Rectangle{ 640, 160, 120, 20}, "Thick", TextFormat("%.0f", thick), &thick, 1, 8);
+            GuiCheckBox(Rectangle{ 640, 190, 20, 20 }, "Bezier", &bezier);
             //------------------------------------------------------------------------------
 
             DrawFPS(10, 10);

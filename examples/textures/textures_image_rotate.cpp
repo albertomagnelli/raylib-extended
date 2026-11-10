@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ int main(void)
     ImageRotate(&image90, 90);
     ImageRotate(&imageNeg90, -90);
 
-    Texture2D textures[NUM_TEXTURES] = { 0 };
+    Texture2D textures[NUM_TEXTURES] = {};
 
     textures[0] = LoadTextureFromImage(image45);
     textures[1] = LoadTextureFromImage(image90);

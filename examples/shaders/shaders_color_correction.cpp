@@ -34,7 +34,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -109,8 +109,8 @@ int main(void)
 
             EndShaderMode();
 
-            DrawLine(580, 0, 580, GetScreenHeight(), (Color){ 218, 218, 218, 255 });
-            DrawRectangle(580, 0, GetScreenWidth(), GetScreenHeight(), (Color){ 232, 232, 232, 255 });
+            DrawLine(580, 0, 580, GetScreenHeight(), Color{ 218, 218, 218, 255 });
+            DrawRectangle(580, 0, GetScreenWidth(), GetScreenHeight(), Color{ 232, 232, 232, 255 });
 
             // Draw UI info text
             DrawText("Color Correction", 585, 40, 20, GRAY);
@@ -121,13 +121,13 @@ int main(void)
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            GuiToggleGroup((Rectangle){ 645, 70, 20, 20 }, "1;2;3;4", &imageIndex);
+            GuiToggleGroup(Rectangle{ 645, 70, 20, 20 }, "1;2;3;4", &imageIndex);
 
-            GuiSliderBar((Rectangle){ 645, 100, 120, 20 }, "Contrast", TextFormat("%.0f", contrast), &contrast, -100.0f, 100.0f);
-            GuiSliderBar((Rectangle){ 645, 130, 120, 20 }, "Saturation", TextFormat("%.0f", saturation), &saturation, -100.0f, 100.0f);
-            GuiSliderBar((Rectangle){ 645, 160, 120, 20 }, "Brightness", TextFormat("%.0f", brightness), &brightness, -100.0f, 100.0f);
+            GuiSliderBar(Rectangle{ 645, 100, 120, 20 }, "Contrast", TextFormat("%.0f", contrast), &contrast, -100.0f, 100.0f);
+            GuiSliderBar(Rectangle{ 645, 130, 120, 20 }, "Saturation", TextFormat("%.0f", saturation), &saturation, -100.0f, 100.0f);
+            GuiSliderBar(Rectangle{ 645, 160, 120, 20 }, "Brightness", TextFormat("%.0f", brightness), &brightness, -100.0f, 100.0f);
 
-            resetButtonClicked = GuiButton((Rectangle){ 645, 190, 40, 20 }, "Reset");
+            resetButtonClicked = GuiButton(Rectangle{ 645, 190, 40, 20 }, "Reset");
             //------------------------------------------------------------------------------
 
             DrawFPS(710, 10);

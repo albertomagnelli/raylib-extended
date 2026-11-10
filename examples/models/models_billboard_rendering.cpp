@@ -19,7 +19,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -29,10 +29,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - billboard rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 5.0f, 4.0f, 5.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 2.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 5.0f, 4.0f, 5.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 2.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -51,7 +51,7 @@ int main(void)
 
     // Rotate around origin
     // Here we choose to rotate around the image center
-    Vector2 origin = Vector2Scale(size, 0.5f);
+    Vector2 origin = ((size) * (0.5f));
 
     // Distance is needed for the correct billboard draw order
     // Larger distance (further away from the camera) should be drawn prior to smaller distance
@@ -70,8 +70,8 @@ int main(void)
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         rotation += 0.4f;
-        distanceStatic = Vector3Distance(camera.position, billPositionStatic);
-        distanceRotating = Vector3Distance(camera.position, billPositionRotating);
+        distanceStatic = glm::distance(camera.position, billPositionStatic);
+        distanceRotating = glm::distance(camera.position, billPositionRotating);
         //----------------------------------------------------------------------------------
 
         // Draw

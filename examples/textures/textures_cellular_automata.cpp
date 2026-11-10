@@ -60,7 +60,7 @@ void ComputeLine(Image *image, int line, int rule)
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -165,7 +165,7 @@ int main(void)
 
                 // If the mouse is on this preset, highlight it
                 if (mouseInCell == i + 8)
-                    DrawRectangleLinesEx((Rectangle) { 2 + (presetsSizeX + 2.0f)*(i/2),
+                    DrawRectangleLinesEx(Rectangle{ 2 + (presetsSizeX + 2.0f)*(i/2),
                                                        (presetsSizeY + 2.0f)*(i%2),
                                                        presetsSizeX + 4.0f, presetsSizeY + 4.0f }, 3, RED);
             }
@@ -188,7 +188,7 @@ int main(void)
 
                 // If the mouse is on this rule bit, highlight it
                 if (mouseInCell == i)
-                    DrawRectangleLinesEx((Rectangle){ drawRuleStartX - drawRuleGroupSpacing*i + drawRuleSpacing - 2.0f,
+                    DrawRectangleLinesEx(Rectangle{ drawRuleStartX - drawRuleGroupSpacing*i + drawRuleSpacing - 2.0f,
                                                       drawRuleStartY + drawRuleSpacing - 2.0f,
                                                       drawRuleSize + 4.0f, drawRuleSize + 4.0f }, 3, RED);
             }

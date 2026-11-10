@@ -60,7 +60,7 @@ static void DrawDisplaySegment(Vector2 center, int length, int thick, bool verti
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -75,20 +75,9 @@ int main(void)
     // Initialize clock
     // NOTE: Includes visual info for anlaog clock
     Clock clock = {
-        .second.angle = 45,
-        .second.length = 140,
-        .second.thickness = 3,
-        .second.color = MAROON,
-
-        .minute.angle = 10,
-        .minute.length = 130,
-        .minute.thickness = 7,
-        .minute.color = DARKGRAY,
-
-        .hour.angle = 0,
-        .hour.length = 100,
-        .hour.thickness = 7,
-        .hour.color = BLACK,
+        { 0, 45, 140, 3, MAROON },      // second
+        { 0, 10, 130, 7, DARKGRAY },    // minute
+        { 0, 0, 100, 7, BLACK }         // hour
     };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -116,10 +105,10 @@ int main(void)
             ClearBackground(RAYWHITE);
 
             // Draw clock in selected mode
-            if (clockMode == CLOCK_ANALOG) DrawClockAnalog(clock, (Vector2){ 400, 240 });
+            if (clockMode == CLOCK_ANALOG) DrawClockAnalog(clock, Vector2{ 400, 240 });
             else if (clockMode == CLOCK_DIGITAL)
             {
-                DrawClockDigital(clock, (Vector2){ 30, 60 });
+                DrawClockDigital(clock, Vector2{ 30, 60 });
 
                 // Draw clock using default raylib font
                 // Get pointer to formated clock time string
@@ -183,9 +172,9 @@ static void DrawClockAnalog(Clock clock, Vector2 position)
         // Draw clock minutes/seconds lines
         for (int i = 0; i < 60; i++)
         {
-            DrawLineEx((Vector2){ position.x + (clock.second.length + ((i%5)? 10 : 6))*cosf((6.0f*i - 90.0f)*DEG2RAD),
+            DrawLineEx(Vector2{ position.x + (clock.second.length + ((i%5)? 10 : 6))*cosf((6.0f*i - 90.0f)*DEG2RAD),
                 position.y + (clock.second.length + ((i%5)? 10 : 6))*sinf((6.0f*i - 90.0f)*DEG2RAD) },
-                (Vector2){ position.x + (clock.second.length + 20)*cosf((6.0f*i - 90.0f)*DEG2RAD),
+                Vector2{ position.x + (clock.second.length + 20)*cosf((6.0f*i - 90.0f)*DEG2RAD),
                 position.y + (clock.second.length + 20)*sinf((6.0f*i - 90.0f)*DEG2RAD) }, ((i%5)? 1.0f : 3.0f), DARKGRAY);
 
             // Draw seconds numbers
@@ -194,16 +183,16 @@ static void DrawClockAnalog(Clock clock, Vector2 position)
         }
 
         // Draw hand seconds
-        DrawRectanglePro((Rectangle){ position.x, position.y, (float)clock.second.length, (float)clock.second.thickness },
-            (Vector2){ 0.0f, clock.second.thickness/2.0f }, clock.second.angle, clock.second.color);
+        DrawRectanglePro(Rectangle{ position.x, position.y, (float)clock.second.length, (float)clock.second.thickness },
+            Vector2{ 0.0f, clock.second.thickness/2.0f }, clock.second.angle, clock.second.color);
 
         // Draw hand minutes
-        DrawRectanglePro((Rectangle){ position.x, position.y, (float)clock.minute.length, (float)clock.minute.thickness },
-            (Vector2){ 0.0f, clock.minute.thickness/2.0f }, clock.minute.angle, clock.minute.color);
+        DrawRectanglePro(Rectangle{ position.x, position.y, (float)clock.minute.length, (float)clock.minute.thickness },
+            Vector2{ 0.0f, clock.minute.thickness/2.0f }, clock.minute.angle, clock.minute.color);
 
         // Draw hand hours
-        DrawRectanglePro((Rectangle){ position.x, position.y, (float)clock.hour.length, (float)clock.hour.thickness },
-            (Vector2){ 0.0f, clock.hour.thickness/2.0f }, clock.hour.angle, clock.hour.color);
+        DrawRectanglePro(Rectangle{ position.x, position.y, (float)clock.hour.length, (float)clock.hour.thickness },
+            Vector2{ 0.0f, clock.hour.thickness/2.0f }, clock.hour.angle, clock.hour.color);
 }
 
 // Draw digital clock
@@ -211,20 +200,20 @@ static void DrawClockAnalog(Clock clock, Vector2 position)
 static void DrawClockDigital(Clock clock, Vector2 position)
 {
     // Draw clock using custom 7-segments display (made of shapes)
-    DrawDisplayValue((Vector2){ position.x, position.y }, clock.hour.value/10, RED, Fade(LIGHTGRAY, 0.3f));
-    DrawDisplayValue((Vector2){ position.x + 120, position.y }, clock.hour.value%10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(Vector2{ position.x, position.y }, clock.hour.value/10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(Vector2{ position.x + 120, position.y }, clock.hour.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
     DrawCircle((int)position.x + 240, (int)position.y + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
     DrawCircle((int)position.x + 240, (int)position.y + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
-    DrawDisplayValue((Vector2){ position.x + 260, position.y }, clock.minute.value/10, RED, Fade(LIGHTGRAY, 0.3f));
-    DrawDisplayValue((Vector2){ position.x + 380, position.y }, clock.minute.value%10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(Vector2{ position.x + 260, position.y }, clock.minute.value/10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(Vector2{ position.x + 380, position.y }, clock.minute.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
     DrawCircle((int)position.x + 500, (int)position.y + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
     DrawCircle((int)position.x + 500, (int)position.y + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
-    DrawDisplayValue((Vector2){ position.x + 520, position.y }, clock.second.value/10, RED, Fade(LIGHTGRAY, 0.3f));
-    DrawDisplayValue((Vector2){ position.x + 640, position.y }, clock.second.value%10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(Vector2{ position.x + 520, position.y }, clock.second.value/10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(Vector2{ position.x + 640, position.y }, clock.second.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 }
 
 // Draw 7-segment display with value
@@ -256,25 +245,25 @@ static void Draw7SDisplay(Vector2 position, char segments, Color colorOn, Color 
     float offsetYAdjust = segmentThick*0.3f; // HACK: Adjust gap space between segment limits
 
     // Segment A
-    DrawDisplaySegment((Vector2){ position.x + segmentThick + segmentLen/2.0f, position.y + segmentThick },
+    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen/2.0f, position.y + segmentThick },
         segmentLen, segmentThick, false, (segments & 0b00000001)? colorOn : colorOff);
     // Segment B
-    DrawDisplaySegment((Vector2){ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
+    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00000010)? colorOn : colorOff);
     // Segment C
-    DrawDisplaySegment((Vector2){ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
+    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00000100)? colorOn : colorOff);
     // Segment D
-    DrawDisplaySegment((Vector2){ position.x + segmentThick + segmentLen/2.0f, position.y + 5*segmentThick + 2*segmentLen - 4*offsetYAdjust },
+    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen/2.0f, position.y + 5*segmentThick + 2*segmentLen - 4*offsetYAdjust },
         segmentLen, segmentThick, false, (segments & 0b00001000)? colorOn : colorOff);
     // Segment E
-    DrawDisplaySegment((Vector2){ position.x + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
+    DrawDisplaySegment(Vector2{ position.x + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00010000)? colorOn : colorOff);
     // Segment F
-    DrawDisplaySegment((Vector2){ position.x + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
+    DrawDisplaySegment(Vector2{ position.x + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00100000)? colorOn : colorOff);
     // Segment G
-    DrawDisplaySegment((Vector2){ position.x + segmentThick + segmentLen/2.0f, position.y + 3*segmentThick + segmentLen - 2*offsetYAdjust },
+    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen/2.0f, position.y + 3*segmentThick + segmentLen - 2*offsetYAdjust },
         segmentLen, segmentThick, false, (segments & 0b01000000)? colorOn : colorOff);
 }
 
@@ -292,12 +281,12 @@ static void DrawDisplaySegment(Vector2 center, int length, int thick, bool verti
             \2___________________________4/
         */
         Vector2 segmentPointsH[6] = {
-            (Vector2){ center.x - length/2.0f - thick/2.0f,  center.y },  // Point 1
-            (Vector2){ center.x - length/2.0f,  center.y + thick/2.0f },  // Point 2
-            (Vector2){ center.x - length/2.0f, center.y - thick/2.0f },   // Point 3
-            (Vector2){ center.x + length/2.0f,  center.y + thick/2.0f },  // Point 4
-            (Vector2){ center.x + length/2.0f,  center.y - thick/2.0f },  // Point 5
-            (Vector2){ center.x + length/2.0f + thick/2.0f,  center.y },  // Point 6
+            Vector2{ center.x - length/2.0f - thick/2.0f,  center.y },  // Point 1
+            Vector2{ center.x - length/2.0f,  center.y + thick/2.0f },  // Point 2
+            Vector2{ center.x - length/2.0f, center.y - thick/2.0f },   // Point 3
+            Vector2{ center.x + length/2.0f,  center.y + thick/2.0f },  // Point 4
+            Vector2{ center.x + length/2.0f,  center.y - thick/2.0f },  // Point 5
+            Vector2{ center.x + length/2.0f + thick/2.0f,  center.y },  // Point 6
         };
 
         DrawTriangleStrip(segmentPointsH, 6, color);
@@ -306,12 +295,12 @@ static void DrawDisplaySegment(Vector2 center, int length, int thick, bool verti
     {
         // Vertical segment points
         Vector2 segmentPointsV[6] = {
-            (Vector2){ center.x,  center.y - length/2.0f - thick/2.0f },  // Point 1
-            (Vector2){ center.x - thick/2.0f,  center.y - length/2.0f },  // Point 2
-            (Vector2){ center.x + thick/2.0f, center.y - length/2.0f },   // Point 3
-            (Vector2){ center.x - thick/2.0f,  center.y + length/2.0f },  // Point 4
-            (Vector2){ center.x + thick/2.0f,  center.y + length/2.0f },  // Point 5
-            (Vector2){ center.x,  center.y + (float)length/2 + thick/2.0f },     // Point 6
+            Vector2{ center.x,  center.y - length/2.0f - thick/2.0f },  // Point 1
+            Vector2{ center.x - thick/2.0f,  center.y - length/2.0f },  // Point 2
+            Vector2{ center.x + thick/2.0f, center.y - length/2.0f },   // Point 3
+            Vector2{ center.x - thick/2.0f,  center.y + length/2.0f },  // Point 4
+            Vector2{ center.x + thick/2.0f,  center.y + length/2.0f },  // Point 5
+            Vector2{ center.x,  center.y + (float)length/2 + thick/2.0f },     // Point 6
         };
 
         DrawTriangleStrip(segmentPointsV, 6, color);

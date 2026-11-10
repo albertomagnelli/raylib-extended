@@ -42,7 +42,7 @@ typedef struct EnvElement {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -52,8 +52,8 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [core] example - automation events");
 
     // Define player
-    Player player = { 0 };
-    player.position = (Vector2){ 400, 280 };
+    Player player = {};
+    player.position = Vector2{ 400, 280 };
     player.speed = 0;
     player.canJump = false;
 
@@ -67,9 +67,9 @@ int main(void)
     };
 
     // Define camera
-    Camera2D camera = { 0 };
+    Camera2D camera = {};
     camera.target = player.position;
-    camera.offset = (Vector2){ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    camera.offset = Vector2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -112,12 +112,12 @@ int main(void)
                 playFrameCounter = 0;
                 currentPlayFrame = 0;
 
-                player.position = (Vector2){ 400, 280 };
+                player.position = Vector2{ 400, 280 };
                 player.speed = 0;
                 player.canJump = false;
 
                 camera.target = player.position;
-                camera.offset = (Vector2){ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+                camera.offset = Vector2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
                 camera.rotation = 0.0f;
                 camera.zoom = 1.0f;
             }
@@ -164,12 +164,12 @@ int main(void)
         if (IsKeyPressed(KEY_R))
         {
             // Reset game state
-            player.position = (Vector2){ 400, 280 };
+            player.position = Vector2{ 400, 280 };
             player.speed = 0;
             player.canJump = false;
 
             camera.target = player.position;
-            camera.offset = (Vector2){ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+            camera.offset = Vector2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
             camera.rotation = 0.0f;
             camera.zoom = 1.0f;
         }
@@ -205,7 +205,7 @@ int main(void)
         // Update camera
         //----------------------------------------------------------------------------------
         camera.target = player.position;
-        camera.offset = (Vector2){ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+        camera.offset = Vector2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
         float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
 
         // WARNING: On event replay, mouse-wheel internal value is set
@@ -222,8 +222,8 @@ int main(void)
             maxY = fmaxf(element->rect.y + element->rect.height, maxY);
         }
 
-        Vector2 max = GetWorldToScreen2D((Vector2){ maxX, maxY }, camera);
-        Vector2 min = GetWorldToScreen2D((Vector2){ minX, minY }, camera);
+        Vector2 max = GetWorldToScreen2D(Vector2{ maxX, maxY }, camera);
+        Vector2 min = GetWorldToScreen2D(Vector2{ minX, minY }, camera);
 
         if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - (float)screenWidth/2);
         if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - (float)screenHeight/2);
@@ -262,12 +262,12 @@ int main(void)
                 playFrameCounter = 0;
                 currentPlayFrame = 0;
 
-                player.position = (Vector2){ 400, 280 };
+                player.position = Vector2{ 400, 280 };
                 player.speed = 0;
                 player.canJump = false;
 
                 camera.target = player.position;
-                camera.offset = (Vector2){ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+                camera.offset = Vector2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
                 camera.rotation = 0.0f;
                 camera.zoom = 1.0f;
             }
@@ -292,7 +292,7 @@ int main(void)
                 }
 
                 // Draw player rectangle
-                DrawRectangleRec((Rectangle){ player.position.x - 20, player.position.y - 40, 40, 40 }, RED);
+                DrawRectangleRec(Rectangle{ player.position.x - 20, player.position.y - 40, 40, 40 }, RED);
 
             EndMode2D();
 
@@ -321,7 +321,7 @@ int main(void)
             {
                 DrawRectangle(10, 160, 290, 30, Fade(LIME, 0.3f));
                 DrawRectangleLines(10, 160, 290, 30, Fade(DARKGREEN, 0.8f));
-                DrawTriangle((Vector2){ 20, 155 + 10 }, (Vector2){ 20, 155 + 30 }, (Vector2){ 40, 155 + 20 }, DARKGREEN);
+                DrawTriangle(Vector2{ 20, 155 + 10 }, Vector2{ 20, 155 + 30 }, Vector2{ 40, 155 + 20 }, DARKGREEN);
 
                 if (((frameCounter/15)%2) == 1) DrawText(TextFormat("PLAYING RECORDED EVENTS... [%i]", currentPlayFrame), 50, 170, 10, DARKGREEN);
             }

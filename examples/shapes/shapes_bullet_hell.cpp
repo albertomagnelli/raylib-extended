@@ -35,7 +35,7 @@ typedef struct Bullet {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ int main(void)
             {
                 if (bulletCount < MAX_BULLETS)
                 {
-                    bullets[bulletCount].position = (Vector2){(float) screenWidth/2, (float) screenHeight/2};
+                    bullets[bulletCount].position = Vector2{(float) screenWidth/2, (float) screenHeight/2};
                     bullets[bulletCount].disabled = false;
                     bullets[bulletCount].color = bulletColor[row%2];
 
@@ -112,7 +112,7 @@ int main(void)
                     // only need to calculate it at the spawning time
                     // 0 degrees = right, 90 degrees = down, 180 degrees = left and 270 degrees = up, basically clockwise
                     // Case you want it to be anti-clockwise, add "* -1" at the y acceleration
-                    bullets[bulletCount].acceleration = (Vector2){
+                    bullets[bulletCount].acceleration = Vector2{
                         bulletSpeed*cosf(bulletDirection*DEG2RAD),
                         bulletSpeed*sinf(bulletDirection*DEG2RAD)
                     };
@@ -174,10 +174,10 @@ int main(void)
 
             // Draw magic circle
             magicCircleRotation++;
-            DrawRectanglePro((Rectangle){ (float)screenWidth/2, (float)screenHeight/2, 120, 120 },
-                (Vector2){ 60.0f, 60.0f }, magicCircleRotation, PURPLE);
-            DrawRectanglePro((Rectangle){ (float)screenWidth/2, (float)screenHeight/2, 120, 120 },
-                (Vector2){ 60.0f, 60.0f }, magicCircleRotation + 45, PURPLE);
+            DrawRectanglePro(Rectangle{ (float)screenWidth/2, (float)screenHeight/2, 120, 120 },
+                Vector2{ 60.0f, 60.0f }, magicCircleRotation, PURPLE);
+            DrawRectanglePro(Rectangle{ (float)screenWidth/2, (float)screenHeight/2, 120, 120 },
+                Vector2{ 60.0f, 60.0f }, magicCircleRotation + 45, PURPLE);
             DrawCircleLines(screenWidth/2, screenHeight/2, 70, BLACK);
             DrawCircleLines(screenWidth/2, screenHeight/2, 50, BLACK);
             DrawCircleLines(screenWidth/2, screenHeight/2, 30, BLACK);
@@ -213,7 +213,7 @@ int main(void)
             }
 
             // Draw UI
-            DrawRectangle(10, 10, 280, 150, (Color){0,0, 0, 200 });
+            DrawRectangle(10, 10, 280, 150, Color{0,0, 0, 200 });
             DrawText("Controls:", 20, 20, 10, LIGHTGRAY);
             DrawText("- Right/Left or A/D: Change rows number", 40, 40, 10, LIGHTGRAY);
             DrawText("- Up/Down or W/S: Change bullet speed", 40, 60, 10, LIGHTGRAY);
@@ -222,11 +222,11 @@ int main(void)
             DrawText("- Enter: Switch draw method (Performance)", 40, 120, 10, LIGHTGRAY);
             DrawText("- C: Clear bullets", 40, 140, 10, LIGHTGRAY);
 
-            DrawRectangle(610, 10, 170, 30, (Color){0,0, 0, 200 });
+            DrawRectangle(610, 10, 170, 30, Color{0,0, 0, 200 });
             if (drawInPerformanceMode) DrawText("Draw method: DrawTexture(*)", 620, 20, 10, GREEN);
             else DrawText("Draw method: DrawCircle(*)", 620, 20, 10, RED);
 
-            DrawRectangle(135, 410, 530, 30, (Color){0,0, 0, 200 });
+            DrawRectangle(135, 410, 530, 30, Color{0,0, 0, 200 });
             DrawText(TextFormat("[ FPS: %d, Bullets: %d, Rows: %d, Bullet speed: %.2f, Angle increment per frame: %d, Cooldown: %.0f ]",
                     GetFPS(), bulletCount - bulletDisabledCount, bulletRows, bulletSpeed,  angleIncrement, spawnCooldown),
                 155, 420, 10, GREEN);

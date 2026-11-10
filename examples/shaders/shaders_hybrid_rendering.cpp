@@ -48,7 +48,7 @@ static void UnloadRenderTextureDepthTex(RenderTexture2D target);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ int main(void)
     Shader shdrRaster = LoadShader(0, TextFormat("resources/shaders/glsl%i/hybrid_raster.fs", GLSL_VERSION));
 
     // Declare Struct used to store camera locs
-    RayLocs marchLocs = { 0 };
+    RayLocs marchLocs = {};
 
     // Fill the struct with shader locs
     marchLocs.camPos = GetShaderLocation(shdrRaymarch, "camPos");
@@ -73,7 +73,7 @@ int main(void)
     marchLocs.screenCenter = GetShaderLocation(shdrRaymarch, "screenCenter");
 
     // Transfer screenCenter position to shader. Which is used to calculate ray direction
-    Vector2 screenCenter = {.x = screenWidth/2.0f, .y = screenHeight/2.0f};
+    Vector2 screenCenter = { screenWidth/2.0f, screenHeight/2.0f };
     SetShaderValue(shdrRaymarch, marchLocs.screenCenter , &screenCenter , SHADER_UNIFORM_VEC2);
 
     // Use Customized function to create writable depth texture buffer
@@ -81,9 +81,9 @@ int main(void)
 
     // Define the camera to look into our 3d world
     Camera camera = {
-        .position = (Vector3){ 0.5f, 1.0f, 1.5f },    // Camera position
-        .target = (Vector3){ 0.0f, 0.5f, 0.0f },      // Camera looking at point
-        .up = (Vector3){ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
+        .position = Vector3{ 0.5f, 1.0f, 1.5f },    // Camera position
+        .target = Vector3{ 0.0f, 0.5f, 0.0f },      // Camera looking at point
+        .up = Vector3{ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
         .fovy = 45.0f,                                // Camera field-of-view Y
         .projection = CAMERA_PERSPECTIVE              // Camera projection type
     };
@@ -105,7 +105,7 @@ int main(void)
         SetShaderValue(shdrRaymarch, marchLocs.camPos, &(camera.position), RL_SHADER_UNIFORM_VEC3);
 
         // Update Camera Looking Vector. Vector length determines FOV
-        Vector3 camDir = Vector3Scale( Vector3Normalize( Vector3Subtract(camera.target, camera.position)) , camDist);
+        Vector3 camDir = ((glm::normalize(((camera.target) - (camera.position)))) * (camDist));
         SetShaderValue(shdrRaymarch, marchLocs.camDir, &(camDir), RL_SHADER_UNIFORM_VEC3);
         //----------------------------------------------------------------------------------
 
@@ -118,16 +118,16 @@ int main(void)
             // Raymarch Scene
             rlEnableDepthTest(); // Manually enable Depth Test to handle multiple rendering methods
             BeginShaderMode(shdrRaymarch);
-                DrawRectangleRec((Rectangle){ 0,0, (float)screenWidth, (float)screenHeight },WHITE);
+                DrawRectangleRec(Rectangle{ 0,0, (float)screenWidth, (float)screenHeight },WHITE);
             EndShaderMode();
 
             // Rasterize Scene
             BeginMode3D(camera);
                 BeginShaderMode(shdrRaster);
-                    DrawCubeWiresV((Vector3){ 0.0f, 0.5f, 1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, RED);
-                    DrawCubeV((Vector3){ 0.0f, 0.5f, 1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, PURPLE);
-                    DrawCubeWiresV((Vector3){ 0.0f, 0.5f, -1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, DARKGREEN);
-                    DrawCubeV((Vector3) { 0.0f, 0.5f, -1.0f }, (Vector3){ 1.0f, 1.0f, 1.0f }, YELLOW);
+                    DrawCubeWiresV(Vector3{ 0.0f, 0.5f, 1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, RED);
+                    DrawCubeV(Vector3{ 0.0f, 0.5f, 1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, PURPLE);
+                    DrawCubeWiresV(Vector3{ 0.0f, 0.5f, -1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, DARKGREEN);
+                    DrawCubeV(Vector3{ 0.0f, 0.5f, -1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, YELLOW);
                     DrawGrid(10, 1.0f);
                 EndShaderMode();
             EndMode3D();
@@ -137,7 +137,7 @@ int main(void)
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(target.texture, (Rectangle) { 0, 0, (float)screenWidth, (float)-screenHeight }, (Vector2) { 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight }, Vector2{ 0, 0 }, WHITE);
 
             DrawFPS(10, 10);
         EndDrawing();
@@ -162,7 +162,7 @@ int main(void)
 // Load custom render texture, create a writable depth texture buffer
 static RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
 {
-    RenderTexture2D target = { 0 };
+    RenderTexture2D target = {};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
 

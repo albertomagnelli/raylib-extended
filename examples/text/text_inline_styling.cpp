@@ -28,7 +28,7 @@ static Vector2 MeasureTextStyled(Font font, const char *text, float fontSize, fl
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - inline styling");
 
-    Vector2 textSize = { 0 };   // Measure text box for provided font and text
+    Vector2 textSize = {};   // Measure text box for provided font and text
     Color colRandom = RED;      // Random color used on text
     int frameCounter = 0;       // Used to generate a new random color every certain frames
 
@@ -75,20 +75,20 @@ int main(void)
             // Example: [bAA00AAFF][cFF0000FF]red text on gray background[r] normal text
 
             DrawTextStyled(GetFontDefault(), "This changes the [cFF0000FF]foreground color[r] of provided text!!!",
-                (Vector2){ 100, 80 }, 20.0f, 2.0f, BLACK);
+                Vector2{ 100, 80 }, 20.0f, 2.0f, BLACK);
 
             DrawTextStyled(GetFontDefault(), "This changes the [bFF00FFFF]background color[r] of provided text!!!",
-                (Vector2){ 100, 120 }, 20.0f, 2.0f, BLACK);
+                Vector2{ 100, 120 }, 20.0f, 2.0f, BLACK);
 
             DrawTextStyled(GetFontDefault(), "This changes the [c00ff00ff][bff0000ff]foreground and background colors[r]!!!",
-                (Vector2){ 100, 160 }, 20.0f, 2.0f, BLACK);
+                Vector2{ 100, 160 }, 20.0f, 2.0f, BLACK);
 
             DrawTextStyled(GetFontDefault(), "This changes the [c00ff00ff]alpha[r] relative [cffffffff][b000000ff]from source[r] [cff000088]color[r]!!!",
-                (Vector2){ 100, 200 }, 20.0f, 2.0f, (Color){ 0, 0, 0, 100 });
+                Vector2{ 100, 200 }, 20.0f, 2.0f, Color{ 0, 0, 0, 100 });
 
             // Get pointer to formated text
             const char *text = TextFormat("Let's be [c%02x%02x%02xFF]CREATIVE[r] !!!", colRandom.r, colRandom.g, colRandom.b);
-            DrawTextStyled(GetFontDefault(), text, (Vector2){ 100, 240 }, 40.0f, 2.0f, BLACK);
+            DrawTextStyled(GetFontDefault(), text, Vector2{ 100, 240 }, 40.0f, 2.0f, BLACK);
 
             textSize = MeasureTextStyled(GetFontDefault(), text, 40.0f, 2.0f);
             DrawRectangleLines(100, 240, (int)textSize.x, (int)textSize.y, GREEN);
@@ -159,7 +159,7 @@ static void DrawTextStyled(Font font, const char *text, Vector2 position, float 
                     i += 2;     // Skip "[c" or "[b" to start parsing color
 
                     // Parse following color
-                    char colHexText[9] = { 0 };
+                    char colHexText[9] = {};
                     const char *textPtr = &text[i]; // Color should start here, let's see...
 
                     int colHexCount = 0;
@@ -200,11 +200,11 @@ static void DrawTextStyled(Font font, const char *text, Vector2 position, float 
             else increaseX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
 
             // Draw background rectangle color (if required)
-            if (colBack.a > 0) DrawRectangleRec((Rectangle) { position.x + textOffsetX, position.y + textOffsetY - backRecPadding, increaseX, fontSize + 2*backRecPadding }, colBack);
+            if (colBack.a > 0) DrawRectangleRec(Rectangle{ position.x + textOffsetX, position.y + textOffsetY - backRecPadding, increaseX, fontSize + 2*backRecPadding }, colBack);
 
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                DrawTextCodepoint(font, codepoint, (Vector2){ position.x + textOffsetX, position.y + textOffsetY }, fontSize, colFront);
+                DrawTextCodepoint(font, codepoint, Vector2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, colFront);
             }
 
             textOffsetX += increaseX;
@@ -219,7 +219,7 @@ static void DrawTextStyled(Font font, const char *text, Vector2 position, float 
 // WARNING: Not considering line breaks
 static Vector2 MeasureTextStyled(Font font, const char *text, float fontSize, float spacing)
 {
-    Vector2 textSize = { 0 };
+    Vector2 textSize = {};
 
     if ((font.texture.id == 0) || (text == NULL) || (text[0] == '\0')) return textSize; // Security check
 

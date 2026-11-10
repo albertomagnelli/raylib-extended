@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //---------------------------------------------------------
@@ -79,9 +79,9 @@ int main(void)
             // NOTE 1: We set the origin of the texture to the center of the render texture
             // NOTE 2: We flip vertically the texture setting negative source rectangle height
             DrawTexturePro(target.texture,
-                (Rectangle){ 0, 0, (float)target.texture.width, (float)-target.texture.height },
-                (Rectangle){ screenWidth/2.0f, screenHeight/2.0f, (float)target.texture.width, (float)target.texture.height },
-                (Vector2){ target.texture.width/2.0f, target.texture.height/2.0f }, rotation, WHITE);
+                Rectangle{ 0, 0, (float)target.texture.width, (float)-target.texture.height },
+                Rectangle{ screenWidth/2.0f, screenHeight/2.0f, (float)target.texture.width, (float)target.texture.height },
+                Vector2{ target.texture.width/2.0f, target.texture.height/2.0f }, rotation, WHITE);
 
             DrawText("DRAWING BOUNCING BALL INSIDE RENDER TEXTURE!", 10, screenHeight - 40, 20, BLACK);
 

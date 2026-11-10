@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,15 +37,15 @@ int main(void)
     Rectangle player1 = { 200, 200, PLAYER_SIZE, PLAYER_SIZE };
     Rectangle player2 = { 250, 200, PLAYER_SIZE, PLAYER_SIZE };
 
-    Camera2D camera1 = { 0 };
-    camera1.target = (Vector2){ player1.x, player1.y };
-    camera1.offset = (Vector2){ 200.0f, 200.0f };
+    Camera2D camera1 = {};
+    camera1.target = Vector2{ player1.x, player1.y };
+    camera1.offset = Vector2{ 200.0f, 200.0f };
     camera1.rotation = 0.0f;
     camera1.zoom = 1.0f;
 
-    Camera2D camera2 = { 0 };
-    camera2.target = (Vector2){ player2.x, player2.y };
-    camera2.offset = (Vector2){ 200.0f, 200.0f };
+    Camera2D camera2 = {};
+    camera2.target = Vector2{ player2.x, player2.y };
+    camera2.offset = Vector2{ 200.0f, 200.0f };
     camera2.rotation = 0.0f;
     camera2.zoom = 1.0f;
 
@@ -73,8 +73,8 @@ int main(void)
         if (IsKeyDown(KEY_RIGHT)) player2.x += 3.0f;
         else if (IsKeyDown(KEY_LEFT)) player2.x -= 3.0f;
 
-        camera1.target = (Vector2){ player1.x, player1.y };
-        camera2.target = (Vector2){ player2.x, player2.y };
+        camera1.target = Vector2{ player1.x, player1.y };
+        camera2.target = Vector2{ player2.x, player2.y };
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -87,12 +87,12 @@ int main(void)
                 // Draw full scene with first camera
                 for (int i = 0; i < screenWidth/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV((Vector2){(float)PLAYER_SIZE*i, 0}, (Vector2){ (float)PLAYER_SIZE*i, (float)screenHeight}, LIGHTGRAY);
+                    DrawLineV(Vector2{(float)PLAYER_SIZE*i, 0}, Vector2{ (float)PLAYER_SIZE*i, (float)screenHeight}, LIGHTGRAY);
                 }
 
                 for (int i = 0; i < screenHeight/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV((Vector2){0, (float)PLAYER_SIZE*i}, (Vector2){ (float)screenWidth, (float)PLAYER_SIZE*i}, LIGHTGRAY);
+                    DrawLineV(Vector2{0, (float)PLAYER_SIZE*i}, Vector2{ (float)screenWidth, (float)PLAYER_SIZE*i}, LIGHTGRAY);
                 }
 
                 for (int i = 0; i < screenWidth/PLAYER_SIZE; i++)
@@ -120,12 +120,12 @@ int main(void)
                 // Draw full scene with second camera
                 for (int i = 0; i < screenWidth/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV((Vector2){ (float)PLAYER_SIZE*i, 0}, (Vector2){ (float)PLAYER_SIZE*i, (float)screenHeight}, LIGHTGRAY);
+                    DrawLineV(Vector2{ (float)PLAYER_SIZE*i, 0}, Vector2{ (float)PLAYER_SIZE*i, (float)screenHeight}, LIGHTGRAY);
                 }
 
                 for (int i = 0; i < screenHeight/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV((Vector2){0, (float)PLAYER_SIZE*i}, (Vector2){ (float)screenWidth, (float)PLAYER_SIZE*i}, LIGHTGRAY);
+                    DrawLineV(Vector2{0, (float)PLAYER_SIZE*i}, Vector2{ (float)screenWidth, (float)PLAYER_SIZE*i}, LIGHTGRAY);
                 }
 
                 for (int i = 0; i < screenWidth/PLAYER_SIZE; i++)
@@ -150,8 +150,8 @@ int main(void)
         BeginDrawing();
             ClearBackground(BLACK);
 
-            DrawTextureRec(screenCamera1.texture, splitScreenRect, (Vector2){ 0, 0 }, WHITE);
-            DrawTextureRec(screenCamera2.texture, splitScreenRect, (Vector2){ screenWidth/2.0f, 0 }, WHITE);
+            DrawTextureRec(screenCamera1.texture, splitScreenRect, Vector2{ 0, 0 }, WHITE);
+            DrawTextureRec(screenCamera2.texture, splitScreenRect, Vector2{ screenWidth/2.0f, 0 }, WHITE);
 
             DrawRectangle(GetScreenWidth()/2 - 2, 0, 4, GetScreenHeight(), LIGHTGRAY);
         EndDrawing();

@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ int main(void)
     float resolution[2] = { (float)screenWidth, (float)screenHeight };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    Vector2 circlePos = (Vector2){40.0f, (float)screenHeight*0.5f};
+    Vector2 circlePos = Vector2{40.0f, (float)screenHeight*0.5f};
     float circleSpeed = 1.0f;
 
     // RenderTexture to apply the postprocessing later
@@ -95,8 +95,8 @@ int main(void)
                 // Draw the scene texture (that we rendered earlier) to the screen
                 // The shader will process every pixel of this texture
                 DrawTextureRec(target.texture,
-                    (Rectangle){ 0, 0, (float)target.texture.width, (float)-target.texture.height },
-                    (Vector2){ 0, 0 }, WHITE);
+                    Rectangle{ 0, 0, (float)target.texture.width, (float)-target.texture.height },
+                    Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             DrawRectangle(0, 0, screenWidth, 40, BLACK);

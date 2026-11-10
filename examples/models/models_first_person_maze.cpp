@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -30,16 +30,16 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - first person maze");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 0.2f, 0.4f, 0.2f };    // Camera position
-    camera.target = (Vector3){ 0.185f, 0.4f, 0.0f };    // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 0.2f, 0.4f, 0.2f };    // Camera position
+    camera.target = Vector3{ 0.185f, 0.4f, 0.0f };    // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     Image imMap = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
     Texture2D cubicmap = LoadTextureFromImage(imMap);       // Convert image to texture to display (VRAM)
-    Mesh mesh = GenMeshCubicmap(imMap, (Vector3){ 1.0f, 1.0f, 1.0f });
+    Mesh mesh = GenMeshCubicmap(imMap, Vector3{ 1.0f, 1.0f, 1.0f });
     Model model = LoadModelFromMesh(mesh);
 
     // NOTE: By default each cube is mapped to one part of texture atlas
@@ -92,7 +92,7 @@ int main(void)
                     if (((x >= 0) && (x < cubicmap.width)) &&
                         (mapPixels[y*cubicmap.width + x].r == 255) &&
                         (CheckCollisionCircleRec(playerPos, playerRadius,
-                        (Rectangle){ mapPosition.x - 0.5f + x*1.0f, mapPosition.z - 0.5f + y*1.0f, 1.0f, 1.0f })))
+                        Rectangle{ mapPosition.x - 0.5f + x*1.0f, mapPosition.z - 0.5f + y*1.0f, 1.0f, 1.0f })))
                     {
                         // Collision detected, reset camera position
                         camera.position = oldCamPos;
@@ -112,7 +112,7 @@ int main(void)
                 DrawModel(model, mapPosition, 1.0f, WHITE);                     // Draw maze map
             EndMode3D();
 
-            DrawTextureEx(cubicmap, (Vector2){ GetScreenWidth() - cubicmap.width*4.0f - 20, 20.0f }, 0.0f, 4.0f, WHITE);
+            DrawTextureEx(cubicmap, Vector2{ GetScreenWidth() - cubicmap.width*4.0f - 20, 20.0f }, 0.0f, 4.0f, WHITE);
             DrawRectangleLines(GetScreenWidth() - cubicmap.width*4 - 20, 20, cubicmap.width*4, cubicmap.height*4, GREEN);
 
             // Draw player position radar

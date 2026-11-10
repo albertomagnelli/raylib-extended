@@ -30,7 +30,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -280,7 +280,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
         // Draw all of the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right Corner, [7] Lower Left Corner
         for (int k = 0; k < 4; ++k)
         {
-            Color color = { 0 };
+            Color color = {};
             float radius = 0.0f;
             if (k == 0) color = left,  radius = radiusLeft;     // [1] Upper Left Corner
             if (k == 1) color = right, radius = radiusRight;    // [3] Upper Right Corner

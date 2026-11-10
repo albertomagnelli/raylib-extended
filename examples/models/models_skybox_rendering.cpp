@@ -16,7 +16,9 @@
 #include "raylib.h"
 
 #include "rlgl.h"
-#include "raymath.h"      // Required for: MatrixPerspective(), MatrixLookAt()
+#include "raymath.h"
+
+#include <initializer_list>      // Required for: MatrixPerspective(), MatrixLookAt()
 
 #if defined(PLATFORM_DESKTOP)
     #define GLSL_VERSION            330
@@ -33,7 +35,7 @@ static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int s
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -43,10 +45,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - skybox rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 1.0f, 1.0f, 1.0f };    // Camera position
-    camera.target = (Vector3){ 4.0f, 1.0f, 4.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 1.0f, 1.0f, 1.0f };    // Camera position
+    camera.target = Vector3{ 4.0f, 1.0f, 4.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -63,17 +65,17 @@ int main(void)
     skybox.materials[0].shader = LoadShader(TextFormat("resources/shaders/glsl%i/skybox.vs", GLSL_VERSION),
                                             TextFormat("resources/shaders/glsl%i/skybox.fs", GLSL_VERSION));
 
-    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "environmentMap"), (int[1]){ MATERIAL_MAP_CUBEMAP }, SHADER_UNIFORM_INT);
-    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "doGamma"), (int[1]){ useHDR? 1 : 0 }, SHADER_UNIFORM_INT);
-    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "vflipped"), (int[1]){ useHDR? 1 : 0 }, SHADER_UNIFORM_INT);
+    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "environmentMap"), std::initializer_list<int>{ MATERIAL_MAP_CUBEMAP }.begin(), SHADER_UNIFORM_INT);
+    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "doGamma"), std::initializer_list<int>{ useHDR? 1 : 0 }.begin(), SHADER_UNIFORM_INT);
+    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "vflipped"), std::initializer_list<int>{ useHDR? 1 : 0 }.begin(), SHADER_UNIFORM_INT);
 
     // Load cubemap shader and setup required shader locations
     Shader shdrCubemap = LoadShader(TextFormat("resources/shaders/glsl%i/cubemap.vs", GLSL_VERSION),
                                     TextFormat("resources/shaders/glsl%i/cubemap.fs", GLSL_VERSION));
 
-    SetShaderValue(shdrCubemap, GetShaderLocation(shdrCubemap, "equirectangularMap"), (int[1]){ 0 }, SHADER_UNIFORM_INT);
+    SetShaderValue(shdrCubemap, GetShaderLocation(shdrCubemap, "equirectangularMap"), std::initializer_list<int>{ 0 }.begin(), SHADER_UNIFORM_INT);
 
-    char skyboxFileName[256] = { 0 };
+    char skyboxFileName[256] = {};
 
     if (useHDR)
     {
@@ -159,7 +161,7 @@ int main(void)
                 // We are inside the cube, we need to disable backface culling!
                 rlDisableBackfaceCulling();
                 rlDisableDepthMask();
-                    DrawModel(skybox, (Vector3){0, 0, 0}, 1.0f, WHITE);
+                    DrawModel(skybox, Vector3{0, 0, 0}, 1.0f, WHITE);
                 rlEnableBackfaceCulling();
                 rlEnableDepthMask();
 
@@ -195,7 +197,7 @@ int main(void)
 // Generate cubemap texture from HDR texture
 static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int size, int format)
 {
-    TextureCubemap cubemap = { 0 };
+    TextureCubemap cubemap = {};
 
     rlDisableBackfaceCulling();     // Disable backface culling to render inside the cube
 
@@ -218,17 +220,17 @@ static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int s
     rlEnableShader(shader.id);
 
     // Define projection matrix and send it to shader
-    Matrix matFboProjection = MatrixPerspective(90.0*DEG2RAD, 1.0, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+    Matrix matFboProjection = glm::perspective(90.0f*DEG2RAD, 1.0f, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     rlSetUniformMatrix(shader.locs[SHADER_LOC_MATRIX_PROJECTION], matFboProjection);
 
     // Define view matrix for every side of the cubemap
     Matrix fboViews[6] = {
-        MatrixLookAt((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){  1.0f,  0.0f,  0.0f }, (Vector3){ 0.0f, -1.0f,  0.0f }),
-        MatrixLookAt((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){ -1.0f,  0.0f,  0.0f }, (Vector3){ 0.0f, -1.0f,  0.0f }),
-        MatrixLookAt((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){  0.0f,  1.0f,  0.0f }, (Vector3){ 0.0f,  0.0f,  1.0f }),
-        MatrixLookAt((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){  0.0f, -1.0f,  0.0f }, (Vector3){ 0.0f,  0.0f, -1.0f }),
-        MatrixLookAt((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){  0.0f,  0.0f,  1.0f }, (Vector3){ 0.0f, -1.0f,  0.0f }),
-        MatrixLookAt((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector3){  0.0f,  0.0f, -1.0f }, (Vector3){ 0.0f, -1.0f,  0.0f })
+        glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{  1.0f,  0.0f,  0.0f }, Vector3{ 0.0f, -1.0f,  0.0f }),
+        glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{ -1.0f,  0.0f,  0.0f }, Vector3{ 0.0f, -1.0f,  0.0f }),
+        glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{  0.0f,  1.0f,  0.0f }, Vector3{ 0.0f,  0.0f,  1.0f }),
+        glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{  0.0f, -1.0f,  0.0f }, Vector3{ 0.0f,  0.0f, -1.0f }),
+        glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{  0.0f,  0.0f,  1.0f }, Vector3{ 0.0f, -1.0f,  0.0f }),
+        glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{  0.0f,  0.0f, -1.0f }, Vector3{ 0.0f, -1.0f,  0.0f })
     };
 
     rlViewport(0, 0, size, size);   // Set viewport to current fbo dimensions

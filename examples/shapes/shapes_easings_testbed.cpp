@@ -79,41 +79,41 @@ static float NoEase(float t, float b, float c, float d);
 //------------------------------------------------------------------------------------
 // Easing functions reference data
 static const EasingFuncs easings[] = {
-    [EASE_LINEAR_NONE] = { .name = "EaseLinearNone", .func = EaseLinearNone },
-    [EASE_LINEAR_IN] = { .name = "EaseLinearIn", .func = EaseLinearIn },
-    [EASE_LINEAR_OUT] = { .name = "EaseLinearOut", .func = EaseLinearOut },
-    [EASE_LINEAR_IN_OUT] = { .name = "EaseLinearInOut", .func = EaseLinearInOut },
-    [EASE_SINE_IN] = { .name = "EaseSineIn", .func = EaseSineIn },
-    [EASE_SINE_OUT] = { .name = "EaseSineOut", .func = EaseSineOut },
-    [EASE_SINE_IN_OUT] = { .name = "EaseSineInOut", .func = EaseSineInOut },
-    [EASE_CIRC_IN] = { .name = "EaseCircIn", .func = EaseCircIn },
-    [EASE_CIRC_OUT] = { .name = "EaseCircOut", .func = EaseCircOut },
-    [EASE_CIRC_IN_OUT] = { .name = "EaseCircInOut", .func = EaseCircInOut },
-    [EASE_CUBIC_IN] = { .name = "EaseCubicIn", .func = EaseCubicIn },
-    [EASE_CUBIC_OUT] = { .name = "EaseCubicOut", .func = EaseCubicOut },
-    [EASE_CUBIC_IN_OUT] = { .name = "EaseCubicInOut", .func = EaseCubicInOut },
-    [EASE_QUAD_IN] = { .name = "EaseQuadIn", .func = EaseQuadIn },
-    [EASE_QUAD_OUT] = { .name = "EaseQuadOut", .func = EaseQuadOut },
-    [EASE_QUAD_IN_OUT] = { .name = "EaseQuadInOut", .func = EaseQuadInOut },
-    [EASE_EXPO_IN] = { .name = "EaseExpoIn", .func = EaseExpoIn },
-    [EASE_EXPO_OUT] = { .name = "EaseExpoOut", .func = EaseExpoOut },
-    [EASE_EXPO_IN_OUT] = { .name = "EaseExpoInOut", .func = EaseExpoInOut },
-    [EASE_BACK_IN] = { .name = "EaseBackIn", .func = EaseBackIn },
-    [EASE_BACK_OUT] = { .name = "EaseBackOut", .func = EaseBackOut },
-    [EASE_BACK_IN_OUT] = { .name = "EaseBackInOut", .func = EaseBackInOut },
-    [EASE_BOUNCE_OUT] = { .name = "EaseBounceOut", .func = EaseBounceOut },
-    [EASE_BOUNCE_IN] = { .name = "EaseBounceIn", .func = EaseBounceIn },
-    [EASE_BOUNCE_IN_OUT] = { .name = "EaseBounceInOut", .func = EaseBounceInOut },
-    [EASE_ELASTIC_IN] = { .name = "EaseElasticIn", .func = EaseElasticIn },
-    [EASE_ELASTIC_OUT] = { .name = "EaseElasticOut", .func = EaseElasticOut },
-    [EASE_ELASTIC_IN_OUT] = { .name = "EaseElasticInOut", .func = EaseElasticInOut },
-    [EASING_NONE] = { .name = "None", .func = NoEase },
+    { "EaseLinearNone", EaseLinearNone },
+    { "EaseLinearIn", EaseLinearIn },
+    { "EaseLinearOut", EaseLinearOut },
+    { "EaseLinearInOut", EaseLinearInOut },
+    { "EaseSineIn", EaseSineIn },
+    { "EaseSineOut", EaseSineOut },
+    { "EaseSineInOut", EaseSineInOut },
+    { "EaseCircIn", EaseCircIn },
+    { "EaseCircOut", EaseCircOut },
+    { "EaseCircInOut", EaseCircInOut },
+    { "EaseCubicIn", EaseCubicIn },
+    { "EaseCubicOut", EaseCubicOut },
+    { "EaseCubicInOut", EaseCubicInOut },
+    { "EaseQuadIn", EaseQuadIn },
+    { "EaseQuadOut", EaseQuadOut },
+    { "EaseQuadInOut", EaseQuadInOut },
+    { "EaseExpoIn", EaseExpoIn },
+    { "EaseExpoOut", EaseExpoOut },
+    { "EaseExpoInOut", EaseExpoInOut },
+    { "EaseBackIn", EaseBackIn },
+    { "EaseBackOut", EaseBackOut },
+    { "EaseBackInOut", EaseBackInOut },
+    { "EaseBounceOut", EaseBounceOut },
+    { "EaseBounceIn", EaseBounceIn },
+    { "EaseBounceInOut", EaseBounceInOut },
+    { "EaseElasticIn", EaseElasticIn },
+    { "EaseElasticOut", EaseElasticOut },
+    { "EaseElasticInOut", EaseElasticInOut },
+    { "None", NoEase },
 };
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------

@@ -17,6 +17,8 @@
 
 #include "raylib.h"
 
+#include <initializer_list>
+
 #include "rlgl.h"
 
 #if defined(PLATFORM_DESKTOP)
@@ -37,7 +39,7 @@ static void UnloadRenderTextureDepthTex(RenderTexture2D target);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -47,10 +49,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - depth rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 4.0f, 1.0f, 5.0f };
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera camera = {};
+    camera.position = Vector3{ 4.0f, 1.0f, 5.0f };
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -61,7 +63,7 @@ int main(void)
     Shader depthShader = LoadShader(0, TextFormat("resources/shaders/glsl%i/depth_render.fs", GLSL_VERSION));
     int depthLoc = GetShaderLocation(depthShader, "depthTexture");
     int flipTextureLoc = GetShaderLocation(depthShader, "flipY");
-    SetShaderValue(depthShader, flipTextureLoc, (int[]){ 1 }, SHADER_UNIFORM_INT); // Flip Y texture
+    SetShaderValue(depthShader, flipTextureLoc, std::initializer_list<int>{ 1 }.begin(), SHADER_UNIFORM_INT); // Flip Y texture
 
     // Load scene models
     Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
@@ -86,8 +88,8 @@ int main(void)
             ClearBackground(WHITE);
 
             BeginMode3D(camera);
-                DrawModel(cube, (Vector3){ 0.0f, 0.0f, 0.0f }, 3.0f, YELLOW);
-                DrawModel(floor, (Vector3){ 10.0f, 0.0f, 2.0f }, 2.0f, RED);
+                DrawModel(cube, Vector3{ 0.0f, 0.0f, 0.0f }, 3.0f, YELLOW);
+                DrawModel(floor, Vector3{ 10.0f, 0.0f, 2.0f }, 2.0f, RED);
             EndMode3D();
         EndTextureMode();
 
@@ -131,7 +133,7 @@ int main(void)
 // Load custom render texture, create a writable depth texture buffer
 static RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
 {
-    RenderTexture2D target = { 0 };
+    RenderTexture2D target = {};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
 

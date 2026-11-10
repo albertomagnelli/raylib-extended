@@ -26,7 +26,7 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -37,18 +37,18 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - framebuffer rendering");
 
     // Camera to look at the 3D world
-    Camera3D subjectCamera = { 0 };
-    subjectCamera.position = (Vector3){ 5.0f, 5.0f, 5.0f };
-    subjectCamera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    subjectCamera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera3D subjectCamera = {};
+    subjectCamera.position = Vector3{ 5.0f, 5.0f, 5.0f };
+    subjectCamera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    subjectCamera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     subjectCamera.fovy = 45.0f;
     subjectCamera.projection = CAMERA_PERSPECTIVE;
 
     // Camera to observe the subject camera and 3D world
-    Camera3D observerCamera = { 0 };
-    observerCamera.position = (Vector3){ 10.0f, 10.0f, 10.0f };
-    observerCamera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
-    observerCamera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
+    Camera3D observerCamera = {};
+    observerCamera.position = Vector3{ 10.0f, 10.0f, 10.0f };
+    observerCamera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+    observerCamera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     observerCamera.fovy = 45.0f;
     observerCamera.projection = CAMERA_PERSPECTIVE;
 
@@ -79,7 +79,7 @@ int main(void)
         UpdateCamera(&observerCamera, CAMERA_FREE);
         UpdateCamera(&subjectCamera, CAMERA_ORBITAL);
 
-        if (IsKeyPressed(KEY_R)) observerCamera.target = (Vector3){ 0.0f, 0.0f, 0.0f };
+        if (IsKeyPressed(KEY_R)) observerCamera.target = Vector3{ 0.0f, 0.0f, 0.0f };
 
         // Build LHS observer view texture
         BeginTextureMode(observerTarget);
@@ -89,8 +89,8 @@ int main(void)
             BeginMode3D(observerCamera);
 
                 DrawGrid(10, 1.0f);
-                DrawCube((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
-                DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
+                DrawCube(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
+                DrawCubeWires(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
                 DrawCameraPrism(subjectCamera, textureAspectRatio, GREEN);
 
             EndMode3D();
@@ -109,8 +109,8 @@ int main(void)
 
             BeginMode3D(subjectCamera);
 
-                DrawCube((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
-                DrawCubeWires((Vector3){ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
+                DrawCube(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
+                DrawCubeWires(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
                 DrawGrid(10, 1.0f);
 
             EndMode3D();
@@ -128,13 +128,13 @@ int main(void)
             ClearBackground(BLACK);
 
             // Draw observer texture LHS
-            DrawTexturePro(observerTarget.texture, observerSource, observerDest, (Vector2){0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(observerTarget.texture, observerSource, observerDest, Vector2{0.0f, 0.0f }, 0.0f, WHITE);
 
             // Draw subject texture RHS
-            DrawTexturePro(subjectTarget.texture, subjectSource, subjectDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(subjectTarget.texture, subjectSource, subjectDest, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
 
             // Draw the small crop overlay on top
-            DrawTexturePro(subjectTarget.texture, cropSource, cropDest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(subjectTarget.texture, cropSource, cropDest, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
             DrawRectangleLinesEx(cropDest, 2, BLACK);
 
             // Draw split screen divider line
@@ -160,7 +160,7 @@ int main(void)
 //----------------------------------------------------------------------------------
 static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
 {
-    float length = Vector3Distance(camera.position, camera.target);
+    float length = glm::distance(camera.position, camera.target);
     // Define the 4 corners of the camera's prism plane sliced at the target in Normalized Device Coordinates
     Vector3 planeNDC[4] = {
         { -1.0f, -1.0f, 1.0f }, // Bottom Left
@@ -171,11 +171,11 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
 
     // Build the matrices
     Matrix view = GetCameraMatrix(camera);
-    Matrix proj = MatrixPerspective(camera.fovy * DEG2RAD, aspect, 0.05f, length);
+    Matrix proj = glm::perspective(camera.fovy * DEG2RAD, aspect, 0.05f, length);
     // Combine view and projection so we can reverse the full camera transform
-    Matrix viewProj = MatrixMultiply(view, proj);
+    Matrix viewProj = ((proj) * (view));
     // Invert the view-projection matrix to unproject points from NDC space back into world space
-    Matrix inverseViewProj = MatrixInvert(viewProj);
+    Matrix inverseViewProj = glm::inverse(viewProj);
 
     // Transform the 4 plane corners from NDC into world space
     Vector3 corners[4];
@@ -187,12 +187,12 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
 
         // Multiply NDC position by the inverse view-projection matrix
         // This produces a homogeneous (x, y, z, w) position in world space
-        float vx = inverseViewProj.m0*x + inverseViewProj.m4*y + inverseViewProj.m8*z + inverseViewProj.m12;
-        float vy = inverseViewProj.m1*x + inverseViewProj.m5*y + inverseViewProj.m9*z + inverseViewProj.m13;
-        float vz = inverseViewProj.m2*x + inverseViewProj.m6*y + inverseViewProj.m10*z + inverseViewProj.m14;
-        float vw = inverseViewProj.m3*x + inverseViewProj.m7*y + inverseViewProj.m11*z + inverseViewProj.m15;
+        float vx = inverseViewProj[0][0]*x + inverseViewProj[1][0]*y + inverseViewProj[2][0]*z + inverseViewProj[3][0];
+        float vy = inverseViewProj[0][1]*x + inverseViewProj[1][1]*y + inverseViewProj[2][1]*z + inverseViewProj[3][1];
+        float vz = inverseViewProj[0][2]*x + inverseViewProj[1][2]*y + inverseViewProj[2][2]*z + inverseViewProj[3][2];
+        float vw = inverseViewProj[0][3]*x + inverseViewProj[1][3]*y + inverseViewProj[2][3]*z + inverseViewProj[3][3];
 
-        corners[i] = (Vector3){ vx/vw, vy/vw, vz/vw };
+        corners[i] = Vector3{ vx/vw, vy/vw, vz/vw };
     }
 
     // Draw the far plane sliced at the target

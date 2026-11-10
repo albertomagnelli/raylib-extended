@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ int main(void)
             if (leftButtonDown)
             {
                 // Increase the hue value by the distance our cursor has moved since the last frame (divided by 3)
-                lineHue += Vector2Distance(mousePositionPrevious, GetMousePosition())/3.0f;
+                lineHue += glm::distance(mousePositionPrevious, GetMousePosition())/3.0f;
 
                 // While the hue is >=360, subtract it to bring it down into the range 0-360
                 // This is more visually accurate than resetting to zero
@@ -114,10 +114,10 @@ int main(void)
         BeginDrawing();
 
             // Draw the render texture to the screen, flipped vertically to make it appear top-side up
-            DrawTextureRec(canvas.texture, (Rectangle){ 0.0f, 0.0f, (float)canvas.texture.width,(float)-canvas.texture.height }, Vector2Zero(), WHITE);
+            DrawTextureRec(canvas.texture, Rectangle{ 0.0f, 0.0f, (float)canvas.texture.width,(float)-canvas.texture.height }, Vector2{}, WHITE);
 
             // Draw the preview circle
-            if (!leftButtonDown) DrawCircleLinesV(GetMousePosition(), lineThickness/2.0f, (Color){ 127, 127, 127, 127 });
+            if (!leftButtonDown) DrawCircleLinesV(GetMousePosition(), lineThickness/2.0f, Color{ 127, 127, 127, 127 });
 
             // Draw the hint text
             if (startText) DrawText("try clicking and dragging!", 275, 215, 20, LIGHTGRAY);

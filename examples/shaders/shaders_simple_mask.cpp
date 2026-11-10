@@ -34,7 +34,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -44,10 +44,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - simple mask");
 
     // Define the camera to look into our 3d world
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 0.0f, 1.0f, 2.0f };    // Camera position
-    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    Camera camera = {};
+    camera.position = Vector3{ 0.0f, 1.0f, 2.0f };    // Camera position
+    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -85,7 +85,7 @@ int main(void)
     model2.materials[0].shader = shader;
 
     int framesCounter = 0;
-    Vector3 rotation = { 0 };           // Model rotation angles
+    Vector3 rotation = {};           // Model rotation angles
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
     SetTargetFPS(60);                   // Set  to run at 60 frames-per-second
@@ -118,9 +118,9 @@ int main(void)
 
             BeginMode3D(camera);
 
-                DrawModel(model1, (Vector3){ 0.5f, 0.0f, 0.0f }, 1, WHITE);
-                DrawModelEx(model2, (Vector3){ -0.5f, 0.0f, 0.0f }, (Vector3){ 1.0f, 1.0f, 0.0f }, 50, (Vector3){ 1.0f, 1.0f, 1.0f }, WHITE);
-                DrawModel(model3,(Vector3){ 0.0f, 0.0f, -1.5f }, 1, WHITE);
+                DrawModel(model1, Vector3{ 0.5f, 0.0f, 0.0f }, 1, WHITE);
+                DrawModelEx(model2, Vector3{ -0.5f, 0.0f, 0.0f }, Vector3{ 1.0f, 1.0f, 0.0f }, 50, Vector3{ 1.0f, 1.0f, 1.0f }, WHITE);
+                DrawModel(model3,Vector3{ 0.0f, 0.0f, -1.5f }, 1, WHITE);
                 DrawGrid(10, 1.0f);        // Draw a grid
 
             EndMode3D();

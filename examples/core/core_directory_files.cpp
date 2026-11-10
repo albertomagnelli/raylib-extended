@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ int main(void)
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - directory files");
 
-    char directory[MAX_FILEPATH_SIZE] = { 0 };
+    char directory[MAX_FILEPATH_SIZE] = {};
     strcpy(directory, GetWorkingDirectory());
 
     // Load file-paths on current working directory
@@ -86,15 +86,15 @@ int main(void)
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            btnBackPressed = GuiButton((Rectangle){ 40.0f, 10.0f, 48, 28 }, "<");
+            btnBackPressed = GuiButton(Rectangle{ 40.0f, 10.0f, 48, 28 }, "<");
 
             GuiSetStyle(DEFAULT, TEXT_SIZE, GuiGetFont().baseSize*2);
-            GuiLabel((Rectangle){ 40 + 48 + 10, 10, 700, 28 }, directory);
+            GuiLabel(Rectangle{ 40 + 48 + 10, 10, 700, 28 }, directory);
             GuiSetStyle(DEFAULT, TEXT_SIZE, GuiGetFont().baseSize);
 
             GuiSetStyle(LISTVIEW, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
             GuiSetStyle(LISTVIEW, TEXT_PADDING, 40);
-            GuiListViewEx((Rectangle){ 0, 50, (float)GetScreenWidth(), (float)GetScreenHeight() - 50 },
+            GuiListViewEx(Rectangle{ 0, 50, (float)GetScreenWidth(), (float)GetScreenHeight() - 50 },
                 files.paths, files.count, &listScrollIndex, &listItemActive, &listItemFocused);
 
         EndDrawing();

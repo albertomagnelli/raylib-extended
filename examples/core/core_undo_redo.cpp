@@ -51,7 +51,7 @@ static void DrawUndoBuffer(Vector2 position, int firstUndoIndex, int lastUndoInd
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ int main(void)
     Vector2 undoInfoPos = { 110, 400 };
 
     // Init current player state and undo/redo recorded states array
-    PlayerState player = { 0 };
+    PlayerState player = {};
     player.cell = (Point){ 10, 10 };
     player.color = RED;
 
@@ -187,7 +187,7 @@ int main(void)
             if (lastUndoIndex > firstUndoIndex)
             {
                 for (int i = firstUndoIndex; i < currentUndoIndex; i++)
-                    DrawRectangleRec((Rectangle){gridPosition.x + states[i].cell.x*GRID_CELL_SIZE, gridPosition.y + states[i].cell.y*GRID_CELL_SIZE,
+                    DrawRectangleRec(Rectangle{gridPosition.x + states[i].cell.x*GRID_CELL_SIZE, gridPosition.y + states[i].cell.y*GRID_CELL_SIZE,
                         GRID_CELL_SIZE, GRID_CELL_SIZE }, LIGHTGRAY);
             }
             else if (firstUndoIndex > lastUndoIndex)
@@ -195,7 +195,7 @@ int main(void)
                 if ((currentUndoIndex < MAX_UNDO_STATES) && (currentUndoIndex > lastUndoIndex))
                 {
                     for (int i = firstUndoIndex; i < currentUndoIndex; i++)
-                        DrawRectangleRec((Rectangle) { gridPosition.x + states[i].cell.x*GRID_CELL_SIZE, gridPosition.y + states[i].cell.y*GRID_CELL_SIZE,
+                        DrawRectangleRec(Rectangle{ gridPosition.x + states[i].cell.x*GRID_CELL_SIZE, gridPosition.y + states[i].cell.y*GRID_CELL_SIZE,
                             GRID_CELL_SIZE, GRID_CELL_SIZE }, LIGHTGRAY);
                 }
                 else

@@ -28,7 +28,7 @@ static void AddCodepointRange(Font *font, const char *fontPath, int start, int s
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -134,19 +134,19 @@ int main(void)
             DrawText("ADD CODEPOINTS: [1][2][3][4]", 20, 20, 20, MAROON);
 
             // Render test strings in different languages
-            DrawTextEx(font, "> English: Hello World!", (Vector2){ 50, 70 }, 32, 1, DARKGRAY); // English
-            DrawTextEx(font, "> Español: Hola mundo!", (Vector2){ 50, 120 }, 32, 1, DARKGRAY); // Spanish
-            DrawTextEx(font, "> Ελληνικά: Γειά σου κόσμε!", (Vector2){ 50, 170 }, 32, 1, DARKGRAY); // Greek
-            DrawTextEx(font, "> Русский: Привет мир!", (Vector2){ 50, 220 }, 32, 0, DARKGRAY); // Russian
-            DrawTextEx(font, "> 中文: 你好世界!", (Vector2){ 50, 270 }, 32, 1, DARKGRAY);        // Chinese
-            DrawTextEx(font, "> 日本語: こんにちは世界!", (Vector2){ 50, 320 }, 32, 1, DARKGRAY); // Japanese
-            //DrawTextEx(font, "देवनागरी: होला मुंडो!", (Vector2){ 50, 350 }, 32, 1, DARKGRAY);     // Devanagari (glyphs not available in font)
+            DrawTextEx(font, "> English: Hello World!", Vector2{ 50, 70 }, 32, 1, DARKGRAY); // English
+            DrawTextEx(font, "> Español: Hola mundo!", Vector2{ 50, 120 }, 32, 1, DARKGRAY); // Spanish
+            DrawTextEx(font, "> Ελληνικά: Γειά σου κόσμε!", Vector2{ 50, 170 }, 32, 1, DARKGRAY); // Greek
+            DrawTextEx(font, "> Русский: Привет мир!", Vector2{ 50, 220 }, 32, 0, DARKGRAY); // Russian
+            DrawTextEx(font, "> 中文: 你好世界!", Vector2{ 50, 270 }, 32, 1, DARKGRAY);        // Chinese
+            DrawTextEx(font, "> 日本語: こんにちは世界!", Vector2{ 50, 320 }, 32, 1, DARKGRAY); // Japanese
+            //DrawTextEx(font, "देवनागरी: होला मुंडो!", Vector2{ 50, 350 }, 32, 1, DARKGRAY);     // Devanagari (glyphs not available in font)
 
             // Draw font texture scaled to screen
             float atlasScale = 380.0f/font.texture.width;
-            DrawRectangleRec((Rectangle) { 400.0f, 16.0f, font.texture.width* atlasScale, font.texture.height* atlasScale }, BLACK);
-            DrawTexturePro(font.texture, (Rectangle){ 0, 0, (float)font.texture.width, (float)font.texture.height },
-                (Rectangle){ 400.0f, 16.0f, font.texture.width*atlasScale, font.texture.height*atlasScale }, (Vector2){ 0, 0 }, 0.0f, WHITE);
+            DrawRectangleRec(Rectangle{ 400.0f, 16.0f, font.texture.width* atlasScale, font.texture.height* atlasScale }, BLACK);
+            DrawTexturePro(font.texture, Rectangle{ 0, 0, (float)font.texture.width, (float)font.texture.height },
+                Rectangle{ 400.0f, 16.0f, font.texture.width*atlasScale, font.texture.height*atlasScale }, Vector2{ 0, 0 }, 0.0f, WHITE);
             DrawRectangleLines(400, 16, 380, 380, RED);
 
             DrawText(TextFormat("ATLAS SIZE: %ix%i px (x%02.2f)", font.texture.width, font.texture.height, atlasScale), 20, 380, 20, BLUE);

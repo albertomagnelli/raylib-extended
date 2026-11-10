@@ -54,7 +54,7 @@ static void DrawADSRGraph(Envelope *env, Rectangle bounds);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ int main(void)
 
     // Set the number of samples the stream will keep in memory at a time to BUFFER_SIZE
     SetAudioStreamBufferSizeDefault(BUFFER_SIZE);
-    float buffer[BUFFER_SIZE] = { 0 };
+    float buffer[BUFFER_SIZE] = {};
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
     AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
@@ -126,14 +126,14 @@ int main(void)
 
             ClearBackground(RAYWHITE);
 
-            GuiSliderBar((Rectangle){ 100, 60, 400, 30 }, "Attack (s)", TextFormat("%2.2fs", env.attackTime), &env.attackTime, 0.1f, 3.0f);
-            GuiSliderBar((Rectangle){ 100, 100, 400, 30 }, "Decay (s)", TextFormat("%2.2fs", env.decayTime), &env.decayTime, 0.1f, 3.0f);
-            GuiSliderBar((Rectangle){ 100, 140, 400, 30 }, "Sustain", TextFormat("%2.2f", env.sustainLevel), &env.sustainLevel, 0.0f, 1.0f);
-            GuiSliderBar((Rectangle){ 100, 180, 400, 30 }, "Release (s)", TextFormat("%2.2fs", env.releaseTime), &env.releaseTime, 0.1f, 3.0f);
+            GuiSliderBar(Rectangle{ 100, 60, 400, 30 }, "Attack (s)", TextFormat("%2.2fs", env.attackTime), &env.attackTime, 0.1f, 3.0f);
+            GuiSliderBar(Rectangle{ 100, 100, 400, 30 }, "Decay (s)", TextFormat("%2.2fs", env.decayTime), &env.decayTime, 0.1f, 3.0f);
+            GuiSliderBar(Rectangle{ 100, 140, 400, 30 }, "Sustain", TextFormat("%2.2f", env.sustainLevel), &env.sustainLevel, 0.0f, 1.0f);
+            GuiSliderBar(Rectangle{ 100, 180, 400, 30 }, "Release (s)", TextFormat("%2.2fs", env.releaseTime), &env.releaseTime, 0.1f, 3.0f);
 
-            DrawADSRGraph(&env, (Rectangle){ 100, 250, 400, 100 });
+            DrawADSRGraph(&env, Rectangle{ 100, 250, 400, 100 });
 
-            DrawCircleV((Vector2){ 520, 350 - (env.currentValue * 100) }, 5, MAROON);
+            DrawCircleV(Vector2{ 520, 350 - (env.currentValue * 100) }, 5, MAROON);
             DrawText(TextFormat("Current Gain: %2.2f", env.currentValue), 535, 345 - (env.currentValue * 100), 10, MAROON);
 
             DrawText("Press SPACE to PLAY the sound!", 200, 400, 20, LIGHTGRAY);

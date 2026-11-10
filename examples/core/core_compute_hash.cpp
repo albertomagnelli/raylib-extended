@@ -26,7 +26,7 @@ static char *GetDataAsHexText(const unsigned int *data, int dataSize);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -80,35 +80,35 @@ int main(void)
 
             GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
             GuiSetStyle(DEFAULT, TEXT_SPACING, 2);
-            GuiLabel((Rectangle){ 40, 26, 720, 32 }, "INPUT DATA (TEXT):");
+            GuiLabel(Rectangle{ 40, 26, 720, 32 }, "INPUT DATA (TEXT):");
             GuiSetStyle(DEFAULT, TEXT_SPACING, 1);
             GuiSetStyle(DEFAULT, TEXT_SIZE, 10);
 
-            if (GuiTextBox((Rectangle){ 40, 64, 720, 32 }, textInput, 95, textBoxEditMode)) textBoxEditMode = !textBoxEditMode;
+            if (GuiTextBox(Rectangle{ 40, 64, 720, 32 }, textInput, 95, textBoxEditMode)) textBoxEditMode = !textBoxEditMode;
 
-            btnComputeHashes = GuiButton((Rectangle){ 40, 64 + 40, 720, 32 }, "COMPUTE INPUT DATA HASHES");
+            btnComputeHashes = GuiButton(Rectangle{ 40, 64 + 40, 720, 32 }, "COMPUTE INPUT DATA HASHES");
 
             GuiSetStyle(DEFAULT, TEXT_SIZE, 20);
             GuiSetStyle(DEFAULT, TEXT_SPACING, 2);
-            GuiLabel((Rectangle){ 40, 160, 720, 32 }, "INPUT DATA HASH VALUES:");
+            GuiLabel(Rectangle{ 40, 160, 720, 32 }, "INPUT DATA HASH VALUES:");
             GuiSetStyle(DEFAULT, TEXT_SPACING, 1);
             GuiSetStyle(DEFAULT, TEXT_SIZE, 10);
 
             GuiSetStyle(TEXTBOX, TEXT_READONLY, 1);
-            GuiLabel((Rectangle){ 40, 200, 120, 32 }, "CRC32 [32 bit]:");
-            GuiTextBox((Rectangle){ 40 + 120, 200, 720 - 120, 32 }, GetDataAsHexText(&hashCRC32, 1), 120, false);
-            GuiLabel((Rectangle){ 40, 200 + 36, 120, 32 }, "MD5 [128 bit]:");
-            GuiTextBox((Rectangle){ 40 + 120, 200 + 36, 720 - 120, 32 }, GetDataAsHexText(hashMD5, 4), 120, false);
-            GuiLabel((Rectangle){ 40, 200 + 36*2, 120, 32 }, "SHA1 [160 bit]:");
-            GuiTextBox((Rectangle){ 40 + 120, 200 + 36*2, 720 - 120, 32 }, GetDataAsHexText(hashSHA1, 5), 120, false);
-            GuiLabel((Rectangle){ 40, 200 + 36*3, 120, 32 }, "SHA256 [256 bit]:");
-            GuiTextBox((Rectangle){ 40 + 120, 200 + 36*3, 720 - 120, 32 }, GetDataAsHexText(hashSHA256, 8), 120, false);
+            GuiLabel(Rectangle{ 40, 200, 120, 32 }, "CRC32 [32 bit]:");
+            GuiTextBox(Rectangle{ 40 + 120, 200, 720 - 120, 32 }, GetDataAsHexText(&hashCRC32, 1), 120, false);
+            GuiLabel(Rectangle{ 40, 200 + 36, 120, 32 }, "MD5 [128 bit]:");
+            GuiTextBox(Rectangle{ 40 + 120, 200 + 36, 720 - 120, 32 }, GetDataAsHexText(hashMD5, 4), 120, false);
+            GuiLabel(Rectangle{ 40, 200 + 36*2, 120, 32 }, "SHA1 [160 bit]:");
+            GuiTextBox(Rectangle{ 40 + 120, 200 + 36*2, 720 - 120, 32 }, GetDataAsHexText(hashSHA1, 5), 120, false);
+            GuiLabel(Rectangle{ 40, 200 + 36*3, 120, 32 }, "SHA256 [256 bit]:");
+            GuiTextBox(Rectangle{ 40 + 120, 200 + 36*3, 720 - 120, 32 }, GetDataAsHexText(hashSHA256, 8), 120, false);
 
             GuiSetState(STATE_FOCUSED);
-            GuiLabel((Rectangle){ 40, 200 + 36*5 - 30, 320, 32 }, "BONUS - BAS64 ENCODED STRING:");
+            GuiLabel(Rectangle{ 40, 200 + 36*5 - 30, 320, 32 }, "BONUS - BAS64 ENCODED STRING:");
             GuiSetState(STATE_NORMAL);
-            GuiLabel((Rectangle){ 40, 200 + 36*5, 120, 32 }, "BASE64 ENCODING:");
-            GuiTextBox((Rectangle){ 40 + 120, 200 + 36*5, 720 - 120, 32 }, base64Text, 120, false);
+            GuiLabel(Rectangle{ 40, 200 + 36*5, 120, 32 }, "BASE64 ENCODING:");
+            GuiTextBox(Rectangle{ 40 + 120, 200 + 36*5, 720 - 120, 32 }, base64Text, 120, false);
             GuiSetStyle(TEXTBOX, TEXT_READONLY, 0);
 
         EndDrawing();
@@ -130,7 +130,7 @@ int main(void)
 //----------------------------------------------------------------------------------
 static char *GetDataAsHexText(const unsigned int *data, int dataSize)
 {
-    static char text[128] = { 0 };
+    static char text[128] = {};
     memset(text, 0, 128);
 
     if ((data != NULL) && (dataSize > 0) && (dataSize < ((128/8) - 1)))

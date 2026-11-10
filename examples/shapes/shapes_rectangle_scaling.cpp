@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ int main(void)
 
     Rectangle rec = { 100, 100, 200, 80 };
 
-    Vector2 mousePosition = { 0 };
+    Vector2 mousePosition = {};
 
     bool mouseScaleReady = false;
     bool mouseScaleMode = false;
@@ -48,7 +48,7 @@ int main(void)
         //----------------------------------------------------------------------------------
         mousePosition = GetMousePosition();
 
-        if (CheckCollisionPointRec(mousePosition, (Rectangle){ rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE }))
+        if (CheckCollisionPointRec(mousePosition, Rectangle{ rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE, MOUSE_SCALE_MARK_SIZE }))
         {
             mouseScaleReady = true;
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) mouseScaleMode = true;
@@ -87,9 +87,9 @@ int main(void)
             if (mouseScaleReady)
             {
                 DrawRectangleLinesEx(rec, 1, RED);
-                DrawTriangle((Vector2){ rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height },
-                             (Vector2){ rec.x + rec.width, rec.y + rec.height },
-                             (Vector2){ rec.x + rec.width, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE }, RED);
+                DrawTriangle(Vector2{ rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height },
+                             Vector2{ rec.x + rec.width, rec.y + rec.height },
+                             Vector2{ rec.x + rec.width, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE }, RED);
             }
 
         EndDrawing();

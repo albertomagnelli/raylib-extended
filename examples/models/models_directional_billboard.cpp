@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -35,10 +35,10 @@ int main(void)
     InitWindow(screenWidth, screenHeight, "raylib [models] example - directional billboard");
 
     // Set up the camera
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 2.0f, 1.0f, 2.0f }; // Starting position
-    camera.target = (Vector3){ 0.0f, 0.5f, 0.0f };  // Target position
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f }; // Up vector
+    Camera camera = {};
+    camera.position = Vector3{ 2.0f, 1.0f, 2.0f }; // Starting position
+    camera.target = Vector3{ 0.0f, 0.5f, 0.0f };  // Target position
+    camera.up = Vector3{ 0.0f, 1.0f, 0.0f }; // Up vector
     camera.fovy = 45.0f; // FOV
     camera.projection = CAMERA_PERSPECTIVE; // Projection type (Standard 3D perspective)
 
@@ -74,7 +74,7 @@ int main(void)
         if (anim >= 4) anim = 0;
 
         // Find the current direction frame based on the camera position to the billboard object
-        float dir = (float)floor(((Vector2Angle((Vector2){ 2.0f, 0.0f }, (Vector2){ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f);
+        float dir = (float)floor(((Vector2Angle(Vector2{ 2.0f, 0.0f }, Vector2{ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f);
 
         // Correct frame index if angle is negative
         if (dir < 0.0f)
@@ -94,7 +94,7 @@ int main(void)
             DrawGrid(10, 1.0f);
 
             // Draw billboard pointing straight up to the sky, rotated relative to the camera and offset from the bottom
-            DrawBillboardPro(camera, skillbot, (Rectangle){ 0.0f + (anim*24.0f), 0.0f + (dir*24.0f), 24.0f, 24.0f }, Vector3Zero(), (Vector3){ 0.0f, 1.0f, 0.0f }, Vector2One(), (Vector2){ 0.5f, 0.0f }, 0, WHITE);
+            DrawBillboardPro(camera, skillbot, Rectangle{ 0.0f + (anim*24.0f), 0.0f + (dir*24.0f), 24.0f, 24.0f }, Vector3{}, Vector3{ 0.0f, 1.0f, 0.0f }, Vector2(1.0f), Vector2{ 0.5f, 0.0f }, 0, WHITE);
 
         EndMode3D();
 

@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //---------------------------------------------------------
@@ -34,7 +34,7 @@ int main(void)
     // Box B: Mouse moved box
     Rectangle boxB = { GetScreenWidth()/2.0f - 30, GetScreenHeight()/2.0f - 30, 60, 60 };
 
-    Rectangle boxCollision = { 0 }; // Collision rectangle
+    Rectangle boxCollision = {}; // Collision rectangle
 
     int screenUpperLimit = 40;      // Top menu limits
 

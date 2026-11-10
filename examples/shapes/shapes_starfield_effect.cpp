@@ -24,7 +24,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -41,8 +41,8 @@ int main(void)
     // We're either drawing lines or circles
     bool drawLines = true;
 
-    Vector3 stars[STAR_COUNT] = { 0 };
-    Vector2 starsScreenPos[STAR_COUNT] = { 0 };
+    Vector3 stars[STAR_COUNT] = {};
+    Vector2 starsScreenPos[STAR_COUNT] = {};
 
     // Setup the stars with a random position
     for (int i = 0; i < STAR_COUNT; i++)
@@ -76,7 +76,7 @@ int main(void)
             stars[i].z -= dt*speed;
 
             // Calculate the screen position
-            starsScreenPos[i] = (Vector2){
+            starsScreenPos[i] = Vector2{
                 screenWidth*0.5f + stars[i].x/stars[i].z,
                 screenHeight*0.5f + stars[i].y/stars[i].z,
             };
@@ -109,7 +109,7 @@ int main(void)
                     if ((t - stars[i].z) > 1e-3)
                     {
                         // Calculate the screen position of the old point
-                        Vector2 startPos = (Vector2){
+                        Vector2 startPos = Vector2{
                             screenWidth*0.5f + stars[i].x/t,
                             screenHeight*0.5f + stars[i].y/t,
                         };

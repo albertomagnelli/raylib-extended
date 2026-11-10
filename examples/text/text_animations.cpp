@@ -35,7 +35,7 @@ typedef struct {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -51,8 +51,8 @@ int main(void)
     AnimatedText text = { "This is an animated text!", { 200, 250 }, 24.0f, 6, 60 };
     int frameCount = 0;
 
-    Vector2 glyphPosition[MAX_TEXT_LENGTH] = { 0 };
-    unsigned char glyphAlpha[MAX_TEXT_LENGTH] = { 0 };
+    Vector2 glyphPosition[MAX_TEXT_LENGTH] = {};
+    unsigned char glyphAlpha[MAX_TEXT_LENGTH] = {};
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ int main(void)
         for (unsigned int i = 0, offsetX = 0; i < TextLength(text.str); i++)
         {
             // NOTE: Calculating every glyph position by its width
-            glyphPosition[i] = (Vector2) { text.position.x + offsetX, text.position.y };
+            glyphPosition[i] = Vector2{ text.position.x + offsetX, text.position.y };
             glyphAlpha[i] = 255U;
 
             offsetX += (MeasureText(TextSubtext(text.str, i, 1), 30) + TEXT_SPACING);
@@ -142,7 +142,7 @@ int main(void)
         {
             // NOTE: Drawing text glyph by glyph, so, spacing is actually not used
             DrawTextEx(GetFontDefault(), TextSubtext(text.str, i, 1), glyphPosition[i],
-                GetFontDefault().baseSize*3.0f, 0, (Color) { 200U, 122U, 255U, glyphAlpha[i] });
+                GetFontDefault().baseSize*3.0f, 0, Color{ 200U, 122U, 255U, glyphAlpha[i] });
         }
 
         EndDrawing();

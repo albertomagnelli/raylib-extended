@@ -77,7 +77,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -107,8 +107,8 @@ int main(void)
 
             // TODO: Draw everything that requires to be drawn at this point
 
-            DrawLineEx((Vector2){ 0, 0 }, (Vector2){ screenWidth, screenHeight }, 2.0f, RED);
-            DrawLineEx((Vector2){ 0, screenHeight }, (Vector2){ screenWidth, 0 }, 2.0f, RED);
+            DrawLineEx(Vector2{ 0, 0 }, Vector2{ screenWidth, screenHeight }, 2.0f, RED);
+            DrawLineEx(Vector2{ 0, screenHeight }, Vector2{ screenWidth, 0 }, 2.0f, RED);
             DrawText("example base code template", 260, 400, 20, LIGHTGRAY);
 
         EndDrawing();

@@ -33,7 +33,7 @@ static Vector2 ComputeHilbertStep(int order, int index);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -103,10 +103,10 @@ int main(void)
             }
 
             // Draw UI using raygui
-            GuiCheckBox((Rectangle){ 450, 50, 20, 20 }, "ANIMATE GENERATION ON CHANGE", &animate);
-            GuiSpinner((Rectangle){ 585, 100, 180, 30 }, "HILBERT CURVE ORDER:  ", &order, 2, 8, false);
-            GuiSlider((Rectangle){ 524, 150, 240, 24 }, "THICKNESS:  ", NULL, &thick, 1.0f, 10.0f);
-            GuiSlider((Rectangle){ 524, 190, 240, 24 }, "TOTAL SIZE: ", NULL, &size, 10.0f, GetScreenHeight()*1.5f);
+            GuiCheckBox(Rectangle{ 450, 50, 20, 20 }, "ANIMATE GENERATION ON CHANGE", &animate);
+            GuiSpinner(Rectangle{ 585, 100, 180, 30 }, "HILBERT CURVE ORDER:  ", &order, 2, 8, false);
+            GuiSlider(Rectangle{ 524, 150, 240, 24 }, "THICKNESS:  ", NULL, &thick, 1.0f, 10.0f);
+            GuiSlider(Rectangle{ 524, 190, 240, 24 }, "TOTAL SIZE: ", NULL, &size, 10.0f, GetScreenHeight()*1.5f);
 
         EndDrawing();
         //--------------------------------------------------------------------------
@@ -155,10 +155,10 @@ static Vector2 ComputeHilbertStep(int order, int index)
 {
     // Hilbert points base pattern
     static const Vector2 hilbertPoints[4] = {
-        [0] = { .x = 0, .y = 0 },
-        [1] = { .x = 0, .y = 1 },
-        [2] = { .x = 1, .y = 1 },
-        [3] = { .x = 1, .y = 0 },
+        { 0, 0 },
+        { 0, 1 },
+        { 1, 1 },
+        { 1, 0 },
     };
 
     int hilbertIndex = index&3;

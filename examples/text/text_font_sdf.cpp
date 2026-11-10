@@ -26,7 +26,7 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ int main(void)
     unsigned char *fileData = LoadFileData("resources/anonymous_pro_bold.ttf", &fileSize);
 
     // Default font generation from TTF font
-    Font fontDefault = { 0 };
+    Font fontDefault = {};
     fontDefault.baseSize = 16;
     fontDefault.glyphCount = 95;
 
@@ -57,7 +57,7 @@ int main(void)
     UnloadImage(atlas);
 
     // SDF font generation from TTF font
-    Font fontSDF = { 0 };
+    Font fontSDF = {};
     fontSDF.baseSize = 16;
     fontSDF.glyphCount = 95;
     // Parameters > font size: 16, no glyphs array provided (0), glyphs count: 0 (defaults to 95)
