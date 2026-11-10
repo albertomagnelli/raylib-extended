@@ -124,7 +124,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
@@ -613,7 +613,7 @@ void SetWindowIcon(Image image)
     {
         if (image.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8)
         {
-            GLFWimage icon[1] = { 0 };
+            GLFWimage icon[1] = {};
 
             icon[0].width = image.width;
             icon[0].height = image.height;
@@ -947,7 +947,7 @@ Vector2 GetMonitorPosition(int monitor)
         int y = 0;
         glfwGetMonitorPos(monitors[monitor], &x, &y);
 
-        position = (Vector2){ (float)x, (float)y };
+        position = Vector2{ (float)x, (float)y };
     }
     else TRACELOG(LOG_WARNING, "GLFW: Failed to find selected monitor");
 
@@ -1061,7 +1061,7 @@ Vector2 GetWindowPosition(void)
     Vector2 position{};
     
     glfwGetWindowPos(platform.handle, &CORE.Window.position.x, &CORE.Window.position.y);
-    position = (Vector2){ (float)CORE.Window.position.x, (float)CORE.Window.position.y };
+    position = Vector2{ (float)CORE.Window.position.x, (float)CORE.Window.position.y };
 
     return position;
 }
@@ -1093,7 +1093,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
 
 #if SUPPORT_CLIPBOARD_IMAGE && SUPPORT_MODULE_RTEXTURES
 #if defined(_WIN32)
@@ -1134,12 +1134,12 @@ Image GetClipboardImage(void)
     XConvertSelection(display, clipboard, targetType, property, window, CurrentTime);
     XSync(display, 0);
 
-    XEvent ev = { 0 };
+    XEvent ev = {};
 
     // Keep calling until we get SelectionNotify
     while (XCheckTypedEvent(display, SelectionNotify, &ev) == False);
 
-    Atom actualType = { 0 };
+    Atom actualType = {};
     int actualFormat = 0;
     unsigned long nitems = 0;
     unsigned long bytesAfter = 0;
@@ -1338,7 +1338,7 @@ void PollInputEvents(void)
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = (Vector2){ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1347,7 +1347,7 @@ void PollInputEvents(void)
     for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.previousTouchState[i] = CORE.Input.Touch.currentTouchState[i];
 
     // Reset touch positions
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = (Vector2){ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
 
     // Map touch position to mouse position for convenience
     // WARNING: If the target desktop device supports touch screen, this behaviour should be reviewed!
@@ -1374,7 +1374,7 @@ void PollInputEvents(void)
 
             // Get current gamepad state using internal GLFW mapping, instead of the immediate joystick API
             // NOTE: There is no callback available, getting it manually
-            GLFWgamepadstate state = { 0 };
+            GLFWgamepadstate state = {};
             int result = glfwGetGamepadState(i, &state); // This remaps all gamepads so they have their buttons mapped like an xbox controller
             if (result == GLFW_FALSE) // No joystick is connected, no gamepad mapping or an error occurred
             {
@@ -2193,7 +2193,7 @@ static void MouseButtonCallback(GLFWwindow *window, int button, int action, int 
 
 #if SUPPORT_GESTURES_SYSTEM && SUPPORT_MOUSE_GESTURES
     // Process mouse events as touches to be able to use mouse-gestures
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
 
     // Register touch actions
     if ((CORE.Input.Mouse.currentButtonState[button] == 1) && (CORE.Input.Mouse.previousButtonState[button] == 0)) gestureEvent.touchAction = TOUCH_ACTION_DOWN;
@@ -2228,7 +2228,7 @@ static void MouseCursorPosCallback(GLFWwindow *window, double x, double y)
 
 #if SUPPORT_GESTURES_SYSTEM && SUPPORT_MOUSE_GESTURES
     // Process mouse events as touches to be able to use mouse-gestures
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
 
     gestureEvent.touchAction = TOUCH_ACTION_MOVE;
 

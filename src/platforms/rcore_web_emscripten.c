@@ -72,7 +72,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 static const KeyboardKey mapDomCodeToKey[DOM_PK_CODE_MAPPED_NUM] = {
     [DOM_PK_ESCAPE] = KEY_ESCAPE,
@@ -817,7 +817,7 @@ int GetCurrentMonitor(void)
 Vector2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -986,7 +986,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
     int w = 0, h = 0;
     RequestClipboardData();
     unsigned char* data = GetLastPastedImage(&w, &h);
@@ -1201,7 +1201,7 @@ void PollInputEvents(void)
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = (Vector2){ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1212,7 +1212,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = (Vector2){ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
 
     // Get number of gamepads connected
     int numGamepads = 0;
@@ -1223,7 +1223,7 @@ void PollInputEvents(void)
         // Register previous gamepad button states
         for (int k = 0; k < MAX_GAMEPAD_BUTTONS; k++) CORE.Input.Gamepad.previousButtonState[i][k] = CORE.Input.Gamepad.currentButtonState[i][k];
 
-        EmscriptenGamepadEvent gamepadState = { 0 };
+        EmscriptenGamepadEvent gamepadState = {};
         int result = emscripten_get_gamepad_status(i, &gamepadState);
 
         if (result == EMSCRIPTEN_RESULT_SUCCESS)
@@ -1293,7 +1293,7 @@ int InitPlatform(void)
     // Initialize graphic device: display/window and graphic context
     //----------------------------------------------------------------------------
     emscripten_set_canvas_element_size(platform.canvasId, CORE.Window.screen.width, CORE.Window.screen.height);
-    EmscriptenWebGLContextAttributes attribs = { 0 };
+    EmscriptenWebGLContextAttributes attribs = {};
     emscripten_webgl_init_context_attributes(&attribs);
     attribs.alpha = EM_TRUE;
     attribs.depth = EM_TRUE;
@@ -1682,7 +1682,7 @@ static EM_BOOL EmscriptenMouseCallback(int eventType, const EmscriptenMouseEvent
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
         {
             CORE.Input.Mouse.cursorOnScreen = false;
-            CORE.Input.Mouse.currentPosition = (Vector2){ 0 };
+            CORE.Input.Mouse.currentPosition = Vector2{ 0 };
         } break;
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
         {
@@ -1704,7 +1704,7 @@ static EM_BOOL EmscriptenMouseCallback(int eventType, const EmscriptenMouseEvent
 
 #if SUPPORT_GESTURES_SYSTEM && SUPPORT_MOUSE_GESTURES
     // Process mouse events as touches to be able to use mouse-gestures
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
 
     // Register touch actions
     if ((CORE.Input.Mouse.currentButtonState[MOUSE_BUTTON_LEFT] == 1) && (CORE.Input.Mouse.previousButtonState[MOUSE_BUTTON_LEFT] == 0)) gestureEvent.touchAction = TOUCH_ACTION_DOWN;
@@ -1763,7 +1763,7 @@ static EM_BOOL EmscriptenMouseMoveCallback(int eventType, const EmscriptenMouseE
 
 #if SUPPORT_GESTURES_SYSTEM && SUPPORT_MOUSE_GESTURES
     // Process mouse events as touches to be able to use mouse-gestures
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
 
     gestureEvent.touchAction = TOUCH_ACTION_MOVE;
 
@@ -1854,7 +1854,7 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
         CORE.Input.Touch.pointId[i] = touchEvent->touches[i].identifier;
 
         // Register touch points position
-        CORE.Input.Touch.position[i] = (Vector2){touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
+        CORE.Input.Touch.position[i] = Vector2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
 
         // Normalize gestureEvent.position[x] for CORE.Window.screen.width and CORE.Window.screen.height
         CORE.Input.Touch.position[i].x *= ((float)GetScreenWidth()/(float)canvasWidth);
@@ -1872,7 +1872,7 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
     }
 
 #if SUPPORT_GESTURES_SYSTEM
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
     gestureEvent.pointCount = CORE.Input.Touch.pointCount;
 
     // Register touch actions

@@ -61,7 +61,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
@@ -214,7 +214,7 @@ int GetCurrentMonitor(void)
 Vector2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -263,14 +263,14 @@ const char *GetMonitorName(int monitor)
 Vector2 GetWindowPosition(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowPosition() not implemented on target platform");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
 Vector2 GetWindowScaleDPI(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowScaleDPI() not implemented on target platform");
-    return (Vector2){ 1.0f, 1.0f };
+    return Vector2{ 1.0f, 1.0f };
 }
 
 // Set clipboard text content
@@ -290,7 +290,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
 
     TRACELOG(LOG_WARNING, "GetClipboardImage() not implemented on target platform");
 
@@ -342,7 +342,7 @@ double GetTime(void)
 {
     double time = 0.0;
 
-    struct timespec ts = { 0 };
+    struct timespec ts = {};
     clock_gettime(CLOCK_MONOTONIC, &ts);
     unsigned long long nanoSeconds = (unsigned long long)ts.tv_sec*1000000000LLU + (unsigned long long)ts.tv_nsec;
 
@@ -394,7 +394,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = (Vector2){ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
 }
 
 // Set mouse cursor
@@ -436,7 +436,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = (Vector2){ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys

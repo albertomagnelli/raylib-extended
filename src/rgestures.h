@@ -298,7 +298,7 @@ void ProcessGestureEvent(GestureEvent event)
 
             GESTURES.Swipe.startTime = rgGetCurrentTime();
 
-            GESTURES.Drag.vector = (Vector2){ 0.0f, 0.0f };
+            GESTURES.Drag.vector = Vector2{ 0.0f, 0.0f };
         }
         else if (event.touchAction == TOUCH_ACTION_UP)
         {
@@ -330,7 +330,7 @@ void ProcessGestureEvent(GestureEvent event)
                 GESTURES.current = GESTURE_NONE;
             }
 
-            GESTURES.Touch.downDragPosition = (Vector2){ 0.0f, 0.0f };
+            GESTURES.Touch.downDragPosition = Vector2{ 0.0f, 0.0f };
             GESTURES.Touch.pointCount = 0;
         }
         else if (event.touchAction == TOUCH_ACTION_MOVE)
@@ -401,7 +401,7 @@ void ProcessGestureEvent(GestureEvent event)
         {
             GESTURES.Pinch.distance = 0.0f;
             GESTURES.Pinch.angle = 0.0f;
-            GESTURES.Pinch.vector = (Vector2){ 0.0f, 0.0f };
+            GESTURES.Pinch.vector = Vector2{ 0.0f, 0.0f };
             GESTURES.Touch.pointCount = 0;
 
             GESTURES.current = GESTURE_NONE;
@@ -530,7 +530,7 @@ static double rgGetCurrentTime(void)
 #endif
 #if defined(__linux__)
     // NOTE: Only for Linux-based systems
-    struct timespec now = { 0 };
+    struct timespec now = {};
     clock_gettime(CLOCK_MONOTONIC, &now);
     unsigned long long nanoSeconds = (unsigned long long)now.tv_sec*1000000000LLU + (unsigned long long)now.tv_nsec;
 
@@ -540,8 +540,8 @@ static double rgGetCurrentTime(void)
     //#define CLOCK_REALTIME  CALENDAR_CLOCK    // returns UTC time since 1970-01-01
     //#define CLOCK_MONOTONIC SYSTEM_CLOCK      // returns the time since boot time
 
-    clock_serv_t cclock = { 0 };
-    mach_timespec_t now = { 0 };
+    clock_serv_t cclock = {};
+    mach_timespec_t now = {};
     host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock);
 
     // NOTE: OS X does not have clock_gettime(), using clock_get_time()

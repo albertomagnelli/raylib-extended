@@ -194,7 +194,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific
+static PlatformData platform = {};   // Platform specific
 
 #if defined(__linux__) // prevent collision of raylibs KEY_<X> and linux/input.h KEY_<X>
     #undef KEY_NULL
@@ -1190,7 +1190,7 @@ Vector2 GetMonitorPosition(int monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(NULL);
 
-    return (Vector2){ (float)mons[monitor]->x, (float)mons[monitor]->y };
+    return Vector2{ (float)mons[monitor]->x, (float)mons[monitor]->y };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -1246,14 +1246,14 @@ Vector2 GetWindowPosition(void)
 {
     if (platform.window == NULL)
     {
-        return (Vector2){ 0.0f, 0.0f };
+        return Vector2{ 0.0f, 0.0f };
     }
 
     if (RGFW_window_getPosition(platform.window, &platform.window->x, &platform.window->y)) {
-        return (Vector2){ (float)platform.window->x, (float)platform.window->y };
+        return Vector2{ (float)platform.window->x, (float)platform.window->y };
     }
 
-    return (Vector2){ 0.0f, 0.0f };
+    return Vector2{ 0.0f, 0.0f };
 }
 
 // Get window scale DPI factor for current monitor
@@ -1267,10 +1267,10 @@ Vector2 GetWindowScaleDPI(void)
     #if defined(__APPLE__)
         // Apple does < 1.0f scaling, example: 0.66f, 0.5f
         // it needs to be convert to be consistent
-        return (Vector2){ 1.0f/monitor->scaleX, 1.0f/monitor->scaleX };
+        return Vector2{ 1.0f/monitor->scaleX, 1.0f/monitor->scaleX };
     #else
         // Linux and Windows do >= 1.0f scaling, example: 1.0f, 1.25f, 2.0f
-        return (Vector2){ monitor->scaleX, monitor->scaleX };
+        return Vector2{ monitor->scaleX, monitor->scaleX };
     #endif
 }
 
@@ -1316,7 +1316,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
 
 #if SUPPORT_CLIPBOARD_IMAGE && SUPPORT_MODULE_RTEXTURES
 #if defined(_WIN32)
@@ -1361,10 +1361,10 @@ Image GetClipboardImage(void)
     XConvertSelection(dpy, clipboard, targetType, property, win, CurrentTime);
 
     // Wait for the SelectionNotify event
-    XEvent ev = { 0 };
+    XEvent ev = {};
     XNextEvent(dpy, &ev);
 
-    Atom actualType = { 0 };
+    Atom actualType = {};
     int actualFormat = 0;
     unsigned long nitems = 0;
     unsigned long bytesAfter = 0;
@@ -1530,7 +1530,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 void SetMousePosition(int x, int y)
 {
     RGFW_window_moveMouse(platform.window, x, y);
-    CORE.Input.Mouse.currentPosition = (Vector2){ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
 }
 
 // Set mouse cursor
@@ -1606,8 +1606,8 @@ void PollInputEvents(void)
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
     if (RGFW_window_isCaptured(platform.window))
     {
-        CORE.Input.Mouse.previousPosition = (Vector2){ 0.0f, 0.0f };
-        CORE.Input.Mouse.currentPosition = (Vector2){ 0.0f, 0.0f };
+        CORE.Input.Mouse.previousPosition = Vector2{ 0.0f, 0.0f };
+        CORE.Input.Mouse.currentPosition = Vector2{ 0.0f, 0.0f };
     }
     else
     {
@@ -1624,7 +1624,7 @@ void PollInputEvents(void)
     RGFW_pollEvents();
     //-----------------------------------------------------------------------------
 
-    mg_event gamepad_event = { 0 };
+    mg_event gamepad_event = {};
     while (mg_gamepads_check_event(&platform.minigamepad, &gamepad_event))
     {
         int gamepadIndex = gamepad_event.gamepad->index;
@@ -2045,7 +2045,7 @@ void RemapMouseToTouch(int touchAction)
     #if SUPPORT_GESTURES_SYSTEM
         if (touchAction < 0) return;
 
-        GestureEvent gestureEvent = { 0 };
+        GestureEvent gestureEvent = {};
 
         // Register touch actions
         gestureEvent.touchAction = touchAction;
@@ -2075,9 +2075,9 @@ double GetTimeSeconds(void)
     double currentTime = 0.0;
 
     #if defined(_WIN32)
-        static LARGE_INTEGER freq = { 0 };
+        static LARGE_INTEGER freq = {};
         static bool freqInitialized = false;
-        LARGE_INTEGER counter = { 0 };
+        LARGE_INTEGER counter = {};
         if (!freqInitialized)
         {
             // Lazy initialization
@@ -2089,7 +2089,7 @@ double GetTimeSeconds(void)
     #elif defined(__EMSCRIPTEN__)
         currentTime = emscripten_get_now()/1000.0;
     #elif defined(__APPLE__)
-        static mach_timebase_info_data_t tb = { 0 };
+        static mach_timebase_info_data_t tb = {};
         static bool tbInitialized = false;
         if (!tbInitialized)
         {
@@ -2100,7 +2100,7 @@ double GetTimeSeconds(void)
 
         currentTime = (double)ticks*(double)tb.numer/(double)tb.denom/1e9;
     #elif defined(__linux__)
-        struct timespec ts = { 0 };
+        struct timespec ts = {};
         clock_gettime(CLOCK_MONOTONIC, &ts);
         currentTime = (double)ts.tv_sec + (double)ts.tv_nsec/1e9;
     #else

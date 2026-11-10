@@ -86,7 +86,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
@@ -726,7 +726,7 @@ int GetCurrentMonitor(void)
 Vector2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -889,7 +889,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
     int w = 0, h = 0;
     RequestClipboardData();
     unsigned char* data = GetLastPastedImage(&w, &h);
@@ -1049,7 +1049,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = (Vector2){ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
 
     if (CORE.Input.Mouse.cursorLocked) CORE.Input.Mouse.lockedPosition = CORE.Input.Mouse.currentPosition;
 
@@ -1106,7 +1106,7 @@ void PollInputEvents(void)
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = (Vector2){ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1117,7 +1117,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = (Vector2){ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
 
     // Gamepad support using emscripten API
     // NOTE: GLFW3 joystick functionality not available in web
@@ -1131,7 +1131,7 @@ void PollInputEvents(void)
         // Register previous gamepad button states
         for (int k = 0; k < MAX_GAMEPAD_BUTTONS; k++) CORE.Input.Gamepad.previousButtonState[i][k] = CORE.Input.Gamepad.currentButtonState[i][k];
 
-        EmscriptenGamepadEvent gamepadState = { 0 };
+        EmscriptenGamepadEvent gamepadState = {};
 
         int result = emscripten_get_gamepad_status(i, &gamepadState);
 
@@ -1669,7 +1669,7 @@ static void MouseButtonCallback(GLFWwindow *window, int button, int action, int 
 
 #if SUPPORT_GESTURES_SYSTEM && SUPPORT_MOUSE_GESTURES
     // Process mouse events as touches to be able to use mouse-gestures
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
 
     // Register touch actions
     if ((CORE.Input.Mouse.currentButtonState[button] == 1) && (CORE.Input.Mouse.previousButtonState[button] == 0)) gestureEvent.touchAction = TOUCH_ACTION_DOWN;
@@ -1710,7 +1710,7 @@ static void MouseMoveCallback(GLFWwindow *window, double x, double y)
 
 #if SUPPORT_GESTURES_SYSTEM && SUPPORT_MOUSE_GESTURES
     // Process mouse events as touches to be able to use mouse-gestures
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
 
     gestureEvent.touchAction = TOUCH_ACTION_MOVE;
 
@@ -1735,7 +1735,7 @@ static void MouseMoveCallback(GLFWwindow *window, double x, double y)
 // GLFW3: Called on mouse wheel scrolling
 static void MouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    CORE.Input.Mouse.currentWheelMove = (Vector2){ (float)xoffset, (float)yoffset };
+    CORE.Input.Mouse.currentWheelMove = Vector2{ (float)xoffset, (float)yoffset };
 }
 
 // GLFW3: Called on mouse entering the window
@@ -1834,7 +1834,7 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
         CORE.Input.Touch.pointId[i] = touchEvent->touches[i].identifier;
 
         // Register touch points position
-        CORE.Input.Touch.position[i] = (Vector2){touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
+        CORE.Input.Touch.position[i] = Vector2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
 
         // Normalize gestureEvent.position[x] for CORE.Window.screen.width and CORE.Window.screen.height
         CORE.Input.Touch.position[i].x *= ((float)GetScreenWidth()/(float)canvasWidth);
@@ -1852,7 +1852,7 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
     }
 
 #if SUPPORT_GESTURES_SYSTEM
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
     gestureEvent.pointCount = CORE.Input.Touch.pointCount;
 
     // Register touch actions

@@ -122,7 +122,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 static const KeyboardKey mapScancodeToKey[SCANCODE_MAPPED_NUM] = {
     KEY_NULL,           // SDL_SCANCODE_UNKNOWN
@@ -958,7 +958,7 @@ void *GetWindowHandle(void)
     handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, NULL); // Type: NSWindow*
     #endif
 #elif defined(USING_SDL2_PROJECT)
-    SDL_SysWMinfo wmInfo = { 0 };
+    SDL_SysWMinfo wmInfo = {};
     SDL_VERSION(&wmInfo.version);
     if (SDL_GetWindowWMInfo(platform.window, &wmInfo))
     {
@@ -1016,12 +1016,12 @@ Vector2 GetMonitorPosition(int monitor)
         if (SDL_GetDisplayUsableBounds(monitor, &displayBounds) == 0)
     #endif
         {
-            return (Vector2){ (float)displayBounds.x, (float)displayBounds.y };
+            return Vector2{ (float)displayBounds.x, (float)displayBounds.y };
         }
         else TRACELOG(LOG_WARNING, "SDL: Failed to get selected display usable bounds");
     }
     else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
-    return (Vector2){ 0.0f, 0.0f };
+    return Vector2{ 0.0f, 0.0f };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -1154,7 +1154,7 @@ Vector2 GetWindowPosition(void)
 
     SDL_GetWindowPosition(platform.window, &x, &y);
 
-    return (Vector2){ (float)x, (float)y };
+    return Vector2{ (float)x, (float)y };
 }
 
 // Get window scale DPI factor for current monitor
@@ -1185,7 +1185,7 @@ void SetClipboardText(const char *text)
 // Get clipboard text content
 const char *GetClipboardText(void)
 {
-    static char buffer[MAX_CLIPBOARD_BUFFER_LENGTH] = { 0 };
+    static char buffer[MAX_CLIPBOARD_BUFFER_LENGTH] = {};
 
     char *clipboard = SDL_GetClipboardText();
 
@@ -1204,7 +1204,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
 
 #if SUPPORT_CLIPBOARD_IMAGE
 #if !SUPPORT_MODULE_RTEXTURES
@@ -1396,7 +1396,7 @@ void SetMousePosition(int x, int y)
 {
     SDL_WarpMouseInWindow(platform.window, x, y);
 
-    CORE.Input.Mouse.currentPosition = (Vector2){ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
 }
 
 // Set mouse cursor
@@ -1434,8 +1434,8 @@ void PollInputEvents(void)
     // Register previous mouse position
     if (CORE.Input.Mouse.cursorLocked)
     {
-        CORE.Input.Mouse.currentPosition = (Vector2){ 0.0f, 0.0f };
-        CORE.Input.Mouse.previousPosition = (Vector2){ 0.0f, 0.0f };
+        CORE.Input.Mouse.currentPosition = Vector2{ 0.0f, 0.0f };
+        CORE.Input.Mouse.previousPosition = Vector2{ 0.0f, 0.0f };
     }
     else CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
 
@@ -1488,7 +1488,7 @@ void PollInputEvents(void)
         CORE.Time.previous = GetTime();
     }
 
-    SDL_Event event = { 0 };
+    SDL_Event event = {};
     while (SDL_PollEvent(&event) != 0)
     {
         // All input events can be processed after polling
@@ -1962,7 +1962,7 @@ void PollInputEvents(void)
         if (touchAction > -1)
         {
             // Process mouse events as touches to be able to use mouse-gestures
-            GestureEvent gestureEvent = { 0 };
+            GestureEvent gestureEvent = {};
 
             // Register touch actions
             gestureEvent.touchAction = touchAction;
@@ -2115,7 +2115,7 @@ int InitPlatform(void)
     {
         CORE.Window.ready = true;
 
-        SDL_DisplayMode displayMode = { 0 };
+        SDL_DisplayMode displayMode = {};
         SDL_GetCurrentDisplayMode(GetCurrentMonitor(), &displayMode);
 
         CORE.Window.display.width = displayMode.w;

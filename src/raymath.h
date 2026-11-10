@@ -29,14 +29,28 @@
 #ifndef RAYMATH_H
 #define RAYMATH_H
 
-#include "raylib.h"                 // Vector2, Vector3, Vector4, Quaternion, Matrix, Color, Rectangle types
-
 #include <cmath>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+// NOTE: raymath can be used standalone, without including raylib.h:
+// the math types are just glm aliases, so provide them here in that case.
+#if !defined(RL_VECTOR2_TYPE)
+    using Vector2 = glm::vec2;
+    using Vector3 = glm::vec3;
+    using Vector4 = glm::vec4;
+    using Quaternion = glm::quat;
+    using Matrix = glm::mat4;
+
+    #define RL_VECTOR2_TYPE
+    #define RL_VECTOR3_TYPE
+    #define RL_VECTOR4_TYPE
+    #define RL_QUATERNION_TYPE
+    #define RL_MATRIX_TYPE
+#endif
 
 #ifndef EPSILON
     #define EPSILON 0.000001f
@@ -114,6 +128,16 @@ inline float Vector2LineAngle(Vector2 start, Vector2 end)
 }
 
 // Move Vector towards target
+// Rotate vector by angle
+// NOTE: raylib-specific 2D helper, glm::rotate() works on 3D vectors only
+inline Vector2 Vector2Rotate(Vector2 v, float angle)
+{
+    float cosres = std::cos(angle);
+    float sinres = std::sin(angle);
+
+    return Vector2{v.x*cosres - v.y*sinres, v.x*sinres + v.y*cosres};
+}
+
 inline Vector2 Vector2MoveTowards(Vector2 v, Vector2 target, float maxDistance)
 {
     float dx = target.x - v.x;

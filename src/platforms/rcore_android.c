@@ -85,7 +85,7 @@ typedef struct {
 // Global Variables Definition
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition
@@ -256,7 +256,7 @@ static const KeyboardKey mapKeycode[KEYCODE_MAP_SIZE] = {
     KEY_KP_EQUAL        // AKEYCODE_NUMPAD_EQUALS
 };
 
-static TouchRaw touchRaw = { 0 };
+static TouchRaw touchRaw = {};
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
@@ -518,7 +518,7 @@ int GetCurrentMonitor(void)
 Vector2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -571,7 +571,7 @@ const char *GetMonitorName(int monitor)
 Vector2 GetWindowPosition(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowPosition() not implemented on target platform");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
@@ -579,7 +579,7 @@ Vector2 GetWindowScaleDPI(void)
 {
     int density = AConfiguration_getDensity(platform.app->config);
     float scale = (float)density/160;
-    return (Vector2){ scale, scale };
+    return Vector2{ scale, scale };
 }
 
 // Set clipboard text content
@@ -599,7 +599,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
 
     TRACELOG(LOG_WARNING, "GetClipboardImage() not implemented on target platform");
 
@@ -650,7 +650,7 @@ void SwapScreenBuffer(void)
 double GetTime(void)
 {
     double time = 0.0;
-    struct timespec ts = { 0 };
+    struct timespec ts = {};
     clock_gettime(CLOCK_MONOTONIC, &ts);
     unsigned long long nanoSeconds = (unsigned long long)ts.tv_sec*1000000000LLU + (unsigned long long)ts.tv_nsec;
 
@@ -722,7 +722,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = (Vector2){ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
 }
 
 // Set mouse cursor
@@ -771,7 +771,7 @@ void PollInputEvents(void)
     for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.previousTouchState[i] = CORE.Input.Touch.currentTouchState[i];
 
     // Reset touch positions
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = (Vector2){ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys
@@ -1100,12 +1100,12 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                     if (GetWindowRequestedSamples() > 0)
                     {
                         // NOTE: Trying to maxime rec padding to avoid pixel bleeding on MSAA filtering
-                        SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 2, rec.y + 2, 1, 1 });
+                        SetShapesTexture(GetFontDefault().texture, Rectangle{ rec.x + 2, rec.y + 2, 1, 1 });
                     }
                     else
                     {
                         // NOTE: Setting up a 1px padding on char rectangle to avoid pixel bleeding
-                        SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 1, rec.y + 1, rec.width - 2, rec.height - 2 });
+                        SetShapesTexture(GetFontDefault().texture, Rectangle{ rec.x + 1, rec.y + 1, rec.width - 2, rec.height - 2 });
                     }
                     #endif
                 #else
@@ -1113,7 +1113,7 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                     // Set default texture and rectangle to be used for shapes drawing
                     // NOTE: rlgl default texture is a 1x1 pixel UNCOMPRESSED_R8G8B8A8
                     Texture2D texture = { rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
-                    SetShapesTexture(texture, (Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f });    // WARNING: Module required: rshapes
+                    SetShapesTexture(texture, Rectangle{ 0.0f, 0.0f, 1.0f, 1.0f });    // WARNING: Module required: rshapes
                     #endif
                 #endif
 
@@ -1345,7 +1345,7 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
         touchRaw.pointId[i] = AMotionEvent_getPointerId(event, i);
 
         // Register touch points position
-        touchRaw.position[i] = (Vector2){ AMotionEvent_getX(event, i), AMotionEvent_getY(event, i) };
+        touchRaw.position[i] = Vector2{ AMotionEvent_getX(event, i), AMotionEvent_getY(event, i) };
 
         // Normalize CORE.Input.Touch.position[i] for CORE.Window.screen.width and CORE.Window.screen.height
         float widthRatio = (float)(CORE.Window.screen.width + CORE.Window.renderOffset.x)/(float)CORE.Window.display.width;
@@ -1373,7 +1373,7 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
     }
 
 #if SUPPORT_GESTURES_SYSTEM
-    GestureEvent gestureEvent = { 0 };
+    GestureEvent gestureEvent = {};
 
     gestureEvent.pointCount = 0;
 
@@ -1466,7 +1466,7 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
 
     // Map touch[0] as mouse input for convenience
     CORE.Input.Mouse.currentPosition = CORE.Input.Touch.position[0];
-    CORE.Input.Mouse.currentWheelMove = (Vector2){ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
 
     return 0;
 }

@@ -145,7 +145,7 @@ typedef BOOL (WINAPI *AreDpiAwarenessContextsEqualProc)(HANDLE a, HANDLE b);
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 // Required WGL functions
 static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
@@ -661,12 +661,12 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
 
     if (flags & FLAG_BORDERLESS_WINDOWED_MODE)
     {
-        MONITORINFO info = { 0 };
+        MONITORINFO info = {};
         HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
         info.cbSize = sizeof(info);
         if (!GetMonitorInfoW(monitor, &info)) TRACELOG(LOG_ERROR, "WIN32: Failed to get monitor info [ERROR: %lu]", GetLastError());
 
-        RECT windowRect = { 0 };
+        RECT windowRect = {};
         if (!GetWindowRect(hwnd, &windowRect)) TRACELOG(LOG_ERROR, "WIN32: Failed to get window rect [ERROR: %lu]", GetLastError());
 
         if ((windowRect.left == info.rcMonitor.left) &&
@@ -696,7 +696,7 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
     };
 
     // Get client size (framebuffer inside the window)
-    RECT rect = { 0 };
+    RECT rect = {};
     GetClientRect(hwnd, &rect);
     SIZE clientSize = { rect.right, rect.bottom };
 
@@ -708,7 +708,7 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
 
     // Calculate window size from desired framebuffer size and window flags
     SIZE windowSize = CalcWindowSize(dpi, desiredSize, MakeWindowStyle(flags));
-    POINT windowPos = { 0 };
+    POINT windowPos = {};
     UINT swpFlags = SWP_NOZORDER | SWP_FRAMECHANGED;
 
     if (mode == 0) // UPDATE_WINDOW_FIRST
@@ -716,7 +716,7 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
         HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTOPRIMARY);
         if (!monitor) TRACELOG(LOG_ERROR, "WIN32: Failed to get monitor from window [ERROR: %lu]", GetLastError());
 
-        MONITORINFO info = { 0 };
+        MONITORINFO info = {};
         info.cbSize = sizeof(info);
         if (!GetMonitorInfoW(monitor, &info)) TRACELOG(LOG_ERROR, "WIN32: Failed to get monitor info [ERROR: %lu]", GetLastError());
 
@@ -826,7 +826,7 @@ static HICON ConvertImageToWindowsIcon(Image image)
     HDC hdc = GetDC(platform.hwnd);
 
     // Create 32-bit BGRA DIB for color
-    BITMAPV5HEADER bi = { 0 };
+    BITMAPV5HEADER bi = {};
     ZeroMemory(&bi, sizeof(bi));
     bi.bV5Size = sizeof(bi);
     bi.bV5Width = image.width;
@@ -864,7 +864,7 @@ static HICON ConvertImageToWindowsIcon(Image image)
     HBITMAP hMaskBitmap = CreateBitmap(image.width, image.height, 1, 1, NULL);
 
     // Build icon info
-    ICONINFO ii = { 0 };
+    ICONINFO ii = {};
     ZeroMemory(&ii, sizeof(ii));
     ii.fIcon = TRUE;
     ii.hbmMask = hMaskBitmap;
@@ -1157,7 +1157,7 @@ void SetWindowPosition(int x, int y)
 {
     if (platform.hwnd != NULL)
     {
-        RECT rect = { 0 };
+        RECT rect = {};
         if (GetWindowRect(platform.hwnd, &rect))
         {
             int width = rect.right - rect.left;
@@ -1252,7 +1252,7 @@ int GetCurrentMonitor(void)
     HMONITOR monitor = MonitorFromWindow(platform.hwnd, MONITOR_DEFAULTTOPRIMARY);
     if (!monitor) TRACELOG(LOG_ERROR, "%s failed, error=%lu", "MonitorFromWindow", GetLastError());
 
-    MonitorInfo info = { 0 };
+    MonitorInfo info = {};
     info.needle = monitor;
     info.index = 0;
     info.matchIndex = -1;
@@ -1267,7 +1267,7 @@ int GetCurrentMonitor(void)
 Vector2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition not implemented");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -1316,14 +1316,14 @@ const char *GetMonitorName(int monitor)
 Vector2 GetWindowPosition(void)
 {
     //TRACELOG(LOG_WARNING, "GetWindowPosition not implemented");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
 Vector2 GetWindowScaleDPI(void)
 {
     float scale = ((float)GetDpiForWindowCompat(platform.hwnd))/96.0f;
-    return (Vector2){ scale, scale };
+    return Vector2{ scale, scale };
 }
 
 // Set clipboard text content
@@ -1428,7 +1428,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
 
 #if SUPPORT_CLIPBOARD_IMAGE && SUPPORT_MODULE_RTEXTURES
     unsigned int dataSize = 0;
@@ -1474,7 +1474,7 @@ void EnableCursor(void)
     {
         if (!ClipCursor(NULL)) TRACELOG(LOG_WARNING, "WIN32: Failed to clip cursor [ERROR: %lu]", GetLastError());
 
-        RAWINPUTDEVICE rid = { 0 };
+        RAWINPUTDEVICE rid = {};
         rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
         rid.usUsage = 0x02; // HID_USAGE_GENERIC_MOUSE
         rid.dwFlags = RIDEV_REMOVE; // Add to this window even in background
@@ -1492,7 +1492,7 @@ void DisableCursor(void)
 {
     if (!CORE.Input.Mouse.cursorLocked)
     {
-        RAWINPUTDEVICE rid = { 0 };
+        RAWINPUTDEVICE rid = {};
         rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
         rid.usUsage = 0x02; // HID_USAGE_GENERIC_MOUSE
         rid.dwFlags = RIDEV_INPUTSINK; // Add to this window even in background
@@ -1500,7 +1500,7 @@ void DisableCursor(void)
         int result = RegisterRawInputDevices(&rid, 1, sizeof(rid));
         if (result == 0) TRACELOG(LOG_WARNING, "WIN32: Failed to register raw input devices [ERROR: %lu]", GetLastError());
 
-        RECT clientRect = { 0 };
+        RECT clientRect = {};
         if (!GetClientRect(platform.hwnd, &clientRect)) TRACELOG(LOG_WARNING, "WIN32: Failed to get client rectangle [ERROR: %lu]", GetLastError());
 
         POINT topleft = { clientRect.left, clientRect.top };
@@ -1517,8 +1517,8 @@ void DisableCursor(void)
         RECT clipRect = { centerX, centerY, centerX + 1, centerY + 1 };
         if (!ClipCursor(&clipRect)) TRACELOG(LOG_WARNING, "WIN32: Failed to clip cursor [ERROR: %lu]", GetLastError());
 
-        CORE.Input.Mouse.previousPosition = (Vector2){ 0, 0 };
-        CORE.Input.Mouse.currentPosition = (Vector2){ 0, 0 };
+        CORE.Input.Mouse.previousPosition = Vector2{ 0, 0 };
+        CORE.Input.Mouse.currentPosition = Vector2{ 0, 0 };
         HideCursor();
 
         CORE.Input.Mouse.cursorLocked = true;
@@ -1551,7 +1551,7 @@ void SwapScreenBuffer(void)
 double GetTime(void)
 {
     double time = 0.0;
-    LARGE_INTEGER now = { 0 };
+    LARGE_INTEGER now = {};
     QueryPerformanceCounter(&now);
     time = (double)(now.QuadPart - CORE.Time.base)/(double)platform.timerFrequency.QuadPart;
 
@@ -1611,7 +1611,7 @@ void SetMousePosition(int x, int y)
     if (!CORE.Input.Mouse.cursorLocked)
     {
         // Set the cursor position relative to the top-left corner of the window's client area
-        POINT topLeft = { 0 };
+        POINT topLeft = {};
 
         // Skip if window is minimized or if ClientToScreen calculation fails
         if (!IsIconic(platform.hwnd) && ClientToScreen(platform.hwnd, &topLeft))
@@ -1621,7 +1621,7 @@ void SetMousePosition(int x, int y)
             int yScaled = (int)roundf(y/scale.y);
             if (SetCursorPos(topLeft.x + xScaled, topLeft.y + yScaled))
             {
-                CORE.Input.Mouse.currentPosition = (Vector2){ (float)xScaled, (float)yScaled };
+                CORE.Input.Mouse.currentPosition = Vector2{ (float)xScaled, (float)yScaled };
             }
         }
     }
@@ -1669,13 +1669,13 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = (Vector2){ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
 
     memcpy(CORE.Input.Keyboard.previousKeyState, CORE.Input.Keyboard.currentKeyState, sizeof(CORE.Input.Keyboard.previousKeyState));
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = (Vector2){ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1684,7 +1684,7 @@ void PollInputEvents(void)
     CORE.Window.shouldClose = false;
 
     // Process windows messages
-    MSG msg = { 0 };
+    MSG msg = {};
     while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
     {
         TranslateMessage(&msg);
@@ -1697,7 +1697,7 @@ void PollInputEvents(void)
 #if defined(GRAPHICS_API_OPENGL_SOFTWARE)
         if (rlGetVersion() == RL_OPENGL_SOFTWARE)
         {
-            BITMAPINFO bmi = { 0 };
+            BITMAPINFO bmi = {};
             ZeroMemory(&bmi, sizeof(bmi));
             bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
             bmi.bmiHeader.biWidth = (LONG)CORE.Window.render.width;
@@ -1817,7 +1817,7 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
             UINT numFormats = 0;
             if (wglChoosePixelFormatARB(hdc, pixelFormatAttribs, NULL, 1, &format, &numFormats) && (numFormats > 0))
             {
-                PIXELFORMATDESCRIPTOR newPixelFormatDescriptor = { 0 };
+                PIXELFORMATDESCRIPTOR newPixelFormatDescriptor = {};
                 DescribePixelFormat(hdc, format, sizeof(newPixelFormatDescriptor), &newPixelFormatDescriptor);
 
                 if (SetPixelFormat(hdc, format, &newPixelFormatDescriptor))
@@ -1976,11 +1976,11 @@ int InitPlatform(void)
     if (result == 0) TRACELOG(LOG_ERROR, "WIN32: Failed to register window class [ERROR: %lu]", GetLastError());
 
     // Get primary monitor info
-    POINT primaryTopLeft = { 0 };
+    POINT primaryTopLeft = {};
     HMONITOR monitor = MonitorFromPoint(primaryTopLeft, MONITOR_DEFAULTTOPRIMARY);
     if (monitor != NULL)
     {
-        MONITORINFO info = { 0 };
+        MONITORINFO info = {};
         info.cbSize = sizeof(info);
         result = (int)GetMonitorInfoW(monitor, &info);
 
@@ -2046,7 +2046,7 @@ int InitPlatform(void)
     int windowHeight = rect.bottom - rect.top;
 
     HMONITOR currentMonitor = MonitorFromWindow(platform.hwnd, MONITOR_DEFAULTTONEAREST);
-    MONITORINFO monitorInfo = { 0 };
+    MONITORINFO monitorInfo = {};
     monitorInfo.cbSize = sizeof(monitorInfo);
     if (GetMonitorInfoW(currentMonitor, &monitorInfo))
     {
@@ -2095,7 +2095,7 @@ int InitPlatform(void)
         TRACELOG(LOG_INFO, "    > GLSL:     %s", "NOT SUPPORTED");
 
         // Initialize software framebuffer
-        BITMAPINFO bmi = { 0 };
+        BITMAPINFO bmi = {};
         ZeroMemory(&bmi, sizeof(bmi));
         bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         bmi.bmiHeader.biWidth = (LONG)CORE.Window.render.width;
@@ -2116,7 +2116,7 @@ int InitPlatform(void)
 
     // Initialize timing system
     //----------------------------------------------------------------------------
-    LARGE_INTEGER time = { 0 };
+    LARGE_INTEGER time = {};
     QueryPerformanceCounter(&time);
     QueryPerformanceFrequency(&platform.timerFrequency);
     CORE.Time.base = time.QuadPart;
@@ -2188,7 +2188,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
         CheckFlags("WndProc", hwnd, CORE.Window.flags, MakeWindowStyle(CORE.Window.flags), mask);
     }
 
-    FlagsOp flagsOp = { 0 };
+    FlagsOp flagsOp = {};
     FlagsOp *deferredFlags = &flagsOp;
 
     // Message processing
@@ -2292,7 +2292,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 
                 UINT dpi = GetDpiForWindowCompat(hwnd);
                 // Get client size (framebuffer inside the window)
-                RECT rect = { 0 };
+                RECT rect = {};
                 GetClientRect(hwnd, &rect);
                 SIZE clientSize = { rect.right, rect.bottom };
                 SIZE oldSize = CalcWindowSize(dpi, clientSize, ss->styleOld);
@@ -2421,8 +2421,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
                 // This code only runs when per-monitor dpi awareness v1 is enabled. v1 doesn't send WM_GETDPISCALEDSIZE and the suggested RECT is subtly wrong (doesn't properly account for the title bar size)
                 // The solution is to manually build a properly sized RECT (and ignore the advice of not using the suggested RECT). This makes a per-monitor v1 process match the behavior of per-monitor v2
                 // To prevent the potential stutter when dragging the window between monitors, the manually sized rect keeps the same center as the suggested RECT
-                RECT windowRect = { 0 };
-                RECT clientRect = { 0 };
+                RECT windowRect = {};
+                RECT clientRect = {};
                 GetWindowRect(hwnd, &windowRect);
                 GetClientRect(hwnd, &clientRect);
 
@@ -2455,7 +2455,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
         {
             if (rlGetVersion() == RL_OPENGL_SOFTWARE) // Using software renderer
             {
-                PAINTSTRUCT ps = { 0 };
+                PAINTSTRUCT ps = {};
                 HDC hdc = BeginPaint(hwnd, &ps);
 
                 // Blit from memory DC to window DC
@@ -2579,7 +2579,7 @@ static void HandleKey(WPARAM wparam, LPARAM lparam, char state)
     {
         // Pressing AltGr causes Windows to send a fake Left Ctrl message
         // GLFW does something similar in win32_window.c
-        MSG next = { 0 };
+        MSG next = {};
         LONG time = GetMessageTime();
 
         if (PeekMessageW(&next, NULL, 0, 0, PM_NOREMOVE))
@@ -2654,7 +2654,7 @@ static void HandleMouseButton(int button, char state)
 // Handle raw input event
 static void HandleRawInput(LPARAM lparam)
 {
-    RAWINPUT input = { 0 };
+    RAWINPUT input = {};
     UINT inputSize = 0;
 
     if (GetRawInputData((HRAWINPUT)lparam, RID_INPUT, NULL, &inputSize, sizeof(RAWINPUTHEADER)) != 0) return;
@@ -2684,7 +2684,7 @@ static void HandleWindowResize(HWND hwnd, int *width, int *height)
     if (CORE.Window.flags & FLAG_WINDOW_MINIMIZED) return;
 
     // Get client size (framebuffer inside the window)
-    RECT rect = { 0 };
+    RECT rect = {};
     GetClientRect(hwnd, &rect);
     SIZE clientSize = { rect.right, rect.bottom };
 
@@ -2714,7 +2714,7 @@ static void HandleWindowResize(HWND hwnd, int *width, int *height)
     if (CORE.Window.flags & FLAG_WINDOW_HIGHDPI)
     {
         float mouseScale = 1.0f/dpiScale;
-        CORE.Input.Mouse.scale = (Vector2){ mouseScale, mouseScale };
+        CORE.Input.Mouse.scale = Vector2{ mouseScale, mouseScale };
     }
 }
 

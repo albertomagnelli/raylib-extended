@@ -163,7 +163,7 @@ typedef struct {
     uint32_t fbId;          // DRM framebuffer ID
 } FramebufferCache;
 
-static FramebufferCache fbCache[MAX_DRM_CACHED_BUFFERS] = { 0 };
+static FramebufferCache fbCache[MAX_DRM_CACHED_BUFFERS] = {};
 static volatile int fbCacheCount = 0;
 static volatile bool pendingFlip = false;
 static bool crtcSet = false;
@@ -174,7 +174,7 @@ static bool crtcSet = false;
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = { 0 };   // Platform specific data
+static PlatformData platform = {};   // Platform specific data
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
@@ -428,7 +428,7 @@ int GetCurrentMonitor(void)
 Vector2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -532,13 +532,13 @@ const char *GetMonitorName(int monitor)
 // Get window position XY on monitor
 Vector2 GetWindowPosition(void)
 {
-    return (Vector2){ 0, 0 };
+    return Vector2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
 Vector2 GetWindowScaleDPI(void)
 {
-    return (Vector2){ 1.0f, 1.0f };
+    return Vector2{ 1.0f, 1.0f };
 }
 
 // Set clipboard text content
@@ -558,7 +558,7 @@ const char *GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = { 0 };
+    Image image = {};
 
     TRACELOG(LOG_WARNING, "GetClipboardImage() not implemented on target platform");
 
@@ -653,7 +653,7 @@ static uint32_t GetOrCreateFbForBo(struct gbm_bo *bo)
     if (drmModeAddFB(platform.fd, width, height, 24, 32, stride, handle, &fbId)) return 0;
 
     // Store in cache
-    fbCache[fbCacheCount] = (FramebufferCache){ .bo = bo, .fbId = fbId };
+    fbCache[fbCacheCount] = FramebufferCache{ bo, fbId };
     fbCacheCount++;
 
     // Set destroy callback to auto-cleanup
@@ -741,7 +741,7 @@ void SwapScreenBuffer()
     if (!crtcSet || !platform.gbmSurface) return;
 
     static int loopCnt = 0;
-    static int errCnt[5] = { 0 };
+    static int errCnt[5] = {};
     loopCnt++;
 
     // Call this only, if pendingFlip is not set
@@ -753,7 +753,7 @@ void SwapScreenBuffer()
         .page_flip_handler = PageFlipHandler
     };
 
-    struct pollfd pfd = { .fd = platform.fd, .events = POLLIN };
+    struct pollfd pfd = { platform.fd, POLLIN, 0 };
 
     // Polling for event for 0ms
     while (poll(&pfd, 1, 0) > 0) drmHandleEvent(platform.fd, &evctx);
@@ -862,7 +862,7 @@ void SwapScreenBuffer(void)
     const uint32_t depth = 24;  // Color depth, here only 24 bits, alpha is not used
 
     // Create a dumb buffer for software rendering
-    struct drm_mode_create_dumb creq = { 0 };
+    struct drm_mode_create_dumb creq = {};
     creq.width = width;
     creq.height = height;
     creq.bpp = bpp;
@@ -880,21 +880,21 @@ void SwapScreenBuffer(void)
     if (result != 0)
     {
         TRACELOG(LOG_ERROR, "DISPLAY: drmModeAddFB() failed with result: %d (%s)", result, strerror(errno));
-        struct drm_mode_destroy_dumb dreq = { 0 };
+        struct drm_mode_destroy_dumb dreq = {};
         dreq.handle = creq.handle;
         drmIoctl(platform.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
         return;
     }
 
     // Map the dumb buffer to copy our software rendered buffer
-    struct drm_mode_map_dumb mreq = { 0 };
+    struct drm_mode_map_dumb mreq = {};
     mreq.handle = creq.handle;
     result = drmIoctl(platform.fd, DRM_IOCTL_MODE_MAP_DUMB, &mreq);
     if (result != 0)
     {
         TRACELOG(LOG_ERROR, "DISPLAY: Failed to map dumb buffer: %s", strerror(errno));
         drmModeRmFB(platform.fd, fb);
-        struct drm_mode_destroy_dumb dreq = { 0 };
+        struct drm_mode_destroy_dumb dreq = {};
         dreq.handle = creq.handle;
         drmIoctl(platform.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
         return;
@@ -906,7 +906,7 @@ void SwapScreenBuffer(void)
     {
         TRACELOG(LOG_ERROR, "DISPLAY: Failed to mmap dumb buffer: %s", strerror(errno));
         drmModeRmFB(platform.fd, fb);
-        struct drm_mode_destroy_dumb dreq = { 0 };
+        struct drm_mode_destroy_dumb dreq = {};
         dreq.handle = creq.handle;
         drmIoctl(platform.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
         return;
@@ -930,7 +930,7 @@ void SwapScreenBuffer(void)
         {
             TRACELOG(LOG_ERROR, "DISPLAY: Failed to get DRM resources");
             drmModeRmFB(platform.fd, fb);
-            struct drm_mode_destroy_dumb dreq = { 0 };
+            struct drm_mode_destroy_dumb dreq = {};
             dreq.handle = creq.handle;
             drmIoctl(platform.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
             return;
@@ -970,7 +970,7 @@ void SwapScreenBuffer(void)
         {
             TRACELOG(LOG_ERROR, "DISPLAY: No compatible CRTC found");
             drmModeRmFB(platform.fd, fb);
-            struct drm_mode_destroy_dumb dreq = { 0 };
+            struct drm_mode_destroy_dumb dreq = {};
             dreq.handle = creq.handle;
             drmIoctl(platform.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
             return;
@@ -986,7 +986,7 @@ void SwapScreenBuffer(void)
         TRACELOG(LOG_ERROR, "DISPLAY: Mode: %dx%d@%d", mode->hdisplay, mode->vdisplay, mode->vrefresh);
 
         drmModeRmFB(platform.fd, fb);
-        struct drm_mode_destroy_dumb dreq = { 0 };
+        struct drm_mode_destroy_dumb dreq = {};
         dreq.handle = creq.handle;
         drmIoctl(platform.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
         return;
@@ -1004,7 +1004,7 @@ void SwapScreenBuffer(void)
     // Clean up previous dumb buffer
     if (platform.prevDumbHandle)
     {
-        struct drm_mode_destroy_dumb dreq = { 0 };
+        struct drm_mode_destroy_dumb dreq = {};
         dreq.handle = platform.prevDumbHandle;
         drmIoctl(platform.fd, DRM_IOCTL_MODE_DESTROY_DUMB, &dreq);
     }
@@ -1022,7 +1022,7 @@ void SwapScreenBuffer(void)
 double GetTime(void)
 {
     double time = 0.0;
-    struct timespec ts = { 0 };
+    struct timespec ts = {};
     clock_gettime(CLOCK_MONOTONIC, &ts);
     unsigned long long nanoSeconds = (unsigned long long)ts.tv_sec*1000000000LLU + (unsigned long long)ts.tv_nsec;
 
@@ -1059,7 +1059,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = (Vector2){ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
 }
 
 // Set mouse cursor
@@ -1112,13 +1112,13 @@ void PollInputEvents(void)
         (CORE.Input.Keyboard.currentKeyState[CORE.Input.Keyboard.exitKey] == 1)) CORE.Window.shouldClose = true;
 
     // Register previous mouse position
-    if (platform.cursorRelative) CORE.Input.Mouse.currentPosition = (Vector2){ 0.0f, 0.0f };
+    if (platform.cursorRelative) CORE.Input.Mouse.currentPosition = Vector2{ 0.0f, 0.0f };
     else CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
 
     // Register previous mouse states
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
     CORE.Input.Mouse.currentWheelMove = platform.eventWheelMove;
-    platform.eventWheelMove = (Vector2){ 0.0f, 0.0f };
+    platform.eventWheelMove = Vector2{ 0.0f, 0.0f };
 
     for (int i = 0; i < MAX_MOUSE_BUTTONS; i++)
     {
@@ -1761,7 +1761,7 @@ static void InitKeyboard(void)
     tcgetattr(STDIN_FILENO, &platform.defaultSettings);
 
     // Reconfigure terminal with new settings
-    struct termios keyboardNewSettings = { 0 };
+    struct termios keyboardNewSettings = {};
     keyboardNewSettings = platform.defaultSettings;
 
     // New terminal settings for keyboard: turn off buffering (non-canonical mode), echo and key processing
@@ -1815,7 +1815,7 @@ static void ProcessKeyboard(void)
 
     // Keyboard input polling (fill keys[256] array with status)
     int bufferByteCount = 0;                        // Bytes available on the buffer
-    char keysBuffer[MAX_KEYBUFFER_SIZE] = { 0 };    // Max keys to be read at a time
+    char keysBuffer[MAX_KEYBUFFER_SIZE] = {};    // Max keys to be read at a time
 
     // Read availables keycodes from stdin
     bufferByteCount = read(STDIN_FILENO, keysBuffer, MAX_KEYBUFFER_SIZE);     // POSIX system call
@@ -1921,7 +1921,7 @@ static void ProcessKeyboard(void)
 // this means mouse, keyboard or gamepad devices
 static void InitEvdevInput(void)
 {
-    char path[MAX_FILEPATH_LENGTH] = { 0 };
+    char path[MAX_FILEPATH_LENGTH] = {};
     DIR *directory = NULL;
     struct dirent *entity = NULL;
 
@@ -1981,10 +1981,10 @@ static void ConfigureEvdevDevice(char *device)
     #define LONG(x)         ((x)/BITS_PER_LONG)
     #define TEST_BIT(array, bit) ((array[LONG(bit)] >> OFF(bit)) & 1)
 
-    unsigned long evBits[NBITS(EV_MAX)] = { 0 };
-    unsigned long absBits[NBITS(ABS_MAX)] = { 0 };
-    unsigned long relBits[NBITS(REL_MAX)] = { 0 };
-    unsigned long keyBits[NBITS(KEY_MAX)] = { 0 };
+    unsigned long evBits[NBITS(EV_MAX)] = {};
+    unsigned long absBits[NBITS(ABS_MAX)] = {};
+    unsigned long relBits[NBITS(REL_MAX)] = {};
+    unsigned long keyBits[NBITS(KEY_MAX)] = {};
 
     // Open the device
     int fd = open(device, O_RDONLY | O_NONBLOCK);
@@ -2003,7 +2003,7 @@ static void ConfigureEvdevDevice(char *device)
     struct {
         bool exist;
         struct input_absinfo info;
-    } absinfo[ABS_CNT] = { 0 };
+    } absinfo[ABS_CNT] = {};
 
     // These flags aren't really a one of
     // Some devices could have properties associated with keyboards
@@ -2202,7 +2202,7 @@ static void PollKeyboardEvents(void)
     int fd = platform.keyboardFd;
     if (fd == -1) return;
 
-    struct input_event event = { 0 };
+    struct input_event event = {};
     int keycode = -1;
 
     // Try to read data from the keyboard and only continue if successful
@@ -2257,7 +2257,7 @@ static void PollKeyboardEvents(void)
 static void PollGamepadEvents(void)
 {
     // Read gamepad event
-    struct input_event event = { 0 };
+    struct input_event event = {};
 
     for (int i = 0; i < platform.gamepadCount; i++)
     {
@@ -2312,7 +2312,7 @@ static void PollMouseEvents(void)
     int fd = platform.mouseFd;
     if (fd == -1) return;
 
-    struct input_event event = { 0 };
+    struct input_event event = {};
     int touchAction = -1;           // 0-TOUCH_ACTION_UP, 1-TOUCH_ACTION_DOWN, 2-TOUCH_ACTION_MOVE
     static bool isMultitouch = false; // Detect if device supports MT events
 
@@ -2570,7 +2570,7 @@ static void PollMouseEvents(void)
 #if SUPPORT_GESTURES_SYSTEM
         if (touchAction > -1)
         {
-            GestureEvent gestureEvent = { 0 };
+            GestureEvent gestureEvent = {};
             gestureEvent.touchAction = touchAction;
             gestureEvent.pointCount = CORE.Input.Touch.pointCount;
 

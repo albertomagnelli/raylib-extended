@@ -375,14 +375,20 @@
 #endif
 
 #if !defined(RL_MATRIX_TYPE)
-// Matrix, 4x4 components, column major, OpenGL style, right handed
-typedef struct Matrix {
-    float m0, m4, m8, m12;      // Matrix first row (4 components)
-    float m1, m5, m9, m13;      // Matrix second row (4 components)
-    float m2, m6, m10, m14;     // Matrix third row (4 components)
-    float m3, m7, m11, m15;     // Matrix fourth row (4 components)
-} Matrix;
-#define RL_MATRIX_TYPE
+    #if defined(__cplusplus)
+        // raylib's Matrix is glm::mat4; rlgl includes this path when used standalone
+        #include <glm/glm.hpp>
+        using Matrix = glm::mat4;
+    #else
+        // Matrix, 4x4 components, column major, OpenGL style, right handed
+        typedef struct Matrix {
+            float m0, m4, m8, m12;      // Matrix first row (4 components)
+            float m1, m5, m9, m13;      // Matrix second row (4 components)
+            float m2, m6, m10, m14;     // Matrix third row (4 components)
+            float m3, m7, m11, m15;     // Matrix fourth row (4 components)
+        } Matrix;
+    #endif
+    #define RL_MATRIX_TYPE
 #endif
 
 // Dynamic vertex buffers (position + texcoords + colors + indices arrays)
