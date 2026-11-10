@@ -28,9 +28,7 @@
 #include "raygui.h"
 #include "raymath.h"
 
-#include <stddef.h>     // Required for: NULL
 #include <string.h>     // Required for: memcpy()
-#include <math.h>       // Required for: fabsf(), fminf()
 
 //--------------------------------------------------------------------------------------
 // Global Definitions
@@ -41,20 +39,23 @@
 // Types and Structures Definition
 //--------------------------------------------------------------------------------------
 
-// Growable triangle-soup buffer used while building a clipped decal mesh
-typedef struct MeshBuilder {
-    int vertexCount;
-    int vertexCapacity;
-    Vector3 *vertices;
-    Vector2 *uvs;
-} MeshBuilder;
+namespace
+{
+    // Growable triangle-soup buffer used while building a clipped decal mesh
+    typedef struct MeshBuilder {
+        int vertexCount;
+        int vertexCapacity;
+        Vector3 *vertices;
+        Vector2 *uvs;
+    } MeshBuilder;
+}
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 v0, Vector3 v1, Vector3 v2);
 static void FreeMeshBuilder(MeshBuilder *mb);
-static Mesh BuildMesh(MeshBuilder *mb);
+static Mesh BuildMesh(const MeshBuilder *mb);
 static Vector3 ClipSegment(Vector3 v0, Vector3 v1, Vector3 p, float s);
 static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float decalOffset);
 
@@ -94,7 +95,6 @@ int main()
         fabsf(modelBBox.max.y - modelBBox.min.y)), fabsf(modelBBox.max.z - modelBBox.min.z));
 
     const float decalSize = modelSize*0.35f;
-    constexpr float decalOffset = 0.01f;
 
     // Translucent cube previewing where the next decal will land
     Model placementCube = LoadModelFromMesh(GenMeshCube(decalSize, decalSize, decalSize));
@@ -145,13 +145,12 @@ int main()
         // Project a new decal at the hit point, facing along the surface normal
         if (collision.hit && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (decalCount < MAX_DECALS))
         {
+            constexpr float decalOffset = 0.01f;
             const Vector3 lookTarget = ((collision.point) + (collision.normal));
             Matrix splat = glm::lookAt(collision.point, lookTarget, Vector3{ 0.0f, 1.0f, 0.0f });
             splat = ((glm::rotate(Matrix(1.0f), DEG2RAD*static_cast<float>(GetRandomValue(-180, 180)), Vector3{0.0f, 0.0f, 1.0f})) * (splat));
 
-            const Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset);
-
-            if (decalMesh.vertexCount > 0)
+            if (const Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset); decalMesh.vertexCount > 0)
             {
                 decals[decalCount] = LoadModelFromMesh(decalMesh);
                 decals[decalCount].materials[0].maps[0] = decalMaterial.maps[0];
@@ -200,7 +199,7 @@ int main()
                 totalTriangles += decals[i].meshes[0].triangleCount;
             }
 
-            const int statX = screenWidth - 280;
+        constexpr int statX = screenWidth - 280;
             DrawText("Vertices", statX + 90, 10, 10, LIME);
             DrawText("Triangles", statX + 180, 10, 10, LIME);
             DrawText("Base Model", statX, 25, 10, LIME);
@@ -251,7 +250,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 v0, Vector3 v1, Ve
     if (mb->vertexCapacity <= (mb->vertexCount + 3))
     {
         const int newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
-        Vector3 *newVertices = static_cast<Vector3 *>(MemAlloc(newVertexCapacity*sizeof(Vector3)));
+        auto *newVertices = static_cast<Vector3 *>(MemAlloc(newVertexCapacity*sizeof(Vector3)));
 
         if (mb->vertexCapacity > 0)
         {
@@ -280,7 +279,7 @@ static void FreeMeshBuilder(MeshBuilder *mb)
 }
 
 // Converts a mesh builder's triangle soup into a standard uploaded raylib Mesh
-static Mesh BuildMesh(MeshBuilder *mb)
+static Mesh BuildMesh(const MeshBuilder *mb)
 {
     Mesh outMesh = {};
 
@@ -363,11 +362,11 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
             }
 
             int insideCount = 0;
-            for (int i = 0; i < 3; i++)
+            for (auto & vertice : vertices)
             {
-                const Vector3 v = Vector3((projection)*Vector4(vertices[i], 1.0f));
+                const auto v = Vector3((projection)*Vector4(vertice, 1.0f));
                 if ((fabsf(v.x) < decalSize) || (fabsf(v.y) <= decalSize) || (fabsf(v.z) <= decalSize)) insideCount++;
-                vertices[i] = v;
+                vertice = v;
             }
 
             if (insideCount > 0) AddTriangleToMeshBuilder(&meshBuilders[mbIndex], vertices[0], vertices[1], vertices[2]);
@@ -375,11 +374,6 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
     }
 
     // Clip the surviving triangles against each of the decal box's 6 faces in turn
-    const Vector3 planes[6] = {
-        {  1,  0,  0 }, { -1,  0,  0 },
-        {  0,  1,  0 }, {  0, -1,  0 },
-        {  0,  0,  1 }, {  0,  0, -1 }
-    };
 
     for (int face = 0; face < 6; face++)
     {
@@ -393,6 +387,11 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
 
         for (int i = 0; i < inMesh->vertexCount; i += 3)
         {
+            const Vector3 planes[6] = {
+                {  1,  0,  0 }, { -1,  0,  0 },
+                {  0,  1,  0 }, {  0, -1,  0 },
+                {  0,  0,  1 }, {  0,  0, -1 }
+            };
             Vector3 nV1, nV2, nV3, nV4;
 
             const float d1 = glm::dot(inMesh->vertices[i + 0], planes[face]) - s;
@@ -402,9 +401,8 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
             const int v1Out = (d1 > 0);
             const int v2Out = (d2 > 0);
             const int v3Out = (d3 > 0);
-            const int total = v1Out + v2Out + v3Out;
 
-            switch (total)
+            switch (const int total = v1Out + v2Out + v3Out)
             {
                 case 0:
                     // Whole triangle is inside this face, keep it as-is
