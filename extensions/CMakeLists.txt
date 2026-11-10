@@ -34,3 +34,11 @@ target_link_libraries(particle_example PRIVATE raylib)
 
 set_target_properties(particle_example PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+# Shadows example, ported from the RayLib-Demo project (examples/phase9_shadows/main.cpp, mx Phase 9)
+add_executable(shadows_example shadows_example.cpp)
+
+target_link_libraries(shadows_example PRIVATE raylib glm::glm)
+
+set_target_properties(shadows_example PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

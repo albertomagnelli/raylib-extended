@@ -9,6 +9,7 @@ extensions/
 ├── camera_controller.hpp           # The CameraController class, header-only
 ├── camera_controller_example.cpp   # Runnable example with all four modes
 ├── particle_example.cpp            # 2d particle demo, ported from the RayLib-Demo project
+├── shadows_example.cpp             # Directional light with shadow mapping, ported from RayLib-Demo
 ├── CMakeLists.txt                  # Builds the examples, standalone or with raylib
 └── README.md
 ```
@@ -171,6 +172,7 @@ cmake -B build
 cmake --build build
 ./build/camera_controller_example
 ./build/particle_example
+./build/shadows_example
 ```
 
 Standalone, from the `extensions/` directory (it configures and builds raylib from the parent folder):
@@ -181,6 +183,7 @@ cmake -B build
 cmake --build build
 ./build/camera_controller_example
 ./build/particle_example
+./build/shadows_example
 ```
 
 In CLion, either open the project root and configure with `-DBUILD_EXTENSIONS=ON`, or open
@@ -188,7 +191,9 @@ In CLion, either open the project root and configure with `-DBUILD_EXTENSIONS=ON
 
 When `extensions/` is configured standalone it does not inherit `CMAKE_CXX_STANDARD` from the
 parent project, so `CMakeLists.txt` falls back to C++20 (`particle_example.cpp` uses
-`std::numbers` and `std::erase_if`). The MinGW runtime DLLs are linked dynamically, so run the
+`std::numbers` and `std::erase_if`). `shadows_example.cpp` uses glm, which `CMakeLists.txt`
+fetches with `FetchContent` (`g-truc/glm` 1.0.1) on the first configure, so that build needs
+network access once. The MinGW runtime DLLs are linked dynamically, so run the
 examples from a shell where the toolchain `bin` directory is on `PATH`, or copy the example next
 to `libstdc++-6.dll`, `libgcc_s_seh-1.dll` and `libwinpthread-1.dll`.
 
@@ -220,6 +225,61 @@ raylib rotates them in degrees, so the orbit rotation is converted with `RAD2DEG
 | `F11` | Toggle fullscreen |
 | `ESC` | Close the window |
 | `F12` | Save a screenshot (raylib built-in) |
+
+## shadows_example (ported mx Schattenwurf-Demo)
+
+`shadows_example.cpp` is the Phase 9 demo of the `RayLib-Demo` project
+(`examples/phase9_shadows/main.cpp`) ported to plain raylib: five lit primitives on a plane,
+an animated directional light and a 2048x2048 depth-only shadow map with 3x3 PCF, drawn through
+`rlgl` with custom shader programs instead of the raylib batch:
+
+| mx engine | raylib |
+| :--- | :--- |
+| `mx::gpu::Device` / `Framebuffer` | `rlLoadFramebuffer()` + `rlLoadTextureDepth()` + `rlFramebufferAttach()` |
+| `mx::gpu::Program` | `LoadShaderFromMemory()` |
+| `mx::gpu::MeshBuffer` | `GenMesh*()` + own VAO/VBO upload through `rlLoadVertexArray()` / `rlLoadVertexBuffer()` |
+| `mx::gpu::Pipeline` | `rlEnableShader()` / `rlEnableBackfaceCulling()` / `rlEnableDepthTest()` |
+| `mx::gpu::Sampler` (nearest, clamp) | the defaults `rlLoadTextureDepth()` already sets |
+| `mx::make*Mesh()` | `GenMeshPlane()` / `GenMeshCube()` / `GenMeshSphere()` / ... |
+| glm math | glm, fetched with `FetchContent` (`g-truc/glm` 1.0.1, target `glm::glm`) in `CMakeLists.txt` |
+
+The lighting, the 3x3 PCF and the Reinhard tonemapping are unchanged, as are the palette and the
+German HUD strings. The original shaders asked for `#version 460` because mx created an OpenGL 4.6
+context, the port uses `#version 330` for the OpenGL 3.3 core context raylib defaults to.
+
+| Input | Action |
+| :--- | :--- |
+| `MOUSE` + `LEFT BUTTON` | Orbit the camera around the scene |
+| `MOUSE WHEEL` | Zoom in and out |
+| `L` | Pause / resume the animated light |
+| `R` | Reset camera and light |
+| `F11` | Toggle fullscreen |
+| `ESC` | Close the window |
+| `F12` | Save a screenshot (raylib built-in) |
+
+### Things to know when drawing through rlgl yourself
+
+These were the three traps while porting, all of them easy to reproduce:
+
+- **`Matrix` field order**: raylib declares the `Matrix` fields as `m0, m4, m8, m12 / m1, m5, ...`
+  (column-major declaration), so an aggregate initializer like `Matrix m = { data[0..15] }` fills
+  `m0, m4, m8, m12` first and silently **transposes** the matrix. Copy glm matrices field by field
+  (`result.m0 = data[0]; result.m4 = data[4]; ...`), which is what `ToRaylibMatrix()` does;
+  `rlSetUniformMatrix()` uploads the fields in their logical `m0..m15` order, so the matrix then
+  reaches OpenGL unchanged.
+- **Depth state is not enabled for custom passes**: raylib initializes OpenGL with
+  `glDisable(GL_DEPTH_TEST)` and only `BeginMode3D()` enables it. A pass that draws straight
+  through `rlgl` has to call `rlEnableDepthTest()` itself, otherwise nothing lands in the depth
+  texture of the shadow map and every fragment samples depth 1.0. The example enables the depth
+  test in the shadow pass and in the lit pass, and restores `rlDisableDepthTest()` before the 2d
+  overlay.
+- **Not every `GenMesh*()` result is indexed**: `GenMeshSphere()`, `GenMeshCylinder()`,
+  `GenMeshCone()` and `GenMeshTorus()` return `indices == NULL`, only plane and cube provide an
+  index buffer. Upload both cases and draw with `rlDrawVertexArrayElements()` or
+  `rlDrawVertexArray()` depending on `mesh.indices`.
+
+After the custom passes the example restores the state the raylib batch expects for the 2d
+overlay: texture slot 0, backface culling off, depth test off, default shader reactivated.
 
 ## MSAA 8x / 16x in the examples
 

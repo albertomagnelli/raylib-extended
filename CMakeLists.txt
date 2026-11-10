@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.22...3.31)
 project(raylib-extended VERSION 1.0.0 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -33,6 +33,18 @@ include(CompilerFlags)
 
 # Registers build options that are exposed to cmake
 include(CMakeOptions.txt)
+
+# glm, the mathematics library of the ported examples, fetched like in the
+# RayLib-Demo project (same version); header-only, exposed as glm::glm
+include(FetchContent)
+
+FetchContent_Declare(glm
+        GIT_REPOSITORY https://github.com/g-truc/glm.git
+        GIT_TAG 1.0.1
+        GIT_SHALLOW TRUE
+        EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(glm)
 
 if (UNIX AND NOT APPLE AND NOT "${PLATFORM}" MATCHES "DRM" AND NOT "${PLATFORM}" MATCHES "Web" AND NOT "${PLATFORM}" MATCHES "SDL")
   if (NOT GLFW_BUILD_WAYLAND AND NOT GLFW_BUILD_X11)
