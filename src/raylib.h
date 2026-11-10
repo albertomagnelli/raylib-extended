@@ -969,7 +969,7 @@ typedef enum {
 // Callbacks to hook some internal functions
 // WARNING: These callbacks are intended for advanced users
 typedef void (*TraceLogCallback)(int logLevel, std::string_view text, va_list args); // Logging: Redirect trace log messages
-typedef unsigned char *(*LoadFileDataCallback)(const char *fileName, int *dataSize); // FileIO: Load binary data
+typedef unsigned char *(*LoadFileDataCallback)(std::string_view fileName, int *dataSize); // FileIO: Load binary data
 typedef bool (*SaveFileDataCallback)(std::string_view fileName, const void *data, int dataSize); // FileIO: Save binary data
 typedef std::string (*LoadFileTextCallback)(std::string_view fileName);                  // FileIO: Load text data
 typedef bool (*SaveFileTextCallback)(std::string_view fileName, std::string_view text); // FileIO: Save text data
