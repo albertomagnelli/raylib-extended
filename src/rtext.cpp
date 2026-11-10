@@ -1793,8 +1793,8 @@ char *TextReplace(const char *text, const char *search, const char *replacement)
     {
         if (replacement == NULL) replacement = "";
 
-        char *insertPoint = NULL;   // Next insert point
-        char *tempPtr = NULL;       // Temp pointer
+        const char *insertPoint = NULL;    // Next insert point
+        char *tempPtr = NULL;              // Temp pointer
         int textLen = 0;            // Text string length
         int searchLen = 0;          // Search string length of (the string to remove)
         int replaceLen = 0;         // Replacement length (the string to replace by)
@@ -1806,8 +1806,8 @@ char *TextReplace(const char *text, const char *search, const char *replacement)
         replaceLen = TextLength(replacement);
 
         // Count the number of replacements needed
-        insertPoint = (char *)text;
-        for (count = 0; (tempPtr = strstr(insertPoint, search)); count++) insertPoint = tempPtr + searchLen;
+        insertPoint = text;
+        for (count = 0; (insertPoint = strstr(insertPoint, search)); count++) insertPoint += searchLen;
 
         if ((textLen + count*(replaceLen - searchLen)) < (MAX_TEXT_BUFFER_LENGTH - 1))
         {
@@ -1856,8 +1856,8 @@ char *TextReplaceAlloc(const char *text, const char *search, const char *replace
     {
         if (replacement == NULL) replacement = "";
 
-        char *insertPoint = NULL;   // Next insert point
-        char *temp = NULL;          // Temp pointer
+        const char *insertPoint = NULL;    // Next insert point
+        char *temp = NULL;                 // Temp pointer
         int textLen = 0;            // Text string length
         int searchLen = 0;          // Search string length of (the string to remove)
         int replaceLen = 0;         // Replacement length (the string to replace by)
@@ -1869,8 +1869,8 @@ char *TextReplaceAlloc(const char *text, const char *search, const char *replace
         replaceLen = TextLength(replacement);
 
         // Count the number of replacements needed
-        insertPoint = (char *)text;
-        for (count = 0; (temp = strstr(insertPoint, search)); count++) insertPoint = temp + searchLen;
+        insertPoint = text;
+        for (count = 0; (insertPoint = strstr(insertPoint, search)); count++) insertPoint += searchLen;
 
         // Allocate returning string and point temp to it
         int tempLen = textLen + (replaceLen - searchLen)*count + 1;
@@ -2128,7 +2128,7 @@ int TextFindIndex(const char *text, const char *search)
 
     if (text != NULL)
     {
-        char *ptr = strstr(text, search);
+        const char *ptr = strstr(text, search);
 
         if (ptr != NULL) position = (int)(ptr - text);
     }
