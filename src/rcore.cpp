@@ -125,9 +125,7 @@
 #define RLGL_IMPLEMENTATION
 #include "rlgl.h"                   // OpenGL abstraction layer to OpenGL 1.1, 3.3+ or ES2
 
-#include "raymath.h"                // Vector2, Vector3, Quaternion and Matrix functionality
-// NOTE: External out-of-line raymath definitions are emitted by raymath_impl.c (compiled as C),
-// this translation unit only gets inline copies for its own calls
+#include "raymath.h"                // Vector2, Vector3, Quaternion and Matrix helpers (glm based)
 
 #if SUPPORT_GESTURES_SYSTEM
     #define RGESTURES_IMPLEMENTATION

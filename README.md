@@ -36,7 +36,7 @@ features
 --------
   - **Bundled dependencies**, all required native libraries are [included in raylib](https://github.com/raysan5/raylib/tree/master/src/external); the math types come from [glm](https://github.com/g-truc/glm), fetched by CMake
   - Multiple platforms supported: **Windows, Linux, MacOS, RPI, Android, HTML5... and more!**
-  - Written in **C++20** using [glm](https://github.com/g-truc/glm) for vectors, matrices and quaternions, with PascalCase/camelCase notation
+  - Written in **C++** (C++20 minimum; the CMake project builds with C++23) using [glm](https://github.com/g-truc/glm) for vectors, matrices and quaternions, with PascalCase/camelCase notation
   - Hardware accelerated with OpenGL: **1.1, 2.1, 3.3, 4.3, 4.6, ES 2.0, ES 3.0**
   - **Unique OpenGL abstraction layer** (usable as standalone module): [rlgl](https://github.com/raysan5/raylib/blob/master/src/rlgl.h)
   - **Software Renderer** backend (no OpenGL required!): [rlsw](https://github.com/raysan5/raylib/blob/master/src/external/rlsw.h)

@@ -2,6 +2,10 @@
 #
 #   raylib makefile
 #
+#   NOTE: This Makefile is NOT maintained by the C++/glm fork. The modules are
+#   C++ sources now and the math types come from glm, so this file still refers
+#   to the old .c files and will not work. Use CMake instead (see README.md).
+#
 #   This file supports building raylib library for the following platforms:
 #
 #     > PLATFORM_DESKTOP

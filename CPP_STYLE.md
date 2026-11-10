@@ -3,7 +3,7 @@
 Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `extensions/`.
 
 ## Language & build
-- Library, examples and extensions compile as **C++20** (CMake). The bundled GLFW sources stay **C**.
+- Library, examples and extensions compile as **C++20 or later** (the top-level CMake project sets C++23, standalone builds fall back to C++20). The bundled GLFW sources stay **C**.
 - `raylib.h` is a **C++ only** header: it requires C++17 or later and exposes glm types. `raymath.h`,
   `rcamera.h` and `rlgl.h` follow the same rule (they can still be used standalone, but as C++).
 - The exported API keeps the `extern "C"` ABI block. `raymath_impl.c` no longer exists: the math is
