@@ -299,11 +299,11 @@ typedef RenderTexture RenderTexture2D;
 // NPatchInfo, n-patch layout info
 typedef struct NPatchInfo {
     Rectangle source;       // Texture source rectangle
-    int left;               // Left border offset
-    int top;                // Top border offset
-    int right;              // Right border offset
-    int bottom;             // Bottom border offset
-    int layout;             // Layout of the n-patch: 3x3, 1x3 or 3x1
+    int left{};               // Left border offset
+    int top{};                // Top border offset
+    int right{};              // Right border offset
+    int bottom{};             // Bottom border offset
+    int layout{};             // Layout of the n-patch: 3x3, 1x3 or 3x1
 } NPatchInfo;
 
 // GlyphInfo, font characters glyphs info
@@ -381,9 +381,9 @@ typedef struct Shader {
 
 // MaterialMap
 typedef struct MaterialMap {
-    Texture2D texture;      // Material map texture
+    Texture2D texture{};      // Material map texture
     Color color;            // Material map color
-    float value;            // Material map value
+    float value{};            // Material map value
 } MaterialMap;
 
 // Material, includes shader and maps
@@ -983,29 +983,28 @@ typedef bool (*SaveFileTextCallback)(std::string_view fileName, std::string_view
 // Window and Graphics Device Functions (Module: core)
 //------------------------------------------------------------------------------------
 
-extern "C" {            // Keep unmangled symbol names for bindings and prebuilt consumers
 
 // Window-related functions
 RLAPI void InitWindow(int width, int height, std::string_view title);  // Initialize window and OpenGL context
-RLAPI void CloseWindow(void);                                     // Close window and unload OpenGL context
-RLAPI bool WindowShouldClose(void);                               // Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)
-RLAPI bool IsWindowReady(void);                                   // Check if window has been initialized successfully
-RLAPI bool IsWindowFullscreen(void);                              // Check if window is currently fullscreen
-RLAPI bool IsWindowHidden(void);                                  // Check if window is currently hidden
-RLAPI bool IsWindowMinimized(void);                               // Check if window is currently minimized
-RLAPI bool IsWindowMaximized(void);                               // Check if window is currently maximized
-RLAPI bool IsWindowFocused(void);                                 // Check if window is currently focused
-RLAPI bool IsWindowResized(void);                                 // Check if window has been resized last frame
+RLAPI void CloseWindow();                                     // Close window and unload OpenGL context
+RLAPI bool WindowShouldClose();                               // Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)
+RLAPI bool IsWindowReady();                                   // Check if window has been initialized successfully
+RLAPI bool IsWindowFullscreen();                              // Check if window is currently fullscreen
+RLAPI bool IsWindowHidden();                                  // Check if window is currently hidden
+RLAPI bool IsWindowMinimized();                               // Check if window is currently minimized
+RLAPI bool IsWindowMaximized();                               // Check if window is currently maximized
+RLAPI bool IsWindowFocused();                                 // Check if window is currently focused
+RLAPI bool IsWindowResized();                                 // Check if window has been resized last frame
 RLAPI bool IsWindowState(unsigned int flag);                      // Check if one specific window flag is enabled
 RLAPI void SetWindowState(unsigned int flags);                    // Set window configuration state using flags
 RLAPI void ClearWindowState(unsigned int flags);                  // Clear window configuration state flags
 RLAPI void SetWindowSamples(int samples);                         // Set the MSAA samples to request for the window, must be called before InitWindow()
-RLAPI int GetWindowSamples(void);                                 // Get the MSAA samples in use, zero means MSAA disabled
-RLAPI void ToggleFullscreen(void);                                // Toggle window state: fullscreen/windowed, resizes monitor to match window resolution
-RLAPI void ToggleBorderlessWindowed(void);                        // Toggle window state: borderless windowed, resizes window to match monitor resolution
-RLAPI void MaximizeWindow(void);                                  // Set window state: maximized, if resizable
-RLAPI void MinimizeWindow(void);                                  // Set window state: minimized, if resizable
-RLAPI void RestoreWindow(void);                                   // Restore window from being minimized/maximized
+RLAPI int GetWindowSamples();                                 // Get the MSAA samples in use, zero means MSAA disabled
+RLAPI void ToggleFullscreen();                                // Toggle window state: fullscreen/windowed, resizes monitor to match window resolution
+RLAPI void ToggleBorderlessWindowed();                        // Toggle window state: borderless windowed, resizes window to match monitor resolution
+RLAPI void MaximizeWindow();                                  // Set window state: maximized, if resizable
+RLAPI void MinimizeWindow();                                  // Set window state: minimized, if resizable
+RLAPI void RestoreWindow();                                   // Restore window from being minimized/maximized
 RLAPI void SetWindowIcon(Image image);                            // Set icon for window (single image, RGBA 32bit)
 RLAPI void SetWindowIcons(Image *images, int count);              // Set icon for window (multiple images, RGBA 32bit)
 RLAPI void SetWindowTitle(std::string_view title);                     // Set title for window
@@ -1015,55 +1014,55 @@ RLAPI void SetWindowMinSize(int width, int height);               // Set window 
 RLAPI void SetWindowMaxSize(int width, int height);               // Set window maximum dimensions (for FLAG_WINDOW_RESIZABLE)
 RLAPI void SetWindowSize(int width, int height);                  // Set window dimensions
 RLAPI void SetWindowOpacity(float opacity);                       // Set window opacity [0.0f..1.0f]
-RLAPI void SetWindowFocused(void);                                // Set window focused
-RLAPI void *GetWindowHandle(void);                                // Get native window handle
-RLAPI int GetScreenWidth(void);                                   // Get current screen width
-RLAPI int GetScreenHeight(void);                                  // Get current screen height
-RLAPI int GetRenderWidth(void);                                   // Get current render width (it considers HiDPI)
-RLAPI int GetRenderHeight(void);                                  // Get current render height (it considers HiDPI)
-RLAPI int GetMonitorCount(void);                                  // Get number of connected monitors
-RLAPI int GetCurrentMonitor(void);                                // Get current monitor where window is placed
+RLAPI void SetWindowFocused();                                // Set window focused
+RLAPI void *GetWindowHandle();                                // Get native window handle
+RLAPI int GetScreenWidth();                                   // Get current screen width
+RLAPI int GetScreenHeight();                                  // Get current screen height
+RLAPI int GetRenderWidth();                                   // Get current render width (it considers HiDPI)
+RLAPI int GetRenderHeight();                                  // Get current render height (it considers HiDPI)
+RLAPI int GetMonitorCount();                                  // Get number of connected monitors
+RLAPI int GetCurrentMonitor();                                // Get current monitor where window is placed
 RLAPI Vector2 GetMonitorPosition(int monitor);                    // Get specified monitor position
 RLAPI int GetMonitorWidth(int monitor);                           // Get specified monitor width (current video mode used by monitor)
 RLAPI int GetMonitorHeight(int monitor);                          // Get specified monitor height (current video mode used by monitor)
 RLAPI int GetMonitorPhysicalWidth(int monitor);                   // Get specified monitor physical width in millimetres
 RLAPI int GetMonitorPhysicalHeight(int monitor);                  // Get specified monitor physical height in millimetres
 RLAPI int GetMonitorRefreshRate(int monitor);                     // Get specified monitor refresh rate
-RLAPI Vector2 GetWindowPosition(void);                            // Get window position XY on monitor
-RLAPI Vector2 GetWindowScaleDPI(void);                            // Get window scale DPI factor
+RLAPI Vector2 GetWindowPosition();                            // Get window position XY on monitor
+RLAPI Vector2 GetWindowScaleDPI();                            // Get window scale DPI factor
 RLAPI std::string GetMonitorName(int monitor);                    // Get the human-readable, UTF-8 encoded name of the specified monitor
 RLAPI void SetClipboardText(std::string_view text);                    // Set clipboard text content
-RLAPI std::string GetClipboardText(void);                         // Get clipboard text content
-RLAPI Image GetClipboardImage(void);                              // Get clipboard image content
-RLAPI void EnableEventWaiting(void);                              // Enable waiting for events on EndDrawing(), no automatic event polling
-RLAPI void DisableEventWaiting(void);                             // Disable waiting for events on EndDrawing(), automatic events polling
+RLAPI std::string GetClipboardText();                         // Get clipboard text content
+RLAPI Image GetClipboardImage();                              // Get clipboard image content
+RLAPI void EnableEventWaiting();                              // Enable waiting for events on EndDrawing(), no automatic event polling
+RLAPI void DisableEventWaiting();                             // Disable waiting for events on EndDrawing(), automatic events polling
 
 // Cursor-related functions
-RLAPI void ShowCursor(void);                                      // Show cursor
-RLAPI void HideCursor(void);                                      // Hide cursor
-RLAPI bool IsCursorHidden(void);                                  // Check if cursor is not visible
-RLAPI void EnableCursor(void);                                    // Enable cursor (unlock cursor)
-RLAPI void DisableCursor(void);                                   // Disable cursor (lock cursor)
-RLAPI bool IsCursorOnScreen(void);                                // Check if cursor is on the screen
+RLAPI void ShowCursor();                                      // Show cursor
+RLAPI void HideCursor();                                      // Hide cursor
+RLAPI bool IsCursorHidden();                                  // Check if cursor is not visible
+RLAPI void EnableCursor();                                    // Enable cursor (unlock cursor)
+RLAPI void DisableCursor();                                   // Disable cursor (lock cursor)
+RLAPI bool IsCursorOnScreen();                                // Check if cursor is on the screen
 
 // Drawing-related functions
 RLAPI void ClearBackground(Color color);                          // Clear background (framebuffer) to color
-RLAPI void BeginDrawing(void);                                    // Begin canvas (framebuffer) drawing
-RLAPI void EndDrawing(void);                                      // End canvas (framebuffer) drawing and swap buffers (double buffering)
+RLAPI void BeginDrawing();                                    // Begin canvas (framebuffer) drawing
+RLAPI void EndDrawing();                                      // End canvas (framebuffer) drawing and swap buffers (double buffering)
 RLAPI void BeginMode2D(Camera2D camera);                          // Begin 2D mode with custom camera (2D)
-RLAPI void EndMode2D(void);                                       // End 2D mode with custom camera
+RLAPI void EndMode2D();                                       // End 2D mode with custom camera
 RLAPI void BeginMode3D(Camera3D camera);                          // Begin 3D mode with custom camera (3D)
-RLAPI void EndMode3D(void);                                       // End 3D mode and returns to default 2D orthographic mode
+RLAPI void EndMode3D();                                       // End 3D mode and returns to default 2D orthographic mode
 RLAPI void BeginTextureMode(RenderTexture2D target);              // Begin drawing to render texture
-RLAPI void EndTextureMode(void);                                  // End drawing to render texture
+RLAPI void EndTextureMode();                                  // End drawing to render texture
 RLAPI void BeginShaderMode(Shader shader);                        // Begin custom shader drawing
-RLAPI void EndShaderMode(void);                                   // End custom shader drawing (use default shader)
+RLAPI void EndShaderMode();                                   // End custom shader drawing (use default shader)
 RLAPI void BeginBlendMode(int mode);                              // Begin blending mode (alpha, additive, multiplied, subtract, custom)
-RLAPI void EndBlendMode(void);                                    // End blending mode (reset to default: alpha blending)
+RLAPI void EndBlendMode();                                    // End blending mode (reset to default: alpha blending)
 RLAPI void BeginScissorMode(int x, int y, int width, int height); // Begin scissor mode (define screen area for following drawing)
-RLAPI void EndScissorMode(void);                                  // End scissor mode
+RLAPI void EndScissorMode();                                  // End scissor mode
 RLAPI void BeginVrStereoMode(VrStereoConfig config);              // Begin stereo rendering (requires VR simulator)
-RLAPI void EndVrStereoMode(void);                                 // End stereo rendering (requires VR simulator)
+RLAPI void EndVrStereoMode();                                 // End stereo rendering (requires VR simulator)
 
 // VR stereo config functions for VR simulator
 RLAPI VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device);     // Load VR stereo config for VR simulator device parameters
@@ -1094,16 +1093,16 @@ RLAPI Matrix GetCameraMatrix2D(Camera2D camera);                        // Get c
 
 // Timing-related functions
 RLAPI void SetTargetFPS(int fps);                       // Set target FPS (maximum)
-RLAPI float GetFrameTime(void);                         // Get time in seconds for last frame drawn (delta time)
-RLAPI double GetTime(void);                             // Get elapsed time in seconds since InitWindow()
-RLAPI int GetFPS(void);                                 // Get current FPS
+RLAPI float GetFrameTime();                         // Get time in seconds for last frame drawn (delta time)
+RLAPI double GetTime();                             // Get elapsed time in seconds since InitWindow()
+RLAPI int GetFPS();                                 // Get current FPS
 
 // Custom frame control functions
 // NOTE: Those functions are intended for advanced users that want full control over the frame processing
 // By default EndDrawing() does this job: draws everything + SwapScreenBuffer() + manage frame timing + PollInputEvents()
 // To avoid that behaviour and control frame processes manually, enable in config.h: SUPPORT_CUSTOM_FRAME_CONTROL
-RLAPI void SwapScreenBuffer(void);                      // Swap back buffer with front buffer (screen drawing)
-RLAPI void PollInputEvents(void);                       // Register all input events
+RLAPI void SwapScreenBuffer();                      // Swap back buffer with front buffer (screen drawing)
+RLAPI void PollInputEvents();                       // Register all input events
 RLAPI void WaitTime(double seconds);                    // Wait for some time (halt program execution)
 
 // Random values generation functions
@@ -1159,8 +1158,8 @@ RLAPI std::string GetFileName(std::string_view filePath);                // Get 
 RLAPI std::string GetFileNameWithoutExt(std::string_view filePath);      // Get filename string without extension
 RLAPI std::string GetDirectoryPath(std::string_view filePath);           // Get full path for a provided fileName with path
 RLAPI std::string GetPrevDirectoryPath(std::string_view dirPath);        // Get previous directory path for a provided path
-RLAPI std::string GetWorkingDirectory(void);                        // Get current working directory
-RLAPI std::string GetApplicationDirectory(void);                    // Get the directory of the running application
+RLAPI std::string GetWorkingDirectory();                        // Get current working directory
+RLAPI std::string GetApplicationDirectory();                    // Get the directory of the running application
 RLAPI int MakeDirectory(std::string_view dirPath);                       // Create directories (including full path requested), returns 0 on success
 RLAPI int ChangeDirectory(std::string_view dirPath);                     // Change working directory, returns 0 on success
 RLAPI bool IsPathFile(std::string_view path);                            // Check if provided path points to a file
@@ -1169,8 +1168,8 @@ RLAPI bool IsPathAbsolute(std::string_view path);                        // Chec
 RLAPI bool IsFileNameValid(std::string_view fileName);                   // Check if fileName is valid for the platform/OS
 RLAPI FilePathList LoadDirectoryFiles(std::string_view dirPath);         // Load directory filepaths, files and directories, no subdirs scan
 RLAPI FilePathList LoadDirectoryFilesEx(std::string_view basePath, std::string_view filter, bool scanSubdirs); // Load directory filepaths with extension filtering and subdir scan; some filters available: '*.*','FILES*','DIRS*'
-RLAPI bool IsFileDropped(void);                                     // Check if file has been dropped into window
-RLAPI FilePathList LoadDroppedFiles(void);                          // Load dropped filepaths
+RLAPI bool IsFileDropped();                                     // Check if file has been dropped into window
+RLAPI FilePathList LoadDroppedFiles();                          // Load dropped filepaths
 RLAPI unsigned int GetDirectoryFileCount(std::string_view dirPath);      // Get the file count in a directory
 RLAPI unsigned int GetDirectoryFileCountEx(std::string_view basePath, std::string_view filter, bool scanSubdirs); // Get the file count in a directory with extension filtering and recursive directory scan. Use 'DIR' in the filter string to include directories in the result
 
@@ -1190,8 +1189,8 @@ RLAPI void UnloadAutomationEventList(AutomationEventList list);   // Unload auto
 RLAPI bool ExportAutomationEventList(AutomationEventList list, std::string_view fileName); // Export automation events list as text file
 RLAPI void SetAutomationEventList(AutomationEventList *list);     // Set automation event list to record to
 RLAPI void SetAutomationEventBaseFrame(int frame);                // Set automation event internal base frame to start recording
-RLAPI void StartAutomationEventRecording(void);                   // Start recording automation events (AutomationEventList must be set)
-RLAPI void StopAutomationEventRecording(void);                    // Stop recording automation events
+RLAPI void StartAutomationEventRecording();                   // Start recording automation events (AutomationEventList must be set)
+RLAPI void StopAutomationEventRecording();                    // Stop recording automation events
 RLAPI void PlayAutomationEvent(AutomationEvent event);            // Play a recorded automation event
 
 //------------------------------------------------------------------------------------
@@ -1204,8 +1203,8 @@ RLAPI bool IsKeyPressedRepeat(int key);                       // Check if key ha
 RLAPI bool IsKeyDown(int key);                                // Check if key is being pressed
 RLAPI bool IsKeyReleased(int key);                            // Check if key has been released once
 RLAPI bool IsKeyUp(int key);                                  // Check if key is NOT being pressed
-RLAPI int GetKeyPressed(void);                                // Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty
-RLAPI int GetCharPressed(void);                               // Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty
+RLAPI int GetKeyPressed();                                // Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty
+RLAPI int GetCharPressed();                               // Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty
 RLAPI std::string GetKeyName(int key);                        // Get name of a QWERTY key on the current keyboard layout (eg returns string 'q' for KEY_A on an AZERTY keyboard)
 RLAPI void SetExitKey(int key);                               // Set a custom key to exit program (default is ESC)
 
@@ -1216,7 +1215,7 @@ RLAPI bool IsGamepadButtonPressed(int gamepad, int button);   // Check if gamepa
 RLAPI bool IsGamepadButtonDown(int gamepad, int button);      // Check if gamepad button is being pressed
 RLAPI bool IsGamepadButtonReleased(int gamepad, int button);  // Check if gamepad button has been released once
 RLAPI bool IsGamepadButtonUp(int gamepad, int button);        // Check if gamepad button is NOT being pressed
-RLAPI int GetGamepadButtonPressed(void);                      // Get the last gamepad button pressed
+RLAPI int GetGamepadButtonPressed();                      // Get the last gamepad button pressed
 RLAPI int GetGamepadAxisCount(int gamepad);                   // Get axis count for a gamepad
 RLAPI float GetGamepadAxisMovement(int gamepad, int axis);    // Get movement value for a gamepad axis
 RLAPI int SetGamepadMappings(std::string_view mappings);           // Set internal gamepad mappings (SDL_GameControllerDB)
@@ -1227,35 +1226,35 @@ RLAPI bool IsMouseButtonPressed(int button);                  // Check if mouse 
 RLAPI bool IsMouseButtonDown(int button);                     // Check if mouse button is being pressed
 RLAPI bool IsMouseButtonReleased(int button);                 // Check if mouse button has been released once
 RLAPI bool IsMouseButtonUp(int button);                       // Check if mouse button is NOT being pressed
-RLAPI int GetMouseX(void);                                    // Get mouse position X
-RLAPI int GetMouseY(void);                                    // Get mouse position Y
-RLAPI Vector2 GetMousePosition(void);                         // Get mouse position XY
-RLAPI Vector2 GetMouseDelta(void);                            // Get mouse delta between frames
+RLAPI int GetMouseX();                                    // Get mouse position X
+RLAPI int GetMouseY();                                    // Get mouse position Y
+RLAPI Vector2 GetMousePosition();                         // Get mouse position XY
+RLAPI Vector2 GetMouseDelta();                            // Get mouse delta between frames
 RLAPI void SetMousePosition(int x, int y);                    // Set mouse position XY
 RLAPI void SetMouseOffset(int offsetX, int offsetY);          // Set mouse offset
 RLAPI void SetMouseScale(float scaleX, float scaleY);         // Set mouse scaling
-RLAPI float GetMouseWheelMove(void);                          // Get mouse wheel movement for X or Y, whichever is larger
-RLAPI Vector2 GetMouseWheelMoveV(void);                       // Get mouse wheel movement for both X and Y
+RLAPI float GetMouseWheelMove();                          // Get mouse wheel movement for X or Y, whichever is larger
+RLAPI Vector2 GetMouseWheelMoveV();                       // Get mouse wheel movement for both X and Y
 RLAPI void SetMouseCursor(int cursor);                        // Set mouse cursor
 
 // Input-related functions: touch
-RLAPI int GetTouchX(void);                                    // Get touch position X for touch point 0 (relative to screen size)
-RLAPI int GetTouchY(void);                                    // Get touch position Y for touch point 0 (relative to screen size)
+RLAPI int GetTouchX();                                    // Get touch position X for touch point 0 (relative to screen size)
+RLAPI int GetTouchY();                                    // Get touch position Y for touch point 0 (relative to screen size)
 RLAPI Vector2 GetTouchPosition(int index);                    // Get touch position XY for a touch point index (relative to screen size)
 RLAPI int GetTouchPointId(int index);                         // Get touch point identifier for provided index
-RLAPI int GetTouchPointCount(void);                           // Get number of touch points
+RLAPI int GetTouchPointCount();                           // Get number of touch points
 
 //------------------------------------------------------------------------------------
 // Gestures and Touch Handling Functions (Module: rgestures)
 //------------------------------------------------------------------------------------
 RLAPI void SetGesturesEnabled(unsigned int flags);            // Enable a set of gestures using flags
 RLAPI bool IsGestureDetected(unsigned int gesture);           // Check if gesture has been detected
-RLAPI int GetGestureDetected(void);                           // Get latest detected gesture
-RLAPI float GetGestureHoldDuration(void);                     // Get gesture hold time in seconds
-RLAPI Vector2 GetGestureDragVector(void);                     // Get gesture drag vector
-RLAPI float GetGestureDragAngle(void);                        // Get gesture drag angle
-RLAPI Vector2 GetGesturePinchVector(void);                    // Get gesture pinch delta
-RLAPI float GetGesturePinchAngle(void);                       // Get gesture pinch angle
+RLAPI int GetGestureDetected();                           // Get latest detected gesture
+RLAPI float GetGestureHoldDuration();                     // Get gesture hold time in seconds
+RLAPI Vector2 GetGestureDragVector();                     // Get gesture drag vector
+RLAPI float GetGestureDragAngle();                        // Get gesture drag angle
+RLAPI Vector2 GetGesturePinchVector();                    // Get gesture pinch delta
+RLAPI float GetGesturePinchAngle();                       // Get gesture pinch angle
 
 //------------------------------------------------------------------------------------
 // Camera System Functions (Module: rcamera)
@@ -1270,8 +1269,8 @@ RLAPI void UpdateCameraPro(Camera *camera, Vector3 movement, Vector3 rotation, f
 // NOTE: It can be useful when using basic shapes and one single font,
 // defining a font char white rectangle would allow drawing everything in a single draw call
 RLAPI void SetShapesTexture(Texture2D texture, Rectangle rec); // Set texture and rectangle to be used on shapes drawing
-RLAPI Texture2D GetShapesTexture(void);                 // Get texture that is used for shapes drawing
-RLAPI Rectangle GetShapesTextureRectangle(void);        // Get texture source rectangle that is used for shapes drawing
+RLAPI Texture2D GetShapesTexture();                 // Get texture that is used for shapes drawing
+RLAPI Rectangle GetShapesTextureRectangle();        // Get texture source rectangle that is used for shapes drawing
 
 // Basic shapes drawing functions
 RLAPI void DrawPixel(int posX, int posY, Color color);                                                   // Draw a pixel using geometry [Can be slow, use with care]
@@ -1365,7 +1364,7 @@ RLAPI Image LoadImageAnim(std::string_view fileName, int *frames);              
 RLAPI Image LoadImageAnimFromMemory(std::string_view fileType, const unsigned char *fileData, int dataSize, int *frames); // Load image sequence from memory buffer
 RLAPI Image LoadImageFromMemory(std::string_view fileType, const unsigned char *fileData, int dataSize);      // Load image from memory buffer, fileType refers to extension: i.e. '.png'
 RLAPI Image LoadImageFromTexture(Texture2D texture);                                                     // Load image from GPU texture data
-RLAPI Image LoadImageFromScreen(void);                                                                   // Load image from screen buffer (screenshot)
+RLAPI Image LoadImageFromScreen();                                                                   // Load image from screen buffer (screenshot)
 RLAPI bool IsImageValid(Image image);                                                                    // Check if an image is valid (data and parameters)
 RLAPI void UnloadImage(Image image);                                                                     // Unload image from CPU memory (RAM)
 RLAPI bool ExportImage(Image image, std::string_view fileName);                                               // Export image data to file, returns true on success
@@ -1507,7 +1506,7 @@ RLAPI int GetPixelDataSize(int width, int height, int format);              // G
 //------------------------------------------------------------------------------------
 
 // Font loading/unloading functions
-RLAPI Font GetFontDefault(void);                                                            // Get the default Font
+RLAPI Font GetFontDefault();                                                            // Get the default Font
 RLAPI Font LoadFont(std::string_view fileName);                                                  // Load font from file into GPU memory (VRAM)
 RLAPI Font LoadFontEx(std::string_view fileName, int fontSize, const int *codepoints, int codepointCount); // Load font from file with defined codepoints and generation size, use NULL for codepoints and 0 for codepointCount to load the default character set, font size is provided in pixels height
 RLAPI Font LoadFontFromImage(Image image, Color key, int firstChar);                        // Load font from Image (XNA style)
@@ -1642,7 +1641,7 @@ RLAPI Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize);                   
 
 // Material loading/unloading functions
 RLAPI Material *LoadMaterials(std::string_view fileName, int *materialCount);                    // Load materials from model file
-RLAPI Material LoadMaterialDefault(void);                                                   // Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)
+RLAPI Material LoadMaterialDefault();                                                   // Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)
 RLAPI bool IsMaterialValid(Material material);                                              // Check if material is valid (shader assigned, map textures loaded in GPU)
 RLAPI void UnloadMaterial(Material material);                                               // Unload material from GPU memory (VRAM)
 RLAPI void SetMaterialTexture(Material *material, int mapType, Texture2D texture);          // Set texture for a material map type (MATERIAL_MAP_DIFFUSE, MATERIAL_MAP_SPECULAR...)
@@ -1671,11 +1670,11 @@ RLAPI RayCollision GetRayCollisionQuad(Ray ray, Vector3 p1, Vector3 p2, Vector3 
 typedef void (*AudioCallback)(void *bufferData, unsigned int frames);
 
 // Audio device management functions
-RLAPI void InitAudioDevice(void);                                     // Initialize audio device and context
-RLAPI void CloseAudioDevice(void);                                    // Close the audio device and context
-RLAPI bool IsAudioDeviceReady(void);                                  // Check if audio device has been initialized successfully
+RLAPI void InitAudioDevice();                                     // Initialize audio device and context
+RLAPI void CloseAudioDevice();                                    // Close the audio device and context
+RLAPI bool IsAudioDeviceReady();                                  // Check if audio device has been initialized successfully
 RLAPI void SetMasterVolume(float volume);                             // Set master volume (listener)
-RLAPI float GetMasterVolume(void);                                    // Get master volume (listener)
+RLAPI float GetMasterVolume();                                    // Get master volume (listener)
 
 // Wave/Sound loading/unloading functions
 RLAPI Wave LoadWave(std::string_view fileName);                            // Load wave data from file
@@ -1748,6 +1747,6 @@ RLAPI void DetachAudioStreamProcessor(AudioStream stream, AudioCallback processo
 RLAPI void AttachAudioMixedProcessor(AudioCallback processor); // Attach audio stream processor to the entire audio pipeline, receives frames x 2 samples as 'float' (stereo)
 RLAPI void DetachAudioMixedProcessor(AudioCallback processor); // Detach audio stream processor from the entire audio pipeline
 
-}
+
 
 #endif // RAYLIB_H
