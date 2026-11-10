@@ -214,25 +214,6 @@ static glm::vec3 OrbitPosition(const OrbitCamera &camera)
                                      camera.distance*cosPitch*cosf(camera.yaw));
 }
 
-// glm stores its matrices column-major; the raylib Matrix fields are declared
-// column-major too (m0, m4, m8, m12 first), but rlSetUniformMatrix() uploads the
-// fields in their logical order m0..m15. Assigning by field name therefore hands
-// the glm matrix over to OpenGL unchanged - an aggregate initializer would fill
-// the fields in declaration order and silently transpose the matrix
-static Matrix ToRaylibMatrix(const glm::mat4 &value)
-{
-    const float *data = glm::value_ptr(value);
-
-    Matrix result = { 0 };
-
-    result.m0 = data[0];   result.m1 = data[1];   result.m2 = data[2];   result.m3 = data[3];
-    result.m4 = data[4];   result.m5 = data[5];   result.m6 = data[6];   result.m7 = data[7];
-    result.m8 = data[8];   result.m9 = data[9];   result.m10 = data[10]; result.m11 = data[11];
-    result.m12 = data[12]; result.m13 = data[13]; result.m14 = data[14]; result.m15 = data[15];
-
-    return result;
-}
-
 static SceneMesh UploadSceneMesh(Mesh mesh)
 {
     SceneMesh result;
@@ -339,7 +320,7 @@ static void UnloadShadowMapRenderTexture(RenderTexture2D target)
     }
 }
 
-int main(void)
+int main()
 {
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib-extended [shadows] - 3d shapes with directional light and shadow mapping");
@@ -498,13 +479,13 @@ int main(void)
             // itself or nothing is written into the depth texture of the shadow map
             rlEnableDepthTest();
 
-            SetShaderValueMatrix(shadowShader, shadowLightViewProjection, ToRaylibMatrix(lightViewProjection));
+            SetShaderValueMatrix(shadowShader, shadowLightViewProjection, lightViewProjection);
 
             for (const SceneObject &object : objects)
             {
                 if (!object.castsShadow) continue;
 
-                SetShaderValueMatrix(shadowShader, shadowModel, ToRaylibMatrix(object.model));
+                SetShaderValueMatrix(shadowShader, shadowModel, object.model);
                 DrawSceneMesh(*object.mesh);
             }
 
@@ -522,8 +503,8 @@ int main(void)
             rlEnableBackfaceCulling();
             rlEnableDepthTest();            // the batch of BeginMode3D would do this, the custom pass has to do it itself
 
-            SetShaderValueMatrix(litShader, litViewProjection, ToRaylibMatrix(projection*view));
-            SetShaderValueMatrix(litShader, litLightViewProjection, ToRaylibMatrix(lightViewProjection));
+            SetShaderValueMatrix(litShader, litViewProjection, projection*view);
+            SetShaderValueMatrix(litShader, litLightViewProjection, lightViewProjection);
             SetShaderValue(litShader, litCameraPosition, glm::value_ptr(cameraPosition), SHADER_UNIFORM_VEC3);
             SetShaderValue(litShader, litLightDirection, glm::value_ptr(lightDirection), SHADER_UNIFORM_VEC3);
 
@@ -532,7 +513,7 @@ int main(void)
 
             for (const SceneObject &object : objects)
             {
-                SetShaderValueMatrix(litShader, litModel, ToRaylibMatrix(object.model));
+                SetShaderValueMatrix(litShader, litModel, object.model);
                 SetShaderValue(litShader, litColor, glm::value_ptr(object.color), SHADER_UNIFORM_VEC4);
                 DrawSceneMesh(*object.mesh);
             }

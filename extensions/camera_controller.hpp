@@ -11,7 +11,7 @@
 *
 *   DEPENDENCIES:
 *       raylib 6.5+   - Window/keyboard/mouse/gamepad input, Camera3D type
-*       raymath       - Vector math (Vector3, Vector3Normalize(), Vector3RotateByAxisAngle(), ...)
+*       raymath       - Vector math (glm vectors, Vector3RotateByAxisAngle(), ...)
 *
 *   USAGE:
 *       #include "camera_controller.hpp"
@@ -68,7 +68,8 @@
 #define CAMERA_CONTROLLER_HPP
 
 #include "raylib.h"         // Required for: Camera3D, GetFrameTime(), GetMouseDelta(), GetMouseWheelMove(), IsKeyDown(), IsKeyPressed(), GetGamepadAxisMovement(), ...
-#include "raymath.h"        // Required for: Vector2, Vector3, Vector3Normalize(), Vector3Length(), Vector3CrossProduct(), Vector3RotateByAxisAngle(), DEG2RAD, EPSILON
+#include "raymath.h"        // Required for: Vector2, Vector3, Vector3RotateByAxisAngle(), DEG2RAD, EPSILON
+                                    // (vector arithmetic is glm: length(), normalize(), cross(), distance(), dot())
 
 #include <math.h>           // Required for: sinf(), cosf(), atan2f(), asinf(), expf(), powf(), fabsf()
 
@@ -256,11 +257,11 @@ public:
             Vector3 planarForward = { forward.x, 0.0f, forward.z };
             Vector3 planarRight = { right.x, 0.0f, right.z };
 
-            if (Vector3LengthSqr(planarForward) > EPSILON) forward = Vector3Normalize(planarForward);
-            else forward = Vector3Zero();
+            if (glm::dot(planarForward, planarForward) > EPSILON) forward = glm::normalize(planarForward);
+            else forward = Vector3{};
 
-            if (Vector3LengthSqr(planarRight) > EPSILON) right = Vector3Normalize(planarRight);
-            else right = Vector3Zero();
+            if (glm::dot(planarRight, planarRight) > EPSILON) right = glm::normalize(planarRight);
+            else right = Vector3{};
         }
 
         Vector3 up = planar? Vector3{ 0.0f, 1.0f, 0.0f } : GetUp();
@@ -293,16 +294,16 @@ public:
         mPivot = UsesPivot()? camera.target : camera.position;
         mPosition = camera.position;
 
-        Vector3 view = Vector3Subtract(camera.target, camera.position);
-        if (Vector3LengthSqr(view) > EPSILON)
+        Vector3 view = camera.target - camera.position;
+        if (glm::dot(view, view) > EPSILON)
         {
-            view = Vector3Normalize(view);
+            view = glm::normalize(view);
             mYaw = atan2f(view.x, view.z)/DEG2RAD;
             mPitch = asinf(Clampf(view.y, -1.0f, 1.0f))/DEG2RAD;
         }
 
         mRoll = 0.0f;
-        mDistance = Vector3Distance(camera.position, camera.target);
+        mDistance = glm::distance(camera.position, camera.target);
         if (UsesPivot() && (mDistance < mConfig.minDistance)) mDistance = mConfig.minDistance;
 
         mFovy = camera.fovy;
@@ -317,8 +318,8 @@ public:
         mTargetDistance = mDistance;
         mTargetFovy = mFovy;
 
-        mVelocity = Vector3Zero();
-        mTargetVelocity = Vector3Zero();
+        mVelocity = Vector3{};
+        mTargetVelocity = Vector3{};
 
         mCamera = camera;
         mCamera.up = GetUp();
@@ -327,8 +328,8 @@ public:
     // Restores the camera this controller was created (or last reset) with
     void Reset()
     {
-        mVelocity = Vector3Zero();
-        mTargetVelocity = Vector3Zero();
+        mVelocity = Vector3{};
+        mTargetVelocity = Vector3{};
         Reset(mInitialCamera);
     }
 
@@ -401,10 +402,10 @@ public:
     // Rotates the camera to look at [target], keeping the current position
     void LookAt(const Vector3 &target, bool snap = false)
     {
-        Vector3 view = Vector3Subtract(target, mCamera.position);
-        if (Vector3LengthSqr(view) <= EPSILON) return;
+        Vector3 view = target - mCamera.position;
+        if (glm::dot(view, view) <= EPSILON) return;
 
-        view = Vector3Normalize(view);
+        view = glm::normalize(view);
 
         mTargetYaw = NearestAngle(atan2f(view.x, view.z)/DEG2RAD, mYaw);
         mTargetPitch = Clampf(asinf(Clampf(view.y, -1.0f, 1.0f))/DEG2RAD, -mConfig.maxPitch, mConfig.maxPitch);
@@ -464,30 +465,30 @@ public:
 
     Vector3 GetRight() const
     {
-        Vector3 right = Vector3CrossProduct(GetForward(), GetUp());
+        Vector3 right = glm::cross(GetForward(), GetUp());
 
         // Degenerate case: the camera looks straight up or down, any horizontal vector is a valid right vector
-        if (Vector3LengthSqr(right) <= EPSILON)
+        if (glm::dot(right, right) <= EPSILON)
         {
             float yawRad = mYaw*DEG2RAD;
             Vector3 horizontalRight = { -cosf(yawRad), 0.0f, sinf(yawRad) };
             return horizontalRight;
         }
 
-        return Vector3Normalize(right);
+        return glm::normalize(right);
     }
 
     //--------------------------------------------------------------------
     // Movement state
     //--------------------------------------------------------------------
     Vector3 GetVelocity() const { return mVelocity; }       // Current smoothed velocity, in world units per second
-    float GetSpeed() const { return Vector3Length(mVelocity); }
+    float GetSpeed() const { return glm::length(mVelocity); }
 
     // Stops the camera immediately, clearing both the current and the requested velocity
     void StopMovement()
     {
-        mVelocity = Vector3Zero();
-        mTargetVelocity = Vector3Zero();
+        mVelocity = Vector3{};
+        mTargetVelocity = Vector3{};
     }
 
     // Adds velocity to the camera without changing the requested one, useful for hits, knockbacks and camera kicks
@@ -740,7 +741,7 @@ private:
         }
 
         Vector3 input = { moveX, moveY, moveZ };
-        if (Vector3LengthSqr(input) > 1.0f) input = Vector3Normalize(input);
+        if (glm::dot(input, input) > 1.0f) input = glm::normalize(input);
 
         velocity = input*speed;
     }

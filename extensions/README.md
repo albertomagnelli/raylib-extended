@@ -35,7 +35,7 @@ lower = smoother and heavier, higher = snappier, `0.0f` = instant.
 #include "raylib.h"
 #include "camera_controller.hpp"
 
-int main(void)
+int main()
 {
     InitWindow(1280, 720, "camera_controller");
     SetTargetFPS(60);
@@ -241,7 +241,7 @@ an animated directional light and a 2048x2048 depth-only shadow map with 3x3 PCF
 | `mx::gpu::Pipeline` | `rlEnableShader()` / `rlEnableBackfaceCulling()` / `rlEnableDepthTest()` |
 | `mx::gpu::Sampler` (nearest, clamp) | the defaults `rlLoadTextureDepth()` already sets |
 | `mx::make*Mesh()` | `GenMeshPlane()` / `GenMeshCube()` / `GenMeshSphere()` / ... |
-| glm math | glm, fetched with `FetchContent` (`g-truc/glm` 1.0.1, target `glm::glm`) in `CMakeLists.txt` |
+| glm math | glm is raylib's public math API (`Vector3`, `Matrix`, ...); the standalone build fetches `g-truc/glm` 1.0.1 with `FetchContent` |
 
 The lighting, the 3x3 PCF and the Reinhard tonemapping are unchanged, as are the palette and the
 German HUD strings. The original shaders asked for `#version 460` because mx created an OpenGL 4.6
@@ -261,12 +261,10 @@ context, the port uses `#version 330` for the OpenGL 3.3 core context raylib def
 
 These were the three traps while porting, all of them easy to reproduce:
 
-- **`Matrix` field order**: raylib declares the `Matrix` fields as `m0, m4, m8, m12 / m1, m5, ...`
-  (column-major declaration), so an aggregate initializer like `Matrix m = { data[0..15] }` fills
-  `m0, m4, m8, m12` first and silently **transposes** the matrix. Copy glm matrices field by field
-  (`result.m0 = data[0]; result.m4 = data[4]; ...`), which is what `ToRaylibMatrix()` does;
-  `rlSetUniformMatrix()` uploads the fields in their logical `m0..m15` order, so the matrix then
-  reaches OpenGL unchanged.
+- **`Matrix` is `glm::mat4`**: raylib exposes glm types directly, so a `glm::mat4` can be passed
+  to `rlSetUniformMatrix()` / `SetShaderValueMatrix()` without any conversion. Both glm and
+  OpenGL store matrices column-major and `rlMatrixToFloat()` preserves that layout, so the matrix
+  reaches the shader unchanged.
 - **Depth state is not enabled for custom passes**: raylib initializes OpenGL with
   `glDisable(GL_DEPTH_TEST)` and only `BeginMode3D()` enables it. A pass that draws straight
   through `rlgl` has to call `rlEnableDepthTest()` itself, otherwise nothing lands in the depth

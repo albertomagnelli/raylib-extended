@@ -155,7 +155,7 @@ static void UpdateParticles(std::vector<Particle> &particles, Vector2 mouse, boo
         if (attracting)
         {
             Vector2 toMouse = { mouse.x - particle.position.x, mouse.y - particle.position.y };
-            float distance = std::max(Vector2Length(toMouse), 1.0f);
+            float distance = std::max(glm::length(toMouse), 1.0f);
             float strength = 3200.0f/(distance + 80.0f);
 
             particle.velocity.x += toMouse.x*(strength*delta/distance);
@@ -290,7 +290,7 @@ static void DrawHud(Font font, Vector2 size, int particleCount, float time, floa
     DrawTextEx(font, fpsText, { size.x - fpsSize.x - 40.0f, size.y - 40.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
 }
 
-int main(void)
+int main()
 {
     // MSAA x4 like the original demo, requested before the window context is created
     SetWindowSamples(4);

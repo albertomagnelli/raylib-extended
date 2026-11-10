@@ -32,7 +32,7 @@
 static void DrawScene(const CameraController &camera);
 static void DrawHud(const CameraController &camera, const char **modeNames, int modeCount, int requestedSamples);
 
-int main(void)
+int main()
 {
     const int screenWidth = 1280;
     const int screenHeight = 720;
@@ -74,7 +74,7 @@ int main(void)
         }
 
         // Camera knockback, the controller damps it out on its own
-        if (IsKeyPressed(KEY_K)) camera.AddVelocity(Vector3Scale(camera.GetForward(), -14.0f));
+        if (IsKeyPressed(KEY_K)) camera.AddVelocity(camera.GetForward()*-14.0f);
 
         // Cycle the MSAA samples: 4x -> 8x -> 16x -> off
         // NOTE: The window is recreated, the samples are fixed when the GL context is created
