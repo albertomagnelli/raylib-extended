@@ -80,9 +80,18 @@
 #else
     #if defined(__TINYC__)
         #define RMAPI static inline // plain inline not supported by tinycc (See issue #435)
+    #elif defined(__cplusplus)
+        // NOTE: In C++ the definitions stay internal to each translation unit:
+        // 'extern "C" inline' would emit strong out-of-line copies per TU and collide
+        // with the exported definitions provided by raymath_impl.c (compiled as C)
+        #define RMAPI static inline
     #else
         #define RMAPI inline        // Functions may be inlined or external definition used
     #endif
+#endif
+
+#if defined(__cplusplus)
+extern "C" {            // Prevents name mangling of functions, so C code can link against them
 #endif
 
 //----------------------------------------------------------------------------------
@@ -2826,6 +2835,10 @@ RMAPI void MatrixDecompose(Matrix mat, Vector3 *translation, Quaternion *rotatio
                               0, 0, 0, 1 };
     *rotation = QuaternionFromMatrix(rotationMatrix);
 }
+
+#if defined(__cplusplus)
+}
+#endif
 
 #if defined(__cplusplus) && !defined(RAYMATH_DISABLE_CPP_OPERATORS)
 

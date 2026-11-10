@@ -234,10 +234,12 @@ typedef struct {
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
+// NOTE: Aggregate initializer (declaration order) instead of designated initializers,
+// which are not valid C++
 static GesturesData GESTURES = {
-    .current = GESTURE_NONE,        // No current gesture detected
-    .Touch.firstId = -1,
-    .enabledFlags = 0b0000001111111111  // All gestures supported by default
+    GESTURE_NONE,                   // .current: No current gesture detected
+    0b0000001111111111,             // .enabledFlags: All gestures supported by default
+    { -1 }                          // .Touch.firstId = -1, remaining fields zero-initialized
 };
 
 //----------------------------------------------------------------------------------

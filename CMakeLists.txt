@@ -5,6 +5,10 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Disable C++20 module scanning (GCC adds -fmodules-ts otherwise, which
+# makes C++20 keywords like 'module' in vendored C headers hard errors)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 # Avoid excessive expansion of variables in conditionals. In particular, if

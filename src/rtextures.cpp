@@ -1074,7 +1074,7 @@ Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float
             float np = (p + 1.0f)/2.0f;
 
             unsigned char intensity = (unsigned char)(np*255.0f);
-            pixels[y*width + x] = (Color){ intensity, intensity, intensity, 255 };
+            pixels[y*width + x] = Color{ intensity, intensity, intensity, 255 };
         }
     }
 
@@ -1104,7 +1104,7 @@ Image GenImageCellular(int width, int height, int tileSize)
     {
         int y = (i/seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
         int x = (i%seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
-        seeds[i] = (Vector2){ (float)x, (float)y };
+        seeds[i] = Vector2{ (float)x, (float)y };
     }
 
     for (int y = 0; y < height; y++)
@@ -1138,7 +1138,7 @@ Image GenImageCellular(int width, int height, int tileSize)
             if (intensity > 255) intensity = 255;
 
             unsigned char intensityUC = (unsigned char)intensity;
-            pixels[y*width + x] = (Color){ intensityUC, intensityUC, intensityUC, 255 };
+            pixels[y*width + x] = Color{ intensityUC, intensityUC, intensityUC, 255 };
         }
     }
 
@@ -1587,8 +1587,8 @@ Image ImageTextEx(Font font, const char *text, float fontSize, float spacing, Co
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
                 Rectangle rec = { (float)(textOffsetX + font.glyphs[index].offsetX), (float)(textOffsetY + font.glyphs[index].offsetY), font.recs[index].width, font.recs[index].height };
-                ImageDrawImagePro(&imText, font.glyphs[index].image, (Rectangle){ 0, 0, (float)font.glyphs[index].image.width, (float)font.glyphs[index].image.height },
-                    rec, (Vector2){ 0 }, 0.0f, tint);
+                ImageDrawImagePro(&imText, font.glyphs[index].image, Rectangle{ 0, 0, (float)font.glyphs[index].image.width, (float)font.glyphs[index].image.height },
+                    rec, Vector2{ 0 }, 0.0f, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += (int)(font.recs[index].width + spacing);
@@ -3232,7 +3232,7 @@ Rectangle GetImageAlphaBorder(Image image, float threshold)
         // Check for empty blank image
         if ((xMin != 65536) && (xMax != 65536))
         {
-            crop = (Rectangle){ (float)xMin, (float)yMin, (float)((xMax + 1) - xMin), (float)((yMax + 1) - yMin) };
+            crop = Rectangle{ (float)xMin, (float)yMin, (float)((xMax + 1) - xMin), (float)((yMax + 1) - yMin) };
         }
 
         UnloadImageColors(pixels);
@@ -3859,7 +3859,7 @@ void ImageDrawTriangleStrip(Image *dst, const Vector2 *points, int pointCount, C
 // Draw rectangle within an image
 void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, Color color)
 {
-    ImageDrawRectangleRec(dst, (Rectangle){ (float)posX, (float)posY, (float)width, (float)height }, color);
+    ImageDrawRectangleRec(dst, Rectangle{ (float)posX, (float)posY, (float)width, (float)height }, color);
 }
 
 // Draw rectangle within an image (Vector version)
@@ -4181,7 +4181,7 @@ void ImageDrawImage(Image *dst, Image src, int posX, int posY, Color tint)
 {
     Rectangle srcRec = { 0.0f, 0.0f, (float)src.width, (float)src.height };
     Rectangle dstRec = { (float)posX, (float)posY, srcRec.width, srcRec.height };
-    ImageDrawImagePro(dst, src, srcRec, dstRec, (Vector2){ 0 }, 0.0f, tint);
+    ImageDrawImagePro(dst, src, srcRec, dstRec, Vector2{ 0 }, 0.0f, tint);
 }
 
 // Draw an image with scaling and rotation within an image
@@ -4274,7 +4274,7 @@ void ImageDrawImageEx(Image *dst, Image src, Vector2 position, float rotation, f
 void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, Vector2 position, Color tint)
 {
     Rectangle dstRec = { position.x, position.y, srcRec.width, srcRec.height };
-    ImageDrawImagePro(dst, src, srcRec, dstRec, (Vector2){ 0 }, 0.0f, tint);
+    ImageDrawImagePro(dst, src, srcRec, dstRec, Vector2{ 0 }, 0.0f, tint);
 }
 
 // Draw a part of an image defined by a rectangle into destination rectangle, with scaling and rotation, within an image
@@ -4304,7 +4304,7 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
         {
             srcMod = ImageFromImage(src, srcRec); // Create image from another image
             ImageResize(&srcMod, (int)dstRec.width, (int)dstRec.height); // Resize to destination rectangle
-            srcRec = (Rectangle){ 0, 0, (float)srcMod.width, (float)srcMod.height };
+            srcRec = Rectangle{ 0, 0, (float)srcMod.width, (float)srcMod.height };
 
             srcPtr = &srcMod;
             useSrcMod = true;
@@ -4424,7 +4424,7 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
             mipmapDstRec.x /= 2;
             mipmapDstRec.y /= 2;
 
-            ImageDrawImagePro(&mipmapDst, mipmapSrc, mipmapSrcRec, mipmapDstRec, (Vector2){ 0 }, 0.0f, tint);
+            ImageDrawImagePro(&mipmapDst, mipmapSrc, mipmapSrcRec, mipmapDstRec, Vector2{ 0 }, 0.0f, tint);
         }
     }
 }
@@ -4451,7 +4451,7 @@ void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, 
     Rectangle srcRec = { 0.0f, 0.0f, (float)imText.width, (float)imText.height };
     Rectangle dstRec = { position.x, position.y, (float)imText.width, (float)imText.height };
 
-    ImageDrawImagePro(dst, imText, srcRec, dstRec, (Vector2){ 0 }, 0.0f, WHITE);
+    ImageDrawImagePro(dst, imText, srcRec, dstRec, Vector2{ 0 }, 0.0f, WHITE);
 
     UnloadImage(imText);
 }
@@ -4538,7 +4538,7 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
         Image faces = { 0 };                // Vertical column image
         Rectangle faceRecs[6] = { 0 };      // Face source rectangles
 
-        for (int i = 0; i < 6; i++) faceRecs[i] = (Rectangle){ 0, 0, (float)size, (float)size };
+        for (int i = 0; i < 6; i++) faceRecs[i] = Rectangle{ 0, 0, (float)size, (float)size };
 
         if (layout == CUBEMAP_LAYOUT_LINE_VERTICAL)
         {
@@ -4583,7 +4583,7 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
                 ImageMipmaps(&faces);
             }
 
-            for (int i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], (Rectangle){ 0, (float)size*i, (float)size, (float)size }, (Vector2){ 0 }, 0.0f, WHITE);
+            for (int i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], Rectangle{ 0, (float)size*i, (float)size, (float)size }, Vector2{ 0 }, 0.0f, WHITE);
 
             UnloadImage(mipmapped);
         }
@@ -4842,7 +4842,7 @@ void SetTextureWrap(Texture2D texture, int wrap)
 // Draw a texture
 void DrawTexture(Texture2D texture, int posX, int posY, Color tint)
 {
-    DrawTextureEx(texture, (Vector2){ (float)posX, (float)posY }, 0.0f, 1.0f, tint);
+    DrawTextureEx(texture, Vector2{ (float)posX, (float)posY }, 0.0f, 1.0f, tint);
 }
 
 // Draw a texture with position defined as Vector2
@@ -4899,10 +4899,10 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, Vecto
         {
             float x = dstrec.x - origin.x;
             float y = dstrec.y - origin.y;
-            topLeft = (Vector2){ x, y };
-            topRight = (Vector2){ x + dstrec.width, y };
-            bottomLeft = (Vector2){ x, y + dstrec.height };
-            bottomRight = (Vector2){ x + dstrec.width, y + dstrec.height };
+            topLeft = Vector2{ x, y };
+            topRight = Vector2{ x + dstrec.width, y };
+            bottomLeft = Vector2{ x, y + dstrec.height };
+            bottomRight = Vector2{ x + dstrec.width, y + dstrec.height };
         }
         else
         {
@@ -5507,7 +5507,7 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
             fout.z = (fsrc.z*fsrc.w + fdst.z*fdst.w*(1 - fsrc.w))/fout.w;
         }
 
-        result = (Color){ (unsigned char)(fout.x*255.0f), (unsigned char)(fout.y*255.0f), (unsigned char)(fout.z*255.0f), (unsigned char)(fout.w*255.0f) };
+        result = Color{ (unsigned char)(fout.x*255.0f), (unsigned char)(fout.y*255.0f), (unsigned char)(fout.z*255.0f), (unsigned char)(fout.w*255.0f) };
     }
 #endif
 
@@ -5550,8 +5550,8 @@ Color GetPixelColor(const void *srcPtr, int format)
 
     switch (format)
     {
-        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: color = (Color){ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], 255 }; break;
-        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: color = (Color){ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1] }; break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], 255 }; break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1] }; break;
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
             color.r = (unsigned char)((((unsigned short *)srcPtr)[0] >> 11)*255/31);
@@ -5576,8 +5576,8 @@ Color GetPixelColor(const void *srcPtr, int format)
             color.a = (unsigned char)((((unsigned short *)srcPtr)[0] & 0b0000000000001111)*255/15);
 
         } break;
-        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: color = (Color){ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1], ((unsigned char *)srcPtr)[2], ((unsigned char *)srcPtr)[3] }; break;
-        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: color = (Color){ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1], ((unsigned char *)srcPtr)[2], 255 }; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1], ((unsigned char *)srcPtr)[2], ((unsigned char *)srcPtr)[3] }; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1], ((unsigned char *)srcPtr)[2], 255 }; break;
         case PIXELFORMAT_UNCOMPRESSED_R32:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]

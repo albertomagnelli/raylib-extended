@@ -9,7 +9,11 @@ add_if_flag_compiles(-Werror=pointer-arith CMAKE_C_FLAGS)
 add_if_flag_compiles(-Werror=implicit-function-declaration CMAKE_C_FLAGS)
 
 # Allows some casting of pointers without generating a warning
+# NOTE: Also applied to the C++ sources, the rlgl batch code intentionally
+# accesses the vertex data through float pointers
 add_if_flag_compiles(-fno-strict-aliasing CMAKE_C_FLAGS)
+add_if_flag_compiles(-Werror=pointer-arith CMAKE_CXX_FLAGS)
+add_if_flag_compiles(-fno-strict-aliasing CMAKE_CXX_FLAGS)
 
 if (ENABLE_MSAN AND ENABLE_ASAN)
     # MSAN and ASAN both work on memory - ASAN does more things
@@ -24,6 +28,8 @@ if (ENABLE_ASAN)
     
     add_if_flag_compiles(-fno-omit-frame-pointer CMAKE_C_FLAGS CMAKE_LINKER_FLAGS)
     add_if_flag_compiles(-fsanitize=address CMAKE_C_FLAGS CMAKE_LINKER_FLAGS)
+    add_if_flag_compiles(-fno-omit-frame-pointer CMAKE_CXX_FLAGS CMAKE_LINKER_FLAGS)
+    add_if_flag_compiles(-fsanitize=address CMAKE_CXX_FLAGS CMAKE_LINKER_FLAGS)
     
 endif()
 
@@ -35,6 +41,8 @@ if (ENABLE_UBSAN)
     
     add_if_flag_compiles(-fno-omit-frame-pointer CMAKE_C_FLAGS CMAKE_LINKER_FLAGS)
     add_if_flag_compiles(-fsanitize=undefined CMAKE_C_FLAGS CMAKE_LINKER_FLAGS)
+    add_if_flag_compiles(-fno-omit-frame-pointer CMAKE_CXX_FLAGS CMAKE_LINKER_FLAGS)
+    add_if_flag_compiles(-fsanitize=undefined CMAKE_CXX_FLAGS CMAKE_LINKER_FLAGS)
     
 endif()
 
@@ -45,6 +53,8 @@ if (ENABLE_MSAN)
     
     add_if_flag_compiles(-fno-omit-frame-pointer CMAKE_C_FLAGS CMAKE_LINKER_FLAGS)
     add_if_flag_compiles(-fsanitize=memory CMAKE_C_FLAGS CMAKE_LINKER_FLAGS)
+    add_if_flag_compiles(-fno-omit-frame-pointer CMAKE_CXX_FLAGS CMAKE_LINKER_FLAGS)
+    add_if_flag_compiles(-fsanitize=memory CMAKE_CXX_FLAGS CMAKE_LINKER_FLAGS)
     
 endif()
 

@@ -129,7 +129,7 @@ typedef struct {
     muchar  patterntable[128];
     muchar  signature[4];
     muchar  speed;
-} module;
+} jar_module; // NOTE: renamed from 'module', 'module' is a keyword in C++20
 
 #pragma pack()
 
@@ -166,7 +166,7 @@ typedef struct {
 } channel;
 
 typedef struct {
-    module  song;
+    jar_module song;
     char*   sampledata[31];
     note*   patterndata[128];
 

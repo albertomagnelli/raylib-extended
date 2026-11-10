@@ -98,7 +98,7 @@ void SetShapesTexture(Texture2D texture, Rectangle rec)
     if ((texture.id == 0) || (rec.width == 0) || (rec.height == 0))
     {
         texShapes = (Texture2D){ 1, 1, 1, 1, 7 };
-        texShapesRec = (Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f };
+        texShapesRec = Rectangle{ 0.0f, 0.0f, 1.0f, 1.0f };
     }
     else
     {
@@ -122,7 +122,7 @@ Rectangle GetShapesTextureRectangle(void)
 // Draw a pixel
 void DrawPixel(int posX, int posY, Color color)
 {
-    DrawPixelV((Vector2){ (float)posX, (float)posY }, color);
+    DrawPixelV(Vector2{ (float)posX, (float)posY }, color);
 }
 
 // Draw a pixel (Vector version)
@@ -598,20 +598,20 @@ void DrawTriangleStrip(const Vector2 *points, int pointCount, Color color)
 // Draw a color-filled rectangle
 void DrawRectangle(int posX, int posY, int width, int height, Color color)
 {
-    DrawRectangleV((Vector2){ (float)posX, (float)posY }, (Vector2){ (float)width, (float)height }, color);
+    DrawRectangleV(Vector2{ (float)posX, (float)posY }, Vector2{ (float)width, (float)height }, color);
 }
 
 // Draw a color-filled rectangle (Vector version)
 // NOTE: On OpenGL 3.3 and ES2 using QUADS to avoid drawing order issues
 void DrawRectangleV(Vector2 position, Vector2 size, Color color)
 {
-    DrawRectanglePro((Rectangle){ position.x, position.y, size.x, size.y }, (Vector2){ 0.0f, 0.0f }, 0.0f, color);
+    DrawRectanglePro(Rectangle{ position.x, position.y, size.x, size.y }, Vector2{ 0.0f, 0.0f }, 0.0f, color);
 }
 
 // Draw a color-filled rectangle
 void DrawRectangleRec(Rectangle rec, Color color)
 {
-    DrawRectanglePro(rec, (Vector2){ 0.0f, 0.0f }, 0.0f, color);
+    DrawRectanglePro(rec, Vector2{ 0.0f, 0.0f }, 0.0f, color);
 }
 
 // Draw a color-filled rectangle with pro parameters
@@ -627,10 +627,10 @@ void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color
     {
         float x = rec.x - origin.x;
         float y = rec.y - origin.y;
-        topLeft = (Vector2){ x, y };
-        topRight = (Vector2){ x + rec.width, y };
-        bottomLeft = (Vector2){ x, y + rec.height };
-        bottomRight = (Vector2){ x + rec.width, y + rec.height };
+        topLeft = Vector2{ x, y };
+        topRight = Vector2{ x + rec.width, y };
+        bottomLeft = Vector2{ x, y + rec.height };
+        bottomRight = Vector2{ x + rec.width, y + rec.height };
     }
     else
     {
@@ -698,13 +698,13 @@ void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color
 // Draw a vertical-gradient-filled rectangle
 void DrawRectangleGradientV(int posX, int posY, int width, int height, Color top, Color bottom)
 {
-    DrawRectangleGradientEx((Rectangle){ (float)posX, (float)posY, (float)width, (float)height }, top, bottom, bottom, top);
+    DrawRectangleGradientEx(Rectangle{ (float)posX, (float)posY, (float)width, (float)height }, top, bottom, bottom, top);
 }
 
 // Draw a horizontal-gradient-filled rectangle
 void DrawRectangleGradientH(int posX, int posY, int width, int height, Color left, Color right)
 {
-    DrawRectangleGradientEx((Rectangle){ (float)posX, (float)posY, (float)width, (float)height }, left, left, right, right);
+    DrawRectangleGradientEx(Rectangle{ (float)posX, (float)posY, (float)width, (float)height }, left, left, right, right);
 }
 
 // Draw a gradient-filled rectangle with custom vertex colors, counter-clockwise color order
@@ -1230,7 +1230,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
             roundedOutlineThick = outerRadius;
 
             // Draw the not-rounded portion of the outline
-            DrawRectangleLinesEx((Rectangle){ rec.x + outerRadius, rec.y + outerRadius, rec.width - outerRadius*2.0f, rec.height - outerRadius*2.0f }, thick - outerRadius, color);
+            DrawRectangleLinesEx(Rectangle{ rec.x + outerRadius, rec.y + outerRadius, rec.width - outerRadius*2.0f, rec.height - outerRadius*2.0f }, thick - outerRadius, color);
         }
         else
         {
@@ -1616,7 +1616,7 @@ void DrawPolyLinesEx(Vector2 center, int sides, float radius, float rotation, fl
 // Draw a color-filled circle
 void DrawCircle(int centerX, int centerY, float radius, Color color)
 {
-    DrawCircleV((Vector2){ (float)centerX, (float)centerY }, radius, color);
+    DrawCircleV(Vector2{ (float)centerX, (float)centerY }, radius, color);
 }
 
 // Draw a color-filled circle (Vector version)
@@ -1929,8 +1929,8 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
     {
         if (thick >= 0.0f)
         {
-            c2 = (Vector2){ center.x + cosf(DEG2RAD*startAngle)*innerRadius, center.y + sinf(DEG2RAD*startAngle)*innerRadius };
-            c5 = (Vector2){ center.x + cosf(DEG2RAD*endAngle)*innerRadius, center.y + sinf(DEG2RAD*endAngle)*innerRadius };
+            c2 = Vector2{ center.x + cosf(DEG2RAD*startAngle)*innerRadius, center.y + sinf(DEG2RAD*startAngle)*innerRadius };
+            c5 = Vector2{ center.x + cosf(DEG2RAD*endAngle)*innerRadius, center.y + sinf(DEG2RAD*endAngle)*innerRadius };
 
             // For C1 and C4, we need to find the point that lies on the circle (n-sided polygon, actually)
             // We want C1 and C4 to be `thick` pixels perpendicularly from the `startAngle` and `endAngle` edges
@@ -2041,11 +2041,11 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
                 // S1 is inside of the circle
 
                 float betweenStartAndEndAngle = (endAngle + startAngle)/2.0f;
-                c0 = (Vector2){ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
+                c0 = Vector2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
                 c3 = c0;
 
-                p1 = (Vector2){ c1.x - center.x, c1.y - center.y };
-                p2 = (Vector2){ c0.x - center.x, c0.y - center.y };
+                p1 = Vector2{ c1.x - center.x, c1.y - center.y };
+                p2 = Vector2{ c0.x - center.x, c0.y - center.y };
 
                 // Copied from "raymath.h" Vector2Angle()
                 float dot = p1.x*p2.x + p1.y*p2.y;
@@ -2078,19 +2078,19 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
                 float vertexAngleBeforeC0 = stepLength*(float)stepsBeforeC0;
                 float vertexAngleAfterC0 = stepLength*((float)(stepsBeforeC0 + 1));
 
-                p1 = (Vector2){ cosf(DEG2RAD*vertexAngleBeforeC0)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC0)*innerRadius };
-                p2 = (Vector2){ cosf(DEG2RAD*vertexAngleAfterC0)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC0)*innerRadius };
+                p1 = Vector2{ cosf(DEG2RAD*vertexAngleBeforeC0)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC0)*innerRadius };
+                p2 = Vector2{ cosf(DEG2RAD*vertexAngleAfterC0)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC0)*innerRadius };
 
                 t = (p1.y - thick)/(p1.y - p2.y);
 
-                vertexBeforeCap1Vertex = (Vector2){ center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius };
-                vertexAfterCap1Vertex = (Vector2){ center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius };
+                vertexBeforeCap1Vertex = Vector2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius };
+                vertexAfterCap1Vertex = Vector2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius };
 
                 c0.x = vertexBeforeCap1Vertex.x + (vertexAfterCap1Vertex.x - vertexBeforeCap1Vertex.x)*t;
                 c0.y = vertexBeforeCap1Vertex.y + (vertexAfterCap1Vertex.y - vertexBeforeCap1Vertex.y)*t;
 
-                vertexBeforeCap2Vertex = (Vector2){ center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius };
-                vertexAfterCap2Vertex = (Vector2){ center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius };
+                vertexBeforeCap2Vertex = Vector2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius };
+                vertexAfterCap2Vertex = Vector2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius };
 
                 c3.x = vertexBeforeCap2Vertex.x + (vertexAfterCap2Vertex.x - vertexBeforeCap2Vertex.x)*t;
                 c3.y = vertexBeforeCap2Vertex.y + (vertexAfterCap2Vertex.y - vertexBeforeCap2Vertex.y)*t;
@@ -2101,11 +2101,11 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
             float outerAngleBetweenCapEnds = ((endAngle + 90.0f) - (startAngle - 90.0f))/2.0f;
             float s1Length = thick/cosf(DEG2RAD*outerAngleBetweenCapEnds);
             float betweenStartAndEndAngle = 180.0f + (endAngle + startAngle)/2.0f;
-            c0 = (Vector2){ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
+            c0 = Vector2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
             c3 = c0;
 
-            c2 = (Vector2){ center.x + cosf(DEG2RAD*startAngle)*outerRadius, center.y + sinf(DEG2RAD*startAngle)*outerRadius };
-            c5 = (Vector2){ center.x + cosf(DEG2RAD*endAngle)*outerRadius, center.y + sinf(DEG2RAD*endAngle)*outerRadius };
+            c2 = Vector2{ center.x + cosf(DEG2RAD*startAngle)*outerRadius, center.y + sinf(DEG2RAD*startAngle)*outerRadius };
+            c5 = Vector2{ center.x + cosf(DEG2RAD*endAngle)*outerRadius, center.y + sinf(DEG2RAD*endAngle)*outerRadius };
 
             // Change the frame of reference so that `center` is the origin and `startAngle` is 0 degrees
 
@@ -2134,8 +2134,8 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
             float c1Run = (c1Rise/rise)*run;
             float c1DistanceFromC0 = (circleVertex1.x + c1Run) - c0Translated.x;
 
-            c1 = (Vector2){ c0.x + cosf(DEG2RAD*startAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*startAngle)*c1DistanceFromC0 };
-            c4 = (Vector2){ c0.x + cosf(DEG2RAD*endAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*endAngle)*c1DistanceFromC0 };
+            c1 = Vector2{ c0.x + cosf(DEG2RAD*startAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*startAngle)*c1DistanceFromC0 };
+            c4 = Vector2{ c0.x + cosf(DEG2RAD*endAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*endAngle)*c1DistanceFromC0 };
 
             if (c1DistanceFromC0 < 0.0f)
             {
@@ -2195,7 +2195,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
 
                 float t = (c1Translated.x - targetX)/(c1Translated.x - circleVertex1.x);
 
-                c1 = (Vector2){ c1.x + (c2.x - c1.x)*t, c1.y + (c2.y - c1.y)*t };
+                c1 = Vector2{ c1.x + (c2.x - c1.x)*t, c1.y + (c2.y - c1.y)*t };
                 c4 = c1;
                 c0 = c1;
                 c3 = c1;
@@ -2537,7 +2537,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
 // Draw circle outline
 void DrawCircleLines(int centerX, int centerY, float radius, Color color)
 {
-    DrawCircleLinesV((Vector2){ (float)centerX, (float)centerY }, radius, color);
+    DrawCircleLinesV(Vector2{ (float)centerX, (float)centerY }, radius, color);
 }
 
 // Draw circle outline (Vector version)
@@ -2563,7 +2563,7 @@ void DrawCircleLinesEx(Vector2 center, float radius, float thick, Color color)
 // Draw ellipse
 void DrawEllipse(int centerX, int centerY, float radiusH, float radiusV, Color color)
 {
-    DrawEllipseV((Vector2){ (float)centerX, (float)centerY }, radiusH, radiusV, color);
+    DrawEllipseV(Vector2{ (float)centerX, (float)centerY }, radiusH, radiusV, color);
 }
 
 // Draw ellipse (Vector version)
@@ -2583,7 +2583,7 @@ void DrawEllipseV(Vector2 center, float radiusH, float radiusV, Color color)
 // Draw ellipse outline
 void DrawEllipseLines(int centerX, int centerY, float radiusH, float radiusV, Color color)
 {
-    DrawEllipseLinesV((Vector2){ (float)centerX, (float)centerY }, radiusH, radiusV, color);
+    DrawEllipseLinesV(Vector2{ (float)centerX, (float)centerY }, radiusH, radiusV, color);
 }
 
 // Draw ellipse outline
@@ -3092,33 +3092,33 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
             // With our additional information, calculate the vertices we need
             // outside of our modified frame of reference
 
-            cap1O0 = (Vector2){ center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
-            cap1O1 = (Vector2){ center.x + cosf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius };
-            cap1O2 = (Vector2){ cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, cap1O1.y + (cap1O0.y - cap1O1.y)*tOuter };
+            cap1O0 = Vector2{ center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
+            cap1O1 = Vector2{ center.x + cosf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius };
+            cap1O2 = Vector2{ cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, cap1O1.y + (cap1O0.y - cap1O1.y)*tOuter };
 
-            cap2O0 = (Vector2){ center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
-            cap2O1 = (Vector2){ center.x + cosf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius };
-            cap2O2 = (Vector2){ cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
+            cap2O0 = Vector2{ center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
+            cap2O1 = Vector2{ center.x + cosf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius };
+            cap2O2 = Vector2{ cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
 
-            //cap1I0 = (Vector2){ center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
-            cap1I2 = (Vector2){ cap1O2.x - cosf(DEG2RAD*startAngle)*capLongEdgeLength, cap1O2.y - sinf(DEG2RAD*startAngle)*capLongEdgeLength };
+            //cap1I0 = Vector2{ center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
+            cap1I2 = Vector2{ cap1O2.x - cosf(DEG2RAD*startAngle)*capLongEdgeLength, cap1O2.y - sinf(DEG2RAD*startAngle)*capLongEdgeLength };
 
-            cap2I0 = (Vector2){ center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
-            cap2I2 = (Vector2){ cap2O2.x - cosf(DEG2RAD*endAngle)*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*endAngle)*capLongEdgeLength };
+            cap2I0 = Vector2{ center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
+            cap2I2 = Vector2{ cap2O2.x - cosf(DEG2RAD*endAngle)*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*endAngle)*capLongEdgeLength };
 
             if (capsIntersect)
             {
-                capIntersectionVertex = (Vector2){ cap2I2.x + (cap2O2.x - cap2I2.x)*tCapLongEdgeCross, cap2I2.y + (cap2O2.y - cap2I2.y)*tCapLongEdgeCross };
+                capIntersectionVertex = Vector2{ cap2I2.x + (cap2O2.x - cap2I2.x)*tCapLongEdgeCross, cap2I2.y + (cap2O2.y - cap2I2.y)*tCapLongEdgeCross };
 
-                cap2I2 = (Vector2){ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
+                cap2I2 = Vector2{ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
                 cap1I2 = cap2I2;
             }
             else if ((tCrossOuter >= 0.0f) && (tCrossOuter <= 1.0f))
             {
-                cap2O2 = (Vector2){ cap2O0.x + (cap2O2.x - cap2O0.x)*tCrossOuter, cap2O0.y + (cap2O2.y - cap2O0.y)*tCrossOuter };
+                cap2O2 = Vector2{ cap2O0.x + (cap2O2.x - cap2O0.x)*tCrossOuter, cap2O0.y + (cap2O2.y - cap2O0.y)*tCrossOuter };
                 cap1O2 = cap2O2;
 
-                cap2I2 = (Vector2){ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
+                cap2I2 = Vector2{ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
                 cap1I2 = cap2I2;
             }
 
@@ -3737,7 +3737,7 @@ void DrawSplineLinear(const Vector2 *points, int pointCount, float thick, Color 
     if (pointCount < 2) return;
 
 #if SUPPORT_SPLINE_MITERS
-    Vector2 prevNormal = (Vector2){-(points[1].y - points[0].y), (points[1].x - points[0].x)};
+    Vector2 prevNormal = Vector2{-(points[1].y - points[0].y), (points[1].x - points[0].x)};
     float prevLength = sqrtf(prevNormal.x*prevNormal.x + prevNormal.y*prevNormal.y);
 
     if (prevLength > 0.0f)
@@ -3759,7 +3759,7 @@ void DrawSplineLinear(const Vector2 *points, int pointCount, float thick, Color 
 
         if (i < pointCount - 2)
         {
-            normal = (Vector2){-(points[i + 2].y - points[i + 1].y), (points[i + 2].x - points[i + 1].x)};
+            normal = Vector2{-(points[i + 2].y - points[i + 1].y), (points[i + 2].x - points[i + 1].x)};
             float normalLength = sqrtf(normal.x*normal.x + normal.y*normal.y);
 
             if (normalLength > 0.0f)
@@ -3823,7 +3823,7 @@ void DrawSplineLinear(const Vector2 *points, int pointCount, float thick, Color 
 
     for (int i = 0; i < pointCount - 1; i++)
     {
-        delta = (Vector2){ points[i + 1].x - points[i].x, points[i + 1].y - points[i].y };
+        delta = Vector2{ points[i + 1].x - points[i].x, points[i + 1].y - points[i].y };
         length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
         if (length > 0) scale = thick/(2*length);

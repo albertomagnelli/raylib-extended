@@ -497,8 +497,8 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
             float sinslice = sinf(sliceangle);
 
             Vector3 vertices[4] = { 0 }; // Required to store face vertices
-            vertices[2] = (Vector3){ 0, 1, 0 };
-            vertices[3] = (Vector3){ sinring, cosring, 0 };
+            vertices[2] = Vector3{ 0, 1, 0 };
+            vertices[3] = Vector3{ sinring, cosring, 0 };
 
             for (int i = 0; i < rings; i++)
             {
@@ -506,8 +506,8 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
                 {
                     vertices[0] = vertices[2]; // Rotate around y axis to set up vertices for next face
                     vertices[1] = vertices[3];
-                    vertices[2] = (Vector3){ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
-                    vertices[3] = (Vector3){ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
+                    vertices[2] = Vector3{ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
+                    vertices[3] = Vector3{ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
 
                     rlNormal3f(vertices[0].x, vertices[0].y, vertices[0].z);
                     rlVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -525,7 +525,7 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
                 }
 
                 vertices[2] = vertices[3]; // Rotate around z axis to set up  starting vertices for next ring
-                vertices[3] = (Vector3){ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
+                vertices[3] = Vector3{ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
             }
         rlEnd();
     rlPopMatrix();
@@ -551,8 +551,8 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
             float sinslice = sinf(sliceangle);
 
             Vector3 vertices[4] = { 0 }; // Required to store face vertices
-            vertices[2] = (Vector3){ 0, 1, 0 };
-            vertices[3] = (Vector3){ sinring, cosring, 0 };
+            vertices[2] = Vector3{ 0, 1, 0 };
+            vertices[3] = Vector3{ sinring, cosring, 0 };
 
             for (int i = 0; i < rings; i++)
             {
@@ -560,8 +560,8 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
                 {
                     vertices[0] = vertices[2]; // Rotate around y axis to set up vertices for next face
                     vertices[1] = vertices[3];
-                    vertices[2] = (Vector3){ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
-                    vertices[3] = (Vector3){ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
+                    vertices[2] = Vector3{ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
+                    vertices[3] = Vector3{ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
 
                     // Longitude Lines
                     rlVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -577,7 +577,7 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
                 }
 
                 vertices[2] = vertices[3]; // Rotate around z axis to set up  starting vertices for next ring
-                vertices[3] = (Vector3){ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
+                vertices[3] = Vector3{ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
             }
         rlEnd();
     rlPopMatrix();
@@ -788,7 +788,7 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
 
     // draw a sphere if start and end points are the same
     bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
-    if (sphereCase) direction = (Vector3){0.0f, 1.0f, 0.0f};
+    if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
     Vector3 b0 = Vector3Normalize(direction);
@@ -814,14 +814,14 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
                     // Compute the four vertices
                     float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
                     float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w1 = (Vector3){
+                    Vector3 w1 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
                     float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
                     float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w2 = (Vector3){
+                    Vector3 w2 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
@@ -829,14 +829,14 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
 
                     float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
                     float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w3 = (Vector3){
+                    Vector3 w3 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
                     float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
                     float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w4 = (Vector3){
+                    Vector3 w4 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
@@ -927,7 +927,7 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
 
     // draw a sphere if start and end points are the same
     bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
-    if (sphereCase) direction = (Vector3){0.0f, 1.0f, 0.0f};
+    if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
     Vector3 b0 = Vector3Normalize(direction);
@@ -953,14 +953,14 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
                     // Compute the four vertices
                     float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
                     float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w1 = (Vector3){
+                    Vector3 w1 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
                     float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
                     float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w2 = (Vector3){
+                    Vector3 w2 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
@@ -968,14 +968,14 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
 
                     float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
                     float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w3 = (Vector3){
+                    Vector3 w3 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
                     float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
                     float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w4 = (Vector3){
+                    Vector3 w4 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
@@ -2173,18 +2173,18 @@ static void ProcessMaterialsOBJ(Material *materials, tinyobj_material_t *mats, i
         materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = (Texture2D){ rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
         if (mats[m].diffuse_texname != NULL) materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture(mats[m].diffuse_texname);  //char *diffuse_texname; // map_Kd
-        else materials[m].maps[MATERIAL_MAP_DIFFUSE].color = (Color){ (unsigned char)(mats[m].diffuse[0]*255.0f), (unsigned char)(mats[m].diffuse[1]*255.0f), (unsigned char)(mats[m].diffuse[2]*255.0f), 255 }; //float diffuse[3];
+        else materials[m].maps[MATERIAL_MAP_DIFFUSE].color = Color{ (unsigned char)(mats[m].diffuse[0]*255.0f), (unsigned char)(mats[m].diffuse[1]*255.0f), (unsigned char)(mats[m].diffuse[2]*255.0f), 255 }; //float diffuse[3];
         materials[m].maps[MATERIAL_MAP_DIFFUSE].value = 0.0f;
 
         if (mats[m].specular_texname != NULL) materials[m].maps[MATERIAL_MAP_SPECULAR].texture = LoadTexture(mats[m].specular_texname);  //char *specular_texname; // map_Ks
-        materials[m].maps[MATERIAL_MAP_SPECULAR].color = (Color){ (unsigned char)(mats[m].specular[0]*255.0f), (unsigned char)(mats[m].specular[1]*255.0f), (unsigned char)(mats[m].specular[2]*255.0f), 255 }; //float specular[3];
+        materials[m].maps[MATERIAL_MAP_SPECULAR].color = Color{ (unsigned char)(mats[m].specular[0]*255.0f), (unsigned char)(mats[m].specular[1]*255.0f), (unsigned char)(mats[m].specular[2]*255.0f), 255 }; //float specular[3];
         materials[m].maps[MATERIAL_MAP_SPECULAR].value = 0.0f;
 
         if (mats[m].bump_texname != NULL) materials[m].maps[MATERIAL_MAP_NORMAL].texture = LoadTexture(mats[m].bump_texname);  //char *bump_texname; // map_bump, bump
         materials[m].maps[MATERIAL_MAP_NORMAL].color = WHITE;
         materials[m].maps[MATERIAL_MAP_NORMAL].value = mats[m].shininess;
 
-        materials[m].maps[MATERIAL_MAP_EMISSION].color = (Color){ (unsigned char)(mats[m].emission[0]*255.0f), (unsigned char)(mats[m].emission[1]*255.0f), (unsigned char)(mats[m].emission[2]*255.0f), 255 }; //float emission[3];
+        materials[m].maps[MATERIAL_MAP_EMISSION].color = Color{ (unsigned char)(mats[m].emission[0]*255.0f), (unsigned char)(mats[m].emission[1]*255.0f), (unsigned char)(mats[m].emission[2]*255.0f), 255 }; //float emission[3];
 
         if (mats[m].displacement_texname != NULL) materials[m].maps[MATERIAL_MAP_HEIGHT].texture = LoadTexture(mats[m].displacement_texname);  //char *displacement_texname; // disp
     }
@@ -2468,7 +2468,7 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
                 Vector3Negate(model.skeleton.bindPose[boneIndex].translation),
                 QuaternionInvert(model.skeleton.bindPose[boneIndex].rotation));
             Quaternion invBindRotation = QuaternionInvert(model.skeleton.bindPose[boneIndex].rotation);
-            Vector3 invBindScale = Vector3Divide((Vector3){ 1.0f, 1.0f, 1.0f }, model.skeleton.bindPose[boneIndex].scale);
+            Vector3 invBindScale = Vector3Divide(Vector3{ 1.0f, 1.0f, 1.0f }, model.skeleton.bindPose[boneIndex].scale);
 
             Vector3 boneTranslation = Vector3Add(Vector3RotateByQuaternion(
                 Vector3Multiply(model.currentPose[boneIndex].scale, invBindTranslation),
@@ -2575,7 +2575,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
 
                 // Early stop when no transformation will be applied
                 if (boneWeight == 0.0f) continue;
-                animVertex = (Vector3){ mesh->vertices[vCounter], mesh->vertices[vCounter + 1], mesh->vertices[vCounter + 2] };
+                animVertex = Vector3{ mesh->vertices[vCounter], mesh->vertices[vCounter + 1], mesh->vertices[vCounter + 2] };
                 animVertex = Vector3Transform(animVertex, model.boneMatrices[boneIndex]);
                 mesh->animVertices[vCounter] += animVertex.x*boneWeight;
                 mesh->animVertices[vCounter + 1] += animVertex.y*boneWeight;
@@ -2586,7 +2586,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
                 // NOTE: Using meshes.baseNormals (default normal) to calculate meshes.normals (animated normals)
                 if ((mesh->normals != NULL) && (mesh->animNormals != NULL ))
                 {
-                    animNormal = (Vector3){ mesh->normals[vCounter], mesh->normals[vCounter + 1], mesh->normals[vCounter + 2] };
+                    animNormal = Vector3{ mesh->normals[vCounter], mesh->normals[vCounter + 1], mesh->normals[vCounter + 2] };
                     animNormal = Vector3Transform(animNormal, MatrixTranspose(MatrixInvert(model.boneMatrices[boneIndex])));
                     mesh->animNormals[vCounter] += animNormal.x*boneWeight;
                     mesh->animNormals[vCounter + 1] += animNormal.y*boneWeight;
@@ -2645,19 +2645,19 @@ Mesh GenMeshPoly(int sides, float radius)
     float d = 0.0f, dStep = 360.0f/sides;
     for (int v = 0; v < vertexCount - 2; v += 3)
     {
-        vertices[v] = (Vector3){ 0.0f, 0.0f, 0.0f };
-        vertices[v + 1] = (Vector3){ sinf(DEG2RAD*d)*radius, 0.0f, cosf(DEG2RAD*d)*radius };
-        vertices[v + 2] = (Vector3){ sinf(DEG2RAD*(d+dStep))*radius, 0.0f, cosf(DEG2RAD*(d+dStep))*radius };
+        vertices[v] = Vector3{ 0.0f, 0.0f, 0.0f };
+        vertices[v + 1] = Vector3{ sinf(DEG2RAD*d)*radius, 0.0f, cosf(DEG2RAD*d)*radius };
+        vertices[v + 2] = Vector3{ sinf(DEG2RAD*(d+dStep))*radius, 0.0f, cosf(DEG2RAD*(d+dStep))*radius };
         d += dStep;
     }
 
     // Normals definition
     Vector3 *normals = (Vector3 *)RL_CALLOC(vertexCount, sizeof(Vector3));
-    for (int n = 0; n < vertexCount; n++) normals[n] = (Vector3){ 0.0f, 1.0f, 0.0f };   // Vector3.up;
+    for (int n = 0; n < vertexCount; n++) normals[n] = Vector3{ 0.0f, 1.0f, 0.0f };   // Vector3.up;
 
     // TexCoords definition
     Vector2 *texcoords = (Vector2 *)RL_CALLOC(vertexCount, sizeof(Vector2));
-    for (int n = 0; n < vertexCount; n++) texcoords[n] = (Vector2){ 0.0f, 0.0f };
+    for (int n = 0; n < vertexCount; n++) texcoords[n] = Vector2{ 0.0f, 0.0f };
 
     mesh.vertexCount = vertexCount;
     mesh.triangleCount = sides;
@@ -2721,13 +2721,13 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
         {
             // [-width/2, width/2]
             float xPos = ((float)x/(resX - 1) - 0.5f)*width;
-            vertices[x + z*resX] = (Vector3){ xPos, 0.0f, zPos };
+            vertices[x + z*resX] = Vector3{ xPos, 0.0f, zPos };
         }
     }
 
     // Normals definition
     Vector3 *normals = (Vector3 *)RL_CALLOC(vertexCount, sizeof(Vector3));
-    for (int n = 0; n < vertexCount; n++) normals[n] = (Vector3){ 0.0f, 1.0f, 0.0f };   // Vector3.up;
+    for (int n = 0; n < vertexCount; n++) normals[n] = Vector3{ 0.0f, 1.0f, 0.0f };   // Vector3.up;
 
     // TexCoords definition
     Vector2 *texcoords = (Vector2 *)RL_CALLOC(vertexCount, sizeof(Vector2));
@@ -2735,7 +2735,7 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
     {
         for (int u = 0; u < resX; u++)
         {
-            texcoords[u + v*resX] = (Vector2){ (float)u/(resX - 1), (float)v/(resZ - 1) };
+            texcoords[u + v*resX] = Vector2{ (float)u/(resX - 1), (float)v/(resZ - 1) };
         }
     }
 
@@ -3514,12 +3514,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n3;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = (Vector2){ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 1] = (Vector2){ topTexUV.x, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 2] = (Vector2){ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 3] = (Vector2){ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 4] = (Vector2){ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 5] = (Vector2){ topTexUV.x + topTexUV.width, topTexUV.y };
+                mapTexcoords[tcCounter] = Vector2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 1] = Vector2{ topTexUV.x, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 2] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 3] = Vector2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 4] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 5] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y };
                 tcCounter += 6;
 
                 // Define bottom triangles (2 tris, 6 vertex --> v6-v8-v7, v6-v5-v8)
@@ -3539,12 +3539,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n4;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = (Vector2){ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 1] = (Vector2){ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 2] = (Vector2){ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 3] = (Vector2){ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 4] = (Vector2){ bottomTexUV.x, bottomTexUV.y };
-                mapTexcoords[tcCounter + 5] = (Vector2){ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 1] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 2] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 3] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 4] = Vector2{ bottomTexUV.x, bottomTexUV.y };
+                mapTexcoords[tcCounter + 5] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
                 tcCounter += 6;
 
                 // Checking cube on bottom of current cube
@@ -3568,12 +3568,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n6;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = (Vector2){ frontTexUV.x, frontTexUV.y };
-                    mapTexcoords[tcCounter + 1] = (Vector2){ frontTexUV.x, frontTexUV.y + frontTexUV.height };
-                    mapTexcoords[tcCounter + 2] = (Vector2){ frontTexUV.x + frontTexUV.width, frontTexUV.y };
-                    mapTexcoords[tcCounter + 3] = (Vector2){ frontTexUV.x + frontTexUV.width, frontTexUV.y };
-                    mapTexcoords[tcCounter + 4] = (Vector2){ frontTexUV.x, frontTexUV.y + frontTexUV.height };
-                    mapTexcoords[tcCounter + 5] = (Vector2){ frontTexUV.x + frontTexUV.width, frontTexUV.y + frontTexUV.height };
+                    mapTexcoords[tcCounter] = Vector2{ frontTexUV.x, frontTexUV.y };
+                    mapTexcoords[tcCounter + 1] = Vector2{ frontTexUV.x, frontTexUV.y + frontTexUV.height };
+                    mapTexcoords[tcCounter + 2] = Vector2{ frontTexUV.x + frontTexUV.width, frontTexUV.y };
+                    mapTexcoords[tcCounter + 3] = Vector2{ frontTexUV.x + frontTexUV.width, frontTexUV.y };
+                    mapTexcoords[tcCounter + 4] = Vector2{ frontTexUV.x, frontTexUV.y + frontTexUV.height };
+                    mapTexcoords[tcCounter + 5] = Vector2{ frontTexUV.x + frontTexUV.width, frontTexUV.y + frontTexUV.height };
                     tcCounter += 6;
                 }
 
@@ -3598,12 +3598,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n5;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = (Vector2){ backTexUV.x + backTexUV.width, backTexUV.y };
-                    mapTexcoords[tcCounter + 1] = (Vector2){ backTexUV.x, backTexUV.y + backTexUV.height };
-                    mapTexcoords[tcCounter + 2] = (Vector2){ backTexUV.x + backTexUV.width, backTexUV.y + backTexUV.height };
-                    mapTexcoords[tcCounter + 3] = (Vector2){ backTexUV.x + backTexUV.width, backTexUV.y };
-                    mapTexcoords[tcCounter + 4] = (Vector2){ backTexUV.x, backTexUV.y };
-                    mapTexcoords[tcCounter + 5] = (Vector2){ backTexUV.x, backTexUV.y + backTexUV.height };
+                    mapTexcoords[tcCounter] = Vector2{ backTexUV.x + backTexUV.width, backTexUV.y };
+                    mapTexcoords[tcCounter + 1] = Vector2{ backTexUV.x, backTexUV.y + backTexUV.height };
+                    mapTexcoords[tcCounter + 2] = Vector2{ backTexUV.x + backTexUV.width, backTexUV.y + backTexUV.height };
+                    mapTexcoords[tcCounter + 3] = Vector2{ backTexUV.x + backTexUV.width, backTexUV.y };
+                    mapTexcoords[tcCounter + 4] = Vector2{ backTexUV.x, backTexUV.y };
+                    mapTexcoords[tcCounter + 5] = Vector2{ backTexUV.x, backTexUV.y + backTexUV.height };
                     tcCounter += 6;
                 }
 
@@ -3628,12 +3628,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n1;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = (Vector2){ rightTexUV.x, rightTexUV.y };
-                    mapTexcoords[tcCounter + 1] = (Vector2){ rightTexUV.x, rightTexUV.y + rightTexUV.height };
-                    mapTexcoords[tcCounter + 2] = (Vector2){ rightTexUV.x + rightTexUV.width, rightTexUV.y };
-                    mapTexcoords[tcCounter + 3] = (Vector2){ rightTexUV.x + rightTexUV.width, rightTexUV.y };
-                    mapTexcoords[tcCounter + 4] = (Vector2){ rightTexUV.x, rightTexUV.y + rightTexUV.height };
-                    mapTexcoords[tcCounter + 5] = (Vector2){ rightTexUV.x + rightTexUV.width, rightTexUV.y + rightTexUV.height };
+                    mapTexcoords[tcCounter] = Vector2{ rightTexUV.x, rightTexUV.y };
+                    mapTexcoords[tcCounter + 1] = Vector2{ rightTexUV.x, rightTexUV.y + rightTexUV.height };
+                    mapTexcoords[tcCounter + 2] = Vector2{ rightTexUV.x + rightTexUV.width, rightTexUV.y };
+                    mapTexcoords[tcCounter + 3] = Vector2{ rightTexUV.x + rightTexUV.width, rightTexUV.y };
+                    mapTexcoords[tcCounter + 4] = Vector2{ rightTexUV.x, rightTexUV.y + rightTexUV.height };
+                    mapTexcoords[tcCounter + 5] = Vector2{ rightTexUV.x + rightTexUV.width, rightTexUV.y + rightTexUV.height };
                     tcCounter += 6;
                 }
 
@@ -3658,12 +3658,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n2;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = (Vector2){ leftTexUV.x, leftTexUV.y };
-                    mapTexcoords[tcCounter + 1] = (Vector2){ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
-                    mapTexcoords[tcCounter + 2] = (Vector2){ leftTexUV.x + leftTexUV.width, leftTexUV.y };
-                    mapTexcoords[tcCounter + 3] = (Vector2){ leftTexUV.x, leftTexUV.y };
-                    mapTexcoords[tcCounter + 4] = (Vector2){ leftTexUV.x, leftTexUV.y + leftTexUV.height };
-                    mapTexcoords[tcCounter + 5] = (Vector2){ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
+                    mapTexcoords[tcCounter] = Vector2{ leftTexUV.x, leftTexUV.y };
+                    mapTexcoords[tcCounter + 1] = Vector2{ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
+                    mapTexcoords[tcCounter + 2] = Vector2{ leftTexUV.x + leftTexUV.width, leftTexUV.y };
+                    mapTexcoords[tcCounter + 3] = Vector2{ leftTexUV.x, leftTexUV.y };
+                    mapTexcoords[tcCounter + 4] = Vector2{ leftTexUV.x, leftTexUV.y + leftTexUV.height };
+                    mapTexcoords[tcCounter + 5] = Vector2{ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
                     tcCounter += 6;
                 }
             }
@@ -3687,12 +3687,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n4;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = (Vector2){ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 1] = (Vector2){ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 2] = (Vector2){ topTexUV.x, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 3] = (Vector2){ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 4] = (Vector2){ topTexUV.x + topTexUV.width, topTexUV.y };
-                mapTexcoords[tcCounter + 5] = (Vector2){ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter] = Vector2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 1] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 2] = Vector2{ topTexUV.x, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 3] = Vector2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 4] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y };
+                mapTexcoords[tcCounter + 5] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
                 tcCounter += 6;
 
                 // Define bottom triangles (2 tris, 6 vertex --> v6-v8-v7, v6-v5-v8)
@@ -3712,12 +3712,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n3;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = (Vector2){ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 1] = (Vector2){ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 2] = (Vector2){ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 3] = (Vector2){ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 4] = (Vector2){ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 5] = (Vector2){ bottomTexUV.x, bottomTexUV.y };
+                mapTexcoords[tcCounter] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 1] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 2] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 3] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 4] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 5] = Vector2{ bottomTexUV.x, bottomTexUV.y };
                 tcCounter += 6;
             }
         }
@@ -3787,13 +3787,13 @@ BoundingBox GetMeshBoundingBox(Mesh mesh)
 
     if (mesh.vertices != NULL)
     {
-        minVertex = (Vector3){ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
-        maxVertex = (Vector3){ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
+        minVertex = Vector3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
+        maxVertex = Vector3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
 
         for (int i = 1; i < mesh.vertexCount; i++)
         {
-            minVertex = Vector3Min(minVertex, (Vector3){ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
-            maxVertex = Vector3Max(maxVertex, (Vector3){ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
+            minVertex = Vector3Min(minVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
+            maxVertex = Vector3Max(maxVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
         }
     }
 
@@ -3909,8 +3909,8 @@ void GenMeshTangents(Mesh *mesh)
         if (Vector3Length(tangent) < 0.0001f)
         {
             // Create a tangent perpendicular to the normal
-            if (fabsf(normal.z) > 0.707f) tangent = (Vector3){ 1.0f, 0.0f, 0.0f };
-            else tangent = Vector3Normalize((Vector3){ -normal.y, normal.x, 0.0f });
+            if (fabsf(normal.z) > 0.707f) tangent = Vector3{ 1.0f, 0.0f, 0.0f };
+            else tangent = Vector3Normalize(Vector3{ -normal.y, normal.x, 0.0f });
 
             mesh->tangents[i*4 + 0] = tangent.x;
             mesh->tangents[i*4 + 1] = tangent.y;
@@ -3927,8 +3927,8 @@ void GenMeshTangents(Mesh *mesh)
         if (Vector3Length(orthogonalized) < 0.0001f)
         {
             // Create a tangent perpendicular to the normal
-            if (fabsf(normal.z) > 0.707f) orthogonalized = (Vector3){ 1.0f, 0.0f, 0.0f };
-            else orthogonalized = Vector3Normalize((Vector3){ -normal.y, normal.x, 0.0f });
+            if (fabsf(normal.z) > 0.707f) orthogonalized = Vector3{ 1.0f, 0.0f, 0.0f };
+            else orthogonalized = Vector3Normalize(Vector3{ -normal.y, normal.x, 0.0f });
         }
         else
         {
@@ -4051,7 +4051,7 @@ void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float sca
 {
     Rectangle rec = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
 
-    DrawBillboardRec(camera, texture, rec, position, (Vector2){ scale*fabsf(rec.width/rec.height), scale }, tint);
+    DrawBillboardRec(camera, texture, rec, position, Vector2{ scale*fabsf(rec.width/rec.height), scale }, tint);
 }
 
 // Draw a billboard (part of a texture defined by a rectangle)
@@ -4120,10 +4120,10 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
     }
 
     Vector2 texcoords[4];
-    texcoords[0] = (Vector2){ rec.x/texture.width, (rec.y + rec.height)/texture.height };
-    texcoords[1] = (Vector2){ (rec.x + rec.width)/texture.width, (rec.y + rec.height)/texture.height };
-    texcoords[2] = (Vector2){ (rec.x + rec.width)/texture.width, rec.y/texture.height };
-    texcoords[3] = (Vector2){ rec.x/texture.width, rec.y/texture.height };
+    texcoords[0] = Vector2{ rec.x/texture.width, (rec.y + rec.height)/texture.height };
+    texcoords[1] = Vector2{ (rec.x + rec.width)/texture.width, (rec.y + rec.height)/texture.height };
+    texcoords[2] = Vector2{ (rec.x + rec.width)/texture.width, rec.y/texture.height };
+    texcoords[3] = Vector2{ rec.x/texture.width, rec.y/texture.height };
 
     rlSetTexture(texture.id);
     rlBegin(RL_QUADS);
@@ -5405,7 +5405,7 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
                 int outSize = numberOfEncodedBits >> 3;                         // Actual encoded bytes
                 void *data = NULL;
 
-                cgltf_options options = { 0 };
+                cgltf_options options = {};
                 options.file.read = LoadFileGLTFCallback;
                 options.file.release = ReleaseFileGLTFCallback;
                 cgltf_result result = cgltf_load_buffer_base64(&options, outSize, cgltfImage->uri + i + 1, &data);
@@ -5543,7 +5543,7 @@ static Model LoadGLTF(const char *fileName)
     if (fileData == NULL) return model;
 
     // glTF data loading
-    cgltf_options options = { 0 };
+    cgltf_options options = {};
     options.file.read = LoadFileGLTFCallback;
     options.file.release = ReleaseFileGLTFCallback;
     cgltf_data *data = NULL;
@@ -5791,7 +5791,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3Transform((Vector3){ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, worldMatrix);
+                                    Vector3 vt = Vector3Transform(Vector3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, worldMatrix);
                                     vertices[3*k] = vt.x;
                                     vertices[3*k+1] = vt.y;
                                     vertices[3*k+2] = vt.z;
@@ -5816,7 +5816,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3Transform((Vector3){ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, worldMatrix);
+                                    Vector3 vt = Vector3Transform(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, worldMatrix);
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5841,7 +5841,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3Transform((Vector3){ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, worldMatrix);
+                                    Vector3 vt = Vector3Transform(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, worldMatrix);
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5869,7 +5869,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Transform((Vector3){ normals[3*k], normals[3*k+1], normals[3*k+2] }, worldMatrixNormals);
+                                    Vector3 nt = Vector3Transform(Vector3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, worldMatrixNormals);
                                     normals[3*k] = nt.x;
                                     normals[3*k+1] = nt.y;
                                     normals[3*k+2] = nt.z;
@@ -5893,7 +5893,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Normalize(Vector3Transform((Vector3){ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
+                                    Vector3 nt = Vector3Normalize(Vector3Transform(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5917,7 +5917,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Normalize(Vector3Transform((Vector3){ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
+                                    Vector3 nt = Vector3Normalize(Vector3Transform(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5941,7 +5941,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Normalize(Vector3Transform((Vector3){ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
+                                    Vector3 nt = Vector3Normalize(Vector3Transform(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5969,7 +5969,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *tangents = model.meshes[meshIndex].tangents;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 tt = Vector3Transform((Vector3){ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, worldMatrix);
+                                    Vector3 tt = Vector3Transform(Vector3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, worldMatrix);
                                     tangents[4*k] = tt.x;
                                     tangents[4*k+1] = tt.y;
                                     tangents[4*k+2] = tt.z;
@@ -6614,7 +6614,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
     ModelAnimation *animations = NULL;
 
     // glTF data loading
-    cgltf_options options = { 0 };
+    cgltf_options options = {};
     options.file.read = LoadFileGLTFCallback;
     options.file.release = ReleaseFileGLTFCallback;
     cgltf_data *data = NULL;
@@ -6729,7 +6729,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     else TRACELOG(LOG_WARNING, "MODEL: [%s] Invalid interpolation curve encountered for GLTF animation.", fileName);
 
                     float time = 0.0f;
-                    result = cgltf_accessor_read_float(channel.sampler->input, channel.sampler->input->count - 1, &time, 1);
+                    result = (cgltf_result)cgltf_accessor_read_float(channel.sampler->input, channel.sampler->input->count - 1, &time, 1);
                     if (!result)
                     {
                         TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load input time", fileName);

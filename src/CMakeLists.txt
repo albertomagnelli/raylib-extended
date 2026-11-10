@@ -1,7 +1,15 @@
 # Setup the project and settings
-project(raylib C)
+# C++ for all raylib modules, C stays enabled for the bundled GLFW and rglfw.c
+project(raylib CXX C)
 set(PROJECT_VERSION 6.2.0)
 set(API_VERSION 620)
+
+# Standalone configurations do not inherit a standard from a parent project
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 include(GNUInstallDirs)
 include(JoinPaths)
@@ -30,20 +38,21 @@ set(raylib_public_headers
 
 # Sources to be compiled
 set(raylib_sources
-    rcore.c
-    rshapes.c
-    rtext.c
-    rtextures.c
+    rcore.cpp
+    rshapes.cpp
+    rtext.cpp
+    rtextures.cpp
+    raymath_impl.c  # raymath out-of-line definitions (compiled as C, see file header)
     )
 
 # Only build raudio if it's enabled
 if (NOT DEFINED SUPPORT_MODULE_RAUDIO OR SUPPORT_MODULE_RAUDIO)
-    list(APPEND raylib_sources raudio.c)
+    list(APPEND raylib_sources raudio.cpp)
 endif()
 
 # Only build rmodels if it's enabled
 if (NOT DEFINED SUPPORT_MODULE_RMODELS OR SUPPORT_MODULE_RMODELS)
-    list(APPEND raylib_sources rmodels.c)
+    list(APPEND raylib_sources rmodels.cpp)
 endif()
 
 # <root>/cmake/GlfwImport.cmake handles the details around the inclusion of glfw
@@ -102,6 +111,7 @@ endif ()
 if (BUILD_SHARED_LIBS)
     # Hide raylib's symbols by default so RLAPI can expose them
     set_property(TARGET raylib PROPERTY C_VISIBILITY_PRESET hidden)
+    set_property(TARGET raylib PROPERTY CXX_VISIBILITY_PRESET hidden)
 endif ()
 
 target_link_libraries(raylib PRIVATE $<BUILD_INTERFACE:${LIBS_PRIVATE}>)

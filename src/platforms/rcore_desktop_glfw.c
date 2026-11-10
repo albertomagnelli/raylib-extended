@@ -1885,7 +1885,7 @@ int InitPlatform(void)
 
     // Load OpenGL extensions
     // NOTE: GL procedures address loader is required to load extensions
-    rlLoadExtensions(glfwGetProcAddress);
+    rlLoadExtensions((void *)glfwGetProcAddress);
     //----------------------------------------------------------------------------
 
     // Initialize input events callbacks
@@ -1936,9 +1936,9 @@ int InitPlatform(void)
 
 #if defined(__NetBSD__)
     // Workaround for NetBSD
-    char *glfwPlatform = "X11 (NetBSD)";
+    const char *glfwPlatform = "X11 (NetBSD)";
 #else
-    char *glfwPlatform = "";
+    const char *glfwPlatform = "";
     switch (glfwGetPlatform())
     {
         case GLFW_PLATFORM_WIN32: glfwPlatform = "Win32"; break;

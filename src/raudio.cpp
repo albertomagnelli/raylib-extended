@@ -402,15 +402,14 @@ typedef struct AudioData {
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static AudioData AUDIO = {          // Global AUDIO context
+// NOTE: Zero-initialized (instead of designated initializers, which are not valid C++),
+// the original initializer only set .Buffer.defaultSize = 0 and .mixedProcessor = NULL
+static AudioData AUDIO = { 0 };     // Global AUDIO context
 
-    // NOTE: Music buffer size is defined by number of samples, independent of sample size and channels number
-    // After some math, considering a sampleRate of 48000, a buffer refill rate of 1/60 seconds and a
-    // standard double-buffering system, a 4096 samples buffer has been chosen, it should be enough
-    // In case of music-stalls, increase this number
-    .Buffer.defaultSize = 0,
-    .mixedProcessor = NULL
-};
+// NOTE: Music buffer size is defined by number of samples, independent of sample size and channels number
+// After some math, considering a sampleRate of 48000, a buffer refill rate of 1/60 seconds and a
+// standard double-buffering system, a 4096 samples buffer has been chosen, it should be enough
+// In case of music-stalls, increase this number
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
@@ -1076,7 +1075,7 @@ bool ExportWave(Wave wave, const char *fileName)
     else if (IsFileExtension(fileName, ".wav"))
     {
         drwav wav = { 0 };
-        drwav_data_format format = { 0 };
+        drwav_data_format format = {};
         format.container = drwav_container_riff;
         if (wave.sampleSize == 32) format.format = DR_WAVE_FORMAT_IEEE_FLOAT;
         else format.format = DR_WAVE_FORMAT_PCM;

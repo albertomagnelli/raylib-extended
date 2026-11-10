@@ -61,8 +61,8 @@ endif ()
 set(example_sources)
 set(example_resources)
 foreach (example_dir ${example_dirs})
-    # Get the .c files
-    file(GLOB sources ${example_dir}/*.c)
+    # Get the .c and .cpp files
+    file(GLOB sources ${example_dir}/*.c ${example_dir}/*.cpp)
     list(APPEND example_sources ${sources})
 
     # Any any resources
@@ -168,6 +168,7 @@ endif ()
 foreach (example_source ${example_sources})
     # Create the basename for the example
     get_filename_component(example_name ${example_source} NAME)
+    string(REPLACE ".cpp" "" example_name ${example_name})
     string(REPLACE ".c" "" example_name ${example_name})
 
     # Setup the example

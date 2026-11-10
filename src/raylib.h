@@ -216,6 +216,21 @@
 typedef struct Vector2 {
     float x;                // Vector x component
     float y;                // Vector y component
+
+#if defined(__cplusplus)
+    Vector2() : x(0.0f), y(0.0f) {}
+    // NOTE: Defaulted components preserve C partial-init semantics: Vector2 v = { 0 } -> { 0, 0 }
+    constexpr Vector2(float x, float y = 0.0f) : x(x), y(y) {}
+
+    // NOTE: Binary/comparison operators live in raymath.h (free functions);
+    // only unary minus and compound assignment are defined here
+    constexpr Vector2 operator-() const { return Vector2(-x, -y); }
+
+    Vector2 &operator+=(const Vector2 &v) { x += v.x; y += v.y; return *this; }
+    Vector2 &operator-=(const Vector2 &v) { x -= v.x; y -= v.y; return *this; }
+    Vector2 &operator*=(float s) { x *= s; y *= s; return *this; }
+    Vector2 &operator/=(float s) { x /= s; y /= s; return *this; }
+#endif
 } Vector2;
 
 // Vector3, 3 components
@@ -223,6 +238,18 @@ typedef struct Vector3 {
     float x;                // Vector x component
     float y;                // Vector y component
     float z;                // Vector z component
+
+#if defined(__cplusplus)
+    Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
+    constexpr Vector3(float x, float y = 0.0f, float z = 0.0f) : x(x), y(y), z(z) {}
+
+    constexpr Vector3 operator-() const { return Vector3(-x, -y, -z); }
+
+    Vector3 &operator+=(const Vector3 &v) { x += v.x; y += v.y; z += v.z; return *this; }
+    Vector3 &operator-=(const Vector3 &v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
+    Vector3 &operator*=(float s) { x *= s; y *= s; z *= s; return *this; }
+    Vector3 &operator/=(float s) { x /= s; y /= s; z /= s; return *this; }
+#endif
 } Vector3;
 
 // Vector4, 4 components
@@ -231,12 +258,26 @@ typedef struct Vector4 {
     float y;                // Vector y component
     float z;                // Vector z component
     float w;                // Vector w component
+
+#if defined(__cplusplus)
+    Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
+    constexpr Vector4(float x, float y = 0.0f, float z = 0.0f, float w = 0.0f) : x(x), y(y), z(z), w(w) {}
+
+    constexpr Vector4 operator-() const { return Vector4(-x, -y, -z, -w); }
+
+    Vector4 &operator+=(const Vector4 &v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
+    Vector4 &operator-=(const Vector4 &v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
+    Vector4 &operator*=(float s) { x *= s; y *= s; z *= s; w *= s; return *this; }
+    Vector4 &operator/=(float s) { x /= s; y /= s; z /= s; w /= s; return *this; }
+#endif
 } Vector4;
 
 // Quaternion, 4 components (Vector4 alias)
 typedef Vector4 Quaternion;
 
 // Matrix, 4x4 components, column major, OpenGL style, right-handed
+// NOTE: Kept as a pure aggregate (no constructors) so brace-init like Matrix m = { 0 } keeps native aggregate semantics;
+// all operators (+, -, *, scalar *) are provided by raymath.h as free functions
 typedef struct Matrix {
     float m0, m4, m8, m12;  // Matrix first row (4 components)
     float m1, m5, m9, m13;  // Matrix second row (4 components)
@@ -250,6 +291,15 @@ typedef struct Color {
     unsigned char g;        // Color green value
     unsigned char b;        // Color blue value
     unsigned char a;        // Color alpha value
+
+#if defined(__cplusplus)
+    Color() : r(0), g(0), b(0), a(0) {}
+    // NOTE: Defaulted components preserve C partial-init semantics: Color c = { 255 } -> { 255, 0, 0, 0 }
+    constexpr Color(unsigned char r, unsigned char g = 0, unsigned char b = 0, unsigned char a = 0) : r(r), g(g), b(b), a(a) {}
+
+    constexpr bool operator==(const Color &c) const { return (r == c.r) && (g == c.g) && (b == c.b) && (a == c.a); }
+    constexpr bool operator!=(const Color &c) const { return !(*this == c); }
+#endif
 } Color;
 
 // Rectangle, 4 components
@@ -258,6 +308,14 @@ typedef struct Rectangle {
     float y;                // Rectangle top-left corner position y
     float width;            // Rectangle width
     float height;           // Rectangle height
+
+#if defined(__cplusplus)
+    Rectangle() : x(0.0f), y(0.0f), width(0.0f), height(0.0f) {}
+    constexpr Rectangle(float x, float y = 0.0f, float width = 0.0f, float height = 0.0f) : x(x), y(y), width(width), height(height) {}
+
+    constexpr bool operator==(const Rectangle &r) const { return (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height); }
+    constexpr bool operator!=(const Rectangle &r) const { return !(*this == r); }
+#endif
 } Rectangle;
 
 // Image, pixel data stored in CPU memory (RAM)

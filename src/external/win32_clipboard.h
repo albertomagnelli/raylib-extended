@@ -93,6 +93,9 @@ unsigned char *Win32GetClipboardImageData(int *width, int *height, unsigned int 
 typedef int WINBOOL;
 
 #if !defined(_WINUSER_) || !defined(WINUSER_ALREADY_INCLUDED)
+#if defined(__cplusplus)
+extern "C" {  // Win32 API functions require C linkage
+#endif
 WINUSERAPI WINBOOL WINAPI OpenClipboard(HWND hWndNewOwner);
 WINUSERAPI WINBOOL WINAPI CloseClipboard(VOID);
 WINUSERAPI DWORD   WINAPI GetClipboardSequenceNumber(VOID);
@@ -112,6 +115,9 @@ WINUSERAPI WINBOOL WINAPI EmptyClipboard(VOID);
 WINUSERAPI WINBOOL WINAPI IsClipboardFormatAvailable(UINT format);
 WINUSERAPI int     WINAPI GetPriorityClipboardFormat(UINT *paFormatPriorityList, int cFormats);
 WINUSERAPI HWND    WINAPI GetOpenClipboardWindow(VOID);
+#if defined(__cplusplus)
+}
+#endif
 #endif
 
 #ifndef HGLOBAL
@@ -119,9 +125,15 @@ WINUSERAPI HWND    WINAPI GetOpenClipboardWindow(VOID);
 #endif
 
 #if !defined(_WINBASE_) || !defined(WINBASE_ALREADY_INCLUDED)
+#if defined(__cplusplus)
+extern "C" {  // Win32 API functions require C linkage
+#endif
 WINBASEAPI SIZE_T  WINAPI GlobalSize (HGLOBAL hMem);
 WINBASEAPI LPVOID  WINAPI GlobalLock (HGLOBAL hMem);
 WINBASEAPI WINBOOL WINAPI GlobalUnlock (HGLOBAL hMem);
+#if defined(__cplusplus)
+}
+#endif
 #endif
 
 #if !defined(_WINGDI_) || !defined(WINGDI_ALREADY_INCLUDED)
