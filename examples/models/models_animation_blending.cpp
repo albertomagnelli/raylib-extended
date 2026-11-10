@@ -93,8 +93,8 @@ int main()
     bool animPause = false;             // Pause animation
 
     // UI required variables
-    char *animNames[64] = {};        // Pointers to animation names for dropdown box
-    for (int i = 0; i < animCount; i++) animNames[i] = anims[i].name;
+    std::vector<std::string> animNames;        // Pointers to animation names for dropdown box
+    for (int i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
 
     bool dropdownEditMode0 = false;
     bool dropdownEditMode1 = false;
@@ -228,17 +228,17 @@ int main()
             //---------------------------------------------------------------------------------------------
             if (dropdownEditMode0) GuiDisable();
             GuiSlider(Rectangle{ 10, 38, 160, 12 },
-                NULL, TextFormat("x%.1f", animFrameSpeed0), &animFrameSpeed0, 0.1f, 2.0f);
+                NULL, TextFormat("x%.1f", animFrameSpeed0).c_str(), &animFrameSpeed0, 0.1f, 2.0f);
             GuiEnable();
             if (dropdownEditMode1) GuiDisable();
             GuiSlider(Rectangle{ GetScreenWidth() - 170.0f, 38, 160, 12 },
-                TextFormat("%.1fx", animFrameSpeed1), NULL, &animFrameSpeed1, 0.1f, 2.0f);
+                TextFormat("%.1fx", animFrameSpeed1).c_str(), NULL, &animFrameSpeed1, 0.1f, 2.0f);
             GuiEnable();
 
             // Draw animation selectors for blending transition
             // NOTE: Transition does not start until requested
             GuiSetStyle(DROPDOWNBOX, DROPDOWN_ITEMS_SPACING, 1);
-            if (GuiDropdownBox(Rectangle{ 10, 10, 160, 24 }, TextJoin(animNames, animCount, ";"),
+            if (GuiDropdownBox(Rectangle{ 10, 10, 160, 24 }, TextJoin(animNames, ";").c_str(),
                 &animIndex0, dropdownEditMode0)) dropdownEditMode0 = !dropdownEditMode0;
 
             // Blending process progress bar
@@ -247,7 +247,7 @@ int main()
             GuiProgressBar(Rectangle{ 180, 14, 440, 16 }, NULL, NULL, &animBlendProgress, 0.0f, 1.0f);
             GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 0); // Reset to Left-->Right
 
-            if (GuiDropdownBox(Rectangle{ GetScreenWidth() - 170.0f, 10, 160, 24 }, TextJoin(animNames, animCount, ";"),
+            if (GuiDropdownBox(Rectangle{ GetScreenWidth() - 170.0f, 10, 160, 24 }, TextJoin(animNames, ";").c_str(),
                 &animIndex1, dropdownEditMode1)) dropdownEditMode1 = !dropdownEditMode1;
 
             GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
@@ -260,7 +260,7 @@ int main()
             {
                 // Draw playing timeline with keyframes for anim0[]
                 GuiProgressBar(Rectangle{ 60, GetScreenHeight() - 60.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 0",
-                    TextFormat("FRAME: %.2f / %i", animFrameProgress0, anims[animIndex0].keyframeCount),
+                    TextFormat("FRAME: %.2f / %i", animFrameProgress0, anims[animIndex0].keyframeCount).c_str(),
                     &animFrameProgress0, 0.0f, (float)anims[animIndex0].keyframeCount);
                 for (int i = 0; i < anims[animIndex0].keyframeCount; i++)
                     DrawRectangle(60 + (int)(((float)(GetScreenWidth() - 180)/(float)anims[animIndex0].keyframeCount)*(float)i),
@@ -268,7 +268,7 @@ int main()
 
                 // Draw playing timeline with keyframes for anim1[]
                 GuiProgressBar(Rectangle{ 60, GetScreenHeight() - 30.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 1",
-                    TextFormat("FRAME: %.2f / %i", animFrameProgress1, anims[animIndex1].keyframeCount),
+                    TextFormat("FRAME: %.2f / %i", animFrameProgress1, anims[animIndex1].keyframeCount).c_str(),
                     &animFrameProgress1, 0.0f, (float)anims[animIndex1].keyframeCount);
                 for (int i = 0; i < anims[animIndex1].keyframeCount; i++)
                     DrawRectangle(60 + (int)(((float)(GetScreenWidth() - 180)/(float)anims[animIndex1].keyframeCount)*(float)i),

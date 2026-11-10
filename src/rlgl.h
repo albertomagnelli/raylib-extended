@@ -111,6 +111,9 @@
 #ifndef RLGL_H
 #define RLGL_H
 
+#include <string>
+#include <string_view>
+
 #define RLGL_VERSION  "6.0"
 
 // Function specifiers in case library is build/used as a shared library
@@ -708,7 +711,7 @@ RLAPI void rlSetBlendFactorsSeparate(int glSrcRGB, int glDstRGB, int glSrcAlpha,
 RLAPI void rlglInit(int width, int height);             // Initialize rlgl (buffers, shaders, textures, states)
 RLAPI void rlglClose(void);                             // De-initialize rlgl (buffers, shaders, textures)
 RLAPI void rlLoadExtensions(void *loader);              // Load OpenGL extensions (loader function required)
-RLAPI void *rlGetProcAddress(const char *procName);     // Get OpenGL procedure address
+RLAPI void *rlGetProcAddress(std::string_view procName);     // Get OpenGL procedure address
 RLAPI int rlGetVersion(void);                           // Get current OpenGL version
 RLAPI void rlSetFramebufferWidth(int width);            // Set current framebuffer width
 RLAPI int rlGetFramebufferWidth(void);                  // Get default framebuffer width
@@ -755,7 +758,7 @@ RLAPI unsigned int rlLoadTextureDepth(int width, int height, bool useRenderBuffe
 RLAPI unsigned int rlLoadTextureCubemap(const void *data, int size, int format, int mipmapCount); // Load texture cubemap data
 RLAPI void rlUpdateTexture(unsigned int id, int offsetX, int offsetY, int width, int height, int format, const void *data); // Update texture with new data on GPU
 RLAPI void rlGetGlTextureFormats(int format, unsigned int *glInternalFormat, unsigned int *glFormat, unsigned int *glType); // Get OpenGL internal formats
-RLAPI const char *rlGetPixelFormatName(unsigned int format);              // Get name string for pixel format
+RLAPI std::string rlGetPixelFormatName(unsigned int format);              // Get name string for pixel format
 RLAPI void rlUnloadTexture(unsigned int id);                              // Unload texture from GPU memory
 RLAPI void rlGenTextureMipmaps(unsigned int id, int width, int height, int format, int *mipmaps); // Generate mipmap data for selected texture
 RLAPI void *rlReadTexturePixels(unsigned int id, int width, int height, int format); // Read texture pixel data
@@ -771,14 +774,14 @@ RLAPI void rlCopyFramebuffer(int x, int y, int width, int height, int format, vo
 RLAPI void rlResizeFramebuffer(int width, int height);                    // Resize internal framebuffer
 
 // Shaders management
-RLAPI unsigned int rlLoadShader(const char *code, int type);                    // Load (compile) shader and return shader id (type: RL_VERTEX_SHADER, RL_FRAGMENT_SHADER, RL_COMPUTE_SHADER)
-RLAPI unsigned int rlLoadShaderProgram(const char *vsCode, const char *fsCode); // Load shader from code strings
+RLAPI unsigned int rlLoadShader(std::string_view code, int type);                    // Load (compile) shader and return shader id (type: RL_VERTEX_SHADER, RL_FRAGMENT_SHADER, RL_COMPUTE_SHADER)
+RLAPI unsigned int rlLoadShaderProgram(std::string_view vsCode, std::string_view fsCode); // Load shader from code strings
 RLAPI unsigned int rlLoadShaderProgramEx(unsigned int vsId, unsigned int fsId); // Load shader program, using already loaded shader ids
 RLAPI unsigned int rlLoadShaderProgramCompute(unsigned int csId);               // Load compute shader program
 RLAPI void rlUnloadShader(unsigned int id);                                     // Unload shader, loaded with rlLoadShader()
 RLAPI void rlUnloadShaderProgram(unsigned int id);                              // Unload shader program
-RLAPI int rlGetLocationUniform(unsigned int id, const char *uniformName);       // Get shader location uniform, requires shader program id
-RLAPI int rlGetLocationAttrib(unsigned int id, const char *attribName);         // Get shader location attribute, requires shader program id
+RLAPI int rlGetLocationUniform(unsigned int id, std::string_view uniformName);       // Get shader location uniform, requires shader program id
+RLAPI int rlGetLocationAttrib(unsigned int id, std::string_view attribName);         // Get shader location attribute, requires shader program id
 RLAPI void rlSetUniform(int locIndex, const void *value, int uniformType, int count); // Set shader value uniform
 RLAPI void rlSetUniformMatrix(int locIndex, Matrix mat);                        // Set shader value matrix
 RLAPI void rlSetUniformMatrices(int locIndex, const Matrix *mat, int count);    // Set shader value matrices
@@ -2664,8 +2667,11 @@ void rlLoadExtensions(void *loader)
 }
 
 // Get OpenGL procedure address
-void *rlGetProcAddress(const char *procName)
+void *rlGetProcAddress(std::string_view procNameView)
 {
+    const std::string procNameStr(procNameView);
+    const char *procName = procNameStr.c_str();
+
     void *func = NULL;
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     func = RLGL.loader(procName);
@@ -3391,7 +3397,7 @@ unsigned int rlLoadTexture(const void *data, int width, int height, int format, 
     // Unbind current texture
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    if (id > 0) TRACELOG(RL_LOG_INFO, "TEXTURE: [ID %i] Texture loaded successfully (%ix%i | %s | %i mipmaps)", id, width, height, rlGetPixelFormatName(format), mipmapCount);
+    if (id > 0) TRACELOG(RL_LOG_INFO, "TEXTURE: [ID %i] Texture loaded successfully (%ix%i | %s | %i mipmaps)", id, width, height, rlGetPixelFormatName(format).c_str(), mipmapCount);
     else TRACELOG(RL_LOG_WARNING, "TEXTURE: Failed to load texture");
 
     return id;
@@ -4187,8 +4193,11 @@ void rlUnloadVertexBuffer(unsigned int vboId)
 // Shaders management
 //-----------------------------------------------------------------------------------------------
 // Load (compile) shader and return shader id
-unsigned int rlLoadShader(const char *code, int type)
+unsigned int rlLoadShader(std::string_view codeView, int type)
 {
+    const std::string codeStr(codeView);
+    const char *code = codeStr.c_str();
+
     unsigned int shaderId = 0;
 
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
@@ -4253,8 +4262,13 @@ unsigned int rlLoadShader(const char *code, int type)
 
 // Load shader program from code strings
 // NOTE: If shader string is NULL, using default vertex/fragment shaders
-unsigned int rlLoadShaderProgram(const char *vsCode, const char *fsCode)
+unsigned int rlLoadShaderProgram(std::string_view vsCodeView, std::string_view fsCodeView)
 {
+    const std::string vsCodeStr(vsCodeView);
+    const char *vsCode = vsCodeStr.c_str();
+    const std::string fsCodeStr(fsCodeView);
+    const char *fsCode = fsCodeStr.c_str();
+
     unsigned int id = 0; // Shader program id
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return id; }
 
@@ -4264,12 +4278,12 @@ unsigned int rlLoadShaderProgram(const char *vsCode, const char *fsCode)
 
     // Compile vertex shader (if provided)
     // NOTE: If not vertex shader is provided, use default one
-    if (vsCode != NULL) vertexShaderId = rlLoadShader(vsCode, GL_VERTEX_SHADER);
+    if (!vsCodeStr.empty()) vertexShaderId = rlLoadShader(vsCode, GL_VERTEX_SHADER);
     else vertexShaderId = RLGL.State.defaultVShaderId;
 
     // Compile fragment shader (if provided)
     // NOTE: If not vertex shader is provided, use default one
-    if (fsCode != NULL) fragmentShaderId = rlLoadShader(fsCode, GL_FRAGMENT_SHADER);
+    if (!fsCodeStr.empty()) fragmentShaderId = rlLoadShader(fsCode, GL_FRAGMENT_SHADER);
     else fragmentShaderId = RLGL.State.defaultFShaderId;
 
     // In case vertex and fragment shader are the default ones, no need to recompile, assign the default shader program id
@@ -4470,8 +4484,11 @@ void rlUnloadShaderProgram(unsigned int id)
 
 // Get shader location uniform
 // NOTE: First parameter refers to shader program id
-int rlGetLocationUniform(unsigned int id, const char *uniformName)
+int rlGetLocationUniform(unsigned int id, std::string_view uniformNameView)
 {
+    const std::string uniformNameStr(uniformNameView);
+    const char *uniformName = uniformNameStr.c_str();
+
     int location = -1;
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     location = glGetUniformLocation(id, uniformName);
@@ -4484,8 +4501,11 @@ int rlGetLocationUniform(unsigned int id, const char *uniformName)
 
 // Get shader location attribute
 // NOTE: First parameter refers to shader program id
-int rlGetLocationAttrib(unsigned int id, const char *attribName)
+int rlGetLocationAttrib(unsigned int id, std::string_view attribNameView)
 {
+    const std::string attribNameStr(attribNameView);
+    const char *attribName = attribNameStr.c_str();
+
     int location = -1;
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     location = glGetAttribLocation(id, attribName);
@@ -4944,8 +4964,9 @@ void rlLoadDrawCube(void)
 }
 
 // Get name string for pixel format
-const char *rlGetPixelFormatName(unsigned int format)
+std::string rlGetPixelFormatName(unsigned int format)
 {
+
     switch (format)
     {
         case RL_PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: return "GRAYSCALE"; break;         // 8 bit per pixel (no alpha)

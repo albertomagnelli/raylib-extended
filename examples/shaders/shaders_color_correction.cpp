@@ -50,7 +50,7 @@ int main()
         LoadTexture("resources/fudesumi.png")
     };
 
-    Shader shdrColorCorrection = LoadShader(0, TextFormat("resources/shaders/glsl%i/color_correction.fs", GLSL_VERSION));
+    Shader shdrColorCorrection = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_correction.fs", GLSL_VERSION));
 
     int imageIndex = 0;
     int resetButtonClicked = 0;
@@ -123,9 +123,9 @@ int main()
             //------------------------------------------------------------------------------
             GuiToggleGroup(Rectangle{ 645, 70, 20, 20 }, "1;2;3;4", &imageIndex);
 
-            GuiSliderBar(Rectangle{ 645, 100, 120, 20 }, "Contrast", TextFormat("%.0f", contrast), &contrast, -100.0f, 100.0f);
-            GuiSliderBar(Rectangle{ 645, 130, 120, 20 }, "Saturation", TextFormat("%.0f", saturation), &saturation, -100.0f, 100.0f);
-            GuiSliderBar(Rectangle{ 645, 160, 120, 20 }, "Brightness", TextFormat("%.0f", brightness), &brightness, -100.0f, 100.0f);
+            GuiSliderBar(Rectangle{ 645, 100, 120, 20 }, "Contrast", TextFormat("%.0f", contrast).c_str(), &contrast, -100.0f, 100.0f);
+            GuiSliderBar(Rectangle{ 645, 130, 120, 20 }, "Saturation", TextFormat("%.0f", saturation).c_str(), &saturation, -100.0f, 100.0f);
+            GuiSliderBar(Rectangle{ 645, 160, 120, 20 }, "Brightness", TextFormat("%.0f", brightness).c_str(), &brightness, -100.0f, 100.0f);
 
             resetButtonClicked = GuiButton(Rectangle{ 645, 190, 40, 20 }, "Reset");
             //------------------------------------------------------------------------------

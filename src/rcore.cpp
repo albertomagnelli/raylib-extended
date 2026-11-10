@@ -303,7 +303,7 @@ typedef struct { unsigned int width; unsigned int height; } Size;
 // Core global state context data
 typedef struct CoreData {
     struct {
-        const char *title;                  // Window text title const pointer
+        std::string title;                  // Window text title
         unsigned int flags;                 // Configuration flags (bit based), keeps window state
         int samples;                        // MSAA samples in use, zero means MSAA disabled
         bool ready;                         // Check if window has been initialized successfully
@@ -329,7 +329,7 @@ typedef struct CoreData {
 
     } Window;
     struct {
-        const char *basePath;               // Base path for data storage
+        std::string basePath;                // Base path for data storage
 
     } Storage;
     struct {
@@ -406,7 +406,10 @@ typedef struct CoreData {
 //----------------------------------------------------------------------------------
 RLAPI const char *raylib_version = RAYLIB_VERSION;  // raylib version exported symbol, required for some bindings
 
-CoreData CORE = { 0 };                              // Global CORE state context
+CoreData CORE = {};                              // Global CORE state context
+
+// Convert a C string that may be NULL into a std::string
+static std::string GetStringOrEmpty(const char *str) { return (str != NULL)? std::string(str) : std::string(); }
 
 static int logTypeLevel = LOG_INFO;                 // Minimum log type level
 
@@ -505,7 +508,7 @@ static void SetupViewport(int width, int height);           // Set viewport for 
 static int GetWindowRequestedSamples(void);                 // Get the MSAA samples requested by the window flags (required by InitPlatform())
 static void UpdateWindowProvidedSamples(void);              // Get the MSAA samples really provided by the graphics device (required by InitWindow())
 
-static void ScanDirectoryFiles(const char *basePath, FilePathList *list, const char *filter, unsigned int expectedFileCount, bool scanSubdirs); // Scan all files and directories in a base path
+static void ScanDirectoryFiles(const char *basePath, FilePathList *list, const char *filter, bool scanSubdirs); // Scan all files and directories in a base path
 
 #if SUPPORT_AUTOMATION_EVENTS
 static void RecordAutomationEvent(void); // Record frame events (to internal events array)
@@ -520,7 +523,7 @@ __declspec(dllimport) void __stdcall Sleep(unsigned long msTimeout); // Required
 #endif
 
 #if !SUPPORT_MODULE_RTEXT
-const char *TextFormat(const char *text, ...); // Formatting of text with variables to 'embed'
+std::string TextFormat(std::string_view text, ...); // Formatting of text with variables to 'embed'
 #endif
 
 // NOTE: PLATFORM_DESKTOP defaults to GLFW backend
@@ -661,8 +664,11 @@ static void UpdateWindowProvidedSamples(void)
 }
 
 // Initialize window and OpenGL context
-void InitWindow(int width, int height, const char *title)
+void InitWindow(int width, int height, std::string_view titleView)
 {
+    const std::string titleStr(titleView);
+    const char *title = titleStr.c_str();
+
     TRACELOG(LOG_INFO, "Initializing raylib %s", RAYLIB_VERSION);
 
 #if defined(PLATFORM_DESKTOP_GLFW)
@@ -804,7 +810,7 @@ void InitWindow(int width, int height, const char *title)
     SetRandomSeed(get_rand_32());
 #endif
 
-    TRACELOG(LOG_INFO, "SYSTEM: Working Directory: %s", GetWorkingDirectory());
+    TRACELOG(LOG_INFO, "SYSTEM: Working Directory: %s", GetWorkingDirectory().c_str());
 }
 
 // Close window and unload OpenGL context
@@ -822,7 +828,7 @@ void CloseWindow(void)
     //--------------------------------------------------------------
 
     // Clear CORE data, in case new window is initialized
-    CORE = (CoreData){ 0 };
+    CORE = CoreData{};
     
     TRACELOG(LOG_INFO, "Window closed successfully");
 }
@@ -1299,29 +1305,36 @@ void UnloadVrStereoConfig(VrStereoConfig config)
 
 // Load shader from files and bind default locations
 // NOTE: If shader filename is NULL, using default vertex/fragment shaders
-Shader LoadShader(const char *vsFileName, const char *fsFileName)
+Shader LoadShader(std::string_view vsFileNameView, std::string_view fsFileNameView)
 {
+    const std::string vsFileNameStr(vsFileNameView);
+    const char *vsFileName = vsFileNameStr.c_str();
+    const std::string fsFileNameStr(fsFileNameView);
+    const char *fsFileName = fsFileNameStr.c_str();
+
     Shader shader = { 0 };
 
-    char *vShaderStr = NULL;
-    char *fShaderStr = NULL;
+    std::string vShaderStr;
+    std::string fShaderStr;
 
-    if (vsFileName != NULL) vShaderStr = LoadFileText(vsFileName);
-    if (fsFileName != NULL) fShaderStr = LoadFileText(fsFileName);
+    if (!vsFileNameView.empty()) vShaderStr = LoadFileText(vsFileNameView);
+    if (!fsFileNameView.empty()) fShaderStr = LoadFileText(fsFileNameView);
 
-    if ((vShaderStr == NULL) && (fShaderStr == NULL)) TRACELOG(LOG_WARNING, "SHADER: Shader files provided are not valid, using default shader");
+    if (vShaderStr.empty() && fShaderStr.empty()) TRACELOG(LOG_WARNING, "SHADER: Shader files provided are not valid, using default shader");
 
     shader = LoadShaderFromMemory(vShaderStr, fShaderStr);
-
-    UnloadFileText(vShaderStr);
-    UnloadFileText(fShaderStr);
 
     return shader;
 }
 
 // Load shader from code strings and bind default locations
-Shader LoadShaderFromMemory(const char *vsCode, const char *fsCode)
+Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCodeView)
 {
+    const std::string vsCodeStr(vsCodeView);
+    const char *vsCode = vsCodeStr.c_str();
+    const std::string fsCodeStr(fsCodeView);
+    const char *fsCode = fsCodeStr.c_str();
+
     Shader shader = { 0 };
 
     shader.id = rlLoadShaderProgram(vsCode, fsCode);
@@ -1428,14 +1441,20 @@ void UnloadShader(Shader shader)
 }
 
 // Get shader uniform location
-int GetShaderLocation(Shader shader, const char *uniformName)
+int GetShaderLocation(Shader shader, std::string_view uniformNameView)
 {
+    const std::string uniformNameStr(uniformNameView);
+    const char *uniformName = uniformNameStr.c_str();
+
     return rlGetLocationUniform(shader.id, uniformName);
 }
 
 // Get shader attribute location
-int GetShaderLocationAttrib(Shader shader, const char *attribName)
+int GetShaderLocationAttrib(Shader shader, std::string_view attribNameView)
 {
+    const std::string attribNameStr(attribNameView);
+    const char *attribName = attribNameStr.c_str();
+
     return rlGetLocationAttrib(shader.id, attribName);
 }
 
@@ -1898,8 +1917,11 @@ void UnloadRandomSequence(int *sequence)
 }
 
 // Takes a screenshot of current screen
-void TakeScreenshot(const char *fileName)
+void TakeScreenshot(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
 #if SUPPORT_MODULE_RTEXTURES
     // Security check to (partially) avoid malicious code
     if (strchr(fileName, '\'') != NULL) { TRACELOG(LOG_WARNING, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
@@ -1912,7 +1934,7 @@ void TakeScreenshot(const char *fileName)
     Image image = { imgData, (int)((float)CORE.Window.render.width*scale.x), (int)((float)CORE.Window.render.height*scale.y), 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
     char path[MAX_FILEPATH_LENGTH] = { 0 };
-    if (!IsPathAbsolute(fileName)) snprintf(path, MAX_FILEPATH_LENGTH, "%s", TextFormat("%s/%s", CORE.Storage.basePath, fileName));
+    if (!IsPathAbsolute(fileName)) snprintf(path, MAX_FILEPATH_LENGTH, "%s", TextFormat("%s/%s", CORE.Storage.basePath.c_str(), fileName).c_str());
     else snprintf(path, MAX_FILEPATH_LENGTH, "%s", fileName);
 
     ExportImage(image, path); // WARNING: Module required: rtextures
@@ -1945,14 +1967,17 @@ void SetConfigFlags(unsigned int flags)
 void SetTraceLogLevel(int logType) { logTypeLevel = logType; }
 
 // Show trace log messages (LOG_INFO, LOG_WARNING, LOG_ERROR, LOG_DEBUG)
-void TraceLog(int logType, const char *text, ...)
+void TraceLog(int logType, std::string_view textView, ...)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
 #if SUPPORT_TRACELOG
     // Message has level below current threshold, don't emit
-    if ((logType < logTypeLevel) || (text == NULL)) return;
+    if (logType < logTypeLevel) return;
 
     va_list args;
-    va_start(args, text);
+    va_start(args, textView);
 
     if (traceLog != NULL)
     {
@@ -2033,8 +2058,11 @@ void MemFree(void *ptr)
 // Module Functions Definition: File System management
 //----------------------------------------------------------------------------------
 // Load data from file into a buffer
-unsigned char *LoadFileData(const char *fileName, int *dataSize)
+unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     unsigned char *data = NULL;
     *dataSize = 0;
 
@@ -2098,8 +2126,11 @@ void UnloadFileData(unsigned char *data)
 }
 
 // Save data to file from buffer
-bool SaveFileData(const char *fileName, const void *data, int dataSize)
+bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
     if (fileName != NULL)
@@ -2129,8 +2160,11 @@ bool SaveFileData(const char *fileName, const void *data, int dataSize)
 }
 
 // Export data to code (.h), returns true on success
-bool ExportDataAsCode(const unsigned char *data, int dataSize, const char *fileName)
+bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
 #ifndef TEXT_BYTES_PER_LINE
@@ -2155,7 +2189,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, const char *fileN
 
     // Get file name from path
     char varFileName[256] = { 0 };
-    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName));
+    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str());
     for (int i = 0; varFileName[i] != '\0'; i++)
     {
         // Convert variable name to uppercase
@@ -2181,11 +2215,14 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, const char *fileN
     return result;
 }
 
-// Load text data from file, returns a '\0' terminated string
-// NOTE: text chars array should be freed manually
-char *LoadFileText(const char *fileName)
+// Load text data from file
+std::string LoadFileText(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     char *text = NULL;
+    size_t textLength = 0;
 
     if (fileName != NULL)
     {
@@ -2216,6 +2253,7 @@ char *LoadFileText(const char *fileName)
 
                     // Zero-terminate the string
                     text[count] = '\0';
+                    textLength = count;
 
                     TRACELOG(LOG_INFO, "FILEIO: [%s] Text file loaded successfully", fileName);
                 }
@@ -2229,7 +2267,11 @@ char *LoadFileText(const char *fileName)
     }
     else TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
 
-    return text;
+    std::string fileText;
+    if (text != NULL) fileText.assign(text, textLength);
+    RL_FREE(text);
+
+    return fileText;
 }
 
 // Unload file text data allocated by LoadFileText()
@@ -2239,8 +2281,13 @@ void UnloadFileText(char *text)
 }
 
 // Save text data to file (write), string must be '\0' terminated
-bool SaveFileText(const char *fileName, const char *text)
+bool SaveFileText(std::string_view fileNameView, std::string_view textView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     bool result = false;
 
     if (fileName != NULL)
@@ -2295,8 +2342,13 @@ void SetSaveFileTextCallback(SaveFileTextCallback callback)
 
 // Rename file (if exists)
 // NOTE: Only rename file name required, not full path
-int FileRename(const char *fileName, const char *fileRename)
+int FileRename(std::string_view fileNameView, std::string_view fileRenameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+    const std::string fileRenameStr(fileRenameView);
+    const char *fileRename = fileRenameStr.c_str();
+
     int result = -1;
 
     if (FileExists(fileName))
@@ -2308,8 +2360,11 @@ int FileRename(const char *fileName, const char *fileRename)
 }
 
 // Remove file (if exists)
-int FileRemove(const char *fileName)
+int FileRemove(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     int result = -1;
 
     if (FileExists(fileName))
@@ -2322,8 +2377,13 @@ int FileRemove(const char *fileName)
 
 // Copy file from one path to another
 // NOTE: If destination path does not exist, it is created!
-int FileCopy(const char *srcPath, const char *dstPath)
+int FileCopy(std::string_view srcPathView, std::string_view dstPathView)
 {
+    const std::string srcPathStr(srcPathView);
+    const char *srcPath = srcPathStr.c_str();
+    const std::string dstPathStr(dstPathView);
+    const char *dstPath = dstPathStr.c_str();
+
     int result = -1;
     int srcDataSize = 0;
     unsigned char *srcFileData = LoadFileData(srcPath, &srcDataSize);
@@ -2331,7 +2391,7 @@ int FileCopy(const char *srcPath, const char *dstPath)
     if ((srcFileData != NULL) && (srcDataSize > 0))
     {
         // Get full destination directory path
-        const char *dstDirPath = GetDirectoryPath(dstPath);
+        std::string dstDirPath = GetDirectoryPath(dstPath);
         
         // Check if directory exist or create it otherwise
         if (DirectoryExists(dstDirPath) || (MakeDirectory(dstDirPath) == 0))
@@ -2348,8 +2408,13 @@ int FileCopy(const char *srcPath, const char *dstPath)
 
 // Move file from one directory to another
 // NOTE: If dst directories do not exists they are created
-int FileMove(const char *srcPath, const char *dstPath)
+int FileMove(std::string_view srcPathView, std::string_view dstPathView)
 {
+    const std::string srcPathStr(srcPathView);
+    const char *srcPath = srcPathStr.c_str();
+    const std::string dstPathStr(dstPathView);
+    const char *dstPath = dstPathStr.c_str();
+
     int result = -1;
 
     if (FileExists(srcPath))
@@ -2374,25 +2439,27 @@ int FileMove(const char *srcPath, const char *dstPath)
 
 // Replace text in an existing file
 // WARNING: DEPENDENCY: [rtext] module
-int FileTextReplace(const char *fileName, const char *search, const char *replacement)
+int FileTextReplace(std::string_view fileNameView, std::string_view searchView, std::string_view replacementView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+    const std::string searchStr(searchView);
+    const char *search = searchStr.c_str();
+    const std::string replacementStr(replacementView);
+    const char *replacement = replacementStr.c_str();
+
     int result = -1;
 
 #if SUPPORT_MODULE_RTEXT
-    char *fileText = NULL;
-    char *fileTextUpdated = { 0 };
-
     if (FileExists(fileName))
     {
-        fileText = LoadFileText(fileName);
-        fileTextUpdated = TextReplaceAlloc(fileText, search, replacement);
-        if (fileTextUpdated != NULL)
+        std::string fileText = LoadFileText(fileName);
+        std::string fileTextUpdated = TextReplace(fileText, search, replacement);
+        if (!fileTextUpdated.empty())
         {
             bool saved = SaveFileText(fileName, fileTextUpdated);
             if (saved) result = 0;
-            MemFree(fileTextUpdated);
         }
-        UnloadFileText(fileText);
     }
 #else
     TRACELOG(LOG_WARNING, "FILE: File text replace requires [rtext] module");
@@ -2403,18 +2470,22 @@ int FileTextReplace(const char *fileName, const char *search, const char *replac
 
 // Find text index position in existing file
 // WARNING: DEPENDENCY: [rtext] module
-int FileTextFindIndex(const char *fileName, const char *search)
+int FileTextFindIndex(std::string_view fileNameView, std::string_view searchView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+    const std::string searchStr(searchView);
+    const char *search = searchStr.c_str();
+
     int result = -1;
 
     if (FileExists(fileName))
     {
-        char *fileText = LoadFileText(fileName);
-        if (fileText != NULL)
+        std::string fileText = LoadFileText(fileName);
+        if (!fileText.empty())
         {
-            char *ptr = strstr(fileText, search);
-            if (ptr != NULL) result = (int)(ptr - fileText);
-            UnloadFileText(fileText);
+            size_t pos = fileText.find(search);
+            if (pos != std::string::npos) result = (int)pos;
         }
     }
 
@@ -2422,8 +2493,11 @@ int FileTextFindIndex(const char *fileName, const char *search)
 }
 
 // Check if the file exists
-bool FileExists(const char *fileName)
+bool FileExists(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
     if ((fileName != NULL) && (ACCESS(fileName) != -1)) result = true;
@@ -2437,19 +2511,24 @@ bool FileExists(const char *fileName)
 }
 
 // Check file extension
-bool IsFileExtension(const char *fileName, const char *ext)
+bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+    const std::string extStr(extView);
+    const char *ext = extStr.c_str();
+
     #define MAX_FILE_EXTENSIONS  32
 
     bool result = false;
-    const char *fileExt = GetFileExtension(fileName);
+    std::string fileExt = GetFileExtension(fileName);
 
     // WARNING: fileExt points to last '.' on fileName string but it could happen
     // that fileName is not correct: "myfile.png more text following\n"
 
-    if (fileExt != NULL)
+    if (!fileExt.empty())
     {
-        int fileExtLength = (int)strlen(fileExt);
+        int fileExtLength = (int)fileExt.size();
         char fileExtLower[16] = { 0 };
         for (int i = 0; (i < fileExtLength) && (i < 15); i++)
         {
@@ -2504,8 +2583,11 @@ bool IsFileExtension(const char *fileName, const char *ext)
 }
 
 // Check if file path (file or directory) is hidden by OS
-bool IsFileHidden(const char *filePath)
+bool IsFileHidden(std::string_view filePathView)
 {
+    const std::string filePathStr(filePathView);
+    const char *filePath = filePathStr.c_str();
+
     bool result = false;
 #if defined(_WIN32)
     unsigned long attribs = GetFileAttributesA(filePath);
@@ -2522,8 +2604,11 @@ bool IsFileHidden(const char *filePath)
 }
 
 // Check if directory path exists
-bool DirectoryExists(const char *dirPath)
+bool DirectoryExists(std::string_view dirPathView)
 {
+    const std::string dirPathStr(dirPathView);
+    const char *dirPath = dirPathStr.c_str();
+
     bool result = false;
     DIR *dir = opendir(dirPath);
 
@@ -2538,8 +2623,11 @@ bool DirectoryExists(const char *dirPath)
 
 // Get file length in bytes
 // NOTE: GetFileSize() conflicts with windows.h
-int GetFileLength(const char *fileName)
+int GetFileLength(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     int size = 0;
 
     // NOTE: On Unix-like systems, it can by used the POSIX system call: stat(),
@@ -2566,8 +2654,11 @@ int GetFileLength(const char *fileName)
 }
 
 // Get file modification time (last write time)
-long GetFileModTime(const char *fileName)
+long GetFileModTime(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     struct stat result = { 0 };
     long modTime = 0;
 
@@ -2582,15 +2673,18 @@ long GetFileModTime(const char *fileName)
 
 // Get pointer to extension for a filename string (includes the dot: .png)
 // WARNING: Getting the pointer to the input string extension position (not a string copy)
-const char *GetFileExtension(const char *fileName)
+std::string GetFileExtension(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     // Only the file name part can contain the extension, not a directory name
-    const char *name = GetFileName(fileName);
-    const char *dot = strrchr(name, '.');
+    std::string name = GetFileName(fileName);
+    size_t dot = name.rfind('.');
 
-    if ((dot == NULL) || (dot == name)) return NULL;     // No extension for hidden files: ".gitignore"
+    if ((dot == std::string::npos) || (dot == 0)) return {};   // No extension for hidden files: ".gitignore"
 
-    return dot;
+    return name.substr(dot);
 }
 
 // String pointer reverse break: returns right-most occurrence of charset in s
@@ -2604,8 +2698,11 @@ static const char *strprbrk(const char *text, const char *charset)
 }
 
 // Get pointer to filename for a path string
-const char *GetFileName(const char *filePath)
+std::string GetFileName(std::string_view filePathView)
 {
+    const std::string filePathStr(filePathView);
+    const char *filePath = filePathStr.c_str();
+
     const char *fileName = NULL;
 
     if (filePath != NULL) fileName = strprbrk(filePath, "\\/");
@@ -2616,8 +2713,11 @@ const char *GetFileName(const char *filePath)
 }
 
 // Get filename string without extension (uses static string)
-const char *GetFileNameWithoutExt(const char *filePath)
+std::string GetFileNameWithoutExt(std::string_view filePathView)
 {
+    const std::string filePathStr(filePathView);
+    const char *filePath = filePathStr.c_str();
+
     #define MAX_FILENAME_LENGTH     256
 
     static char fileName[MAX_FILENAME_LENGTH] = { 0 };
@@ -2625,7 +2725,8 @@ const char *GetFileNameWithoutExt(const char *filePath)
 
     if (filePath != NULL)
     {
-        snprintf(fileName, MAX_FILENAME_LENGTH, "%s", GetFileName(filePath)); // Get filename.ext without path
+        std::string baseName = GetFileName(filePath);
+        snprintf(fileName, MAX_FILENAME_LENGTH, "%s", baseName.c_str()); // Get filename.ext without path
         int fileNameLength = (int)strlen(fileName); // Get size in bytes
 
         for (int i = fileNameLength; i > 0; i--) // Reverse search '.'
@@ -2643,8 +2744,11 @@ const char *GetFileNameWithoutExt(const char *filePath)
 }
 
 // Get directory for a provided filePath
-const char *GetDirectoryPath(const char *filePath)
+std::string GetDirectoryPath(std::string_view filePathView)
 {
+    const std::string filePathStr(filePathView);
+    const char *filePath = filePathStr.c_str();
+
     /*
     // NOTE: Directory separator is different in Windows and other platforms,
     // fortunately, Windows also support the '/' separator, that's the one should be used
@@ -2700,8 +2804,11 @@ const char *GetDirectoryPath(const char *filePath)
 }
 
 // Get previous directory path for a provided path
-const char *GetPrevDirectoryPath(const char *dirPath)
+std::string GetPrevDirectoryPath(std::string_view dirPathView)
 {
+    const std::string dirPathStr(dirPathView);
+    const char *dirPath = dirPathStr.c_str();
+
     static char prevDirPath[MAX_FILEPATH_LENGTH] = { 0 };
     memset(prevDirPath, 0, MAX_FILEPATH_LENGTH);
 
@@ -2733,17 +2840,17 @@ const char *GetPrevDirectoryPath(const char *dirPath)
 }
 
 // Get current working directory
-const char *GetWorkingDirectory(void)
+std::string GetWorkingDirectory(void)
 {
     static char currentDir[MAX_FILEPATH_LENGTH] = { 0 };
     memset(currentDir, 0, MAX_FILEPATH_LENGTH);
 
     char *path = GETCWD(currentDir, MAX_FILEPATH_LENGTH);
 
-    return path;
+    return GetStringOrEmpty(path);
 }
 
-const char *GetApplicationDirectory(void)
+std::string GetApplicationDirectory(void)
 {
     static char appDir[MAX_FILEPATH_LENGTH] = { 0 };
     memset(appDir, 0, MAX_FILEPATH_LENGTH);
@@ -2855,8 +2962,11 @@ const char *GetApplicationDirectory(void)
 // NOTE: Base path is prepended to the scanned filepaths
 // WARNING: Directory is scanned twice, first time to get paths count
 // Scanneed files and directories, no recursive/subdirs scanning
-FilePathList LoadDirectoryFiles(const char *dirPath)
+FilePathList LoadDirectoryFiles(std::string_view dirPathView)
 {
+    const std::string dirPathStr(dirPathView);
+    const char *dirPath = dirPathStr.c_str();
+
     return LoadDirectoryFilesEx(dirPath, FILE_FILTER_TAG_ALL, false);
 }
 
@@ -2865,52 +2975,36 @@ FilePathList LoadDirectoryFiles(const char *dirPath)
 // Use "FILES*" to include only files on scan
 // Use "DIRS*" to include only directories on scan
 // WARNING: Directory is scanned twice, first time to get paths count
-FilePathList LoadDirectoryFilesEx(const char *basePath, const char *filter, bool scanSubdirs)
+FilePathList LoadDirectoryFilesEx(std::string_view basePathView, std::string_view filterView, bool scanSubdirs)
 {
-    FilePathList files = { 0 };
+    const std::string basePathStr(basePathView);
+    const char *basePath = basePathStr.c_str();
+    const std::string filterStr(filterView);
+    const char *filter = filterStr.c_str();
+
+    FilePathList files;
 
     if (DirectoryExists(basePath)) // It's a directory
     {
-        if ((filter != NULL) && (filter[0] == '\0')) filter = NULL;
 
-        // SCAN 1: Count files
-        unsigned int fileCounter = GetDirectoryFileCountEx(basePath, filter, scanSubdirs);
+        // Reserve space for the scanned filepaths
+        files.paths.reserve(GetDirectoryFileCountEx(basePath, filter, scanSubdirs));
 
-        // Memory allocation for dirFileCount
-        files.paths = (char **)RL_CALLOC(fileCounter, sizeof(char *));
-        for (unsigned int i = 0; i < fileCounter; i++) files.paths[i] = (char *)RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
-
-        // SCAN 2: Read filepaths
+        // Read filepaths
         // WARNING: basePath is always prepended to scanned paths
-        ScanDirectoryFiles(basePath, &files, filter, fileCounter, scanSubdirs);
-
-        // Security check: read files.count should match fileCounter
-        if (files.count != fileCounter)
-        {
-            TRACELOG(LOG_WARNING, "FILEIO: Read files count (%u) does not match capacity allocated (%u)", files.count, fileCounter);
-            files.count = fileCounter; // Avoid memory leak when unloading this FilePathList
-        }
+        ScanDirectoryFiles(basePath, &files, filter, scanSubdirs);
     }
     else TRACELOG(LOG_WARNING, "FILEIO: Directory cannot be opened (%s)", basePath);  // Maybe it's a file...
 
     return files;
 }
 
-// Unload directory filepaths
-// WARNING: files.count is not reseted to 0 after unloading
-void UnloadDirectoryFiles(FilePathList files)
-{
-    if (files.paths != NULL)
-    {
-        for (unsigned int i = 0; i < files.count; i++) RL_FREE(files.paths[i]);
-
-        RL_FREE(files.paths);
-    }
-}
-
 // Create directories (including full path requested), returns 0 on success
-int MakeDirectory(const char *dirPath)
+int MakeDirectory(std::string_view dirPathView)
 {
+    const std::string dirPathStr(dirPathView);
+    const char *dirPath = dirPathStr.c_str();
+
     if ((dirPath == NULL) || (dirPath[0] == '\0')) return -1; // Path is not valid
     if (DirectoryExists(dirPath)) return 0; // Path already exists (is valid)
 
@@ -2946,8 +3040,11 @@ int MakeDirectory(const char *dirPath)
 }
 
 // Change working directory, returns true on success
-int ChangeDirectory(const char *dirPath)
+int ChangeDirectory(std::string_view dirPathView)
 {
+    const std::string dirPathStr(dirPathView);
+    const char *dirPath = dirPathStr.c_str();
+
     // NOTE: On success, CHDIR() return 0; on error, returns -1 and errno is set to indicate the error,
     // depending on the filesystem, other errors can be returned
     int result = CHDIR(dirPath);
@@ -2959,8 +3056,11 @@ int ChangeDirectory(const char *dirPath)
 }
 
 // Check if provided path point to a file
-bool IsPathFile(const char *path)
+bool IsPathFile(std::string_view pathView)
 {
+    const std::string pathStr(pathView);
+    const char *path = pathStr.c_str();
+
     bool result = false;
 
     struct stat info = { 0 };
@@ -2972,8 +3072,11 @@ bool IsPathFile(const char *path)
 }
 
 // Check if provided path point to a directory
-bool IsPathDirectory(const char *path)
+bool IsPathDirectory(std::string_view pathView)
 {
+    const std::string pathStr(pathView);
+    const char *path = pathStr.c_str();
+
     bool result = false;
 
     struct stat info = { 0 };
@@ -2983,8 +3086,11 @@ bool IsPathDirectory(const char *path)
 }
 
 // Check if provided path is an absolute path
-bool IsPathAbsolute(const char *path)
+bool IsPathAbsolute(std::string_view pathView)
 {
+    const std::string pathStr(pathView);
+    const char *path = pathStr.c_str();
+
     int result = false;
 
     if ((path != NULL) && (path[0] != '\0'))
@@ -3005,8 +3111,11 @@ bool IsPathAbsolute(const char *path)
 }
 
 // Check if fileName is valid for the platform/OS
-bool IsFileNameValid(const char *fileName)
+bool IsFileNameValid(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool valid = true;
 
     if ((fileName != NULL) && (fileName[0] != '\0'))
@@ -3073,39 +3182,31 @@ bool IsFileDropped(void)
 // Load dropped filepaths
 FilePathList LoadDroppedFiles(void)
 {
-    FilePathList files = { 0 };
+    FilePathList files;
 
-    files.count = CORE.Window.dropFileCount;
-    files.paths = CORE.Window.dropFilepaths;
+    files.paths.reserve(CORE.Window.dropFileCount);
+    for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++) files.paths.emplace_back(CORE.Window.dropFilepaths[i]);
 
     return files;
 }
 
-// Unload dropped filepaths
-void UnloadDroppedFiles(FilePathList files)
-{
-    // WARNING: files pointers are the same as internal ones
-
-    if (files.count > 0)
-    {
-        for (unsigned int i = 0; i < files.count; i++) RL_FREE(files.paths[i]);
-
-        RL_FREE(files.paths);
-
-        CORE.Window.dropFileCount = 0;
-        CORE.Window.dropFilepaths = NULL;
-    }
-}
-
 // Get the file count in a directory
-unsigned int GetDirectoryFileCount(const char *dirPath)
+unsigned int GetDirectoryFileCount(std::string_view dirPathView)
 {
+    const std::string dirPathStr(dirPathView);
+    const char *dirPath = dirPathStr.c_str();
+
     return GetDirectoryFileCountEx(dirPath, FILE_FILTER_TAG_ALL, false);
 }
 
 // Get the file count in a directory with extension filtering and recursive directory scan. Use 'FILE_FILTER_TAG_DIR_ONLY' in the filter string to include directories in the result
-unsigned int GetDirectoryFileCountEx(const char *basePath, const char *filter, bool scanSubdirs)
+unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_view filterView, bool scanSubdirs)
 {
+    const std::string basePathStr(basePathView);
+    const char *basePath = basePathStr.c_str();
+    const std::string filterStr(filterView);
+    const char *filter = filterStr.c_str();
+
     unsigned int fileCounter = 0;
 
     // WARNING: Path can not be static or it will be reused between recursive function calls!
@@ -3135,12 +3236,12 @@ unsigned int GetDirectoryFileCountEx(const char *basePath, const char *filter, b
                 }
                 else if (IsPathFile(path))
                 {
-                    if ((filter == NULL) || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL) ||
+                    if ((filter == NULL) || (filter[0] == '\0') || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL) ||
                         (strstr(filter, FILE_FILTER_TAG_FILE_ONLY) != NULL) || IsFileExtension(path, filter)) fileCounter++;
                 }
                 else
                 {
-                    if ((filter != NULL) && ((strstr(filter, FILE_FILTER_TAG_ALL) != NULL) || (strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != NULL))) fileCounter++;
+                    if (!filterStr.empty() && ((strstr(filter, FILE_FILTER_TAG_ALL) != NULL) || (strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != NULL))) fileCounter++;
                     if (scanSubdirs) fileCounter += GetDirectoryFileCountEx(path, filter, scanSubdirs);
                 }
             }
@@ -3205,7 +3306,7 @@ unsigned char *DecompressData(const unsigned char *compData, int compDataSize, i
 
 // Encode data to Base64 string
 // NOTE: Returned string includes NULL terminator, considered on outputSize
-char *EncodeDataBase64(const unsigned char *data, int dataSize, int *outputSize)
+std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outputSize)
 {
     // Base64 conversion table from RFC 4648 [0..63]
     // NOTE: They represent 64 values (6 bits), to encode 3 bytes of data into 4 "sextets" (6bit characters)
@@ -3255,12 +3356,19 @@ char *EncodeDataBase64(const unsigned char *data, int dataSize, int *outputSize)
     if (outputCount != estimatedOutputSize) TRACELOG(LOG_WARNING, "BASE64: Output size differs from estimation");
 
     *outputSize = estimatedOutputSize;
-    return encodedData;
+
+    std::string encoded = GetStringOrEmpty(encodedData);
+    RL_FREE(encodedData);
+
+    return encoded;
 }
 
 // Decode Base64 string (expected NULL terminated)
-unsigned char *DecodeDataBase64(const char *text, int *outputSize)
+unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     // Base64 decode table
     // NOTE: Following ASCII order [0..255] assigning the expected sixtet value to
     // every character in the corresponding ASCII position
@@ -3710,8 +3818,11 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
 //----------------------------------------------------------------------------------
 
 // Load automation events list from file, NULL for empty list, capacity = MAX_AUTOMATION_EVENTS
-AutomationEventList LoadAutomationEventList(const char *fileName)
+AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     AutomationEventList list = { 0 };
 
 #if SUPPORT_AUTOMATION_EVENTS
@@ -3719,7 +3830,7 @@ AutomationEventList LoadAutomationEventList(const char *fileName)
     list.events = (AutomationEvent *)RL_CALLOC(MAX_AUTOMATION_EVENTS, sizeof(AutomationEvent));
     list.capacity = MAX_AUTOMATION_EVENTS;
 
-    if (fileName == NULL) TRACELOG(LOG_INFO, "AUTOMATION: New empty events list loaded successfully");
+    if (fileNameView.empty()) TRACELOG(LOG_INFO, "AUTOMATION: New empty events list loaded successfully");
     else
     {
         // Load automation events file (binary)
@@ -3804,8 +3915,11 @@ void UnloadAutomationEventList(AutomationEventList list)
 }
 
 // Export automation events list as text file
-bool ExportAutomationEventList(AutomationEventList list, const char *fileName)
+bool ExportAutomationEventList(AutomationEventList list, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
 #if SUPPORT_AUTOMATION_EVENTS
@@ -4110,13 +4224,13 @@ bool IsGamepadAvailable(int gamepad)
 }
 
 // Get gamepad internal name id
-const char *GetGamepadName(int gamepad)
+std::string GetGamepadName(int gamepad)
 {
     const char *name = NULL;
 
     if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS)) name = CORE.Input.Gamepad.name[gamepad];
 
-    return name;
+    return GetStringOrEmpty(name);
 }
 
 // Check if gamepad button has been pressed once
@@ -4448,7 +4562,7 @@ void SetupViewport(int width, int height)
 // Scan all files and directories in a base path
 // WARNING: files.paths[] must be previously allocated and
 // contain enough space to store all required paths
-static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const char *filter, unsigned int expectedFileCount, bool scanSubdirs)
+static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const char *filter, bool scanSubdirs)
 {
     // WARNING: Path can not be static or it will be reused between recursive function calls!
     char path[MAX_FILEPATH_LENGTH] = { 0 };
@@ -4459,7 +4573,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 
     if (dir != NULL)
     {
-        while (((dp = readdir(dir)) != NULL) && (files->count < expectedFileCount))
+        while ((dp = readdir(dir)) != NULL)
         {
             if ((strcmp(dp->d_name, ".") != 0) && (strcmp(dp->d_name, "..") != 0))
             {
@@ -4476,22 +4590,20 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
                 }
                 else if (IsPathFile(path))
                 {
-                    if ((filter == NULL) || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL) ||
+                    if ((filter == NULL) || (filter[0] == '\0') || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL) ||
                         (strstr(filter, FILE_FILTER_TAG_FILE_ONLY) != NULL) || IsFileExtension(path, filter))
                     {
-                        memcpy(files->paths[files->count], path, pathLength);
-                        files->count++;
+                        files->paths.emplace_back(path, pathLength);
                     }
                 }
                 else
                 {
-                    if ((filter != NULL) && ((strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != NULL) || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL)))
+                    if ((filter != NULL) && (filter[0] != '\0') && ((strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != NULL) || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL)))
                     {
-                        memcpy(files->paths[files->count], path, pathLength);
-                        files->count++;
+                        files->paths.emplace_back(path, pathLength);
                     }
 
-                    if (scanSubdirs) ScanDirectoryFiles(path, files, filter, expectedFileCount, scanSubdirs);
+                    if (scanSubdirs) ScanDirectoryFiles(path, files, filter, scanSubdirs);
                 }
             }
         }
@@ -4767,8 +4879,11 @@ static void RecordAutomationEvent(void)
 #if !SUPPORT_MODULE_RTEXT
 // Formatting of text with variables to 'embed'
 // WARNING: String returned will expire after this function is called MAX_TEXTFORMAT_BUFFERS times
-const char *TextFormat(const char *text, ...)
+std::string TextFormat(std::string_view textView, ...)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
 #ifndef MAX_TEXTFORMAT_BUFFERS
     #define MAX_TEXTFORMAT_BUFFERS      4        // Maximum number of static buffers for text formatting
 #endif

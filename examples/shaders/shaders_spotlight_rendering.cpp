@@ -99,7 +99,7 @@ int main()
     int frameCounter = 0;
 
     // Use default vert shader
-    Shader shdrSpot = LoadShader(0, TextFormat("resources/shaders/glsl%i/spotlight.fs", GLSL_VERSION));
+    Shader shdrSpot = LoadShader({}, TextFormat("resources/shaders/glsl%i/spotlight.fs", GLSL_VERSION));
 
     // Get the locations of spots in the shader
     Spot spots[MAX_SPOTS];

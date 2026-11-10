@@ -21,7 +21,7 @@
 #include <time.h>           // Required for: time_t, tm, time(), localtime(), strftime()
 
 // Custom logging function
-void CustomTraceLog(int msgType, const char *text, va_list args)
+void CustomTraceLog(int msgType, std::string_view text, va_list args)
 {
     char timeStr[64] = {};
     time_t now = time(NULL);
@@ -39,7 +39,8 @@ void CustomTraceLog(int msgType, const char *text, va_list args)
         default: break;
     }
 
-    vprintf(text, args);
+    std::string textStr(text);
+    vprintf(textStr.c_str(), args);
     printf("\n");
 }
 

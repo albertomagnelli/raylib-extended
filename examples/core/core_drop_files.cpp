@@ -55,16 +55,15 @@ int main()
         {
             FilePathList droppedFiles = LoadDroppedFiles();
 
-            for (int i = 0, offset = filePathCounter; i < (int)droppedFiles.count; i++)
+            for (int i = 0, offset = filePathCounter; i < (int)droppedFiles.paths.size(); i++)
             {
                 if (filePathCounter < (MAX_FILEPATH_RECORDED - 1))
                 {
-                    TextCopy(filePaths[offset + i], droppedFiles.paths[i]);
+                    snprintf(filePaths[offset + i], MAX_FILEPATH_SIZE, "%s", droppedFiles.paths[i].c_str());
                     filePathCounter++;
                 }
             }
 
-            UnloadDroppedFiles(droppedFiles);    // Unload filepaths from memory
         }
         //----------------------------------------------------------------------------------
 

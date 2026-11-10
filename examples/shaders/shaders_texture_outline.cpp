@@ -40,7 +40,7 @@ int main()
 
     Texture2D texture = LoadTexture("resources/fudesumi.png");
 
-    Shader shdrOutline = LoadShader(0, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
+    Shader shdrOutline = LoadShader({}, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
 
     float outlineSize = 2.0f;
     float outlineColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };     // Normalized RED color

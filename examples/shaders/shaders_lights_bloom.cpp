@@ -70,7 +70,7 @@ int main()
     // is checked explicitly and reported on screen rather than staying silently wrong
     Shader lightShader = LoadShader(TextFormat("resources/shaders/glsl%i/lights_bloom.vs", GLSL_VERSION),
                                      TextFormat("resources/shaders/glsl%i/lights_bloom.fs", GLSL_VERSION));
-    Shader bloomShader = LoadShader(0, TextFormat("resources/shaders/glsl%i/lights_bloom_post.fs", GLSL_VERSION));
+    Shader bloomShader = LoadShader({}, TextFormat("resources/shaders/glsl%i/lights_bloom_post.fs", GLSL_VERSION));
 
     // Load models from generated cube mesh and plane
     // NOTE: Meshes are automatically unloaded on UnloadModel()

@@ -126,10 +126,10 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            GuiSliderBar(Rectangle{ 100, 60, 400, 30 }, "Attack (s)", TextFormat("%2.2fs", env.attackTime), &env.attackTime, 0.1f, 3.0f);
-            GuiSliderBar(Rectangle{ 100, 100, 400, 30 }, "Decay (s)", TextFormat("%2.2fs", env.decayTime), &env.decayTime, 0.1f, 3.0f);
-            GuiSliderBar(Rectangle{ 100, 140, 400, 30 }, "Sustain", TextFormat("%2.2f", env.sustainLevel), &env.sustainLevel, 0.0f, 1.0f);
-            GuiSliderBar(Rectangle{ 100, 180, 400, 30 }, "Release (s)", TextFormat("%2.2fs", env.releaseTime), &env.releaseTime, 0.1f, 3.0f);
+            GuiSliderBar(Rectangle{ 100, 60, 400, 30 }, "Attack (s)", TextFormat("%2.2fs", env.attackTime).c_str(), &env.attackTime, 0.1f, 3.0f);
+            GuiSliderBar(Rectangle{ 100, 100, 400, 30 }, "Decay (s)", TextFormat("%2.2fs", env.decayTime).c_str(), &env.decayTime, 0.1f, 3.0f);
+            GuiSliderBar(Rectangle{ 100, 140, 400, 30 }, "Sustain", TextFormat("%2.2f", env.sustainLevel).c_str(), &env.sustainLevel, 0.0f, 1.0f);
+            GuiSliderBar(Rectangle{ 100, 180, 400, 30 }, "Release (s)", TextFormat("%2.2fs", env.releaseTime).c_str(), &env.releaseTime, 0.1f, 3.0f);
 
             DrawADSRGraph(&env, Rectangle{ 100, 250, 400, 100 });
 

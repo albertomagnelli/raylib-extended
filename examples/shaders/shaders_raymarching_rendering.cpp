@@ -46,7 +46,7 @@ int main()
 
     // Load raymarching shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader(0, TextFormat("resources/shaders/glsl%i/raymarching.fs", GLSL_VERSION));
+    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/raymarching.fs", GLSL_VERSION));
 
     // Get shader locations for required uniforms
     int viewEyeLoc = GetShaderLocation(shader, "viewEye");

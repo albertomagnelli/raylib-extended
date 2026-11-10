@@ -85,7 +85,7 @@ int main()
     RenderTexture2D bufferA = LoadRenderTexture(screenWidth, screenHeight);
     Vector2 iResolution = { (float)screenWidth, (float)screenHeight };
 
-    Shader shader = LoadShader(0, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
+    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
 
     int iResolutionLocation = GetShaderLocation(shader, "iResolution");
     int iChannel0Location = GetShaderLocation(shader, "iChannel0");

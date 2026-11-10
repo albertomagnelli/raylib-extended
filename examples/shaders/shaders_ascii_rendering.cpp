@@ -41,7 +41,7 @@ int main()
     Texture2D raysan = LoadTexture("resources/raysan.png");
 
     // Load shader to be used on postprocessing
-    Shader shader = LoadShader(0, TextFormat("resources/shaders/glsl%i/ascii.fs", GLSL_VERSION));
+    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/ascii.fs", GLSL_VERSION));
 
     // These locations are used to send data to the GPU
     int resolutionLoc = GetShaderLocation(shader, "resolution");

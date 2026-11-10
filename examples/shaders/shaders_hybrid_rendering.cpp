@@ -58,11 +58,11 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - hybrid rendering");
 
     // This Shader calculates pixel depth and color using raymarch
-    Shader shdrRaymarch = LoadShader(0, TextFormat("resources/shaders/glsl%i/hybrid_raymarch.fs", GLSL_VERSION));
+    Shader shdrRaymarch = LoadShader({}, TextFormat("resources/shaders/glsl%i/hybrid_raymarch.fs", GLSL_VERSION));
 
     // This Shader is a standard rasterization fragment shader with the addition of depth writing
     // You are required to write depth for all shaders if one shader does it
-    Shader shdrRaster = LoadShader(0, TextFormat("resources/shaders/glsl%i/hybrid_raster.fs", GLSL_VERSION));
+    Shader shdrRaster = LoadShader({}, TextFormat("resources/shaders/glsl%i/hybrid_raster.fs", GLSL_VERSION));
 
     // Declare Struct used to store camera locs
     RayLocs marchLocs = {};

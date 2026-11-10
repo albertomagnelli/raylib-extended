@@ -47,7 +47,7 @@ int main()
     unsigned int *hashSHA256 = NULL;
 
     // Base64 encoded data
-    char *base64Text = NULL;
+    std::string base64Text;
     int base64TextSize = 0;
 
     SetTargetFPS(60);
@@ -108,7 +108,7 @@ int main()
             GuiLabel(Rectangle{ 40, 200 + 36*5 - 30, 320, 32 }, "BONUS - BAS64 ENCODED STRING:");
             GuiSetState(STATE_NORMAL);
             GuiLabel(Rectangle{ 40, 200 + 36*5, 120, 32 }, "BASE64 ENCODING:");
-            GuiTextBox(Rectangle{ 40 + 120, 200 + 36*5, 720 - 120, 32 }, base64Text, 120, false);
+            GuiTextBox(Rectangle{ 40 + 120, 200 + 36*5, 720 - 120, 32 }, base64Text.data(), 120, false);
             GuiSetStyle(TEXTBOX, TEXT_READONLY, 0);
 
         EndDrawing();
@@ -117,7 +117,6 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    MemFree(base64Text);    // Free Base64 text data
 
     CloseWindow();          // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
@@ -135,9 +134,9 @@ static char *GetDataAsHexText(const unsigned int *data, int dataSize)
 
     if ((data != NULL) && (dataSize > 0) && (dataSize < ((128/8) - 1)))
     {
-        for (int i = 0; i < dataSize; i++) TextCopy(text + i*8, TextFormat("%08X", data[i]));
+        for (int i = 0; i < dataSize; i++) snprintf(text + i*8, 128 - i*8, "%08X", data[i]);
     }
-    else TextCopy(text, "00000000");
+    else snprintf(text, 128, "00000000");
 
     return text;
 }

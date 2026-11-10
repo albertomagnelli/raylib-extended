@@ -76,7 +76,7 @@ int main()
         {
             FilePathList droppedFiles = LoadDroppedFiles();
 
-            if (droppedFiles.count == 1) // Only support one file dropped
+            if (droppedFiles.paths.size() == 1) // Only support one file dropped
             {
                 if (IsFileExtension(droppedFiles.paths[0], ".obj") ||
                     IsFileExtension(droppedFiles.paths[0], ".gltf") ||
@@ -105,7 +105,6 @@ int main()
                 }
             }
 
-            UnloadDroppedFiles(droppedFiles);    // Unload filepaths from memory
         }
 
         // Select model on mouse click

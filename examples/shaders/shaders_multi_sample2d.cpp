@@ -48,7 +48,7 @@ int main()
     Texture texBlue = LoadTextureFromImage(imBlue);
     UnloadImage(imBlue);
 
-    Shader shader = LoadShader(0, TextFormat("resources/shaders/glsl%i/color_mix.fs", GLSL_VERSION));
+    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_mix.fs", GLSL_VERSION));
 
     // Get an additional sampler2D location to be enabled on drawing
     int texBlueLoc = GetShaderLocation(shader, "texture1");

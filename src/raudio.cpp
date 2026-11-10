@@ -428,15 +428,15 @@ static void StopAudioBufferInLockedState(AudioBuffer *buffer);
 static void UpdateAudioStreamInLockedState(AudioStream stream, const void *data, int frameCount);
 
 #if defined(RAUDIO_STANDALONE)
-static bool IsFileExtension(const char *fileName, const char *ext); // Check file extension
-static const char *GetFileExtension(const char *fileName);          // Get pointer to extension for a filename string (includes the dot: .png)
-static const char *GetFileName(const char *filePath);               // Get pointer to filename for a path string
-static const char *GetFileNameWithoutExt(const char *filePath);     // Get filename string without extension (uses static string)
+static bool IsFileExtension(std::string_view fileName, std::string_view ext); // Check file extension
+static std::string GetFileExtension(std::string_view fileName);          // Get pointer to extension for a filename string (includes the dot: .png)
+static std::string GetFileName(std::string_view filePath);               // Get pointer to filename for a path string
+static std::string GetFileNameWithoutExt(std::string_view filePath);     // Get filename string without extension
 
-static unsigned char *LoadFileData(const char *fileName, int *dataSize);    // Load file data as byte array (read)
+static unsigned char *LoadFileData(std::string_view fileName, int *dataSize);    // Load file data as byte array (read)
 static void UnloadFileData(unsigned char *data);                     // Unload file data allocated by LoadFileData()
-static bool SaveFileData(const char *fileName, void *data, int dataSize);   // Save data to file from byte array (write)
-static bool SaveFileText(const char *fileName, char *text);         // Save text data to file (write), string must be '\0' terminated
+static bool SaveFileData(std::string_view fileName, const void *data, int dataSize);   // Save data to file from byte array (write)
+static bool SaveFileText(std::string_view fileName, std::string_view text);         // Save text data to file (write)
 #endif
 
 //----------------------------------------------------------------------------------
@@ -782,8 +782,11 @@ void UntrackAudioBuffer(AudioBuffer *buffer)
 //----------------------------------------------------------------------------------
 
 // Load wave data from file
-Wave LoadWave(const char *fileName)
+Wave LoadWave(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Wave wave = { 0 };
 
     // Loading file to memory
@@ -800,13 +803,16 @@ Wave LoadWave(const char *fileName)
 
 // Load wave from memory buffer, fileType refers to extension: i.e. ".wav"
 // WARNING: File extension must be provided in lower-case
-Wave LoadWaveFromMemory(const char *fileType, const unsigned char *fileData, int dataSize)
+Wave LoadWaveFromMemory(std::string_view fileTypeView, const unsigned char *fileData, int dataSize)
 {
+    const std::string fileTypeStr(fileTypeView);
+    const char *fileType = fileTypeStr.c_str();
+
     Wave wave = { 0 };
 
     // Security checks for input data
     if ((fileData == NULL) || (dataSize <= 0)) { TRACELOG(LOG_WARNING, "WAVE: Invalid file data"); return wave; }
-    if (fileType == NULL) { TRACELOG(LOG_WARNING, "WAVE: Missing file extension"); return wave; }
+    if (fileTypeView.empty()) { TRACELOG(LOG_WARNING, "WAVE: Missing file extension"); return wave; }
 
     if (false) { }
 #if SUPPORT_FILEFORMAT_WAV
@@ -928,8 +934,11 @@ bool IsWaveValid(Wave wave)
 
 // Load sound from file
 // NOTE: The entire file is loaded to memory to be played (no-streaming)
-Sound LoadSound(const char *fileName)
+Sound LoadSound(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Wave wave = LoadWave(fileName);
 
     Sound sound = LoadSoundFromWave(wave);
@@ -1066,8 +1075,11 @@ void UpdateSound(Sound sound, const void *data, int frameCount)
 }
 
 // Export wave data to file
-bool ExportWave(Wave wave, const char *fileName)
+bool ExportWave(Wave wave, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
     if (false) { }
@@ -1124,8 +1136,11 @@ bool ExportWave(Wave wave, const char *fileName)
 }
 
 // Export wave sample data to code (.h)
-bool ExportWaveAsCode(Wave wave, const char *fileName)
+bool ExportWaveAsCode(Wave wave, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
 #ifndef TEXT_BYTES_PER_LINE
@@ -1153,7 +1168,7 @@ bool ExportWaveAsCode(Wave wave, const char *fileName)
 
     // Get file name from path and convert variable name to uppercase
     char varFileName[256] = { 0 };
-    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName)); // NOTE: Using function provided by [rcore] module
+    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str()); // NOTE: Using function provided by [rcore] module
     for (int i = 0; varFileName[i] != '\0'; i++) if (varFileName[i] >= 'a' && varFileName[i] <= 'z') { varFileName[i] = varFileName[i] - 32; }
 
     // Add wave information
@@ -1341,8 +1356,11 @@ void UnloadWaveSamples(float *samples)
 //----------------------------------------------------------------------------------
 
 // Load music stream from file
-Music LoadMusicStream(const char *fileName)
+Music LoadMusicStream(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Music music = { 0 };
     bool musicLoaded = false;
 
@@ -1533,14 +1551,17 @@ Music LoadMusicStream(const char *fileName)
 
 // Load music stream from memory buffer, fileType refers to extension: i.e. ".wav"
 // WARNING: File extension must be provided in lower-case
-Music LoadMusicStreamFromMemory(const char *fileType, const unsigned char *data, int dataSize)
+Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const unsigned char *data, int dataSize)
 {
+    const std::string fileTypeStr(fileTypeView);
+    const char *fileType = fileTypeStr.c_str();
+
     Music music = { 0 };
     bool musicLoaded = false;
 
     // Security checks for input data
     if ((data == NULL) || (dataSize <= 0)) { TRACELOG(LOG_WARNING, "MUSIC: Invalid file data"); return music; }
-    if (fileType == NULL) { TRACELOG(LOG_WARNING, "MUSIC: Missing file extension"); return music; }
+    if (fileTypeView.empty()) { TRACELOG(LOG_WARNING, "MUSIC: Missing file extension"); return music; }
 
     if (false) { }
 #if SUPPORT_FILEFORMAT_WAV
@@ -2755,29 +2776,34 @@ static void UpdateAudioStreamInLockedState(AudioStream stream, const void *data,
 // Some required functions for audio standalone module version
 #if defined(RAUDIO_STANDALONE)
 // Check file extension
-static bool IsFileExtension(const char *fileName, const char *ext)
+bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
 {
-    bool result = false;
-    const char *fileExt;
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+    const std::string extStr(extView);
+    const char *ext = extStr.c_str();
 
-    if ((fileExt = GetFileExtension(fileName)) != NULL)
-    {
-        if (strcmp(fileExt, ext) == 0) result = true;
-    }
+    bool result = false;
+    std::string fileExt = GetFileExtension(fileName);
+
+    if (!fileExt.empty()) result = (fileExt == ext);
 
     return result;
 }
 
 // Get pointer to extension for a filename string (includes the dot: .png)
-static const char *GetFileExtension(const char *fileName)
+std::string GetFileExtension(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     // Only the file name part can contain the extension, not a directory name
-    const char *name = GetFileName(fileName);
-    const char *dot = strrchr(name, '.');
+    std::string name = GetFileName(fileName);
+    size_t dot = name.rfind('.');
 
-    if (!dot || dot == fileName) return NULL;
+    if (dot == std::string::npos || dot == 0) return {};
 
-    return dot;
+    return name.substr(dot);
 }
 
 // String pointer reverse break: returns right-most occurrence of charset in text
@@ -2791,8 +2817,11 @@ static const char *strprbrk(const char *text, const char *charset)
 }
 
 // Get pointer to filename for a path string
-static const char *GetFileName(const char *filePath)
+std::string GetFileName(std::string_view filePathView)
 {
+    const std::string filePathStr(filePathView);
+    const char *filePath = filePathStr.c_str();
+
     const char *fileName = NULL;
     if (filePath != NULL) fileName = strprbrk(filePath, "\\/");
 
@@ -2802,14 +2831,17 @@ static const char *GetFileName(const char *filePath)
 }
 
 // Get filename string without extension (uses static string)
-static const char *GetFileNameWithoutExt(const char *filePath)
+std::string GetFileNameWithoutExt(std::string_view filePathView)
 {
+    const std::string filePathStr(filePathView);
+    const char *filePath = filePathStr.c_str();
+
     #define MAX_FILENAMEWITHOUTEXT_LENGTH   256
 
     static char fileName[MAX_FILENAMEWITHOUTEXT_LENGTH] = { 0 };
     memset(fileName, 0, MAX_FILENAMEWITHOUTEXT_LENGTH);
 
-    if (filePath != NULL) snprintf(fileName, MAX_FILENAMEWITHOUTEXT_LENGTH, "%s", GetFileName(filePath));
+    snprintf(fileName, MAX_FILENAMEWITHOUTEXT_LENGTH, "%s", GetFileName(filePath).c_str());
 
     int fileNameLength = (int)strlen(fileName); // Get size in bytes
 
@@ -2827,8 +2859,11 @@ static const char *GetFileNameWithoutExt(const char *filePath)
 }
 
 // Load data from file into a buffer
-static unsigned char *LoadFileData(const char *fileName, int *dataSize)
+unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     unsigned char *data = NULL;
     *dataSize = 0;
 

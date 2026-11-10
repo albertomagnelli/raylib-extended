@@ -92,7 +92,7 @@ int main()
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            GuiSliderBar(Rectangle{ 640, 40, 120, 20}, "Segments", TextFormat("%.0f", segments), &segments, 6.0f, 60.0f);
+            GuiSliderBar(Rectangle{ 640, 40, 120, 20}, "Segments", TextFormat("%.0f", segments).c_str(), &segments, 6.0f, 60.0f);
             GuiCheckBox(Rectangle{ 640, 70, 20, 20 }, "Outline", &outline);
             //------------------------------------------------------------------------------
 

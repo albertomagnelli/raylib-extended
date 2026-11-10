@@ -66,13 +66,13 @@ typedef struct WaveTextConfig {
 // Draw a codepoint in 3D space
 static void DrawTextCodepoint3D(Font font, int codepoint, Vector3 position, float fontSize, bool backface, Color tint);
 // Draw a 2D text in 3D space
-static void DrawText3D(Font font, const char *text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint);
+static void DrawText3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint);
 
 // Draw a 2D text in 3D space and wave the parts that start with '~~' and end with '~~'
 // This is a modified version of the original code by @Nighten found here https://github.com/NightenDushi/Raylib_DrawTextStyle
-static void DrawTextWave3D(Font font, const char *text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig *config, float time, Color tint);
+static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig *config, float time, Color tint);
 // Measure a text in 3D ignoring the `~~` chars
-static Vector3 MeasureTextWave3D(Font font, const char *text, float fontSize, float fontSpacing, float lineSpacing);
+static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing);
 // Generates a nice color with a random hue
 static Color GenerateRandomColor(float s, float v);
 
@@ -130,7 +130,7 @@ int main()
     Color dark = RED;
 
     // Load the alpha discard shader
-    Shader alphaDiscard = LoadShader(NULL, TextFormat("resources/shaders/glsl%i/alpha_discard.fs", GLSL_VERSION));
+    Shader alphaDiscard = LoadShader({}, TextFormat("resources/shaders/glsl%i/alpha_discard.fs", GLSL_VERSION));
 
     // Array filled with multiple random colors (when multicolor mode is set)
     Color multi[TEXT_MAX_LAYERS] = {};
@@ -165,7 +165,7 @@ int main()
                 fontSize = (float)font.baseSize;
             }
 
-            UnloadDroppedFiles(droppedFiles);    // Unload filepaths from memory
+
         }
 
         // Handle Events
@@ -315,7 +315,7 @@ int main()
                     //-------------------------------------------------------------------------
                     rlPushMatrix();
                         rlRotatef(180.0f, 0.0f, 1.0f, 0.0f);
-                        const char *opt = TextFormat("< SIZE: %2.1f >", fontSize);
+                        std::string opt = TextFormat("< SIZE: %2.1f >", fontSize);
                         quads += TextLength(opt);
                         Vector2 m = MeasureTextEx(GetFontDefault(), opt, 0.8f, 0.1f);
                         Vector3 pos = { -m.x/2.0f, 0.01f, 2.0f};
@@ -413,7 +413,7 @@ int main()
             "Press [F3] to toggle the camera", 10, 35, 10, BLACK);
 
             quads += TextLength(text)*2*layers;
-            const char *tmp = TextFormat("%2i layer(s) | %s camera | %4i quads (%4i verts)", layers, spin? "ORBITAL" : "FREE", quads, quads*4);
+            std::string tmp = TextFormat("%2i layer(s) | %s camera | %4i quads (%4i verts)", layers, spin? "ORBITAL" : "FREE", quads, quads*4);
             int width = MeasureText(tmp, 10);
             DrawText(tmp, screenWidth - 20 - width, 10, 10, DARKGREEN);
 
@@ -521,7 +521,7 @@ static void DrawTextCodepoint3D(Font font, int codepoint, Vector3 position, floa
 }
 
 // Draw a 2D text in 3D space
-static void DrawText3D(Font font, const char *text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint)
+static void DrawText3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint)
 {
     int length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
@@ -563,7 +563,7 @@ static void DrawText3D(Font font, const char *text, Vector3 position, float font
 
 // Draw a 2D text in 3D space and wave the parts that start with `~~` and end with `~~`
 // This is a modified version of the original code by @Nighten found here https://github.com/NightenDushi/Raylib_DrawTextStyle
-static void DrawTextWave3D(Font font, const char *text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig* config, float time, Color tint)
+static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig* config, float time, Color tint)
 {
     int length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
@@ -623,7 +623,7 @@ static void DrawTextWave3D(Font font, const char *text, Vector3 position, float 
 }
 
 // Measure a text in 3D ignoring the `~~` chars
-static Vector3 MeasureTextWave3D(Font font, const char* text, float fontSize, float fontSpacing, float lineSpacing)
+static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing)
 {
     int len = TextLength(text);
     int tempLen = 0;                // Used to count longer text line num chars

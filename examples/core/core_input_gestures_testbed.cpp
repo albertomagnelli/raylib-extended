@@ -48,7 +48,7 @@ int main()
 
     // Gesture log variables definitions
     // NOTE: The gesture log uses an array (as an inverted circular queue) to store the performed gestures
-    char gestureLog[GESTURE_LOG_SIZE][12] = { "" };
+    std::string gestureLog[GESTURE_LOG_SIZE];
     // NOTE: The index for the inverted circular queue (moving from last to first direction, then looping around)
     int gestureLogIndex = 0;
     int previousGesture = 0;
@@ -144,7 +144,7 @@ int main()
             gestureLogIndex--;
 
             // Copy the gesture respective name to the gesture log array
-            TextCopy(gestureLog[gestureLogIndex], GetGestureName(currentGesture));
+            gestureLog[gestureLogIndex] = GetGestureName(currentGesture);
         }
 
         // Handle protractor
@@ -220,9 +220,9 @@ int main()
 
             // Draw protractor
             DrawText("Angle", (int)protractorPosition.x + 55, (int)protractorPosition.y + 76, 10, BLACK);
-            const char *angleString = TextFormat("%f", currentAngleDegrees);
+            std::string angleString = TextFormat("%f", currentAngleDegrees);
             const int angleStringDot = TextFindIndex(angleString, ".");
-            const char *angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
+            std::string angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
             DrawText( angleStringTrim, (int)protractorPosition.x + 55, (int)protractorPosition.y + 92, 20, gestureColor);
             DrawCircleV(protractorPosition, 80.0f, WHITE);
             DrawLineEx(Vector2{ protractorPosition.x - 90, protractorPosition.y }, Vector2{ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);

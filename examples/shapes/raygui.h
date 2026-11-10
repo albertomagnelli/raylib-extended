@@ -2444,7 +2444,7 @@ int GuiComboBox(Rectangle bounds, const char *text, int *active)
     GuiSetStyle(BUTTON, BORDER_WIDTH, 1);
     GuiSetStyle(BUTTON, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
 
-    GuiButton(selector, TextFormat("%i/%i", *active + 1, itemCount));
+    GuiButton(selector, TextFormat("%i/%i", *active + 1, itemCount).c_str());
 
     GuiSetStyle(BUTTON, TEXT_ALIGNMENT, tempTextAlign);
     GuiSetStyle(BUTTON, BORDER_WIDTH, tempBorderWidth);
@@ -2674,14 +2674,15 @@ int GuiTextBox(Rectangle bounds, char *text, int textSize, bool editMode)
             if (multiline && GUI_KEY_PRESSED(KEY_ENTER)) codepoint = (int)'\n';
 
             // Encode codepoint as UTF-8
-            int codepointSize = 0;
-            const char *charEncoded = CodepointToUTF8(codepoint, &codepointSize);
+            std::string charEncodedStr = CodepointToUTF8(codepoint);
+            const char *charEncoded = charEncodedStr.c_str();
+            int codepointSize = (int)charEncodedStr.size();
 
             // Handle text paste action
             if (GUI_KEY_PRESSED(KEY_V) && (GUI_KEY_DOWN(KEY_LEFT_CONTROL) || GUI_KEY_DOWN(KEY_RIGHT_CONTROL)))
             {
-                const char *pasteText = GetClipboardText();
-                if (pasteText != NULL)
+                std::string pasteText = GetClipboardText();
+                if (!pasteText.empty())
                 {
                     int pasteLength = 0;
                     int pasteCodepoint;
@@ -2690,7 +2691,7 @@ int GuiTextBox(Rectangle bounds, char *text, int textSize, bool editMode)
                     // Count how many codepoints to copy, stopping at the first unwanted control character
                     while (true)
                     {
-                        pasteCodepoint = GetCodepointNext(pasteText + pasteLength, &pasteCodepointSize);
+                        pasteCodepoint = GetCodepointNext(pasteText.c_str() + pasteLength, &pasteCodepointSize);
                         if (textLength + pasteLength + pasteCodepointSize >= textSize) break;
                         if (!(multiline && (pasteCodepoint == (int)'\n')) && !(pasteCodepoint >= 32)) break;
                         pasteLength += pasteCodepointSize;
@@ -4683,9 +4684,8 @@ void GuiLoadStyle(const char *fileName)
                         {
                             // Load text data from file
                             // NOTE: Expected an UTF-8 array of codepoints, no separation
-                            char *textData = LoadFileText(TextFormat("%s/%s", GetDirectoryPath(fileName), charmapFileName));
+                            std::string textData = LoadFileText(TextFormat("%s/%s", GetDirectoryPath(fileName).c_str(), charmapFileName));
                             codepoints = LoadCodepoints(textData, &codepointCount);
-                            UnloadFileText(textData);
                         }
 
                         if (fontFileName[0] != '\0')
@@ -4693,8 +4693,8 @@ void GuiLoadStyle(const char *fileName)
                             // In case a font is already loaded and it is not default internal font, unload it
                             if (font.texture.id != GetFontDefault().texture.id) UnloadTexture(font.texture);
 
-                            if (codepointCount > 0) font = LoadFontEx(TextFormat("%s/%s", GetDirectoryPath(fileName), fontFileName), fontSize, codepoints, codepointCount);
-                            else font = LoadFontEx(TextFormat("%s/%s", GetDirectoryPath(fileName), fontFileName), fontSize, NULL, 0);   // Default to 95 standard codepoints
+                            if (codepointCount > 0) font = LoadFontEx(TextFormat("%s/%s", GetDirectoryPath(fileName).c_str(), fontFileName), fontSize, codepoints, codepointCount);
+                            else font = LoadFontEx(TextFormat("%s/%s", GetDirectoryPath(fileName).c_str(), fontFileName), fontSize, NULL, 0);   // Default to 95 standard codepoints
                         }
 
                         // If font texture not properly loaded, revert to default font and size/spacing

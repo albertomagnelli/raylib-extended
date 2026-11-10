@@ -53,8 +53,8 @@ int main()
     bool animPause = false;             // Pause animation
 
     // UI required variables
-    char *animNames[64] = {};
-    for (int i = 0; i < animCount; i++) animNames[i] = anims[i].name;
+    std::vector<std::string> animNames;
+    for (int i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
 
     bool dropdownEditMode = false;
     float animFrameProgress = 0.0f;
@@ -101,15 +101,15 @@ int main()
 
             // Draw UI, select anim and playing speed
             GuiSetStyle(DROPDOWNBOX, DROPDOWN_ITEMS_SPACING, 1);
-            if (GuiDropdownBox(Rectangle{ 10, 10, 140, 24 }, TextJoin(animNames, animCount, ";"),
+            if (GuiDropdownBox(Rectangle{ 10, 10, 140, 24 }, TextJoin(animNames, ";").c_str(),
                 &animIndex, dropdownEditMode)) dropdownEditMode = !dropdownEditMode;
 
-            GuiSlider(Rectangle{ 260, 10, 500, 24 }, "FRAME SPEED: ", TextFormat("x%.1f", animFrameSpeed),
+            GuiSlider(Rectangle{ 260, 10, 500, 24 }, "FRAME SPEED: ", TextFormat("x%.1f", animFrameSpeed).c_str(),
                 &animFrameSpeed, 0.1f, 2.0f);
 
             // Draw playing timeline with keyframes
             GuiLabel(Rectangle{ 10, GetScreenHeight() - 64.0f, GetScreenWidth() - 20.0f, 24 },
-                TextFormat("CURRENT FRAME: %.2f / %i", animFrameProgress, anims[animIndex].keyframeCount));
+                TextFormat("CURRENT FRAME: %.2f / %i", animFrameProgress, anims[animIndex].keyframeCount).c_str());
             GuiProgressBar(Rectangle{ 10, GetScreenHeight() - 40.0f, GetScreenWidth() - 20.0f, 24 }, NULL, NULL,
                 &animFrameProgress, 0.0f, (float)anims[animIndex].keyframeCount);
             for (int i = 0; i < anims[animIndex].keyframeCount; i++)

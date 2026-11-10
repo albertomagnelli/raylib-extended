@@ -418,8 +418,11 @@ void SetWindowIcons(Image *images, int count)
 }
 
 // Set title for window
-void SetWindowTitle(const char *title)
+void SetWindowTitle(std::string_view titleView)
 {
+    const std::string titleStr(titleView);
+    const char *title = titleStr.c_str();
+
     CORE.Window.title = title;
 }
 
@@ -561,7 +564,7 @@ int GetMonitorRefreshRate(int monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-const char *GetMonitorName(int monitor)
+std::string GetMonitorName(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorName() not implemented on target platform");
     return "";
@@ -583,17 +586,20 @@ Vector2 GetWindowScaleDPI(void)
 }
 
 // Set clipboard text content
-void SetClipboardText(const char *text)
+void SetClipboardText(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     TRACELOG(LOG_WARNING, "SetClipboardText() not implemented on target platform");
 }
 
 // Get clipboard text content
 // NOTE: returned string is allocated and freed by GLFW
-const char *GetClipboardText(void)
+std::string GetClipboardText(void)
 {
     TRACELOG(LOG_WARNING, "GetClipboardText() not implemented on target platform");
-    return NULL;
+    return {};
 }
 
 // Get clipboard image
@@ -663,8 +669,11 @@ double GetTime(void)
 // WARNING: This function is only safe to use if you control the URL given,
 // a user could craft a malicious string to perform and undesired action
 // NOTE: Some safety checks have been added to mitigate security issues
-void OpenURL(const char *url)
+void OpenURL(std::string_view urlView)
 {
+    const std::string urlStr(urlView);
+    const char *url = urlStr.c_str();
+
     // Security check to (partially) avoid malicious code
     if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
     {
@@ -707,10 +716,13 @@ void OpenURL(const char *url)
 //----------------------------------------------------------------------------------
 
 // Set internal gamepad mappings
-int SetGamepadMappings(const char *mappings)
+int SetGamepadMappings(std::string_view mappingsView)
 {
+    const std::string mappingsStr(mappingsView);
+    const char *mappings = mappingsStr.c_str();
+
     TRACELOG(LOG_WARNING, "SetGamepadMappings() not implemented on target platform");
-    return 0;
+    return {};
 }
 
 // Set gamepad vibration
@@ -732,7 +744,7 @@ void SetMouseCursor(int cursor)
 }
 
 // Get physical key name
-const char *GetKeyName(int key)
+std::string GetKeyName(int key)
 {
     TRACELOG(LOG_WARNING, "GetKeyName() not implemented on target platform");
     return "";
@@ -885,7 +897,7 @@ int InitPlatform(void)
 
     for (int i = 0; i < MAX_TOUCH_POINTS; i++) touchRaw.hoverPoints[i] = -1;
 
-    return 0;
+    return {};
 }
 
 // Close platform

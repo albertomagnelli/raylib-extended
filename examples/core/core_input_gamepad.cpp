@@ -80,7 +80,7 @@ int main()
 
             if (IsGamepadAvailable(gamepad))
             {
-                DrawText(TextFormat("GP%d: %s", gamepad, GetGamepadName(gamepad)), 10, 10, 10, BLACK);
+                DrawText(TextFormat("GP%d: %s", gamepad, GetGamepadName(gamepad).c_str()), 10, 10, 10, BLACK);
 
                 // Get axis values
                 float leftStickX = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_X);

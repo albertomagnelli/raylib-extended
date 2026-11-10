@@ -51,7 +51,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            GuiSliderBar(Rectangle{ 290, 50, 220, 24 }, "Thickness", TextFormat("%.2f", thick), &thick, -30.0f, 30.0f);
+            GuiSliderBar(Rectangle{ 290, 50, 220, 24 }, "Thickness", TextFormat("%.2f", thick).c_str(), &thick, -30.0f, 30.0f);
 
             DrawRectangle(35, 180, 220, 220, LIGHTGRAY);
             DrawRectangleLinesEx(Rectangle{ 35, 180, 220, 220 }, thick, BLUE);

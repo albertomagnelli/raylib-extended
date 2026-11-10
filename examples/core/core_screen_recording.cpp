@@ -79,7 +79,7 @@ int main()
                 // Stop current recording and save file
                 gifRecording = false;
                 MsfGifResult result = msf_gif_end(&gifState);
-                SaveFileData(TextFormat("%s/screenrecording.gif", GetApplicationDirectory()), result.data, (unsigned int)result.dataSize);
+                SaveFileData(TextFormat("%s/screenrecording.gif", GetApplicationDirectory().c_str()), result.data, (unsigned int)result.dataSize);
                 msf_gif_free(result);
 
                 TraceLog(LOG_INFO, "Finish animated GIF recording");

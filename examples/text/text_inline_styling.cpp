@@ -22,8 +22,8 @@
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static void DrawTextStyled(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color color);
-static Vector2 MeasureTextStyled(Font font, const char *text, float fontSize, float spacing);
+static void DrawTextStyled(Font font, std::string_view text, Vector2 position, float fontSize, float spacing, Color color);
+static Vector2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -87,7 +87,7 @@ int main()
                 Vector2{ 100, 200 }, 20.0f, 2.0f, Color{ 0, 0, 0, 100 });
 
             // Get pointer to formated text
-            const char *text = TextFormat("Let's be [c%02x%02x%02xFF]CREATIVE[r] !!!", colRandom.r, colRandom.g, colRandom.b);
+            std::string text = TextFormat("Let's be [c%02x%02x%02xFF]CREATIVE[r] !!!", colRandom.r, colRandom.g, colRandom.b);
             DrawTextStyled(GetFontDefault(), text, Vector2{ 100, 240 }, 40.0f, 2.0f, BLACK);
 
             textSize = MeasureTextStyled(GetFontDefault(), text, 40.0f, 2.0f);
@@ -111,7 +111,7 @@ int main()
 // Draw text using inline styling
 // PARAM: color is the default text color, background color is BLANK by default
 // NOTE: Using input color as the base alpha multiplied to inline styles
-static void DrawTextStyled(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color color)
+static void DrawTextStyled(Font font, std::string_view text, Vector2 position, float fontSize, float spacing, Color color)
 {
     // Text inline styling strategy used: [ ] delimiters for format
     // - Define foreground color:      [cRRGGBBAA]
@@ -160,10 +160,10 @@ static void DrawTextStyled(Font font, const char *text, Vector2 position, float 
 
                     // Parse following color
                     char colHexText[9] = {};
-                    const char *textPtr = &text[i]; // Color should start here, let's see...
+                    std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
                     int colHexCount = 0;
-                    while ((textPtr != NULL) && (textPtr[colHexCount] != '\0') && (textPtr[colHexCount] != ']'))
+                    while ((colHexCount < (int)textPtr.size()) && (textPtr[colHexCount] != ']'))
                     {
                         if (((textPtr[colHexCount] >= '0') && (textPtr[colHexCount] <= '9')) ||
                             ((textPtr[colHexCount] >= 'A') && (textPtr[colHexCount] <= 'F')) ||
@@ -217,11 +217,11 @@ static void DrawTextStyled(Font font, const char *text, Vector2 position, float 
 // Measure inline styled text
 // NOTE: Measuring styled text requires skipping styling data
 // WARNING: Not considering line breaks
-static Vector2 MeasureTextStyled(Font font, const char *text, float fontSize, float spacing)
+static Vector2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing)
 {
     Vector2 textSize = {};
 
-    if ((font.texture.id == 0) || (text == NULL) || (text[0] == '\0')) return textSize; // Security check
+    if ((font.texture.id == 0) || text.empty()) return textSize; // Security check
 
     int textLen = TextLength(text); // Get size in bytes of text
     //float textLineSpacing = fontSize*1.5f; // Not used...
@@ -250,10 +250,10 @@ static Vector2 MeasureTextStyled(Font font, const char *text, float fontSize, fl
             {
                 i += 2;     // Skip "[c" or "[b" to start parsing color
 
-                const char *textPtr = &text[i]; // Color should start here, let's see...
+                std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
                 int colHexCount = 0;
-                while ((textPtr != NULL) && (textPtr[colHexCount] != '\0') && (textPtr[colHexCount] != ']'))
+                while ((colHexCount < (int)textPtr.size()) && (textPtr[colHexCount] != ']'))
                 {
                     if (((textPtr[colHexCount] >= '0') && (textPtr[colHexCount] <= '9')) ||
                         ((textPtr[colHexCount] >= 'A') && (textPtr[colHexCount] <= 'F')) ||

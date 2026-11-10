@@ -60,7 +60,7 @@ int main()
 
     // Load depth writing shader
     // NOTE: The shader inverts the depth buffer by writing into it by `gl_FragDepth = 1 - gl_FragCoord.z;`
-    Shader shader = LoadShader(0, TextFormat("resources/shaders/glsl%i/depth_write.fs", GLSL_VERSION));
+    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/depth_write.fs", GLSL_VERSION));
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 

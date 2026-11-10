@@ -1141,12 +1141,15 @@ void SetWindowIcons(Image *images, int count)
     else TRACELOG(LOG_WARNING, "WIN32: All icons passed to SetWindowIcons were invalid");
 }
 
-void SetWindowTitle(const char *title)
+void SetWindowTitle(std::string_view titleView)
 {
+    const std::string titleStr(titleView);
+    const char *title = titleStr.c_str();
+
     CORE.Window.title = title;
 
     WCHAR *titleWide = NULL;
-    A_TO_W_ALLOCA(titleWide, CORE.Window.title);
+    A_TO_W_ALLOCA(titleWide, CORE.Window.title.c_str());
 
     int result = SetWindowTextW(platform.hwnd, titleWide);
     if (result == 0) TRACELOG(LOG_WARNING, "WIN32: Failed to set window title [ERROR: %lu]", GetLastError());
@@ -1306,10 +1309,10 @@ int GetMonitorRefreshRate(int monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-const char *GetMonitorName(int monitor)
+std::string GetMonitorName(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorName not implemented");
-    return 0;
+    return {};
 }
 
 // Get window position XY on monitor
@@ -1327,8 +1330,11 @@ Vector2 GetWindowScaleDPI(void)
 }
 
 // Set clipboard text content
-void SetClipboardText(const char *text)
+void SetClipboardText(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     if (OpenClipboard(platform.hwnd))
     {
         if (text == NULL) EmptyClipboard();
@@ -1375,7 +1381,7 @@ void SetClipboardText(const char *text)
 }
 
 // Get clipboard text content
-const char *GetClipboardText(void)
+std::string GetClipboardText(void)
 {
     if (platform.clipboardText != NULL)
     {
@@ -1562,8 +1568,11 @@ double GetTime(void)
 // WARNING: This function is only safe to use if you control the URL given,
 // a user could craft a malicious string to perform and undesired action
 // NOTE: Some safety checks have been added to mitigate security issues
-void OpenURL(const char *url)
+void OpenURL(std::string_view urlView)
 {
+    const std::string urlStr(urlView);
+    const char *url = urlStr.c_str();
+
     // Security check to (partially) avoid malicious code
     if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
     {
@@ -1592,8 +1601,11 @@ void OpenURL(const char *url)
 //----------------------------------------------------------------------------------
 
 // Set internal gamepad mappings
-int SetGamepadMappings(const char *mappings)
+int SetGamepadMappings(std::string_view mappingsView)
 {
+    const std::string mappingsStr(mappingsView);
+    const char *mappings = mappingsStr.c_str();
+
     TRACELOG(LOG_WARNING, "SetGamepadMappings not implemented");
 
     return -1;
@@ -1640,10 +1652,10 @@ void SetMouseCursor(int cursor)
 }
 
 // Get physical key name
-const char *GetKeyName(int key)
+std::string GetKeyName(int key)
 {
     TRACELOG(LOG_WARNING, "GetKeyName not implemented");
-    return NULL;
+    return {};
 }
 
 // Register all input events
@@ -1996,7 +2008,7 @@ int InitPlatform(void)
     // Create window
     // NOTE: Title string needs to be converted to WCHAR
     WCHAR *titleWide = NULL;
-    A_TO_W_ALLOCA(titleWide, CORE.Window.title);
+    A_TO_W_ALLOCA(titleWide, CORE.Window.title.c_str());
 
     // Create window and get handle
     platform.hwnd = CreateWindowExW(
@@ -2131,7 +2143,7 @@ int InitPlatform(void)
 
     TRACELOG(LOG_INFO, "PLATFORM: DESKTOP: WIN32: Initialized successfully");
 
-    return 0;
+    return {};
 }
 
 // Close platform

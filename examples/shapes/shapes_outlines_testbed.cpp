@@ -384,16 +384,16 @@ int main()
 
             DrawLineEx(Vector2{ optionsBackground.x, optionsBackground.y }, Vector2{ optionsBackground.x, optionsBackground.y + optionsBackground.height }, 1.0f, BLACK);
 
-            GuiSliderBar(Rectangle{ 605,  10, 150, 25 }, "Line Opacity"    , TextFormat("%d"  , (int)lineOpacity)      , &lineOpacity         ,  0     , 255);
-            GuiSliderBar(Rectangle{ 605,  45, 150, 25 }, "Thickness"       , TextFormat("%.2f", lineThickness)         , &lineThickness       , -20.0f , 40.0f);
-            GuiSliderBar(Rectangle{ 605,  80, 150, 25 }, "Rect Roundness"  , TextFormat("%.2f", rectangleRoundness)    , &rectangleRoundness  , -1.0f  , 2.0f);
-            GuiSliderBar(Rectangle{ 605, 115, 150, 25 }, "Rect Segments"   , TextFormat("%d"  , (int)rectangleSegments), &rectangleSegments   , -1     , 100);
-            GuiSliderBar(Rectangle{ 605, 150, 150, 25 }, "Ellipse Radius Y", TextFormat("%.2f", ellipseRadiusY)        , &ellipseRadiusY      , 0.0f   , 1.25f);
-            GuiSliderBar(Rectangle{ 605, 185, 150, 25 }, "Start Angle"     , TextFormat("%.2f", circleStartAngle)      , &circleStartAngle    , -360.0f, 360.0f);
-            GuiSliderBar(Rectangle{ 605, 220, 150, 25 }, "End Angle"       , TextFormat("%.2f", circleEndAngle)        , &circleEndAngle      , -360.0f, 360.0f);
-            GuiSliderBar(Rectangle{ 605, 255, 150, 25 }, "Circle Segments" , TextFormat("%d"  , (int)circleSegments)   , &circleSegments      , -1     , 100);
-            GuiSliderBar(Rectangle{ 605, 290, 150, 25 }, "Ring Radius"     , TextFormat("%.2f", ringInnerRadiusScale)  , &ringInnerRadiusScale, -1.0f  , 2.0f);
-            GuiSliderBar(Rectangle{ 605, 325, 150, 25 }, "Poly Sides"      , TextFormat("%d"  , (int)polygonSides)     , &polygonSides        , -1     , 100);
+            GuiSliderBar(Rectangle{ 605,  10, 150, 25 }, "Line Opacity"    , TextFormat("%d"  , (int)lineOpacity).c_str()      , &lineOpacity         ,  0     , 255);
+            GuiSliderBar(Rectangle{ 605,  45, 150, 25 }, "Thickness"       , TextFormat("%.2f", lineThickness).c_str()         , &lineThickness       , -20.0f , 40.0f);
+            GuiSliderBar(Rectangle{ 605,  80, 150, 25 }, "Rect Roundness"  , TextFormat("%.2f", rectangleRoundness).c_str()    , &rectangleRoundness  , -1.0f  , 2.0f);
+            GuiSliderBar(Rectangle{ 605, 115, 150, 25 }, "Rect Segments"   , TextFormat("%d"  , (int)rectangleSegments).c_str(), &rectangleSegments   , -1     , 100);
+            GuiSliderBar(Rectangle{ 605, 150, 150, 25 }, "Ellipse Radius Y", TextFormat("%.2f", ellipseRadiusY).c_str()        , &ellipseRadiusY      , 0.0f   , 1.25f);
+            GuiSliderBar(Rectangle{ 605, 185, 150, 25 }, "Start Angle"     , TextFormat("%.2f", circleStartAngle).c_str()      , &circleStartAngle    , -360.0f, 360.0f);
+            GuiSliderBar(Rectangle{ 605, 220, 150, 25 }, "End Angle"       , TextFormat("%.2f", circleEndAngle).c_str()        , &circleEndAngle      , -360.0f, 360.0f);
+            GuiSliderBar(Rectangle{ 605, 255, 150, 25 }, "Circle Segments" , TextFormat("%d"  , (int)circleSegments).c_str()   , &circleSegments      , -1     , 100);
+            GuiSliderBar(Rectangle{ 605, 290, 150, 25 }, "Ring Radius"     , TextFormat("%.2f", ringInnerRadiusScale).c_str()  , &ringInnerRadiusScale, -1.0f  , 2.0f);
+            GuiSliderBar(Rectangle{ 605, 325, 150, 25 }, "Poly Sides"      , TextFormat("%d"  , (int)polygonSides).c_str()     , &polygonSides        , -1     , 100);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

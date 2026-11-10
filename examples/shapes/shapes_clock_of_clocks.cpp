@@ -93,7 +93,7 @@ int main()
             prevSeconds = timeinfo->tm_sec;
 
             // Format the current time so we can access the individual digits
-            const char *clockDigits = TextFormat("%02d%02d%02d", timeinfo->tm_hour%hourMode, timeinfo->tm_min, timeinfo->tm_sec);
+            std::string clockDigits = TextFormat("%02d%02d%02d", timeinfo->tm_hour%hourMode, timeinfo->tm_min, timeinfo->tm_sec);
 
             // Fetch where we want all the hands to be
             for (int digit = 0; digit < 6; digit++)

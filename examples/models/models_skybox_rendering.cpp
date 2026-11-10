@@ -75,11 +75,11 @@ int main()
 
     SetShaderValue(shdrCubemap, GetShaderLocation(shdrCubemap, "equirectangularMap"), std::initializer_list<int>{ 0 }.begin(), SHADER_UNIFORM_INT);
 
-    char skyboxFileName[256] = {};
+    std::string skyboxFileName;
 
     if (useHDR)
     {
-        TextCopy(skyboxFileName, "resources/dresden_square_2k.hdr");
+        skyboxFileName = "resources/dresden_square_2k.hdr";
 
         // Load HDR panorama (sphere) texture
         Texture2D panorama = LoadTexture(skyboxFileName);
@@ -118,7 +118,7 @@ int main()
         {
             FilePathList droppedFiles = LoadDroppedFiles();
 
-            if (droppedFiles.count == 1)         // Only support one file dropped
+            if (droppedFiles.paths.size() == 1)         // Only support one file dropped
             {
                 if (IsFileExtension(droppedFiles.paths[0], ".png;.jpg;.hdr;.bmp;.tga"))
                 {
@@ -142,11 +142,10 @@ int main()
                         UnloadImage(image);
                     }
 
-                    TextCopy(skyboxFileName, droppedFiles.paths[0]);
+                    skyboxFileName = droppedFiles.paths[0];
                 }
             }
 
-            UnloadDroppedFiles(droppedFiles);    // Unload filepaths from memory
         }
         //----------------------------------------------------------------------------------
 
@@ -169,8 +168,8 @@ int main()
 
             EndMode3D();
 
-            if (useHDR) DrawText(TextFormat("Panorama image from hdrihaven.com: %s", GetFileName(skyboxFileName)), 10, GetScreenHeight() - 20, 10, BLACK);
-            else DrawText(TextFormat(": %s", GetFileName(skyboxFileName)), 10, GetScreenHeight() - 20, 10, BLACK);
+            if (useHDR) DrawText(TextFormat("Panorama image from hdrihaven.com: %s", GetFileName(skyboxFileName).c_str()), 10, GetScreenHeight() - 20, 10, BLACK);
+            else DrawText(TextFormat(": %s", GetFileName(skyboxFileName).c_str()), 10, GetScreenHeight() - 20, 10, BLACK);
 
             DrawFPS(10, 10);
 

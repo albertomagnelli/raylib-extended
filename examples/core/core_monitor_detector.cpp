@@ -22,7 +22,7 @@
 // Monitor info
 typedef struct MonitorInfo {
     Vector2 position;
-    const char *name;
+    std::string name;
     int width;
     int height;
     int physicalWidth;
@@ -123,7 +123,7 @@ int main()
                 };
 
                 // Draw monitor name and information inside the rectangle
-                DrawText(TextFormat("[%i] %s", i, monitors[i].name), (int)rec.x + 10, (int)rec.y + (int)(100*monitorScale), (int)(120*monitorScale), BLUE);
+                DrawText(TextFormat("[%i] %s", i, monitors[i].name.c_str()), (int)rec.x + 10, (int)rec.y + (int)(100*monitorScale), (int)(120*monitorScale), BLUE);
                 DrawText(
                     TextFormat("Resolution: [%ipx x %ipx]\nRefreshRate: [%ihz]\nPhysical Size: [%imm x %imm]\nPosition: %3.0f x %3.0f",
                         monitors[i].width,

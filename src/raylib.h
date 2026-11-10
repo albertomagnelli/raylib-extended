@@ -204,6 +204,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 
+#include <string>
+#include <string_view>
+#include <vector>
+
 static_assert(sizeof(glm::vec2) == 8,  "glm::vec2 must match the raylib Vector2 ABI");
 static_assert(sizeof(glm::vec3) == 12, "glm::vec3 must match the raylib Vector3 ABI");
 static_assert(sizeof(glm::vec4) == 16, "glm::vec4 must match the raylib Vector4 ABI");
@@ -526,8 +530,7 @@ typedef struct VrStereoConfig {
 
 // File path list
 typedef struct FilePathList {
-    unsigned int count;             // Filepaths entries count
-    char **paths;                   // Filepaths entries
+    std::vector<std::string> paths; // Filepaths entries
 } FilePathList;
 
 // Automation event
@@ -965,11 +968,11 @@ typedef enum {
 
 // Callbacks to hook some internal functions
 // WARNING: These callbacks are intended for advanced users
-typedef void (*TraceLogCallback)(int logLevel, const char *text, va_list args); // Logging: Redirect trace log messages
+typedef void (*TraceLogCallback)(int logLevel, std::string_view text, va_list args); // Logging: Redirect trace log messages
 typedef unsigned char *(*LoadFileDataCallback)(const char *fileName, int *dataSize); // FileIO: Load binary data
-typedef bool (*SaveFileDataCallback)(const char *fileName, const void *data, int dataSize); // FileIO: Save binary data
-typedef char *(*LoadFileTextCallback)(const char *fileName);                  // FileIO: Load text data
-typedef bool (*SaveFileTextCallback)(const char *fileName, const char *text); // FileIO: Save text data
+typedef bool (*SaveFileDataCallback)(std::string_view fileName, const void *data, int dataSize); // FileIO: Save binary data
+typedef std::string (*LoadFileTextCallback)(std::string_view fileName);                  // FileIO: Load text data
+typedef bool (*SaveFileTextCallback)(std::string_view fileName, std::string_view text); // FileIO: Save text data
 
 //------------------------------------------------------------------------------------
 // Global Variables Definition
@@ -983,7 +986,7 @@ typedef bool (*SaveFileTextCallback)(const char *fileName, const char *text); //
 extern "C" {            // Keep unmangled symbol names for bindings and prebuilt consumers
 
 // Window-related functions
-RLAPI void InitWindow(int width, int height, const char *title);  // Initialize window and OpenGL context
+RLAPI void InitWindow(int width, int height, std::string_view title);  // Initialize window and OpenGL context
 RLAPI void CloseWindow(void);                                     // Close window and unload OpenGL context
 RLAPI bool WindowShouldClose(void);                               // Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)
 RLAPI bool IsWindowReady(void);                                   // Check if window has been initialized successfully
@@ -1005,7 +1008,7 @@ RLAPI void MinimizeWindow(void);                                  // Set window 
 RLAPI void RestoreWindow(void);                                   // Restore window from being minimized/maximized
 RLAPI void SetWindowIcon(Image image);                            // Set icon for window (single image, RGBA 32bit)
 RLAPI void SetWindowIcons(Image *images, int count);              // Set icon for window (multiple images, RGBA 32bit)
-RLAPI void SetWindowTitle(const char *title);                     // Set title for window
+RLAPI void SetWindowTitle(std::string_view title);                     // Set title for window
 RLAPI void SetWindowPosition(int x, int y);                       // Set window position on screen
 RLAPI void SetWindowMonitor(int monitor);                         // Set monitor for the current window
 RLAPI void SetWindowMinSize(int width, int height);               // Set window minimum dimensions (for FLAG_WINDOW_RESIZABLE)
@@ -1028,9 +1031,9 @@ RLAPI int GetMonitorPhysicalHeight(int monitor);                  // Get specifi
 RLAPI int GetMonitorRefreshRate(int monitor);                     // Get specified monitor refresh rate
 RLAPI Vector2 GetWindowPosition(void);                            // Get window position XY on monitor
 RLAPI Vector2 GetWindowScaleDPI(void);                            // Get window scale DPI factor
-RLAPI const char *GetMonitorName(int monitor);                    // Get the human-readable, UTF-8 encoded name of the specified monitor
-RLAPI void SetClipboardText(const char *text);                    // Set clipboard text content
-RLAPI const char *GetClipboardText(void);                         // Get clipboard text content
+RLAPI std::string GetMonitorName(int monitor);                    // Get the human-readable, UTF-8 encoded name of the specified monitor
+RLAPI void SetClipboardText(std::string_view text);                    // Set clipboard text content
+RLAPI std::string GetClipboardText(void);                         // Get clipboard text content
 RLAPI Image GetClipboardImage(void);                              // Get clipboard image content
 RLAPI void EnableEventWaiting(void);                              // Enable waiting for events on EndDrawing(), no automatic event polling
 RLAPI void DisableEventWaiting(void);                             // Disable waiting for events on EndDrawing(), automatic events polling
@@ -1068,11 +1071,11 @@ RLAPI void UnloadVrStereoConfig(VrStereoConfig config);           // Unload VR s
 
 // Shader management functions
 // NOTE: Shader functionality is not available on OpenGL 1.1
-RLAPI Shader LoadShader(const char *vsFileName, const char *fsFileName);   // Load shader from files and bind default locations
-RLAPI Shader LoadShaderFromMemory(const char *vsCode, const char *fsCode); // Load shader from code strings and bind default locations
+RLAPI Shader LoadShader(std::string_view vsFileName, std::string_view fsFileName);   // Load shader from files and bind default locations
+RLAPI Shader LoadShaderFromMemory(std::string_view vsCode, std::string_view fsCode); // Load shader from code strings and bind default locations
 RLAPI bool IsShaderValid(Shader shader);                                   // Check if shader is valid (loaded on GPU)
-RLAPI int GetShaderLocation(Shader shader, const char *uniformName);       // Get shader uniform location
-RLAPI int GetShaderLocationAttrib(Shader shader, const char *attribName);  // Get shader attribute location
+RLAPI int GetShaderLocation(Shader shader, std::string_view uniformName);       // Get shader uniform location
+RLAPI int GetShaderLocationAttrib(Shader shader, std::string_view attribName);  // Get shader attribute location
 RLAPI void SetShaderValue(Shader shader, int locIndex, const void *value, int uniformType); // Set shader uniform value
 RLAPI void SetShaderValueV(Shader shader, int locIndex, const void *value, int uniformType, int count); // Set shader uniform value vector
 RLAPI void SetShaderValueMatrix(Shader shader, int locIndex, Matrix mat);  // Set shader uniform value (matrix 4x4)
@@ -1110,13 +1113,13 @@ RLAPI int *LoadRandomSequence(unsigned int count, int min, int max); // Load ran
 RLAPI void UnloadRandomSequence(int *sequence);         // Unload random values sequence
 
 // Misc. functions
-RLAPI void TakeScreenshot(const char *fileName);                // Takes a screenshot of current screen (filename extension defines format)
+RLAPI void TakeScreenshot(std::string_view fileName);                // Takes a screenshot of current screen (filename extension defines format)
 RLAPI void SetConfigFlags(unsigned int flags);                  // Set init configuration flags (view FLAGS)
-RLAPI void OpenURL(const char *url);                            // Open URL with default system browser (if available)
+RLAPI void OpenURL(std::string_view url);                            // Open URL with default system browser (if available)
 
 // Logging system
 RLAPI void SetTraceLogLevel(int logLevel);                      // Set the current threshold (minimum) log level
-RLAPI void TraceLog(int logLevel, const char *text, ...);       // Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...)
+RLAPI void TraceLog(int logLevel, std::string_view text, ...);       // Show trace log messages (LOG_DEBUG, LOG_INFO, LOG_WARNING, LOG_ERROR...)
 RLAPI void SetTraceLogCallback(TraceLogCallback callback);      // Set custom trace log
 
 // Memory management, using internal allocators
@@ -1125,13 +1128,12 @@ RLAPI void *MemRealloc(void *ptr, unsigned int size);           // Internal memo
 RLAPI void MemFree(void *ptr);                                  // Internal memory free
 
 // File system management functions
-RLAPI unsigned char *LoadFileData(const char *fileName, int *dataSize); // Load file data as byte array (read)
+RLAPI unsigned char *LoadFileData(std::string_view fileName, int *dataSize); // Load file data as byte array (read)
 RLAPI void UnloadFileData(unsigned char *data);                     // Unload file data allocated by LoadFileData()
-RLAPI bool SaveFileData(const char *fileName, const void *data, int dataSize); // Save data to file from byte array (write), returns true on success
-RLAPI bool ExportDataAsCode(const unsigned char *data, int dataSize, const char *fileName); // Export data to code (.h), returns true on success
-RLAPI char *LoadFileText(const char *fileName);                     // Load text data from file (read), returns a '\0' terminated string
-RLAPI void UnloadFileText(char *text);                              // Unload file text data allocated by LoadFileText()
-RLAPI bool SaveFileText(const char *fileName, const char *text);    // Save text data to file (write), string must be '\0' terminated, returns true on success
+RLAPI bool SaveFileData(std::string_view fileName, const void *data, int dataSize); // Save data to file from byte array (write), returns true on success
+RLAPI bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view fileName); // Export data to code (.h), returns true on success
+RLAPI std::string LoadFileText(std::string_view fileName);                     // Load text data from file (read)
+RLAPI bool SaveFileText(std::string_view fileName, std::string_view text);    // Save text data to file (write), returns true on success
 
 // File access custom callbacks
 // WARNING: Callbacks setup is intended for advanced users
@@ -1140,54 +1142,52 @@ RLAPI void SetSaveFileDataCallback(SaveFileDataCallback callback);  // Set custo
 RLAPI void SetLoadFileTextCallback(LoadFileTextCallback callback);  // Set custom file text data loader
 RLAPI void SetSaveFileTextCallback(SaveFileTextCallback callback);  // Set custom file text data saver
 
-RLAPI int FileRename(const char *fileName, const char *fileRename); // Rename file (if exists), returns 0 on success
-RLAPI int FileRemove(const char *fileName);                         // Remove file (if exists), returns 0 on success
-RLAPI int FileCopy(const char *srcPath, const char *dstPath);       // Copy file from one path to another, dstPath created if it doesn't exist, returns 0 on success
-RLAPI int FileMove(const char *srcPath, const char *dstPath);       // Move file from one directory to another, dstPath created if it doesn't exist, returns 0 on success
-RLAPI int FileTextReplace(const char *fileName, const char *search, const char *replacement); // Replace text in an existing file, returns 0 on success
-RLAPI int FileTextFindIndex(const char *fileName, const char *search); // Find text in existing file, returns -1 if index not found or index otherwise
-RLAPI bool FileExists(const char *fileName);                        // Check if file exists
-RLAPI bool DirectoryExists(const char *dirPath);                    // Check if directory path exists
-RLAPI bool IsFileExtension(const char *fileName, const char *ext);  // Check file extension (recommended include point: .png, .wav)
-RLAPI bool IsFileHidden(const char *filePath);                      // Check if file path (file or directory) is hidden by OS
-RLAPI int GetFileLength(const char *fileName);                      // Get file length in bytes (NOTE: GetFileSize() conflicts with windows.h)
-RLAPI long GetFileModTime(const char *fileName);                    // Get file modification time (last write time)
-RLAPI const char *GetFileExtension(const char *fileName);           // Get pointer to extension for a filename string (includes dot: '.png')
-RLAPI const char *GetFileName(const char *filePath);                // Get pointer to filename for a path string
-RLAPI const char *GetFileNameWithoutExt(const char *filePath);      // Get filename string without extension (uses static string)
-RLAPI const char *GetDirectoryPath(const char *filePath);           // Get full path for a provided fileName with path (uses static string)
-RLAPI const char *GetPrevDirectoryPath(const char *dirPath);        // Get previous directory path for a provided path (uses static string)
-RLAPI const char *GetWorkingDirectory(void);                        // Get current working directory (uses static string)
-RLAPI const char *GetApplicationDirectory(void);                    // Get the directory of the running application (uses static string)
-RLAPI int MakeDirectory(const char *dirPath);                       // Create directories (including full path requested), returns 0 on success
-RLAPI int ChangeDirectory(const char *dirPath);                     // Change working directory, returns 0 on success
-RLAPI bool IsPathFile(const char *path);                            // Check if provided path points to a file
-RLAPI bool IsPathDirectory(const char *path);                       // Check if provided path points to a directory
-RLAPI bool IsPathAbsolute(const char *path);                        // Check if provided path is an absolute path
-RLAPI bool IsFileNameValid(const char *fileName);                   // Check if fileName is valid for the platform/OS
-RLAPI FilePathList LoadDirectoryFiles(const char *dirPath);         // Load directory filepaths, files and directories, no subdirs scan
-RLAPI FilePathList LoadDirectoryFilesEx(const char *basePath, const char *filter, bool scanSubdirs); // Load directory filepaths with extension filtering and subdir scan; some filters available: '*.*','FILES*','DIRS*'
-RLAPI void UnloadDirectoryFiles(FilePathList files);                // Unload filepaths
+RLAPI int FileRename(std::string_view fileName, std::string_view fileRename); // Rename file (if exists), returns 0 on success
+RLAPI int FileRemove(std::string_view fileName);                         // Remove file (if exists), returns 0 on success
+RLAPI int FileCopy(std::string_view srcPath, std::string_view dstPath);       // Copy file from one path to another, dstPath created if it doesn't exist, returns 0 on success
+RLAPI int FileMove(std::string_view srcPath, std::string_view dstPath);       // Move file from one directory to another, dstPath created if it doesn't exist, returns 0 on success
+RLAPI int FileTextReplace(std::string_view fileName, std::string_view search, std::string_view replacement); // Replace text in an existing file, returns 0 on success
+RLAPI int FileTextFindIndex(std::string_view fileName, std::string_view search); // Find text in existing file, returns -1 if index not found or index otherwise
+RLAPI bool FileExists(std::string_view fileName);                        // Check if file exists
+RLAPI bool DirectoryExists(std::string_view dirPath);                    // Check if directory path exists
+RLAPI bool IsFileExtension(std::string_view fileName, std::string_view ext);  // Check file extension (recommended include point: .png, .wav)
+RLAPI bool IsFileHidden(std::string_view filePath);                      // Check if file path (file or directory) is hidden by OS
+RLAPI int GetFileLength(std::string_view fileName);                      // Get file length in bytes (NOTE: GetFileSize() conflicts with windows.h)
+RLAPI long GetFileModTime(std::string_view fileName);                    // Get file modification time (last write time)
+RLAPI std::string GetFileExtension(std::string_view fileName);           // Get file extension for a filename string (includes dot: '.png')
+RLAPI std::string GetFileName(std::string_view filePath);                // Get filename for a path string
+RLAPI std::string GetFileNameWithoutExt(std::string_view filePath);      // Get filename string without extension
+RLAPI std::string GetDirectoryPath(std::string_view filePath);           // Get full path for a provided fileName with path
+RLAPI std::string GetPrevDirectoryPath(std::string_view dirPath);        // Get previous directory path for a provided path
+RLAPI std::string GetWorkingDirectory(void);                        // Get current working directory
+RLAPI std::string GetApplicationDirectory(void);                    // Get the directory of the running application
+RLAPI int MakeDirectory(std::string_view dirPath);                       // Create directories (including full path requested), returns 0 on success
+RLAPI int ChangeDirectory(std::string_view dirPath);                     // Change working directory, returns 0 on success
+RLAPI bool IsPathFile(std::string_view path);                            // Check if provided path points to a file
+RLAPI bool IsPathDirectory(std::string_view path);                       // Check if provided path points to a directory
+RLAPI bool IsPathAbsolute(std::string_view path);                        // Check if provided path is an absolute path
+RLAPI bool IsFileNameValid(std::string_view fileName);                   // Check if fileName is valid for the platform/OS
+RLAPI FilePathList LoadDirectoryFiles(std::string_view dirPath);         // Load directory filepaths, files and directories, no subdirs scan
+RLAPI FilePathList LoadDirectoryFilesEx(std::string_view basePath, std::string_view filter, bool scanSubdirs); // Load directory filepaths with extension filtering and subdir scan; some filters available: '*.*','FILES*','DIRS*'
 RLAPI bool IsFileDropped(void);                                     // Check if file has been dropped into window
 RLAPI FilePathList LoadDroppedFiles(void);                          // Load dropped filepaths
-RLAPI void UnloadDroppedFiles(FilePathList files);                  // Unload dropped filepaths
-RLAPI unsigned int GetDirectoryFileCount(const char *dirPath);      // Get the file count in a directory
-RLAPI unsigned int GetDirectoryFileCountEx(const char *basePath, const char *filter, bool scanSubdirs); // Get the file count in a directory with extension filtering and recursive directory scan. Use 'DIR' in the filter string to include directories in the result
+RLAPI unsigned int GetDirectoryFileCount(std::string_view dirPath);      // Get the file count in a directory
+RLAPI unsigned int GetDirectoryFileCountEx(std::string_view basePath, std::string_view filter, bool scanSubdirs); // Get the file count in a directory with extension filtering and recursive directory scan. Use 'DIR' in the filter string to include directories in the result
 
 // Compression/Encoding functionality
 RLAPI unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDataSize);        // Compress data (DEFLATE algorithm), memory must be MemFree()
 RLAPI unsigned char *DecompressData(const unsigned char *compData, int compDataSize, int *dataSize);  // Decompress data (DEFLATE algorithm), memory must be MemFree()
-RLAPI char *EncodeDataBase64(const unsigned char *data, int dataSize, int *outputSize);               // Encode data to Base64 string (includes NULL terminator), memory must be MemFree()
-RLAPI unsigned char *DecodeDataBase64(const char *text, int *outputSize);                             // Decode Base64 string (expected NULL terminated), memory must be MemFree()
+RLAPI std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outputSize);               // Encode data to Base64 string
+RLAPI unsigned char *DecodeDataBase64(std::string_view text, int *outputSize);                             // Decode Base64 string
 RLAPI unsigned int ComputeCRC32(const unsigned char *data, int dataSize); // Compute CRC32 hash code
 RLAPI unsigned int *ComputeMD5(const unsigned char *data, int dataSize);  // Compute MD5 hash code, returns static int[4] (16 bytes)
 RLAPI unsigned int *ComputeSHA1(const unsigned char *data, int dataSize); // Compute SHA1 hash code, returns static int[5] (20 bytes)
 RLAPI unsigned int *ComputeSHA256(const unsigned char *data, int dataSize); // Compute SHA256 hash code, returns static int[8] (32 bytes)
 
 // Automation events functionality
-RLAPI AutomationEventList LoadAutomationEventList(const char *fileName); // Load automation events list from file, NULL for empty list, capacity = MAX_AUTOMATION_EVENTS
+RLAPI AutomationEventList LoadAutomationEventList(std::string_view fileName); // Load automation events list from file, empty view for an empty list, capacity = MAX_AUTOMATION_EVENTS
 RLAPI void UnloadAutomationEventList(AutomationEventList list);   // Unload automation events list from file
-RLAPI bool ExportAutomationEventList(AutomationEventList list, const char *fileName); // Export automation events list as text file
+RLAPI bool ExportAutomationEventList(AutomationEventList list, std::string_view fileName); // Export automation events list as text file
 RLAPI void SetAutomationEventList(AutomationEventList *list);     // Set automation event list to record to
 RLAPI void SetAutomationEventBaseFrame(int frame);                // Set automation event internal base frame to start recording
 RLAPI void StartAutomationEventRecording(void);                   // Start recording automation events (AutomationEventList must be set)
@@ -1206,12 +1206,12 @@ RLAPI bool IsKeyReleased(int key);                            // Check if key ha
 RLAPI bool IsKeyUp(int key);                                  // Check if key is NOT being pressed
 RLAPI int GetKeyPressed(void);                                // Get key pressed (keycode), call it multiple times for keys queued, returns 0 when the queue is empty
 RLAPI int GetCharPressed(void);                               // Get char pressed (unicode), call it multiple times for chars queued, returns 0 when the queue is empty
-RLAPI const char *GetKeyName(int key);                        // Get name of a QWERTY key on the current keyboard layout (eg returns string 'q' for KEY_A on an AZERTY keyboard)
+RLAPI std::string GetKeyName(int key);                        // Get name of a QWERTY key on the current keyboard layout (eg returns string 'q' for KEY_A on an AZERTY keyboard)
 RLAPI void SetExitKey(int key);                               // Set a custom key to exit program (default is ESC)
 
 // Input-related functions: gamepads
 RLAPI bool IsGamepadAvailable(int gamepad);                   // Check if gamepad is available
-RLAPI const char *GetGamepadName(int gamepad);                // Get gamepad internal name id
+RLAPI std::string GetGamepadName(int gamepad);                // Get gamepad internal name id
 RLAPI bool IsGamepadButtonPressed(int gamepad, int button);   // Check if gamepad button has been pressed once
 RLAPI bool IsGamepadButtonDown(int gamepad, int button);      // Check if gamepad button is being pressed
 RLAPI bool IsGamepadButtonReleased(int gamepad, int button);  // Check if gamepad button has been released once
@@ -1219,7 +1219,7 @@ RLAPI bool IsGamepadButtonUp(int gamepad, int button);        // Check if gamepa
 RLAPI int GetGamepadButtonPressed(void);                      // Get the last gamepad button pressed
 RLAPI int GetGamepadAxisCount(int gamepad);                   // Get axis count for a gamepad
 RLAPI float GetGamepadAxisMovement(int gamepad, int axis);    // Get movement value for a gamepad axis
-RLAPI int SetGamepadMappings(const char *mappings);           // Set internal gamepad mappings (SDL_GameControllerDB)
+RLAPI int SetGamepadMappings(std::string_view mappings);           // Set internal gamepad mappings (SDL_GameControllerDB)
 RLAPI void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float duration); // Set gamepad vibration for both motors (duration in seconds)
 
 // Input-related functions: mouse
@@ -1359,18 +1359,18 @@ RLAPI Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2);                
 
 // Image loading functions
 // NOTE: These functions do not require GPU access
-RLAPI Image LoadImage(const char *fileName);                                                             // Load image from file into CPU memory (RAM)
-RLAPI Image LoadImageRaw(const char *fileName, int width, int height, int format, int headerSize);       // Load image from RAW file data
-RLAPI Image LoadImageAnim(const char *fileName, int *frames);                                            // Load image sequence from file (frames appended to image.data)
-RLAPI Image LoadImageAnimFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int *frames); // Load image sequence from memory buffer
-RLAPI Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize);      // Load image from memory buffer, fileType refers to extension: i.e. '.png'
+RLAPI Image LoadImage(std::string_view fileName);                                                             // Load image from file into CPU memory (RAM)
+RLAPI Image LoadImageRaw(std::string_view fileName, int width, int height, int format, int headerSize);       // Load image from RAW file data
+RLAPI Image LoadImageAnim(std::string_view fileName, int *frames);                                            // Load image sequence from file (frames appended to image.data)
+RLAPI Image LoadImageAnimFromMemory(std::string_view fileType, const unsigned char *fileData, int dataSize, int *frames); // Load image sequence from memory buffer
+RLAPI Image LoadImageFromMemory(std::string_view fileType, const unsigned char *fileData, int dataSize);      // Load image from memory buffer, fileType refers to extension: i.e. '.png'
 RLAPI Image LoadImageFromTexture(Texture2D texture);                                                     // Load image from GPU texture data
 RLAPI Image LoadImageFromScreen(void);                                                                   // Load image from screen buffer (screenshot)
 RLAPI bool IsImageValid(Image image);                                                                    // Check if an image is valid (data and parameters)
 RLAPI void UnloadImage(Image image);                                                                     // Unload image from CPU memory (RAM)
-RLAPI bool ExportImage(Image image, const char *fileName);                                               // Export image data to file, returns true on success
-RLAPI unsigned char *ExportImageToMemory(Image image, const char *fileType, int *fileSize);              // Export image to memory buffer, memory must be MemFree()
-RLAPI bool ExportImageAsCode(Image image, const char *fileName);                                         // Export image as code file defining an array of bytes, returns true on success
+RLAPI bool ExportImage(Image image, std::string_view fileName);                                               // Export image data to file, returns true on success
+RLAPI unsigned char *ExportImageToMemory(Image image, std::string_view fileType, int *fileSize);              // Export image to memory buffer, memory must be MemFree()
+RLAPI bool ExportImageAsCode(Image image, std::string_view fileName);                                         // Export image as code file defining an array of bytes, returns true on success
 
 // Image generation functions
 RLAPI Image GenImageColor(int width, int height, Color color);                                           // Generate image: plain color
@@ -1381,14 +1381,14 @@ RLAPI Image GenImageChecked(int width, int height, int checksX, int checksY, Col
 RLAPI Image GenImageWhiteNoise(int width, int height, float factor);                                     // Generate image: white noise
 RLAPI Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale);           // Generate image: perlin noise
 RLAPI Image GenImageCellular(int width, int height, int tileSize);                                       // Generate image: cellular algorithm, bigger tileSize means bigger cells
-RLAPI Image GenImageText(int width, int height, const char *text);                                       // Generate image: grayscale image from text data
+RLAPI Image GenImageText(int width, int height, std::string_view text);                                       // Generate image: grayscale image from text data
 
 // Image manipulation functions
 RLAPI Image ImageCopy(Image image);                                                                      // Create an image duplicate (useful for transformations)
 RLAPI Image ImageFromImage(Image image, Rectangle rec);                                                  // Create an image from another image piece
 RLAPI Image ImageFromChannel(Image image, int selectedChannel);                                          // Create an image from a selected channel of another image (GRAYSCALE)
-RLAPI Image ImageText(const char *text, int fontSize, Color color);                                      // Create an image from text (default font)
-RLAPI Image ImageTextEx(Font font, const char *text, float fontSize, float spacing, Color tint);         // Create an image from text (custom sprite font)
+RLAPI Image ImageText(std::string_view text, int fontSize, Color color);                                      // Create an image from text (default font)
+RLAPI Image ImageTextEx(Font font, std::string_view text, float fontSize, float spacing, Color tint);         // Create an image from text (custom sprite font)
 RLAPI void ImageFormat(Image *image, int newFormat);                                                     // Convert image data to desired format
 RLAPI void ImageToPOT(Image *image, Color fill);                                                         // Convert image to POT (power-of-two)
 RLAPI void ImageCrop(Image *image, Rectangle crop);                                                      // Crop an image to a defined rectangle
@@ -1452,13 +1452,13 @@ RLAPI void ImageDrawImage(Image *dst, Image src, int posX, int posY, Color tint)
 RLAPI void ImageDrawImageEx(Image *dst, Image src, Vector2 position, float rotation, float scale, Color tint); // Draw an image with scaling and rotation within an image
 RLAPI void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, Vector2 position, Color tint);     // Draw a part of an image defined by a rectangle within an image
 RLAPI void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Vector2 origin, float rotation, Color tint); // Draw a part of an image defined by a rectangle into destination rectangle, with scaling and rotation, within an image
-RLAPI void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color);   // Draw text (using default font) within an image (destination)
-RLAPI void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
-RLAPI void ImageDrawTextPro(Image *dst, Font font, const char *text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
+RLAPI void ImageDrawText(Image *dst, std::string_view text, int posX, int posY, int fontSize, Color color);   // Draw text (using default font) within an image (destination)
+RLAPI void ImageDrawTextEx(Image *dst, Font font, std::string_view text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
+RLAPI void ImageDrawTextPro(Image *dst, Font font, std::string_view text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
 
 // Texture loading functions
 // NOTE: These functions require GPU access
-RLAPI Texture2D LoadTexture(const char *fileName);                                                       // Load texture from file into GPU memory (VRAM)
+RLAPI Texture2D LoadTexture(std::string_view fileName);                                                       // Load texture from file into GPU memory (VRAM)
 RLAPI Texture2D LoadTextureFromImage(Image image);                                                       // Load texture from image data
 RLAPI TextureCubemap LoadTextureCubemap(Image image, int layout);                                        // Load cubemap from image, multiple image cubemap layouts supported
 RLAPI RenderTexture2D LoadRenderTexture(int width, int height);                                          // Load texture for rendering (framebuffer)
@@ -1508,74 +1508,65 @@ RLAPI int GetPixelDataSize(int width, int height, int format);              // G
 
 // Font loading/unloading functions
 RLAPI Font GetFontDefault(void);                                                            // Get the default Font
-RLAPI Font LoadFont(const char *fileName);                                                  // Load font from file into GPU memory (VRAM)
-RLAPI Font LoadFontEx(const char *fileName, int fontSize, const int *codepoints, int codepointCount); // Load font from file with defined codepoints and generation size, use NULL for codepoints and 0 for codepointCount to load the default character set, font size is provided in pixels height
+RLAPI Font LoadFont(std::string_view fileName);                                                  // Load font from file into GPU memory (VRAM)
+RLAPI Font LoadFontEx(std::string_view fileName, int fontSize, const int *codepoints, int codepointCount); // Load font from file with defined codepoints and generation size, use NULL for codepoints and 0 for codepointCount to load the default character set, font size is provided in pixels height
 RLAPI Font LoadFontFromImage(Image image, Color key, int firstChar);                        // Load font from Image (XNA style)
-RLAPI Font LoadFontFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int fontSize, const int *codepoints, int codepointCount); // Load font from memory buffer, fileType refers to extension: i.e. '.ttf'
+RLAPI Font LoadFontFromMemory(std::string_view fileType, const unsigned char *fileData, int dataSize, int fontSize, const int *codepoints, int codepointCount); // Load font from memory buffer, fileType refers to extension: i.e. '.ttf'
 RLAPI bool IsFontValid(Font font);                                                          // Check if font is valid (font data loaded, WARNING: GPU texture not checked)
 RLAPI GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSize, const int *codepoints, int codepointCount, int type, int *glyphCount); // Load font data for further use
 RLAPI Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyphCount, int fontSize, int padding, int packMethod); // Generate image font atlas using chars info
 RLAPI void UnloadFontData(GlyphInfo *glyphs, int glyphCount);                               // Unload font chars info data (RAM)
 RLAPI void UnloadFont(Font font);                                                           // Unload font from GPU memory (VRAM)
-RLAPI bool ExportFontAsCode(Font font, const char *fileName);                               // Export font as code file, returns true on success
+RLAPI bool ExportFontAsCode(Font font, std::string_view fileName);                               // Export font as code file, returns true on success
 
 // Text drawing functions
 RLAPI void DrawFPS(int posX, int posY);                                                     // Draw current FPS
-RLAPI void DrawText(const char *text, int posX, int posY, int fontSize, Color color);       // Draw text (using default font)
-RLAPI void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
-RLAPI void DrawTextPro(Font font, const char *text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
+RLAPI void DrawText(std::string_view text, int posX, int posY, int fontSize, Color color);       // Draw text (using default font)
+RLAPI void DrawTextEx(Font font, std::string_view text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
+RLAPI void DrawTextPro(Font font, std::string_view text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
 RLAPI void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSize, Color tint); // Draw one character (codepoint)
 RLAPI void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, Vector2 position, float fontSize, float spacing, Color tint); // Draw multiple characters (codepoint)
 
 // Text font info functions
 RLAPI void SetTextLineSpacing(int spacing);                                                 // Set vertical line spacing when drawing with line-breaks
-RLAPI int MeasureText(const char *text, int fontSize);                                      // Measure string width for default font
-RLAPI Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing);    // Measure string size for Font
+RLAPI int MeasureText(std::string_view text, int fontSize);                                      // Measure string width for default font
+RLAPI Vector2 MeasureTextEx(Font font, std::string_view text, float fontSize, float spacing);    // Measure string size for Font
 RLAPI Vector2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing); // Measure string size for an existing array of codepoints for Font
 RLAPI int GetGlyphIndex(Font font, int codepoint);                                          // Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found
 RLAPI GlyphInfo GetGlyphInfo(Font font, int codepoint);                                     // Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found
 RLAPI Rectangle GetGlyphAtlasRec(Font font, int codepoint);                                 // Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found
 
 // Text codepoints management functions (unicode characters)
-RLAPI char *LoadUTF8(const int *codepoints, int length);                                    // Load UTF-8 text encoded from codepoints array
-RLAPI void UnloadUTF8(char *text);                                                          // Unload UTF-8 text encoded from codepoints array
-RLAPI int *LoadCodepoints(const char *text, int *count);                                    // Load all codepoints from a UTF-8 text string, codepoints count returned by parameter
+RLAPI std::string LoadUTF8(const int *codepoints, int length);                                    // Load UTF-8 text encoded from codepoints array
+RLAPI int *LoadCodepoints(std::string_view text, int *count);                                    // Load all codepoints from a UTF-8 text string, codepoints count returned by parameter
 RLAPI void UnloadCodepoints(int *codepoints);                                               // Unload codepoints data from memory
-RLAPI int GetCodepointCount(const char *text);                                              // Get total number of codepoints in a UTF-8 encoded string
-RLAPI int GetCodepoint(const char *text, int *codepointSize);                               // Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
-RLAPI int GetCodepointNext(const char *text, int *codepointSize);                           // Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
-RLAPI int GetCodepointPrevious(const char *text, int *codepointSize);                       // Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
-RLAPI const char *CodepointToUTF8(int codepoint, int *utf8Size);                            // Encode one codepoint into UTF-8 byte array (array length returned as parameter)
+RLAPI int GetCodepointCount(std::string_view text);                                              // Get total number of codepoints in a UTF-8 encoded string
+RLAPI int GetCodepoint(std::string_view text, int *codepointSize);                               // Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+RLAPI int GetCodepointNext(std::string_view text, int *codepointSize);                           // Get next codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+RLAPI int GetCodepointPrevious(std::string_view text, int *codepointSize);                       // Get previous codepoint in a UTF-8 encoded string, 0x3f('?') is returned on failure
+RLAPI std::string CodepointToUTF8(int codepoint);                            // Encode one codepoint into UTF-8 byte array
 
 // Text strings management functions (no UTF-8 strings, only byte chars)
-// WARNING 1: Most of these functions use internal static buffers[], it's recommended to store returned data on user-side for re-use
-// WARNING 2: Some functions allocate memory internally for the returned strings, those strings must be freed by user using MemFree()
-RLAPI char **LoadTextLines(const char *text, int *count);                                   // Load text as separate lines ('\n')
-RLAPI void UnloadTextLines(char **text, int lineCount);                                     // Unload text lines
-RLAPI int TextCopy(char *dst, const char *src);                                             // Copy one string to another, returns bytes copied
-RLAPI bool TextIsEqual(const char *text1, const char *text2);                               // Check if two text strings are equal
-RLAPI unsigned int TextLength(const char *text);                                            // Get text length, checks for '\0' ending
-RLAPI const char *TextFormat(const char *text, ...);                                        // Text formatting with variables (sprintf() style)
-RLAPI const char *TextSubtext(const char *text, int position, int length);                  // Get a piece of a text string
-RLAPI const char *TextRemoveSpaces(const char *text);                                       // Remove text spaces, concat words
-RLAPI char *GetTextBetween(const char *text, const char *begin, const char *end);           // Get text between two strings
-RLAPI char *TextReplace(const char *text, const char *search, const char *replacement);     // Replace text string with new string
-RLAPI char *TextReplaceAlloc(const char *text, const char *search, const char *replacement); // Replace text string with new string, memory must be MemFree()
-RLAPI char *TextReplaceBetween(const char *text, const char *begin, const char *end, const char *replacement); // Replace text between two specific strings
-RLAPI char *TextReplaceBetweenAlloc(const char *text, const char *begin, const char *end, const char *replacement); // Replace text between two specific strings, memory must be MemFree()
-RLAPI char *TextInsert(const char *text, const char *insert, int position);                 // Insert text in a defined byte position
-RLAPI char *TextInsertAlloc(const char *text, const char *insert, int position);            // Insert text in a defined byte position, memory must be MemFree()
-RLAPI char *TextJoin(char **textList, int count, const char *delimiter);                    // Join text strings with delimiter
-RLAPI char **TextSplit(const char *text, char delimiter, int *count);                       // Split text into multiple strings, using MAX_TEXTSPLIT_COUNT static strings
-RLAPI void TextAppend(char *text, const char *append, int *position);                       // Append text at specific position and move cursor
-RLAPI int TextFindIndex(const char *text, const char *search);                              // Find first text occurrence within a string, -1 if not found
-RLAPI char *TextToUpper(const char *text);                                                  // Get upper case version of provided string
-RLAPI char *TextToLower(const char *text);                                                  // Get lower case version of provided string
-RLAPI char *TextToPascal(const char *text);                                                 // Get Pascal case notation version of provided string
-RLAPI char *TextToSnake(const char *text);                                                  // Get Snake case notation version of provided string
-RLAPI char *TextToCamel(const char *text);                                                  // Get Camel case notation version of provided string
-RLAPI int TextToInteger(const char *text);                                                  // Get integer value from text
-RLAPI float TextToFloat(const char *text);                                                  // Get float value from text
+RLAPI std::vector<std::string> LoadTextLines(std::string_view text);      // Load text as separate lines
+RLAPI bool TextIsEqual(std::string_view text1, std::string_view text2);                               // Check if two text strings are equal
+RLAPI unsigned int TextLength(std::string_view text);                                            // Get text length, checks for '\0' ending
+RLAPI std::string TextFormat(std::string_view text, ...);                                        // Text formatting with variables (sprintf() style)
+RLAPI std::string TextSubtext(std::string_view text, int position, int length);                  // Get a piece of a text string
+RLAPI std::string TextRemoveSpaces(std::string_view text);                                       // Remove text spaces, concat words
+RLAPI std::string GetTextBetween(std::string_view text, std::string_view begin, std::string_view end);           // Get text between two strings
+RLAPI std::string TextReplace(std::string_view text, std::string_view search, std::string_view replacement);     // Replace text string with new string
+RLAPI std::string TextReplaceBetween(std::string_view text, std::string_view begin, std::string_view end, std::string_view replacement); // Replace text between two specific strings
+RLAPI std::string TextInsert(std::string_view text, std::string_view insert, int position);                 // Insert text in a defined byte position
+RLAPI std::string TextJoin(const std::vector<std::string> &textList, std::string_view delimiter); // Join text strings with delimiter
+RLAPI std::vector<std::string> TextSplit(std::string_view text, char delimiter); // Split text into multiple strings
+RLAPI int TextFindIndex(std::string_view text, std::string_view search);                              // Find first text occurrence within a string, -1 if not found
+RLAPI std::string TextToUpper(std::string_view text);                                                  // Get upper case version of provided string
+RLAPI std::string TextToLower(std::string_view text);                                                  // Get lower case version of provided string
+RLAPI std::string TextToPascal(std::string_view text);                                                 // Get Pascal case notation version of provided string
+RLAPI std::string TextToSnake(std::string_view text);                                                  // Get Snake case notation version of provided string
+RLAPI std::string TextToCamel(std::string_view text);                                                  // Get Camel case notation version of provided string
+RLAPI int TextToInteger(std::string_view text);                                                  // Get integer value from text
+RLAPI float TextToFloat(std::string_view text);                                                  // Get float value from text
 
 //------------------------------------------------------------------------------------
 // Basic 3d Shapes Drawing Functions (Module: models)
@@ -1609,7 +1600,7 @@ RLAPI void DrawGrid(int slices, float spacing);                                 
 //------------------------------------------------------------------------------------
 
 // Model management functions
-RLAPI Model LoadModel(const char *fileName);                                                // Load model from files (meshes and materials)
+RLAPI Model LoadModel(std::string_view fileName);                                                // Load model from files (meshes and materials)
 RLAPI Model LoadModelFromMesh(Mesh mesh);                                                   // Load model from generated mesh (default material)
 RLAPI bool IsModelValid(Model model);                                                       // Check if model is valid (loaded in GPU, VAO/VBOs)
 RLAPI void UnloadModel(Model model);                                                        // Unload model (including meshes) from memory (RAM and/or VRAM)
@@ -1633,8 +1624,8 @@ RLAPI void DrawMesh(Mesh mesh, Material material, Matrix transform);            
 RLAPI void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, int instances); // Draw multiple mesh instances with material and different transforms
 RLAPI BoundingBox GetMeshBoundingBox(Mesh mesh);                                            // Compute mesh bounding box limits
 RLAPI void GenMeshTangents(Mesh *mesh);                                                     // Compute mesh tangents
-RLAPI bool ExportMesh(Mesh mesh, const char *fileName);                                     // Export mesh data to file, returns true on success
-RLAPI bool ExportMeshAsCode(Mesh mesh, const char *fileName);                               // Export mesh as code file (.h) defining multiple arrays of vertex attributes
+RLAPI bool ExportMesh(Mesh mesh, std::string_view fileName);                                     // Export mesh data to file, returns true on success
+RLAPI bool ExportMeshAsCode(Mesh mesh, std::string_view fileName);                               // Export mesh as code file (.h) defining multiple arrays of vertex attributes
 
 // Mesh generation functions
 RLAPI Mesh GenMeshPoly(int sides, float radius);                                            // Generate polygonal mesh
@@ -1650,7 +1641,7 @@ RLAPI Mesh GenMeshHeightmap(Image heightmap, Vector3 size);                     
 RLAPI Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize);                               // Generate cubes-based map mesh from image data
 
 // Material loading/unloading functions
-RLAPI Material *LoadMaterials(const char *fileName, int *materialCount);                    // Load materials from model file
+RLAPI Material *LoadMaterials(std::string_view fileName, int *materialCount);                    // Load materials from model file
 RLAPI Material LoadMaterialDefault(void);                                                   // Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)
 RLAPI bool IsMaterialValid(Material material);                                              // Check if material is valid (shader assigned, map textures loaded in GPU)
 RLAPI void UnloadMaterial(Material material);                                               // Unload material from GPU memory (VRAM)
@@ -1658,7 +1649,7 @@ RLAPI void SetMaterialTexture(Material *material, int mapType, Texture2D texture
 RLAPI void SetModelMeshMaterial(Model *model, int meshId, int materialId);                  // Set material for a mesh
 
 // Model animations loading/unloading functions
-RLAPI ModelAnimation *LoadModelAnimations(const char *fileName, int *animCount);            // Load model animations from file
+RLAPI ModelAnimation *LoadModelAnimations(std::string_view fileName, int *animCount);            // Load model animations from file
 RLAPI void UpdateModelAnimation(Model model, ModelAnimation anim, float frame);             // Update model animation pose (vertex buffers and bone matrices)
 RLAPI void UpdateModelAnimationEx(Model model, ModelAnimation animA, float frameA, ModelAnimation animB, float frameB, float blend); // Update model animation pose, blending two animations
 RLAPI void UnloadModelAnimations(ModelAnimation *animations, int animCount);                // Unload animation array data
@@ -1687,10 +1678,10 @@ RLAPI void SetMasterVolume(float volume);                             // Set mas
 RLAPI float GetMasterVolume(void);                                    // Get master volume (listener)
 
 // Wave/Sound loading/unloading functions
-RLAPI Wave LoadWave(const char *fileName);                            // Load wave data from file
-RLAPI Wave LoadWaveFromMemory(const char *fileType, const unsigned char *fileData, int dataSize); // Load wave from memory buffer, fileType refers to extension: i.e. '.wav'
+RLAPI Wave LoadWave(std::string_view fileName);                            // Load wave data from file
+RLAPI Wave LoadWaveFromMemory(std::string_view fileType, const unsigned char *fileData, int dataSize); // Load wave from memory buffer, fileType refers to extension: i.e. '.wav'
 RLAPI bool IsWaveValid(Wave wave);                                    // Check if wave data is valid (data loaded and parameters)
-RLAPI Sound LoadSound(const char *fileName);                          // Load sound from file
+RLAPI Sound LoadSound(std::string_view fileName);                          // Load sound from file
 RLAPI Sound LoadSoundFromWave(Wave wave);                             // Load sound from wave data
 RLAPI Sound LoadSoundAlias(Sound source);                             // Load sound alias, new sound that shares the same sample data as the source sound, does not own the sound data
 RLAPI bool IsSoundValid(Sound sound);                                 // Check if sound is valid (data loaded and buffers initialized)
@@ -1698,8 +1689,8 @@ RLAPI void UpdateSound(Sound sound, const void *data, int frameCount); // Update
 RLAPI void UnloadWave(Wave wave);                                     // Unload wave data
 RLAPI void UnloadSound(Sound sound);                                  // Unload sound
 RLAPI void UnloadSoundAlias(Sound alias);                             // Unload sound alias (does not deallocate sample data)
-RLAPI bool ExportWave(Wave wave, const char *fileName);               // Export wave data to file, returns true on success
-RLAPI bool ExportWaveAsCode(Wave wave, const char *fileName);         // Export wave sample data to code (.h), returns true on success
+RLAPI bool ExportWave(Wave wave, std::string_view fileName);               // Export wave data to file, returns true on success
+RLAPI bool ExportWaveAsCode(Wave wave, std::string_view fileName);         // Export wave sample data to code (.h), returns true on success
 
 // Wave/Sound management functions
 RLAPI void PlaySound(Sound sound);                                    // Play a sound
@@ -1717,8 +1708,8 @@ RLAPI float *LoadWaveSamples(Wave wave);                              // Load sa
 RLAPI void UnloadWaveSamples(float *samples);                         // Unload samples data loaded with LoadWaveSamples()
 
 // Music management functions
-RLAPI Music LoadMusicStream(const char *fileName);                    // Load music stream from file
-RLAPI Music LoadMusicStreamFromMemory(const char *fileType, const unsigned char *data, int dataSize); // Load music stream from data
+RLAPI Music LoadMusicStream(std::string_view fileName);                    // Load music stream from file
+RLAPI Music LoadMusicStreamFromMemory(std::string_view fileType, const unsigned char *data, int dataSize); // Load music stream from data
 RLAPI bool IsMusicValid(Music music);                                 // Check if music stream is valid (context and buffers initialized)
 RLAPI void UnloadMusicStream(Music music);                            // Unload music stream
 RLAPI void PlayMusicStream(Music music);                              // Start music playing

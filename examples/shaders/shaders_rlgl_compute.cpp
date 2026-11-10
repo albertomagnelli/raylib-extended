@@ -64,20 +64,18 @@ int main()
     unsigned int brushSize = 8;
 
     // Game of Life logic compute shader
-    char *golLogicCode = LoadFileText("resources/shaders/glsl430/gol.glsl");
+    std::string golLogicCode = LoadFileText("resources/shaders/glsl430/gol.glsl");
     unsigned int golLogicShader = rlLoadShader(golLogicCode, RL_COMPUTE_SHADER);
     unsigned int golLogicProgram = rlLoadShaderProgramCompute(golLogicShader);
-    UnloadFileText(golLogicCode);
 
     // Game of Life logic render shader
-    Shader golRenderShader = LoadShader(NULL, "resources/shaders/glsl430/gol_render.glsl");
+    Shader golRenderShader = LoadShader({}, "resources/shaders/glsl430/gol_render.glsl");
     int resUniformLoc = GetShaderLocation(golRenderShader, "resolution");
 
     // Game of Life transfert shader (CPU<->GPU download and upload)
-    char *golTransfertCode = LoadFileText("resources/shaders/glsl430/gol_transfert.glsl");
+    std::string golTransfertCode = LoadFileText("resources/shaders/glsl430/gol_transfert.glsl");
     unsigned int golTransfertShader = rlLoadShader(golTransfertCode, RL_COMPUTE_SHADER);
     unsigned int golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
-    UnloadFileText(golTransfertCode);
 
     // Load shader storage buffer object (SSBO), id returned
     unsigned int ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), NULL, RL_DYNAMIC_COPY);

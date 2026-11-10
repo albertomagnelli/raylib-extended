@@ -113,7 +113,7 @@ int main()
                 // Draw clock using default raylib font
                 // Get pointer to formated clock time string
                 // WARNING: Pointing to an internal static string that is reused between TextFormat() calls
-                const char *clockTime = TextFormat("%02i:%02i:%02i", clock.hour.value, clock.minute.value, clock.second.value);
+                std::string clockTime = TextFormat("%02i:%02i:%02i", clock.hour.value, clock.minute.value, clock.second.value);
                 DrawText(clockTime, GetScreenWidth()/2 - MeasureText(clockTime, 150)/2, 300, 150, BLACK);
             }
 

@@ -1049,8 +1049,11 @@ void SetWindowIcons(Image *images, int count)
 }
 
 // Set title for window
-void SetWindowTitle(const char *title)
+void SetWindowTitle(std::string_view titleView)
 {
+    const std::string titleStr(titleView);
+    const char *title = titleStr.c_str();
+
     RGFW_window_setName(platform.window, (char *)title);
     CORE.Window.title = title;
 }
@@ -1234,11 +1237,11 @@ int GetMonitorRefreshRate(int monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-const char *GetMonitorName(int monitor)
+std::string GetMonitorName(int monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(NULL);
 
-    return mons[monitor]->name;
+    return GetStringOrEmpty(mons[monitor]->name);
 }
 
 // Get window position XY on monitor
@@ -1287,17 +1290,20 @@ float GetMonitorPixelRatio(void)
 }
 
 // Set clipboard text content
-void SetClipboardText(const char *text)
+void SetClipboardText(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     // add 1 for null terminator
     RGFW_writeClipboard(text, strlen(text)+1);
 }
 
 // Get clipboard text content
 // NOTE: returned string is allocated and freed by RGFW
-const char *GetClipboardText(void)
+std::string GetClipboardText(void)
 {
-    return RGFW_readClipboard(NULL);
+    return GetStringOrEmpty(RGFW_readClipboard(NULL));
 }
 
 #if SUPPORT_CLIPBOARD_IMAGE
@@ -1479,8 +1485,11 @@ double GetTime(void)
 // WARNING: This function is only safe to use if you control the URL given,
 // a user could craft a malicious string to perform and undesired action
 // NOTE: Some safety checks have been added to mitigate security issues
-void OpenURL(const char *url)
+void OpenURL(std::string_view urlView)
 {
+    const std::string urlStr(urlView);
+    const char *url = urlStr.c_str();
+
     // Security check to (partially) avoid malicious code
     if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
     {
@@ -1515,8 +1524,11 @@ void OpenURL(const char *url)
 //----------------------------------------------------------------------------------
 
 // Set internal gamepad mappings
-int SetGamepadMappings(const char *mappings)
+int SetGamepadMappings(std::string_view mappingsView)
 {
+    const std::string mappingsStr(mappingsView);
+    const char *mappings = mappingsStr.c_str();
+
     return mg_update_gamepad_mappings(&platform.minigamepad, mappings);
 }
 
@@ -1540,7 +1552,7 @@ void SetMouseCursor(int cursor)
 }
 
 // Get physical key name
-const char *GetKeyName(int key)
+std::string GetKeyName(int key)
 {
     TRACELOG(LOG_WARNING, "GetKeyName() unsupported on target platform");
 
@@ -1813,7 +1825,7 @@ int InitPlatform(void)
     hints->samples = GetWindowRequestedSamples();   // Zero disables multisampling (MSAA)
     RGFW_setGlobalHints_OpenGL(hints);
 
-    platform.window = RGFW_createWindow((CORE.Window.title != 0)? CORE.Window.title : " ", 0, 0, CORE.Window.screen.width, CORE.Window.screen.height, flags | RGFW_windowOpenGL);
+    platform.window = RGFW_createWindow(CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), 0, 0, CORE.Window.screen.width, CORE.Window.screen.height, flags | RGFW_windowOpenGL);
 
 #ifndef PLATFORM_WEB_RGFW
     i32 screenSizeWidth;
@@ -2015,7 +2027,7 @@ int InitPlatform(void)
 
     mg_gamepads_init(&platform.minigamepad);
 
-    return 0;
+    return {};
 }
 
 // Close platform

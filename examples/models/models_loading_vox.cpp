@@ -176,7 +176,7 @@ int main()
             DrawText("- MOUSE LEFT BUTTON: CYCLE VOX MODELS", 20, 50, 10, BLUE);
             DrawText("- MOUSE MIDDLE BUTTON: ZOOM OR ROTATE CAMERA", 20, 70, 10, BLUE);
             DrawText("- UP-DOWN-LEFT-RIGHT KEYS: MOVE CAMERA", 20, 90, 10, BLUE);
-            DrawText(TextFormat("VOX model file: %s", GetFileName(voxFileNames[currentModel])), 10, 10, 20, GRAY);
+            DrawText(TextFormat("VOX model file: %s", GetFileName(voxFileNames[currentModel]).c_str()), 10, 10, 20, GRAY);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

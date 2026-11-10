@@ -38,11 +38,16 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
 - RAII handles (move-only, deleted copies) for `Image`, `Texture2D`, `RenderTexture2D`, `Shader`,
   `Mesh`, `Model`, `Font`, `Wave`, `Sound`, `Music`, `AudioStream` — **next phase**, after style review.
   `Model` owns its `Mesh` list; copies deleted, moves transfer ownership.
-- Text APIs: `std::string_view` parameters; `TextFormat` stays printf-style for now.
+- Text APIs are C++: `std::string_view` parameters, `std::string` return values and
+  `std::vector<std::string>` for lists (`LoadTextLines`, `TextSplit`, `FilePathList`).
+  `TextFormat`/`TraceLog` keep their printf-style variadic signature, so `std::string`
+  arguments passed through them need `.c_str()`.
 
 ## Examples
 - `int main()` (no `(void)`), constructor-init for structs, `Vector2{}` literals,
   `const` locals kept as-is. One file per example, `.cpp` extension.
+- Text is passed as string literals or `std::string`; APIs accept `std::string_view`, so no
+  `.c_str()` is needed for normal calls. Only varargs (`TextFormat`, `TraceLog`) need it.
 - Array arguments that used C compound literals (`(float[4]){ ... }`) become
   `std::initializer_list<float>{ ... }.begin()`, which keeps the temporary alive for the call.
 

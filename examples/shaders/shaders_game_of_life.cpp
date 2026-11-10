@@ -98,7 +98,7 @@ int main()
     bool buttonSlower = false;
 
     // Load shader
-    Shader shdrGameOfLife = LoadShader(0, TextFormat("resources/shaders/glsl%i/game_of_life.fs", GLSL_VERSION));
+    Shader shdrGameOfLife = LoadShader({}, TextFormat("resources/shaders/glsl%i/game_of_life.fs", GLSL_VERSION));
 
     // Set shader uniform size of the world
     int resolutionLoc = GetShaderLocation(shdrGameOfLife, "resolution");

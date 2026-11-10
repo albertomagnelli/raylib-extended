@@ -663,8 +663,11 @@ void SetWindowIcons(Image *images, int count)
 }
 
 // Set title for window
-void SetWindowTitle(const char *title)
+void SetWindowTitle(std::string_view titleView)
 {
+    const std::string titleStr(titleView);
+    const char *title = titleStr.c_str();
+
     CORE.Window.title = title;
     glfwSetWindowTitle(platform.handle, title);
 }
@@ -1039,7 +1042,7 @@ int GetMonitorRefreshRate(int monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-const char *GetMonitorName(int monitor)
+std::string GetMonitorName(int monitor)
 {
     const char *name = NULL;
     
@@ -1052,7 +1055,7 @@ const char *GetMonitorName(int monitor)
     }
     else TRACELOG(LOG_WARNING, "GLFW: Failed to find selected monitor");
     
-    return name;
+    return GetStringOrEmpty(name);
 }
 
 // Get window position XY on monitor
@@ -1078,16 +1081,19 @@ Vector2 GetWindowScaleDPI(void)
 }
 
 // Set clipboard text content
-void SetClipboardText(const char *text)
+void SetClipboardText(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     glfwSetClipboardString(platform.handle, text);
 }
 
 // Get clipboard text content
 // NOTE: returned string is allocated and freed by GLFW
-const char *GetClipboardText(void)
+std::string GetClipboardText(void)
 {
-    return glfwGetClipboardString(platform.handle);
+    return GetStringOrEmpty(glfwGetClipboardString(platform.handle));
 }
 
 // Get clipboard image
@@ -1230,8 +1236,11 @@ double GetTime(void)
 // WARNING: This function is only safe to use if you control the URL given,
 // a user could craft a malicious string to perform and undesired action
 // NOTE: Some safety checks have been added to mitigate security issues
-void OpenURL(const char *url)
+void OpenURL(std::string_view urlView)
 {
+    const std::string urlStr(urlView);
+    const char *url = urlStr.c_str();
+
     // Security check to (partially) avoid malicious code
     if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
     {
@@ -1267,8 +1276,11 @@ void OpenURL(const char *url)
 //----------------------------------------------------------------------------------
 
 // Set internal gamepad mappings
-int SetGamepadMappings(const char *mappings)
+int SetGamepadMappings(std::string_view mappingsView)
 {
+    const std::string mappingsStr(mappingsView);
+    const char *mappings = mappingsStr.c_str();
+
     return glfwUpdateGamepadMappings(mappings);
 }
 
@@ -1302,9 +1314,9 @@ void SetMouseCursor(int cursor)
 }
 
 // Get physical key name
-const char *GetKeyName(int key)
+std::string GetKeyName(int key)
 {
-    return glfwGetKeyName(key, glfwGetKeyScancode(key));
+    return GetStringOrEmpty(glfwGetKeyName(key, glfwGetKeyScancode(key)));
 }
 
 // Register all input events
@@ -1699,7 +1711,7 @@ int InitPlatform(void)
             CORE.Window.screen = CORE.Window.display;
         }
 
-        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, (CORE.Window.title != 0)? CORE.Window.title : " ", monitor, NULL);
+        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), monitor, NULL);
         if (!platform.handle)
         {
             glfwTerminate();
@@ -1727,7 +1739,7 @@ int InitPlatform(void)
         if ((workWidth > 0) && (CORE.Window.screen.width > (unsigned int)workWidth)) CORE.Window.screen.width = workWidth;
         if ((workHeight > 0) && (CORE.Window.screen.height > (unsigned int)workHeight)) CORE.Window.screen.height = workHeight;
 
-        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, (CORE.Window.title != 0)? CORE.Window.title : " ", NULL, NULL);
+        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), NULL, NULL);
         if (!platform.handle)
         {
             glfwTerminate();
@@ -1952,7 +1964,7 @@ int InitPlatform(void)
 
     TRACELOG(LOG_INFO, "PLATFORM: DESKTOP (GLFW - %s): Initialized successfully", glfwPlatform);
 
-    return 0;
+    return {};
 }
 
 // Close platform

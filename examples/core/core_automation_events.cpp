@@ -74,7 +74,7 @@ int main()
     camera.zoom = 1.0f;
 
     // Automation events
-    AutomationEventList aelist = LoadAutomationEventList(0);  // Initialize list of automation events to record new events
+    AutomationEventList aelist = LoadAutomationEventList({});  // Initialize list of automation events to record new events
     SetAutomationEventList(&aelist);
     bool eventRecording = false;
     bool eventPlaying = false;
@@ -122,7 +122,6 @@ int main()
                 camera.zoom = 1.0f;
             }
 
-            UnloadDroppedFiles(droppedFiles);   // Unload filepaths from memory
         }
         //----------------------------------------------------------------------------------
 

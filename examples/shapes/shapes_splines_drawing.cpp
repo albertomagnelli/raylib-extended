@@ -263,7 +263,7 @@ int main()
             if (splineTypeEditMode || (selectedPoint != -1) || (selectedControlPoint != NULL)) GuiLock();
 
             // Draw spline config
-            GuiLabel(Rectangle{ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", (int)splineThickness));
+            GuiLabel(Rectangle{ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", (int)splineThickness).c_str());
             GuiSliderBar(Rectangle{ 12, 60 + 24, 140, 16 }, NULL, NULL, &splineThickness, 1.0f, 40.0f);
 
             GuiCheckBox(Rectangle{ 12, 110, 20, 20 }, "Show point helpers", &splineHelpersActive);

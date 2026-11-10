@@ -154,9 +154,9 @@ int main()
             // Draw GUI controls
             //------------------------------------------------------------------------------
             GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, ColorToInt(GRAY));
-            GuiToggle(Rectangle{ 640, 70, 120, 20}, TextFormat("Pause"), &pause);
+            GuiToggle(Rectangle{ 640, 70, 120, 20}, TextFormat("Pause").c_str(), &pause);
             GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, ColorToInt(LIME));
-            GuiSliderBar(Rectangle{ 640, 40, 120, 20}, "Angle", TextFormat("%.0f°", angle), &angle, 0.0f, 360.0f);
+            GuiSliderBar(Rectangle{ 640, 40, 120, 20}, "Angle", TextFormat("%.0f°", angle).c_str(), &angle, 0.0f, 360.0f);
 
             // Angle values panel
             GuiGroupBox(Rectangle{ 620, 110, 140, 170}, "Angle Values");

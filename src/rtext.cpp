@@ -334,8 +334,11 @@ Font GetFontDefault()
 }
 
 // Load Font from file into GPU memory (VRAM)
-Font LoadFont(const char *fileName)
+Font LoadFont(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     // Default values for ttf font generation
 #ifndef FONT_TTF_DEFAULT_SIZE
     #define FONT_TTF_DEFAULT_SIZE           32      // TTF font generation default char size (char-height)
@@ -384,8 +387,11 @@ Font LoadFont(const char *fileName)
 // Load font from file with defined codepoints and generation size
 // NOTE: NULL for codepoints and 0 for codepointCount to load the default character set (32..126),
 // font size is provided in pixels height
-Font LoadFontEx(const char *fileName, int fontSize, const int *codepoints, int codepointCount)
+Font LoadFontEx(std::string_view fileNameView, int fontSize, const int *codepoints, int codepointCount)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Font font = { 0 };
 
     // Loading file to memory
@@ -535,12 +541,15 @@ Font LoadFontFromImage(Image image, Color key, int firstChar)
 }
 
 // Load font from memory buffer, fileType refers to extension: i.e. ".ttf"
-Font LoadFontFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int fontSize, const int *codepoints, int codepointCount)
+Font LoadFontFromMemory(std::string_view fileTypeView, const unsigned char *fileData, int dataSize, int fontSize, const int *codepoints, int codepointCount)
 {
+    const std::string fileTypeStr(fileTypeView);
+    const char *fileType = fileTypeStr.c_str();
+
     Font font = { 0 };
 
     char fileExtLower[16] = { 0 };
-    snprintf(fileExtLower, 16, "%s", TextToLower(fileType));
+    snprintf(fileExtLower, 16, "%s", TextToLower(fileType).c_str());
 
     font.baseSize = fontSize;
     font.glyphPadding = 0;
@@ -1038,8 +1047,11 @@ void UnloadFont(Font font)
 }
 
 // Export font as code file, returns true on success
-bool ExportFontAsCode(Font font, const char *fileName)
+bool ExportFontAsCode(Font font, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
 #ifndef TEXT_BYTES_PER_LINE
@@ -1048,7 +1060,7 @@ bool ExportFontAsCode(Font font, const char *fileName)
 
     // Get file name from path
     char fileNamePascal[256] = { 0 };
-    snprintf(fileNamePascal, 256, "%s", TextToPascal(GetFileNameWithoutExt(fileName)));
+    snprintf(fileNamePascal, 256, "%s", TextToPascal(GetFileNameWithoutExt(fileName)).c_str());
 
     // Get font atlas image and size, required to estimate code file size
     // NOTE: This mechanism is highly coupled to raylib
@@ -1098,10 +1110,10 @@ bool ExportFontAsCode(Font font, const char *fileName)
     unsigned char *compData = CompressData((const unsigned char *)image.data, imageDataSize, &compDataSize);
 
     // Save font image data (compressed)
-    byteCount += sprintf(txtData + byteCount, "#define COMPRESSED_DATA_SIZE_FONT_%s %i\n\n", TextToUpper(fileNamePascal), compDataSize);
+    byteCount += sprintf(txtData + byteCount, "#define COMPRESSED_DATA_SIZE_FONT_%s %i\n\n", TextToUpper(fileNamePascal).c_str(), compDataSize);
     byteCount += sprintf(txtData + byteCount, "// Font image pixels data compressed (DEFLATE)\n");
     byteCount += sprintf(txtData + byteCount, "// NOTE: Original pixel data simplified to GRAYSCALE\n");
-    byteCount += sprintf(txtData + byteCount, "static unsigned char fontData_%s[COMPRESSED_DATA_SIZE_FONT_%s] = { ", fileNamePascal, TextToUpper(fileNamePascal));
+    byteCount += sprintf(txtData + byteCount, "static unsigned char fontData_%s[COMPRESSED_DATA_SIZE_FONT_%s] = { ", fileNamePascal, TextToUpper(fileNamePascal).c_str());
     for (int i = 0; i < compDataSize - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%02x,\n    " : "0x%02x, "), compData[i]);
     byteCount += sprintf(txtData + byteCount, "0x%02x };\n\n", compData[compDataSize - 1]);
     RL_FREE(compData);
@@ -1145,7 +1157,7 @@ bool ExportFontAsCode(Font font, const char *fileName)
 #if defined(SUPPORT_COMPRESSED_FONT_ATLAS)
     byteCount += sprintf(txtData + byteCount, "    // NOTE: Compressed font image data (DEFLATE), it requires DecompressData() function\n");
     byteCount += sprintf(txtData + byteCount, "    int fontDataSize_%s = 0;\n", fileNamePascal);
-    byteCount += sprintf(txtData + byteCount, "    unsigned char *data = DecompressData(fontData_%s, COMPRESSED_DATA_SIZE_FONT_%s, &fontDataSize_%s);\n", fileNamePascal, TextToUpper(fileNamePascal), fileNamePascal);
+    byteCount += sprintf(txtData + byteCount, "    unsigned char *data = DecompressData(fontData_%s, COMPRESSED_DATA_SIZE_FONT_%s, &fontDataSize_%s);\n", fileNamePascal, TextToUpper(fileNamePascal).c_str(), fileNamePascal);
     byteCount += sprintf(txtData + byteCount, "    Image imFont = { data, %i, %i, 1, %i };\n\n", image.width, image.height, image.format);
 #else
     byteCount += sprintf(txtData + byteCount, "    Image imFont = { fontImageData_%s, %i, %i, 1, %i };\n\n", styleName, image.width, image.height, image.format);
@@ -1208,8 +1220,11 @@ void DrawFPS(int posX, int posY)
 // Draw text (using default font)
 // NOTE: fontSize work like in any drawing program but if fontSize is lower than font-base-size, then font-base-size is used
 // NOTE: chars spacing is proportional to fontSize
-void DrawText(const char *text, int posX, int posY, int fontSize, Color color)
+void DrawText(std::string_view textView, int posX, int posY, int fontSize, Color color)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     // Check if default font has been loaded
     if (GetFontDefault().texture.id != 0)
     {
@@ -1225,8 +1240,11 @@ void DrawText(const char *text, int posX, int posY, int fontSize, Color color)
 
 // Draw text using Font
 // NOTE: chars spacing is NOT proportional to fontSize
-void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint)
+void DrawTextEx(Font font, std::string_view textView, Vector2 position, float fontSize, float spacing, Color tint)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     if (font.texture.id == 0) font = GetFontDefault();  // Security check in case of not valid font
 
     int size = TextLength(text);    // Total size in bytes of the text, scanned by codepoints in loop
@@ -1265,8 +1283,11 @@ void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, f
 }
 
 // Draw text using Font and pro parameters (rotation)
-void DrawTextPro(Font font, const char *text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint)
+void DrawTextPro(Font font, std::string_view textView, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     rlPushMatrix();
 
         rlTranslatef(position.x, position.y, 0.0f);
@@ -1340,8 +1361,11 @@ void SetTextLineSpacing(int spacing)
 }
 
 // Measure string width for default font
-int MeasureText(const char *text, int fontSize)
+int MeasureText(std::string_view textView, int fontSize)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     Vector2 textSize = { 0.0f, 0.0f };
 
     // Check if default font has been loaded
@@ -1358,8 +1382,11 @@ int MeasureText(const char *text, int fontSize)
 }
 
 // Measure string size for Font
-Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing)
+Vector2 MeasureTextEx(Font font, std::string_view textView, float fontSize, float spacing)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     Vector2 textSize{};
 
     if ((font.texture.id == 0) || (text == NULL) || (text[0] == '\0')) return textSize; // Security check
@@ -1528,51 +1555,33 @@ Rectangle GetGlyphAtlasRec(Font font, int codepoint)
 //----------------------------------------------------------------------------------
 // Load text as separate lines ('\n')
 // NOTE: Returned lines end with null terminator '\0'
-char **LoadTextLines(const char *text, int *count)
+std::vector<std::string> LoadTextLines(std::string_view textView)
 {
-    char **lines = NULL;
-    int lineCount = 0;
+    std::vector<std::string> lines;
 
-    if (text != NULL)
+    size_t start = 0;
+    while (start <= textView.size())
     {
-        int textLength = TextLength(text);
-        lineCount = 1;
+        size_t end = textView.find('\n', start);
+        if (end == std::string_view::npos) end = textView.size();
 
-        // First text scan pass to get required line count
-        for (int i = 0; i < textLength; i++)
-        {
-            if (text[i] == '\n') lineCount++;
-        }
-
-        lines = (char **)RL_CALLOC(lineCount, sizeof(char *));
-        for (int i = 0, l = 0, lineLen = 0; i <= textLength; i++)
-        {
-            if ((text[i] == '\n') || (text[i] == '\0'))
-            {
-                lines[l] = (char *)RL_CALLOC(lineLen + 1, 1);
-                memcpy(lines[l], &text[i - lineLen], lineLen);
-                lineLen = 0;
-                l++;
-            }
-            else lineLen++;
-        }
+        lines.emplace_back(textView.substr(start, end - start));
+        start = end + 1;
     }
 
-    *count = lineCount;
     return lines;
 }
 
 // Unload text lines
-void UnloadTextLines(char **lines, int lineCount)
-{
-    for (int i = 0; i < lineCount; i++) RL_FREE(lines[i]);
-    RL_FREE(lines);
-}
+
 
 // Get text length in bytes, check for \0 character
 // NOTE: Alternative: use strlen(text)
-unsigned int TextLength(const char *text)
+unsigned int TextLength(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     unsigned int length = 0;
 
     if (text != NULL)
@@ -1585,8 +1594,11 @@ unsigned int TextLength(const char *text)
 
 // Formatting of text with variables to 'embed'
 // WARNING: String returned will expire after this function is called MAX_TEXTFORMAT_BUFFERS times
-const char *TextFormat(const char *text, ...)
+std::string TextFormat(std::string_view textView, ...)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
 #ifndef MAX_TEXTFORMAT_BUFFERS
     #define MAX_TEXTFORMAT_BUFFERS 4        // Maximum number of static buffers for text formatting
 #endif
@@ -1601,7 +1613,7 @@ const char *TextFormat(const char *text, ...)
     if (text != NULL)
     {
         va_list args;
-        va_start(args, text);
+        va_start(args, textView);
         int requiredByteCount = vsnprintf(currentBuffer, MAX_TEXT_BUFFER_LENGTH, text, args);
         va_end(args);
 
@@ -1622,8 +1634,11 @@ const char *TextFormat(const char *text, ...)
 
 // Get integer value from text
 // NOTE: This function replaces atoi() [stdlib.h]
-int TextToInteger(const char *text)
+int TextToInteger(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     int value = 0;
     int sign = 1;
 
@@ -1644,8 +1659,11 @@ int TextToInteger(const char *text)
 // Get float value from text
 // NOTE: This function replaces atof() [stdlib.h]
 // WARNING: Only '.' character is understood as decimal point
-float TextToFloat(const char *text)
+float TextToFloat(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     float value = 0.0f;
     float sign = 1.0f;
 
@@ -1676,31 +1694,17 @@ float TextToFloat(const char *text)
 
 // Copy one string to another, returns bytes copied
 // NOTE: Alternative implementation to strcpy(dst, src) from C standard library
-int TextCopy(char *dst, const char *src)
-{
-    int bytes = 0;
 
-    if ((src != NULL) && (dst != NULL))
-    {
-        while (*src != '\0')
-        {
-            *dst = *src;
-            dst++;
-            src++;
-
-            bytes++;
-        }
-
-        *dst = '\0';
-    }
-
-    return bytes;
-}
 
 // Check if two text strings are equal
 // REQUIRES: strcmp()
-bool TextIsEqual(const char *text1, const char *text2)
+bool TextIsEqual(std::string_view text1View, std::string_view text2View)
 {
+    const std::string text1Str(text1View);
+    const char *text1 = text1Str.c_str();
+    const std::string text2Str(text2View);
+    const char *text2 = text2Str.c_str();
+
     bool result = false;
 
     if ((text1 != NULL) && (text2 != NULL))
@@ -1712,8 +1716,11 @@ bool TextIsEqual(const char *text1, const char *text2)
 }
 
 // Get a piece of a text string
-const char *TextSubtext(const char *text, int position, int length)
+std::string TextSubtext(std::string_view textView, int position, int length)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -1739,8 +1746,11 @@ const char *TextSubtext(const char *text, int position, int length)
 }
 
 // Remove text spaces, concat words
-const char *TextRemoveSpaces(const char *text)
+std::string TextRemoveSpaces(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -1757,8 +1767,15 @@ const char *TextRemoveSpaces(const char *text)
 }
 
 // Get text between two strings
-char *GetTextBetween(const char *text, const char *begin, const char *end)
+std::string GetTextBetween(std::string_view textView, std::string_view beginView, std::string_view endView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+    const std::string beginStr(beginView);
+    const char *begin = beginStr.c_str();
+    const std::string endStr(endView);
+    const char *end = endStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -1784,14 +1801,20 @@ char *GetTextBetween(const char *text, const char *begin, const char *end)
 // Replace text string
 // REQUIRES: strstr(), memcpy()
 // NOTE: Limited text replace functionality, using static string
-char *TextReplace(const char *text, const char *search, const char *replacement)
+std::string TextReplace(std::string_view textView, std::string_view searchView, std::string_view replacementView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+    const std::string searchStr(searchView);
+    const char *search = searchStr.c_str();
+    const std::string replacementStr(replacementView);
+    const char *replacement = replacementStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if ((text != NULL) && (search != NULL) && (search[0] != '\0'))
+    if (!textStr.empty() && !searchStr.empty())
     {
-        if (replacement == NULL) replacement = "";
 
         const char *insertPoint = NULL;    // Next insert point
         char *tempPtr = NULL;              // Temp pointer
@@ -1839,7 +1862,7 @@ char *TextReplace(const char *text, const char *search, const char *replacement)
             // NOTE: Text pointer internal copy has been updated along the process
             memcpy(tempPtr, text, TextLength(text));
         }
-        else TRACELOG(LOG_WARNING, "Text with replacement is longer than internal buffer, use TextReplaceAlloc()");
+        else TRACELOG(LOG_WARNING, "Text with replacement is longer than internal buffer");
     }
 
     return buffer;
@@ -1848,74 +1871,26 @@ char *TextReplace(const char *text, const char *search, const char *replacement)
 // Replace text string
 // REQUIRES: strstr(), memcpy()
 // WARNING: Allocated memory must be manually freed
-char *TextReplaceAlloc(const char *text, const char *search, const char *replacement)
-{
-    char *result = NULL;
 
-    if ((text != NULL) && (search != NULL) && (search[0] != '\0'))
-    {
-        if (replacement == NULL) replacement = "";
-
-        const char *insertPoint = NULL;    // Next insert point
-        char *temp = NULL;                 // Temp pointer
-        int textLen = 0;            // Text string length
-        int searchLen = 0;          // Search string length of (the string to remove)
-        int replaceLen = 0;         // Replacement length (the string to replace by)
-        int lastReplacePos = 0;     // Distance between next search and end of last replace
-        int count = 0;              // Number of replacements
-
-        textLen = TextLength(text);
-        searchLen = TextLength(search);
-        replaceLen = TextLength(replacement);
-
-        // Count the number of replacements needed
-        insertPoint = text;
-        for (count = 0; (insertPoint = strstr(insertPoint, search)); count++) insertPoint += searchLen;
-
-        // Allocate returning string and point temp to it
-        int tempLen = textLen + (replaceLen - searchLen)*count + 1;
-        temp = result = (char *)RL_CALLOC(tempLen, sizeof(char));
-
-        // First time through the loop, all the variable are set correctly from here on,
-        //  - 'temp' points to the end of the result string
-        //  - 'insertPoint' points to the next occurrence of replace in text
-        //  - 'text' points to the remainder of text after "end of replace"
-        while (count > 0)
-        {
-            insertPoint = strstr(text, search);
-            lastReplacePos = (int)(insertPoint - text);
-
-            memcpy(temp, text, lastReplacePos);
-            temp += lastReplacePos;
-
-            if (replaceLen > 0)
-            {
-                memcpy(temp, replacement, replaceLen);
-                temp += replaceLen;
-            }
-
-            text += (lastReplacePos + searchLen); // Move to next "end of replace"
-
-            count--;
-        }
-
-        // Copy remaind text part after replacement to result (pointed by moving temp)
-        // NOTE: Text pointer internal copy has been updated along the process
-        memcpy(temp, text, TextLength(text));
-    }
-
-    return result;
-}
 
 // Replace text between two specific strings
 // REQUIRES: strncpy()
 // NOTE: If (replacement == NULL) removes "begin"[ ]"end" text
-char *TextReplaceBetween(const char *text, const char *begin, const char *end, const char *replacement)
+std::string TextReplaceBetween(std::string_view textView, std::string_view beginView, std::string_view endView, std::string_view replacementView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+    const std::string beginStr(beginView);
+    const char *begin = beginStr.c_str();
+    const std::string endStr(endView);
+    const char *end = endStr.c_str();
+    const std::string replacementStr(replacementView);
+    const char *replacement = replacementStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if ((text != NULL) && (begin != NULL) && (end != NULL))
+    if (!textStr.empty() && !beginStr.empty() && !endStr.empty())
     {
         int beginIndex = TextFindIndex(text, begin);
 
@@ -1929,13 +1904,13 @@ char *TextReplaceBetween(const char *text, const char *begin, const char *end, c
                 endIndex += (beginIndex + beginLen);
 
                 int textLen = TextLength(text);
-                int replaceLen = (replacement == NULL)? 0 : TextLength(replacement);
+                int replaceLen = (int)replacementStr.size();
                 //int toreplaceLen = endIndex - beginIndex - beginLen;
 
                 if ((beginIndex + beginLen + replaceLen + (textLen - endIndex)) < (MAX_TEXT_BUFFER_LENGTH - 1))
                 {
                     strncpy(buffer, text, beginIndex + beginLen); // Copy first text part
-                    if (replacement != NULL) strncpy(buffer + beginIndex + beginLen, replacement, replaceLen); // Copy replacement (if provided)
+                    strncpy(buffer + beginIndex + beginLen, replacement, replaceLen); // Copy replacement (if provided)
                     strncpy(buffer + beginIndex + beginLen + replaceLen, text + endIndex, textLen - endIndex); // Copy end text part
                 }
                 else TRACELOG(LOG_WARNING, "TEXT: Text with replaced string is longer than internal buffer (MAX_TEXT_BUFFER_LENGTH)");
@@ -1950,47 +1925,22 @@ char *TextReplaceBetween(const char *text, const char *begin, const char *end, c
 // REQUIRES: strncpy()
 // NOTE: If (replacement == NULL) remove "begin"[ ]"end" text
 // WARNING: Returned string must be freed by user
-char *TextReplaceBetweenAlloc(const char *text, const char *begin, const char *end, const char *replacement)
-{
-    char *result = NULL;
 
-    if ((text != NULL) && (begin != NULL) && (end != NULL))
-    {
-        int beginIndex = TextFindIndex(text, begin);
-
-        if (beginIndex > -1)
-        {
-            int beginLen = TextLength(begin);
-            int endIndex = TextFindIndex(text + beginIndex + beginLen, end);
-
-            if (endIndex > -1)
-            {
-                endIndex += (beginIndex + beginLen);
-
-                int textLen = TextLength(text);
-                int replaceLen = (replacement == NULL)? 0 : TextLength(replacement);
-                int toreplaceLen = endIndex - beginIndex - beginLen;
-                result = (char *)RL_CALLOC(textLen + replaceLen - toreplaceLen + 1, sizeof(char));
-
-                strncpy(result, text, beginIndex + beginLen); // Copy first text part
-                if (replacement != NULL) strncpy(result + beginIndex + beginLen, replacement, replaceLen); // Copy replacement (if provided)
-                strncpy(result + beginIndex + beginLen + replaceLen, text + endIndex, textLen - endIndex); // Copy end text part
-            }
-        }
-    }
-
-    return result;
-}
 
 // Insert text in a specific position, moves all text forward
 // WARNING: Allocated memory must be manually freed
-char *TextInsert(const char *text, const char *insert, int position)
+std::string TextInsert(std::string_view textView, std::string_view insertView, int position)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+    const std::string insertStr(insertView);
+    const char *insert = insertStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
     int textLen = TextLength(text);
 
-    if ((text != NULL) && (insert != NULL) && (position >= 0))
+    if (!textStr.empty() && !insertStr.empty() && (position >= 0))
     {
         if (position > textLen) position = textLen; // End of text string
         int insertLen = TextLength(insert);
@@ -2011,119 +1961,59 @@ char *TextInsert(const char *text, const char *insert, int position)
 
 // Insert text in a specific position, moves all text forward
 // WARNING: Allocated memory must be manually freed
-char *TextInsertAlloc(const char *text, const char *insert, int position)
+
+
+// Join text strings with delimiter
+// REQUIRES: memset(), memcpy()
+std::string TextJoin(const std::vector<std::string> &textList, std::string_view delimiter)
 {
-    char *result = NULL;
-    int textLen = TextLength(text);
+    std::string result;
 
-    if ((text != NULL) && (insert != NULL) && (position >= 0))
+    for (size_t i = 0; i < textList.size(); i++)
     {
-        if (position > textLen) position = textLen; // End of text string
-        int insertLen = TextLength(insert);
-
-        result = (char *)RL_CALLOC(textLen + insertLen + 1, 1);
-
-        for (int i = 0; i < position; i++) result[i] = text[i];
-        for (int i = 0; i < insertLen; i++) result[i + position] = insert[i];
-        for (int i = position; i < textLen; i++) result[i + insertLen] = text[i];
-
-        result[textLen + insertLen] = '\0'; // Add EOL
+        if (i > 0) result += delimiter;
+        result += textList[i];
     }
 
     return result;
 }
 
-// Join text strings with delimiter
-// REQUIRES: memset(), memcpy()
-char *TextJoin(char **textList, int count, const char *delimiter)
-{
-    static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
-    memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
-    char *textPtr = buffer;
-
-    int totalLength = 0;
-    int delimiterLen = TextLength(delimiter);
-
-    for (int i = 0; i < count; i++)
-    {
-        int textLength = TextLength(textList[i]);
-
-        // Make sure joined text could fit inside MAX_TEXT_BUFFER_LENGTH
-        if ((totalLength + textLength + delimiterLen) < MAX_TEXT_BUFFER_LENGTH)
-        {
-            memcpy(textPtr, textList[i], textLength);
-            totalLength += textLength;
-            textPtr += textLength;
-
-            if ((delimiterLen > 0) && (i < (count - 1)))
-            {
-                memcpy(textPtr, delimiter, delimiterLen);
-                totalLength += delimiterLen;
-                textPtr += delimiterLen;
-            }
-        }
-    }
-
-    return buffer;
-}
-
 // Split string into multiple strings
 // REQUIRES: memset()
-char **TextSplit(const char *text, char delimiter, int *count)
+std::vector<std::string> TextSplit(std::string_view text, char delimiter)
 {
-    // NOTE: Current implementation returns a copy of the provided string with '\0' (string end delimiter)
-    // inserted between strings defined by "delimiter" parameter. No memory is dynamically allocated,
-    // all used memory is static... it has some limitations:
-    //      1. Maximum number of possible split strings is set by MAX_TEXTSPLIT_COUNT
-    //      2. Maximum size of text to split is MAX_TEXT_BUFFER_LENGTH
+    std::vector<std::string> result;
 
-    static char *buffers[MAX_TEXTSPLIT_COUNT] = { NULL }; // Pointers to buffer[] text data
-    static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 }; // Text data with '\0' separators
-    memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
-
-    buffers[0] = buffer;
-    int counter = 0;
-
-    if (text != NULL)
+    size_t start = 0;
+    while (true)
     {
-        counter = 1;
-
-        // Count how many substrings ar found on text and set pointers to every one
-        // NOTE: Last buffer byte is reserved to terminate the last substring
-        for (int i = 0; i < MAX_TEXT_BUFFER_LENGTH - 1; i++)
+        size_t end = text.find(delimiter, start);
+        if (end == std::string_view::npos)
         {
-            buffer[i] = text[i];
-            if (buffer[i] == '\0') break;
-            else if (buffer[i] == delimiter)
-            {
-                buffer[i] = '\0';   // Set an end of string at this point
-                if (counter == MAX_TEXTSPLIT_COUNT) break;  // No room for more substrings, keep the last one complete
-
-                buffers[counter] = buffer + i + 1;
-                counter++;
-            }
+            result.emplace_back(text.substr(start));
+            break;
         }
+
+        result.emplace_back(text.substr(start, end - start));
+        start = end + 1;
     }
 
-    *count = counter;
-    return buffers;
+    return result;
 }
 
 // Append text at specific position and move cursor
 // WARNING: It's up to the user to make sure appended text does not overflow the buffer!
-void TextAppend(char *text, const char *append, int *position)
-{
-    if ((text != NULL) && (append != NULL))
-    {
-        TextCopy(text + *position, append);
-        *position += TextLength(append);
-    }
-}
+
 
 // Find first text occurrence within a string
 // REQUIRES: strstr()
-int TextFindIndex(const char *text, const char *search)
+int TextFindIndex(std::string_view textView, std::string_view searchView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+    const std::string searchStr(searchView);
+    const char *search = searchStr.c_str();
+
     int position = -1;
 
     if (text != NULL)
@@ -2139,8 +2029,11 @@ int TextFindIndex(const char *text, const char *search)
 // Get upper case version of provided string
 // WARNING: Limited functionality, only basic characters set
 // TODO: Support UTF-8 diacritics (á, ñ, ü...) to upper-case, check codepoints
-char *TextToUpper(const char *text)
+std::string TextToUpper(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -2158,8 +2051,11 @@ char *TextToUpper(const char *text)
 
 // Get lower case version of provided string
 // WARNING: Limited functionality, only basic characters set
-char *TextToLower(const char *text)
+std::string TextToLower(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -2177,8 +2073,11 @@ char *TextToLower(const char *text)
 
 // Get Pascal case notation version of provided string
 // WARNING: Limited functionality, only basic characters set
-char *TextToPascal(const char *text)
+std::string TextToPascal(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -2208,8 +2107,11 @@ char *TextToPascal(const char *text)
 
 // Get snake case notation version of provided string
 // WARNING: Limited functionality, only basic characters set
-char *TextToSnake(const char *text)
+std::string TextToSnake(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -2261,8 +2163,11 @@ char *TextToSnake(const char *text)
 
 // Get Camel case notation version of provided string
 // WARNING: Limited functionality, only basic characters set
-char *TextToCamel(const char *text)
+std::string TextToCamel(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
@@ -2293,44 +2198,25 @@ char *TextToCamel(const char *text)
 // Encode text codepoint into UTF-8 text
 // REQUIRES: memcpy()
 // WARNING: Allocated memory must be manually freed
-char *LoadUTF8(const int *codepoints, int length)
+std::string LoadUTF8(const int *codepoints, int length)
 {
-    char *text = NULL;
+    std::string text;
+    text.reserve((size_t)length*4);
 
-    if ((codepoints != NULL) && (length > 0))
-    {
-        // Allocate enough memory to fit all possible codepoints
-        // NOTE: 5 bytes for every codepoint should be enough
-        text = (char *)RL_CALLOC(length*5, 1);
-        const char *utf8 = NULL;
-        int size = 0;
-
-        for (int i = 0, bytes = 0; i < length; i++)
-        {
-            utf8 = CodepointToUTF8(codepoints[i], &bytes);
-            memcpy(text + size, utf8, bytes);
-            size += bytes;
-        }
-
-        // Create second buffer and copy data manually to it
-        char *temp = (char *)RL_CALLOC(size + 1, 1);
-        memcpy(temp, text, size);
-        RL_FREE(text);
-        text = temp;
-    }
+    for (int i = 0; i < length; i++) text += CodepointToUTF8(codepoints[i]);
 
     return text;
 }
 
 // Unload UTF-8 text encoded from codepoints array
-void UnloadUTF8(char *text)
-{
-    RL_FREE(text);
-}
+
 
 // Load all codepoints from a UTF-8 text string, codepoints count returned by parameter
-int *LoadCodepoints(const char *text, int *count)
+int * LoadCodepoints(std::string_view textView, int *count)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     int *codepoints = NULL;
     int codepointCount = 0;
 
@@ -2367,8 +2253,11 @@ void UnloadCodepoints(int *codepoints)
 
 // Get total number of characters(codepoints) in a UTF-8 encoded text, until '\0' is found
 // NOTE: If an invalid UTF-8 sequence is encountered a '?'(0x3f) codepoint is counted instead
-int GetCodepointCount(const char *text)
+int GetCodepointCount(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     unsigned int length = 0;
     const char *ptr = text;
 
@@ -2388,18 +2277,17 @@ int GetCodepointCount(const char *text)
 
 // Encode codepoint into utf8 text (char array length returned as parameter)
 // NOTE: It uses a static array to store UTF-8 bytes
-const char *CodepointToUTF8(int codepoint, int *utf8Size)
+std::string CodepointToUTF8(int codepoint)
 {
-    static char utf8[6] = { 0 };
-    memset(utf8, 0, 6); // Clear static array
-    int size = 0;       // Byte size of codepoint
+    char utf8[5] = { 0 };
+    int size = 0;
 
-    if (codepoint <= 0x7f)
+    if (codepoint < 0x80)
     {
         utf8[0] = (char)codepoint;
         size = 1;
     }
-    else if (codepoint <= 0x7ff)
+    else if (codepoint < 0x800)
     {
         utf8[0] = (char)(((codepoint >> 6) & 0x1f) | 0xc0);
         utf8[1] = (char)((codepoint & 0x3f) | 0x80);
@@ -2421,9 +2309,7 @@ const char *CodepointToUTF8(int codepoint, int *utf8Size)
         size = 4;
     }
 
-    *utf8Size = size;
-
-    return utf8;
+    return std::string(utf8, size);
 }
 
 // Get next codepoint in a UTF-8 encoded text, scanning until '\0' is found
@@ -2431,8 +2317,11 @@ const char *CodepointToUTF8(int codepoint, int *utf8Size)
 // Total number of bytes processed are returned as a parameter
 // NOTE: The standard says U+FFFD should be returned in case of errors
 // but that character is not supported by the default font in raylib
-int GetCodepoint(const char *text, int *codepointSize)
+int GetCodepoint(std::string_view textView, int *codepointSize)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
 /*
     UTF-8 specs from https://www.ietf.org/rfc/rfc3629.txt
 
@@ -2537,8 +2426,11 @@ int GetCodepoint(const char *text, int *codepointSize)
 }
 
 // Get next codepoint in a byte sequence and bytes processed
-int GetCodepointNext(const char *text, int *codepointSize)
+int GetCodepointNext(std::string_view textView, int *codepointSize)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     const char *ptr = text;
     int codepoint = 0x3f;       // Codepoint (defaults to '?')
     *codepointSize = 1;
@@ -2577,8 +2469,11 @@ int GetCodepointNext(const char *text, int *codepointSize)
 }
 
 // Get previous codepoint in a byte sequence and bytes processed
-int GetCodepointPrevious(const char *text, int *codepointSize)
+int GetCodepointPrevious(std::string_view textView, int *codepointSize)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     const char *ptr = text;
     int codepoint = 0x3f;       // Codepoint (defaults to '?')
     *codepointSize = 1;
@@ -2637,11 +2532,11 @@ static Font LoadBMFont(const char *fileName)
     int readBytes = 0;  // Data bytes read
     int readVars = 0;   // Variables filled by sscanf()
 
-    char *fileText = LoadFileText(fileName);
+    std::string fileText = LoadFileText(fileName);
 
-    if (fileText == NULL) return font;
+    if (fileText.empty()) return font;
 
-    char *fileTextPtr = fileText;
+    char *fileTextPtr = fileText.data();
 
     // NOTE: Skip first line, it contains no useful information
     readBytes = GetLine(fileTextPtr, buffer, MAX_BUFFER_SIZE);
@@ -2653,7 +2548,7 @@ static Font LoadBMFont(const char *fileName)
     readVars = sscanf(searchPoint, "lineHeight=%i base=%i scaleW=%i scaleH=%i pages=%i", &fontSize, &base, &imWidth, &imHeight, &pageCount);
     fileTextPtr += (readBytes + 1);
 
-    if (readVars < 4) { UnloadFileText(fileText); return font; } // Some data not available, file malformed
+    if (readVars < 4) return font; // Some data not available, file malformed
 
     if (pageCount > MAX_FONT_IMAGE_PAGES)
     {
@@ -2668,7 +2563,7 @@ static Font LoadBMFont(const char *fileName)
         readVars = sscanf(searchPoint, "file=\"%128[^\"]\"", imFileName[i]);
         fileTextPtr += (readBytes + 1);
 
-        if (readVars < 1) { UnloadFileText(fileText); return font; } // No fileName read
+        if (readVars < 1) return font; // No fileName read
     }
 
     readBytes = GetLine(fileTextPtr, buffer, MAX_BUFFER_SIZE);
@@ -2676,14 +2571,14 @@ static Font LoadBMFont(const char *fileName)
     readVars = sscanf(searchPoint, "count=%i", &glyphCount);
     fileTextPtr += (readBytes + 1);
 
-    if (readVars < 1) { UnloadFileText(fileText); return font; } // No glyphCount read
+    if (readVars < 1) return font; // No glyphCount read
 
     // Load all required images for further compose
     Image *imFonts = (Image *)RL_CALLOC(pageCount, sizeof(Image)); // Font atlases, multiple images
 
     for (int i = 0; i < pageCount; i++)
     {
-        imFonts[i] = LoadImage(TextFormat("%s/%s", GetDirectoryPath(fileName), imFileName[i]));
+        imFonts[i] = LoadImage(TextFormat("%s/%s", GetDirectoryPath(fileName).c_str(), imFileName[i]));
 
         if (imFonts[i].format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE)
         {
@@ -2775,7 +2670,6 @@ static Font LoadBMFont(const char *fileName)
     }
 
     UnloadImage(fullFont);
-    UnloadFileText(fileText);
 
     if (font.texture.id == 0)
     {

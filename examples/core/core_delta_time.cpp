@@ -88,7 +88,7 @@ int main()
 
             // Draw the help text
             // Determine what help text to show depending on the current FPS target
-            const char *fpsText = 0;
+            std::string fpsText;
             if (currentFps <= 0) fpsText = TextFormat("FPS: unlimited (%i)", GetFPS());
             else fpsText = TextFormat("FPS: %i (target: %i)", GetFPS(), currentFps);
             DrawText(fpsText, 10, 10, 20, DARKGRAY);

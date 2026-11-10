@@ -277,7 +277,7 @@ static void DrawHud(Font font, Vector2 size, int particleCount, float time, floa
     DrawTextEx(font, "Leertaste: Explosion | R: Zuruecksetzen", { 48.0f, 112.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
     DrawTextEx(font, "F11: Vollbild | ESC: Beenden", { 48.0f, 136.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
 
-    const char *counter = TextFormat("%i Partikel", particleCount);
+    std::string counter = TextFormat("%i Partikel", particleCount);
     Vector2 counterSize = MeasureTextEx(font, counter, 20.0f, 1.0f);
     DrawTextEx(font, counter, { size.x - counterSize.x - 40.0f, 40.0f }, 20.0f, 1.0f, WithAlpha(textSecondary, alpha));
 
@@ -285,7 +285,7 @@ static void DrawHud(Font font, Vector2 size, int particleCount, float time, floa
     Vector2 hintSize = MeasureTextEx(font, hint, 18.0f, 1.0f);
     DrawTextEx(font, hint, { size.x*0.5f - hintSize.x*0.5f, size.y - 44.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, 0.75f*alpha));
 
-    const char *fpsText = TextFormat("%.0f FPS", (delta > 0.0f)? 1.0f/delta : 0.0f);
+    std::string fpsText = TextFormat("%.0f FPS", (delta > 0.0f)? 1.0f/delta : 0.0f);
     Vector2 fpsSize = MeasureTextEx(font, fpsText, 18.0f, 1.0f);
     DrawTextEx(font, fpsText, { size.x - fpsSize.x - 40.0f, size.y - 40.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
 }

@@ -33,7 +33,7 @@ int main()
     Rectangle touchArea = { 220, 10, screenWidth - 230.0f, screenHeight - 20.0f };
 
     int gesturesCount = 0;
-    char gestureStrings[MAX_GESTURE_STRINGS][32];
+    std::string gestureStrings[MAX_GESTURE_STRINGS];
 
     int currentGesture = GESTURE_NONE;
     int lastGesture = GESTURE_NONE;
@@ -59,16 +59,16 @@ int main()
                 // Store gesture string
                 switch (currentGesture)
                 {
-                    case GESTURE_TAP: TextCopy(gestureStrings[gesturesCount], "GESTURE TAP"); break;
-                    case GESTURE_DOUBLETAP: TextCopy(gestureStrings[gesturesCount], "GESTURE DOUBLETAP"); break;
-                    case GESTURE_HOLD: TextCopy(gestureStrings[gesturesCount], "GESTURE HOLD"); break;
-                    case GESTURE_DRAG: TextCopy(gestureStrings[gesturesCount], "GESTURE DRAG"); break;
-                    case GESTURE_SWIPE_RIGHT: TextCopy(gestureStrings[gesturesCount], "GESTURE SWIPE RIGHT"); break;
-                    case GESTURE_SWIPE_LEFT: TextCopy(gestureStrings[gesturesCount], "GESTURE SWIPE LEFT"); break;
-                    case GESTURE_SWIPE_UP: TextCopy(gestureStrings[gesturesCount], "GESTURE SWIPE UP"); break;
-                    case GESTURE_SWIPE_DOWN: TextCopy(gestureStrings[gesturesCount], "GESTURE SWIPE DOWN"); break;
-                    case GESTURE_PINCH_IN: TextCopy(gestureStrings[gesturesCount], "GESTURE PINCH IN"); break;
-                    case GESTURE_PINCH_OUT: TextCopy(gestureStrings[gesturesCount], "GESTURE PINCH OUT"); break;
+                    case GESTURE_TAP: gestureStrings[gesturesCount] = "GESTURE TAP"; break;
+                    case GESTURE_DOUBLETAP: gestureStrings[gesturesCount] = "GESTURE DOUBLETAP"; break;
+                    case GESTURE_HOLD: gestureStrings[gesturesCount] = "GESTURE HOLD"; break;
+                    case GESTURE_DRAG: gestureStrings[gesturesCount] = "GESTURE DRAG"; break;
+                    case GESTURE_SWIPE_RIGHT: gestureStrings[gesturesCount] = "GESTURE SWIPE RIGHT"; break;
+                    case GESTURE_SWIPE_LEFT: gestureStrings[gesturesCount] = "GESTURE SWIPE LEFT"; break;
+                    case GESTURE_SWIPE_UP: gestureStrings[gesturesCount] = "GESTURE SWIPE UP"; break;
+                    case GESTURE_SWIPE_DOWN: gestureStrings[gesturesCount] = "GESTURE SWIPE DOWN"; break;
+                    case GESTURE_PINCH_IN: gestureStrings[gesturesCount] = "GESTURE PINCH IN"; break;
+                    case GESTURE_PINCH_OUT: gestureStrings[gesturesCount] = "GESTURE PINCH OUT"; break;
                     default: break;
                 }
 
@@ -77,7 +77,7 @@ int main()
                 // Reset gestures strings
                 if (gesturesCount >= MAX_GESTURE_STRINGS)
                 {
-                    for (int i = 0; i < MAX_GESTURE_STRINGS; i++) TextCopy(gestureStrings[i], "\0");
+                    for (int i = 0; i < MAX_GESTURE_STRINGS; i++) gestureStrings[i].clear();
 
                     gesturesCount = 0;
                 }

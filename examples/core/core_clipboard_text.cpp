@@ -43,7 +43,7 @@ int main()
         "Copy and paste me!"
     };
 
-    const char *clipboardText = NULL;
+    std::string clipboardText;
     char inputBuffer[256] = "Hello from raylib!"; // Random initial string
 
     // UI required variables
@@ -86,7 +86,7 @@ int main()
         {
             // Paste text from clipboard
             clipboardText = GetClipboardText();
-            if (clipboardText != NULL) TextCopy(inputBuffer, clipboardText);
+            if (!clipboardText.empty()) snprintf(inputBuffer, sizeof(inputBuffer), "%s", clipboardText.c_str());
         }
 
         if (btnClearPressed)
@@ -98,7 +98,7 @@ int main()
         if (btnRandomPressed)
         {
             // Get random text from sample list
-            TextCopy(inputBuffer, sampleTexts[GetRandomValue(0, MAX_TEXT_SAMPLES - 1)]);
+            snprintf(inputBuffer, sizeof(inputBuffer), "%s", sampleTexts[GetRandomValue(0, MAX_TEXT_SAMPLES - 1)]);
         }
 
         // Quick cut/copy/paste with keyboard shortcuts
@@ -115,7 +115,7 @@ int main()
             if (IsKeyPressed(KEY_V))
             {
                 clipboardText = GetClipboardText();
-                if (clipboardText != NULL) TextCopy(inputBuffer, clipboardText);
+                if (!clipboardText.empty()) snprintf(inputBuffer, sizeof(inputBuffer), "%s", clipboardText.c_str());
             }
         }
         //----------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ int main()
         GuiSetState(STATE_DISABLED);
         GuiLabel(Rectangle{ 50, 260, 700, 40 }, "Clipboard current text data:");
         GuiSetStyle(TEXTBOX, TEXT_READONLY, 1);
-        GuiTextBox(Rectangle{ 50, 300, 700, 40 }, (char *)clipboardText, 256, false);
+        GuiTextBox(Rectangle{ 50, 300, 700, 40 }, clipboardText.data(), 256, false);
         GuiSetStyle(TEXTBOX, TEXT_READONLY, 0);
         GuiLabel(Rectangle{ 50, 360, 700, 40 }, "Try copying text from other applications and pasting here!");
         GuiSetState(STATE_NORMAL);

@@ -1110,8 +1110,11 @@ void DrawGrid(int slices, float spacing)
 }
 
 // Load model from files (mesh and material)
-Model LoadModel(const char *fileName)
+Model LoadModel(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Model model = { 0 };
 
 #if SUPPORT_FILEFORMAT_OBJ
@@ -1967,8 +1970,11 @@ void UnloadMesh(Mesh mesh)
 }
 
 // Export mesh data to file
-bool ExportMesh(Mesh mesh, const char *fileName)
+bool ExportMesh(Mesh mesh, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
     if (IsFileExtension(fileName, ".obj"))
@@ -2059,8 +2065,11 @@ bool ExportMesh(Mesh mesh, const char *fileName)
 }
 
 // Export mesh as code file (.h) defining multiple arrays of vertex attributes
-bool ExportMeshAsCode(Mesh mesh, const char *fileName)
+bool ExportMeshAsCode(Mesh mesh, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
 #ifndef TEXT_BYTES_PER_LINE
@@ -2084,7 +2093,7 @@ bool ExportMeshAsCode(Mesh mesh, const char *fileName)
 
     // Get file name from path and convert variable name to uppercase
     char varFileName[256] = { 0 };
-    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName)); // NOTE: Using function provided by [rcore] module
+    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str()); // NOTE: Using function provided by [rcore] module
     for (int i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
 
     // Add image information
@@ -2192,8 +2201,11 @@ static void ProcessMaterialsOBJ(Material *materials, tinyobj_material_t *mats, i
 #endif
 
 // Load materials from model file
-Material *LoadMaterials(const char *fileName, int *materialCount)
+Material * LoadMaterials(std::string_view fileNameView, int *materialCount)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Material *materials = NULL;
     unsigned int count = 0;
 
@@ -2287,8 +2299,11 @@ void SetModelMeshMaterial(Model *model, int meshId, int materialId)
 }
 
 // Load model animations from file
-ModelAnimation *LoadModelAnimations(const char *fileName, int *animCount)
+ModelAnimation * LoadModelAnimations(std::string_view fileNameView, int *animCount)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     ModelAnimation *animations = NULL;
 
 #if SUPPORT_FILEFORMAT_IQM
@@ -4470,23 +4485,24 @@ static Model LoadOBJ(const char *fileName)
     Model model = { 0 };
     model.transform = Matrix(1.0f);
 
-    char *fileText = LoadFileText(fileName);
+    std::string fileText = LoadFileText(fileName);
 
-    if (fileText == NULL)
+    if (fileText.empty())
     {
         TRACELOG(LOG_WARNING, "MODEL: [%s] Unable to read obj file", fileName);
         return model;
     }
 
     char currentDir[MAX_FILEPATH_LENGTH] = { 0 };
-    snprintf(currentDir, MAX_FILEPATH_LENGTH, "%s", GetWorkingDirectory()); // Save current working directory
-    const char *workingDir = GetDirectoryPath(fileName); // Switch to OBJ directory for material path correctness
-    if (CHDIR(workingDir) != 0) TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to change working directory", workingDir);
+    std::string currentDirPath = GetWorkingDirectory();
+    snprintf(currentDir, MAX_FILEPATH_LENGTH, "%s", currentDirPath.c_str()); // Save current working directory
+    std::string workingDir = GetDirectoryPath(fileName); // Switch to OBJ directory for material path correctness
+    if (CHDIR(workingDir.c_str()) != 0) TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to change working directory", workingDir.c_str());
 
-    unsigned int dataSize = (unsigned int)strlen(fileText);
+    unsigned int dataSize = (unsigned int)fileText.size();
 
     unsigned int flags = TINYOBJ_FLAG_TRIANGULATE;
-    int ret = tinyobj_parse_obj(&objAttributes, &objShapes, &objShapeCount, &objMaterials, &objMaterialCount, fileText, dataSize, flags);
+    int ret = tinyobj_parse_obj(&objAttributes, &objShapes, &objShapeCount, &objMaterials, &objMaterialCount, fileText.c_str(), dataSize, flags);
 
     if (ret != TINYOBJ_SUCCESS)
     {
@@ -4494,7 +4510,6 @@ static Model LoadOBJ(const char *fileName)
         return model;
     }
 
-    UnloadFileText(fileText);
 
     unsigned int faceVertIndex = 0;
     unsigned int nextShape = 1;
@@ -4822,7 +4837,7 @@ static Model LoadIQM(const char *fileName)
     // In case file can not be read, return an empty model
     if (fileDataPtr == NULL) return model;
 
-    const char *basePath = GetDirectoryPath(fileName);
+    std::string basePath = GetDirectoryPath(fileName);
 
     // Read IQM header
     IQMHeader *iqmHeader = (IQMHeader *)fileDataPtr;
@@ -4870,7 +4885,7 @@ static Model LoadIQM(const char *fileName)
         memcpy(material, fileDataPtr + iqmHeader->ofs_text + imesh[i].material, MATERIAL_NAME_LENGTH*sizeof(char));
 
         model.materials[i] = LoadMaterialDefault();
-        if (TextLength(material) > 0) model.materials[i].maps[MATERIAL_MAP_ALBEDO].texture = LoadTexture(TextFormat("%s/%s", basePath, material));
+        if (TextLength(material) > 0) model.materials[i].maps[MATERIAL_MAP_ALBEDO].texture = LoadTexture(TextFormat("%s/%s", basePath.c_str(), material));
 
         model.meshMaterial[i] = i;
 
@@ -5415,7 +5430,7 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
         {
             image = LoadImageFromMemory(".jpg", data, (int)cgltfImage->buffer_view->size);
         }
-        else TRACELOG(LOG_WARNING, "MODEL: glTF image data MIME type not recognized", TextFormat("%s/%s", texPath, cgltfImage->uri));
+        else TRACELOG(LOG_WARNING, "MODEL: glTF image data MIME type not recognized (%s)", TextFormat("%s/%s", texPath, cgltfImage->uri).c_str());
 
         RL_FREE(data);
     }
@@ -5586,7 +5601,7 @@ static Model LoadGLTF(const char *fileName)
         for (unsigned int i = 0, j = 1; i < data->materials_count; i++, j++)
         {
             model.materials[j] = LoadMaterialDefault();
-            const char *texPath = GetDirectoryPath(fileName);
+            std::string texPath = GetDirectoryPath(fileName);
 
             // Check glTF material flow: PBR metallic/roughness flow
             // NOTE: Alternatively, materials can follow PBR specular/glossiness flow
@@ -5595,7 +5610,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load base color texture (albedo)
                 if (data->materials[i].pbr_metallic_roughness.base_color_texture.texture)
                 {
-                    Image imAlbedo = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.base_color_texture.texture->image, texPath);
+                    Image imAlbedo = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.base_color_texture.texture->image, texPath.c_str());
                     if (imAlbedo.data != NULL)
                     {
                         model.materials[j].maps[MATERIAL_MAP_ALBEDO].texture = LoadTextureFromImage(imAlbedo);
@@ -5611,7 +5626,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load metallic/roughness texture
                 if (data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture)
                 {
-                    Image imMetallicRoughness = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture->image, texPath);
+                    Image imMetallicRoughness = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture->image, texPath.c_str());
                     if (imMetallicRoughness.data != NULL)
                     {
                         Image imMetallic = { 0 };
@@ -5656,7 +5671,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load normal texture
                 if (data->materials[i].normal_texture.texture)
                 {
-                    Image imNormal = LoadImageFromCgltfImage(data->materials[i].normal_texture.texture->image, texPath);
+                    Image imNormal = LoadImageFromCgltfImage(data->materials[i].normal_texture.texture->image, texPath.c_str());
                     if (imNormal.data != NULL)
                     {
                         model.materials[j].maps[MATERIAL_MAP_NORMAL].texture = LoadTextureFromImage(imNormal);
@@ -5667,7 +5682,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load ambient occlusion texture
                 if (data->materials[i].occlusion_texture.texture)
                 {
-                    Image imOcclusion = LoadImageFromCgltfImage(data->materials[i].occlusion_texture.texture->image, texPath);
+                    Image imOcclusion = LoadImageFromCgltfImage(data->materials[i].occlusion_texture.texture->image, texPath.c_str());
                     if (imOcclusion.data != NULL)
                     {
                         model.materials[j].maps[MATERIAL_MAP_OCCLUSION].texture = LoadTextureFromImage(imOcclusion);
@@ -5678,7 +5693,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load emissive texture
                 if (data->materials[i].emissive_texture.texture)
                 {
-                    Image imEmissive = LoadImageFromCgltfImage(data->materials[i].emissive_texture.texture->image, texPath);
+                    Image imEmissive = LoadImageFromCgltfImage(data->materials[i].emissive_texture.texture->image, texPath.c_str());
                     if (imEmissive.data != NULL)
                     {
                         model.materials[j].maps[MATERIAL_MAP_EMISSION].texture = LoadTextureFromImage(imEmissive);

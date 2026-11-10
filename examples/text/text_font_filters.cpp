@@ -95,7 +95,7 @@ int main()
                 font = LoadFontEx(droppedFiles.paths[0], (int)fontSize, 0, 0);
             }
 
-            UnloadDroppedFiles(droppedFiles);    // Unload filepaths from memory
+                // Unload filepaths from memory
         }
         //----------------------------------------------------------------------------------
 

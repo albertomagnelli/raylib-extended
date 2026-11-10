@@ -815,8 +815,11 @@ void SetWindowIcons(Image *images, int count)
 }
 
 // Set title for window
-void SetWindowTitle(const char *title)
+void SetWindowTitle(std::string_view titleView)
 {
+    const std::string titleStr(titleView);
+    const char *title = titleStr.c_str();
+
     SDL_SetWindowTitle(platform.window, title);
 
     CORE.Window.title = title;
@@ -1131,7 +1134,7 @@ int GetMonitorRefreshRate(int monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-const char *GetMonitorName(int monitor)
+std::string GetMonitorName(int monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1139,7 +1142,7 @@ const char *GetMonitorName(int monitor)
     if ((monitor >= 0) && (monitor < SDL_GetNumVideoDisplays()))
 #endif
     {
-        return SDL_GetDisplayName(monitor);
+        return GetStringOrEmpty(SDL_GetDisplayName(monitor));
     }
     else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
 
@@ -1177,13 +1180,16 @@ Vector2 GetWindowScaleDPI(void)
 }
 
 // Set clipboard text content
-void SetClipboardText(const char *text)
+void SetClipboardText(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     SDL_SetClipboardText(text);
 }
 
 // Get clipboard text content
-const char *GetClipboardText(void)
+std::string GetClipboardText(void)
 {
     static char buffer[MAX_CLIPBOARD_BUFFER_LENGTH] = {};
 
@@ -1332,8 +1338,11 @@ double GetTime(void)
 // WARNING: This function is only safe to use if you control the URL given,
 // a user could craft a malicious string to perform and undesired action
 // NOTE: Some safety checks have been added to mitigate security issues
-void OpenURL(const char *url)
+void OpenURL(std::string_view urlView)
 {
+    const std::string urlStr(urlView);
+    const char *url = urlStr.c_str();
+
     // Security check to (partially) avoid malicious code
     if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
     {
@@ -1353,8 +1362,11 @@ void OpenURL(const char *url)
 //----------------------------------------------------------------------------------
 
 // Set internal gamepad mappings
-int SetGamepadMappings(const char *mappings)
+int SetGamepadMappings(std::string_view mappingsView)
 {
+    const std::string mappingsStr(mappingsView);
+    const char *mappings = mappingsStr.c_str();
+
     const int mappingsLength = strlen(mappings);
     char *buffer = (char *)RL_CALLOC(mappingsLength + 1, sizeof(char));
     memcpy(buffer, mappings, mappingsLength);
@@ -1409,9 +1421,9 @@ void SetMouseCursor(int cursor)
 }
 
 // Get physical key name
-const char *GetKeyName(int key)
+std::string GetKeyName(int key)
 {
-    return SDL_GetKeyName(key);
+    return GetStringOrEmpty(SDL_GetKeyName(key));
 }
 
 // Register all input events
@@ -2091,7 +2103,7 @@ int InitPlatform(void)
 
     // Init window
 #if defined(USING_VERSION_SDL3)
-    platform.window = SDL_CreateWindow(CORE.Window.title, CORE.Window.screen.width, CORE.Window.screen.height, flags);
+    platform.window = SDL_CreateWindow(CORE.Window.title.c_str(), CORE.Window.screen.width, CORE.Window.screen.height, flags);
 
 
     // NOTE: SDL3 no longer enables text input by default,
@@ -2102,7 +2114,7 @@ int InitPlatform(void)
     if (!SDL_StartTextInput(platform.window)) TRACELOG(LOG_WARNING, "SDL: Failed to start text input: %s", SDL_GetError());
     if (enableOSK == NULL) SDL_SetHint(SDL_HINT_ENABLE_SCREEN_KEYBOARD, NULL);
 #else
-    platform.window = SDL_CreateWindow(CORE.Window.title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CORE.Window.screen.width, CORE.Window.screen.height, flags);
+    platform.window = SDL_CreateWindow(CORE.Window.title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CORE.Window.screen.width, CORE.Window.screen.height, flags);
 #endif
 
     // Init OpenGL context
@@ -2224,7 +2236,7 @@ int InitPlatform(void)
     TRACELOG(LOG_INFO, "PLATFORM: DESKTOP (SDL2): Initialized successfully");
 #endif
 
-    return 0;
+    return {};
 }
 
 // Close platform

@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void DrawTextCenter(const char *text, int x, int y, int fontSize, Color color);
+static void DrawTextCenter(std::string_view text, int x, int y, int fontSize, Color color);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -126,7 +126,7 @@ int main()
 //------------------------------------------------------------------------------------
 // Module Functions Definition
 //------------------------------------------------------------------------------------
-static void DrawTextCenter(const char *text, int x, int y, int fontSize, Color color)
+static void DrawTextCenter(std::string_view text, int x, int y, int fontSize, Color color)
 {
     Vector2 size = MeasureTextEx(GetFontDefault(), text, (float)fontSize, 3);
     Vector2 pos = Vector2{ x - size.x/2, y - size.y/2 };

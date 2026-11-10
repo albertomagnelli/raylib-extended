@@ -57,7 +57,7 @@ int main()
 
     // Load julia set shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader(0, TextFormat("resources/shaders/glsl%i/julia_set.fs", GLSL_VERSION));
+    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/julia_set.fs", GLSL_VERSION));
 
     // Create a RenderTexture2D to be used for render to texture
     RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());

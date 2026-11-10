@@ -710,8 +710,11 @@ void SetWindowIcons(Image *images, int count)
 }
 
 // Set title for window
-void SetWindowTitle(const char *title)
+void SetWindowTitle(std::string_view titleView)
 {
+    const std::string titleStr(titleView);
+    const char *title = titleStr.c_str();
+
     CORE.Window.title = title;
     emscripten_set_window_title(title);
 }
@@ -864,7 +867,7 @@ int GetMonitorRefreshRate(int monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-const char *GetMonitorName(int monitor)
+std::string GetMonitorName(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorName() not implemented on target platform");
     return "";
@@ -893,8 +896,11 @@ Vector2 GetWindowScaleDPI(void)
 }
 
 // Set clipboard text content
-void SetClipboardText(const char *text)
+void SetClipboardText(std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     // Security check to (partially) avoid malicious code
     if (strchr(text, '\'') != NULL) TRACELOG(LOG_WARNING, "SYSTEM: Provided Clipboard could be potentially malicious, avoid [\'] character");
     else EM_ASM({ navigator.clipboard.writeText(UTF8ToString($0)); }, text);
@@ -947,7 +953,7 @@ EM_JS(char *, GetLastPastedText, (void), {
         stringToUTF8(str, ptr, length);
         return ptr;
     }
-    return 0;
+    return {};
 });
 
 // Returns the image created by RequestClipboardData from JS memory to Emscripten C memory
@@ -977,10 +983,10 @@ EM_JS(unsigned char *, GetLastPastedImage, (int *width, int *height), {
 
 // Get clipboard text content
 // NOTE: returned string is allocated and freed by GLFW
-const char *GetClipboardText(void)
+std::string GetClipboardText(void)
 {
     RequestClipboardData();
-    return GetLastPastedText();
+    return GetStringOrEmpty(GetLastPastedText());
 }
 
 // Get clipboard image
@@ -1092,8 +1098,11 @@ double GetTime(void)
 // WARNING: This function is only safe to use if you control the URL given,
 // a user could craft a malicious string to perform and undesired action
 // NOTE: Some safety checks have been added to mitigate security issues
-void OpenURL(const char *url)
+void OpenURL(std::string_view urlView)
 {
+    const std::string urlStr(urlView);
+    const char *url = urlStr.c_str();
+
     // Security check to (partially) avoid malicious code
     if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
     {
@@ -1113,11 +1122,14 @@ void OpenURL(const char *url)
 //----------------------------------------------------------------------------------
 
 // Set internal gamepad mappings
-int SetGamepadMappings(const char *mappings)
+int SetGamepadMappings(std::string_view mappingsView)
 {
+    const std::string mappingsStr(mappingsView);
+    const char *mappings = mappingsStr.c_str();
+
     TRACELOG(LOG_INFO, "SetGamepadMappings not implemented in rcore_web.c");
 
-    return 0;
+    return {};
 }
 
 // Set gamepad vibration
@@ -1163,7 +1175,7 @@ void SetMouseCursor(int cursor)
 }
 
 // Get physical key name
-const char *GetKeyName(int key)
+std::string GetKeyName(int key)
 {
     // TODO: Browser can definitely provide a key name e->key
     TRACELOG(LOG_WARNING, "GetKeyName() not implemented on target platform");
@@ -1337,7 +1349,7 @@ int InitPlatform(void)
 
         // Create WebGL context
         platform.glContext = emscripten_webgl_create_context(platform.canvasId, &attribs);
-        if (platform.glContext == 0) return 0;
+        if (platform.glContext == 0) return {};
 
         emscripten_webgl_make_context_current(platform.glContext);
     }
@@ -1360,7 +1372,7 @@ int InitPlatform(void)
     CORE.Window.render.height = CORE.Window.screen.height;
 
     // Set default window title
-    emscripten_set_window_title((CORE.Window.title != 0)? CORE.Window.title : " ");
+    emscripten_set_window_title(CORE.Window.title.empty()? " " : CORE.Window.title.c_str());
 
     // Check context activation
     if ((platform.glContext != 0) || (platform.pixels != NULL))

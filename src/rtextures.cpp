@@ -270,8 +270,11 @@ static Vector4 *LoadImageDataNormalized(Image image);       // Load pixel data f
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Load image from file into CPU memory (RAM)
-Image LoadImage(const char *fileName)
+Image LoadImage(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Image image = { 0 };
 
 #if SUPPORT_FILEFORMAT_PNG || \
@@ -303,8 +306,11 @@ Image LoadImage(const char *fileName)
 }
 
 // Load an image from RAW file data
-Image LoadImageRaw(const char *fileName, int width, int height, int format, int headerSize)
+Image LoadImageRaw(std::string_view fileNameView, int width, int height, int format, int headerSize)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Image image = { 0 };
 
     int dataSize = 0;
@@ -339,8 +345,11 @@ Image LoadImageRaw(const char *fileName, int width, int height, int format, int 
 //  - Number of frames is returned through 'frames' parameter
 //  - All frames are returned in RGBA format
 //  - Frames delay data is discarded
-Image LoadImageAnim(const char *fileName, int *frames)
+Image LoadImageAnim(std::string_view fileNameView, int *frames)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Image image = { 0 };
     int frameCount = 0;
 
@@ -381,12 +390,15 @@ Image LoadImageAnim(const char *fileName, int *frames)
 //  - Number of frames is returned through 'frames' parameter
 //  - All frames are returned in RGBA format
 //  - Frames delay data is discarded
-Image LoadImageAnimFromMemory(const char *fileType, const unsigned char *fileData, int dataSize, int *frames)
+Image LoadImageAnimFromMemory(std::string_view fileTypeView, const unsigned char *fileData, int dataSize, int *frames)
 {
+    const std::string fileTypeStr(fileTypeView);
+    const char *fileType = fileTypeStr.c_str();
+
     Image image = { 0 };
     int frameCount = 0;
 
-    if ((fileType == NULL) || (fileData == NULL) || (dataSize == 0)) return image; // Security check
+    if (fileTypeView.empty() || (fileData == NULL) || (dataSize == 0)) return image; // Security check
 
 #if SUPPORT_FILEFORMAT_GIF
     if ((strcmp(fileType, ".gif") == 0) || (strcmp(fileType, ".GIF") == 0))
@@ -418,13 +430,16 @@ Image LoadImageAnimFromMemory(const char *fileType, const unsigned char *fileDat
 
 // Load image from memory buffer, fileType refers to extension: i.e. ".png"
 // WARNING: File extension must be provided in lower-case
-Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, int dataSize)
+Image LoadImageFromMemory(std::string_view fileTypeView, const unsigned char *fileData, int dataSize)
 {
+    const std::string fileTypeStr(fileTypeView);
+    const char *fileType = fileTypeStr.c_str();
+
     Image image = { 0 };
 
     // Security checks for input data
     if ((fileData == NULL) || (dataSize == 0)) { TRACELOG(LOG_WARNING, "IMAGE: Invalid file data"); return image; }
-    if (fileType == NULL) { TRACELOG(LOG_WARNING, "IMAGE: Missing file extension"); return image; }
+    if (fileTypeView.empty()) { TRACELOG(LOG_WARNING, "IMAGE: Missing file extension"); return image; }
 
     if ((false)
 #if SUPPORT_FILEFORMAT_PNG
@@ -569,7 +584,7 @@ Image LoadImageFromMemory(const char *fileType, const unsigned char *fileData, i
 #endif
     else TRACELOG(LOG_WARNING, "IMAGE: Data format not supported");
 
-    if (image.data != NULL) TRACELOG(LOG_INFO, "IMAGE: Data loaded successfully (%ix%i | %s | %i mipmaps)", image.width, image.height, rlGetPixelFormatName(image.format), image.mipmaps);
+    if (image.data != NULL) TRACELOG(LOG_INFO, "IMAGE: Data loaded successfully (%ix%i | %s | %i mipmaps)", image.width, image.height, rlGetPixelFormatName(image.format).c_str(), image.mipmaps);
     else TRACELOG(LOG_WARNING, "IMAGE: Failed to load image data");
 
     return image;
@@ -646,8 +661,11 @@ void UnloadImage(Image image)
 
 // Export image data to file
 // NOTE: File format depends on fileName extension
-bool ExportImage(Image image, const char *fileName)
+bool ExportImage(Image image, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     int result = 0;
 
     if ((image.width == 0) || (image.height == 0) || (image.data == NULL)) return result; // Security check
@@ -778,8 +796,11 @@ unsigned char *ExportImageToMemory(Image image, const char *fileType, int *dataS
 }
 
 // Export image as code file (.h) defining an array of bytes
-bool ExportImageAsCode(Image image, const char *fileName)
+bool ExportImageAsCode(Image image, std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     bool result = false;
 
 #ifndef TEXT_BYTES_PER_LINE
@@ -806,7 +827,7 @@ bool ExportImageAsCode(Image image, const char *fileName)
 
     // Get file name from path and convert variable name to uppercase
     char varFileName[256] = { 0 };
-    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName)); // NOTE: Using function provided by [rcore] module
+    snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str()); // NOTE: Using function provided by [rcore] module
     for (int i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
 
     // Add image information
@@ -1156,8 +1177,11 @@ Image GenImageCellular(int width, int height, int tileSize)
 }
 
 // Generate image: grayscale image from text data
-Image GenImageText(int width, int height, const char *text)
+Image GenImageText(int width, int height, std::string_view textView)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     Image image = { 0 };
 
     int imageSize = width*height;
@@ -1523,8 +1547,11 @@ void ImageFormat(Image *image, int newFormat)
 }
 
 // Create an image from text (default font)
-Image ImageText(const char *text, int fontSize, Color color)
+Image ImageText(std::string_view textView, int fontSize, Color color)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     Image imText = { 0 };
 #if SUPPORT_MODULE_RTEXT
     int defaultFontSize = 10;   // Default Font chars height in pixel
@@ -1540,8 +1567,11 @@ Image ImageText(const char *text, int fontSize, Color color)
 
 // Create an image from text (custom sprite font)
 // WARNING: Module required: rtext
-Image ImageTextEx(Font font, const char *text, float fontSize, float spacing, Color tint)
+Image ImageTextEx(Font font, std::string_view textView, float fontSize, float spacing, Color tint)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     Image imText = { 0 };
 #if SUPPORT_MODULE_RTEXT
     if (text == NULL) return imText;
@@ -4430,8 +4460,11 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
 }
 
 // Draw text (default font) within an image (destination)
-void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSize, Color color)
+void ImageDrawText(Image *dst, std::string_view textView, int posX, int posY, int fontSize, Color color)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
 #if SUPPORT_MODULE_RTEXT
     // Make sure default font is loaded to be used on image text drawing
     if (GetFontDefault().texture.id == 0) LoadFontDefault();
@@ -4444,8 +4477,11 @@ void ImageDrawText(Image *dst, const char *text, int posX, int posY, int fontSiz
 }
 
 // Draw text (custom sprite font) within an image (destination)
-void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint)
+void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, Vector2 position, float fontSize, float spacing, Color tint)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     Image imText = ImageTextEx(font, text, fontSize, spacing, tint);
 
     Rectangle srcRec = { 0.0f, 0.0f, (float)imText.width, (float)imText.height };
@@ -4457,8 +4493,11 @@ void ImageDrawTextEx(Image *dst, Font font, const char *text, Vector2 position, 
 }
 
 // Draw text using Font and pro parameters (rotation)
-void ImageDrawTextPro(Image *dst, Font font, const char *text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint)
+void ImageDrawTextPro(Image *dst, Font font, std::string_view textView, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint)
 {
+    const std::string textStr(textView);
+    const char *text = textStr.c_str();
+
     // TODO: NEW: Implement ImageDrawTextPro()
 }
 
@@ -4466,8 +4505,11 @@ void ImageDrawTextPro(Image *dst, Font font, const char *text, Vector2 position,
 // Texture loading functions
 //------------------------------------------------------------------------------------
 // Load texture from file into GPU memory (VRAM)
-Texture2D LoadTexture(const char *fileName)
+Texture2D LoadTexture(std::string_view fileNameView)
 {
+    const std::string fileNameStr(fileNameView);
+    const char *fileName = fileNameStr.c_str();
+
     Texture2D texture = { 0 };
 
     Image image = LoadImage(fileName);

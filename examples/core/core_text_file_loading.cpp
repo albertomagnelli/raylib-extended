@@ -43,11 +43,11 @@ int main()
 
     // Loading text file from resources/text_file.txt
     const char *fileName = "resources/text_file.txt";
-    char *text = LoadFileText(fileName);
+    std::string text = LoadFileText(fileName);
 
     // Loading all the text lines
-    int lineCount = 0;
-    char **lines = LoadTextLines(text, &lineCount);
+    std::vector<std::string> lines = LoadTextLines(text);
+    int lineCount = (int)lines.size();
 
     // Stylistic choises
     int fontSize = 20;
@@ -61,7 +61,7 @@ int main()
         int lastSpace = 0;          // Keeping track of last valid space to insert '\n'
         int lastWrapStart = 0;      // Keeping track of the start of this wrapped line.
 
-        while (j <= strlen(lines[i]))
+        while (j <= strlen(lines[i].c_str()))
         {
             if (lines[i][j] == ' ' || lines[i][j] == '\0')
             {
@@ -70,7 +70,7 @@ int main()
                 lines[i][j] = '\0';
 
                 // Checking if the text has crossed the wrapWidth, then going back and inserting a newline
-                if (MeasureText(lines[i] + lastWrapStart, fontSize) > wrapWidth)
+                if (MeasureText(lines[i].c_str() + lastWrapStart, fontSize) > wrapWidth)
                 {
                     lines[i][lastSpace] = '\n';
 
@@ -134,7 +134,7 @@ int main()
                 {
                     // Each time we go through and calculate the height of the text to move the cursor appropriately
                     Vector2 size;
-                    if(strcmp(lines[i], "")){
+                    if(strcmp(lines[i].c_str(), "")){
                         // Fix for empty line in the text file
                         size = MeasureTextEx( GetFontDefault(), lines[i], (float)fontSize, 2);
                     }else{
@@ -161,8 +161,6 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    UnloadTextLines(lines, lineCount);
-    UnloadFileText(text);
 
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

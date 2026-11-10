@@ -27,7 +27,7 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct TextParticle {
-    char text[MAX_TEXT_LENGTH];
+    std::string text;
     Rectangle rect;    // Boundary
     Vector2 vel;       // Velocity
     Vector2 ppos;      // Previous position
@@ -42,8 +42,8 @@ typedef struct TextParticle {
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-void PrepareFirstTextParticle(const char* text, TextParticle *tps, int *particleCount);
-TextParticle CreateTextParticle(const char *text, float x, float y, Color color);
+void PrepareFirstTextParticle(std::string_view text, TextParticle *tps, int *particleCount);
+TextParticle CreateTextParticle(std::string_view text, float x, float y, Color color);
 void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextParticle *tps, int *particleCount);
 void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, int *particleCount);
 void ShatterTextParticle(TextParticle *tp, int particlePos, TextParticle *tps, int *particleCount);
@@ -261,7 +261,7 @@ int main()
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
-void PrepareFirstTextParticle(const char* text, TextParticle *tps, int *particleCount)
+void PrepareFirstTextParticle(std::string_view text, TextParticle *tps, int *particleCount)
 {
     tps[0] = CreateTextParticle(
         text,
@@ -272,7 +272,7 @@ void PrepareFirstTextParticle(const char* text, TextParticle *tps, int *particle
     *particleCount = 1;
 }
 
-TextParticle CreateTextParticle(const char *text, float x, float y, Color color)
+TextParticle CreateTextParticle(std::string_view text, float x, float y, Color color)
 {
     TextParticle tp = {
         .text = "",
@@ -287,7 +287,7 @@ TextParticle CreateTextParticle(const char *text, float x, float y, Color color)
         .grabbed = false
     };
 
-    TextCopy(tp.text, text);
+    tp.text = text;
     tp.rect.width = MeasureText(tp.text, FONT_SIZE)+tp.padding*2;
     tp.rect.height = FONT_SIZE+tp.padding*2;
     return tp;
@@ -301,7 +301,7 @@ void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextP
     {
         for (int i = 0; i < length; i += sliceLength)
         {
-            const char *text = sliceLength == 1 ? TextFormat("%c", tp->text[i]) : TextSubtext(tp->text, i, sliceLength);
+            std::string text = (sliceLength == 1)? TextFormat("%c", tp->text[i]) : TextSubtext(tp->text, i, sliceLength);
             tps[(*particleCount)++] = CreateTextParticle(
                 text,
                 tp->rect.x + i * tp->rect.width/length,
@@ -315,8 +315,8 @@ void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextP
 
 void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, int *particleCount)
 {
-    int tokenCount = 0;
-    char **tokens = TextSplit(tp->text, charToSlice, &tokenCount);
+    std::vector<std::string> tokens = TextSplit(tp->text, charToSlice);
+    int tokenCount = (int)tokens.size();
 
     if (tokenCount > 1)
     {
@@ -337,7 +337,7 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
         {
             int tokenLength = TextLength(tokens[i]);
             tps[(*particleCount)++] = CreateTextParticle(
-                TextFormat("%s", tokens[i]),
+                tokens[i],
                 tp->rect.x + i * tp->rect.width/tokenLength,
                 tp->rect.y,
                 Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 }
@@ -369,7 +369,7 @@ void GlueTextParticles(TextParticle *grabbed, TextParticle *target, TextParticle
     if ((p1 != -1) && (p2 != -1))
     {
         TextParticle tp = CreateTextParticle(
-            TextFormat( "%s%s", grabbed->text, target->text),
+            TextFormat("%s%s", grabbed->text.c_str(), target->text.c_str()),
             grabbed->rect.x,
             grabbed->rect.y,
             RAYWHITE

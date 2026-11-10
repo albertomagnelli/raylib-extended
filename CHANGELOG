@@ -16,6 +16,12 @@ Fork:        glm math migration (C++20)
  - REVIEWED: MatrixMultiply(a, b) keeps its "apply a, then b" order (glm `b * a`); glTF quaternions
              are reordered from (x, y, z, w) to glm's (w, x, y, z)
  - REVIEWED: Matrix layout is column-major, mN maps to mat[N/4][N%4]
+ - CHANGED: String API is C++: `std::string_view` parameters, `std::string` returns,
+            `std::vector<std::string>` for text/path lists (`FilePathList`, `LoadTextLines`,
+            `TextSplit`, `TextJoin`); optional string arguments use an empty view instead of NULL
+ - REMOVED: Ownership-based text helpers (`UnloadFileText`, `UnloadUTF8`, `UnloadTextLines`,
+            `TextCopy`, `TextAppend`, `UnloadDirectoryFiles`, `UnloadDroppedFiles`) and the
+            redundant `TextReplaceAlloc`/`TextInsertAlloc` variants
 
 -------------------------------------------------------------------------
 Release:     raylib 6.2 (15 October 2026)
