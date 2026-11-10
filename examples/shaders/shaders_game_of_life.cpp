@@ -57,19 +57,19 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - game of life");
 
-    const int menuWidth = 100;
+    constexpr int menuWidth = 100;
     const int windowWidth = screenWidth - menuWidth;
     const int windowHeight = screenHeight;
 
-    const int worldWidth = 2048;
-    const int worldHeight = 2048;
+    constexpr int worldWidth = 2048;
+    constexpr int worldHeight = 2048;
 
-    const int randomTiles = 8;      // Random preset: divide the world to compute random points in each tile
+    constexpr int randomTiles = 8;      // Random preset: divide the world to compute random points in each tile
 
     const Rectangle worldRectSource = { 0, 0, static_cast<float>(worldWidth), static_cast<float>(-worldHeight) };
     const Rectangle worldRectDest = { 0, 0, static_cast<float>(worldWidth), static_cast<float>(worldHeight) };
@@ -98,10 +98,10 @@ int main()
     bool buttonSlower = false;
 
     // Load shader
-    Shader shdrGameOfLife = LoadShader({}, TextFormat("resources/shaders/glsl%i/game_of_life.fs", GLSL_VERSION));
+    const Shader shdrGameOfLife = LoadShader({}, TextFormat("resources/shaders/glsl%i/game_of_life.fs", GLSL_VERSION));
 
     // Set shader uniform size of the world
-    int resolutionLoc = GetShaderLocation(shdrGameOfLife, "resolution");
+    const int resolutionLoc = GetShaderLocation(shdrGameOfLife, "resolution");
     const float resolution[2] = { static_cast<float>(worldWidth), static_cast<float>(worldHeight) };
     SetShaderValue(shdrGameOfLife, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
@@ -112,7 +112,7 @@ int main()
         ClearBackground(RAYWHITE);
     EndTextureMode();
 
-    Image startPattern = LoadImage("resources/game_of_life/r_pentomino.png");
+    const Image startPattern = LoadImage("resources/game_of_life/r_pentomino.png");
     UpdateTextureRec(world2.texture, Rectangle{ worldWidth/2.0f, worldHeight/2.0f, static_cast<float>(startPattern.width), static_cast<float>(startPattern.height) }, startPattern.data);
     UnloadImage(startPattern);
 
@@ -134,7 +134,7 @@ int main()
         frame++;
 
         // Change zoom: both by buttons or by mouse wheel
-        float mouseWheelMove = GetMouseWheelMove();
+        const float mouseWheelMove = GetMouseWheelMove();
         if (buttonZoomIn || (buttonZomOut && (zoom > 1)) || (mouseWheelMove != 0.0f))
         {
             FreeImageToDraw(&imageToDraw);  // Zoom change: free the image to draw to be recreated again
@@ -178,7 +178,7 @@ int main()
             // Create image to draw if not created yet
             if (imageToDraw == nullptr)
             {
-                RenderTexture2D worldOnScreen = LoadRenderTexture(sizeInWorldX, sizeInWorldY);
+                const RenderTexture2D worldOnScreen = LoadRenderTexture(sizeInWorldX, sizeInWorldY);
                 BeginTextureMode(worldOnScreen);
                     DrawTexturePro(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<float>(sizeInWorldX), -static_cast<float>(sizeInWorldY) },
                             Rectangle{ 0, 0, static_cast<float>(sizeInWorldX), static_cast<float>(sizeInWorldY) }, Vector2{ 0, 0 }, 0.0f, WHITE);

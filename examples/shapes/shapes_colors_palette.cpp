@@ -24,12 +24,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - colors palette");
 
-    Color colors[MAX_COLORS_COUNT] = {
+    const Color colors[MAX_COLORS_COUNT] = {
         DARKGRAY, MAROON, ORANGE, DARKGREEN, DARKBLUE, DARKPURPLE, DARKBROWN,
         GRAY, RED, GOLD, LIME, BLUE, VIOLET, BROWN, LIGHTGRAY, PINK, YELLOW,
         GREEN, SKYBLUE, PURPLE, BEIGE };

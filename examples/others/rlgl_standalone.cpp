@@ -123,8 +123,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // GLFW3 Initialization + OpenGL 3.3 Context + Extensions
     //--------------------------------------------------------
@@ -189,7 +189,7 @@ int main()
     camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
 
-    Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };        // Cube default position (center)
+    const Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };        // Cube default position (center)
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -299,7 +299,7 @@ static void DrawRectangleV(Vector2 position, Vector2 size, Color color)
 // Draw a grid centered at (0, 0, 0)
 static void DrawGrid(int slices, float spacing)
 {
-    int halfSlices = slices/2;
+    const int halfSlices = slices/2;
 
     rlBegin(RL_LINES);
         for (int i = -halfSlices; i <= halfSlices; i++)
@@ -332,9 +332,9 @@ static void DrawGrid(int slices, float spacing)
 // NOTE: Cube position is the center position
 static void DrawCube(Vector3 position, float width, float height, float length, Color color)
 {
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
+    constexpr float x = 0.0f;
+    constexpr float y = 0.0f;
+    constexpr float z = 0.0f;
 
     rlPushMatrix();
 
@@ -406,9 +406,9 @@ static void DrawCube(Vector3 position, float width, float height, float length, 
 // Draw cube wires
 static void DrawCubeWires(Vector3 position, float width, float height, float length, Color color)
 {
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
+    constexpr float x = 0.0f;
+    constexpr float y = 0.0f;
+    constexpr float z = 0.0f;
 
     rlPushMatrix();
 

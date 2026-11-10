@@ -31,8 +31,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - clipboard image");
 
@@ -58,7 +58,7 @@ int main()
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_V) &&
             (currentCollectionIndex < MAX_TEXTURE_COLLECTION))
         {
-            Image image = GetClipboardImage();
+            const Image image = GetClipboardImage();
 
             if (IsImageValid(image))
             {

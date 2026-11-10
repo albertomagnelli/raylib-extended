@@ -83,22 +83,22 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - palette switch");
 
     // Load shader to be used on some parts drawing
     // NOTE 1: Using GLSL 330 shader version, on OpenGL ES 2.0 use GLSL 100 shader version
     // NOTE 2: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/palette_switch.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/palette_switch.fs", GLSL_VERSION));
 
     // Get variable (uniform) location on the shader to connect with the program
     // NOTE: If uniform variable could not be found in the shader, function returns -1
-    int paletteLoc = GetShaderLocation(shader, "palette");
+    const int paletteLoc = GetShaderLocation(shader, "palette");
 
     int currentPalette = 0;
-    int lineHeight = screenHeight/COLORS_PER_PALETTE;
+    const int lineHeight = screenHeight/COLORS_PER_PALETTE;
 
     SetTargetFPS(60);                       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

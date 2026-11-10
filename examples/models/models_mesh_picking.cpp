@@ -28,8 +28,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh picking");
 
@@ -43,29 +43,29 @@ int main()
 
     Ray ray = {};        // Picking ray
 
-    Model tower = LoadModel("resources/models/obj/turret.obj");                 // Load OBJ model
-    Texture2D texture = LoadTexture("resources/models/obj/turret_diffuse.png"); // Load model texture
+    const Model tower = LoadModel("resources/models/obj/turret.obj");                 // Load OBJ model
+    const Texture2D texture = LoadTexture("resources/models/obj/turret_diffuse.png"); // Load model texture
     tower.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set model diffuse texture
 
-    Vector3 towerPos = { 0.0f, 0.0f, 0.0f };                        // Set model position
-    BoundingBox towerBBox = GetMeshBoundingBox(tower.meshes[0]);    // Get mesh bounding box
+    const Vector3 towerPos = { 0.0f, 0.0f, 0.0f };                        // Set model position
+    const BoundingBox towerBBox = GetMeshBoundingBox(tower.meshes[0]);    // Get mesh bounding box
 
     // Ground quad
-    Vector3 g0 = Vector3{ -50.0f, 0.0f, -50.0f };
-    Vector3 g1 = Vector3{ -50.0f, 0.0f,  50.0f };
-    Vector3 g2 = Vector3{  50.0f, 0.0f,  50.0f };
-    Vector3 g3 = Vector3{  50.0f, 0.0f, -50.0f };
+    const Vector3 g0 = Vector3{ -50.0f, 0.0f, -50.0f };
+    const Vector3 g1 = Vector3{ -50.0f, 0.0f,  50.0f };
+    const Vector3 g2 = Vector3{  50.0f, 0.0f,  50.0f };
+    const Vector3 g3 = Vector3{  50.0f, 0.0f, -50.0f };
 
     // Test triangle
-    Vector3 ta = Vector3{ -25.0f, 0.5f, 0.0f };
-    Vector3 tb = Vector3{ -4.0f, 2.5f, 1.0f };
-    Vector3 tc = Vector3{ -8.0f, 6.5f, 0.0f };
+    const Vector3 ta = Vector3{ -25.0f, 0.5f, 0.0f };
+    const Vector3 tb = Vector3{ -4.0f, 2.5f, 1.0f };
+    const Vector3 tc = Vector3{ -8.0f, 6.5f, 0.0f };
 
     Vector3 bary = { 0.0f, 0.0f, 0.0f };
 
     // Test sphere
-    Vector3 sp = Vector3{ -30.0f, 5.0f, 5.0f };
-    float sr = 4.0f;
+    const Vector3 sp = Vector3{ -30.0f, 5.0f, 5.0f };
+    constexpr float sr = 4.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ int main()
         ray = GetScreenToWorldRay(GetMousePosition(), camera);
 
         // Check ray collision against ground quad
-        RayCollision groundHitInfo = GetRayCollisionQuad(ray, g0, g1, g2, g3);
+        const RayCollision groundHitInfo = GetRayCollisionQuad(ray, g0, g1, g2, g3);
 
         if ((groundHitInfo.hit) && (groundHitInfo.distance < collision.distance))
         {
@@ -104,7 +104,7 @@ int main()
         }
 
         // Check ray collision against test triangle
-        RayCollision triHitInfo = GetRayCollisionTriangle(ray, ta, tb, tc);
+        const RayCollision triHitInfo = GetRayCollisionTriangle(ray, ta, tb, tc);
 
         if ((triHitInfo.hit) && (triHitInfo.distance < collision.distance))
         {
@@ -116,7 +116,7 @@ int main()
         }
 
         // Check ray collision against test sphere
-        RayCollision sphereHitInfo = GetRayCollisionSphere(ray, sp, sr);
+        const RayCollision sphereHitInfo = GetRayCollisionSphere(ray, sp, sr);
 
         if ((sphereHitInfo.hit) && (sphereHitInfo.distance < collision.distance))
         {
@@ -126,7 +126,7 @@ int main()
         }
 
         // Check ray collision against bounding box first, before trying the full ray-mesh test
-        RayCollision boxHitInfo = GetRayCollisionBox(ray, towerBBox);
+        const RayCollision boxHitInfo = GetRayCollisionBox(ray, towerBBox);
 
         if ((boxHitInfo.hit) && (boxHitInfo.distance < collision.distance))
         {
@@ -209,7 +209,7 @@ int main()
 
             if (collision.hit)
             {
-                int ypos = 70;
+                constexpr int ypos = 70;
 
                 DrawText(TextFormat("Distance: %3.2f", collision.distance), 10, ypos, 10, BLACK);
 

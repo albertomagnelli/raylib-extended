@@ -58,8 +58,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - amp envelope");
 
@@ -70,7 +70,7 @@ int main()
     float buffer[BUFFER_SIZE] = {};
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
-    AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
+    const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
 
     // Init Phase
     float audioTime = 0.0f;
@@ -158,7 +158,7 @@ int main()
 //------------------------------------------------------------------------------------
 static void FillAudioBuffer(int i, float *buffer, float envelopeValue, float *audioTime)
 {
-    int frequency = 440;
+    constexpr int frequency = 440;
     buffer[i] = envelopeValue*sinf(2.0f*PI*frequency*(*audioTime));
     *audioTime += (1.0f/SAMPLE_RATE);
 }
@@ -166,7 +166,7 @@ static void FillAudioBuffer(int i, float *buffer, float envelopeValue, float *au
 static void UpdateEnvelope(Envelope *env)
 {
     // Calculate the time delta for ONE sample (1/44100)
-    float sampleTime = 1.0f/SAMPLE_RATE;
+    const float sampleTime = 1.0f/SAMPLE_RATE;
 
     switch(env->state)
     {
@@ -215,19 +215,19 @@ static void DrawADSRGraph(Envelope *env, Rectangle bounds)
     DrawRectangleLinesEx(bounds, 1, GRAY);
 
     // Fixed visual width for sustain stage since it's an amplitude not a time value
-    float sustainWidth = 1.0f;
+    constexpr float sustainWidth = 1.0f;
 
     // Total time to visualize (sum of A, D, R + a padding for Sustain)
-    float totalTime = env->attackTime + env->decayTime + sustainWidth + env->releaseTime;
+    const float totalTime = env->attackTime + env->decayTime + sustainWidth + env->releaseTime;
 
-    float scaleX = bounds.width/totalTime;
-    float scaleY = bounds.height;
+    const float scaleX = bounds.width/totalTime;
+    const float scaleY = bounds.height;
 
-    Vector2 start = { bounds.x, bounds.y + bounds.height };
-    Vector2 peak = { start.x + (env->attackTime*scaleX), bounds.y };
-    Vector2 sustain = { peak.x + (env->decayTime*scaleX), bounds.y + (1.0f - env->sustainLevel)*scaleY };
-    Vector2 rel = { sustain.x + (sustainWidth*scaleX), sustain.y };
-    Vector2 end = { rel.x + (env->releaseTime*scaleX), bounds.y + bounds.height };
+    const Vector2 start = { bounds.x, bounds.y + bounds.height };
+    const Vector2 peak = { start.x + (env->attackTime*scaleX), bounds.y };
+    const Vector2 sustain = { peak.x + (env->decayTime*scaleX), bounds.y + (1.0f - env->sustainLevel)*scaleY };
+    const Vector2 rel = { sustain.x + (sustainWidth*scaleX), sustain.y };
+    const Vector2 end = { rel.x + (env->releaseTime*scaleX), bounds.y + bounds.height };
 
     DrawLineV(start, peak, SKYBLUE);
     DrawLineV(peak, sustain, BLUE);

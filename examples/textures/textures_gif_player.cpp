@@ -25,8 +25,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - gif player");
 
@@ -35,13 +35,13 @@ int main()
     // Load all GIF animation frames into a single Image
     // NOTE: GIF data is always loaded as RGBA (32bit) by default
     // NOTE: Frames are just appended one after another in image.data memory
-    Image imScarfyAnim = LoadImageAnim("resources/scarfy_run.gif", &animFrames);
+    const Image imScarfyAnim = LoadImageAnim("resources/scarfy_run.gif", &animFrames);
 
     // Load texture from image
     // NOTE: We will update this texture when required with next frame data
     // WARNING: It's not recommended to use this technique for sprites animation,
     // use spritesheets instead, like illustrated in textures_sprite_anim example
-    Texture2D texScarfyAnim = LoadTextureFromImage(imScarfyAnim);
+    const Texture2D texScarfyAnim = LoadTextureFromImage(imScarfyAnim);
 
     unsigned int nextFrameDataOffset = 0;  // Current byte offset to next frame in image.data
 

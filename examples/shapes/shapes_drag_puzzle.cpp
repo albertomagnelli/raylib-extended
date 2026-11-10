@@ -39,24 +39,24 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - drag puzzle");
 
     // Rectangle
     Rectangle rec = { screenWidth/2 - 250, screenHeight/2 + 50, 100.0f, 100.0f };
-    Rectangle recArea = { screenWidth/2 - 60, screenHeight/2 - 110, 110.0f, 110.0f };
+    const Rectangle recArea = { screenWidth/2 - 60, screenHeight/2 - 110, 110.0f, 110.0f };
     bool recPickedUp = false;
 
     // Circle
     Circle circ = { { screenWidth/2.0f, screenHeight/2.0f + 100 }, 50.0f };
-    Circle circArea = { { screenWidth/2.0f - 195, screenHeight/2.0f - 55 }, 55.0f };
+    const Circle circArea = { { screenWidth/2.0f - 195, screenHeight/2.0f - 55 }, 55.0f };
     bool circPickedUp = false;
 
     // Triangle
     Triangle tri = { { 600, 282 }, { 550, 369 }, { 650, 369 } };
-    Triangle triArea = { { 600, 115 }, { 540, 222 }, { 660, 222 } };
+    const Triangle triArea = { { 600, 115 }, { 540, 222 }, { 660, 222 } };
     bool triPickedUp = false;
 
     Vector2 mouseOffset = { 0.0f, 0.0f };    // Stores the offset of the mouse relative to the object's pivot point
@@ -69,7 +69,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        Vector2 mousePosition = GetMousePosition();
+        const Vector2 mousePosition = GetMousePosition();
         bool recPlaced = false;
         bool circPlaced = false;
         bool triPlaced = false;
@@ -102,7 +102,7 @@ int main()
             rec.x = mousePosition.x + mouseOffset.x;
             rec.y = mousePosition.y + mouseOffset.y;
         }
-        Rectangle RecCol = GetCollisionRec(recArea, rec);
+        const Rectangle RecCol = GetCollisionRec(recArea, rec);
         if (RecCol.width == rec.width && RecCol.height == rec.height) recPlaced = true;
 
         // Circle update
@@ -116,8 +116,8 @@ int main()
         // Triangle update
         if (triPickedUp)
         {
-            Vector2 v2Offset = { tri.v2.x - tri.v1.x, tri.v2.y - tri.v1.y };
-            Vector2 v3Offset = { tri.v3.x - tri.v1.x, tri.v3.y - tri.v1.y };
+            const Vector2 v2Offset = { tri.v2.x - tri.v1.x, tri.v2.y - tri.v1.y };
+            const Vector2 v3Offset = { tri.v3.x - tri.v1.x, tri.v3.y - tri.v1.y };
 
             tri.v1 = Vector2{ mousePosition.x + mouseOffset.x, mousePosition.y + mouseOffset.y };
             tri.v2 = Vector2{ tri.v1.x + v2Offset.x, tri.v1.y + v2Offset.y };

@@ -119,8 +119,8 @@ inline float Vector2CrossProduct(Vector2 v1, Vector2 v2)
 // Calculate angle defined by a two vectors line (radians)
 inline float Vector2Angle(Vector2 v1, Vector2 v2)
 {
-    float dot = v1.x*v2.x + v1.y*v2.y;
-    float det = v1.x*v2.y - v1.y*v2.x;
+    const float dot = v1.x*v2.x + v1.y*v2.y;
+    const float det = v1.x*v2.y - v1.y*v2.x;
 
     return std::atan2(det, dot);
 }
@@ -136,21 +136,21 @@ inline float Vector2LineAngle(Vector2 start, Vector2 end)
 // NOTE: raylib-specific 2D helper, glm::rotate() works on 3D vectors only
 inline Vector2 Vector2Rotate(Vector2 v, float angle)
 {
-    float cosres = std::cos(angle);
-    float sinres = std::sin(angle);
+    const float cosres = std::cos(angle);
+    const float sinres = std::sin(angle);
 
     return Vector2{v.x*cosres - v.y*sinres, v.x*sinres + v.y*cosres};
 }
 
 inline Vector2 Vector2MoveTowards(Vector2 v, Vector2 target, float maxDistance)
 {
-    float dx = target.x - v.x;
-    float dy = target.y - v.y;
-    float value = (dx*dx) + (dy*dy);
+    const float dx = target.x - v.x;
+    const float dy = target.y - v.y;
+    const float value = (dx*dx) + (dy*dy);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
 
-    float dist = std::sqrt(value);
+    const float dist = std::sqrt(value);
 
     return Vector2{v.x + dx/dist*maxDistance, v.y + dy/dist*maxDistance};
 }
@@ -180,14 +180,14 @@ inline Vector3 Vector3Perpendicular(Vector3 v)
 // Calculate angle between two vectors, returns degrees
 inline float Vector3Angle(Vector3 v1, Vector3 v2)
 {
-    Vector3 cross = glm::cross(v1, v2);
+    const Vector3 cross = glm::cross(v1, v2);
     return std::atan2(std::sqrt(glm::dot(cross, cross)), glm::dot(v1, v2));
 }
 
 // Calculate the projection of the vector v1 on to v2
 inline Vector3 Vector3Project(Vector3 v1, Vector3 v2)
 {
-    float v2Length = glm::dot(v2, v2);
+    const float v2Length = glm::dot(v2, v2);
 
     if (v2Length > 0.0f) return v2*(glm::dot(v1, v2)/v2Length);
 
@@ -197,7 +197,7 @@ inline Vector3 Vector3Project(Vector3 v1, Vector3 v2)
 // Calculate the rejection of the vector v1 on to v2
 inline Vector3 Vector3Reject(Vector3 v1, Vector3 v2)
 {
-    float v2Length = glm::dot(v2, v2);
+    const float v2Length = glm::dot(v2, v2);
 
     if (v2Length > 0.0f) return v1 - v2*(glm::dot(v1, v2)/v2Length);
 
@@ -222,11 +222,11 @@ inline Vector3 Vector3RotateByAxisAngle(Vector3 v, Vector3 axis, float angle)
 
     angle *= 0.5f;
     float a = std::sin(angle);
-    Vector3 w = axis*a;
+    const Vector3 w = axis*a;
     a = std::cos(angle);
 
-    Vector3 wv = glm::cross(w, v);
-    Vector3 wwv = glm::cross(w, wv);
+    const Vector3 wv = glm::cross(w, v);
+    const Vector3 wwv = glm::cross(w, wv);
 
     return v + wv*(2.0f*a) + wwv*2.0f;
 }
@@ -234,8 +234,8 @@ inline Vector3 Vector3RotateByAxisAngle(Vector3 v, Vector3 axis, float angle)
 // Move Vector towards target
 inline Vector3 Vector3MoveTowards(Vector3 v, Vector3 target, float maxDistance)
 {
-    Vector3 dir = target - v;
-    float value = glm::dot(dir, dir);
+    const Vector3 dir = target - v;
+    const float value = glm::dot(dir, dir);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
 
@@ -245,12 +245,12 @@ inline Vector3 Vector3MoveTowards(Vector3 v, Vector3 target, float maxDistance)
 // Calculate the cubic Hermite interpolation between two values
 inline Vector3 Vector3CubicHermite(Vector3 v1, Vector3 tangent1, Vector3 v2, Vector3 tangent2, float amount)
 {
-    float t2 = amount*amount;
-    float t3 = t2*amount;
-    float h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
-    float h10 = t3 - 2.0f*t2 + amount;
-    float h01 = -2.0f*t3 + 3.0f*t2;
-    float h11 = t3 - t2;
+    const float t2 = amount*amount;
+    const float t3 = t2*amount;
+    const float h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
+    const float h10 = t3 - 2.0f*t2 + amount;
+    const float h01 = -2.0f*t3 + 3.0f*t2;
+    const float h11 = t3 - t2;
 
     return v1*h00 + tangent1*h10 + v2*h01 + tangent2*h11;
 }
@@ -258,16 +258,16 @@ inline Vector3 Vector3CubicHermite(Vector3 v1, Vector3 tangent1, Vector3 v2, Vec
 // Calculate barycenter of a triangle, given 4 points: p point in the triangle, a, b, c triangle vertices
 inline Vector3 Vector3Barycenter(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
 {
-    Vector3 v0 = b - a;
-    Vector3 v1 = c - a;
-    Vector3 v2 = p - a;
-    float d00 = glm::dot(v0, v0);
-    float d01 = glm::dot(v0, v1);
-    float d11 = glm::dot(v1, v1);
-    float d20 = glm::dot(v2, v0);
-    float d21 = glm::dot(v2, v1);
+    const Vector3 v0 = b - a;
+    const Vector3 v1 = c - a;
+    const Vector3 v2 = p - a;
+    const float d00 = glm::dot(v0, v0);
+    const float d01 = glm::dot(v0, v1);
+    const float d11 = glm::dot(v1, v1);
+    const float d20 = glm::dot(v2, v0);
+    const float d21 = glm::dot(v2, v1);
 
-    float denom = d00*d11 - d01*d01;
+    const float denom = d00*d11 - d01*d01;
 
     Vector3 result{};
     result.y = (d11*d20 - d01*d21)/denom;
@@ -280,9 +280,9 @@ inline Vector3 Vector3Barycenter(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
 // Project point from world coordinate system to the normalized device coordinate (NDC) space
 inline Vector3 Vector3Unproject(Vector3 source, Matrix projection, Matrix view)
 {
-    Matrix matViewProjInv = glm::inverse(projection*view);
+    const Matrix matViewProjInv = glm::inverse(projection*view);
 
-    Vector4 qtransformed = matViewProjInv*Vector4{source, 1.0f};
+    const Vector4 qtransformed = matViewProjInv*Vector4{source, 1.0f};
 
     return Vector3{qtransformed.x/qtransformed.w,
                    qtransformed.y/qtransformed.w,
@@ -306,8 +306,8 @@ inline float3 Vector3ToFloatV(Vector3 v)
 // Move Vector towards target
 inline Vector4 Vector4MoveTowards(Vector4 v, Vector4 target, float maxDistance)
 {
-    Vector4 dir = target - v;
-    float value = glm::dot(dir, dir);
+    const Vector4 dir = target - v;
+    const float value = glm::dot(dir, dir);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
 
@@ -352,10 +352,10 @@ inline Quaternion QuaternionDivide(Quaternion q, float div)
 // Calculate quaternion based on the rotation from one vector to another
 inline Quaternion QuaternionFromVector3ToVector3(Vector3 from, Vector3 to)
 {
-    float cos2Theta = glm::dot(from, to);
-    Vector3 cross = glm::cross(from, to);
+    const float cos2Theta = glm::dot(from, to);
+    const Vector3 cross = glm::cross(from, to);
 
-    float lengths = std::sqrt(glm::dot(cross, cross) + cos2Theta*cos2Theta); // |from|*|to|
+    const float lengths = std::sqrt(glm::dot(cross, cross) + cos2Theta*cos2Theta); // |from|*|to|
 
     float x = cross.x;
     float y = cross.y;
@@ -398,12 +398,12 @@ inline Quaternion QuaternionNlerp(Quaternion q1, Quaternion q2, float amount)
 // as described in the GLTF 2.0 specification: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#interpolation-cubic
 inline Quaternion QuaternionCubicHermiteSpline(Quaternion q1, Quaternion outTangent1, Quaternion q2, Quaternion inTangent2, float t)
 {
-    float t2 = t*t;
-    float t3 = t2*t;
-    float h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
-    float h10 = t3 - 2.0f*t2 + t;
-    float h01 = -2.0f*t3 + 3.0f*t2;
-    float h11 = t3 - t2;
+    const float t2 = t*t;
+    const float t3 = t2*t;
+    const float h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
+    const float h10 = t3 - 2.0f*t2 + t;
+    const float h01 = -2.0f*t3 + 3.0f*t2;
+    const float h11 = t3 - t2;
 
     return glm::normalize(QuaternionAdd(QuaternionAdd(QuaternionScale(q1, h00), QuaternionScale(outTangent1, h10)),
                                        QuaternionAdd(QuaternionScale(q2, h01), QuaternionScale(inTangent2, h11))));
@@ -412,12 +412,12 @@ inline Quaternion QuaternionCubicHermiteSpline(Quaternion q1, Quaternion outTang
 // Calculate quaternion from Euler angles (pitch, yaw, roll), in radians
 inline Quaternion QuaternionFromEuler(float pitch, float yaw, float roll)
 {
-    float x0 = std::cos(pitch*0.5f);
-    float x1 = std::sin(pitch*0.5f);
-    float y0 = std::cos(yaw*0.5f);
-    float y1 = std::sin(yaw*0.5f);
-    float z0 = std::cos(roll*0.5f);
-    float z1 = std::sin(roll*0.5f);
+    const float x0 = std::cos(pitch*0.5f);
+    const float x1 = std::sin(pitch*0.5f);
+    const float y0 = std::cos(yaw*0.5f);
+    const float y1 = std::sin(yaw*0.5f);
+    const float z0 = std::cos(roll*0.5f);
+    const float z1 = std::sin(roll*0.5f);
 
     return Quaternion{x0*y0*z0 + x1*y1*z1,   // w
                       x1*y0*z0 - x0*y1*z1,   // x
@@ -439,19 +439,19 @@ inline Vector3 QuaternionToEuler(Quaternion q)
     if (std::fabs(y0) >= 0.9999995f)
     {
         // Gimbal lock: roll and yaw turn about the same axis, keep the whole turn in roll
-        float sign = (q.w < 0.0f)? -1.0f : 1.0f;
+        const float sign = (q.w < 0.0f)? -1.0f : 1.0f;
         result.x = 2.0f*std::atan2(sign*q.x, sign*q.w);
     }
     else
     {
         // Roll (x-axis rotation)
-        float x0 = 2.0f*(q.w*q.x + q.y*q.z);
-        float x1 = 1.0f - 2.0f*(q.x*q.x + q.y*q.y);
+        const float x0 = 2.0f*(q.w*q.x + q.y*q.z);
+        const float x1 = 1.0f - 2.0f*(q.x*q.x + q.y*q.y);
         result.x = std::atan2(x0, x1);
 
         // Yaw (z-axis rotation)
-        float z0 = 2.0f*(q.w*q.z + q.x*q.y);
-        float z1 = 1.0f - 2.0f*(q.y*q.y + q.z*q.z);
+        const float z0 = 2.0f*(q.w*q.z + q.x*q.y);
+        const float z1 = 1.0f - 2.0f*(q.y*q.y + q.z*q.z);
         result.z = std::atan2(z0, z1);
     }
 
@@ -470,8 +470,8 @@ inline void QuaternionToAxisAngle(Quaternion q, Vector3 *outAxis, float *outAngl
     if (std::fabs(q.w) > 1.0f) q = glm::normalize(q);
 
     Vector3 resAxis{0.0f, 0.0f, 0.0f};
-    float resAngle = 2.0f*std::acos(q.w);
-    float den = std::sqrt(1.0f - q.w*q.w);
+    const float resAngle = 2.0f*std::acos(q.w);
+    const float den = std::sqrt(1.0f - q.w*q.w);
 
     if (den > EPSILON)
     {
@@ -498,12 +498,12 @@ inline Matrix MatrixRotateXYZ(Vector3 angle)
 {
     Matrix result = Matrix(1.0f);
 
-    float cosz = std::cos(-angle.z);
-    float sinz = std::sin(-angle.z);
-    float cosy = std::cos(-angle.y);
-    float siny = std::sin(-angle.y);
-    float cosx = std::cos(-angle.x);
-    float sinx = std::sin(-angle.x);
+    const float cosz = std::cos(-angle.z);
+    const float sinz = std::sin(-angle.z);
+    const float cosy = std::cos(-angle.y);
+    const float siny = std::sin(-angle.y);
+    const float cosx = std::cos(-angle.x);
+    const float sinx = std::sin(-angle.x);
 
     result[0][0] = cosz*cosy;
     result[0][1] = (cosz*siny*sinx) - (sinz*cosx);
@@ -525,12 +525,12 @@ inline Matrix MatrixRotateZYX(Vector3 angle)
 {
     Matrix result = Matrix(1.0f);
 
-    float cz = std::cos(angle.z);
-    float sz = std::sin(angle.z);
-    float cy = std::cos(angle.y);
-    float sy = std::sin(angle.y);
-    float cx = std::cos(angle.x);
-    float sx = std::sin(angle.x);
+    const float cz = std::cos(angle.z);
+    const float sz = std::sin(angle.z);
+    const float cy = std::cos(angle.y);
+    const float sy = std::sin(angle.y);
+    const float cx = std::cos(angle.x);
+    const float sx = std::sin(angle.x);
 
     result[0][0] = cz*cy;
     result[1][0] = cz*sy*sx - cx*sz;
@@ -563,7 +563,7 @@ inline Matrix MatrixCompose(Vector3 translation, Quaternion rotation, Vector3 sc
 // Decompose a transformation matrix into its rotational, translational and scaling components and remove shear
 inline void MatrixDecompose(Matrix mat, Vector3 *translation, Quaternion *rotation, Vector3 *scale)
 {
-    float eps = static_cast<float>(1e-9);
+    const float eps = static_cast<float>(1e-9);
 
     // Extract Translation
     *translation = Vector3{mat[3][0], mat[3][1], mat[3][2]};

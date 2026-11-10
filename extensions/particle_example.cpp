@@ -32,9 +32,9 @@
 #include <random>
 #include <vector>
 
-const int screenWidth = 1280;
-const int screenHeight = 720;
-const int maxParticles = 900;
+constexpr int screenWidth = 1280;
+constexpr int screenHeight = 720;
+constexpr int maxParticles = 900;
 
 struct Particle
 {
@@ -139,14 +139,14 @@ static void SpawnBurst(std::vector<Particle> &particles, Vector2 origin, int cou
 {
     for (int i = 0; i < count; i++)
     {
-        float angle = RandomFloat(0.0f, 2.0f*static_cast<float>(std::numbers::pi));
+        const float angle = RandomFloat(0.0f, 2.0f*static_cast<float>(std::numbers::pi));
         SpawnParticle(particles, origin, { cosf(angle), sinf(angle) }, RandomFloat(120.0f, 460.0f));
     }
 }
 
 static void UpdateParticles(std::vector<Particle> &particles, Vector2 mouse, bool attracting, Vector2 bounds, float delta)
 {
-    float damping = expf(-1.6f*delta);
+    const float damping = expf(-1.6f*delta);
 
     for (Particle &particle : particles)
     {
@@ -154,9 +154,9 @@ static void UpdateParticles(std::vector<Particle> &particles, Vector2 mouse, boo
 
         if (attracting)
         {
-            Vector2 toMouse = { mouse.x - particle.position.x, mouse.y - particle.position.y };
-            float distance = std::max(glm::length(toMouse), 1.0f);
-            float strength = 3200.0f/(distance + 80.0f);
+            const Vector2 toMouse = { mouse.x - particle.position.x, mouse.y - particle.position.y };
+            const float distance = std::max(glm::length(toMouse), 1.0f);
+            const float strength = 3200.0f/(distance + 80.0f);
 
             particle.velocity.x += toMouse.x*(strength*delta/distance);
             particle.velocity.y += toMouse.y*(strength*delta/distance);
@@ -168,7 +168,7 @@ static void UpdateParticles(std::vector<Particle> &particles, Vector2 mouse, boo
         particle.position.y += particle.velocity.y*delta;
 
         // Bounce on the screen edges, keeping some energy
-        float radius = particle.radius;
+        const float radius = particle.radius;
 
         if (particle.position.x < radius)
         {
@@ -198,24 +198,24 @@ static void UpdateParticles(std::vector<Particle> &particles, Vector2 mouse, boo
 
 static void DrawBackground(Vector2 size, float time)
 {
-    int width = static_cast<int>(size.x);
-    int height = static_cast<int>(size.y);
+    const int width = static_cast<int>(size.x);
+    const int height = static_cast<int>(size.y);
 
     // Vertical gradient, one line pair of pixels per rectangle
     for (int y = 0; y < height; y += 2)
     {
-        float t = static_cast<float>(y)/size.y;
+        const float t = static_cast<float>(y)/size.y;
         DrawRectangle(0, y, size.x, 2.0f, MixColor(backgroundTop, backgroundBottom, t));
     }
 
     // Soft pulsing glow behind everything
-    Vector2 center = { size.x*0.5f, size.y*0.5f };
-    float pulse = 1.0f + 0.03f*sinf(time*1.7f);
-    float maxRadius = std::max(size.x, size.y)*0.55f*pulse;
+    const Vector2 center = { size.x*0.5f, size.y*0.5f };
+    const float pulse = 1.0f + 0.03f*sinf(time*1.7f);
+    const float maxRadius = std::max(size.x, size.y)*0.55f*pulse;
 
     for (int layer = 18; layer > 0; layer--)
     {
-        float t = static_cast<float>(layer)/18.0f;
+        const float t = static_cast<float>(layer)/18.0f;
         DrawCircleV(center, maxRadius*t, WithAlpha(MixColor(accent, accentWarm, t), 0.012f));
     }
 
@@ -230,9 +230,9 @@ static void DrawBackground(Vector2 size, float time)
 static void DrawOrbit(Vector2 center, Vector2 size, float time)
 {
     // The original demo rotates in radians, raylib polygons are rotated in degrees
-    float rotation = time*18.0f;
+    const float rotation = time*18.0f;
 
-    float screenMin = std::min(size.x, size.y);
+    const float screenMin = std::min(size.x, size.y);
 
     DrawCircleLinesEx(center, screenMin*0.24f, 1.0f, WithAlpha(accent, 0.10f));
     DrawCircleLinesEx(center, screenMin*0.32f, 1.0f, WithAlpha(accentWarm, 0.08f));
@@ -240,10 +240,10 @@ static void DrawOrbit(Vector2 center, Vector2 size, float time)
     DrawPolyLinesEx(center, 6, screenMin*0.17f, rotation*RAD2DEG, 2.0f, WithAlpha(accent, 0.35f));
     DrawPolyLinesEx(center, 3, screenMin*0.12f, -rotation*1.6f*RAD2DEG, 2.0f, WithAlpha(accentWarm, 0.35f));
 
-    float orbitRadius = screenMin*0.24f;
+    const float orbitRadius = screenMin*0.24f;
     for (int i = 0; i < 8; i++)
     {
-        float angle = rotation*0.03f + 2.0f*static_cast<float>(std::numbers::pi)*static_cast<float>(i)/8.0f;
+        const float angle = rotation*0.03f + 2.0f*static_cast<float>(std::numbers::pi)*static_cast<float>(i)/8.0f;
         DrawCircleV({ center.x + cosf(angle)*orbitRadius, center.y + sinf(angle)*orbitRadius }, 3.0f, WithAlpha(accent, 0.55f));
     }
 }
@@ -252,7 +252,7 @@ static void DrawParticles(const std::vector<Particle> &particles)
 {
     for (const Particle &particle : particles)
     {
-        float fade = std::clamp(particle.life/particle.maxLife, 0.0f, 1.0f);
+        const float fade = std::clamp(particle.life/particle.maxLife, 0.0f, 1.0f);
 
         DrawCircleV(particle.position, particle.radius*4.0f, WithAlpha(particle.color, 0.05f*fade));
         DrawCircleV(particle.position, particle.radius*2.2f, WithAlpha(particle.color, 0.12f*fade));
@@ -268,7 +268,7 @@ static void DrawPanel(Rectangle bounds, float alpha)
 
 static void DrawHud(Font font, Vector2 size, int particleCount, float time, float delta)
 {
-    float alpha = std::clamp(time*0.8f, 0.0f, 1.0f);
+    const float alpha = std::clamp(time*0.8f, 0.0f, 1.0f);
 
     DrawPanel({ 28.0f, 28.0f, 430.0f, 152.0f }, alpha);
 
@@ -277,16 +277,16 @@ static void DrawHud(Font font, Vector2 size, int particleCount, float time, floa
     DrawTextEx(font, "Leertaste: Explosion | R: Zuruecksetzen", { 48.0f, 112.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
     DrawTextEx(font, "F11: Vollbild | ESC: Beenden", { 48.0f, 136.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
 
-    std::string counter = TextFormat("%i Partikel", particleCount);
-    Vector2 counterSize = MeasureTextEx(font, counter, 20.0f, 1.0f);
+    const std::string counter = TextFormat("%i Partikel", particleCount);
+    const Vector2 counterSize = MeasureTextEx(font, counter, 20.0f, 1.0f);
     DrawTextEx(font, counter, { size.x - counterSize.x - 40.0f, 40.0f }, 20.0f, 1.0f, WithAlpha(textSecondary, alpha));
 
-    const char *hint = "Bewege die Maus und halte die linke Taste gedrueckt";
-    Vector2 hintSize = MeasureTextEx(font, hint, 18.0f, 1.0f);
+    constexpr const char *hint = "Bewege die Maus und halte die linke Taste gedrueckt";
+    const Vector2 hintSize = MeasureTextEx(font, hint, 18.0f, 1.0f);
     DrawTextEx(font, hint, { size.x*0.5f - hintSize.x*0.5f, size.y - 44.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, 0.75f*alpha));
 
-    std::string fpsText = TextFormat("%.0f FPS", (delta > 0.0f)? 1.0f/delta : 0.0f);
-    Vector2 fpsSize = MeasureTextEx(font, fpsText, 18.0f, 1.0f);
+    const std::string fpsText = TextFormat("%.0f FPS", (delta > 0.0f)? 1.0f/delta : 0.0f);
+    const Vector2 fpsSize = MeasureTextEx(font, fpsText, 18.0f, 1.0f);
     DrawTextEx(font, fpsText, { size.x - fpsSize.x - 40.0f, size.y - 40.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
 }
 
@@ -334,10 +334,10 @@ int main()
         time += delta;
         frames++;
 
-        Vector2 size = { static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
-        Vector2 mouse = GetMousePosition();
+        const Vector2 size = { static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
+        const Vector2 mouse = GetMousePosition();
 
-        bool attracting = IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
+        const bool attracting = IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
                           (mouse.x >= 0.0f) && (mouse.y >= 0.0f) &&
                           (mouse.x <= size.x) && (mouse.y <= size.y);
 
@@ -348,7 +348,7 @@ int main()
 
             while (spawnAccumulator >= 1.0f)
             {
-                float angle = RandomFloat(0.0f, 2.0f*static_cast<float>(std::numbers::pi));
+                const float angle = RandomFloat(0.0f, 2.0f*static_cast<float>(std::numbers::pi));
                 SpawnParticle(particles, mouse, { cosf(angle), sinf(angle) }, RandomFloat(20.0f, 140.0f));
                 spawnAccumulator -= 1.0f;
             }

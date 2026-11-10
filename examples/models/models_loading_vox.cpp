@@ -39,8 +39,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     const char *voxFileNames[] = {
         "resources/models/vox/chr_knight.vox",
@@ -65,28 +65,28 @@ int main()
     for (int i = 0; i < MAX_VOX_FILES; i++)
     {
         // Load VOX file and measure time
-        double t0 = GetTime()*1000.0;
+        const double t0 = GetTime()*1000.0;
         models[i] = LoadModel(voxFileNames[i]);
-        double t1 = GetTime()*1000.0;
+        const double t1 = GetTime()*1000.0;
 
         TraceLog(LOG_INFO, TextFormat("[%s] Model file loaded in %.3f ms", voxFileNames[i], t1 - t0));
 
         // Compute model translation matrix to center model on draw position (0, 0 , 0)
-        BoundingBox bb = GetModelBoundingBox(models[i]);
+        const BoundingBox bb = GetModelBoundingBox(models[i]);
         Vector3 center = {};
         center.x = bb.min.x + (((bb.max.x - bb.min.x)/2));
         center.z = bb.min.z + (((bb.max.z - bb.min.z)/2));
 
-        Matrix matTranslate = glm::translate(Matrix(1.0f), Vector3{-center.x, 0, -center.z});
+        const Matrix matTranslate = glm::translate(Matrix(1.0f), Vector3{-center.x, 0, -center.z});
         models[i].transform = matTranslate;
     }
 
     int currentModel = 0;
-    Vector3 modelpos = {};
+    const Vector3 modelpos = {};
     Vector3 camerarot = {};
 
     // Load voxel shader
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/voxel_lighting.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/voxel_lighting.vs", GLSL_VERSION),
         TextFormat("resources/shaders/glsl%i/voxel_lighting.fs", GLSL_VERSION));
 
     // Get some required shader locations
@@ -96,7 +96,7 @@ int main()
     //shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
 
     // Ambient light level (some basic lighting)
-    int ambientLoc = GetShaderLocation(shader, "ambient");
+    const int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.1f, 0.1f, 0.1f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Assign out lighting shader to model

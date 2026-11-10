@@ -43,8 +43,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - random sequence");
 
@@ -138,12 +138,12 @@ static ColorRect *GenerateRandomColorRectSequence(float rectCount, float rectWid
     ColorRect *rectangles = static_cast<ColorRect *>(RL_CALLOC(static_cast<int>(rectCount), sizeof(ColorRect)));
 
     int *seq = LoadRandomSequence(static_cast<unsigned int>(rectCount), 0, static_cast<unsigned int>(rectCount) - 1);
-    float rectSeqWidth = rectCount*rectWidth;
-    float startX = (screenWidth - rectSeqWidth)*0.5f;
+    const float rectSeqWidth = rectCount*rectWidth;
+    const float startX = (screenWidth - rectSeqWidth)*0.5f;
 
     for (int i = 0; i < rectCount; i++)
     {
-        int rectHeight = static_cast<int>(Remap(static_cast<float>(seq[i]), 0, rectCount - 1, 0, screenHeight));
+        const int rectHeight = static_cast<int>(Remap(static_cast<float>(seq[i]), 0, rectCount - 1, 0, screenHeight));
 
         rectangles[i].color = GenerateRandomColor();
         rectangles[i].rect = CLITERAL(Rectangle){ startX + i*rectWidth, screenHeight - rectHeight, rectWidth, static_cast<float>(rectHeight) };
@@ -164,7 +164,7 @@ static void ShuffleColorRectSequence(ColorRect *rectangles, int rectCount)
         ColorRect *r2 = &rectangles[seq[i1]];
 
         // Swap only the color and height
-        ColorRect tmp = *r1;
+        const ColorRect tmp = *r1;
         r1->color = r2->color;
         r1->rect.height = r2->rect.height;
         r1->rect.y = r2->rect.y;

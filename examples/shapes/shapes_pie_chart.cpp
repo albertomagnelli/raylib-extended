@@ -32,8 +32,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - pie chart");
 
@@ -52,8 +52,8 @@ int main()
     Rectangle view = {};
 
     // UI layout parameters
-    const int panelWidth = 270;
-    const int panelMargin = 5;
+    constexpr int panelWidth = 270;
+    constexpr int panelMargin = 5;
 
     // UI Panel top-left anchor
     const Vector2 panelPos = {
@@ -71,7 +71,7 @@ int main()
     // Pie chart geometry
     const Rectangle canvas = { 0, 0, panelPos.x, static_cast<float>(screenHeight) };
     const Vector2 center = { canvas.width/2.0f, canvas.height/2.0f };
-    const float radius = 205.0f;
+    constexpr float radius = 205.0f;
 
     // Total value for percentage calculations
     float totalValue = 0.0f;
@@ -93,13 +93,13 @@ int main()
 
         // Check for mouse hover over slices
         hoveredSlice = -1; // Reset hovered slice
-        Vector2 mousePos = GetMousePosition();
+        const Vector2 mousePos = GetMousePosition();
 
         if (CheckCollisionPointRec(mousePos, canvas)) // Only check if mouse is inside the canvas
         {
-            float dx = mousePos.x - center.x;
-            float dy = mousePos.y - center.y;
-            float distance = sqrtf(dx*dx + dy*dy);
+            const float dx = mousePos.x - center.x;
+            const float dy = mousePos.y - center.y;
+            const float distance = sqrtf(dx*dx + dy*dy);
 
             if ((distance <= radius) && (!showDonut || distance >= donutInnerRadius)) // Inside the pie, outside the donut hole
             {
@@ -109,7 +109,7 @@ int main()
                 float currentAngle = 0.0f;
                 for (int i = 0; i < sliceCount; i++)
                 {
-                    float sweep = (totalValue > 0)? (values[i]/totalValue)*360.0f : 0.0f;
+                    const float sweep = (totalValue > 0)? (values[i]/totalValue)*360.0f : 0.0f;
 
                     if ((angle >= currentAngle) && (angle < (currentAngle + sweep)))
                     {
@@ -132,10 +132,10 @@ int main()
             float startAngle = 0.0f;
             for (int i = 0; i < sliceCount; i++)
             {
-                float sweepAngle = (totalValue > 0)? (values[i]/totalValue)*360.0f : 0.0f;
-                float midAngle = startAngle + sweepAngle/2.0f; // Middle angle for label positioning
+                const float sweepAngle = (totalValue > 0)? (values[i]/totalValue)*360.0f : 0.0f;
+                const float midAngle = startAngle + sweepAngle/2.0f; // Middle angle for label positioning
 
-                Color color = ColorFromHSV(static_cast<float>(i)/sliceCount*360.0f, 0.75f, 0.9f);
+                const Color color = ColorFromHSV(static_cast<float>(i)/sliceCount*360.0f, 0.75f, 0.9f);
                 float currentRadius = radius;
 
                 // Make the hovered slice pop out by adding 20 pixels to its radius
@@ -154,9 +154,9 @@ int main()
                     else if (showPercentages) snprintf(labelText, 64, "%.0f%%", (values[i]/totalValue)*100.0f);
                     else labelText[0] = '\0';
 
-                    Vector2 textSize = MeasureTextEx(GetFontDefault(), labelText, 20, 1);
-                    float labelRadius = showDonut? (donutInnerRadius + radius)/2.0f : radius*0.7f;
-                    Vector2 labelPos = { center.x + cosf(midAngle*DEG2RAD)*labelRadius - textSize.x/2.0f,
+                    const Vector2 textSize = MeasureTextEx(GetFontDefault(), labelText, 20, 1);
+                    const float labelRadius = showDonut? (donutInnerRadius + radius)/2.0f : radius*0.7f;
+                    const Vector2 labelPos = { center.x + cosf(midAngle*DEG2RAD)*labelRadius - textSize.x/2.0f,
                         center.y + sinf(midAngle*DEG2RAD)*labelRadius - textSize.y/2.0f };
                     DrawText(labelText, static_cast<int>(labelPos.x), static_cast<int>(labelPos.y), 20, WHITE);
                 }
@@ -187,7 +187,7 @@ int main()
                 panelRect.width - panelMargin*2,
                 panelRect.y + panelRect.height - (panelPos.y + 12 + 190) - panelMargin
             };
-            int contentHeight = sliceCount*35;
+            const int contentHeight = sliceCount*35;
 
             GuiScrollPanel(scrollPanelBounds, nullptr, Rectangle{ 0, 0, panelRect.width - 25, static_cast<float>(contentHeight) },
                 &scrollContentOffset, &view);
@@ -202,7 +202,7 @@ int main()
                     const int rowY = static_cast<int>(contentY + 5 + i*35);
 
                     // Color indicator
-                    Color color = ColorFromHSV(static_cast<float>(i)/sliceCount*360.0f, 0.75f, 0.9f);
+                    const Color color = ColorFromHSV(static_cast<float>(i)/sliceCount*360.0f, 0.75f, 0.9f);
                     DrawRectangle(static_cast<int>(contentX + 15), rowY + 5, 20, 20, color);
 
                     // Label textbox

@@ -27,11 +27,11 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
-    const int virtualScreenWidth = 160;
-    const int virtualScreenHeight = 90;
+    constexpr int virtualScreenWidth = 160;
+    constexpr int virtualScreenHeight = 90;
 
     const float virtualRatio = static_cast<float>(screenWidth)/static_cast<float>(virtualScreenWidth);
 
@@ -44,17 +44,17 @@ int main()
     screenSpaceCamera.zoom = 1.0f;
 
     // Load render texture to draw all our objects
-    RenderTexture2D target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
+    const RenderTexture2D target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
 
-    Rectangle rec01 = { 70.0f, 35.0f, 20.0f, 20.0f };
-    Rectangle rec02 = { 90.0f, 55.0f, 30.0f, 10.0f };
-    Rectangle rec03 = { 80.0f, 65.0f, 15.0f, 25.0f };
+    const Rectangle rec01 = { 70.0f, 35.0f, 20.0f, 20.0f };
+    const Rectangle rec02 = { 90.0f, 55.0f, 30.0f, 10.0f };
+    const Rectangle rec03 = { 80.0f, 65.0f, 15.0f, 25.0f };
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
     Rectangle destRec = { (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
 
-    Vector2 origin = { 0.0f, 0.0f };
+    const Vector2 origin = { 0.0f, 0.0f };
 
     float rotation = 0.0f;
 

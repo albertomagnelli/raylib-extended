@@ -24,8 +24,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image drawing");
 
@@ -51,14 +51,14 @@ int main()
     UnloadImage(cat);       // Unload image from RAM
 
     // Load custom font for drawing on image
-    Font font = LoadFont("resources/custom_jupiter_crash.png");
+    const Font font = LoadFont("resources/custom_jupiter_crash.png");
 
     // Draw over image using custom font
     ImageDrawTextEx(&parrots, font, "PARROTS & CAT", Vector2{ 300, 230 }, static_cast<float>(font.baseSize), -2, WHITE);
 
     UnloadFont(font);       // Unload custom font (already drawn used on image)
 
-    Texture2D texture = LoadTextureFromImage(parrots);      // Image converted to texture, uploaded to GPU memory (VRAM)
+    const Texture2D texture = LoadTextureFromImage(parrots);      // Image converted to texture, uploaded to GPU memory (VRAM)
     UnloadImage(parrots);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
     SetTargetFPS(60);

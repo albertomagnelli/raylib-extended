@@ -24,8 +24,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - first person maze");
 
@@ -37,20 +37,20 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Image imMap = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
-    Texture2D cubicmap = LoadTextureFromImage(imMap);       // Convert image to texture to display (VRAM)
-    Mesh mesh = GenMeshCubicmap(imMap, Vector3{ 1.0f, 1.0f, 1.0f });
-    Model model = LoadModelFromMesh(mesh);
+    const Image imMap = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
+    const Texture2D cubicmap = LoadTextureFromImage(imMap);       // Convert image to texture to display (VRAM)
+    const Mesh mesh = GenMeshCubicmap(imMap, Vector3{ 1.0f, 1.0f, 1.0f });
+    const Model model = LoadModelFromMesh(mesh);
 
     // NOTE: By default each cube is mapped to one part of texture atlas
-    Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");    // Load map texture
+    const Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");    // Load map texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;    // Set map diffuse texture
 
     // Get map image data to be used for collision detection
     Color *mapPixels = LoadImageColors(imMap);
     UnloadImage(imMap);             // Unload image from RAM
 
-    Vector3 mapPosition = { -16.0f, 0.0f, -8.0f };  // Set model position
+    const Vector3 mapPosition = { -16.0f, 0.0f, -8.0f };  // Set model position
 
     DisableCursor();                // Limit cursor to relative movement inside the window
 
@@ -62,13 +62,13 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        Vector3 oldCamPos = camera.position;    // Store old camera position
+        const Vector3 oldCamPos = camera.position;    // Store old camera position
 
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
         // Check player collision (we simplify to 2D collision detection)
-        Vector2 playerPos = { camera.position.x, camera.position.z };
-        float playerRadius = 0.1f;  // Collision radius (player is modelled as a cilinder for collision)
+        const Vector2 playerPos = { camera.position.x, camera.position.z };
+        constexpr float playerRadius = 0.1f;  // Collision radius (player is modelled as a cilinder for collision)
 
         int playerCellX = static_cast<int>(playerPos.x - mapPosition.x + 0.5f);
         int playerCellY = static_cast<int>(playerPos.y - mapPosition.z + 0.5f);

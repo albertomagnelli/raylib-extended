@@ -42,16 +42,16 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - eratosthenes sieve");
 
-    RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     // Load Eratosthenes shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/eratosthenes.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/eratosthenes.fs", GLSL_VERSION));
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

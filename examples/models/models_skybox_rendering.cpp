@@ -39,8 +39,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - skybox rendering");
 
@@ -53,12 +53,12 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load skybox model
-    Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    Model skybox = LoadModelFromMesh(cube);
+    const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    const Model skybox = LoadModelFromMesh(cube);
 
     // Set this to true to use an HDR Texture
     // NOTE: raylib must be built with HDR Support for this to work: SUPPORT_FILEFORMAT_HDR
-    bool useHDR = false;
+    constexpr bool useHDR = false;
 
     // Load skybox shader and set required locations
     // NOTE: Some locations are automatically set at shader loading
@@ -70,7 +70,7 @@ int main()
     SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "vflipped"), std::initializer_list<int>{ useHDR? 1 : 0 }.begin(), SHADER_UNIFORM_INT);
 
     // Load cubemap shader and setup required shader locations
-    Shader shdrCubemap = LoadShader(TextFormat("resources/shaders/glsl%i/cubemap.vs", GLSL_VERSION),
+    const Shader shdrCubemap = LoadShader(TextFormat("resources/shaders/glsl%i/cubemap.vs", GLSL_VERSION),
                                     TextFormat("resources/shaders/glsl%i/cubemap.fs", GLSL_VERSION));
 
     SetShaderValue(shdrCubemap, GetShaderLocation(shdrCubemap, "equirectangularMap"), std::initializer_list<int>{ 0 }.begin(), SHADER_UNIFORM_INT);
@@ -82,7 +82,7 @@ int main()
         skyboxFileName = "resources/dresden_square_2k.hdr";
 
         // Load HDR panorama (sphere) texture
-        Texture2D panorama = LoadTexture(skyboxFileName);
+        const Texture2D panorama = LoadTexture(skyboxFileName);
 
         // Generate cubemap (texture with 6 quads-cube-mapping) from panorama HDR texture
         // NOTE 1: New texture is generated rendering to texture, shader calculates the sphere->cube coordinates mapping
@@ -96,7 +96,7 @@ int main()
     {
         // TODO: WARNING: On PLATFORM_WEB it requires a big amount of memory to process input image
         // and generate the required cubemap image to be passed to rlLoadTextureCubemap()
-        Image image = LoadImage("resources/skybox.png");
+        const Image image = LoadImage("resources/skybox.png");
         skybox.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = LoadTextureCubemap(image, CUBEMAP_LAYOUT_AUTO_DETECT);
         UnloadImage(image);
     }
@@ -128,7 +128,7 @@ int main()
                     if (useHDR)
                     {
                         // Load HDR panorama (sphere) texture
-                        Texture2D panorama = LoadTexture(droppedFiles.paths[0]);
+                        const Texture2D panorama = LoadTexture(droppedFiles.paths[0]);
 
                         // Generate cubemap from panorama texture
                         skybox.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = GenTextureCubemap(shdrCubemap, panorama, 1024, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
@@ -137,7 +137,7 @@ int main()
                     }
                     else
                     {
-                        Image image = LoadImage(droppedFiles.paths[0]);
+                        const Image image = LoadImage(droppedFiles.paths[0]);
                         skybox.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = LoadTextureCubemap(image, CUBEMAP_LAYOUT_AUTO_DETECT);
                         UnloadImage(image);
                     }
@@ -202,10 +202,10 @@ static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int s
 
     // STEP 1: Setup framebuffer
     //------------------------------------------------------------------------------------------
-    unsigned int rbo = rlLoadTextureDepth(size, size, true);
+    const unsigned int rbo = rlLoadTextureDepth(size, size, true);
     cubemap.id = rlLoadTextureCubemap(nullptr, size, format, 1);
 
-    unsigned int fbo = rlLoadFramebuffer();
+    const unsigned int fbo = rlLoadFramebuffer();
     rlFramebufferAttach(fbo, rbo, RL_ATTACHMENT_DEPTH, RL_ATTACHMENT_RENDERBUFFER, 0);
     rlFramebufferAttach(fbo, cubemap.id, RL_ATTACHMENT_COLOR_CHANNEL0, RL_ATTACHMENT_CUBEMAP_POSITIVE_X, 0);
 
@@ -219,11 +219,11 @@ static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int s
     rlEnableShader(shader.id);
 
     // Define projection matrix and send it to shader
-    Matrix matFboProjection = glm::perspective(90.0f*DEG2RAD, 1.0f, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+    const Matrix matFboProjection = glm::perspective(90.0f*DEG2RAD, 1.0f, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     rlSetUniformMatrix(shader.locs[SHADER_LOC_MATRIX_PROJECTION], matFboProjection);
 
     // Define view matrix for every side of the cubemap
-    Matrix fboViews[6] = {
+    const Matrix fboViews[6] = {
         glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{  1.0f,  0.0f,  0.0f }, Vector3{ 0.0f, -1.0f,  0.0f }),
         glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{ -1.0f,  0.0f,  0.0f }, Vector3{ 0.0f, -1.0f,  0.0f }),
         glm::lookAt(Vector3{ 0.0f, 0.0f, 0.0f }, Vector3{  0.0f,  1.0f,  0.0f }, Vector3{ 0.0f,  0.0f,  1.0f }),

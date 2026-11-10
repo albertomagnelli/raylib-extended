@@ -32,14 +32,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
-    const float sunRadius = 4.0f;
-    const float earthRadius = 0.6f;
-    const float earthOrbitRadius = 8.0f;
-    const float moonRadius = 0.16f;
-    const float moonOrbitRadius = 1.5f;
+    constexpr float sunRadius = 4.0f;
+    constexpr float earthRadius = 0.6f;
+    constexpr float earthOrbitRadius = 8.0f;
+    constexpr float moonRadius = 0.16f;
+    constexpr float moonOrbitRadius = 1.5f;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - rlgl solar system");
 
@@ -51,7 +51,7 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    float rotationSpeed = 0.2f;         // General system rotation speed
+    constexpr float rotationSpeed = 0.2f;         // General system rotation speed
 
     float earthRotation = 0.0f;         // Rotation of earth around itself (days) in degrees
     float earthOrbitRotation = 0.0f;    // Rotation of earth around the Sun (years) in degrees
@@ -132,8 +132,8 @@ int main()
 // NOTE: Sphere is drawn in world position ( 0, 0, 0 ) with radius 1.0f
 void DrawSphereBasic(Color color)
 {
-    int rings = 16;
-    int slices = 16;
+    constexpr int rings = 16;
+    constexpr int slices = 16;
 
     // Make sure there is enough space in the internal render batch
     // buffer to store all required vertex, batch is reseted if required

@@ -25,18 +25,18 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 720;
-    const int screenHeight = 400;
+    constexpr int screenWidth = 720;
+    constexpr int screenHeight = 400;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - math angle rotation");
     SetTargetFPS(60);
 
-    Vector2 center = { screenWidth/2.0f, screenHeight/2.0f };
-    const float lineLength = 150.0f;
+    const Vector2 center = { screenWidth/2.0f, screenHeight/2.0f };
+    constexpr float lineLength = 150.0f;
 
     // Predefined angles for fixed lines
-    int angles[] = { 0, 30, 60, 90 };
-    int numAngles = sizeof(angles)/sizeof(angles[0]);
+    const int angles[] = { 0, 30, 60, 90 };
+    const int numAngles = sizeof(angles)/sizeof(angles[0]);
 
     float totalAngle = 0.0f; // Animated rotation angle
     //--------------------------------------------------------------------------------------
@@ -60,8 +60,8 @@ int main()
             // Draw fixed-angle lines with colorful gradient
             for (int i = 0; i < numAngles; i++)
             {
-                float rad = angles[i]*DEG2RAD;
-                Vector2 end = { center.x + cosf(rad)*lineLength,
+                const float rad = angles[i]*DEG2RAD;
+                const Vector2 end = { center.x + cosf(rad)*lineLength,
                                 center.y + sinf(rad)*lineLength };
 
                 // Gradient color from green → cyan → blue → magenta
@@ -78,18 +78,18 @@ int main()
                 DrawLineEx(center, end, 5.0f, col);
 
                 // Draw angle label slightly offset along the line
-                Vector2 textPos = { center.x + cosf(rad)*(lineLength + 20),
+                const Vector2 textPos = { center.x + cosf(rad)*(lineLength + 20),
                                     center.y + sinf(rad)*(lineLength + 20) };
                 DrawText(TextFormat("%d°", angles[i]), static_cast<int>(textPos.x), static_cast<int>(textPos.y), 20, col);
             }
 
             // Draw animated rotating line with changing color
-            float animRad = totalAngle*DEG2RAD;
-            Vector2 animEnd = { center.x + cosf(animRad)*lineLength,
+            const float animRad = totalAngle*DEG2RAD;
+            const Vector2 animEnd = { center.x + cosf(animRad)*lineLength,
                                 center.y + sinf(animRad)*lineLength };
 
             // Cycle through HSV colors for animated line
-            Color animCol = ColorFromHSV(fmodf(totalAngle, 360.0f), 0.8f, 0.9f);
+            const Color animCol = ColorFromHSV(fmodf(totalAngle, 360.0f), 0.8f, 0.9f);
             DrawLineEx(center, animEnd, 5.0f, animCol);
 
         EndDrawing();

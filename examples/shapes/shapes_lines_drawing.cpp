@@ -26,8 +26,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - lines drawing");
 
@@ -38,7 +38,7 @@ int main()
     Vector2 mousePositionPrevious = GetMousePosition();
 
     // The canvas to draw lines on
-    RenderTexture canvas = LoadRenderTexture(screenWidth, screenHeight);
+    const RenderTexture canvas = LoadRenderTexture(screenWidth, screenHeight);
 
     // The line's thickness
     float lineThickness = 8.0f;
@@ -70,8 +70,8 @@ int main()
         }
 
         // Store whether the left and right buttons are down
-        bool leftButtonDown = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
-        bool rightButtonDown = IsMouseButtonDown(MOUSE_BUTTON_RIGHT);
+        const bool leftButtonDown = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+        const bool rightButtonDown = IsMouseButtonDown(MOUSE_BUTTON_RIGHT);
 
         if (leftButtonDown || rightButtonDown)
         {

@@ -38,19 +38,19 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - color correction");
 
-    Texture2D texture[MAX_TEXTURES] = {
+    const Texture2D texture[MAX_TEXTURES] = {
         LoadTexture("resources/parrots.png"),
         LoadTexture("resources/cat.png"),
         LoadTexture("resources/mandrill.png"),
         LoadTexture("resources/fudesumi.png")
     };
 
-    Shader shdrColorCorrection = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_correction.fs", GLSL_VERSION));
+    const Shader shdrColorCorrection = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_correction.fs", GLSL_VERSION));
 
     int imageIndex = 0;
     int resetButtonClicked = 0;
@@ -60,9 +60,9 @@ int main()
     float brightness = 0.0f;
 
     // Get shader locations
-    int contrastLoc = GetShaderLocation(shdrColorCorrection, "contrast");
-    int saturationLoc = GetShaderLocation(shdrColorCorrection, "saturation");
-    int brightnessLoc = GetShaderLocation(shdrColorCorrection, "brightness");
+    const int contrastLoc = GetShaderLocation(shdrColorCorrection, "contrast");
+    const int saturationLoc = GetShaderLocation(shdrColorCorrection, "saturation");
+    const int brightnessLoc = GetShaderLocation(shdrColorCorrection, "brightness");
 
     // Set shader values (they can be changed later)
     SetShaderValue(shdrColorCorrection, contrastLoc, &contrast, SHADER_UNIFORM_FLOAT);

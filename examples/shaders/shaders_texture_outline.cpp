@@ -33,23 +33,23 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture outline");
 
-    Texture2D texture = LoadTexture("resources/fudesumi.png");
+    const Texture2D texture = LoadTexture("resources/fudesumi.png");
 
-    Shader shdrOutline = LoadShader({}, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
+    const Shader shdrOutline = LoadShader({}, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
 
     float outlineSize = 2.0f;
     float outlineColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };     // Normalized RED color
     float textureSize[2] = { static_cast<float>(texture.width), static_cast<float>(texture.height) };
 
     // Get shader locations
-    int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
-    int outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
-    int textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
+    const int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
+    const int outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
+    const int textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
 
     // Set shader values (they can be changed later)
     SetShaderValue(shdrOutline, outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);

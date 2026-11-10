@@ -41,8 +41,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - depth writing");
 
@@ -56,11 +56,11 @@ int main()
     };
 
     // Load custom render texture with writable depth texture buffer
-    RenderTexture2D target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
 
     // Load depth writing shader
     // NOTE: The shader inverts the depth buffer by writing into it by `gl_FragDepth = 1 - gl_FragCoord.z;`
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/depth_write.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/depth_write.fs", GLSL_VERSION));
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 

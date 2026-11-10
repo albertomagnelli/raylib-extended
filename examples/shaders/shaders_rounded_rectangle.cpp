@@ -68,17 +68,17 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - rounded rectangle");
 
     // Load the shader
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/base.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/base.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/rounded_rectangle.fs", GLSL_VERSION));
 
     // Create a rounded rectangle
-    RoundedRectangle roundedRectangle = CreateRoundedRectangle(
+    const RoundedRectangle roundedRectangle = CreateRoundedRectangle(
         Vector4{ 5.0f, 10.0f, 15.0f, 20.0f },     // Corner radius
         20.0f,                                      // Shadow radius
         Vector2{ 0.0f, -5.0f },                   // Shadow offset

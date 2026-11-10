@@ -26,12 +26,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image channel");
 
-    Image fudesumiImage = LoadImage("resources/fudesumi.png");
+    const Image fudesumiImage = LoadImage("resources/fudesumi.png");
 
     Image imageAlpha = ImageFromChannel(fudesumiImage, 3);
     ImageAlphaMask(&imageAlpha, imageAlpha);
@@ -45,14 +45,14 @@ int main()
     Image imageBlue = ImageFromChannel(fudesumiImage, 2);
     ImageAlphaMask(&imageBlue, imageAlpha);
 
-    Image backgroundImage = GenImageChecked(screenWidth, screenHeight, screenWidth/20, screenHeight/20, ORANGE, YELLOW);
+    const Image backgroundImage = GenImageChecked(screenWidth, screenHeight, screenWidth/20, screenHeight/20, ORANGE, YELLOW);
 
-    Texture2D fudesumiTexture = LoadTextureFromImage(fudesumiImage);
-    Texture2D textureAlpha = LoadTextureFromImage(imageAlpha);
-    Texture2D textureRed = LoadTextureFromImage(imageRed);
-    Texture2D textureGreen = LoadTextureFromImage(imageGreen);
-    Texture2D textureBlue = LoadTextureFromImage(imageBlue);
-    Texture2D backgroundTexture = LoadTextureFromImage(backgroundImage);
+    const Texture2D fudesumiTexture = LoadTextureFromImage(fudesumiImage);
+    const Texture2D textureAlpha = LoadTextureFromImage(imageAlpha);
+    const Texture2D textureRed = LoadTextureFromImage(imageRed);
+    const Texture2D textureGreen = LoadTextureFromImage(imageGreen);
+    const Texture2D textureBlue = LoadTextureFromImage(imageBlue);
+    const Texture2D backgroundTexture = LoadTextureFromImage(backgroundImage);
 
     UnloadImage(fudesumiImage);
     UnloadImage(imageAlpha);
@@ -61,13 +61,13 @@ int main()
     UnloadImage(imageBlue);
     UnloadImage(backgroundImage);
 
-    Rectangle fudesumiRec = {0, 0, static_cast<float>(fudesumiImage.width), static_cast<float>(fudesumiImage.height)};
+    const Rectangle fudesumiRec = {0, 0, static_cast<float>(fudesumiImage.width), static_cast<float>(fudesumiImage.height)};
 
-    Rectangle fudesumiPos = {50, 10, fudesumiImage.width*0.8f, fudesumiImage.height*0.8f};
-    Rectangle redPos = { 410, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
-    Rectangle greenPos = { 600, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
-    Rectangle bluePos = { 410, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
-    Rectangle alphaPos = { 600, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const Rectangle fudesumiPos = {50, 10, fudesumiImage.width*0.8f, fudesumiImage.height*0.8f};
+    const Rectangle redPos = { 410, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const Rectangle greenPos = { 600, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const Rectangle bluePos = { 410, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const Rectangle alphaPos = { 600, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

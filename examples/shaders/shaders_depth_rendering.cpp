@@ -43,8 +43,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - depth rendering");
 
@@ -57,17 +57,17 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load render texture with a depth texture attached
-    RenderTexture2D target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
 
     // Load depth shader and get depth texture shader location
-    Shader depthShader = LoadShader({}, TextFormat("resources/shaders/glsl%i/depth_render.fs", GLSL_VERSION));
-    int depthLoc = GetShaderLocation(depthShader, "depthTexture");
-    int flipTextureLoc = GetShaderLocation(depthShader, "flipY");
+    const Shader depthShader = LoadShader({}, TextFormat("resources/shaders/glsl%i/depth_render.fs", GLSL_VERSION));
+    const int depthLoc = GetShaderLocation(depthShader, "depthTexture");
+    const int flipTextureLoc = GetShaderLocation(depthShader, "flipY");
     SetShaderValue(depthShader, flipTextureLoc, std::initializer_list<int>{ 1 }.begin(), SHADER_UNIFORM_INT); // Flip Y texture
 
     // Load scene models
-    Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    Model floor = LoadModelFromMesh(GenMeshPlane(20.0f, 20.0f, 1, 1));
+    const Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    const Model floor = LoadModelFromMesh(GenMeshPlane(20.0f, 20.0f, 1, 1));
 
     DisableCursor();  // Limit cursor to relative movement inside the window
 

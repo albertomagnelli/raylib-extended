@@ -38,8 +38,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - simple mask");
 
@@ -52,33 +52,33 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Define our three models to show the shader on
-    Mesh torus = GenMeshTorus(0.3f, 1, 16, 32);
+    const Mesh torus = GenMeshTorus(0.3f, 1, 16, 32);
     Model model1 = LoadModelFromMesh(torus);
 
-    Mesh cube = GenMeshCube(0.8f,0.8f,0.8f);
-    Model model2 = LoadModelFromMesh(cube);
+    const Mesh cube = GenMeshCube(0.8f,0.8f,0.8f);
+    const Model model2 = LoadModelFromMesh(cube);
 
     // Generate model to be shaded just to see the gaps in the other two
-    Mesh sphere = GenMeshSphere(1, 16, 16);
-    Model model3 = LoadModelFromMesh(sphere);
+    const Mesh sphere = GenMeshSphere(1, 16, 16);
+    const Model model3 = LoadModelFromMesh(sphere);
 
     // Load the shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/mask.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/mask.fs", GLSL_VERSION));
 
     // Load and apply the diffuse texture (colour map)
-    Texture texDiffuse = LoadTexture("resources/plasma.png");
+    const Texture texDiffuse = LoadTexture("resources/plasma.png");
     model1.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texDiffuse;
     model2.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texDiffuse;
 
     // Using MATERIAL_MAP_EMISSION as a spare slot to use for 2nd texture
     // NOTE: Don't use MATERIAL_MAP_IRRADIANCE, MATERIAL_MAP_PREFILTER or  MATERIAL_MAP_CUBEMAP as they are bound as cube maps
-    Texture texMask = LoadTexture("resources/mask.png");
+    const Texture texMask = LoadTexture("resources/mask.png");
     model1.materials[0].maps[MATERIAL_MAP_EMISSION].texture = texMask;
     model2.materials[0].maps[MATERIAL_MAP_EMISSION].texture = texMask;
     shader.locs[SHADER_LOC_MAP_EMISSION] = GetShaderLocation(shader, "mask");
 
     // Frame is incremented each frame to animate the shader
-    int shaderFrame = GetShaderLocation(shader, "frame");
+    const int shaderFrame = GetShaderLocation(shader, "frame");
 
     // Apply the shader to the two models
     model1.materials[0].shader = shader;

@@ -33,8 +33,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard testbed");
     SetExitKey(KEY_NULL); // Avoid exit on KEY_ESCAPE
@@ -43,7 +43,7 @@ int main()
     int line01KeyWidths[15] = {};
     for (int i = 0; i < 15; i++) line01KeyWidths[i] = 45;
     line01KeyWidths[13] = 62;   // PRINTSCREEN
-    int line01Keys[15] = {
+    const int line01Keys[15] = {
         KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,
         KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11,
         KEY_F12, KEY_PRINT_SCREEN, KEY_PAUSE
@@ -54,7 +54,7 @@ int main()
     for (int i = 0; i < 15; i++) line02KeyWidths[i] = 45;
     line02KeyWidths[0] = 25;    // GRAVE
     line02KeyWidths[13] = 82;   // BACKSPACE
-    int line02Keys[15] = {
+    const int line02Keys[15] = {
         KEY_GRAVE, KEY_ONE, KEY_TWO, KEY_THREE, KEY_FOUR,
         KEY_FIVE, KEY_SIX, KEY_SEVEN, KEY_EIGHT, KEY_NINE,
         KEY_ZERO, KEY_MINUS, KEY_EQUAL, KEY_BACKSPACE, KEY_DELETE };
@@ -64,7 +64,7 @@ int main()
     for (int i = 0; i < 15; i++) line03KeyWidths[i] = 45;
     line03KeyWidths[0] = 50;    // TAB
     line03KeyWidths[13] = 57;   // BACKSLASH
-    int line03Keys[15] = {
+    const int line03Keys[15] = {
         KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y,
         KEY_U, KEY_I, KEY_O, KEY_P, KEY_LEFT_BRACKET,
         KEY_RIGHT_BRACKET, KEY_BACKSLASH, KEY_INSERT
@@ -75,7 +75,7 @@ int main()
     for (int i = 0; i < 14; i++) line04KeyWidths[i] = 45;
     line04KeyWidths[0] = 68;    // CAPS
     line04KeyWidths[12] = 88;   // ENTER
-    int line04Keys[14] = {
+    const int line04Keys[14] = {
         KEY_CAPS_LOCK, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,
         KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON,
         KEY_APOSTROPHE, KEY_ENTER, KEY_PAGE_UP
@@ -86,7 +86,7 @@ int main()
     for (int i = 0; i < 14; i++) line05KeyWidths[i] = 45;
     line05KeyWidths[0] = 80;    // LSHIFT
     line05KeyWidths[11] = 76;   // RSHIFT
-    int line05Keys[14] = {
+    const int line05Keys[14] = {
         KEY_LEFT_SHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B,
         KEY_N, KEY_M, KEY_COMMA, KEY_PERIOD, /*KEY_MINUS*/
         KEY_SLASH, KEY_RIGHT_SHIFT, KEY_UP, KEY_PAGE_DOWN
@@ -98,13 +98,13 @@ int main()
     line06KeyWidths[0] = 80;    // LCTRL
     line06KeyWidths[3] = 208;   // SPACE
     line06KeyWidths[7] = 60;    // RCTRL
-    int line06Keys[11] = {
+    const int line06Keys[11] = {
         KEY_LEFT_CONTROL, KEY_LEFT_SUPER, KEY_LEFT_ALT,
         KEY_SPACE, KEY_RIGHT_ALT, 162, KEY_NULL,
         KEY_RIGHT_CONTROL, KEY_LEFT, KEY_DOWN, KEY_RIGHT
     };
 
-    Vector2 keyboardOffset = { 26, 80 };
+    const Vector2 keyboardOffset = { 26, 80 };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -114,10 +114,10 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        int key = GetKeyPressed(); // Get pressed keycode
+        const int key = GetKeyPressed(); // Get pressed keycode
         if (key > 0) TraceLog(LOG_INFO, "KEYBOARD TESTBED: KEY PRESSED:    %d", key);
 
-        int ch = GetCharPressed(); // Get pressed char for text input, using OS mapping
+        const int ch = GetCharPressed(); // Get pressed char for text input, using OS mapping
         if (ch > 0) TraceLog(LOG_INFO,  "KEYBOARD TESTBED: CHAR PRESSED:   %c (%d)", ch, ch);
         //----------------------------------------------------------------------------------
 

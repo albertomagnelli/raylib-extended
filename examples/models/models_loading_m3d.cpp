@@ -30,8 +30,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading m3d");
 
@@ -44,8 +44,8 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load model
-    Model model = LoadModel("resources/models/m3d/cesium_man.m3d");             // Load the animated model mesh and basic data
-    Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const Model model = LoadModel("resources/models/m3d/cesium_man.m3d");             // Load the animated model mesh and basic data
+    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
 
     // Load animation data
     int animCount = 0;

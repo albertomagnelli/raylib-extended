@@ -35,17 +35,17 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - shapes textures");
 
-    Texture2D fudesumi = LoadTexture("resources/fudesumi.png");
+    const Texture2D fudesumi = LoadTexture("resources/fudesumi.png");
 
     // Load shader to be used on some parts drawing
     // NOTE 1: Using GLSL 330 shader version, on OpenGL ES 2.0 use GLSL 100 shader version
     // NOTE 2: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/grayscale.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/grayscale.fs", GLSL_VERSION));
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

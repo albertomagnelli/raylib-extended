@@ -25,22 +25,22 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite explosion");
 
     InitAudioDevice();
 
     // Load explosion sound
-    Sound fxBoom = LoadSound("resources/boom.wav");
+    const Sound fxBoom = LoadSound("resources/boom.wav");
 
     // Load explosion texture
-    Texture2D explosion = LoadTexture("resources/explosion.png");
+    const Texture2D explosion = LoadTexture("resources/explosion.png");
 
     // Init variables for animation
-    float frameWidth = static_cast<float>(explosion.width)/NUM_FRAMES_PER_LINE;   // Sprite one frame rectangle width
-    float frameHeight = static_cast<float>(explosion.height)/NUM_LINES;           // Sprite one frame rectangle height
+    const float frameWidth = static_cast<float>(explosion.width)/NUM_FRAMES_PER_LINE;   // Sprite one frame rectangle width
+    const float frameHeight = static_cast<float>(explosion.height)/NUM_LINES;           // Sprite one frame rectangle height
     int currentFrame = 0;
     int currentLine = 0;
 

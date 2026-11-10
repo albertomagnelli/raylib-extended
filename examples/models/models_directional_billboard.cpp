@@ -29,8 +29,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - directional billboard");
 
@@ -43,7 +43,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE; // Projection type (Standard 3D perspective)
 
     // Load billboard texture
-    Texture skillbot = LoadTexture("resources/skillbot.png");
+    const Texture skillbot = LoadTexture("resources/skillbot.png");
 
     // Timer to update animation
     float anim_timer = 0.0f;

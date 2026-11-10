@@ -29,8 +29,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 440;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 440;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera split screen");
 
@@ -49,11 +49,11 @@ int main()
     camera2.rotation = 0.0f;
     camera2.zoom = 1.0f;
 
-    RenderTexture screenCamera1 = LoadRenderTexture(screenWidth/2, screenHeight);
-    RenderTexture screenCamera2 = LoadRenderTexture(screenWidth/2, screenHeight);
+    const RenderTexture screenCamera1 = LoadRenderTexture(screenWidth/2, screenHeight);
+    const RenderTexture screenCamera2 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Build a flipped rectangle the size of the split view to use for drawing later
-    Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<float>(screenCamera1.texture.width), static_cast<float>(-screenCamera1.texture.height) };
+    const Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<float>(screenCamera1.texture.width), static_cast<float>(-screenCamera1.texture.height) };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

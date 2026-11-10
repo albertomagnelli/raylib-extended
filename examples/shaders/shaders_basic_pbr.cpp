@@ -81,8 +81,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - basic pbr");
@@ -96,7 +96,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load PBR shader and setup all required locations
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/pbr.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/pbr.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/pbr.fs", GLSL_VERSION));
     shader.locs[SHADER_LOC_MAP_ALBEDO] = GetShaderLocation(shader, "albedoMap");
     // WARNING: Metalness, roughness, and ambient occlusion are all packed into a MRA texture
@@ -112,30 +112,30 @@ int main()
 
     // Setup additional required shader locations, including lights data
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
-    int lightCountLoc = GetShaderLocation(shader, "numOfLights");
+    const int lightCountLoc = GetShaderLocation(shader, "numOfLights");
     int maxLightCount = MAX_LIGHTS;
     SetShaderValue(shader, lightCountLoc, &maxLightCount, SHADER_UNIFORM_INT);
 
     // Setup ambient color and intensity parameters
     float ambientIntensity = 0.02f;
-    Color ambientColor = Color{ 26, 32, 135, 255 };
+    const Color ambientColor = Color{ 26, 32, 135, 255 };
     Vector3 ambientColorNormalized = Vector3{ ambientColor.r/255.0f, ambientColor.g/255.0f, ambientColor.b/255.0f };
     SetShaderValue(shader, GetShaderLocation(shader, "ambientColor"), &ambientColorNormalized, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, GetShaderLocation(shader, "ambient"), &ambientIntensity, SHADER_UNIFORM_FLOAT);
 
     // Get location for shader parameters that can be modified in real time
-    int metallicValueLoc = GetShaderLocation(shader, "metallicValue");
-    int roughnessValueLoc = GetShaderLocation(shader, "roughnessValue");
-    int emissiveIntensityLoc = GetShaderLocation(shader, "emissivePower");
-    int emissiveColorLoc = GetShaderLocation(shader, "emissiveColor");
-    int textureTilingLoc = GetShaderLocation(shader, "tiling");
+    const int metallicValueLoc = GetShaderLocation(shader, "metallicValue");
+    const int roughnessValueLoc = GetShaderLocation(shader, "roughnessValue");
+    const int emissiveIntensityLoc = GetShaderLocation(shader, "emissivePower");
+    const int emissiveColorLoc = GetShaderLocation(shader, "emissiveColor");
+    const int textureTilingLoc = GetShaderLocation(shader, "tiling");
 
     // Load old car model using PBR maps and shader
     // WARNING: We know this model consists of a single model.meshes[0] and
     // that model.materials[0] is by default assigned to that mesh
     // There could be more complex models consisting of multiple meshes and
     // multiple materials defined for those meshes... but always 1 mesh = 1 material
-    Model car = LoadModel("resources/models/old_car_new.glb");
+    const Model car = LoadModel("resources/models/old_car_new.glb");
 
     // Assign already setup PBR shader to model.materials[0], used by models.meshes[0]
     car.materials[0].shader = shader;
@@ -155,7 +155,7 @@ int main()
 
     // Load floor model mesh and assign material parameters
     // NOTE: A basic plane shape can be generated instead of being loaded from a model file
-    Model floor = LoadModel("resources/models/plane.glb");
+    const Model floor = LoadModel("resources/models/plane.glb");
     //Mesh floorMesh = GenMeshPlane(10, 10, 10, 10);
     //GenMeshTangents(&floorMesh);      // TODO: Review tangents generation
     //Model floor = LoadModelFromMesh(floorMesh);
@@ -252,7 +252,7 @@ int main()
                 // Draw spheres to show the lights positions
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
-                    Color lightColor = Color{
+                    const Color lightColor = Color{
                         static_cast<unsigned char>(lights[i].color[0]*255),
                         static_cast<unsigned char>(lights[i].color[1]*255),
                         static_cast<unsigned char>(lights[i].color[2]*255),

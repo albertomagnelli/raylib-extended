@@ -36,13 +36,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input virtual controls");
 
     Vector2 padPosition = { 100, 350 };
-    float buttonRadius = 30;
+    constexpr float buttonRadius = 30;
 
     Vector2 buttonPositions[BUTTON_MAX] = {
         { padPosition.x,padPosition.y - buttonRadius*1.5f },  // Up
@@ -51,7 +51,7 @@ int main()
         { padPosition.x, padPosition.y + buttonRadius*1.5f }  // Down
     };
 
-    Vector2 arrowTris[4][3] = {
+    const Vector2 arrowTris[4][3] = {
         // Up
         {
             { buttonPositions[0].x,     buttonPositions[0].y - 12 },
@@ -78,7 +78,7 @@ int main()
         }
     };
 
-    Color buttonLabelColors[BUTTON_MAX] = {
+    const Color buttonLabelColors[BUTTON_MAX] = {
         YELLOW, // Up
         BLUE,   // Left
         RED,    // Right
@@ -89,7 +89,7 @@ int main()
     Vector2 inputPosition = { 0, 0 };
 
     Vector2 playerPosition = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
-    float playerSpeed = 75;
+    constexpr float playerSpeed = 75;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -112,8 +112,8 @@ int main()
             // Find nearest D-Pad button to the input position
             for (int i = 0; i < BUTTON_MAX; i++)
             {
-                float distX = fabsf(buttonPositions[i].x - inputPosition.x);
-                float distY = fabsf(buttonPositions[i].y - inputPosition.y);
+                const float distX = fabsf(buttonPositions[i].x - inputPosition.x);
+                const float distY = fabsf(buttonPositions[i].y - inputPosition.y);
 
                 if ((distX + distY < buttonRadius))
                 {

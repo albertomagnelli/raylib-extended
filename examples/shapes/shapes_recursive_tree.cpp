@@ -38,12 +38,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - recursive tree");
 
-    Vector2 start = { (screenWidth/2.0f) - 125.0f, static_cast<float>(screenHeight) };
+    const Vector2 start = { (screenWidth/2.0f) - 125.0f, static_cast<float>(screenHeight) };
     float angle = 40.0f;
     float thick = 1.0f;
     float treeDepth = 10.0f;
@@ -59,31 +59,31 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float theta = angle*DEG2RAD;
-        int maxBranches = static_cast<int>(powf(2, floorf(treeDepth)));
+        const float theta = angle*DEG2RAD;
+        const int maxBranches = static_cast<int>(powf(2, floorf(treeDepth)));
         Branch branches[1030] = {};
         int count = 0;
 
-        Vector2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
+        const Vector2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
         branches[count++] = Branch{start, initialEnd, 0.0f, length};
 
         for (int i = 0; i < count; i++)
         {
-            Branch branch = branches[i];
+            const Branch branch = branches[i];
             if (branch.length < 2) continue;
 
-            float nextLength = branch.length*branchDecay;
+            const float nextLength = branch.length*branchDecay;
 
             if (count < maxBranches && nextLength >= 2)
             {
-                Vector2 branchStart = branch.end;
+                const Vector2 branchStart = branch.end;
 
-                float angle1 = branch.angle + theta;
-                Vector2 branchEnd1 = { branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
+                const float angle1 = branch.angle + theta;
+                const Vector2 branchEnd1 = { branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
                 branches[count++] = Branch{branchStart, branchEnd1, angle1, nextLength};
 
-                float angle2 = branch.angle - theta;
-                Vector2 branchEnd2 = { branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
+                const float angle2 = branch.angle - theta;
+                const Vector2 branchEnd2 = { branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
                 branches[count++] = Branch{branchStart, branchEnd2, angle2, nextLength};
             }
         }
@@ -96,7 +96,7 @@ int main()
 
             for (int i = 0; i < count; i++)
             {
-                Branch branch = branches[i];
+                const Branch branch = branches[i];
                 if (branch.length >= 2)
                 {
                     if (bezier) DrawLineBezier(branch.start, branch.end, thick, RED);

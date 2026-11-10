@@ -250,12 +250,12 @@ public:
         // Requested velocity, expressed on the camera basis
         Vector3 forward = GetForward();
         Vector3 right = GetRight();
-        bool planar = (mConfig.moveInWorldPlane && (mMode != CAMERA_CONTROLLER_FREE));
+        const bool planar = (mConfig.moveInWorldPlane && (mMode != CAMERA_CONTROLLER_FREE));
 
         if (planar)
         {
-            Vector3 planarForward = { forward.x, 0.0f, forward.z };
-            Vector3 planarRight = { right.x, 0.0f, right.z };
+            const Vector3 planarForward = { forward.x, 0.0f, forward.z };
+            const Vector3 planarRight = { right.x, 0.0f, right.z };
 
             if (glm::dot(planarForward, planarForward) > EPSILON) forward = glm::normalize(planarForward);
             else forward = Vector3{};
@@ -264,7 +264,7 @@ public:
             else right = Vector3{};
         }
 
-        Vector3 up = planar? Vector3{ 0.0f, 1.0f, 0.0f } : GetUp();
+        const Vector3 up = planar? Vector3{ 0.0f, 1.0f, 0.0f } : GetUp();
         mTargetVelocity = (right*velocity.x) + (up*velocity.y) + (forward*velocity.z);
 
         // Smooth everything: velocity, rotation, roll, distance and field-of-view
@@ -449,10 +449,10 @@ public:
     // Normalized camera basis vectors, [forward] is the direction the camera looks at
     Vector3 GetForward() const
     {
-        float yawRad = mYaw*DEG2RAD;
-        float pitchRad = mPitch*DEG2RAD;
+        const float yawRad = mYaw*DEG2RAD;
+        const float pitchRad = mPitch*DEG2RAD;
 
-        Vector3 forward = { sinf(yawRad)*cosf(pitchRad), sinf(pitchRad), cosf(yawRad)*cosf(pitchRad) };
+        const Vector3 forward = { sinf(yawRad)*cosf(pitchRad), sinf(pitchRad), cosf(yawRad)*cosf(pitchRad) };
         return forward;
     }
 
@@ -465,13 +465,13 @@ public:
 
     Vector3 GetRight() const
     {
-        Vector3 right = glm::cross(GetForward(), GetUp());
+        const Vector3 right = glm::cross(GetForward(), GetUp());
 
         // Degenerate case: the camera looks straight up or down, any horizontal vector is a valid right vector
         if (glm::dot(right, right) <= EPSILON)
         {
-            float yawRad = mYaw*DEG2RAD;
-            Vector3 horizontalRight = { -cosf(yawRad), 0.0f, sinf(yawRad) };
+            const float yawRad = mYaw*DEG2RAD;
+            const Vector3 horizontalRight = { -cosf(yawRad), 0.0f, sinf(yawRad) };
             return horizontalRight;
         }
 
@@ -690,7 +690,7 @@ private:
         else if (IsKeyDown(mKeys.slow)) speed *= mConfig.slowMultiplier;
 
         // Mouse look
-        Vector2 mouseDelta = GetMouseDelta();
+        const Vector2 mouseDelta = GetMouseDelta();
         rotation.x -= mouseDelta.x*mConfig.lookSensitivity;
         rotation.y -= mouseDelta.y*mConfig.lookSensitivity;
         if (mConfig.invertY) rotation.y = -rotation.y;
@@ -749,7 +749,7 @@ private:
     // Writes the smoothed state into the raylib camera
     void UpdateCameraTransform()
     {
-        Vector3 forward = GetForward();
+        const Vector3 forward = GetForward();
 
         if (UsesPivot())
         {
@@ -783,7 +783,7 @@ private:
     {
         if (fabsf(value) < mConfig.gamepadDeadZone) return 0.0f;
 
-        float sign = (value < 0.0f)? -1.0f : 1.0f;
+        const float sign = (value < 0.0f)? -1.0f : 1.0f;
         return sign*((fabsf(value) - mConfig.gamepadDeadZone)/(1.0f - mConfig.gamepadDeadZone));
     }
 
@@ -798,7 +798,7 @@ private:
 
     static Vector3 DampVector(Vector3 current, Vector3 target, float response, float dt)
     {
-        Vector3 result = { Damp(current.x, target.x, response, dt), Damp(current.y, target.y, response, dt), Damp(current.z, target.z, response, dt) };
+        const Vector3 result = { Damp(current.x, target.x, response, dt), Damp(current.y, target.y, response, dt), Damp(current.z, target.z, response, dt) };
         return result;
     }
 

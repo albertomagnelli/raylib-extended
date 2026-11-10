@@ -26,8 +26,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     //SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [models] example - yaw pitch roll");
@@ -40,7 +40,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera type
 
     Model model = LoadModel("resources/models/obj/plane.obj");                  // Load model
-    Texture2D texture = LoadTexture("resources/models/obj/plane_diffuse.png");  // Load model texture
+    const Texture2D texture = LoadTexture("resources/models/obj/plane_diffuse.png");  // Load model texture
 
     SetTextureWrap(texture, TEXTURE_WRAP_REPEAT);       // Force Repeat to avoid issue on Web version
 

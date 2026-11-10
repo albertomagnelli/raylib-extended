@@ -22,8 +22,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - world screen");
 
@@ -35,7 +35,7 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
+    const Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
     Vector2 cubeScreenPosition = { 0.0f, 0.0f };
 
     DisableCursor();                    // Limit cursor to relative movement inside the window

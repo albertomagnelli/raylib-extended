@@ -28,8 +28,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // NOTE: screenWidth/screenHeight should match VR device aspect ratio
     InitWindow(screenWidth, screenHeight, "raylib [core] example - vr simulator");
@@ -55,7 +55,7 @@ int main()
     VrStereoConfig config = LoadVrStereoConfig(device);
 
     // Distortion shader (uses device lens distortion and chroma)
-    Shader distortion = LoadShader({}, TextFormat("resources/shaders/glsl%i/distortion.fs", GLSL_VERSION));
+    const Shader distortion = LoadShader({}, TextFormat("resources/shaders/glsl%i/distortion.fs", GLSL_VERSION));
 
     // Update distortion shader with lens and distortion-scale parameters
     SetShaderValue(distortion, GetShaderLocation(distortion, "leftLensCenter"),
@@ -78,11 +78,11 @@ int main()
 
     // Initialize framebuffer for stereo rendering
     // NOTE: Screen size should match HMD aspect ratio
-    RenderTexture2D target = LoadRenderTexture(device.hResolution, device.vResolution);
+    const RenderTexture2D target = LoadRenderTexture(device.hResolution, device.vResolution);
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
-    Rectangle destRec = { 0.0f, 0.0f, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
+    const Rectangle destRec = { 0.0f, 0.0f, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
 
     // Define the camera to look into our 3d world
     Camera camera = {};
@@ -92,7 +92,7 @@ int main()
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
+    const Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
 

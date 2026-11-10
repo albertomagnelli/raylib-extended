@@ -35,8 +35,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
@@ -50,17 +50,17 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Model model = LoadModel("resources/models/watermill.obj");                   // Load OBJ model
-    Texture2D texture = LoadTexture("resources/models/watermill_diffuse.png");   // Load model texture
+    const Model model = LoadModel("resources/models/watermill.obj");                   // Load OBJ model
+    const Texture2D texture = LoadTexture("resources/models/watermill_diffuse.png");   // Load model texture
 
     // Load shader for model
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/grayscale.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/grayscale.fs", GLSL_VERSION));
 
     model.materials[0].shader = shader;                 // Set shader effect to 3d model
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Bind texture to model
 
-    Vector3 position = { 0.0f, 0.0f, 0.0f };    // Set model position
+    const Vector3 position = { 0.0f, 0.0f, 0.0f };    // Set model position
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second

@@ -42,8 +42,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Enable Multi Sampling Anti Aliasing 4x (if available)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lightmap rendering");
@@ -77,11 +77,11 @@ int main()
     rlDisableVertexArray();
 
     // Load lightmap shader
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lightmap.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lightmap.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/lightmap.fs", GLSL_VERSION));
 
     Texture texture = LoadTexture("resources/cubicmap_atlas.png");
-    Texture light = LoadTexture("resources/spark_flame.png");
+    const Texture light = LoadTexture("resources/spark_flame.png");
 
     GenTextureMipmaps(&texture);
     SetTextureFilter(texture, TEXTURE_FILTER_TRILINEAR);

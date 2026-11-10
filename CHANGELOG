@@ -24,6 +24,8 @@ Fork:        glm math migration (C++20)
             redundant `TextReplaceAlloc`/`TextInsertAlloc` variants
  - CHANGED: `NULL` replaced with `nullptr` and C-style casts replaced with
             `static_cast`/`reinterpret_cast`/`const_cast`
+ - CHANGED: Local values and parameters are `const` where they are not modified;
+            compile-time tables and literal constants use `constexpr`
 
 -------------------------------------------------------------------------
 Release:     raylib 6.2 (15 October 2026)

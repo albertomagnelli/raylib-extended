@@ -22,26 +22,26 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - srcrec dstrec");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 
-    Texture2D scarfy = LoadTexture("resources/scarfy.png");        // Texture loading
+    const Texture2D scarfy = LoadTexture("resources/scarfy.png");        // Texture loading
 
-    int frameWidth = scarfy.width/6;
-    int frameHeight = scarfy.height;
+    const int frameWidth = scarfy.width/6;
+    const int frameHeight = scarfy.height;
 
     // Source rectangle (part of the texture to use for drawing)
-    Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
 
     // Destination rectangle (screen rectangle where drawing part of texture)
-    Rectangle destRec = { screenWidth/2.0f, screenHeight/2.0f, frameWidth*2.0f, frameHeight*2.0f };
+    const Rectangle destRec = { screenWidth/2.0f, screenHeight/2.0f, frameWidth*2.0f, frameHeight*2.0f };
 
     // Origin of the texture (rotation/scale point), it's relative to destination rectangle size
-    Vector2 origin = { static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    const Vector2 origin = { static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
 
     int rotation = 0;
 

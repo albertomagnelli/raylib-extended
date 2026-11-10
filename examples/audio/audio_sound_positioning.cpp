@@ -31,14 +31,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - sound positioning");
 
     InitAudioDevice();
 
-    Sound sound = LoadSound("resources/coin.wav");
+    const Sound sound = LoadSound("resources/coin.wav");
 
     Camera camera = {
         .position = Vector3{ 0, 5, 5 },
@@ -60,9 +60,9 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
 
-        float th = static_cast<float>(GetTime());
+        const float th = static_cast<float>(GetTime());
 
-        Vector3 spherePos = { 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
+        const Vector3 spherePos = { 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
 
         SetSoundPosition(camera, sound, spherePos, 1.0f);
 
@@ -102,24 +102,24 @@ int main()
 static void SetSoundPosition(Camera listener, Sound sound, Vector3 position, float maxDist)
 {
     // Calculate direction vector and distance between listener and sound source
-    Vector3 direction = ((position) - (listener.position));
-    float distance = glm::length(direction);
+    const Vector3 direction = ((position) - (listener.position));
+    const float distance = glm::length(direction);
 
     // Apply logarithmic distance attenuation and clamp between 0-1
     float attenuation = 1.0f/(1.0f + (distance/maxDist));
     attenuation = Clamp(attenuation, 0.0f, 1.0f);
 
     // Calculate normalized vectors for spatial positioning
-    Vector3 normalizedDirection = glm::normalize(direction);
-    Vector3 forward = glm::normalize(((listener.target) - (listener.position)));
-    Vector3 right = glm::normalize(glm::cross(forward, listener.up));
+    const Vector3 normalizedDirection = glm::normalize(direction);
+    const Vector3 forward = glm::normalize(((listener.target) - (listener.position)));
+    const Vector3 right = glm::normalize(glm::cross(forward, listener.up));
 
     // Reduce volume for sounds behind the listener
-    float dotProduct = glm::dot(forward, normalizedDirection);
+    const float dotProduct = glm::dot(forward, normalizedDirection);
     if (dotProduct < 0.0f) attenuation *= (1.0f + dotProduct*0.5f);
 
     // Set stereo panning based on sound position relative to listener
-    float pan = glm::dot(normalizedDirection, right);
+    const float pan = glm::dot(normalizedDirection, right);
 
     // Apply final sound properties
     SetSoundVolume(sound, attenuation);

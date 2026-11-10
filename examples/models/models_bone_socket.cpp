@@ -31,8 +31,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - bone socket");
 
@@ -46,7 +46,7 @@ int main()
 
     // Load gltf model
     Model characterModel = LoadModel("resources/models/gltf/greenman.glb"); // Load character model
-    Model equipModel[BONE_SOCKETS] = {
+    const Model equipModel[BONE_SOCKETS] = {
         LoadModel("resources/models/gltf/greenman_hat.glb"),    // Index for the hat model is the same as BONE_SOCKET_HAT
         LoadModel("resources/models/gltf/greenman_sword.glb"),  // Index for the sword model is the same as BONE_SOCKET_HAND_R
         LoadModel("resources/models/gltf/greenman_shield.glb")  // Index for the shield model is the same as BONE_SOCKET_HAND_L
@@ -85,7 +85,7 @@ int main()
         }
     }
 
-    Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
     unsigned short angle = 0;           // Set angle for rotate character
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
@@ -114,7 +114,7 @@ int main()
         if (IsKeyPressed(KEY_THREE)) showEquip[BONE_SOCKET_HAND_L] = !showEquip[BONE_SOCKET_HAND_L];
 
         // Update model animation
-        ModelAnimation anim = modelAnimations[animIndex];
+        const ModelAnimation anim = modelAnimations[animIndex];
         animCurrentFrame = (animCurrentFrame + 1)%anim.keyframeCount;
         UpdateModelAnimation(characterModel, anim, static_cast<float>(animCurrentFrame));
         //----------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ int main()
 
             BeginMode3D(camera);
                 // Draw character
-                Quaternion characterRotate = glm::angleAxis(angle*DEG2RAD, glm::normalize(Vector3{ 0.0f, 1.0f, 0.0f }));
+                const Quaternion characterRotate = glm::angleAxis(angle*DEG2RAD, glm::normalize(Vector3{ 0.0f, 1.0f, 0.0f }));
                 characterModel.transform = ((glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z})) * (glm::mat4_cast(characterRotate)));
                 UpdateModelAnimation(characterModel, anim, static_cast<float>(animCurrentFrame));
                 DrawMesh(characterModel.meshes[0], characterModel.materials[1], characterModel.transform);
@@ -138,11 +138,11 @@ int main()
                     if (!showEquip[i]) continue;
 
                     Transform *transform = &anim.keyframePoses[animCurrentFrame][boneSocketIndex[i]];
-                    Quaternion inRotation = characterModel.skeleton.bindPose[boneSocketIndex[i]].rotation;
-                    Quaternion outRotation = transform->rotation;
+                    const Quaternion inRotation = characterModel.skeleton.bindPose[boneSocketIndex[i]].rotation;
+                    const Quaternion outRotation = transform->rotation;
 
                     // Calculate socket rotation (angle between bone in initial pose and same bone in current animation frame)
-                    Quaternion rotate = ((outRotation) * (glm::inverse(inRotation)));
+                    const Quaternion rotate = ((outRotation) * (glm::inverse(inRotation)));
                     Matrix matrixTransform = glm::mat4_cast(rotate);
                     // Translate socket to its position in the current animation
                     matrixTransform = ((glm::translate(Matrix(1.0f), Vector3{transform->translation.x, transform->translation.y, transform->translation.z})) * (matrixTransform));

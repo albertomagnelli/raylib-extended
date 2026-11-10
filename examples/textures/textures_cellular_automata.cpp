@@ -19,24 +19,24 @@
 
 // Initialization constants
 //--------------------------------------------------------------------------------------
-const int screenWidth = 800;
-const int screenHeight = 450;
-const int imageWidth = 800;
+constexpr int screenWidth = 800;
+constexpr int screenHeight = 450;
+constexpr int imageWidth = 800;
 const int imageHeight = 800/2;
 
 // Rule button sizes and positions
-const int drawRuleStartX       = 585;
-const int drawRuleStartY       = 10;
-const int drawRuleSpacing      = 15;
-const int drawRuleGroupSpacing = 50;
-const int drawRuleSize         = 14;
-const int drawRuleInnerSize    = 10;
+constexpr int drawRuleStartX = 585;
+constexpr int drawRuleStartY = 10;
+constexpr int drawRuleSpacing = 15;
+constexpr int drawRuleGroupSpacing = 50;
+constexpr int drawRuleSize = 14;
+constexpr int drawRuleInnerSize = 10;
 
 // Preset button sizes
-const int presetsSizeX = 42;
-const int presetsSizeY = 22;
+constexpr int presetsSizeX = 42;
+constexpr int presetsSizeY = 22;
 
-const int linesUpdatedPerFrame = 4;
+constexpr int linesUpdatedPerFrame = 4;
 
 //----------------------------------------------------------------------------------
 // Functions
@@ -71,7 +71,7 @@ int main()
     // The top central pixel set as black
     ImageDrawPixel(&image, imageWidth/2, 0, BLACK);
 
-    Texture2D texture = LoadTextureFromImage(image);
+    const Texture2D texture = LoadTextureFromImage(image);
 
     // Some interesting rules
     const int presetValues[] = { 18, 30, 60, 86, 102, 124, 126, 150, 182, 225 };

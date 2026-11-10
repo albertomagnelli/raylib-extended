@@ -37,8 +37,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - particles blending");
 
@@ -56,9 +56,9 @@ int main()
         mouseTail[i].active = false;
     }
 
-    float gravity = 3.0f;
+    constexpr float gravity = 3.0f;
 
-    Texture2D smoke = LoadTexture("resources/spark_flame.png");
+    const Texture2D smoke = LoadTexture("resources/spark_flame.png");
 
     int blending = BLEND_ALPHA;
 

@@ -32,14 +32,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE); // Make the window resizable
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - tiled drawing");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
-    Texture texPattern = LoadTexture("resources/patterns.png");
+    const Texture texPattern = LoadTexture("resources/patterns.png");
     SetTextureFilter(texPattern, TEXTURE_FILTER_BILINEAR); // Makes the texture smoother when upscaled
 
     // Coordinates for all patterns inside the texture
@@ -177,7 +177,8 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, Vecto
     if ((texture.id <= 0) || (scale <= 0.0f)) return;  // Wanna see a infinite loop?!...just delete this line!
     if ((source.width == 0) || (source.height == 0)) return;
 
-    int tileWidth = static_cast<int>(source.width*scale), tileHeight = static_cast<int>(source.height*scale);
+    const int tileWidth = static_cast<int>(source.width*scale);
+    const int tileHeight = static_cast<int>(source.height*scale);
     if ((dest.width < tileWidth) && (dest.height < tileHeight))
     {
         // Can fit only one tile

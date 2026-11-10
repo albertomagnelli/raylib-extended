@@ -91,7 +91,7 @@ static PlatformData platform = {};   // Platform specific data
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static const char cursorLUT[11][12] = {
+static constexpr char cursorLUT[11][12] = {
     "default",     // 0  MOUSE_CURSOR_DEFAULT
     "default",     // 1  MOUSE_CURSOR_ARROW
     "text",        // 2  MOUSE_CURSOR_IBEAM

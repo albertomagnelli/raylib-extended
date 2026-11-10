@@ -57,8 +57,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - strings management");
 
@@ -77,8 +77,8 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float delta = GetFrameTime();
-        Vector2 mousePos = GetMousePosition();
+        const float delta = GetFrameTime();
+        const Vector2 mousePos = GetMousePosition();
 
         // Checks if a text particle was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -146,7 +146,7 @@ int main()
         if (IsKeyPressed(KEY_SIX)) PrepareFirstTextParticle(TextToCamel("raylib_fun_videogames_programming"), textParticles, &particleCount);
 
         // Slice by char pressed only when we have one text particle
-        char charPressed = GetCharPressed();
+        const char charPressed = GetCharPressed();
         if ((charPressed >= 'A') && (charPressed <= 'z') && (particleCount == 1))
         {
             SliceTextParticleByChar(&textParticles[0], charPressed, textParticles, &particleCount);
@@ -295,13 +295,13 @@ TextParticle CreateTextParticle(std::string_view text, float x, float y, Color c
 
 void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextParticle *tps, int *particleCount)
 {
-    int length = TextLength(tp->text);
+    const int length = TextLength(tp->text);
 
     if((length > 1) && ((*particleCount+length) < MAX_TEXT_PARTICLES))
     {
         for (int i = 0; i < length; i += sliceLength)
         {
-            std::string text = (sliceLength == 1)? TextFormat("%c", tp->text[i]) : TextSubtext(tp->text, i, sliceLength);
+            const std::string text = (sliceLength == 1)? TextFormat("%c", tp->text[i]) : TextSubtext(tp->text, i, sliceLength);
             tps[(*particleCount)++] = CreateTextParticle(
                 text,
                 tp->rect.x + i * tp->rect.width/length,
@@ -316,11 +316,11 @@ void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextP
 void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, int *particleCount)
 {
     std::vector<std::string> tokens = TextSplit(tp->text, charToSlice);
-    int tokenCount = static_cast<int>(tokens.size());
+    const int tokenCount = static_cast<int>(tokens.size());
 
     if (tokenCount > 1)
     {
-        int textLength = TextLength(tp->text);
+        const int textLength = TextLength(tp->text);
         for (int i = 0; i < textLength; i++)
         {
             if (tp->text[i] == charToSlice)
@@ -335,7 +335,7 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
         }
         for (int i = 0; i < tokenCount; i++)
         {
-            int tokenLength = TextLength(tokens[i]);
+            const int tokenLength = TextLength(tokens[i]);
             tps[(*particleCount)++] = CreateTextParticle(
                 tokens[i],
                 tp->rect.x + i * tp->rect.width/tokenLength,

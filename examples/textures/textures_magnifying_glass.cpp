@@ -26,21 +26,21 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - magnifying glass");
 
-    Texture2D bunny = LoadTexture("resources/raybunny.png");
-    Texture2D parrots = LoadTexture("resources/parrots.png");
+    const Texture2D bunny = LoadTexture("resources/raybunny.png");
+    const Texture2D parrots = LoadTexture("resources/parrots.png");
 
     // Use image draw to generate a mask texture instead of loading it from a file.
     Image circle = GenImageColor(256, 256, BLANK);
     ImageDrawCircle(&circle, 128, 128, 128, WHITE);
-    Texture2D mask = LoadTextureFromImage(circle); // Copy the mask image from RAM to VRAM
+    const Texture2D mask = LoadTextureFromImage(circle); // Copy the mask image from RAM to VRAM
     UnloadImage(circle); // Unload the image from RAM
 
-    RenderTexture2D magnifiedWorld = LoadRenderTexture(256, 256);
+    const RenderTexture2D magnifiedWorld = LoadRenderTexture(256, 256);
 
     Camera2D camera = {};
     // Set magnifying glass zoom
@@ -56,7 +56,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        Vector2 mPos = GetMousePosition();
+        const Vector2 mPos = GetMousePosition();
         camera.target = mPos;
 
         //----------------------------------------------------------------------------------
@@ -112,8 +112,8 @@ int main()
             DrawRing(mPos, 126, 130, 0, 360, 64, BLACK);
 
             // Draw floating specular highlight on the glass
-            float rx = mPos.x/800;
-            float ry = mPos.y/800;
+            const float rx = mPos.x/800;
+            const float ry = mPos.y/800;
             DrawCircle(static_cast<int>(mPos.x - 64*rx) - 32, static_cast<int>(mPos.y - 64*ry) - 32, 4, ColorAlpha(WHITE, 0.5));
 
         EndDrawing();

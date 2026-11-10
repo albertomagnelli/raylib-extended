@@ -64,30 +64,30 @@ int main()
     unsigned int brushSize = 8;
 
     // Game of Life logic compute shader
-    std::string golLogicCode = LoadFileText("resources/shaders/glsl430/gol.glsl");
-    unsigned int golLogicShader = rlLoadShader(golLogicCode, RL_COMPUTE_SHADER);
-    unsigned int golLogicProgram = rlLoadShaderProgramCompute(golLogicShader);
+    const std::string golLogicCode = LoadFileText("resources/shaders/glsl430/gol.glsl");
+    const unsigned int golLogicShader = rlLoadShader(golLogicCode, RL_COMPUTE_SHADER);
+    const unsigned int golLogicProgram = rlLoadShaderProgramCompute(golLogicShader);
 
     // Game of Life logic render shader
-    Shader golRenderShader = LoadShader({}, "resources/shaders/glsl430/gol_render.glsl");
-    int resUniformLoc = GetShaderLocation(golRenderShader, "resolution");
+    const Shader golRenderShader = LoadShader({}, "resources/shaders/glsl430/gol_render.glsl");
+    const int resUniformLoc = GetShaderLocation(golRenderShader, "resolution");
 
     // Game of Life transfert shader (CPU<->GPU download and upload)
-    std::string golTransfertCode = LoadFileText("resources/shaders/glsl430/gol_transfert.glsl");
-    unsigned int golTransfertShader = rlLoadShader(golTransfertCode, RL_COMPUTE_SHADER);
-    unsigned int golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
+    const std::string golTransfertCode = LoadFileText("resources/shaders/glsl430/gol_transfert.glsl");
+    const unsigned int golTransfertShader = rlLoadShader(golTransfertCode, RL_COMPUTE_SHADER);
+    const unsigned int golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
 
     // Load shader storage buffer object (SSBO), id returned
     unsigned int ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), nullptr, RL_DYNAMIC_COPY);
     unsigned int ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), nullptr, RL_DYNAMIC_COPY);
-    unsigned int ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), nullptr, RL_DYNAMIC_COPY);
+    const unsigned int ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), nullptr, RL_DYNAMIC_COPY);
 
     GolUpdateSSBO transfertBuffer = {};
 
     // Create a white texture of the size of the window to update
     // each pixel of the window using the fragment shader: golRenderShader
-    Image whiteImage = GenImageColor(GOL_WIDTH, GOL_WIDTH, WHITE);
-    Texture whiteTex = LoadTextureFromImage(whiteImage);
+    const Image whiteImage = GenImageColor(GOL_WIDTH, GOL_WIDTH, WHITE);
+    const Texture whiteTex = LoadTextureFromImage(whiteImage);
     UnloadImage(whiteImage);
 
     SetTargetFPS(0);                    // Set our game to run with an uncapped framerate
@@ -134,7 +134,7 @@ int main()
             rlDisableShader();
 
             // ssboA <-> ssboB
-            int temp = ssboA;
+            const int temp = ssboA;
             ssboA = ssboB;
             ssboB = temp;
         }

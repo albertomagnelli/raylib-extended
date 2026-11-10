@@ -64,8 +64,8 @@ int main()
 {
     // Initialization
     // -------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - deferred rendering");
 
@@ -77,14 +77,14 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load plane model from a generated mesh
-    Model model = LoadModelFromMesh(GenMeshPlane(10.0f, 10.0f, 3, 3));
-    Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
+    const Model model = LoadModelFromMesh(GenMeshPlane(10.0f, 10.0f, 3, 3));
+    const Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
 
     // Load geometry buffer (G-buffer) shader and deferred shader
-    Shader gbufferShader = LoadShader(TextFormat("resources/shaders/glsl%i/gbuffer.vs", GLSL_VERSION),
+    const Shader gbufferShader = LoadShader(TextFormat("resources/shaders/glsl%i/gbuffer.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/gbuffer.fs", GLSL_VERSION));
 
-    Shader deferredShader = LoadShader(TextFormat("resources/shaders/glsl%i/deferred_shading.vs", GLSL_VERSION),
+    const Shader deferredShader = LoadShader(TextFormat("resources/shaders/glsl%i/deferred_shading.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/deferred_shading.fs", GLSL_VERSION));
     deferredShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(deferredShader, "viewPosition");
 
@@ -152,7 +152,7 @@ int main()
     lights[2] = CreateLight(LIGHT_POINT, Vector3{ -2, 1, 2 }, Vector3{}, GREEN, deferredShader);
     lights[3] = CreateLight(LIGHT_POINT, Vector3{ 2, 1, -2 }, Vector3{}, BLUE, deferredShader);
 
-    const float CUBE_SCALE = 0.25;
+    constexpr float CUBE_SCALE = 0.25;
     Vector3 cubePositions[MAX_CUBES] = {};
     float cubeRotations[MAX_CUBES] = {};
 
@@ -221,7 +221,7 @@ int main()
 
                     for (int i = 0; i < MAX_CUBES; i++)
                     {
-                        Vector3 position = cubePositions[i];
+                        const Vector3 position = cubePositions[i];
                         DrawModelEx(cube, position, Vector3{ 1, 1, 1 }, cubeRotations[i], Vector3{ CUBE_SCALE, CUBE_SCALE, CUBE_SCALE }, WHITE);
                     }
                 rlDisableShader();

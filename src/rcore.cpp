@@ -458,7 +458,7 @@ typedef enum AutomationEventType {
 #define MAX_AUTOMATION_EVENT_TYPES  24
 
 // Event type name strings, required for export
-static const char *autoEventTypeName[MAX_AUTOMATION_EVENT_TYPES] = {
+static constexpr const char *autoEventTypeName[MAX_AUTOMATION_EVENT_TYPES] = {
     "EVENT_NONE",
     "INPUT_KEY_UP",
     "INPUT_KEY_DOWN",
@@ -648,7 +648,7 @@ int GetWindowSamples(void)
 static void UpdateWindowProvidedSamples(void)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
-    int requestedSamples = GetWindowRequestedSamples();
+    const int requestedSamples = GetWindowRequestedSamples();
     if (requestedSamples == 0)
     {
         CORE.Window.samples = 0;
@@ -742,7 +742,7 @@ void InitWindow(int width, int height, std::string_view titleView)
 
     // Initialize platform
     //--------------------------------------------------------------
-    int result = InitPlatform();
+    const int result = InitPlatform();
 
     if (result != 0)
     {
@@ -778,7 +778,7 @@ void InitWindow(int width, int height, std::string_view titleView)
     #if SUPPORT_MODULE_RSHAPES
     // Set font white rectangle for shapes drawing, so shapes and text can be batched together
     // WARNING: rshapes module is required, if not available, default internal white rectangle is used
-    Rectangle rec = GetFontDefault().recs[95];
+    const Rectangle rec = GetFontDefault().recs[95];
     if (CORE.Window.samples > 0)
     {
         // NOTE: Try to maximize rec padding to avoid pixel bleeding on MSAA filtering
@@ -992,7 +992,7 @@ void EndDrawing(void)
         WaitTime(CORE.Time.target - CORE.Time.frame);
 
         CORE.Time.current = GetTime();
-        double waitTime = CORE.Time.current - CORE.Time.previous;
+        const double waitTime = CORE.Time.current - CORE.Time.previous;
         CORE.Time.previous = CORE.Time.current;
 
         CORE.Time.frame += waitTime;    // Total frame time: update + draw + wait
@@ -1042,22 +1042,22 @@ void BeginMode3D(Camera camera)
     rlPushMatrix();                 // Save previous matrix, which contains the settings for the 2d ortho projection
     rlLoadIdentity();               // Reset current matrix (projection)
 
-    float aspect = static_cast<float>(CORE.Window.currentFbo.width)/static_cast<float>(CORE.Window.currentFbo.height);
+    const float aspect = static_cast<float>(CORE.Window.currentFbo.width)/static_cast<float>(CORE.Window.currentFbo.height);
 
     // NOTE: zNear and zFar values are important when computing depth buffer values
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Setup perspective projection
-        float top = rlGetCullDistanceNear()*tanf(camera.fovy*0.5f*DEG2RAD);
-        float right = top*aspect;
+        const float top = rlGetCullDistanceNear()*tanf(camera.fovy*0.5f*DEG2RAD);
+        const float right = top*aspect;
 
         rlFrustum(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
         // Setup orthographic projection
-        float top = camera.fovy/2.0f;
-        float right = top*aspect;
+        const float top = camera.fovy/2.0f;
+        const float right = top*aspect;
 
         rlOrtho(-right, right, -top,top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
@@ -1066,7 +1066,7 @@ void BeginMode3D(Camera camera)
     rlLoadIdentity();               // Reset current matrix (modelview)
 
     // Setup Camera view
-    Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+    const Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
     rlMultMatrixf(MatrixToFloat(matView));      // Multiply modelview matrix by view matrix (camera)
 
     rlEnableDepthTest();            // Enable DEPTH_TEST for 3D
@@ -1182,7 +1182,7 @@ void BeginScissorMode(int x, int y, int width, int height)
 #else
     if (!CORE.Window.usingFbo && FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
-        Vector2 scale = GetWindowScaleDPI();
+        const Vector2 scale = GetWindowScaleDPI();
         rlScissor(static_cast<int>(x*scale.x), static_cast<int>(CORE.Window.currentFbo.height - (y + height)*scale.y), static_cast<int>(width*scale.x), static_cast<int>(height*scale.y));
     }
 #endif
@@ -1227,10 +1227,10 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
     if (rlGetVersion() != RL_OPENGL_11)
     {
         // Compute aspect ratio
-        float aspect = (static_cast<float>(device.hResolution)*0.5f)/static_cast<float>(device.vResolution);
+        const float aspect = (static_cast<float>(device.hResolution)*0.5f)/static_cast<float>(device.vResolution);
 
         // Compute lens parameters
-        float lensShift = (device.hScreenSize*0.25f - device.lensSeparationDistance*0.5f)/device.hScreenSize;
+        const float lensShift = (device.hScreenSize*0.25f - device.lensSeparationDistance*0.5f)/device.hScreenSize;
         config.leftLensCenter[0] = 0.25f + lensShift;
         config.leftLensCenter[1] = 0.5f;
         config.rightLensCenter[0] = 0.75f - lensShift;
@@ -1242,15 +1242,15 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
 
         // Compute distortion scale parameters
         // NOTE: To get lens max radius, lensShift must be normalized to [-1..1]
-        float lensRadius = fabsf(-1.0f - 4.0f*lensShift);
-        float lensRadiusSq = lensRadius*lensRadius;
-        float distortionScale = device.lensDistortionValues[0] +
+        const float lensRadius = fabsf(-1.0f - 4.0f*lensShift);
+        const float lensRadiusSq = lensRadius*lensRadius;
+        const float distortionScale = device.lensDistortionValues[0] +
                                 device.lensDistortionValues[1]*lensRadiusSq +
                                 device.lensDistortionValues[2]*lensRadiusSq*lensRadiusSq +
                                 device.lensDistortionValues[3]*lensRadiusSq*lensRadiusSq*lensRadiusSq;
 
-        float normScreenWidth = 0.5f;
-        float normScreenHeight = 1.0f;
+        constexpr float normScreenWidth = 0.5f;
+        constexpr float normScreenHeight = 1.0f;
         config.scaleIn[0] = 2.0f/normScreenWidth;
         config.scaleIn[1] = 2.0f/normScreenHeight/aspect;
         config.scale[0] = normScreenWidth*0.5f/distortionScale;
@@ -1258,12 +1258,12 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
 
         // Fovy is normally computed with: 2*atan2f(device.vScreenSize, 2*device.eyeToScreenDistance)
         // ...but with lens distortion it is increased (see Oculus SDK Documentation)
-        float fovy = 2.0f*atan2f(device.vScreenSize*0.5f*distortionScale, device.eyeToScreenDistance);     // Really need distortionScale?
+        const float fovy = 2.0f*atan2f(device.vScreenSize*0.5f*distortionScale, device.eyeToScreenDistance);     // Really need distortionScale?
        // float fovy = 2.0f*(float)atan2f(device.vScreenSize*0.5f, device.eyeToScreenDistance);
 
         // Compute camera projection matrices
-        float projOffset = 4.0f*lensShift;      // Scaled to projection space coordinates [-1..1]
-        Matrix proj = glm::perspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        const float projOffset = 4.0f*lensShift;      // Scaled to projection space coordinates [-1..1]
+        const Matrix proj = glm::perspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
 
         config.projection[0] = glm::translate(Matrix(1.0f), Vector3{projOffset, 0.0f, 0.0f})*proj;
         config.projection[1] = glm::translate(Matrix(1.0f), Vector3{-projOffset, 0.0f, 0.0f})*proj;
@@ -1516,15 +1516,15 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
 
     // Calculate normalized device coordinates
     // NOTE: y value is negative
-    float x = (2.0f*position.x)/static_cast<float>(width) - 1.0f;
-    float y = 1.0f - (2.0f*position.y)/static_cast<float>(height);
-    float z = 1.0f;
+    const float x = (2.0f*position.x)/static_cast<float>(width) - 1.0f;
+    const float y = 1.0f - (2.0f*position.y)/static_cast<float>(height);
+    constexpr float z = 1.0f;
 
     // Store values in a vector
-    Vector3 deviceCoords = { x, y, z };
+    const Vector3 deviceCoords = { x, y, z };
 
     // Calculate view matrix from camera look at
-    Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+    const Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
 
     Matrix matProj = Matrix(1.0f);
 
@@ -1535,26 +1535,26 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
-        float aspect = static_cast<float>(width)/static_cast<float>(height);
-        float top = camera.fovy/2.0f;
-        float right = top*aspect;
+        const float aspect = static_cast<float>(width)/static_cast<float>(height);
+        const float top = camera.fovy/2.0f;
+        const float right = top*aspect;
 
         // Calculate projection matrix from orthographic
         matProj = glm::ortho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
 
     // Unproject far/near points
-    Vector3 nearPoint = Vector3Unproject(Vector3{ deviceCoords.x, deviceCoords.y, 0.0f }, matProj, matView);
-    Vector3 farPoint = Vector3Unproject(Vector3{ deviceCoords.x, deviceCoords.y, 1.0f }, matProj, matView);
+    const Vector3 nearPoint = Vector3Unproject(Vector3{ deviceCoords.x, deviceCoords.y, 0.0f }, matProj, matView);
+    const Vector3 farPoint = Vector3Unproject(Vector3{ deviceCoords.x, deviceCoords.y, 1.0f }, matProj, matView);
 
     // Unproject the mouse cursor in the near plane
     // It is needed as the source position because orthographic projects,
     // compared to perspective doesn't have a convergence point,
     // meaning that the "eye" of the camera is more like a plane than a point
-    Vector3 cameraPlanePointerPos = Vector3Unproject(Vector3{ deviceCoords.x, deviceCoords.y, -1.0f }, matProj, matView);
+    const Vector3 cameraPlanePointerPos = Vector3Unproject(Vector3{ deviceCoords.x, deviceCoords.y, -1.0f }, matProj, matView);
 
     // Calculate normalized direction vector
-    Vector3 direction = glm::normalize(farPoint - nearPoint);
+    const Vector3 direction = glm::normalize(farPoint - nearPoint);
 
     if (camera.projection == CAMERA_PERSPECTIVE) ray.position = camera.position;
     else if (camera.projection == CAMERA_ORTHOGRAPHIC) ray.position = cameraPlanePointerPos;
@@ -1591,10 +1591,10 @@ Matrix GetCameraMatrix2D(Camera2D camera)
     //   1. Move to offset
     //   2. Rotate and Scale
     //   3. Move by -target
-    Matrix matOrigin = glm::translate(Matrix(1.0f), Vector3{-camera.target.x, -camera.target.y, 0.0f});
-    Matrix matRotation = glm::rotate(Matrix(1.0f), camera.rotation*DEG2RAD, Vector3{0.0f, 0.0f, 1.0f});
-    Matrix matScale = glm::scale(Matrix(1.0f), Vector3{camera.zoom, camera.zoom, 1.0f});
-    Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{camera.offset.x, camera.offset.y, 0.0f});
+    const Matrix matOrigin = glm::translate(Matrix(1.0f), Vector3{-camera.target.x, -camera.target.y, 0.0f});
+    const Matrix matRotation = glm::rotate(Matrix(1.0f), camera.rotation*DEG2RAD, Vector3{0.0f, 0.0f, 1.0f});
+    const Matrix matScale = glm::scale(Matrix(1.0f), Vector3{camera.zoom, camera.zoom, 1.0f});
+    const Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{camera.offset.x, camera.offset.y, 0.0f});
 
     matTransform = matTranslation*(matRotation*matScale)*matOrigin;
 
@@ -1604,7 +1604,7 @@ Matrix GetCameraMatrix2D(Camera2D camera)
 // Get screen space position from a 3d world space position
 Vector2 GetWorldToScreen(Vector3 position, Camera camera)
 {
-    Vector2 screenPosition = GetWorldToScreenEx(position, camera, GetScreenWidth(), GetScreenHeight());
+    const Vector2 screenPosition = GetWorldToScreenEx(position, camera, GetScreenWidth(), GetScreenHeight());
 
     return screenPosition;
 }
@@ -1622,16 +1622,16 @@ Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int heigh
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
-        float aspect = static_cast<float>(width)/static_cast<float>(height);
-        float top = camera.fovy/2.0f;
-        float right = top*aspect;
+        const float aspect = static_cast<float>(width)/static_cast<float>(height);
+        const float top = camera.fovy/2.0f;
+        const float right = top*aspect;
 
         // Calculate projection matrix from orthographic
         matProj = glm::ortho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
 
     // Calculate view matrix from camera look at (and transpose it)
-    Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+    const Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
 
     // Convert world position vector to homogeneous clip-space position
     Vector4 worldPos = { position.x, position.y, position.z, 1.0f };
@@ -1643,10 +1643,10 @@ Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int heigh
     worldPos = matProj*worldPos;
 
     // Calculate normalized device coordinates (inverted y)
-    Vector3 ndcPos = { worldPos.x/worldPos.w, -worldPos.y/worldPos.w, worldPos.z/worldPos.w };
+    const Vector3 ndcPos = { worldPos.x/worldPos.w, -worldPos.y/worldPos.w, worldPos.z/worldPos.w };
 
     // Calculate 2d screen position vector
-    Vector2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*static_cast<float>(width), (ndcPos.y + 1.0f)/2.0f*static_cast<float>(height) };
+    const Vector2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*static_cast<float>(width), (ndcPos.y + 1.0f)/2.0f*static_cast<float>(height) };
 
     return screenPosition;
 }
@@ -1654,8 +1654,8 @@ Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int heigh
 // Get screen space position for a 2d camera world space position
 Vector2 GetWorldToScreen2D(Vector2 position, Camera2D camera)
 {
-    Matrix matCamera = GetCameraMatrix2D(camera);
-    Vector3 transform = Vector3(matCamera*Vector4(position.x, position.y, 0.0f, 1.0f));
+    const Matrix matCamera = GetCameraMatrix2D(camera);
+    const Vector3 transform = Vector3(matCamera*Vector4(position.x, position.y, 0.0f, 1.0f));
 
     return Vector2{ transform.x, transform.y };
 }
@@ -1663,8 +1663,8 @@ Vector2 GetWorldToScreen2D(Vector2 position, Camera2D camera)
 // Get world space position for a 2d camera screen space position
 Vector2 GetScreenToWorld2D(Vector2 position, Camera2D camera)
 {
-    Matrix invMatCamera = glm::inverse(GetCameraMatrix2D(camera));
-    Vector3 transform = Vector3(invMatCamera*Vector4(position.x, position.y, 0.0f, 1.0f));
+    const Matrix invMatCamera = glm::inverse(GetCameraMatrix2D(camera));
+    const Vector3 transform = Vector3(invMatCamera*Vector4(position.x, position.y, 0.0f, 1.0f));
 
     return Vector2{ transform.x, transform.y };
 }
@@ -1700,7 +1700,7 @@ int GetFPS(void)
     static unsigned int captureFramesCounted = 0;
     static float history[FPS_CAPTURE_FRAMES_COUNT] = { 0 };
     static float average = 0, last = 0;
-    float fpsFrame = GetFrameTime();
+    const float fpsFrame = GetFrameTime();
 
     // If reseting the window, reset the FPS info
     if (CORE.Time.frameCounter == 0)
@@ -1758,14 +1758,14 @@ void WaitTime(double seconds)
     if (seconds < 0) return;    // Security check
 
 #if SUPPORT_BUSY_WAIT_LOOP || SUPPORT_PARTIALBUSY_WAIT_LOOP
-    double destinationTime = GetTime() + seconds;
+    const double destinationTime = GetTime() + seconds;
 #endif
 
 #if SUPPORT_BUSY_WAIT_LOOP
     while (GetTime() < destinationTime) { }
 #else
     #if SUPPORT_PARTIALBUSY_WAIT_LOOP
-        double sleepSeconds = seconds - seconds*0.05;  // NOTE: Reserve a percentage of the time for busy waiting
+        const double sleepSeconds = seconds - seconds*0.05;  // NOTE: Reserve a percentage of the time for busy waiting
     #else
         double sleepSeconds = seconds;
     #endif
@@ -1776,8 +1776,8 @@ void WaitTime(double seconds)
     #endif
     #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
         struct timespec req = { 0 };
-        time_t sec = sleepSeconds;
-        long nsec = (sleepSeconds - sec)*1000000000L;
+        const time_t sec = sleepSeconds;
+        const long nsec = (sleepSeconds - sec)*1000000000L;
         req.tv_sec = sec;
         req.tv_nsec = nsec;
 
@@ -1818,7 +1818,7 @@ int GetRandomValue(int min, int max)
 
     if (min > max)
     {
-        int tmp = max;
+        const int tmp = max;
         max = min;
         min = tmp;
     }
@@ -1931,7 +1931,7 @@ void TakeScreenshot(std::string_view fileNameView)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)) scale = GetWindowScaleDPI();
 
     unsigned char *imgData = rlReadScreenPixels(static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y));
-    Image image = { imgData, static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y), 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    const Image image = { imgData, static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y), 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
     char path[MAX_FILEPATH_LENGTH] = { 0 };
     if (!IsPathAbsolute(fileName)) snprintf(path, MAX_FILEPATH_LENGTH, "%s", TextFormat("%s/%s", CORE.Storage.basePath.c_str(), fileName).c_str());
@@ -2011,7 +2011,7 @@ void TraceLog(int logType, std::string_view textView, ...)
         default: break;
     }
 
-    unsigned int textLength = static_cast<unsigned int>(strlen(text));
+    const unsigned int textLength = static_cast<unsigned int>(strlen(text));
     memcpy(buffer + strlen(buffer), text, (textLength < (MAX_TRACELOG_MSG_LENGTH - 12))? textLength : (MAX_TRACELOG_MSG_LENGTH - 12));
     strcat(buffer, "\n");
     vprintf(buffer, args);
@@ -2077,7 +2077,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
             // WARNING: On binary streams SEEK_END could not be found,
             // using fseek() and ftell() could not work in some (rare) cases
             fseek(file, 0, SEEK_END);
-            int size = ftell(file);     // WARNING: ftell() returns 'long int', maximum size returned is INT_MAX (2147483647 bytes)
+            const int size = ftell(file);     // WARNING: ftell() returns 'long int', maximum size returned is INT_MAX (2147483647 bytes)
             fseek(file, 0, SEEK_SET);
 
             if (size > 0)
@@ -2087,7 +2087,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                 if (data != nullptr)
                 {
                     // NOTE: fread() returns number of read elements instead of bytes, so reading [1 byte, size elements]
-                    size_t count = fread(data, sizeof(unsigned char), size, file);
+                    const size_t count = fread(data, sizeof(unsigned char), size, file);
 
                     // WARNING: fread() returns a size_t value, usually 'unsigned int' (32bit compilation) and 'unsigned long long' (64bit compilation)
                     // dataSize is unified along raylib as a 'int' type, so, for file-sizes >INT_MAX (2147483647 bytes) there is a limitation
@@ -2143,13 +2143,13 @@ bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
         {
             // WARNING: fwrite() returns a size_t value, usually 'unsigned int' (32bit compilation) and 'unsigned long long' (64bit compilation)
             // and expects a size_t input value but as dataSize is limited to INT_MAX (2147483647 bytes), there shouldn't be a problem
-            int count = static_cast<int>(fwrite(data, sizeof(unsigned char), dataSize, file));
+            const int count = static_cast<int>(fwrite(data, sizeof(unsigned char), dataSize, file));
 
             if (count == 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write file", fileName);
             else if (count != dataSize) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially written", fileName);
             else TRACELOG(LOG_INFO, "FILEIO: [%s] File saved successfully", fileName);
 
-            int closed = fclose(file);
+            const int closed = fclose(file);
             if (closed == 0) result = true;
         }
         else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open file", fileName);
@@ -2236,7 +2236,7 @@ std::string LoadFileText(std::string_view fileNameView)
             // text mode causes carriage return-linefeed translation...
             // ...but using fseek() should return correct byte-offset
             fseek(file, 0, SEEK_END);
-            unsigned int size = static_cast<unsigned int>(ftell(file));
+            const unsigned int size = static_cast<unsigned int>(ftell(file));
             fseek(file, 0, SEEK_SET);
 
             if (size > 0)
@@ -2245,7 +2245,7 @@ std::string LoadFileText(std::string_view fileNameView)
 
                 if (text != nullptr)
                 {
-                    unsigned int count = static_cast<unsigned int>(fread(text, sizeof(char), size, file));
+                    const unsigned int count = static_cast<unsigned int>(fread(text, sizeof(char), size, file));
 
                     // WARNING: \r\n is converted to \n on reading, so,
                     // read bytes count gets reduced by the number of lines
@@ -2298,12 +2298,12 @@ bool SaveFileText(std::string_view fileNameView, std::string_view textView)
 
         if (file != nullptr)
         {
-            int count = fprintf(file, "%s", text);
+            const int count = fprintf(file, "%s", text);
 
             if (count < 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write text file", fileName);
             else TRACELOG(LOG_INFO, "FILEIO: [%s] Text file saved successfully", fileName);
 
-            int closed = fclose(file);
+            const int closed = fclose(file);
             if (closed == 0) result = true;
         }
         else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open text file", fileName);
@@ -2391,12 +2391,12 @@ int FileCopy(std::string_view srcPathView, std::string_view dstPathView)
     if ((srcFileData != nullptr) && (srcDataSize > 0))
     {
         // Get full destination directory path
-        std::string dstDirPath = GetDirectoryPath(dstPath);
+        const std::string dstDirPath = GetDirectoryPath(dstPath);
         
         // Check if directory exist or create it otherwise
         if (DirectoryExists(dstDirPath) || (MakeDirectory(dstDirPath) == 0))
         {
-            bool saved = SaveFileData(dstPath, srcFileData, srcDataSize);
+            const bool saved = SaveFileData(dstPath, srcFileData, srcDataSize);
             if (saved) result = 0; // WARNING: SaveFileData() returns true on success
         }
     }
@@ -2453,11 +2453,11 @@ int FileTextReplace(std::string_view fileNameView, std::string_view searchView, 
 #if SUPPORT_MODULE_RTEXT
     if (FileExists(fileName))
     {
-        std::string fileText = LoadFileText(fileName);
-        std::string fileTextUpdated = TextReplace(fileText, search, replacement);
+        const std::string fileText = LoadFileText(fileName);
+        const std::string fileTextUpdated = TextReplace(fileText, search, replacement);
         if (!fileTextUpdated.empty())
         {
-            bool saved = SaveFileText(fileName, fileTextUpdated);
+            const bool saved = SaveFileText(fileName, fileTextUpdated);
             if (saved) result = 0;
         }
     }
@@ -2481,10 +2481,10 @@ int FileTextFindIndex(std::string_view fileNameView, std::string_view searchView
 
     if (FileExists(fileName))
     {
-        std::string fileText = LoadFileText(fileName);
+        const std::string fileText = LoadFileText(fileName);
         if (!fileText.empty())
         {
-            size_t pos = fileText.find(search);
+            const size_t pos = fileText.find(search);
             if (pos != std::string::npos) result = static_cast<int>(pos);
         }
     }
@@ -2528,7 +2528,7 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
 
     if (!fileExt.empty())
     {
-        int fileExtLength = static_cast<int>(fileExt.size());
+        const int fileExtLength = static_cast<int>(fileExt.size());
         char fileExtLower[16] = { 0 };
         for (int i = 0; (i < fileExtLength) && (i < 15); i++)
         {
@@ -2538,7 +2538,7 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
         }
 
         int extCount = 1;
-        int extLength = static_cast<int>(strlen(ext));
+        const int extLength = static_cast<int>(strlen(ext));
         char *extList = static_cast<char *>(RL_CALLOC(extLength + 1, 1));
         char *extListPtrs[MAX_FILE_EXTENSIONS] = { nullptr };
         memcpy(extList, ext, extLength);
@@ -2641,7 +2641,7 @@ int GetFileLength(std::string_view fileNameView)
     if (file != nullptr)
     {
         fseek(file, 0L, SEEK_END);
-        long int fileSize = ftell(file);
+        const long int fileSize = ftell(file);
 
         // Check for size overflow (INT_MAX)
         if (fileSize > 2147483647) TRACELOG(LOG_WARNING, "[%s] File size overflows expected limit, do not use GetFileLength()", fileName);
@@ -2664,7 +2664,7 @@ long GetFileModTime(std::string_view fileNameView)
 
     if (stat(fileName, &result) == 0)
     {
-        time_t mod = result.st_mtime;
+        const time_t mod = result.st_mtime;
         modTime = static_cast<long>(mod);
     }
 
@@ -2679,8 +2679,8 @@ std::string GetFileExtension(std::string_view fileNameView)
     const char *fileName = fileNameStr.c_str();
 
     // Only the file name part can contain the extension, not a directory name
-    std::string name = GetFileName(fileName);
-    size_t dot = name.rfind('.');
+    const std::string name = GetFileName(fileName);
+    const size_t dot = name.rfind('.');
 
     if ((dot == std::string::npos) || (dot == 0)) return {};   // No extension for hidden files: ".gitignore"
 
@@ -2725,9 +2725,9 @@ std::string GetFileNameWithoutExt(std::string_view filePathView)
 
     if (filePath != nullptr)
     {
-        std::string baseName = GetFileName(filePath);
+        const std::string baseName = GetFileName(filePath);
         snprintf(fileName, MAX_FILENAME_LENGTH, "%s", baseName.c_str()); // Get filename.ext without path
-        int fileNameLength = static_cast<int>(strlen(fileName)); // Get size in bytes
+        const int fileNameLength = static_cast<int>(strlen(fileName)); // Get size in bytes
 
         for (int i = fileNameLength; i > 0; i--) // Reverse search '.'
         {
@@ -2764,7 +2764,7 @@ std::string GetDirectoryPath(std::string_view filePathView)
 
     // In case provided path does not contain a root drive letter (C:\, D:\)
     // nor leading path separator (\, /), add the current directory path to dirPath
-    bool isRelative = (filePath[0] != '\\') && (filePath[0] != '/') && ((filePath[0] == '\0') || (filePath[1] != ':'));
+    const bool isRelative = (filePath[0] != '\\') && (filePath[0] != '/') && ((filePath[0] == '\0') || (filePath[1] != ':'));
     if (isRelative)
     {
         // For security, set starting path to current directory,
@@ -2784,8 +2784,8 @@ std::string GetDirectoryPath(std::string_view filePathView)
         }
         else
         {
-            int dirPathOffset = isRelative? 2 : 0;          // Skip "./" added for relative paths
-            int dirPathLength = static_cast<int>(lastSlash - filePath);
+            const int dirPathOffset = isRelative? 2 : 0;          // Skip "./" added for relative paths
+            const int dirPathLength = static_cast<int>(lastSlash - filePath);
 
             if ((dirPathOffset + dirPathLength) < MAX_FILEPATH_LENGTH)
             {
@@ -2885,8 +2885,8 @@ std::string GetApplicationDirectory(void)
 
 #elif defined(__linux__)
 
-    unsigned int size = sizeof(appDir);
-    ssize_t len = readlink("/proc/self/exe", appDir, size);
+    const unsigned int size = sizeof(appDir);
+    const ssize_t len = readlink("/proc/self/exe", appDir, size);
 
     if (len > 0)
     {
@@ -3009,7 +3009,7 @@ int MakeDirectory(std::string_view dirPathView)
     if (DirectoryExists(dirPath)) return 0; // Path already exists (is valid)
 
     // Copy path string to avoid modifying original
-    int dirPathLength = static_cast<int>(strlen(dirPath)) + 1;
+    const int dirPathLength = static_cast<int>(strlen(dirPath)) + 1;
     char *pathcpy = static_cast<char *>(RL_CALLOC(dirPathLength, 1));
     memcpy(pathcpy, dirPath, dirPathLength);
 
@@ -3047,7 +3047,7 @@ int ChangeDirectory(std::string_view dirPathView)
 
     // NOTE: On success, CHDIR() return 0; on error, returns -1 and errno is set to indicate the error,
     // depending on the filesystem, other errors can be returned
-    int result = CHDIR(dirPath);
+    const int result = CHDIR(dirPath);
 
     if (result != 0) TRACELOG(LOG_WARNING, "SYSTEM: Failed to change to directory: %s", dirPath);
     else TRACELOG(LOG_INFO, "SYSTEM: Working Directory: %s", dirPath);
@@ -3120,7 +3120,7 @@ bool IsFileNameValid(std::string_view fileNameView)
 
     if ((fileName != nullptr) && (fileName[0] != '\0'))
     {
-        int fileNameLength = static_cast<int>(strlen(fileName));
+        const int fileNameLength = static_cast<int>(strlen(fileName));
         bool allPeriods = true;
 
         for (int i = 0; i < fileNameLength; i++)
@@ -3227,7 +3227,7 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
                 #if defined(_WIN32)
                     int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s\\%s", basePath, entity->d_name);
                 #else
-                    int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, entity->d_name);
+                    const int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, entity->d_name);
                 #endif
                 // Don't add to count if path too long
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
@@ -3266,7 +3266,7 @@ unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDa
 #if SUPPORT_COMPRESSION_API
     // Compress data and generate a valid DEFLATE stream
     struct sdefl *sdefl = static_cast<struct sdefl *>(RL_CALLOC(1, sizeof(struct sdefl)));   // WARNING: Possible stack overflow, struct sdefl is almost 1MB
-    int bounds = sdefl_bound(dataSize);
+    const int bounds = sdefl_bound(dataSize);
     compData = static_cast<unsigned char *>(RL_CALLOC(bounds, 1));
 
     *compDataSize = sdeflate(sdefl, compData, data, dataSize, COMPRESSION_QUALITY_DEFLATE);   // Compression level 8, same as stbiw
@@ -3286,7 +3286,7 @@ unsigned char *DecompressData(const unsigned char *compData, int compDataSize, i
 #if SUPPORT_COMPRESSION_API
     // Decompress data from a valid DEFLATE stream
     unsigned char *data0 = static_cast<unsigned char *>(RL_CALLOC(MAX_DECOMPRESSION_SIZE*1024*1024, 1));
-    int size = sinflate(data0, MAX_DECOMPRESSION_SIZE*1024*1024, compData, compDataSize);
+    const int size = sinflate(data0, MAX_DECOMPRESSION_SIZE*1024*1024, compData, compDataSize);
 
     // WARNING: RL_REALLOC can make (and leave) data copies in memory,
     // that can be a security concern in case of compression of sensitive data
@@ -3310,13 +3310,13 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
 {
     // Base64 conversion table from RFC 4648 [0..63]
     // NOTE: They represent 64 values (6 bits), to encode 3 bytes of data into 4 "sextets" (6bit characters)
-    static const char base64EncodeTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static constexpr char base64EncodeTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     // Compute expected size and padding
     int paddedSize = dataSize;
     while (paddedSize%3 != 0) paddedSize++; // Padding bytes to round 4*(dataSize/3) to 4 bytes
     int estimatedOutputSize = 4*(paddedSize/3);
-    int padding = paddedSize - dataSize;
+    const int padding = paddedSize - dataSize;
 
     // Adding null terminator to string
     estimatedOutputSize += 1;
@@ -3373,7 +3373,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
     // NOTE: Following ASCII order [0..255] assigning the expected sixtet value to
     // every character in the corresponding ASCII position
     // NOTE: Built with a lambda initializer, designated initializers (['A'] = 0) are not valid C++
-    static const std::array<unsigned char, 256> base64DecodeTable = []() {
+    static constexpr std::array<unsigned char, 256> base64DecodeTable = []() {
         std::array<unsigned char, 256> table{};
         for (int c = 'A'; c <= 'Z'; c++) table[c] = static_cast<unsigned char>(c - 'A');
         for (int c = 'a'; c <= 'z'; c++) table[c] = static_cast<unsigned char>(c - 'a' + 26);
@@ -3387,13 +3387,13 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
     if (text == nullptr) return nullptr;
 
     // Compute expected size and padding
-    int dataSize = static_cast<int>(strlen(text)); // WARNING: Expecting NULL terminated strings!
+    const int dataSize = static_cast<int>(strlen(text)); // WARNING: Expecting NULL terminated strings!
     int ending = dataSize - 1;
     int padding = 0;
     while ((ending >= 0) && (text[ending] == '=')) { padding++; ending--; }
     int estimatedOutputSize = 3*(dataSize/4) - padding;
     if (estimatedOutputSize < 0) estimatedOutputSize = 0;   // Invalid input, i.e. "QQ=" or "===="
-    int maxOutputSize = 3*(dataSize/4);
+    const int maxOutputSize = 3*(dataSize/4);
 
     // Load some memory to store decoded data
     // NOTE: Allocated enough size to include padding
@@ -3409,12 +3409,12 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
             break;
         }
 
-        unsigned int sixtetA = base64DecodeTable[static_cast<unsigned char>(text[i])];
-        unsigned int sixtetB = base64DecodeTable[static_cast<unsigned char>(text[i + 1])];
-        unsigned int sixtetC = (((i + 2) < dataSize) && static_cast<unsigned char>(text[i + 2]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 2])] : 0;
-        unsigned int sixtetD = (((i + 3) < dataSize) && static_cast<unsigned char>(text[i + 3]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 3])] : 0;
+        const unsigned int sixtetA = base64DecodeTable[static_cast<unsigned char>(text[i])];
+        const unsigned int sixtetB = base64DecodeTable[static_cast<unsigned char>(text[i + 1])];
+        const unsigned int sixtetC = (((i + 2) < dataSize) && static_cast<unsigned char>(text[i + 2]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 2])] : 0;
+        const unsigned int sixtetD = (((i + 3) < dataSize) && static_cast<unsigned char>(text[i + 3]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 3])] : 0;
 
-        unsigned int octetPack = (sixtetA << 18) | (sixtetB << 12)  | (sixtetC << 6) | sixtetD;
+        const unsigned int octetPack = (sixtetA << 18) | (sixtetB << 12)  | (sixtetC << 6) | sixtetD;
 
         if ((outputCount + 3) > maxOutputSize)
         {
@@ -3438,7 +3438,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
 // Compute CRC32 hash code
 unsigned int ComputeCRC32(const unsigned char *data, int dataSize)
 {
-    static unsigned int crcTable[256] = {
+    static const unsigned int crcTable[256] = {
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
         0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988, 0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91,
         0x1db71064, 0x6ab020f2, 0xf3b97148, 0x84be41de, 0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,
@@ -3491,7 +3491,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
     // WARNING: All variables are unsigned 32 bit and wrap modulo 2^32 when calculating
 
     // NOTE: r specifies the per-round shift amounts
-    unsigned int r[] = {
+    const unsigned int r[] = {
         7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
         5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
         4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
@@ -3499,7 +3499,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
     };
 
     // Using binary integer part of the sines of integers (in radians) as constants
-    unsigned int k[] = {
+    const unsigned int k[] = {
         0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
         0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
         0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
@@ -3532,7 +3532,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
     // Append '0' bit until message length in bit 448 (mod 512)
     // Append length mod (2 pow 64) to message
 
-    int newDataSize = ((((dataSize + 8)/64) + 1)*64) - 8;
+    const int newDataSize = ((((dataSize + 8)/64) + 1)*64) - 8;
 
     unsigned char *msg = static_cast<unsigned char *>(RL_CALLOC(newDataSize + 64, 1)); // Initialize with '0' bits, allocating 64 extra bytes
     memcpy(msg, data, dataSize);
@@ -3579,7 +3579,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
                 g = (7*i)%16;
             }
 
-            unsigned int temp = d;
+            const unsigned int temp = d;
             d = c;
             c = b;
             b = b + ROTATE_LEFT((a + f + k[i] + w[g]), r[i]);
@@ -3622,13 +3622,13 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
     // Append '0' bit until message length in bit 448 (mod 512)
     // Append length mod (2 pow 64) to message
 
-    int newDataSize = ((((dataSize + 8)/64) + 1)*64);
+    const int newDataSize = ((((dataSize + 8)/64) + 1)*64);
 
     unsigned char *msg = static_cast<unsigned char *>(RL_CALLOC(newDataSize, 1)); // Initialize with '0' bits
     memcpy(msg, data, dataSize);
     msg[dataSize] = 128; // Write the '1' bit
 
-    unsigned long long bitsLen = 8ULL*dataSize;
+    const unsigned long long bitsLen = 8ULL*dataSize;
     msg[newDataSize - 1] = static_cast<unsigned char>(bitsLen);
     msg[newDataSize - 2] = static_cast<unsigned char>(bitsLen >> 8);
     msg[newDataSize - 3] = static_cast<unsigned char>(bitsLen >> 16);
@@ -3687,7 +3687,7 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
                 k = 0xCA62C1D6;
             }
 
-            unsigned int temp = SHA1_ROTATE_LEFT(a, 5) + f + e + k + w[i];
+            const unsigned int temp = SHA1_ROTATE_LEFT(a, 5) + f + e + k + w[i];
             e = d;
             d = c;
             c = SHA1_ROTATE_LEFT(b, 30);
@@ -3716,7 +3716,7 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
     #define SHA256_A0(x) (SHA256_ROTATE_RIGHT(x, 7) ^ SHA256_ROTATE_RIGHT(x, 18) ^ (x >> 3))
     #define SHA256_A1(x) (SHA256_ROTATE_RIGHT(x, 17) ^ SHA256_ROTATE_RIGHT(x, 19) ^ (x >> 10))
 
-    static const unsigned int k[64] = {
+    static constexpr unsigned int k[64] = {
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
         0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
         0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -3781,12 +3781,12 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
 
         for (int t = 0; t < 64; t++)
         {
-            unsigned int e1 = (SHA256_ROTATE_RIGHT(e, 6) ^ SHA256_ROTATE_RIGHT(e, 11) ^ SHA256_ROTATE_RIGHT(e, 25));
-            unsigned int ch = ((e & f) ^ (~e & g));
-            unsigned int t1 = (h + e1 + ch + k[t] + w[t]);
-            unsigned int e0 = (SHA256_ROTATE_RIGHT(a, 2) ^ SHA256_ROTATE_RIGHT(a, 13) ^ SHA256_ROTATE_RIGHT(a, 22));
-            unsigned int maj = ((a & b) ^ (a & c) ^ (b & c));
-            unsigned int t2 = e0 + maj;
+            const unsigned int e1 = (SHA256_ROTATE_RIGHT(e, 6) ^ SHA256_ROTATE_RIGHT(e, 11) ^ SHA256_ROTATE_RIGHT(e, 25));
+            const unsigned int ch = ((e & f) ^ (~e & g));
+            const unsigned int t1 = (h + e1 + ch + k[t] + w[t]);
+            const unsigned int e0 = (SHA256_ROTATE_RIGHT(a, 2) ^ SHA256_ROTATE_RIGHT(a, 13) ^ SHA256_ROTATE_RIGHT(a, 22));
+            const unsigned int maj = ((a & b) ^ (a & c) ^ (b & c));
+            const unsigned int t2 = e0 + maj;
 
             h = g;
             g = f;
@@ -4309,7 +4309,7 @@ float GetGamepadAxisMovement(int gamepad, int axis)
 
     if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (axis < MAX_GAMEPAD_AXES))
     {
-        float movement = (value < 0.0f)? CORE.Input.Gamepad.axisState[gamepad][axis] : fabsf(CORE.Input.Gamepad.axisState[gamepad][axis]);
+        const float movement = (value < 0.0f)? CORE.Input.Gamepad.axisState[gamepad][axis] : fabsf(CORE.Input.Gamepad.axisState[gamepad][axis]);
 
         if (movement > value) value = CORE.Input.Gamepad.axisState[gamepad][axis];
     }
@@ -4392,7 +4392,7 @@ bool IsMouseButtonUp(int button)
 // Get mouse position X
 int GetMouseX(void)
 {
-    int mouseX = static_cast<int>((CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x);
+    const int mouseX = static_cast<int>((CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x);
 
     return mouseX;
 }
@@ -4400,7 +4400,7 @@ int GetMouseX(void)
 // Get mouse position Y
 int GetMouseY(void)
 {
-    int mouseY = static_cast<int>((CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y);
+    const int mouseY = static_cast<int>((CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y);
 
     return mouseY;
 }
@@ -4469,14 +4469,14 @@ Vector2 GetMouseWheelMoveV(void)
 // Get touch position X for touch point 0 (relative to screen size)
 int GetTouchX(void)
 {
-    int touchX = static_cast<int>(CORE.Input.Touch.position[0].x);
+    const int touchX = static_cast<int>(CORE.Input.Touch.position[0].x);
     return touchX;
 }
 
 // Get touch position Y for touch point 0 (relative to screen size)
 int GetTouchY(void)
 {
-    int touchY = static_cast<int>(CORE.Input.Touch.position[0].y);
+    const int touchY = static_cast<int>(CORE.Input.Touch.position[0].y);
     return touchY;
 }
 
@@ -4581,7 +4581,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
             #if defined(_WIN32)
                 int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s\\%s", basePath, dp->d_name);
             #else
-                int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, dp->d_name);
+                const int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, dp->d_name);
             #endif
 
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
@@ -4836,7 +4836,7 @@ static void RecordAutomationEvent(void)
         for (int axis = 0; axis < MAX_GAMEPAD_AXES; axis++)
         {
             // Event type: INPUT_GAMEPAD_AXIS_MOTION
-            float defaultMovement = ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))? -1.0f : 0.0f;
+            const float defaultMovement = ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))? -1.0f : 0.0f;
             if (GetGamepadAxisMovement(gamepad, axis) != defaultMovement)
             {
                 currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;

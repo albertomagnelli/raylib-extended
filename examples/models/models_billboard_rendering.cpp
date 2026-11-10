@@ -23,8 +23,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - billboard rendering");
 
@@ -36,22 +36,22 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Texture2D bill = LoadTexture("resources/billboard.png");    // Our billboard texture
-    Vector3 billPositionStatic = { 0.0f, 2.0f, 0.0f };          // Position of static billboard
-    Vector3 billPositionRotating = { 1.0f, 2.0f, 1.0f };        // Position of rotating billboard
+    const Texture2D bill = LoadTexture("resources/billboard.png");    // Our billboard texture
+    const Vector3 billPositionStatic = { 0.0f, 2.0f, 0.0f };          // Position of static billboard
+    const Vector3 billPositionRotating = { 1.0f, 2.0f, 1.0f };        // Position of rotating billboard
 
     // Entire billboard texture, source is used to take a segment from a larger texture
-    Rectangle source = { 0.0f, 0.0f, static_cast<float>(bill.width), static_cast<float>(bill.height) };
+    const Rectangle source = { 0.0f, 0.0f, static_cast<float>(bill.width), static_cast<float>(bill.height) };
 
     // NOTE: Billboard locked on axis-Y
-    Vector3 billUp = { 0.0f, 1.0f, 0.0f };
+    const Vector3 billUp = { 0.0f, 1.0f, 0.0f };
 
     // Set the height of the rotating billboard to 1.0 with the aspect ratio fixed
-    Vector2 size = { source.width/source.height, 1.0f };
+    const Vector2 size = { source.width/source.height, 1.0f };
 
     // Rotate around origin
     // Here we choose to rotate around the image center
-    Vector2 origin = ((size) * (0.5f));
+    const Vector2 origin = ((size) * (0.5f));
 
     // Distance is needed for the correct billboard draw order
     // Larger distance (further away from the camera) should be drawn prior to smaller distance

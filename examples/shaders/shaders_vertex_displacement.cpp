@@ -35,8 +35,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - vertex displacement");
 
@@ -49,25 +49,25 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load vertex and fragment shaders
-    Shader shader = LoadShader(
+    const Shader shader = LoadShader(
         TextFormat("resources/shaders/glsl%i/vertex_displacement.vs", GLSL_VERSION),
         TextFormat("resources/shaders/glsl%i/vertex_displacement.fs", GLSL_VERSION));
 
     // Load perlin noise texture
-    Image perlinNoiseImage = GenImagePerlinNoise(512, 512, 0, 0, 1.0f);
-    Texture perlinNoiseMap = LoadTextureFromImage(perlinNoiseImage);
+    const Image perlinNoiseImage = GenImagePerlinNoise(512, 512, 0, 0, 1.0f);
+    const Texture perlinNoiseMap = LoadTextureFromImage(perlinNoiseImage);
     UnloadImage(perlinNoiseImage);
 
     // Set shader uniform location
-    int perlinNoiseMapLoc = GetShaderLocation(shader, "perlinNoiseMap");
+    const int perlinNoiseMapLoc = GetShaderLocation(shader, "perlinNoiseMap");
     rlEnableShader(shader.id);
     rlActiveTextureSlot(1);
     rlEnableTexture(perlinNoiseMap.id);
     rlSetUniformSampler(perlinNoiseMapLoc, 1);
 
     // Create a plane mesh and model
-    Mesh planeMesh = GenMeshPlane(50, 50, 50, 50);
-    Model planeModel = LoadModelFromMesh(planeMesh);
+    const Mesh planeMesh = GenMeshPlane(50, 50, 50, 50);
+    const Model planeModel = LoadModelFromMesh(planeMesh);
     // Set plane model material
     planeModel.materials[0].shader = shader;
 

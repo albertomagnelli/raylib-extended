@@ -24,8 +24,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - delta time");
 
@@ -36,8 +36,8 @@ int main()
     Vector2 frameCircle = { 0, static_cast<float>(screenHeight)*(2.0f/3.0f) };
 
     // The speed applied to both circles
-    const float speed = 10.0f;
-    const float circleRadius = 32.0f;
+    constexpr float speed = 10.0f;
+    constexpr float circleRadius = 32.0f;
 
     SetTargetFPS(currentFps);
     //--------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Adjust the FPS target based on the mouse wheel
-        float mouseWheel = GetMouseWheelMove();
+        const float mouseWheel = GetMouseWheelMove();
         if (mouseWheel != 0)
         {
             currentFps += static_cast<int>(mouseWheel);

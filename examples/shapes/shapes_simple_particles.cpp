@@ -66,8 +66,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - simple particles");
 
@@ -196,7 +196,7 @@ static void EmitParticle(CircularBuffer *circularBuffer, Vector2 emitterPosition
             default: break;
         }
 
-        float direction = static_cast<float>(rand()%360);
+        const float direction = static_cast<float>(rand()%360);
         newParticle->velocity = Vector2{ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
     }
 }
@@ -258,8 +258,8 @@ static void UpdateParticles(CircularBuffer *circularBuffer, int screenWidth, int
         }
 
         // Disable particle when out of screen
-        Vector2 center = circularBuffer->buffer[i].position;
-        float radius = circularBuffer->buffer[i].radius;
+        const Vector2 center = circularBuffer->buffer[i].position;
+        const float radius = circularBuffer->buffer[i].radius;
 
         if ((center.x < -radius) || (center.x > (screenWidth + radius)) ||
             (center.y < -radius) || (center.y > (screenHeight + radius)))

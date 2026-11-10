@@ -47,8 +47,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lights bloom");
@@ -60,7 +60,7 @@ int main()
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     // Forward multi-light shader and bloom post-process shader, both loaded from the
     // resources folder shared with the rest of the shaders examples. If the GLSL version
@@ -68,20 +68,20 @@ int main()
     // raylib was built against, linking fails and silently falls back to the default
     // shader - so this retries once with the other version, and either way the result
     // is checked explicitly and reported on screen rather than staying silently wrong
-    Shader lightShader = LoadShader(TextFormat("resources/shaders/glsl%i/lights_bloom.vs", GLSL_VERSION),
+    const Shader lightShader = LoadShader(TextFormat("resources/shaders/glsl%i/lights_bloom.vs", GLSL_VERSION),
                                      TextFormat("resources/shaders/glsl%i/lights_bloom.fs", GLSL_VERSION));
-    Shader bloomShader = LoadShader({}, TextFormat("resources/shaders/glsl%i/lights_bloom_post.fs", GLSL_VERSION));
+    const Shader bloomShader = LoadShader({}, TextFormat("resources/shaders/glsl%i/lights_bloom_post.fs", GLSL_VERSION));
 
     // Load models from generated cube mesh and plane
     // NOTE: Meshes are automatically unloaded on UnloadModel()
-    Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
-    Model floor = LoadModelFromMesh(GenMeshPlane(14.0f, 14.0f, 1, 1));
+    const Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
+    const Model floor = LoadModelFromMesh(GenMeshPlane(14.0f, 14.0f, 1, 1));
     cube.materials[0].shader = lightShader;
     floor.materials[0].shader = lightShader;
 
-    int lightPosLoc = GetShaderLocation(lightShader, "lightPositions");
-    int lightColLoc = GetShaderLocation(lightShader, "lightColors");
-    int viewPosLoc = GetShaderLocation(lightShader, "viewPos");
+    const int lightPosLoc = GetShaderLocation(lightShader, "lightPositions");
+    const int lightColLoc = GetShaderLocation(lightShader, "lightColors");
+    const int viewPosLoc = GetShaderLocation(lightShader, "viewPos");
 
     Vector3 lightPositions[MAX_LIGHTS] = {};
     Vector3 lightColors[MAX_LIGHTS] = {
@@ -107,14 +107,14 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        float time = static_cast<float>(GetTime());
+        const float time = static_cast<float>(GetTime());
 
         // Orbital path for each point light, its own radius/height offset by index
         for (int i = 0; i < MAX_LIGHTS; i++)
         {
-            float angle = (i/static_cast<float>(MAX_LIGHTS))*2.0f*PI + time*0.6f;
-            float radius = 4.2f + sinf(time*1.2f + i)*0.4f;
-            float height = 1.0f + sinf(time*1.8f + i)*0.6f;
+            const float angle = (i/static_cast<float>(MAX_LIGHTS))*2.0f*PI + time*0.6f;
+            const float radius = 4.2f + sinf(time*1.2f + i)*0.4f;
+            const float height = 1.0f + sinf(time*1.8f + i)*0.6f;
 
             lightPositions[i] = Vector3{ sinf(angle)*radius, height, cosf(angle)*radius };
         }
@@ -139,7 +139,7 @@ int main()
                 // Glowing bulbs mark each light's position
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
-                    Color bulbColor = Color{
+                    const Color bulbColor = Color{
                         static_cast<unsigned char>(lightColors[i].x*255),
                         static_cast<unsigned char>(lightColors[i].y*255),
                         static_cast<unsigned char>(lightColors[i].z*255),
@@ -157,7 +157,7 @@ int main()
 
             ClearBackground(BLACK);
 
-            Rectangle srcRec = { 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) };
+            const Rectangle srcRec = { 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) };
 
             BeginShaderMode(bloomShader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)

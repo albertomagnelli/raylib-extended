@@ -75,20 +75,20 @@ int main()
 {
     // Initialization
     //-----------------------------------------------------------------------------------     ---
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - spectrum visualizer");
 
     Image fftImage = GenImageColor(BUFFER_SIZE, TEXTURE_HEIGHT, WHITE);
-    Texture2D fftTexture = LoadTextureFromImage(fftImage);
-    RenderTexture2D bufferA = LoadRenderTexture(screenWidth, screenHeight);
+    const Texture2D fftTexture = LoadTextureFromImage(fftImage);
+    const RenderTexture2D bufferA = LoadRenderTexture(screenWidth, screenHeight);
     Vector2 iResolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
 
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
 
-    int iResolutionLocation = GetShaderLocation(shader, "iResolution");
-    int iChannel0Location = GetShaderLocation(shader, "iChannel0");
+    const int iResolutionLocation = GetShaderLocation(shader, "iResolution");
+    const int iChannel0Location = GetShaderLocation(shader, "iChannel0");
     SetShaderValue(shader, iResolutionLocation, &iResolution, SHADER_UNIFORM_VEC2);
     SetShaderValueTexture(shader, iChannel0Location, fftTexture);
 
@@ -99,10 +99,10 @@ int main()
     Wave wav = LoadWave("resources/country.mp3");
     WaveFormat(&wav, SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
 
-    AudioStream audioStream = LoadAudioStream(SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
+    const AudioStream audioStream = LoadAudioStream(SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
     PlayAudioStream(audioStream);
 
-    int fftHistoryLen = static_cast<int>(ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME)) + 1;
+    const int fftHistoryLen = static_cast<int>(ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME)) + 1;
 
     FFTData fft = {
         .spectrum = static_cast<FFTComplex *>(RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
@@ -133,8 +133,8 @@ int main()
         {
             for (int i = 0; i < AUDIO_STREAM_RING_BUFFER_SIZE; i++)
             {
-                int left = (wav.channels == 2)? wavPCM16[wavCursor*2 + 0] : wavPCM16[wavCursor];
-                int right = (wav.channels == 2)? wavPCM16[wavCursor*2 + 1] : left;
+                const int left = (wav.channels == 2)? wavPCM16[wavCursor*2 + 0] : wavPCM16[wavCursor];
+                const int right = (wav.channels == 2)? wavPCM16[wavCursor*2 + 1] : left;
                 chunkSamples[i] = static_cast<short>((left + right)/2);
 
                 if (++wavCursor >= wav.frameCount) wavCursor = 0;
@@ -203,7 +203,7 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n)
         j += bit;
         if (i < j)
         {
-            FFTComplex temp = spectrum[i];
+            const FFTComplex temp = spectrum[i];
             spectrum[i] = spectrum[j];
             spectrum[j] = temp;
         }
@@ -211,16 +211,16 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n)
 
     for (int len = 2; len <= n; len <<= 1)
     {
-        float angle = -2.0f*PI/len;
-        FFTComplex twiddleUnit = { cosf(angle), sinf(angle) };
+        const float angle = -2.0f*PI/len;
+        const FFTComplex twiddleUnit = { cosf(angle), sinf(angle) };
         for (int i = 0; i < n; i += len)
         {
             FFTComplex twiddleCurrent = { 1.0f, 0.0f };
             for (int j = 0; j < len/2; j++)
             {
-                FFTComplex even = spectrum[i + j];
-                FFTComplex odd = spectrum[i + j + len/2];
-                FFTComplex twiddledOdd = {
+                const FFTComplex even = spectrum[i + j];
+                const FFTComplex odd = spectrum[i + j + len/2];
+                const FFTComplex twiddledOdd = {
                     odd.real*twiddleCurrent.real - odd.imaginary*twiddleCurrent.imaginary,
                     odd.real*twiddleCurrent.imaginary + odd.imaginary*twiddleCurrent.real
                 };
@@ -230,7 +230,7 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n)
                 spectrum[i + j + len/2].real = even.real - twiddledOdd.real;
                 spectrum[i + j + len/2].imaginary = even.imaginary - twiddledOdd.imaginary;
 
-                float twiddleRealNext = twiddleCurrent.real*twiddleUnit.real - twiddleCurrent.imaginary*twiddleUnit.imaginary;
+                const float twiddleRealNext = twiddleCurrent.real*twiddleUnit.real - twiddleCurrent.imaginary*twiddleUnit.imaginary;
                 twiddleCurrent.imaginary = twiddleCurrent.real*twiddleUnit.imaginary + twiddleCurrent.imaginary*twiddleUnit.real;
                 twiddleCurrent.real = twiddleRealNext;
             }
@@ -242,8 +242,8 @@ static void CaptureFrame(FFTData *fftData, const float *audioSamples)
 {
     for (int i = 0; i < FFT_WINDOW_SIZE; i++)
     {
-        float x = (2.0f*PI*i)/(FFT_WINDOW_SIZE - 1.0f);
-        float blackmanWeight  = 0.42f - 0.5f*cosf(x) + 0.08f*cosf(2.0f*x); // https://en.wikipedia.org/wiki/Window_function#Blackman_window
+        const float x = (2.0f*PI*i)/(FFT_WINDOW_SIZE - 1.0f);
+        const float blackmanWeight  = 0.42f - 0.5f*cosf(x) + 0.08f*cosf(2.0f*x); // https://en.wikipedia.org/wiki/Window_function#Blackman_window
         fftData->workBuffer[i].real = audioSamples[i]*blackmanWeight;
         fftData->workBuffer[i].imaginary = 0.0f;
     }
@@ -255,15 +255,15 @@ static void CaptureFrame(FFTData *fftData, const float *audioSamples)
 
     for (int bin = 0; bin < BUFFER_SIZE; bin++)
     {
-        float re = fftData->workBuffer[bin].real;
-        float im = fftData->workBuffer[bin].imaginary;
-        float linearMagnitude = sqrtf(re*re + im*im)/FFT_WINDOW_SIZE;
+        const float re = fftData->workBuffer[bin].real;
+        const float im = fftData->workBuffer[bin].imaginary;
+        const float linearMagnitude = sqrtf(re*re + im*im)/FFT_WINDOW_SIZE;
 
-        float smoothedMagnitude = SMOOTHING_TIME_CONSTANT*fftData->prevMagnitudes[bin] + (1.0f - SMOOTHING_TIME_CONSTANT)*linearMagnitude;
+        const float smoothedMagnitude = SMOOTHING_TIME_CONSTANT*fftData->prevMagnitudes[bin] + (1.0f - SMOOTHING_TIME_CONSTANT)*linearMagnitude;
         fftData->prevMagnitudes[bin] = smoothedMagnitude;
 
-        float db = logf(fmaxf(smoothedMagnitude, 1e-40f))*DB_TO_LINEAR_SCALE;
-        float normalized = (db - MIN_DECIBELS)*INVERSE_DECIBEL_RANGE;
+        const float db = logf(fmaxf(smoothedMagnitude, 1e-40f))*DB_TO_LINEAR_SCALE;
+        const float normalized = (db - MIN_DECIBELS)*INVERSE_DECIBEL_RANGE;
         smoothedSpectrum[bin] = Clamp(normalized, 0.0f, 1.0f);
     }
 

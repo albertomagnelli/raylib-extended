@@ -24,21 +24,21 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - raw data");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 
     // Load RAW image data (512x512, 32bit RGBA, no file header)
-    Image fudesumiRaw = LoadImageRaw("resources/fudesumi.raw", 384, 512, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 0);
-    Texture2D fudesumi = LoadTextureFromImage(fudesumiRaw);  // Upload CPU (RAM) image to GPU (VRAM)
+    const Image fudesumiRaw = LoadImageRaw("resources/fudesumi.raw", 384, 512, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 0);
+    const Texture2D fudesumi = LoadTextureFromImage(fudesumiRaw);  // Upload CPU (RAM) image to GPU (VRAM)
     UnloadImage(fudesumiRaw);                                // Unload CPU (RAM) image data
 
     // Generate a checked texture by code
-    int imWidth = 960;
-    int imHeight = 480;
+    constexpr int imWidth = 960;
+    constexpr int imHeight = 480;
 
     // Dynamic memory allocation to store pixels data (Color type)
     // WARNING: Using raylib provided MemAlloc() that uses default raylib
@@ -58,7 +58,7 @@ int main()
     // Load pixels data into an image structure and create texture
     // NOTE: We can assign pixels directly to data because Color is R8G8B8A8
     // data structure defining that pixelformat, format must be set properly
-    Image checkedIm = {
+    const Image checkedIm = {
         pixels,
         imWidth,
         imHeight,
@@ -66,7 +66,7 @@ int main()
         PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
     };
 
-    Texture2D checked = LoadTextureFromImage(checkedIm);
+    const Texture2D checked = LoadTextureFromImage(checkedIm);
     UnloadImage(checkedIm);         // Unload CPU (RAM) image data (pixels)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

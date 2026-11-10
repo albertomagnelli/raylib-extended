@@ -28,12 +28,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - starfield effect");
 
-    Color bgColor = ColorLerp(DARKBLUE, BLACK, 0.69f);
+    const Color bgColor = ColorLerp(DARKBLUE, BLACK, 0.69f);
 
     // Speed at which we fly forward
     float speed = 10.0f/9.0f;
@@ -61,7 +61,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Change speed based on mouse
-        float mouseMove = GetMouseWheelMove();
+        const float mouseMove = GetMouseWheelMove();
         if (static_cast<int>(mouseMove) != 0) speed += 2.0f*mouseMove/9.0f;
         if (speed < 0.0f) speed = 0.1f;
         else if (speed > 2.0f) speed = 2.0f;
@@ -69,7 +69,7 @@ int main()
         // Toggle lines / points with space bar
         if (IsKeyPressed(KEY_SPACE)) drawLines = !drawLines;
 
-        float dt = GetFrameTime();
+        const float dt = GetFrameTime();
         for (int i = 0; i < STAR_COUNT; i++)
         {
             // Update star's timer
@@ -103,13 +103,13 @@ int main()
                 if (drawLines)
                 {
                     // Get the time a little while ago for this star, but clamp it
-                    float t = Clamp(stars[i].z + 1.0f/32.0f, 0.0f, 1.0f);
+                    const float t = Clamp(stars[i].z + 1.0f/32.0f, 0.0f, 1.0f);
 
                     // If it's different enough from the current time, we proceed
                     if ((t - stars[i].z) > 1e-3)
                     {
                         // Calculate the screen position of the old point
-                        Vector2 startPos = Vector2{
+                        const Vector2 startPos = Vector2{
                             screenWidth*0.5f + stars[i].x/t,
                             screenHeight*0.5f + stars[i].y/t,
                         };
@@ -121,7 +121,7 @@ int main()
                 else
                 {
                     // Make the radius grow as the star ages
-                    float radius = Lerp(stars[i].z, 1.0f, 5.0f);
+                    const float radius = Lerp(stars[i].z, 1.0f, 5.0f);
 
                     // Draw the circle
                     DrawCircleV(starsScreenPos[i], radius, RAYWHITE);

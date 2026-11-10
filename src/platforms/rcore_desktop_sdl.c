@@ -124,7 +124,7 @@ extern CoreData CORE;                   // Global CORE state context
 
 static PlatformData platform = {};   // Platform specific data
 
-static const KeyboardKey mapScancodeToKey[SCANCODE_MAPPED_NUM] = {
+static constexpr KeyboardKey mapScancodeToKey[SCANCODE_MAPPED_NUM] = {
     KEY_NULL,           // SDL_SCANCODE_UNKNOWN
     0,
     0,
@@ -248,7 +248,7 @@ static const KeyboardKey mapScancodeToKey[SCANCODE_MAPPED_NUM] = {
     KEY_RIGHT_SUPER     //SDL_SCANCODE_RGUI
 };
 
-static const int CursorsLUT[] = {
+static constexpr int CursorsLUT[] = {
     SDL_SYSTEM_CURSOR_ARROW,       // 0  MOUSE_CURSOR_DEFAULT
     SDL_SYSTEM_CURSOR_ARROW,       // 1  MOUSE_CURSOR_ARROW
     SDL_SYSTEM_CURSOR_IBEAM,       // 2  MOUSE_CURSOR_IBEAM

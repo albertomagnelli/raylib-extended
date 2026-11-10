@@ -30,8 +30,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading iqm");
 
@@ -43,10 +43,10 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 
-    Model model = LoadModel("resources/models/iqm/guy.iqm");                    // Load the animated model mesh and basic data
-    Texture2D texture = LoadTexture("resources/models/iqm/guytex.png");         // Load model texture and set material
+    const Model model = LoadModel("resources/models/iqm/guy.iqm");                    // Load the animated model mesh and basic data
+    const Texture2D texture = LoadTexture("resources/models/iqm/guytex.png");         // Load model texture and set material
     SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);     // Set model material map texture
-    Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
 
     // Load animation data
     int animCount = 0;

@@ -53,8 +53,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - textured curve");
@@ -98,7 +98,7 @@ int main()
         if (curveSelectedPoint != nullptr) *curveSelectedPoint = ((*curveSelectedPoint) + (GetMouseDelta()));
 
         // The mouse is down, and nothing was selected, so see if anything was picked
-        Vector2 mouse = GetMousePosition();
+        const Vector2 mouse = GetMousePosition();
         if (CheckCollisionPointCircle(mouse, curveStartPosition, 6)) curveSelectedPoint = &curveStartPosition;
         else if (CheckCollisionPointCircle(mouse, curveStartPositionTangent, 6)) curveSelectedPoint = &curveStartPositionTangent;
         else if (CheckCollisionPointCircle(mouse, curveEndPosition, 6)) curveSelectedPoint = &curveEndPosition;
@@ -174,23 +174,23 @@ static void DrawTexturedCurve(void)
     {
         t = step*static_cast<float>(i);
 
-        float a = powf(1.0f - t, 3);
-        float b = 3.0f*powf(1.0f - t, 2)*t;
-        float c = 3.0f*(1.0f - t)*powf(t, 2);
-        float d = powf(t, 3);
+        const float a = powf(1.0f - t, 3);
+        const float b = 3.0f*powf(1.0f - t, 2)*t;
+        const float c = 3.0f*(1.0f - t)*powf(t, 2);
+        const float d = powf(t, 3);
 
         // Compute the endpoint for this segment
         current.y = a*curveStartPosition.y + b*curveStartPositionTangent.y + c*curveEndPositionTangent.y + d*curveEndPosition.y;
         current.x = a*curveStartPosition.x + b*curveStartPositionTangent.x + c*curveEndPositionTangent.x + d*curveEndPosition.x;
 
         // Vector from previous to current
-        Vector2 delta = { current.x - previous.x, current.y - previous.y };
+        const Vector2 delta = { current.x - previous.x, current.y - previous.y };
 
         // The right hand normal to the delta vector
-        Vector2 normal = glm::normalize(Vector2{ -delta.y, delta.x });
+        const Vector2 normal = glm::normalize(Vector2{ -delta.y, delta.x });
 
         // The v texture coordinate of the segment (add up the length of all the segments so far)
-        float v = previousV + glm::length(delta) / static_cast<float>(texRoad.height * 2);
+        const float v = previousV + glm::length(delta) / static_cast<float>(texRoad.height * 2);
 
         // Make sure the start point has a normal
         if (!tangentSet)
@@ -200,11 +200,11 @@ static void DrawTexturedCurve(void)
         }
 
         // Extend out the normals from the previous and current points to get the quad for this segment
-        Vector2 prevPosNormal = ((previous) + (((previousTangent) * (curveWidth))));
-        Vector2 prevNegNormal = ((previous) + (((previousTangent) * (-curveWidth))));
+        const Vector2 prevPosNormal = ((previous) + (((previousTangent) * (curveWidth))));
+        const Vector2 prevNegNormal = ((previous) + (((previousTangent) * (-curveWidth))));
 
-        Vector2 currentPosNormal = ((current) + (((normal) * (curveWidth))));
-        Vector2 currentNegNormal = ((current) + (((normal) * (-curveWidth))));
+        const Vector2 currentPosNormal = ((current) + (((normal) * (curveWidth))));
+        const Vector2 currentNegNormal = ((current) + (((normal) * (-curveWidth))));
 
         // Draw the segment as a quad
         rlSetTexture(texRoad.id);

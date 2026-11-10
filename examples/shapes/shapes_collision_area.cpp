@@ -22,8 +22,8 @@ int main()
 {
     // Initialization
     //---------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - collision area");
 
@@ -36,7 +36,7 @@ int main()
 
     Rectangle boxCollision = {}; // Collision rectangle
 
-    int screenUpperLimit = 40;      // Top menu limits
+    constexpr int screenUpperLimit = 40;      // Top menu limits
 
     bool pause = false;             // Movement pause
     bool collision = false;         // Collision detection

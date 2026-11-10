@@ -35,26 +35,26 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - multi sample2d");
 
-    Image imRed = GenImageColor(800, 450, Color{ 255, 0, 0, 255 });
-    Texture texRed = LoadTextureFromImage(imRed);
+    const Image imRed = GenImageColor(800, 450, Color{ 255, 0, 0, 255 });
+    const Texture texRed = LoadTextureFromImage(imRed);
     UnloadImage(imRed);
 
-    Image imBlue = GenImageColor(800, 450, Color{ 0, 0, 255, 255 });
-    Texture texBlue = LoadTextureFromImage(imBlue);
+    const Image imBlue = GenImageColor(800, 450, Color{ 0, 0, 255, 255 });
+    const Texture texBlue = LoadTextureFromImage(imBlue);
     UnloadImage(imBlue);
 
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_mix.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_mix.fs", GLSL_VERSION));
 
     // Get an additional sampler2D location to be enabled on drawing
-    int texBlueLoc = GetShaderLocation(shader, "texture1");
+    const int texBlueLoc = GetShaderLocation(shader, "texture1");
 
     // Get shader uniform for divider
-    int dividerLoc = GetShaderLocation(shader, "divider");
+    const int dividerLoc = GetShaderLocation(shader, "divider");
     float dividerValue = 0.5f;
 
     SetTargetFPS(60);                           // Set our game to run at 60 frames-per-second

@@ -78,13 +78,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - spotlight rendering");
     HideCursor();
 
-    Texture texRay = LoadTexture("resources/raysan.png");
+    const Texture texRay = LoadTexture("resources/raysan.png");
 
     Star stars[MAX_STARS] = {};
 
@@ -99,7 +99,7 @@ int main()
     int frameCounter = 0;
 
     // Use default vert shader
-    Shader shdrSpot = LoadShader({}, TextFormat("resources/shaders/glsl%i/spotlight.fs", GLSL_VERSION));
+    const Shader shdrSpot = LoadShader({}, TextFormat("resources/shaders/glsl%i/spotlight.fs", GLSL_VERSION));
 
     // Get the locations of spots in the shader
     Spot spots[MAX_SPOTS];
@@ -121,7 +121,7 @@ int main()
 
     // Tell the shader how wide the screen is so we can have
     // a pitch black half and a dimly lit half
-    unsigned int wLoc = GetShaderLocation(shdrSpot, "screenWidth");
+    const unsigned int wLoc = GetShaderLocation(shdrSpot, "screenWidth");
     float sw = static_cast<float>(GetScreenWidth());
     SetShaderValue(shdrSpot, wLoc, &sw, SHADER_UNIFORM_FLOAT);
 
@@ -165,7 +165,7 @@ int main()
         {
             if (i == 0)
             {
-                Vector2 mp = GetMousePosition();
+                const Vector2 mp = GetMousePosition();
                 spots[i].position.x = mp.x;
                 spots[i].position.y = screenHeight - mp.y;
             }

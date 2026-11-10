@@ -29,8 +29,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - mouse trail");
 
@@ -45,7 +45,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        Vector2 mousePosition = GetMousePosition();
+        const Vector2 mousePosition = GetMousePosition();
 
         // Shift all existing positions backward by one slot in the array
         // The last element (the oldest position) is dropped
@@ -71,14 +71,14 @@ int main()
                 if ((trailPositions[i].x != 0.0f) || (trailPositions[i].y != 0.0f))
                 {
                     // Calculate relative trail strength (ratio is near 1.0 for new, near 0.0 for old)
-                    float ratio = static_cast<float>(MAX_TRAIL_LENGTH - i)/MAX_TRAIL_LENGTH;
+                    const float ratio = static_cast<float>(MAX_TRAIL_LENGTH - i)/MAX_TRAIL_LENGTH;
 
                     // Fade effect: oldest positions are more transparent
                     // Fade (color, alpha) - alpha is 0.5 to 1.0 based on ratio
-                    Color trailColor = Fade(SKYBLUE, ratio*0.5f + 0.5f);
+                    const Color trailColor = Fade(SKYBLUE, ratio*0.5f + 0.5f);
 
                     // Size effect: oldest positions are smaller
-                    float trailRadius = 15.0f*ratio;
+                    const float trailRadius = 15.0f*ratio;
 
                     DrawCircleV(trailPositions[i], trailRadius, trailColor);
                 }

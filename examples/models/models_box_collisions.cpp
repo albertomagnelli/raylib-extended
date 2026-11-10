@@ -22,23 +22,23 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - box collisions");
 
     // Define the camera to look into our 3d world
-    Camera camera = { { 0.0f, 10.0f, 10.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
+    const Camera camera = { { 0.0f, 10.0f, 10.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
 
     Vector3 playerPosition = { 0.0f, 1.0f, 2.0f };
-    Vector3 playerSize = { 1.0f, 2.0f, 1.0f };
+    const Vector3 playerSize = { 1.0f, 2.0f, 1.0f };
     Color playerColor = GREEN;
 
-    Vector3 enemyBoxPos = { -4.0f, 1.0f, 0.0f };
-    Vector3 enemyBoxSize = { 2.0f, 2.0f, 2.0f };
+    const Vector3 enemyBoxPos = { -4.0f, 1.0f, 0.0f };
+    const Vector3 enemyBoxSize = { 2.0f, 2.0f, 2.0f };
 
-    Vector3 enemySpherePos = { 4.0f, 0.0f, 0.0f };
-    float enemySphereSize = 1.5f;
+    const Vector3 enemySpherePos = { 4.0f, 0.0f, 0.0f };
+    constexpr float enemySphereSize = 1.5f;
 
     bool collision = false;
 

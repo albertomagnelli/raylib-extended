@@ -39,8 +39,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // Shadows are a HUGE topic, and this example shows an extremely simple implementation of the shadowmapping algorithm,
     // which is the industry standard for shadows. This algorithm can be extended in a ridiculous number of ways to improve
@@ -56,34 +56,34 @@ int main()
     camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
 
-    Shader shadowShader = LoadShader(TextFormat("resources/shaders/glsl%i/shadowmap.vs", GLSL_VERSION),
+    const Shader shadowShader = LoadShader(TextFormat("resources/shaders/glsl%i/shadowmap.vs", GLSL_VERSION),
                                      TextFormat("resources/shaders/glsl%i/shadowmap.fs", GLSL_VERSION));
     shadowShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shadowShader, "viewPos");
 
     Vector3 lightDir = glm::normalize(Vector3{ 0.35f, -1.0f, -0.35f });
-    Color lightColor = WHITE;
+    const Color lightColor = WHITE;
     Vector4 lightColorNormalized = ColorNormalize(lightColor);
-    int lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
-    int lightColLoc = GetShaderLocation(shadowShader, "lightColor");
+    const int lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
+    const int lightColLoc = GetShaderLocation(shadowShader, "lightColor");
     SetShaderValue(shadowShader, lightDirLoc, &lightDir, SHADER_UNIFORM_VEC3);
     SetShaderValue(shadowShader, lightColLoc, &lightColorNormalized, SHADER_UNIFORM_VEC4);
-    int ambientLoc = GetShaderLocation(shadowShader, "ambient");
+    const int ambientLoc = GetShaderLocation(shadowShader, "ambient");
     float ambient[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     SetShaderValue(shadowShader, ambientLoc, ambient, SHADER_UNIFORM_VEC4);
-    int lightVPLoc = GetShaderLocation(shadowShader, "lightVP");
-    int shadowMapLoc = GetShaderLocation(shadowShader, "shadowMap");
+    const int lightVPLoc = GetShaderLocation(shadowShader, "lightVP");
+    const int shadowMapLoc = GetShaderLocation(shadowShader, "shadowMap");
     int shadowMapResolution = SHADOWMAP_RESOLUTION;
     SetShaderValue(shadowShader, GetShaderLocation(shadowShader, "shadowMapResolution"), &shadowMapResolution, SHADER_UNIFORM_INT);
 
-    Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    const Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
     cube.materials[0].shader = shadowShader;
-    Model robot = LoadModel("resources/models/robot.glb");
+    const Model robot = LoadModel("resources/models/robot.glb");
     for (int i = 0; i < robot.materialCount; i++) robot.materials[i].shader = shadowShader;
 
     int animCount = 0;
     ModelAnimation* anims = LoadModelAnimations("resources/models/robot.glb", &animCount);
 
-    RenderTexture2D shadowMap = LoadShadowmapRenderTexture(SHADOWMAP_RESOLUTION, SHADOWMAP_RESOLUTION);
+    const RenderTexture2D shadowMap = LoadShadowmapRenderTexture(SHADOWMAP_RESOLUTION, SHADOWMAP_RESOLUTION);
 
     // For the shadowmapping algorithm, we will be rendering everything from the light's point of view
     Camera3D lightCamera = {};
@@ -109,7 +109,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float deltaTime = GetFrameTime();
+        const float deltaTime = GetFrameTime();
 
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
@@ -122,7 +122,7 @@ int main()
         UpdateModelAnimation(robot, anims[0], static_cast<float>(frameCounter));
 
         // Move light with arrow keys
-        const float cameraSpeed = 0.05f;
+        constexpr float cameraSpeed = 0.05f;
         if (IsKeyDown(KEY_LEFT))
         {
             if (lightDir.x < 0.6f) lightDir.x += cameraSpeed*60.0f*deltaTime;

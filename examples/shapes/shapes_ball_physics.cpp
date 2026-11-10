@@ -46,8 +46,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ball physics");
 
@@ -81,8 +81,8 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float delta = GetFrameTime();
-        Vector2 mousePos = GetMousePosition();
+        const float delta = GetFrameTime();
+        const Vector2 mousePos = GetMousePosition();
 
         // Checks if a ball was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -133,7 +133,7 @@ int main()
         }
 
         // Get window position change for shaking
-        Vector2 windowPositionDelta = ((windowPosition) - (GetWindowPosition()));
+        const Vector2 windowPositionDelta = ((windowPosition) - (GetWindowPosition()));
         
         if (glm::length(windowPositionDelta) > 5.0f)
         {

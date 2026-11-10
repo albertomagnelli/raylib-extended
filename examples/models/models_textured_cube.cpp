@@ -30,8 +30,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - textured cube");
 
@@ -44,7 +44,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load texture to be applied to the cubes sides
-    Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");
+    const Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -99,9 +99,9 @@ int main()
 // NOTE: Cube position is the center position
 void DrawCubeTexture(Texture2D texture, Vector3 position, float width, float height, float length, Color color)
 {
-    float x = position.x;
-    float y = position.y;
-    float z = position.z;
+    const float x = position.x;
+    const float y = position.y;
+    const float z = position.z;
 
     // Set desired texture to be enabled while drawing following vertex data
     rlSetTexture(texture.id);
@@ -161,11 +161,11 @@ void DrawCubeTexture(Texture2D texture, Vector3 position, float width, float hei
 // Draw cube with texture piece applied to all faces
 void DrawCubeTextureRec(Texture2D texture, Rectangle source, Vector3 position, float width, float height, float length, Color color)
 {
-    float x = position.x;
-    float y = position.y;
-    float z = position.z;
-    float texWidth = static_cast<float>(texture.width);
-    float texHeight = static_cast<float>(texture.height);
+    const float x = position.x;
+    const float y = position.y;
+    const float z = position.z;
+    const float texWidth = static_cast<float>(texture.width);
+    const float texHeight = static_cast<float>(texture.height);
 
     // Set desired texture to be enabled while drawing following vertex data
     rlSetTexture(texture.id);

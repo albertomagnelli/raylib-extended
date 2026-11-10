@@ -27,8 +27,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera mouse zoom");
 
@@ -56,16 +56,16 @@ int main()
             camera.target = ((camera.target) + (delta));
         }
 
-        Vector2 renderScale = { static_cast<float>(GetRenderWidth())/GetScreenWidth(), static_cast<float>(GetRenderHeight())/GetScreenHeight() };
+        const Vector2 renderScale = { static_cast<float>(GetRenderWidth())/GetScreenWidth(), static_cast<float>(GetRenderHeight())/GetScreenHeight() };
 
         if (zoomMode == 0)
         {
             // Zoom based on mouse wheel
-            float wheel = GetMouseWheelMove();
+            const float wheel = GetMouseWheelMove();
             if (wheel != 0)
             {
                 // Get the world point that is under the mouse
-                Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+                const Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
                 camera.offset = ((GetMousePosition()) * (renderScale));
@@ -76,7 +76,7 @@ int main()
 
                 // Zoom increment
                 // Uses log scaling to provide consistent zoom speed
-                float scale = 0.2f*wheel;
+                const float scale = 0.2f*wheel;
                 camera.zoom = Clamp(expf(logf(camera.zoom)+scale), 0.125f, 64.0f);
             }
         }
@@ -86,7 +86,7 @@ int main()
             if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
             {
                 // Get the world point that is under the mouse
-                Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+                const Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
                 camera.offset = ((GetMousePosition()) * (renderScale));
@@ -100,8 +100,8 @@ int main()
             {
                 // Zoom increment
                 // Uses log scaling to provide consistent zoom speed
-                float deltaX = GetMouseDelta().x;
-                float scale = 0.005f*deltaX;
+                const float deltaX = GetMouseDelta().x;
+                const float scale = 0.005f*deltaX;
                 camera.zoom = Clamp(expf(logf(camera.zoom)+scale), 0.125f, 64.0f);
             }
         }

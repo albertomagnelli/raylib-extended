@@ -31,12 +31,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // The minimum/maximum points the circle can have
-    const unsigned int pointsMin = 3;
-    const unsigned int pointsMax = 256;
+    constexpr unsigned int pointsMin = 3;
+    constexpr unsigned int pointsMax = 256;
 
     // The current number of points and the radius of the circle
     unsigned int triangleCount = 64;
@@ -46,7 +46,7 @@ int main()
     float value = 1.0f;
 
     // The center of the screen
-    Vector2 center = { static_cast<float>(screenWidth)/2.0f, static_cast<float>(screenHeight)/2.0f };
+    const Vector2 center = { static_cast<float>(screenWidth)/2.0f, static_cast<float>(screenHeight)/2.0f };
     // The location of the color wheel
     Vector2 circlePosition = center;
 
@@ -74,14 +74,14 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float wheel = roundf(GetMouseWheelMove());
+        const float wheel = roundf(GetMouseWheelMove());
         triangleCount = static_cast<unsigned int>(Clamp(static_cast<float>(triangleCount) + wheel, static_cast<float>(pointsMin), static_cast<float>(pointsMax)));
 
-        Rectangle sliderRectangle = { 42.0f, 16.0f + 64.0f + 45.0f, 64.0f, 16.0f };
-        Vector2 mousePosition = GetMousePosition();
+        const Rectangle sliderRectangle = { 42.0f, 16.0f + 64.0f + 45.0f, 64.0f, 16.0f };
+        const Vector2 mousePosition = GetMousePosition();
 
         // Checks if the user is hovering over the value slider
-        bool sliderHover = (mousePosition.x >= sliderRectangle.x && mousePosition.y >= sliderRectangle.y && mousePosition.x < sliderRectangle.x + sliderRectangle.width && mousePosition.y < sliderRectangle.y + sliderRectangle.height);
+        const bool sliderHover = (mousePosition.x >= sliderRectangle.x && mousePosition.y >= sliderRectangle.y && mousePosition.x < sliderRectangle.x + sliderRectangle.width && mousePosition.y < sliderRectangle.y + sliderRectangle.height);
 
         // Copy color as hex
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyDown(KEY_C))
@@ -121,8 +121,8 @@ int main()
                 circlePosition = ((((((circlePosition) - (center))) * (Vector2{ 0.975f, 0.975f }))) + (center));
             }
 
-            float distance = glm::distance(center, circlePosition)/pointScale;
-            float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
+            const float distance = glm::distance(center, circlePosition)/pointScale;
+            const float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
 
             if (distance > 1.0f)
             {
@@ -154,13 +154,13 @@ int main()
         {
             if (settingColor) circlePosition = GetMousePosition();
 
-            float distance = glm::distance(center, circlePosition)/pointScale;
+            const float distance = glm::distance(center, circlePosition)/pointScale;
 
-            float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
+            const float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
             if (settingColor && distance > 1.0f) circlePosition = ((Vector2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI* 2.0f))*pointScale }) + (center));
 
-            float angle360 = angle*360.0f;
-            float valueActual = Clamp(distance, 0.0f, 1.0f);
+            const float angle360 = angle*360.0f;
+            const float valueActual = Clamp(distance, 0.0f, 1.0f);
             color = ColorLerp(Color{ static_cast<unsigned char>(value*255.0f), static_cast<unsigned char>(value*255.0f), static_cast<unsigned char>(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
         }
         //----------------------------------------------------------------------------------
@@ -175,22 +175,22 @@ int main()
         rlBegin(renderType);
         for (unsigned int i = 0; i < triangleCount; i++)
         {
-            float angleOffset = ((PI*2.0f)/static_cast<float>(triangleCount));
-            float angle = angleOffset*static_cast<float>(i);
-            float angleOffsetCalculated = (static_cast<float>(i) + 1)*angleOffset;
-            Vector2 scale = Vector2{ pointScale, pointScale };
+            const float angleOffset = ((PI*2.0f)/static_cast<float>(triangleCount));
+            const float angle = angleOffset*static_cast<float>(i);
+            const float angleOffsetCalculated = (static_cast<float>(i) + 1)*angleOffset;
+            const Vector2 scale = Vector2{ pointScale, pointScale };
 
-            Vector2 offset = ((Vector2{ sinf(angle), -cosf(angle) }) * (scale));
-            Vector2 offset2 = ((Vector2{ sinf(angleOffsetCalculated), -cosf(angleOffsetCalculated) }) * (scale));
+            const Vector2 offset = ((Vector2{ sinf(angle), -cosf(angle) }) * (scale));
+            const Vector2 offset2 = ((Vector2{ sinf(angleOffsetCalculated), -cosf(angleOffsetCalculated) }) * (scale));
 
-            Vector2 position = ((center) + (offset));
-            Vector2 position2 = ((center) + (offset2));
+            const Vector2 position = ((center) + (offset));
+            const Vector2 position2 = ((center) + (offset2));
 
-            float angleNonRadian = (angle/(2.0f*PI))*360.0f;
-            float angleNonRadianOffset = (angleOffset/(2.0f*PI))*360.0f;
+            const float angleNonRadian = (angle/(2.0f*PI))*360.0f;
+            const float angleNonRadianOffset = (angleOffset/(2.0f*PI))*360.0f;
 
-            Color currentColor = ColorFromHSV(angleNonRadian, 1.0f, 1.0f);
-            Color offsetColor = ColorFromHSV(angleNonRadian + angleNonRadianOffset, 1.0f, 1.0f);
+            const Color currentColor = ColorFromHSV(angleNonRadian, 1.0f, 1.0f);
+            const Color offsetColor = ColorFromHSV(angleNonRadian + angleNonRadianOffset, 1.0f, 1.0f);
 
             // Input vertices differently depending on mode
             if (renderType == RL_TRIANGLES)

@@ -52,8 +52,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - mixed processor");
 
@@ -61,8 +61,8 @@ int main()
 
     AttachAudioMixedProcessor(ProcessAudio);
 
-    Music music = LoadMusicStream("resources/country.mp3");
-    Sound sound = LoadSound("resources/coin.wav");
+    const Music music = LoadMusicStream("resources/country.mp3");
+    const Sound sound = LoadSound("resources/coin.wav");
 
     PlayMusicStream(music);
 

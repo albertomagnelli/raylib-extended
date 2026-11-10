@@ -37,8 +37,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - hilbert curve");
 
@@ -128,8 +128,8 @@ int main()
 // Load the whole Hilbert Path (including each U and their link)
 static Vector2 *LoadHilbertPath(int order, float size, int *strokeCount)
 {
-    int N = 1 << order;
-    float len = size/N;
+    const int N = 1 << order;
+    const float len = size/N;
     *strokeCount = N*N;
 
     Vector2 *hilbertPath = static_cast<Vector2 *>(RL_CALLOC(*strokeCount, sizeof(Vector2)));

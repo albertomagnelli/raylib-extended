@@ -31,8 +31,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image kernel");
 
@@ -79,10 +79,10 @@ int main()
     ImageCrop(&catSharpend, Rectangle{ 0, 0, static_cast<float>(200), static_cast<float>(450) });
 
     // Images converted to texture, GPU memory (VRAM)
-    Texture2D texture = LoadTextureFromImage(image);
-    Texture2D catSharpendTexture = LoadTextureFromImage(catSharpend);
-    Texture2D catSobelTexture = LoadTextureFromImage(catSobel);
-    Texture2D catGaussianTexture = LoadTextureFromImage(catGaussian);
+    const Texture2D texture = LoadTextureFromImage(image);
+    const Texture2D catSharpendTexture = LoadTextureFromImage(catSharpend);
+    const Texture2D catSobelTexture = LoadTextureFromImage(catSobel);
+    const Texture2D catGaussianTexture = LoadTextureFromImage(catGaussian);
 
     // Once images have been converted to texture and uploaded to VRAM,
     // they can be unloaded from RAM

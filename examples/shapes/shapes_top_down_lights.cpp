@@ -79,8 +79,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - top down lights");
 
@@ -90,12 +90,12 @@ int main()
     SetupBoxes(boxes, &boxCount);
 
     // Create a checkerboard ground texture
-    Image img = GenImageChecked(64, 64, 32, 32, DARKBROWN, DARKGRAY);
-    Texture2D backgroundTexture = LoadTextureFromImage(img);
+    const Image img = GenImageChecked(64, 64, 32, 32, DARKBROWN, DARKGRAY);
+    const Texture2D backgroundTexture = LoadTextureFromImage(img);
     UnloadImage(img);
 
     // Create a global light mask to hold all the blended lights
-    RenderTexture lightMask = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    const RenderTexture lightMask = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     // Setup initial light
     SetupLight(0, 600, 400, 300);
@@ -240,13 +240,13 @@ static void ComputeShadowVolumeForEdge(int slot, Vector2 sp, Vector2 ep)
 {
     if (lights[slot].shadowCount >= MAX_SHADOWS) return;
 
-    float extension = lights[slot].outerRadius*2;
+    const float extension = lights[slot].outerRadius*2;
 
-    Vector2 spVector = glm::normalize(((sp) - (lights[slot].position)));
-    Vector2 spProjection = ((sp) + (((spVector) * (extension))));
+    const Vector2 spVector = glm::normalize(((sp) - (lights[slot].position)));
+    const Vector2 spProjection = ((sp) + (((spVector) * (extension))));
 
-    Vector2 epVector = glm::normalize(((ep) - (lights[slot].position)));
-    Vector2 epProjection = ((ep) + (((epVector) * (extension))));
+    const Vector2 epVector = glm::normalize(((ep) - (lights[slot].position)));
+    const Vector2 epProjection = ((ep) + (((epVector) * (extension))));
 
     lights[slot].shadows[lights[slot].shadowCount].vertices[0] = sp;
     lights[slot].shadows[lights[slot].shadowCount].vertices[1] = ep;

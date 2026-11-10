@@ -61,8 +61,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - stream callback");
 
@@ -72,7 +72,7 @@ int main()
     SetAudioStreamBufferSizeDefault(BUFFER_SIZE);
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
-    AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
+    const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
     PlayAudioStream(stream);
 
     // Configure it so that waveCallbacks[waveType] is called whenever stream is out of samples
@@ -133,8 +133,8 @@ int main()
             // Draw the last 10 ms of uploaded audio
             for (int i = 0; i < screenWidth - 1; i++)
             {
-                Vector2 startPos = {static_cast<float>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
-                Vector2 endPos = { static_cast<float>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
+                const Vector2 startPos = {static_cast<float>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
+                const Vector2 endPos = { static_cast<float>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
                 DrawLineV(startPos, endPos, RED);
             }
 
@@ -158,7 +158,7 @@ int main()
 //------------------------------------------------------------------------------------
 static void SineCallback(void *framesOut, unsigned int frameCount)
 {
-    int wavelength = SAMPLE_RATE/waveFrequency;
+    const int wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the sine wave
     for (unsigned int i = 0; i < frameCount; i++)
@@ -181,7 +181,7 @@ static void SineCallback(void *framesOut, unsigned int frameCount)
 
 static void SquareCallback(void *framesOut, unsigned int frameCount)
 {
-    int wavelength = SAMPLE_RATE/waveFrequency;
+    const int wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the square wave
     for (unsigned int i = 0; i < frameCount; i++)
@@ -203,7 +203,7 @@ static void SquareCallback(void *framesOut, unsigned int frameCount)
 
 static void TriangleCallback(void *framesOut, unsigned int frameCount)
 {
-    int wavelength = SAMPLE_RATE/waveFrequency;
+    const int wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the triangle wave
     for (unsigned int i = 0; i < frameCount; i++)
@@ -225,7 +225,7 @@ static void TriangleCallback(void *framesOut, unsigned int frameCount)
 
 static void SawtoothCallback(void *framesOut, unsigned int frameCount)
 {
-    int wavelength = SAMPLE_RATE/waveFrequency;
+    const int wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the sawtooth wave
     for (unsigned int i = 0; i < frameCount; i++)

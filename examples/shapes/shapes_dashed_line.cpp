@@ -24,19 +24,19 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - dashed line");
 
     // Line Properties
-    Vector2 lineStartPosition = { 20.0f, 50.0f };
+    const Vector2 lineStartPosition = { 20.0f, 50.0f };
     Vector2 lineEndPosition = { 780.0f, 400.0f };
     float dashLength = 25.0f;
     float blankLength = 15.0f;
 
     // Color selection
-    Color lineColors[] = { RED, ORANGE, GOLD, GREEN, BLUE, VIOLET, PINK, BLACK };
+    const Color lineColors[] = { RED, ORANGE, GOLD, GREEN, BLUE, VIOLET, PINK, BLACK };
     int colorIndex = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

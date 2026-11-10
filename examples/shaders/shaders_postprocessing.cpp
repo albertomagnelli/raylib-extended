@@ -72,8 +72,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
@@ -87,11 +87,11 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Model model = LoadModel("resources/models/church.obj");                 // Load OBJ model
-    Texture2D texture = LoadTexture("resources/models/church_diffuse.png"); // Load model texture (diffuse map)
+    const Model model = LoadModel("resources/models/church.obj");                 // Load OBJ model
+    const Texture2D texture = LoadTexture("resources/models/church_diffuse.png"); // Load model texture (diffuse map)
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;        // Set model diffuse texture
 
-    Vector3 position = { 0.0f, 0.0f, 0.0f };            // Set model position
+    const Vector3 position = { 0.0f, 0.0f, 0.0f };            // Set model position
 
     // Load all postpro shaders
     // NOTE 1: All postpro shader use the base vertex shader (DEFAULT_VERTEX_SHADER)
@@ -115,7 +115,7 @@ int main()
     int currentShader = FX_GRAYSCALE;
 
     // Create a RenderTexture2D to be used for render to texture
-    RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -34,8 +34,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rectangle advanced");
 
@@ -47,7 +47,8 @@ int main()
     {
         // Update rectangle bounds
         //----------------------------------------------------------------------------------
-        float width = GetScreenWidth()/2.0f, height = GetScreenHeight()/6.0f;
+        const float width = GetScreenWidth()/2.0f;
+        const float height = GetScreenHeight()/6.0f;
         Rectangle rec = {
             GetScreenWidth()/2.0f - width/2,
             GetScreenHeight()/2.0f - 5*(height/2),
@@ -104,7 +105,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
     if (roundnessRight >= 1.0f) roundnessRight = 1.0f;
 
     // Calculate corner radius both from right and left
-    float recSize = rec.width > rec.height ? rec.height : rec.width;
+    const float recSize = rec.width > rec.height ? rec.height : rec.width;
     float radiusLeft  = (recSize*roundnessLeft)/2;
     float radiusRight = (recSize*roundnessRight)/2;
 
@@ -113,7 +114,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
 
     if (radiusRight <= 0.0f && radiusLeft <= 0.0f) return;
 
-    float stepLength = 90.0f/static_cast<float>(segments);
+    const float stepLength = 90.0f/static_cast<float>(segments);
 
     /*
     Diagram Copied here for reference, original at 'DrawRectangleRounded()' source code

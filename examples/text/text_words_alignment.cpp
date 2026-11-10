@@ -35,13 +35,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - words alignment");
 
     // Define the rectangle we will draw the text in
-    Rectangle textContainerRect = Rectangle{ static_cast<float>(screenWidth)/2-static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2-static_cast<float>(screenHeight)/3, static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)*2/3 };
+    const Rectangle textContainerRect = Rectangle{ static_cast<float>(screenWidth)/2-static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2-static_cast<float>(screenHeight)/3, static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)*2/3 };
 
     // Some text to display the current alignment
     const char *textAlignNameH[] = { "Left", "Centre", "Right" };
@@ -50,13 +50,13 @@ int main()
     // Define the text we're going to draw in the rectangle
     int wordIndex = 0;
     std::vector<std::string> words = TextSplit("raylib is a simple and easy-to-use library to enjoy videogames programming", ' ');
-    int wordCount = static_cast<int>(words.size());
+    const int wordCount = static_cast<int>(words.size());
 
     // Initialize the font size we're going to use
-    int fontSize = 40;
+    constexpr int fontSize = 40;
 
     // And of course the font...
-    Font font = GetFontDefault();
+    const Font font = GetFontDefault();
 
     // Initialize the alignment variables
     int hAlign = TEXT_ALIGN_CENTRE;
@@ -109,10 +109,10 @@ int main()
             DrawRectangleRec(textContainerRect, BLUE);
 
             // Get the size of the text to draw
-            Vector2 textSize = MeasureTextEx(font, words[wordIndex], static_cast<float>(fontSize), fontSize*.1f);
+            const Vector2 textSize = MeasureTextEx(font, words[wordIndex], static_cast<float>(fontSize), fontSize*.1f);
 
             // Calculate the top-left text position based on the rectangle and alignment
-            Vector2 textPos = Vector2{
+            const Vector2 textPos = Vector2{
                 textContainerRect.x + Lerp(0.0f, textContainerRect.width  - textSize.x, (static_cast<float>(hAlign))*0.5f),
                 textContainerRect.y + Lerp(0.0f, textContainerRect.height - textSize.y, (static_cast<float>(vAlign))*0.5f)
             };

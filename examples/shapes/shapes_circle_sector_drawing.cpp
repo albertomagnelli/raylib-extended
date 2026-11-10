@@ -27,12 +27,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - circle sector drawing");
 
-    Vector2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
+    const Vector2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
     float outerRadius = 180.0f;
     float startAngle = 0.0f;

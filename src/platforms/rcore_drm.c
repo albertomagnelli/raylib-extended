@@ -186,7 +186,7 @@ static PlatformData platform = {};   // Platform specific data
 // Currently non US keyboards will have the wrong mapping for some keys
 // NOTE: Replacing this with the keymap from X11 would probably be useless, as people use the drm
 // backend to *avoid* X11
-static const int evkeyToUnicodeLUT[] = {
+static constexpr int evkeyToUnicodeLUT[] = {
     0, 27, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 8, 0, 113, 119, 101, 114,
     116, 121, 117, 105, 111, 112, 0, 0, 13, 0, 97, 115, 100, 102, 103, 104, 106, 107, 108, 59,
     39, 96, 0, 92, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, 0, 0, 0, 32
@@ -195,7 +195,7 @@ static const int evkeyToUnicodeLUT[] = {
 
 // This is the map used to map any keycode returned from linux to a raylib code from 'raylib.h'
 // NOTE: Use short here to save a little memory
-static const short linuxToRaylibMap[KEYMAP_SIZE] = {
+static constexpr short linuxToRaylibMap[KEYMAP_SIZE] = {
     // Don't map with designated initialization,
     // it will generate many naming conflicts
     0,   256, 49,  50,  51,  52,  53,  54,
@@ -518,7 +518,7 @@ int GetMonitorRefreshRate(int monitor)
 // Get the human-readable, UTF-8 encoded name of the selected monitor
 std::string GetMonitorName(int monitor)
 {
-    const char *name = "";
+    constexpr const char *name = "";
 
     if (monitor != 0)
     {
@@ -2096,7 +2096,7 @@ static void ConfigureEvdevDevice(char *device)
         // The first 32 keys as defined in input-event-codes.h are pretty much
         // exclusive to keyboards, so they can be tested using a mask
         // Leave out the first bit to not test KEY_RESERVED
-        const unsigned long mask = 0xFFFFFFFE;
+        constexpr unsigned long mask = 0xFFFFFFFE;
         if ((keyBits[0] & mask) == mask) isKeyboard = true;
 
         // If any of the common gamepad buttons is found, assume it's a gamepad
@@ -2114,7 +2114,7 @@ static void ConfigureEvdevDevice(char *device)
         }
     }
 
-    const char *deviceKindStr = "unknown";
+    constexpr const char *deviceKindStr = "unknown";
     if (isMouse || isTouch)
     {
         bool prioritize = false;

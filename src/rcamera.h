@@ -224,8 +224,8 @@ Vector3 GetCameraUp(Camera *camera)
 // Returns the cameras right vector (normalized)
 Vector3 GetCameraRight(Camera *camera)
 {
-    Vector3 forward = GetCameraForward(camera);
-    Vector3 up = GetCameraUp(camera);
+    const Vector3 forward = GetCameraForward(camera);
+    const Vector3 up = GetCameraUp(camera);
 
     return glm::normalize(glm::cross(forward, up));
 }
@@ -301,7 +301,7 @@ void CameraMoveToTarget(Camera *camera, float delta)
     if (distance <= 0) distance = 0.001f;
 
     // Set new distance by moving the position along the forward vector
-    Vector3 forward = GetCameraForward(camera);
+    const Vector3 forward = GetCameraForward(camera);
     camera->position = camera->target - forward*distance;
 }
 
@@ -312,7 +312,7 @@ void CameraMoveToTarget(Camera *camera, float delta)
 void CameraYaw(Camera *camera, float angle, bool rotateAroundTarget)
 {
     // Rotation axis
-    Vector3 up = GetCameraUp(camera);
+    const Vector3 up = GetCameraUp(camera);
 
     // View vector
     Vector3 targetPosition = camera->target - camera->position;
@@ -340,7 +340,7 @@ void CameraYaw(Camera *camera, float angle, bool rotateAroundTarget)
 void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTarget, bool rotateUp)
 {
     // Up direction
-    Vector3 up = GetCameraUp(camera);
+    const Vector3 up = GetCameraUp(camera);
 
     // View vector
     Vector3 targetPosition = camera->target - camera->position;
@@ -363,7 +363,7 @@ void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTa
     }
 
     // Rotation axis
-    Vector3 right = GetCameraRight(camera);
+    const Vector3 right = GetCameraRight(camera);
 
     // Rotate view vector around right axis
     targetPosition = glm::angleAxis(angle, glm::normalize(right))*targetPosition;
@@ -392,7 +392,7 @@ void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTa
 void CameraRoll(Camera *camera, float angle)
 {
     // Rotation axis
-    Vector3 forward = GetCameraForward(camera);
+    const Vector3 forward = GetCameraForward(camera);
 
     // Rotate up direction around forward axis
     camera->up = glm::angleAxis(angle, glm::normalize(forward))*camera->up;
@@ -413,8 +413,8 @@ Matrix GetCameraProjectionMatrix(Camera *camera, float aspect)
     }
     else if (camera->projection == CAMERA_ORTHOGRAPHIC)
     {
-        float top = camera->fovy/2.0f;
-        float right = top*aspect;
+        const float top = camera->fovy/2.0f;
+        const float right = top*aspect;
 
         return glm::ortho(-right, right, -top, top, CAMERA_CULL_DISTANCE_NEAR, CAMERA_CULL_DISTANCE_FAR);
     }
@@ -427,23 +427,23 @@ Matrix GetCameraProjectionMatrix(Camera *camera, float aspect)
 // Camera mode: CAMERA_FREE, CAMERA_FIRST_PERSON, CAMERA_THIRD_PERSON, CAMERA_ORBITAL or CUSTOM
 void UpdateCamera(Camera *camera, int mode)
 {
-    Vector2 mousePositionDelta = GetMouseDelta();
+    const Vector2 mousePositionDelta = GetMouseDelta();
 
-    bool moveInWorldPlane = ((mode == CAMERA_FIRST_PERSON) || (mode == CAMERA_THIRD_PERSON));
-    bool rotateAroundTarget = ((mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL));
-    bool lockView = ((mode == CAMERA_FREE) || (mode == CAMERA_FIRST_PERSON) || (mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL));
-    bool rotateUp = false;
+    const bool moveInWorldPlane = ((mode == CAMERA_FIRST_PERSON) || (mode == CAMERA_THIRD_PERSON));
+    const bool rotateAroundTarget = ((mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL));
+    const bool lockView = ((mode == CAMERA_FREE) || (mode == CAMERA_FIRST_PERSON) || (mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL));
+    constexpr bool rotateUp = false;
 
     // Camera speeds based on frame time
-    float cameraMoveSpeed = CAMERA_MOVE_SPEED*GetFrameTime();
-    float cameraRotationSpeed = CAMERA_ROTATION_SPEED*GetFrameTime();
-    float cameraPanSpeed = CAMERA_PAN_SPEED*GetFrameTime();
-    float cameraOrbitalSpeed = CAMERA_ORBITAL_SPEED*GetFrameTime();
+    const float cameraMoveSpeed = CAMERA_MOVE_SPEED*GetFrameTime();
+    const float cameraRotationSpeed = CAMERA_ROTATION_SPEED*GetFrameTime();
+    const float cameraPanSpeed = CAMERA_PAN_SPEED*GetFrameTime();
+    const float cameraOrbitalSpeed = CAMERA_ORBITAL_SPEED*GetFrameTime();
 
     if (mode == CAMERA_CUSTOM) {}
     else if (mode == CAMERA_ORBITAL)
     {
-        Matrix rotation = glm::rotate(Matrix(1.0f), cameraOrbitalSpeed, GetCameraUp(camera));
+        const Matrix rotation = glm::rotate(Matrix(1.0f), cameraOrbitalSpeed, GetCameraUp(camera));
         Vector3 view = camera->position - camera->target;
         view = Vector3(rotation*Vector4(view, 1.0f));
         camera->position = camera->target + view;
@@ -523,10 +523,10 @@ void UpdateCameraPro(Camera *camera, Vector3 movement, Vector3 rotation, float z
     // rotation.z - roll
     // zoom - Move towards target
 
-    bool lockView = true;
-    bool rotateAroundTarget = false;
-    bool rotateUp = false;
-    bool moveInWorldPlane = true;
+    constexpr bool lockView = true;
+    constexpr bool rotateAroundTarget = false;
+    constexpr bool rotateUp = false;
+    constexpr bool moveInWorldPlane = true;
 
     // Camera rotation
     CameraPitch(camera, -rotation.y*DEG2RAD, lockView, rotateAroundTarget, rotateUp);

@@ -35,8 +35,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation gpu skinning");
 
@@ -49,8 +49,8 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
     // Load gltf model
-    Model model = LoadModel("resources/models/gltf/greenman.glb"); // Load character model
-    Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const Model model = LoadModel("resources/models/gltf/greenman.glb"); // Load character model
+    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
 
 #if SUPPORT_GPU_SKINNING
     // WARNING: SUPPORT_GPU_SKINNING is required to be enabled at raylib compile time (disabled by default)

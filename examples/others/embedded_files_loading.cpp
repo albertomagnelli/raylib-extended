@@ -27,8 +27,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - embedded files loading");
 
@@ -36,7 +36,7 @@ int main()
 
     // Loaded in CPU memory (RAM) from header file (audio_data.h)
     // Same as: Wave wave = LoadWave("sound.wav");
-    Wave wave = {
+    const Wave wave = {
         AUDIO_FRAME_COUNT,
         AUDIO_SAMPLE_RATE,
         AUDIO_SAMPLE_SIZE,
@@ -45,7 +45,7 @@ int main()
     };
 
     // Wave converted to Sound to be played
-    Sound sound = LoadSoundFromWave(wave);
+    const Sound sound = LoadSoundFromWave(wave);
 
     // With a Wave loaded from file, after Sound is loaded, we can unload Wave
     // but in our case, Wave is embedded in executable, in program .data segment
@@ -54,7 +54,7 @@ int main()
 
     // Loaded in CPU memory (RAM) from header file (image_data.h)
     // Same as: Image image = LoadImage("raylib_logo.png");
-    Image image = {
+    const Image image = {
         IMAGE_DATA,
         IMAGE_WIDTH,
         IMAGE_HEIGHT,
@@ -63,7 +63,7 @@ int main()
     };
 
     // Image converted to Texture (VRAM) to be drawn
-    Texture2D texture = LoadTextureFromImage(image);
+    const Texture2D texture = LoadTextureFromImage(image);
 
     // With an Image loaded from file, after Texture is loaded, we can unload Image
     // but in our case, Image is embedded in executable, in program .data segment

@@ -295,7 +295,7 @@ typedef struct {
 // Global Const Variables Definition
 //----------------------------------------------------------------------------------
 // Maps scancodes to Raylib keys
-static const unsigned short keyboardKeyFromScancode[] = {
+static constexpr unsigned short keyboardKeyFromScancode[] = {
     [0x01] = KEY_ESCAPE,
     [0x02] = KEY_ONE,
     [0x03] = KEY_TWO,
@@ -388,7 +388,7 @@ static const unsigned short keyboardKeyFromScancode[] = {
 };
 
 // Maps scancodes with extended-flag set to Raylib keys; lowest key is 0x1C
-static const unsigned short keyboardKeyFromExtendedScancode[] = {
+static constexpr unsigned short keyboardKeyFromExtendedScancode[] = {
     [0x1C - EXTENDED_KEY_OFFSET] = KEY_KP_ENTER,
     [0x1D - EXTENDED_KEY_OFFSET] = KEY_RIGHT_CONTROL,
     [0x35 - EXTENDED_KEY_OFFSET] = KEY_KP_DIVIDE,

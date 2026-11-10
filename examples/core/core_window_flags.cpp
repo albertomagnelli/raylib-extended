@@ -22,8 +22,8 @@ int main()
 {
     // Initialization
     //---------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // Possible window flags
     /*
@@ -48,7 +48,7 @@ int main()
 
     Vector2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
     Vector2 ballSpeed = { 5.0f, 4.0f };
-    float ballRadius = 20;
+    constexpr float ballRadius = 20;
 
     int framesCounter = 0;
 

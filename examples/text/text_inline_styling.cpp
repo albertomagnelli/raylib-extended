@@ -32,8 +32,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - inline styling");
 
@@ -87,7 +87,7 @@ int main()
                 Vector2{ 100, 200 }, 20.0f, 2.0f, Color{ 0, 0, 0, 100 });
 
             // Get pointer to formated text
-            std::string text = TextFormat("Let's be [c%02x%02x%02xFF]CREATIVE[r] !!!", colRandom.r, colRandom.g, colRandom.b);
+            const std::string text = TextFormat("Let's be [c%02x%02x%02xFF]CREATIVE[r] !!!", colRandom.r, colRandom.g, colRandom.b);
             DrawTextStyled(GetFontDefault(), text, Vector2{ 100, 240 }, 40.0f, 2.0f, BLACK);
 
             textSize = MeasureTextStyled(GetFontDefault(), text, 40.0f, 2.0f);
@@ -121,21 +121,21 @@ static void DrawTextStyled(Font font, std::string_view text, Vector2 position, f
 
     if (font.texture.id == 0) font = GetFontDefault();
 
-    int textLen = TextLength(text);
+    const int textLen = TextLength(text);
 
     Color colFront = color;
     Color colBack = BLANK;
-    int backRecPadding = 4; // Background rectangle padding
+    constexpr int backRecPadding = 4; // Background rectangle padding
 
     float textOffsetY = 0.0f;
     float textOffsetX = 0.0f;
-    float textLineSpacing = 0.0f;
-    float scaleFactor = fontSize/font.baseSize;
+    constexpr float textLineSpacing = 0.0f;
+    const float scaleFactor = fontSize/font.baseSize;
 
     for (int i = 0; i < textLen;)
     {
         int codepointByteCount = 0;
-        int codepoint = GetCodepointNext(&text[i], &codepointByteCount);
+        const int codepoint = GetCodepointNext(&text[i], &codepointByteCount);
 
         if (codepoint == '\n')
         {
@@ -160,7 +160,7 @@ static void DrawTextStyled(Font font, std::string_view text, Vector2 position, f
 
                     // Parse following color
                     char colHexText[9] = {};
-                    std::string_view textPtr = text.substr(i); // Color should start here, let's see...
+                    const std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
                     int colHexCount = 0;
                     while ((colHexCount < static_cast<int>(textPtr.size())) && (textPtr[colHexCount] != ']'))
@@ -176,7 +176,7 @@ static void DrawTextStyled(Font font, std::string_view text, Vector2 position, f
                     }
 
                     // Convert hex color text into actual Color
-                    unsigned int colHexValue = strtoul(colHexText, nullptr, 16);
+                    const unsigned int colHexValue = strtoul(colHexText, nullptr, 16);
                     if (text[i - 1] == 'c')
                     {
 						colFront = GetColor(colHexValue);
@@ -193,7 +193,7 @@ static void DrawTextStyled(Font font, std::string_view text, Vector2 position, f
                 }
             }
 
-            int index = GetGlyphIndex(font, codepoint);
+            const int index = GetGlyphIndex(font, codepoint);
             float increaseX = 0.0f;
 
             if (font.glyphs[index].advanceX == 0) increaseX = (font.recs[index].width*scaleFactor + spacing);
@@ -223,12 +223,12 @@ static Vector2 MeasureTextStyled(Font font, std::string_view text, float fontSiz
 
     if ((font.texture.id == 0) || text.empty()) return textSize; // Security check
 
-    int textLen = TextLength(text); // Get size in bytes of text
+    const int textLen = TextLength(text); // Get size in bytes of text
     //float textLineSpacing = fontSize*1.5f; // Not used...
 
     float textWidth = 0.0f;
-    float textHeight = fontSize;
-    float scaleFactor = fontSize/static_cast<float>(font.baseSize);
+    const float textHeight = fontSize;
+    const float scaleFactor = fontSize/static_cast<float>(font.baseSize);
 
     int codepoint = 0;              // Current character
     int index = 0;                  // Index position in sprite font
@@ -250,7 +250,7 @@ static Vector2 MeasureTextStyled(Font font, std::string_view text, float fontSiz
             {
                 i += 2;     // Skip "[c" or "[b" to start parsing color
 
-                std::string_view textPtr = text.substr(i); // Color should start here, let's see...
+                const std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
                 int colHexCount = 0;
                 while ((colHexCount < static_cast<int>(textPtr.size())) && (textPtr[colHexCount] != ']'))

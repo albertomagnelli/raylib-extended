@@ -39,13 +39,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - bunnymark");
 
     // Load bunny texture
-    Texture2D texBunny = LoadTexture("resources/raybunny.png");
+    const Texture2D texBunny = LoadTexture("resources/raybunny.png");
 
     Bunny *bunnies = static_cast<Bunny *>(RL_MALLOC(MAX_BUNNIES*sizeof(Bunny)));    // Bunnies array
 

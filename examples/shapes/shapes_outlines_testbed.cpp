@@ -68,8 +68,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - outlines testbed");
 
@@ -318,7 +318,7 @@ int main()
             // Draw*LinesEx() with screen space pixel thickness
             posY = shapeOffset + shapePaddingY*static_cast<float>(ORDER_LINES_EX_SCREEN);
 
-            float constantThickness = lineThickness/camera.zoom;
+            const float constantThickness = lineThickness/camera.zoom;
 
             // Rectangle
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RECTANGLE);

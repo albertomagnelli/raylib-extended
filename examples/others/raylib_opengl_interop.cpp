@@ -71,16 +71,16 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - OpenGL interoperatibility");
 
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/point_particle.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/point_particle.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/point_particle.fs", GLSL_VERSION));
 
-    int currentTimeLoc = GetShaderLocation(shader, "currentTime");
-    int colorLoc = GetShaderLocation(shader, "color");
+    const int currentTimeLoc = GetShaderLocation(shader, "currentTime");
+    const int colorLoc = GetShaderLocation(shader, "color");
 
     // Initialize the vertex buffer for the particles and assign each particle random values
     Particle particles[MAX_PARTICLES] = {};
@@ -141,7 +141,7 @@ int main()
                 glUniform4fv(colorLoc, 1, reinterpret_cast<float *>(&color));
 
                 // Get the current modelview and projection matrix so the particle system is displayed and transformed
-                Matrix modelViewProjection = ((rlGetMatrixProjection()) * (rlGetMatrixModelview()));
+                const Matrix modelViewProjection = ((rlGetMatrixProjection()) * (rlGetMatrixModelview()));
 
                 glUniformMatrix4fv(shader.locs[SHADER_LOC_MATRIX_MVP], 1, false, MatrixToFloat(modelViewProjection));
 

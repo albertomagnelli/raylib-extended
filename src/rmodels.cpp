@@ -269,9 +269,9 @@ void DrawTriangleStrip3D(const Vector3 *points, int pointCount, Color color)
 // NOTE: Cube position is the center position
 void DrawCube(Vector3 position, float width, float height, float length, Color color)
 {
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
+    constexpr float x = 0.0f;
+    constexpr float y = 0.0f;
+    constexpr float z = 0.0f;
 
     rlPushMatrix();
         // NOTE: Transformation is applied in inverse order (scale -> rotate -> translate)
@@ -354,9 +354,9 @@ void DrawCubeV(Vector3 position, Vector3 size, Color color)
 // Draw cube wires
 void DrawCubeWires(Vector3 position, float width, float height, float length, Color color)
 {
-    float x = 0.0f;
-    float y = 0.0f;
-    float z = 0.0f;
+    constexpr float x = 0.0f;
+    constexpr float y = 0.0f;
+    constexpr float z = 0.0f;
 
     rlPushMatrix();
         rlTranslatef(position.x, position.y, position.z);
@@ -488,13 +488,13 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
         rlBegin(RL_TRIANGLES);
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            float ringangle = DEG2RAD*(180.0f/rings); // Angle between latitudinal parallels
-            float sliceangle = DEG2RAD*(360.0f/slices); // Angle between longitudinal meridians
+            const float ringangle = DEG2RAD*(180.0f/rings); // Angle between latitudinal parallels
+            const float sliceangle = DEG2RAD*(360.0f/slices); // Angle between longitudinal meridians
 
-            float cosring = cosf(ringangle);
-            float sinring = sinf(ringangle);
-            float cosslice = cosf(sliceangle);
-            float sinslice = sinf(sliceangle);
+            const float cosring = cosf(ringangle);
+            const float sinring = sinf(ringangle);
+            const float cosslice = cosf(sliceangle);
+            const float sinslice = sinf(sliceangle);
 
             Vector3 vertices[4]{}; // Required to store face vertices
             vertices[2] = Vector3{ 0, 1, 0 };
@@ -542,13 +542,13 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
         rlBegin(RL_LINES);
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            float ringangle = DEG2RAD*(180.0f/rings); // Angle between latitudinal parallels
-            float sliceangle = DEG2RAD*(360.0f/slices); // Angle between longitudinal meridians
+            const float ringangle = DEG2RAD*(180.0f/rings); // Angle between latitudinal parallels
+            const float sliceangle = DEG2RAD*(360.0f/slices); // Angle between longitudinal meridians
 
-            float cosring = cosf(ringangle);
-            float sinring = sinf(ringangle);
-            float cosslice = cosf(sliceangle);
-            float sinslice = sinf(sliceangle);
+            const float cosring = cosf(ringangle);
+            const float sinring = sinf(ringangle);
+            const float cosslice = cosf(sliceangle);
+            const float sinslice = sinf(sliceangle);
 
             Vector3 vertices[4]{}; // Required to store face vertices
             vertices[2] = Vector3{ 0, 1, 0 };
@@ -648,14 +648,14 @@ void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float e
 {
     if (sides < 3) sides = 3;
 
-    Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    const Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
-    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
+    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
 
-    float baseAngle = (2.0f*PI)/sides;
+    const float baseAngle = (2.0f*PI)/sides;
 
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -663,18 +663,18 @@ void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float e
         for (int i = 0; i < sides; i++)
         {
             // Compute the four vertices
-            float s1 = sinf(baseAngle*(i + 0))*startRadius;
-            float c1 = cosf(baseAngle*(i + 0))*startRadius;
-            Vector3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
-            float s2 = sinf(baseAngle*(i + 1))*startRadius;
-            float c2 = cosf(baseAngle*(i + 1))*startRadius;
-            Vector3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
-            float s3 = sinf(baseAngle*(i + 0))*endRadius;
-            float c3 = cosf(baseAngle*(i + 0))*endRadius;
-            Vector3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
-            float s4 = sinf(baseAngle*(i + 1))*endRadius;
-            float c4 = cosf(baseAngle*(i + 1))*endRadius;
-            Vector3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
+            const float s1 = sinf(baseAngle*(i + 0))*startRadius;
+            const float c1 = cosf(baseAngle*(i + 0))*startRadius;
+            const Vector3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
+            const float s2 = sinf(baseAngle*(i + 1))*startRadius;
+            const float c2 = cosf(baseAngle*(i + 1))*startRadius;
+            const Vector3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
+            const float s3 = sinf(baseAngle*(i + 0))*endRadius;
+            const float c3 = cosf(baseAngle*(i + 0))*endRadius;
+            const Vector3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
+            const float s4 = sinf(baseAngle*(i + 1))*endRadius;
+            const float c4 = cosf(baseAngle*(i + 1))*endRadius;
+            const Vector3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             if (startRadius > 0)
             {
@@ -739,14 +739,14 @@ void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, fl
 {
     if (slices < 3) slices = 3;
 
-    Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    const Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
-    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
+    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
 
-    float baseAngle = (2.0f*PI)/slices;
+    const float baseAngle = (2.0f*PI)/slices;
 
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -754,18 +754,18 @@ void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, fl
         for (int i = 0; i < slices; i++)
         {
             // Compute the four vertices
-            float s1 = sinf(baseAngle*(i + 0))*startRadius;
-            float c1 = cosf(baseAngle*(i + 0))*startRadius;
-            Vector3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
-            float s2 = sinf(baseAngle*(i + 1))*startRadius;
-            float c2 = cosf(baseAngle*(i + 1))*startRadius;
-            Vector3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
-            float s3 = sinf(baseAngle*(i + 0))*endRadius;
-            float c3 = cosf(baseAngle*(i + 0))*endRadius;
-            Vector3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
-            float s4 = sinf(baseAngle*(i + 1))*endRadius;
-            float c4 = cosf(baseAngle*(i + 1))*endRadius;
-            Vector3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
+            const float s1 = sinf(baseAngle*(i + 0))*startRadius;
+            const float c1 = cosf(baseAngle*(i + 0))*startRadius;
+            const Vector3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
+            const float s2 = sinf(baseAngle*(i + 1))*startRadius;
+            const float c2 = cosf(baseAngle*(i + 1))*startRadius;
+            const Vector3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
+            const float s3 = sinf(baseAngle*(i + 0))*endRadius;
+            const float c3 = cosf(baseAngle*(i + 0))*endRadius;
+            const Vector3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
+            const float s4 = sinf(baseAngle*(i + 1))*endRadius;
+            const float c4 = cosf(baseAngle*(i + 1))*endRadius;
+            const Vector3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             rlVertex3f(w1.x, w1.y, w1.z);
             rlVertex3f(w2.x, w2.y, w2.z);
@@ -787,17 +787,17 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
     Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
 
     // draw a sphere if start and end points are the same
-    bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
+    const bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
     if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
     Vector3 b0 = glm::normalize(direction);
-    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
+    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
     Vector3 capCenter = endPos;
 
-    float baseSliceAngle = (2.0f*PI)/slices;
-    float baseRingAngle  = PI*0.5f/rings;
+    const float baseSliceAngle = (2.0f*PI)/slices;
+    const float baseRingAngle  = PI*0.5f/rings;
 
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -812,31 +812,31 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
                     // Building up the rings from capCenter in the direction of the 'direction' vector computed earlier
 
                     // Compute the four vertices
-                    float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w1 = Vector3{
+                    const float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
+                    const float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
+                    const Vector3 w1 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
-                    float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w2 = Vector3{
+                    const float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
+                    const float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
+                    const Vector3 w2 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
                     };
 
-                    float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w3 = Vector3{
+                    const float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
+                    const float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
+                    const Vector3 w3 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
-                    float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w4 = Vector3{
+                    const float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
+                    const float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
+                    const Vector3 w4 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
@@ -874,31 +874,31 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
             for (int j = 0; j < slices; j++)
             {
                 // compute the four vertices
-                float ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
-                float ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
-                Vector3 w1 = {
+                const float ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
+                const float ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
+                const Vector3 w1 = {
                     startPos.x + ringSin1*b1.x + ringCos1*b2.x,
                     startPos.y + ringSin1*b1.y + ringCos1*b2.y,
                     startPos.z + ringSin1*b1.z + ringCos1*b2.z
                 };
-                float ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
-                float ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
-                Vector3 w2 = {
+                const float ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
+                const float ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
+                const Vector3 w2 = {
                     startPos.x + ringSin2*b1.x + ringCos2*b2.x,
                     startPos.y + ringSin2*b1.y + ringCos2*b2.y,
                     startPos.z + ringSin2*b1.z + ringCos2*b2.z
                 };
 
-                float ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
-                float ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
-                Vector3 w3 = {
+                const float ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
+                const float ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
+                const Vector3 w3 = {
                     endPos.x + ringSin3*b1.x + ringCos3*b2.x,
                     endPos.y + ringSin3*b1.y + ringCos3*b2.y,
                     endPos.z + ringSin3*b1.z + ringCos3*b2.z
                 };
-                float ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
-                float ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
-                Vector3 w4 = {
+                const float ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
+                const float ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
+                const Vector3 w4 = {
                     endPos.x + ringSin4*b1.x + ringCos4*b2.x,
                     endPos.y + ringSin4*b1.y + ringCos4*b2.y,
                     endPos.z + ringSin4*b1.z + ringCos4*b2.z
@@ -926,17 +926,17 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
     Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
 
     // draw a sphere if start and end points are the same
-    bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
+    const bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
     if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
     Vector3 b0 = glm::normalize(direction);
-    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
+    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
     Vector3 capCenter = endPos;
 
-    float baseSliceAngle = (2.0f*PI)/slices;
-    float baseRingAngle  = PI*0.5f/rings;
+    const float baseSliceAngle = (2.0f*PI)/slices;
+    const float baseRingAngle  = PI*0.5f/rings;
 
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -951,31 +951,31 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
                     // Building up the rings from capCenter in the direction of the 'direction' vector computed earlier
 
                     // Compute the four vertices
-                    float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w1 = Vector3{
+                    const float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
+                    const float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
+                    const Vector3 w1 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
-                    float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    Vector3 w2 = Vector3{
+                    const float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
+                    const float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
+                    const Vector3 w2 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
                     };
 
-                    float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w3 = Vector3{
+                    const float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
+                    const float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
+                    const Vector3 w3 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
-                    float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    Vector3 w4 = Vector3{
+                    const float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
+                    const float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
+                    const Vector3 w4 = Vector3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
@@ -1006,31 +1006,31 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
             for (int j = 0; j < slices; j++)
             {
                 // compute the four vertices
-                float ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
-                float ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
-                Vector3 w1 = {
+                const float ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
+                const float ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
+                const Vector3 w1 = {
                     startPos.x + ringSin1*b1.x + ringCos1*b2.x,
                     startPos.y + ringSin1*b1.y + ringCos1*b2.y,
                     startPos.z + ringSin1*b1.z + ringCos1*b2.z
                 };
-                float ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
-                float ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
-                Vector3 w2 = {
+                const float ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
+                const float ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
+                const Vector3 w2 = {
                     startPos.x + ringSin2*b1.x + ringCos2*b2.x,
                     startPos.y + ringSin2*b1.y + ringCos2*b2.y,
                     startPos.z + ringSin2*b1.z + ringCos2*b2.z
                 };
 
-                float ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
-                float ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
-                Vector3 w3 = {
+                const float ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
+                const float ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
+                const Vector3 w3 = {
                     endPos.x + ringSin3*b1.x + ringCos3*b2.x,
                     endPos.y + ringSin3*b1.y + ringCos3*b2.y,
                     endPos.z + ringSin3*b1.z + ringCos3*b2.z
                 };
-                float ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
-                float ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
-                Vector3 w4 = {
+                const float ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
+                const float ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
+                const Vector3 w4 = {
                     endPos.x + ringSin4*b1.x + ringCos4*b2.x,
                     endPos.y + ringSin4*b1.y + ringCos4*b2.y,
                     endPos.z + ringSin4*b1.z + ringCos4*b2.z
@@ -1072,7 +1072,7 @@ void DrawPlane(Vector3 centerPos, Vector2 size, Color color)
 // Draw a ray line
 void DrawRay(Ray ray, Color color)
 {
-    float scale = 10000;
+    constexpr float scale = 10000;
 
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -1086,7 +1086,7 @@ void DrawRay(Ray ray, Color color)
 // Draw a grid centered at (0, 0, 0)
 void DrawGrid(int slices, float spacing)
 {
-    int halfSlices = slices/2;
+    const int halfSlices = slices/2;
 
     rlBegin(RL_LINES);
         for (int i = -halfSlices; i <= halfSlices; i++)
@@ -1254,7 +1254,7 @@ BoundingBox GetModelBoundingBox(Model model)
 
         for (int i = 1; i < model.meshCount; i++)
         {
-            BoundingBox tempBounds = GetMeshBoundingBox(model.meshes[i]);
+            const BoundingBox tempBounds = GetMeshBoundingBox(model.meshes[i]);
 
             temp.x = (bounds.min.x < tempBounds.min.x)? bounds.min.x : tempBounds.min.x;
             temp.y = (bounds.min.y < tempBounds.min.y)? bounds.min.y : tempBounds.min.y;
@@ -1529,9 +1529,9 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     // That's because BeginMode3D() sets it and there is no model-drawing function
     // that modifies it, all use rlPushMatrix() and rlPopMatrix()
     Matrix matModel = Matrix(1.0f);
-    Matrix matView = rlGetMatrixModelview();
+    const Matrix matView = rlGetMatrixModelview();
     Matrix matModelView = Matrix(1.0f);
-    Matrix matProjection = rlGetMatrixProjection();
+    const Matrix matProjection = rlGetMatrixProjection();
 
     // Upload view and projection matrices (if locations available)
     if (material.shader.locs[SHADER_LOC_MATRIX_VIEW] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_VIEW], matView);
@@ -1747,10 +1747,10 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
     // NOTE: At this point the modelview matrix contains the view matrix (camera)
     // That's because BeginMode3D() sets it and there is no model-drawing function
     // that modifies it, all use rlPushMatrix() and rlPopMatrix()
-    Matrix matModel = Matrix(1.0f);
-    Matrix matView = rlGetMatrixModelview();
+    const Matrix matModel = Matrix(1.0f);
+    const Matrix matView = rlGetMatrixModelview();
     Matrix matModelView = Matrix(1.0f);
-    Matrix matProjection = rlGetMatrixProjection();
+    const Matrix matProjection = rlGetMatrixProjection();
 
     // Upload view and projection matrices (if locations available)
     if (material.shader.locs[SHADER_LOC_MATRIX_VIEW] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_VIEW], matView);
@@ -1980,8 +1980,8 @@ bool ExportMesh(Mesh mesh, std::string_view fileNameView)
     if (IsFileExtension(fileName, ".obj"))
     {
         // Estimated data size, it should be enough...
-        int vc = mesh.vertexCount;
-        int dataSize = vc*static_cast<int>(strlen("v -0000.000000f -0000.000000f -0000.000000f\n")) +
+        const int vc = mesh.vertexCount;
+        const int dataSize = vc*static_cast<int>(strlen("v -0000.000000f -0000.000000f -0000.000000f\n")) +
                        vc*static_cast<int>(strlen("vt -0.000000f -0.000000f\n")) +
                        vc*static_cast<int>(strlen("vn -0.0000f -0.0000f -0.0000f\n")) +
                        mesh.triangleCount*snprintf(nullptr, 0, "f %i/%i/%i %i/%i/%i %i/%i/%i\n", vc, vc, vc, vc, vc, vc, vc, vc, vc);
@@ -2214,7 +2214,7 @@ Material * LoadMaterials(std::string_view fileNameView, int *materialCount)
     {
         tinyobj_material_t *mats = nullptr;
 
-        int result = tinyobj_parse_mtl_file(&mats, &count, fileName);
+        const int result = tinyobj_parse_mtl_file(&mats, &count, fileName);
         if (result != TINYOBJ_SUCCESS) TRACELOG(LOG_WARNING, "MATERIAL: [%s] Failed to parse materials file", fileName);
 
         materials = static_cast<Material *>(RL_CALLOC(count, sizeof(Material)));
@@ -2413,14 +2413,14 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
         for (unsigned int boneIndex = 0; boneIndex < model.skeleton.boneCount; boneIndex++)
         {
             // Get frame-interpolation for first animation
-            Vector3 frameATranslation = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].translation, animA.keyframePoses[nextFrameA][boneIndex].translation, blendA);
-            Quaternion frameARotation = glm::slerp(animA.keyframePoses[currentFrameA][boneIndex].rotation, animA.keyframePoses[nextFrameA][boneIndex].rotation, blendA);
-            Vector3 frameAScale = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].scale, animA.keyframePoses[nextFrameA][boneIndex].scale, blendA);
+            const Vector3 frameATranslation = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].translation, animA.keyframePoses[nextFrameA][boneIndex].translation, blendA);
+            const Quaternion frameARotation = glm::slerp(animA.keyframePoses[currentFrameA][boneIndex].rotation, animA.keyframePoses[nextFrameA][boneIndex].rotation, blendA);
+            const Vector3 frameAScale = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].scale, animA.keyframePoses[nextFrameA][boneIndex].scale, blendA);
 
             // Get frame-interpolation for second animation
-            Vector3 frameBTranslation = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].translation, animB.keyframePoses[nextFrameB][boneIndex].translation, blendB);
-            Quaternion frameBRotation = glm::slerp(animB.keyframePoses[currentFrameB][boneIndex].rotation, animB.keyframePoses[nextFrameB][boneIndex].rotation, blendB);
-            Vector3 frameBScale = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].scale, animB.keyframePoses[nextFrameB][boneIndex].scale, blendB);
+            const Vector3 frameBTranslation = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].translation, animB.keyframePoses[nextFrameB][boneIndex].translation, blendB);
+            const Quaternion frameBRotation = glm::slerp(animB.keyframePoses[currentFrameB][boneIndex].rotation, animB.keyframePoses[nextFrameB][boneIndex].rotation, blendB);
+            const Vector3 frameBScale = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].scale, animB.keyframePoses[nextFrameB][boneIndex].scale, blendB);
 
             // Compute interpolated pose between both animations frames
             // NOTE: Storing animation frame data in model.currentPose
@@ -2516,7 +2516,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
 
         // Skip if the shader is using the bones directly
 #if SUPPORT_GPU_SKINNING
-        Material material = model.materials[model.meshMaterial[m]];
+        const Material material = model.materials[model.meshMaterial[m]];
         if ((material.shader.locs != nullptr) && (material.shader.locs[SHADER_LOC_VERTEX_BONEIDS] != -1)) continue;
 #endif
         // Lazy allocation of CPU animation buffers for vertex positions and normals, 
@@ -2622,7 +2622,7 @@ Mesh GenMeshPoly(int sides, float radius)
 
     if (sides < 3) return mesh; // Security check
 
-    int vertexCount = sides*3;
+    const int vertexCount = sides*3;
 
     // Vertices definition
     Vector3 *vertices = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
@@ -2695,17 +2695,17 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
     resZ++;
 
     // Vertices definition
-    int vertexCount = resX*resZ; // vertices get reused for the faces
+    const int vertexCount = resX*resZ; // vertices get reused for the faces
 
     Vector3 *vertices = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
     for (int z = 0; z < resZ; z++)
     {
         // [-length/2, length/2]
-        float zPos = (static_cast<float>(z)/(resZ - 1) - 0.5f)*length;
+        const float zPos = (static_cast<float>(z)/(resZ - 1) - 0.5f)*length;
         for (int x = 0; x < resX; x++)
         {
             // [-width/2, width/2]
-            float xPos = (static_cast<float>(x)/(resX - 1) - 0.5f)*width;
+            const float xPos = (static_cast<float>(x)/(resX - 1) - 0.5f)*width;
             vertices[x + z*resX] = Vector3{ xPos, 0.0f, zPos };
         }
     }
@@ -2725,13 +2725,13 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
     }
 
     // Triangles definition (indices)
-    int numFaces = (resX - 1)*(resZ - 1);
+    const int numFaces = (resX - 1)*(resZ - 1);
     int *triangles = static_cast<int *>(RL_CALLOC(numFaces*6, sizeof(int)));
     int t = 0;
     for (int face = 0; face < numFaces; face++)
     {
         // Retrieve lower left corner from face ind
-        int i = face + face/(resX - 1);
+        const int i = face + face/(resX - 1);
 
         triangles[t++] = i + resX;
         triangles[t++] = i + 1;
@@ -3288,8 +3288,8 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
 
     Mesh mesh = { 0 };
 
-    int mapX = heightmap.width;
-    int mapZ = heightmap.height;
+    const int mapX = heightmap.width;
+    const int mapZ = heightmap.height;
 
     Color *pixels = LoadImageColors(heightmap);
 
@@ -3307,7 +3307,7 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
     int tcCounter = 0;      // Used to count texcoords float by float
     int nCounter = 0;       // Used to count normals float by float
 
-    Vector3 scaleFactor = { size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
+    const Vector3 scaleFactor = { size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
 
     Vector3 vA{};
     Vector3 vB{};
@@ -3423,27 +3423,27 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
     Color *pixels = LoadImageColors(cubicmap);
 
     // NOTE: Max possible number of triangles numCubes*(12 triangles by cube)
-    int maxTriangles = cubicmap.width*cubicmap.height*12;
+    const int maxTriangles = cubicmap.width*cubicmap.height*12;
 
     int vCounter = 0;       // Used to count vertices
     int tcCounter = 0;      // Used to count texcoords
     int nCounter = 0;       // Used to count normals
 
-    float w = cubeSize.x;
-    float h = cubeSize.z;
-    float h2 = cubeSize.y;
+    const float w = cubeSize.x;
+    const float h = cubeSize.z;
+    const float h2 = cubeSize.y;
 
     Vector3 *mapVertices = static_cast<Vector3 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector3)));
     Vector2 *mapTexcoords = static_cast<Vector2 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector2)));
     Vector3 *mapNormals = static_cast<Vector3 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector3)));
 
     // Define the 6 normals of the cube, combined accordingly later
-    Vector3 n1 = { 1.0f, 0.0f, 0.0f };
-    Vector3 n2 = { -1.0f, 0.0f, 0.0f };
-    Vector3 n3 = { 0.0f, 1.0f, 0.0f };
-    Vector3 n4 = { 0.0f, -1.0f, 0.0f };
-    Vector3 n5 = { 0.0f, 0.0f, -1.0f };
-    Vector3 n6 = { 0.0f, 0.0f, 1.0f };
+    const Vector3 n1 = { 1.0f, 0.0f, 0.0f };
+    const Vector3 n2 = { -1.0f, 0.0f, 0.0f };
+    const Vector3 n3 = { 0.0f, 1.0f, 0.0f };
+    const Vector3 n4 = { 0.0f, -1.0f, 0.0f };
+    const Vector3 n5 = { 0.0f, 0.0f, -1.0f };
+    const Vector3 n6 = { 0.0f, 0.0f, 1.0f };
 
     // NOTE: Using texture rectangles to define different
     // textures for top-bottom-front-back-right-left (6)
@@ -3454,26 +3454,26 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
         float height;
     } RectangleF;
 
-    RectangleF rightTexUV = { 0.0f, 0.0f, 0.5f, 0.5f };
-    RectangleF leftTexUV = { 0.5f, 0.0f, 0.5f, 0.5f };
-    RectangleF frontTexUV = { 0.0f, 0.0f, 0.5f, 0.5f };
-    RectangleF backTexUV = { 0.5f, 0.0f, 0.5f, 0.5f };
-    RectangleF topTexUV = { 0.0f, 0.5f, 0.5f, 0.5f };
-    RectangleF bottomTexUV = { 0.5f, 0.5f, 0.5f, 0.5f };
+    const RectangleF rightTexUV = { 0.0f, 0.0f, 0.5f, 0.5f };
+    const RectangleF leftTexUV = { 0.5f, 0.0f, 0.5f, 0.5f };
+    const RectangleF frontTexUV = { 0.0f, 0.0f, 0.5f, 0.5f };
+    const RectangleF backTexUV = { 0.5f, 0.0f, 0.5f, 0.5f };
+    const RectangleF topTexUV = { 0.0f, 0.5f, 0.5f, 0.5f };
+    const RectangleF bottomTexUV = { 0.5f, 0.5f, 0.5f, 0.5f };
 
     for (int z = 0; z < cubicmap.height; ++z)
     {
         for (int x = 0; x < cubicmap.width; x++)
         {
             // Define the 8 vertex of the cube, to be combined accordingly later
-            Vector3 v1 = { w*(x - 0.5f), h2, h*(z - 0.5f) };
-            Vector3 v2 = { w*(x - 0.5f), h2, h*(z + 0.5f) };
-            Vector3 v3 = { w*(x + 0.5f), h2, h*(z + 0.5f) };
-            Vector3 v4 = { w*(x + 0.5f), h2, h*(z - 0.5f) };
-            Vector3 v5 = { w*(x + 0.5f), 0, h*(z - 0.5f) };
-            Vector3 v6 = { w*(x - 0.5f), 0, h*(z - 0.5f) };
-            Vector3 v7 = { w*(x - 0.5f), 0, h*(z + 0.5f) };
-            Vector3 v8 = { w*(x + 0.5f), 0, h*(z + 0.5f) };
+            const Vector3 v1 = { w*(x - 0.5f), h2, h*(z - 0.5f) };
+            const Vector3 v2 = { w*(x - 0.5f), h2, h*(z + 0.5f) };
+            const Vector3 v3 = { w*(x + 0.5f), h2, h*(z + 0.5f) };
+            const Vector3 v4 = { w*(x + 0.5f), h2, h*(z - 0.5f) };
+            const Vector3 v5 = { w*(x + 0.5f), 0, h*(z - 0.5f) };
+            const Vector3 v6 = { w*(x - 0.5f), 0, h*(z - 0.5f) };
+            const Vector3 v7 = { w*(x - 0.5f), 0, h*(z + 0.5f) };
+            const Vector3 v8 = { w*(x + 0.5f), 0, h*(z + 0.5f) };
 
             // Check pixel color to be WHITE -> draw full cube
             if (COLOR_EQUAL(pixels[z*cubicmap.width + x], WHITE))
@@ -3843,36 +3843,36 @@ void GenMeshTangents(Mesh *mesh)
         }
 
         // Get triangle vertices position
-        Vector3 v1 = { mesh->vertices[i0*3 + 0], mesh->vertices[i0*3 + 1], mesh->vertices[i0*3 + 2] };
-        Vector3 v2 = { mesh->vertices[i1*3 + 0], mesh->vertices[i1*3 + 1], mesh->vertices[i1*3 + 2] };
-        Vector3 v3 = { mesh->vertices[i2*3 + 0], mesh->vertices[i2*3 + 1], mesh->vertices[i2*3 + 2] };
+        const Vector3 v1 = { mesh->vertices[i0*3 + 0], mesh->vertices[i0*3 + 1], mesh->vertices[i0*3 + 2] };
+        const Vector3 v2 = { mesh->vertices[i1*3 + 0], mesh->vertices[i1*3 + 1], mesh->vertices[i1*3 + 2] };
+        const Vector3 v3 = { mesh->vertices[i2*3 + 0], mesh->vertices[i2*3 + 1], mesh->vertices[i2*3 + 2] };
 
         // Get triangle texcoords
-        Vector2 uv1 = { mesh->texcoords[i0*2 + 0], mesh->texcoords[i0*2 + 1] };
-        Vector2 uv2 = { mesh->texcoords[i1*2 + 0], mesh->texcoords[i1*2 + 1] };
-        Vector2 uv3 = { mesh->texcoords[i2*2 + 0], mesh->texcoords[i2*2 + 1] };
+        const Vector2 uv1 = { mesh->texcoords[i0*2 + 0], mesh->texcoords[i0*2 + 1] };
+        const Vector2 uv2 = { mesh->texcoords[i1*2 + 0], mesh->texcoords[i1*2 + 1] };
+        const Vector2 uv3 = { mesh->texcoords[i2*2 + 0], mesh->texcoords[i2*2 + 1] };
 
         // Calculate triangle edges
-        float x1 = v2.x - v1.x;
-        float y1 = v2.y - v1.y;
-        float z1 = v2.z - v1.z;
-        float x2 = v3.x - v1.x;
-        float y2 = v3.y - v1.y;
-        float z2 = v3.z - v1.z;
+        const float x1 = v2.x - v1.x;
+        const float y1 = v2.y - v1.y;
+        const float z1 = v2.z - v1.z;
+        const float x2 = v3.x - v1.x;
+        const float y2 = v3.y - v1.y;
+        const float z2 = v3.z - v1.z;
 
         // Calculate texture coordinate differences
-        float s1 = uv2.x - uv1.x;
-        float t1 = uv2.y - uv1.y;
-        float s2 = uv3.x - uv1.x;
-        float t2 = uv3.y - uv1.y;
+        const float s1 = uv2.x - uv1.x;
+        const float t1 = uv2.y - uv1.y;
+        const float s2 = uv3.x - uv1.x;
+        const float t2 = uv3.y - uv1.y;
 
         // Calculate denominator and check for degenerate UV
-        float div = s1*t2 - s2*t1;
-        float r = (fabsf(div) < 0.0001f)? 0.0f : 1.0f/div;
+        const float div = s1*t2 - s2*t1;
+        const float r = (fabsf(div) < 0.0001f)? 0.0f : 1.0f/div;
 
         // Calculate tangent and bitangent directions
-        Vector3 sdir = { (t2*x1 - t1*x2)*r, (t2*y1 - t1*y2)*r, (t2*z1 - t1*z2)*r };
-        Vector3 tdir = { (s1*x2 - s2*x1)*r, (s1*y2 - s2*y1)*r, (s1*z2 - s2*z1)*r };
+        const Vector3 sdir = { (t2*x1 - t1*x2)*r, (t2*y1 - t1*y2)*r, (t2*z1 - t1*z2)*r };
+        const Vector3 tdir = { (s1*x2 - s2*x1)*r, (s1*y2 - s2*y1)*r, (s1*z2 - s2*z1)*r };
 
         // Accumulate tangents and bitangents for each vertex of the triangle
         tan1[i0] = ((tan1[i0]) + (sdir));
@@ -3887,7 +3887,7 @@ void GenMeshTangents(Mesh *mesh)
     // Calculate final tangents for each vertex
     for (int i = 0; i < mesh->vertexCount; i++)
     {
-        Vector3 normal = { mesh->normals[i*3 + 0], mesh->normals[i*3 + 1], mesh->normals[i*3 + 2] };
+        const Vector3 normal = { mesh->normals[i*3 + 0], mesh->normals[i*3 + 1], mesh->normals[i*3 + 2] };
         Vector3 tangent = tan1[i];
 
         // Handle zero tangent (can happen with degenerate UVs)
@@ -3961,8 +3961,8 @@ void GenMeshTangents(Mesh *mesh)
 // Draw a model (with texture if set)
 void DrawModel(Model model, Vector3 position, float scale, Color tint)
 {
-    Vector3 vScale = { scale, scale, scale };
-    Vector3 rotationAxis = { 0.0f, 1.0f, 0.0f };
+    const Vector3 vScale = { scale, scale, scale };
+    const Vector3 rotationAxis = { 0.0f, 1.0f, 0.0f };
 
     DrawModelEx(model, position, rotationAxis, 0.0f, vScale, tint);
 }
@@ -3972,19 +3972,19 @@ void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rota
 {
     // Calculate transformation matrix from function parameters
     // Get transform matrix (rotation -> scale -> translation)
-    Matrix matScale = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
-    Matrix matRotation = glm::rotate(Matrix(1.0f), rotationAngle*DEG2RAD, rotationAxis);
-    Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z});
+    const Matrix matScale = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
+    const Matrix matRotation = glm::rotate(Matrix(1.0f), rotationAngle*DEG2RAD, rotationAxis);
+    const Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z});
 
-    Matrix matTransform = ((matTranslation) * (((matRotation) * (matScale))));
+    const Matrix matTransform = ((matTranslation) * (((matRotation) * (matScale))));
 
     // Combine model transformation matrix (model.transform) with matrix generated by function parameters (matTransform)
     model.transform = ((matTransform) * (model.transform));
 
     for (int i = 0; i < model.meshCount; i++)
     {
-        Material mat = model.materials[model.meshMaterial[i]];
-        Color colDiffuse = mat.maps[MATERIAL_MAP_DIFFUSE].color;
+        const Material mat = model.materials[model.meshMaterial[i]];
+        const Color colDiffuse = mat.maps[MATERIAL_MAP_DIFFUSE].color;
 
         // Applying color tint directly to material diffuse map,
         // because it comes as an input parameter to the function
@@ -4034,7 +4034,7 @@ void DrawModelWiresEx(Model model, Vector3 position, Vector3 rotationAxis, float
 // Draw a billboard
 void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float scale, Color tint)
 {
-    Rectangle rec = { 0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height) };
+    const Rectangle rec = { 0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height) };
 
     DrawBillboardRec(camera, texture, rec, position, Vector2{ scale*fabsf(rec.width/rec.height), scale }, tint);
 }
@@ -4043,7 +4043,7 @@ void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float sca
 void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle rec, Vector3 position, Vector2 size, Color tint)
 {
     // NOTE: Billboard locked on axis-Y
-    Vector3 up = { 0.0f, 1.0f, 0.0f };
+    const Vector3 up = { 0.0f, 1.0f, 0.0f };
 
     DrawBillboardPro(camera, texture, rec, position, up, size, size*0.5f, 0.0f, tint);
 }
@@ -4089,7 +4089,7 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
     Vector3 forward;
     if (rotation != 0.0) forward = glm::cross(right, up);
 
-    Vector3 origin3D = ((((glm::normalize(right)) * (origin.x))) + (((glm::normalize(up)) * (origin.y))));
+    const Vector3 origin3D = ((((glm::normalize(right)) * (origin.x))) + (((glm::normalize(up)) * (origin.y))));
 
     Vector3 points[4];
     points[0] = Vector3{};
@@ -4133,7 +4133,7 @@ void DrawBoundingBox(BoundingBox box, Color color)
     size.y = fabsf(box.max.y - box.min.y);
     size.z = fabsf(box.max.z - box.min.z);
 
-    Vector3 center = { box.min.x + size.x/2.0f, box.min.y + size.y/2.0f, box.min.z + size.z/2.0f };
+    const Vector3 center = { box.min.x + size.x/2.0f, box.min.y + size.y/2.0f, box.min.z + size.z/2.0f };
 
     DrawCubeWires(center, size.x, size.y, size.z, color);
 }
@@ -4156,7 +4156,7 @@ bool CheckCollisionSpheres(Vector3 center1, float radius1, Vector3 center2, floa
     */
 
     // Check for distances squared to avoid sqrtf()
-    float radSum = radius1 + radius2;
+    const float radSum = radius1 + radius2;
     if (glm::dot((center1) - (center2), (center1) - (center2)) <= (radSum*radSum)) collision = true;
 
     return collision;
@@ -4183,7 +4183,7 @@ bool CheckCollisionBoxSphere(BoundingBox box, Vector3 center, float radius)
 {
     bool collision = false;
 
-    Vector3 closestPoint = {
+    const Vector3 closestPoint = {
         Clamp(center.x, box.min.x, box.max.x),
         Clamp(center.y, box.min.y, box.max.y),
         Clamp(center.z, box.min.z, box.max.z)
@@ -4199,10 +4199,10 @@ RayCollision GetRayCollisionSphere(Ray ray, Vector3 center, float radius)
 {
     RayCollision collision = { 0 };
 
-    Vector3 raySpherePos = ((center) - (ray.position));
-    float vector = glm::dot(raySpherePos, ray.direction);
-    float distanceToCenter = glm::length(raySpherePos);
-    float d = radius*radius - (distanceToCenter*distanceToCenter - vector*vector);
+    const Vector3 raySpherePos = ((center) - (ray.position));
+    const float vector = glm::dot(raySpherePos, ray.direction);
+    const float distanceToCenter = glm::length(raySpherePos);
+    const float d = radius*radius - (distanceToCenter*distanceToCenter - vector*vector);
 
     // Check if the ray's line intersects with the sphere
     if (d >= 0.0f)
@@ -4252,7 +4252,7 @@ RayCollision GetRayCollisionBox(Ray ray, BoundingBox box)
 
     // NOTE: If ray.position is inside the box, the distance is negative (as if the ray was reversed)
     // Reversing ray.direction will give use the correct result
-    bool insideBox = (ray.position.x > box.min.x) && (ray.position.x < box.max.x) &&
+    const bool insideBox = (ray.position.x > box.min.x) && (ray.position.x < box.max.x) &&
                      (ray.position.y > box.min.y) && (ray.position.y < box.max.y) &&
                      (ray.position.z > box.min.z) && (ray.position.z < box.max.z);
 
@@ -4315,14 +4315,14 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
     {
         // Transform the ray into model space by the inverse of the transform, 
         // so it can be tested against the untransformed vertex data
-        Matrix inverseMatrix = glm::inverse(transform);
+        const Matrix inverseMatrix = glm::inverse(transform);
         ray.position = Vector3((inverseMatrix)*Vector4(ray.position, 1.0f));
 
         // Direction does not get translation, just rotation
-        Quaternion invRot = glm::quat_cast(glm::mat3(inverseMatrix));
+        const Quaternion invRot = glm::quat_cast(glm::mat3(inverseMatrix));
         ray.direction = ((invRot)*(ray.direction));
 
-        int triangleCount = mesh.triangleCount;
+        const int triangleCount = mesh.triangleCount;
 
         // Test against all triangles in mesh
         for (int i = 0; i < triangleCount; i++)
@@ -4345,7 +4345,7 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
                 c = vertdata[i*3 + 2];
             }
 
-            RayCollision triHitInfo = GetRayCollisionTriangle(ray, a, b, c);
+            const RayCollision triHitInfo = GetRayCollisionTriangle(ray, a, b, c);
 
             if (triHitInfo.hit)
             {
@@ -4485,7 +4485,7 @@ static Model LoadOBJ(const char *fileName)
     Model model = { 0 };
     model.transform = Matrix(1.0f);
 
-    std::string fileText = LoadFileText(fileName);
+    const std::string fileText = LoadFileText(fileName);
 
     if (fileText.empty())
     {
@@ -4494,15 +4494,15 @@ static Model LoadOBJ(const char *fileName)
     }
 
     char currentDir[MAX_FILEPATH_LENGTH] = { 0 };
-    std::string currentDirPath = GetWorkingDirectory();
+    const std::string currentDirPath = GetWorkingDirectory();
     snprintf(currentDir, MAX_FILEPATH_LENGTH, "%s", currentDirPath.c_str()); // Save current working directory
-    std::string workingDir = GetDirectoryPath(fileName); // Switch to OBJ directory for material path correctness
+    const std::string workingDir = GetDirectoryPath(fileName); // Switch to OBJ directory for material path correctness
     if (CHDIR(workingDir.c_str()) != 0) TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to change working directory", workingDir.c_str());
 
-    unsigned int dataSize = static_cast<unsigned int>(fileText.size());
+    const unsigned int dataSize = static_cast<unsigned int>(fileText.size());
 
-    unsigned int flags = TINYOBJ_FLAG_TRIANGULATE;
-    int ret = tinyobj_parse_obj(&objAttributes, &objShapes, &objShapeCount, &objMaterials, &objMaterialCount, fileText.c_str(), dataSize, flags);
+    const unsigned int flags = TINYOBJ_FLAG_TRIANGULATE;
+    const int ret = tinyobj_parse_obj(&objAttributes, &objShapes, &objShapeCount, &objMaterials, &objMaterialCount, fileText.c_str(), dataSize, flags);
 
     if (ret != TINYOBJ_SUCCESS)
     {
@@ -4608,7 +4608,7 @@ static Model LoadOBJ(const char *fileName)
     for (int i = 0; i < model.meshCount; i++)
     {
         // Allocate the buffers for each mesh
-        unsigned int vertexCount = localMeshVertexCounts[i];
+        const unsigned int vertexCount = localMeshVertexCounts[i];
 
         model.meshes[i].vertexCount = vertexCount;
         model.meshes[i].triangleCount = vertexCount/3;
@@ -4671,9 +4671,9 @@ static Model LoadOBJ(const char *fileName)
 
         for (int f = 0; f < objAttributes.face_num_verts[faceId]; f++)
         {
-            int vertIndex = objAttributes.faces[faceVertIndex].v_idx;
-            int normalIndex = objAttributes.faces[faceVertIndex].vn_idx;
-            int texcordIndex = objAttributes.faces[faceVertIndex].vt_idx;
+            const int vertIndex = objAttributes.faces[faceVertIndex].v_idx;
+            const int normalIndex = objAttributes.faces[faceVertIndex].vn_idx;
+            const int texcordIndex = objAttributes.faces[faceVertIndex].vt_idx;
 
             // NOTE: Out-of-range indices from malformed files are skipped, keeping zeroed values
             if ((vertIndex >= 0) && (vertIndex < static_cast<int>(objAttributes.num_vertices)))
@@ -4837,7 +4837,7 @@ static Model LoadIQM(const char *fileName)
     // In case file can not be read, return an empty model
     if (fileDataPtr == nullptr) return model;
 
-    std::string basePath = GetDirectoryPath(fileName);
+    const std::string basePath = GetDirectoryPath(fileName);
 
     // Read IQM header
     IQMHeader *iqmHeader = reinterpret_cast<IQMHeader *>(fileDataPtr);
@@ -5386,14 +5386,14 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
             {
                 int base64Size = static_cast<int>(strlen(cgltfImage->uri + i + 1));
                 while (cgltfImage->uri[i + base64Size] == '=') base64Size--;    // Ignore optional paddings
-                int numberOfEncodedBits = base64Size*6 - (base64Size*6)%8;      // Encoded bits minus extra bits, so it becomes a multiple of 8 bits
-                int outSize = numberOfEncodedBits >> 3;                         // Actual encoded bytes
+                const int numberOfEncodedBits = base64Size*6 - (base64Size*6)%8;      // Encoded bits minus extra bits, so it becomes a multiple of 8 bits
+                const int outSize = numberOfEncodedBits >> 3;                         // Actual encoded bytes
                 void *data = nullptr;
 
                 cgltf_options options = {};
                 options.file.read = LoadFileGLTFCallback;
                 options.file.release = ReleaseFileGLTFCallback;
-                cgltf_result result = cgltf_load_buffer_base64(&options, outSize, cgltfImage->uri + i + 1, &data);
+                const cgltf_result result = cgltf_load_buffer_base64(&options, outSize, cgltfImage->uri + i + 1, &data);
 
                 if (result == cgltf_result_success)
                 {
@@ -5411,7 +5411,7 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
     {
         unsigned char *data = static_cast<unsigned char *>(RL_CALLOC(cgltfImage->buffer_view->size, sizeof(unsigned char)));
         int offset = static_cast<int>(cgltfImage->buffer_view->offset);
-        int stride = static_cast<int>(cgltfImage->buffer_view->stride)? static_cast<int>(cgltfImage->buffer_view->stride) : 1;
+        const int stride = static_cast<int>(cgltfImage->buffer_view->stride)? static_cast<int>(cgltfImage->buffer_view->stride) : 1;
 
         // Copy buffer data to memory for loading
         for (unsigned int i = 0; i < cgltfImage->buffer_view->size; i++)
@@ -5446,7 +5446,7 @@ static BoneInfo *LoadBoneInfoGLTF(cgltf_skin skin, unsigned int *boneCount)
 
     for (unsigned int i = 0; i < skin.joints_count; i++)
     {
-        cgltf_node node = *skin.joints[i];
+        const cgltf_node node = *skin.joints[i];
         if (node.name != nullptr) snprintf(bones[i].name, sizeof(bones[i].name), "%s", node.name);
 
         // Find parent bone index by walking up the node tree past any
@@ -5601,7 +5601,7 @@ static Model LoadGLTF(const char *fileName)
         for (unsigned int i = 0, j = 1; i < data->materials_count; i++, j++)
         {
             model.materials[j] = LoadMaterialDefault();
-            std::string texPath = GetDirectoryPath(fileName);
+            const std::string texPath = GetDirectoryPath(fileName);
 
             // Check glTF material flow: PBR metallic/roughness flow
             // NOTE: Alternatively, materials can follow PBR specular/glossiness flow
@@ -5610,7 +5610,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load base color texture (albedo)
                 if (data->materials[i].pbr_metallic_roughness.base_color_texture.texture)
                 {
-                    Image imAlbedo = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.base_color_texture.texture->image, texPath.c_str());
+                    const Image imAlbedo = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.base_color_texture.texture->image, texPath.c_str());
                     if (imAlbedo.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_ALBEDO].texture = LoadTextureFromImage(imAlbedo);
@@ -5626,7 +5626,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load metallic/roughness texture
                 if (data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture)
                 {
-                    Image imMetallicRoughness = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture->image, texPath.c_str());
+                    const Image imMetallicRoughness = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture->image, texPath.c_str());
                     if (imMetallicRoughness.data != nullptr)
                     {
                         Image imMetallic = { nullptr };
@@ -5645,7 +5645,7 @@ static Model LoadGLTF(const char *fileName)
                         {
                             for (int y = 0; y < imRoughness.height; y++)
                             {
-                                Color color = GetImageColor(imMetallicRoughness, x, y);
+                                const Color color = GetImageColor(imMetallicRoughness, x, y);
 
                                 (static_cast<unsigned char *>(imRoughness.data))[y*imRoughness.width + x] = color.g; // Roughness color channel
                                 (static_cast<unsigned char *>(imMetallic.data))[y*imMetallic.width + x] = color.b; // Metallic color channel
@@ -5661,17 +5661,17 @@ static Model LoadGLTF(const char *fileName)
                     }
 
                     // Load metallic/roughness material properties
-                    float roughness = data->materials[i].pbr_metallic_roughness.roughness_factor;
+                    const float roughness = data->materials[i].pbr_metallic_roughness.roughness_factor;
                     model.materials[j].maps[MATERIAL_MAP_ROUGHNESS].value = roughness;
 
-                    float metallic = data->materials[i].pbr_metallic_roughness.metallic_factor;
+                    const float metallic = data->materials[i].pbr_metallic_roughness.metallic_factor;
                     model.materials[j].maps[MATERIAL_MAP_METALNESS].value = metallic;
                 }
 
                 // Load normal texture
                 if (data->materials[i].normal_texture.texture)
                 {
-                    Image imNormal = LoadImageFromCgltfImage(data->materials[i].normal_texture.texture->image, texPath.c_str());
+                    const Image imNormal = LoadImageFromCgltfImage(data->materials[i].normal_texture.texture->image, texPath.c_str());
                     if (imNormal.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_NORMAL].texture = LoadTextureFromImage(imNormal);
@@ -5682,7 +5682,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load ambient occlusion texture
                 if (data->materials[i].occlusion_texture.texture)
                 {
-                    Image imOcclusion = LoadImageFromCgltfImage(data->materials[i].occlusion_texture.texture->image, texPath.c_str());
+                    const Image imOcclusion = LoadImageFromCgltfImage(data->materials[i].occlusion_texture.texture->image, texPath.c_str());
                     if (imOcclusion.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_OCCLUSION].texture = LoadTextureFromImage(imOcclusion);
@@ -5693,7 +5693,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load emissive texture
                 if (data->materials[i].emissive_texture.texture)
                 {
-                    Image imEmissive = LoadImageFromCgltfImage(data->materials[i].emissive_texture.texture->image, texPath.c_str());
+                    const Image imEmissive = LoadImageFromCgltfImage(data->materials[i].emissive_texture.texture->image, texPath.c_str());
                     if (imEmissive.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_EMISSION].texture = LoadTextureFromImage(imEmissive);
@@ -5733,14 +5733,14 @@ static Model LoadGLTF(const char *fileName)
             cgltf_float worldTransform[16];
             cgltf_node_transform_world(node, worldTransform);
 
-            Matrix worldMatrix = {
+            const Matrix worldMatrix = {
                 worldTransform[0], worldTransform[1], worldTransform[2], worldTransform[3],
                 worldTransform[4], worldTransform[5], worldTransform[6], worldTransform[7],
                 worldTransform[8], worldTransform[9], worldTransform[10], worldTransform[11],
                 worldTransform[12], worldTransform[13], worldTransform[14], worldTransform[15]
             };
 
-            Matrix worldMatrixNormals = glm::transpose(glm::inverse(worldMatrix));
+            const Matrix worldMatrixNormals = glm::transpose(glm::inverse(worldMatrix));
 
             for (unsigned int p = 0; p < mesh->primitives_count; p++)
             {
@@ -5776,7 +5776,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, 1.0f));
+                                    const Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k+1] = vt.y;
                                     vertices[3*k+2] = vt.z;
@@ -5801,7 +5801,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
+                                    const Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5826,7 +5826,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
+                                    const Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5854,7 +5854,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, 1.0f));
+                                    const Vector3 nt = Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, 1.0f));
                                     normals[3*k] = nt.x;
                                     normals[3*k+1] = nt.y;
                                     normals[3*k+2] = nt.z;
@@ -5878,7 +5878,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
+                                    const Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5902,7 +5902,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
+                                    const Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5926,7 +5926,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
+                                    const Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5954,7 +5954,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *tangents = model.meshes[meshIndex].tangents;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 tt = Vector3((worldMatrix)*Vector4(Vector3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, 1.0f));
+                                    const Vector3 tt = Vector3((worldMatrix)*Vector4(Vector3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, 1.0f));
                                     tangents[4*k] = tt.x;
                                     tangents[4*k+1] = tt.y;
                                     tangents[4*k+2] = tt.z;
@@ -6012,7 +6012,7 @@ static Model LoadGLTF(const char *fileName)
                         }
                         else TRACELOG(LOG_WARNING, "MODEL: [%s] Texcoords attribute data format not supported, use vec2 float", fileName);
 
-                        int index = mesh->primitives[p].attributes[j].index;
+                        const int index = mesh->primitives[p].attributes[j].index;
                         if (index == 0) model.meshes[meshIndex].texcoords = texcoordPtr;
                         else if (index == 1) model.meshes[meshIndex].texcoords2 = texcoordPtr;
                         else
@@ -6210,7 +6210,7 @@ static Model LoadGLTF(const char *fileName)
         //----------------------------------------------------------------------------------------------------
         if (data->skins_count > 0)
         {
-            cgltf_skin skin = data->skins[0];
+            const cgltf_skin skin = data->skins[0];
             model.skeleton.bones = LoadBoneInfoGLTF(skin, &model.skeleton.boneCount);
             model.skeleton.bindPose = static_cast<Transform *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Transform)));
 
@@ -6223,7 +6223,7 @@ static Model LoadGLTF(const char *fileName)
                     (skin.inverse_bind_matrices->count >= skin.joints_count) &&
                     cgltf_accessor_read_float(skin.inverse_bind_matrices, i, inverseBindTransform, 16))
                 {
-                    Matrix inverseBindMatrix = {
+                    const Matrix inverseBindMatrix = {
                 inverseBindTransform[0], inverseBindTransform[1], inverseBindTransform[2], inverseBindTransform[3],
                 inverseBindTransform[4], inverseBindTransform[5], inverseBindTransform[6], inverseBindTransform[7],
                 inverseBindTransform[8], inverseBindTransform[9], inverseBindTransform[10], inverseBindTransform[11],
@@ -6236,7 +6236,7 @@ static Model LoadGLTF(const char *fileName)
                     cgltf_float worldTransform[16] = { 0 };
                     cgltf_node_transform_world(skin.joints[i], worldTransform);
 
-                    Matrix worldMatrix = {
+                    const Matrix worldMatrix = {
                 worldTransform[0], worldTransform[1], worldTransform[2], worldTransform[3],
                 worldTransform[4], worldTransform[5], worldTransform[6], worldTransform[7],
                 worldTransform[8], worldTransform[9], worldTransform[10], worldTransform[11],
@@ -6446,10 +6446,10 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
 
     for (int i = 0; i < static_cast<int>(input->count) - 1; i++)
     {
-        cgltf_bool r1 = cgltf_accessor_read_float(input, i, &tstart, 1);
+        const cgltf_bool r1 = cgltf_accessor_read_float(input, i, &tstart, 1);
         if (!r1) return false;
 
-        cgltf_bool r2 = cgltf_accessor_read_float(input, i + 1, &tend, 1);
+        const cgltf_bool r2 = cgltf_accessor_read_float(input, i + 1, &tend, 1);
         if (!r2) return false;
 
         if ((tstart <= time) && (time < tend))
@@ -6481,7 +6481,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
         interpolationType = cgltf_interpolation_type_step;
     }
 
-    float duration = fmaxf((tend - tstart), EPSILON);
+    const float duration = fmaxf((tend - tstart), EPSILON);
     float t = (time - tstart)/duration;
     t = (t < 0.0f)? 0.0f : t;
     t = (t > 1.0f)? 1.0f : t;
@@ -6496,7 +6496,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 3);
-                Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
+                const Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
                 Vector3 *r = static_cast<Vector3 *>(data);
 
                 *r = v1;
@@ -6505,9 +6505,9 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 3);
-                Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
+                const Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 3);
-                Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
+                const Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
                 Vector3 *r = static_cast<Vector3 *>(data);
 
                 *r = glm::mix(v1, v2, t);
@@ -6516,13 +6516,13 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, 3*keyframe+1, tmp, 3);
-                Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
+                const Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*keyframe+2, tmp, 3);
-                Vector3 tangent1 = {tmp[0], tmp[1], tmp[2]};
+                const Vector3 tangent1 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1)+1, tmp, 3);
-                Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
+                const Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1), tmp, 3);
-                Vector3 tangent2 = {tmp[0], tmp[1], tmp[2]};
+                const Vector3 tangent2 = {tmp[0], tmp[1], tmp[2]};
                 Vector3 *r = static_cast<Vector3 *>(data);
 
                 *r = Vector3CubicHermite(v1, tangent1, v2, tangent2, t);
@@ -6547,9 +6547,9 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 4);
-                Quaternion q1 = {tmp[3], tmp[0], tmp[1], tmp[2]};
+                const Quaternion q1 = {tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 4);
-                Quaternion q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
+                const Quaternion q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
                 Quaternion *r = static_cast<Quaternion *>(data);
 
                 *r = glm::slerp(q1, q2, t);
@@ -6615,14 +6615,14 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
     {
         if (data->skins_count > 0)
         {
-            cgltf_skin skin = data->skins[0];
+            const cgltf_skin skin = data->skins[0];
 
             // Precompute, per joint, the static transform contributed by any
             // intermediate non-joint nodes between the joint and its nearest
             // joint ancestor. This handles exporters (e.g. wow.export) that
             // store bone offsets on dummy parent nodes rather than on the
             // joints themselves. Depends only on the skin, not the animation.
-            int jointCount = static_cast<int>(skin.joints_count);
+            const int jointCount = static_cast<int>(skin.joints_count);
             Matrix *extOffset = static_cast<Matrix *>(RL_CALLOC(jointCount, sizeof(Matrix)));
 
             if (extOffset == nullptr)
@@ -6659,10 +6659,10 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     if (isJoint) break;
 
                     // Compose the intermediate node's local TRS (scale, then rotation, then translation)
-                    Matrix nodeScale = glm::scale(Matrix(1.0f), Vector3{n->scale[0], n->scale[1], n->scale[2]});
-                    Matrix nodeRotation = glm::mat4_cast(Quaternion{n->rotation[3], n->rotation[0], n->rotation[1], n->rotation[2]});
-                    Matrix nodeTranslation = glm::translate(Matrix(1.0f), Vector3{n->translation[0], n->translation[1], n->translation[2]});
-                    Matrix nodeTransform = ((nodeTranslation) * (((nodeRotation) * (nodeScale))));
+                    const Matrix nodeScale = glm::scale(Matrix(1.0f), Vector3{n->scale[0], n->scale[1], n->scale[2]});
+                    const Matrix nodeRotation = glm::mat4_cast(Quaternion{n->rotation[3], n->rotation[0], n->rotation[1], n->rotation[2]});
+                    const Matrix nodeTranslation = glm::translate(Matrix(1.0f), Vector3{n->translation[0], n->translation[1], n->translation[2]});
+                    const Matrix nodeTransform = ((nodeTranslation) * (((nodeRotation) * (nodeScale))));
 
                     extOffset[k] = ((nodeTransform) * (extOffset[k]));
                     n = n->parent;
@@ -6673,7 +6673,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
             {
                 BoneInfo *bones = LoadBoneInfoGLTF(skin, &animations[a].boneCount);
 
-                cgltf_animation animData = data->animations[a];
+                const cgltf_animation animData = data->animations[a];
 
                 struct Channels {
                     cgltf_animation_channel *translate;
@@ -6686,7 +6686,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
 
                 for (unsigned int j = 0; j < animData.channels_count; j++)
                 {
-                    cgltf_animation_channel channel = animData.channels[j];
+                    const cgltf_animation_channel channel = animData.channels[j];
                     int boneIndex = -1;
 
                     for (unsigned int k = 0; k < skin.joints_count; k++)
@@ -6728,7 +6728,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                 for (int j = 0; j < animations[a].keyframeCount; j++)
                 {
                     animations[a].keyframePoses[j] = static_cast<Transform *>(RL_CALLOC(animations[a].boneCount, sizeof(Transform)));
-                    float time = static_cast<float>(j) / GLTF_FRAMERATE;
+                    const float time = static_cast<float>(j) / GLTF_FRAMERATE;
 
                     for (unsigned int k = 0; k < animations[a].boneCount; k++)
                     {
@@ -6763,11 +6763,11 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                         // Compose joint local TRS, then prepend the static
                         // intermediate non-joint offsets so the final TRS is
                         // expressed relative to the joint's skeleton parent.
-                        Matrix S = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
-                        Matrix R = glm::mat4_cast(rotation);
-                        Matrix T = glm::translate(Matrix(1.0f), Vector3{translation.x, translation.y, translation.z});
-                        Matrix jointLocal = ((T) * (((R) * (S))));
-                        Matrix combined = ((extOffset[k]) * (jointLocal));
+                        const Matrix S = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
+                        const Matrix R = glm::mat4_cast(rotation);
+                        const Matrix T = glm::translate(Matrix(1.0f), Vector3{translation.x, translation.y, translation.z});
+                        const Matrix jointLocal = ((T) * (((R) * (S))));
+                        const Matrix combined = ((extOffset[k]) * (jointLocal));
 
                         Transform tr;
                         MatrixDecompose(combined, &tr.translation, &tr.rotation, &tr.scale);
@@ -6820,7 +6820,7 @@ static Model LoadVOX(const char *fileName)
 
     // Read and build voxarray description
     VoxArray3D voxarray = { 0 };
-    int ret = Vox_LoadFromMemory(fileData, dataSize, &voxarray);
+    const int ret = Vox_LoadFromMemory(fileData, dataSize, &voxarray);
 
     if (ret != VOX_SUCCESS)
     {
@@ -6853,7 +6853,7 @@ static Model LoadVOX(const char *fileName)
 
     // Init model meshes
     int verticesRemain = voxarray.vertices.used;
-    int verticesMax = 65532; // 5461 voxels x 12 vertices per voxel -> 65532 (must be inf 65536)
+    constexpr int verticesMax = 65532; // 5461 voxels x 12 vertices per voxel -> 65532 (must be inf 65536)
 
     // 6*4 = 12 vertices per voxel
     Vector3 *pvertices = reinterpret_cast<Vector3 *>(voxarray.vertices.array);
@@ -7098,7 +7098,7 @@ static Model LoadM3D(const char *fileName)
             {
                 for (n = 0; n < 3; n++)
                 {
-                    int skinid = m3d->vertex[m3d->face[i].vertex[n]].skinid;
+                    const int skinid = m3d->vertex[m3d->face[i].vertex[n]].skinid;
 
                     // Check if there is a skin for this mesh
                     if ((skinid != M3D_UNDEF) && (skinid < static_cast<int>(m3d->numskin)))

@@ -22,13 +22,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - logo raylib anim");
 
-    int logoPositionX = screenWidth/2 - 128;
-    int logoPositionY = screenHeight/2 - 128;
+    const int logoPositionX = screenWidth/2 - 128;
+    const int logoPositionY = screenHeight/2 - 128;
 
     int framesCounter = 0;
     int lettersCount = 0;

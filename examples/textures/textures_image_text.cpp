@@ -22,8 +22,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image text");
 
@@ -35,16 +35,16 @@ int main()
     int codepointCount = 0;
     int *codepoints = LoadCodepoints(" !\"#$%&'()*+,-./0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", &codepointCount);
     // TTF Font loading with custom generation parameters
-    Font font = LoadFontEx("resources/KAISG.ttf", 64, codepoints, codepointCount);
+    const Font font = LoadFontEx("resources/KAISG.ttf", 64, codepoints, codepointCount);
     UnloadCodepoints(codepoints);
 
     // Draw over image using custom font
     ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", Vector2{ 20.0f, 20.0f }, static_cast<float>(font.baseSize), 0.0f, RED);
 
-    Texture2D texture = LoadTextureFromImage(parrots);  // Image converted to texture, uploaded to GPU memory (VRAM)
+    const Texture2D texture = LoadTextureFromImage(parrots);  // Image converted to texture, uploaded to GPU memory (VRAM)
     UnloadImage(parrots);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
-    Vector2 position = { static_cast<float>(screenWidth)/2 - static_cast<float>(texture.width)/2, static_cast<float>(screenHeight)/2 - static_cast<float>(texture.height)/2 - 20 };
+    const Vector2 position = { static_cast<float>(screenWidth)/2 - static_cast<float>(texture.width)/2, static_cast<float>(screenHeight)/2 - static_cast<float>(texture.height)/2 - 20 };
 
     bool showFont = false;
 
@@ -80,13 +80,13 @@ int main()
                 // Make the font atlas texture fit the screen, so we can see the whole thing
                 float scale = 1.0f;
 
-                float atlasRatio = static_cast<float>(font.texture.width)/static_cast<float>(font.texture.height);
-                float screenRatio = static_cast<float>(screenWidth)/static_cast<float>(screenHeight);
+                const float atlasRatio = static_cast<float>(font.texture.width)/static_cast<float>(font.texture.height);
+                const float screenRatio = static_cast<float>(screenWidth)/static_cast<float>(screenHeight);
                 if (atlasRatio >= screenRatio) scale = static_cast<float>(screenWidth)/static_cast<float>(font.texture.width);
                 else scale = static_cast<float>(screenHeight)/static_cast<float>(font.texture.height);
 
-                float width = static_cast<float>(font.texture.width) * scale;
-                float height = static_cast<float>(font.texture.height) * scale;
+                const float width = static_cast<float>(font.texture.width) * scale;
+                const float height = static_cast<float>(font.texture.height) * scale;
 
                 DrawTextureEx(font.texture, Vector2{ (static_cast<float>(screenWidth) - width)/2, (static_cast<float>(screenHeight) - height)/2 }, 0, scale, BLACK);
             }

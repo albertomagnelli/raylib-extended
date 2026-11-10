@@ -42,8 +42,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - cel shading");
@@ -56,28 +56,28 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load model
-    Model model = LoadModel("resources/models/old_car_new.glb");
+    const Model model = LoadModel("resources/models/old_car_new.glb");
 
     // Load cel shader
-    Shader celShader = LoadShader(
+    const Shader celShader = LoadShader(
         TextFormat("resources/shaders/glsl%i/cel.vs", GLSL_VERSION),
         TextFormat("resources/shaders/glsl%i/cel.fs", GLSL_VERSION));
     celShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(celShader, "viewPos");
 
     // Apply cel shader to model, keep copy of default shader
-    Shader defaultShader = model.materials[0].shader;
+    const Shader defaultShader = model.materials[0].shader;
     model.materials[0].shader = celShader;
 
     // numBands: controls toon quantization steps (2 = hard binary, 20 = near-smooth)
     float numBands = 10.0f;
-    int numBandsLoc = GetShaderLocation(celShader, "numBands");
+    const int numBandsLoc = GetShaderLocation(celShader, "numBands");
     SetShaderValue(celShader, numBandsLoc, &numBands, SHADER_UNIFORM_FLOAT);
 
     // Inverted-hull outline shader: draws back faces extruded along normals
-    Shader outlineShader = LoadShader(
+    const Shader outlineShader = LoadShader(
         TextFormat("resources/shaders/glsl%i/outline_hull.vs", GLSL_VERSION),
         TextFormat("resources/shaders/glsl%i/outline_hull.fs", GLSL_VERSION));
-    int outlineThicknessLoc = GetShaderLocation(outlineShader, "outlineThickness");
+    const int outlineThicknessLoc = GetShaderLocation(outlineShader, "outlineThickness");
 
     // Single directional white light, angled so toon bands are visible on the model sides.
     // Spins opposite to CAMERA_ORBITAL (0.5 rad/s) so lighting changes as you watch.
@@ -117,7 +117,7 @@ int main()
         SetShaderValue(celShader, numBandsLoc, &numBands, SHADER_UNIFORM_FLOAT);
 
         // Spin light opposite to CAMERA_ORBITAL (0.5 rad/s), angled 45 degrees off vertical
-        float t = static_cast<float>(GetTime());
+        const float t = static_cast<float>(GetTime());
         lights[0].position = Vector3{ sinf(-t*0.3f)*5.0f, 5.0f, cosf(-t*0.3f)*5.0f };
 
         for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(celShader, lights[i]);

@@ -32,8 +32,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font spritefont");
 
@@ -42,17 +42,17 @@ int main()
     const char msg3[50] = "...and a THIRD one! GREAT! :D";
 
     // NOTE: Textures/Fonts MUST be loaded after Window initialization (OpenGL context is required)
-    Font font1 = LoadFont("resources/custom_mecha.png");          // Font loading
-    Font font2 = LoadFont("resources/custom_alagard.png");        // Font loading
-    Font font3 = LoadFont("resources/custom_jupiter_crash.png");  // Font loading
+    const Font font1 = LoadFont("resources/custom_mecha.png");          // Font loading
+    const Font font2 = LoadFont("resources/custom_alagard.png");        // Font loading
+    const Font font3 = LoadFont("resources/custom_jupiter_crash.png");  // Font loading
 
-    Vector2 fontPosition1 = { screenWidth/2.0f - MeasureTextEx(font1, msg1, static_cast<float>(font1.baseSize), -3).x/2,
+    const Vector2 fontPosition1 = { screenWidth/2.0f - MeasureTextEx(font1, msg1, static_cast<float>(font1.baseSize), -3).x/2,
                               screenHeight/2.0f - font1.baseSize/2.0f - 80.0f };
 
-    Vector2 fontPosition2 = { screenWidth/2.0f - MeasureTextEx(font2, msg2, static_cast<float>(font2.baseSize), -2.0f).x/2.0f,
+    const Vector2 fontPosition2 = { screenWidth/2.0f - MeasureTextEx(font2, msg2, static_cast<float>(font2.baseSize), -2.0f).x/2.0f,
                               screenHeight/2.0f - font2.baseSize/2.0f - 10.0f };
 
-    Vector2 fontPosition3 = { screenWidth/2.0f - MeasureTextEx(font3, msg3, static_cast<float>(font3.baseSize), 2.0f).x/2.0f,
+    const Vector2 fontPosition3 = { screenWidth/2.0f - MeasureTextEx(font3, msg3, static_cast<float>(font3.baseSize), 2.0f).x/2.0f,
                               screenHeight/2.0f - font3.baseSize/2.0f + 50.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

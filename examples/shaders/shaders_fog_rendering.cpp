@@ -40,8 +40,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Enable Multi Sampling Anti Aliasing 4x (if available)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - fog rendering");
@@ -56,9 +56,9 @@ int main()
 
     // Load models and texture
     Model modelA = LoadModelFromMesh(GenMeshTorus(0.4f, 1.0f, 16, 32));
-    Model modelB = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    Model modelC = LoadModelFromMesh(GenMeshSphere(0.5f, 32, 32));
-    Texture texture = LoadTexture("resources/texel_checker.png");
+    const Model modelB = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    const Model modelC = LoadModelFromMesh(GenMeshSphere(0.5f, 32, 32));
+    const Texture texture = LoadTexture("resources/texel_checker.png");
 
     // Assign texture to default model material
     modelA.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
@@ -66,22 +66,22 @@ int main()
     modelC.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
     // Load shader and set up some uniforms
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/fog.fs", GLSL_VERSION));
     shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
     // Ambient light level
     Vector4 ambient = Vector4{ 0.2f, 0.2f, 0.2f, 1.0f };
-    int ambientLoc = GetShaderLocation(shader, "ambient");
+    const int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, &ambient, SHADER_UNIFORM_VEC4);
 
     Vector4 fogColor = ColorNormalize(GRAY);
-    int fogColorLoc = GetShaderLocation(shader, "fogColor");
+    const int fogColorLoc = GetShaderLocation(shader, "fogColor");
     SetShaderValue(shader, fogColorLoc, &fogColor, SHADER_UNIFORM_VEC4);
 
     float fogDensity = 0.15f;
-    int fogDensityLoc = GetShaderLocation(shader, "fogDensity");
+    const int fogDensityLoc = GetShaderLocation(shader, "fogDensity");
     SetShaderValue(shader, fogDensityLoc, &fogDensity, SHADER_UNIFORM_FLOAT);
 
     // NOTE: All models share the same shader

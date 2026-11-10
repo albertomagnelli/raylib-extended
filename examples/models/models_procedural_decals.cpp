@@ -65,8 +65,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [models] example - procedural decals");
@@ -79,22 +79,22 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Target model: a procedurally generated knot with a checkerboard skin
-    Model model = LoadModelFromMesh(GenMeshTorus(0.8f, 1.8f, 32, 64));
+    const Model model = LoadModelFromMesh(GenMeshTorus(0.8f, 1.8f, 32, 64));
 
-    Image checkerImage = GenImageChecked(512, 512, 32, 32, LIGHTGRAY, GRAY);
-    Texture2D modelTexture = LoadTextureFromImage(checkerImage);
+    const Image checkerImage = GenImageChecked(512, 512, 32, 32, LIGHTGRAY, GRAY);
+    const Texture2D modelTexture = LoadTextureFromImage(checkerImage);
     UnloadImage(checkerImage);
     SetTextureFilter(modelTexture, TEXTURE_FILTER_BILINEAR);
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = modelTexture;
 
-    BoundingBox modelBBox = GetMeshBoundingBox(model.meshes[0]);
+    const BoundingBox modelBBox = GetMeshBoundingBox(model.meshes[0]);
     camera.target = glm::mix(modelBBox.min, modelBBox.max, 0.5f);
 
-    float modelSize = fminf(fminf(fabsf(modelBBox.max.x - modelBBox.min.x),
+    const float modelSize = fminf(fminf(fabsf(modelBBox.max.x - modelBBox.min.x),
         fabsf(modelBBox.max.y - modelBBox.min.y)), fabsf(modelBBox.max.z - modelBBox.min.z));
 
-    float decalSize = modelSize*0.35f;
-    float decalOffset = 0.01f;
+    const float decalSize = modelSize*0.35f;
+    constexpr float decalOffset = 0.01f;
 
     // Translucent cube previewing where the next decal will land
     Model placementCube = LoadModelFromMesh(GenMeshCube(decalSize, decalSize, decalSize));
@@ -107,11 +107,11 @@ int main()
     ImageDrawCircle(&decalImage, 64, 64, 30, RED);
     ImageDrawCircle(&decalImage, 64, 64, 15, YELLOW);
 
-    Texture2D decalTexture = LoadTextureFromImage(decalImage);
+    const Texture2D decalTexture = LoadTextureFromImage(decalImage);
     UnloadImage(decalImage);
     SetTextureFilter(decalTexture, TEXTURE_FILTER_BILINEAR);
 
-    Material decalMaterial = LoadMaterialDefault();
+    const Material decalMaterial = LoadMaterialDefault();
     decalMaterial.maps[MATERIAL_MAP_DIFFUSE].texture = decalTexture;
     decalMaterial.maps[MATERIAL_MAP_DIFFUSE].color = RAYWHITE;
 
@@ -130,14 +130,14 @@ int main()
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) UpdateCamera(&camera, CAMERA_THIRD_PERSON);
 
         // Cast a ray from the mouse and keep the closest point it hits on the model
-        Ray ray = GetScreenToWorldRay(GetMousePosition(), camera);
+        const Ray ray = GetScreenToWorldRay(GetMousePosition(), camera);
         RayCollision collision = {};
 
         if (GetRayCollisionBox(ray, modelBBox).hit && (decalCount < MAX_DECALS))
         {
             for (int m = 0; m < model.meshCount; m++)
             {
-                RayCollision meshHit = GetRayCollisionMesh(ray, model.meshes[m], model.transform);
+                const RayCollision meshHit = GetRayCollisionMesh(ray, model.meshes[m], model.transform);
                 if (meshHit.hit && (!collision.hit || (meshHit.distance < collision.distance))) collision = meshHit;
             }
         }
@@ -145,11 +145,11 @@ int main()
         // Project a new decal at the hit point, facing along the surface normal
         if (collision.hit && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (decalCount < MAX_DECALS))
         {
-            Vector3 lookTarget = ((collision.point) + (collision.normal));
+            const Vector3 lookTarget = ((collision.point) + (collision.normal));
             Matrix splat = glm::lookAt(collision.point, lookTarget, Vector3{ 0.0f, 1.0f, 0.0f });
             splat = ((glm::rotate(Matrix(1.0f), DEG2RAD*static_cast<float>(GetRandomValue(-180, 180)), Vector3{0.0f, 0.0f, 1.0f})) * (splat));
 
-            Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset);
+            const Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset);
 
             if (decalMesh.vertexCount > 0)
             {
@@ -175,8 +175,8 @@ int main()
                 // Preview cube at the surface point currently under the mouse
                 if (collision.hit)
                 {
-                    Vector3 lookTarget = ((collision.point) + (collision.normal));
-                    Matrix splat = glm::lookAt(collision.point, lookTarget, Vector3{ 0.0f, 1.0f, 0.0f });
+                    const Vector3 lookTarget = ((collision.point) + (collision.normal));
+                    const Matrix splat = glm::lookAt(collision.point, lookTarget, Vector3{ 0.0f, 1.0f, 0.0f });
                     placementCube.transform = glm::inverse(splat);
                     DrawModel(placementCube, Vector3{}, 1.0f, Fade(WHITE, 0.5f));
                 }
@@ -200,7 +200,7 @@ int main()
                 totalTriangles += decals[i].meshes[0].triangleCount;
             }
 
-            int statX = screenWidth - 280;
+            const int statX = screenWidth - 280;
             DrawText("Vertices", statX + 90, 10, 10, LIME);
             DrawText("Triangles", statX + 180, 10, 10, LIME);
             DrawText("Base Model", statX, 25, 10, LIME);
@@ -250,7 +250,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 v0, Vector3 v1, Ve
 {
     if (mb->vertexCapacity <= (mb->vertexCount + 3))
     {
-        int newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
+        const int newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
         Vector3 *newVertices = static_cast<Vector3 *>(MemAlloc(newVertexCapacity*sizeof(Vector3)));
 
         if (mb->vertexCapacity > 0)
@@ -263,7 +263,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 v0, Vector3 v1, Ve
         mb->vertexCapacity = newVertexCapacity;
     }
 
-    int index = mb->vertexCount;
+    const int index = mb->vertexCount;
     mb->vertexCount += 3;
 
     mb->vertices[index + 0] = v0;
@@ -310,9 +310,9 @@ static Mesh BuildMesh(MeshBuilder *mb)
 // Clips the segment [v0, v1] against the plane p.x = s, returning the intersection point
 static Vector3 ClipSegment(Vector3 v0, Vector3 v1, Vector3 p, float s)
 {
-    float d0 = glm::dot(v0, p) - s;
-    float d1 = glm::dot(v1, p) - s;
-    float t = d0/(d0 - d1);
+    const float d0 = glm::dot(v0, p) - s;
+    const float d1 = glm::dot(v1, p) - s;
+    const float t = d0/(d0 - d1);
 
     return glm::mix(v0, v1, t);
 }
@@ -324,7 +324,7 @@ static Vector3 ClipSegment(Vector3 v0, Vector3 v1, Vector3 p, float s)
 // after clipping becomes the decal's own small mesh, UV-mapped from its local coordinates
 static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float decalOffset)
 {
-    Matrix invProj = glm::inverse(projection);
+    const Matrix invProj = glm::inverse(projection);
     MeshBuilder meshBuilders[2] = {};
     int mbIndex = 0;
 
@@ -332,7 +332,7 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
     // pre-filter meant to skip most of the model, the precise clip happens below
     for (int meshIndex = 0; meshIndex < model.meshCount; meshIndex++)
     {
-        Mesh mesh = model.meshes[meshIndex];
+        const Mesh mesh = model.meshes[meshIndex];
 
         for (int tri = 0; tri < mesh.triangleCount; tri++)
         {
@@ -353,7 +353,7 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
             {
                 for (int v = 0; v < 3; v++)
                 {
-                    int idx = mesh.indices[3*tri + v];
+                    const int idx = mesh.indices[3*tri + v];
                     vertices[v] = Vector3{
                         mesh.vertices[3*idx + 0],
                         mesh.vertices[3*idx + 1],
@@ -365,7 +365,7 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
             int insideCount = 0;
             for (int i = 0; i < 3; i++)
             {
-                Vector3 v = Vector3((projection)*Vector4(vertices[i], 1.0f));
+                const Vector3 v = Vector3((projection)*Vector4(vertices[i], 1.0f));
                 if ((fabsf(v.x) < decalSize) || (fabsf(v.y) <= decalSize) || (fabsf(v.z) <= decalSize)) insideCount++;
                 vertices[i] = v;
             }
@@ -375,7 +375,7 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
     }
 
     // Clip the surviving triangles against each of the decal box's 6 faces in turn
-    Vector3 planes[6] = {
+    const Vector3 planes[6] = {
         {  1,  0,  0 }, { -1,  0,  0 },
         {  0,  1,  0 }, {  0, -1,  0 },
         {  0,  0,  1 }, {  0,  0, -1 }
@@ -389,20 +389,20 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
         MeshBuilder *outMesh = &meshBuilders[mbIndex];
 
         outMesh->vertexCount = 0;
-        float s = 0.5f*decalSize;
+        const float s = 0.5f*decalSize;
 
         for (int i = 0; i < inMesh->vertexCount; i += 3)
         {
             Vector3 nV1, nV2, nV3, nV4;
 
-            float d1 = glm::dot(inMesh->vertices[i + 0], planes[face]) - s;
-            float d2 = glm::dot(inMesh->vertices[i + 1], planes[face]) - s;
-            float d3 = glm::dot(inMesh->vertices[i + 2], planes[face]) - s;
+            const float d1 = glm::dot(inMesh->vertices[i + 0], planes[face]) - s;
+            const float d2 = glm::dot(inMesh->vertices[i + 1], planes[face]) - s;
+            const float d3 = glm::dot(inMesh->vertices[i + 2], planes[face]) - s;
 
-            int v1Out = (d1 > 0);
-            int v2Out = (d2 > 0);
-            int v3Out = (d3 > 0);
-            int total = v1Out + v2Out + v3Out;
+            const int v1Out = (d1 > 0);
+            const int v2Out = (d2 > 0);
+            const int v3Out = (d3 > 0);
+            const int total = v1Out + v2Out + v3Out;
 
             switch (total)
             {

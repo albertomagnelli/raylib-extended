@@ -22,16 +22,16 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - background scrolling");
 
     // NOTE: Be careful, background width must be equal or bigger than screen width
     // if not, texture should be draw more than two times for scrolling effect
-    Texture2D background = LoadTexture("resources/cyberpunk_street_background.png");
-    Texture2D midground = LoadTexture("resources/cyberpunk_street_midground.png");
-    Texture2D foreground = LoadTexture("resources/cyberpunk_street_foreground.png");
+    const Texture2D background = LoadTexture("resources/cyberpunk_street_background.png");
+    const Texture2D midground = LoadTexture("resources/cyberpunk_street_midground.png");
+    const Texture2D foreground = LoadTexture("resources/cyberpunk_street_foreground.png");
 
     float scrollingBack = 0.0f;
     float scrollingMid = 0.0f;

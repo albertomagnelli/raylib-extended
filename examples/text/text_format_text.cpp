@@ -22,14 +22,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - format text");
 
-    int score = 100020;
-    int hiscore = 200450;
-    int lives = 5;
+    constexpr int score = 100020;
+    constexpr int hiscore = 200450;
+    constexpr int lives = 5;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -39,12 +39,12 @@ const float pointsOfInterest[6][2] =
     { -0.70176f, -0.3842f },
 };
 
-const int screenWidth = 800;
-const int screenHeight = 450;
-const float zoomSpeed = 1.01f;
-const float offsetSpeedMul = 2.0f;
+constexpr int screenWidth = 800;
+constexpr int screenHeight = 450;
+constexpr float zoomSpeed = 1.01f;
+constexpr float offsetSpeedMul = 2.0f;
 
-const float startingZoom = 0.75f;
+constexpr float startingZoom = 0.75f;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -57,10 +57,10 @@ int main()
 
     // Load julia set shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/julia_set.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/julia_set.fs", GLSL_VERSION));
 
     // Create a RenderTexture2D to be used for render to texture
-    RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    const RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     // c constant to use in z^2 + c
     float c[2] = { pointsOfInterest[0][0], pointsOfInterest[0][1] };
@@ -71,9 +71,9 @@ int main()
 
     // Get variable (uniform) locations on the shader to connect with the program
     // NOTE: If uniform variable could not be found in the shader, function returns -1
-    int cLoc = GetShaderLocation(shader, "c");
-    int zoomLoc = GetShaderLocation(shader, "zoom");
-    int offsetLoc = GetShaderLocation(shader, "offset");
+    const int cLoc = GetShaderLocation(shader, "c");
+    const int zoomLoc = GetShaderLocation(shader, "zoom");
+    const int offsetLoc = GetShaderLocation(shader, "offset");
 
     // Upload the shader uniform values!
     SetShaderValue(shader, cLoc, c, SHADER_UNIFORM_VEC2);

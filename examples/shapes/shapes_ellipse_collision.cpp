@@ -21,8 +21,8 @@
 // Check if point is inside ellipse
 static bool CheckCollisionPointEllipse(Vector2 point, Vector2 center, float rx, float ry)
 {
-    float dx = (point.x - center.x)/rx;
-    float dy = (point.y - center.y)/ry;
+    const float dx = (point.x - center.x)/rx;
+    const float dy = (point.y - center.y)/ry;
     return (dx*dx + dy*dy) <= 1.0f;
 }
 
@@ -30,21 +30,21 @@ static bool CheckCollisionPointEllipse(Vector2 point, Vector2 center, float rx, 
 // Uses radial boundary distance in the direction between centers — scales correctly with radii
 static bool CheckCollisionEllipses(Vector2 c1, float rx1, float ry1, Vector2 c2, float rx2, float ry2)
 {
-    float dx = c2.x - c1.x;
-    float dy = c2.y - c1.y;
-    float dist = sqrtf(dx*dx + dy*dy);
+    const float dx = c2.x - c1.x;
+    const float dy = c2.y - c1.y;
+    const float dist = sqrtf(dx*dx + dy*dy);
 
     // Ellipses are on top of each other
     if (dist == 0.0f) return true;
 
-    float theta = atan2f(dy, dx);
-    float cosT = cosf(theta);
-    float sinT = sinf(theta);
+    const float theta = atan2f(dy, dx);
+    const float cosT = cosf(theta);
+    const float sinT = sinf(theta);
 
     // Radial distance from center to ellipse boundary in direction theta
     // r(theta) = (rx * ry) / sqrt((ry*cos)^2 + (rx*sin)^2)
-    float r1 = (rx1*ry1)/sqrtf((ry1*cosT)*(ry1*cosT) + (rx1*sinT)*(rx1*sinT));
-    float r2 = (rx2*ry2)/sqrtf((ry2*cosT)*(ry2*cosT) + (rx2*sinT)*(rx2*sinT));
+    const float r1 = (rx1*ry1)/sqrtf((ry1*cosT)*(ry1*cosT) + (rx1*sinT)*(rx1*sinT));
+    const float r2 = (rx2*ry2)/sqrtf((ry2*cosT)*(ry2*cosT) + (rx2*sinT)*(rx2*sinT));
 
     return dist <= (r1 + r2);
 }
@@ -56,19 +56,19 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ellipse collision");
     SetTargetFPS(60);
 
     Vector2 ellipseACenter = { static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2 };
-    float ellipseARx = 120.0f;
-    float ellipseARy = 70.0f;
+    constexpr float ellipseARx = 120.0f;
+    constexpr float ellipseARy = 70.0f;
 
     Vector2 ellipseBCenter = { static_cast<float>(screenWidth)*3/4, static_cast<float>(screenHeight)/2 };
-    float ellipseBRx = 90.0f;
-    float ellipseBRy = 140.0f;
+    constexpr float ellipseBRx = 90.0f;
+    constexpr float ellipseBRy = 140.0f;
 
     // 0 = controlling A, 1 = controlling B
     int controlled = 0;
@@ -86,13 +86,13 @@ int main()
         if (controlled == 0) ellipseACenter = GetMousePosition();
         else ellipseBCenter = GetMousePosition();
 
-        bool ellipsesCollide = CheckCollisionEllipses(
+        const bool ellipsesCollide = CheckCollisionEllipses(
             ellipseACenter, ellipseARx, ellipseARy,
             ellipseBCenter, ellipseBRx, ellipseBRy
         );
 
-        bool mouseInA = CheckCollisionPointEllipse(GetMousePosition(), ellipseACenter, ellipseARx, ellipseARy);
-        bool mouseInB = CheckCollisionPointEllipse(GetMousePosition(), ellipseBCenter, ellipseBRx, ellipseBRy);
+        const bool mouseInA = CheckCollisionPointEllipse(GetMousePosition(), ellipseACenter, ellipseARx, ellipseARy);
+        const bool mouseInB = CheckCollisionPointEllipse(GetMousePosition(), ellipseBCenter, ellipseBRx, ellipseBRy);
         //----------------------------------------------------------------------------------
 
         // Draw

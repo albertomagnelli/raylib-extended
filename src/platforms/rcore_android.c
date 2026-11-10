@@ -91,7 +91,7 @@ static PlatformData platform = {};   // Platform specific data
 // Local Variables Definition
 //----------------------------------------------------------------------------------
 #define KEYCODE_MAP_SIZE 162
-static const KeyboardKey mapKeycode[KEYCODE_MAP_SIZE] = {
+static constexpr KeyboardKey mapKeycode[KEYCODE_MAP_SIZE] = {
     KEY_NULL,           // AKEYCODE_UNKNOWN
     0,                  // AKEYCODE_SOFT_LEFT
     0,                  // AKEYCODE_SOFT_RIGHT

@@ -24,8 +24,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - highdpi testbed");
@@ -35,7 +35,7 @@ int main()
     int currentMonitor = GetCurrentMonitor();
     Vector2 windowPos = GetWindowPosition();
 
-    int gridSpacing = 40;   // Grid spacing in pixels
+    constexpr int gridSpacing = 40;   // Grid spacing in pixels
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

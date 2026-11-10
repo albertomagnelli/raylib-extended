@@ -34,12 +34,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - hot reloading");
 
-    const char *fragShaderFileName = "resources/shaders/glsl%i/reload.fs";
+    constexpr const char *fragShaderFileName = "resources/shaders/glsl%i/reload.fs";
     time_t fragShaderFileModTime = GetFileModTime(TextFormat(fragShaderFileName, GLSL_VERSION));
 
     // Load raymarching shader
@@ -66,7 +66,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         totalTime += GetFrameTime();
-        Vector2 mouse = GetMousePosition();
+        const Vector2 mouse = GetMousePosition();
         float mousePos[2] = { mouse.x, mouse.y };
 
         // Set shader required uniform values
@@ -76,13 +76,13 @@ int main()
         // Hot shader reloading
         if (shaderAutoReloading || (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)))
         {
-            long currentFragShaderModTime = GetFileModTime(TextFormat(fragShaderFileName, GLSL_VERSION));
+            const long currentFragShaderModTime = GetFileModTime(TextFormat(fragShaderFileName, GLSL_VERSION));
 
             // Check if shader file has been modified
             if (currentFragShaderModTime != fragShaderFileModTime)
             {
                 // Try reloading updated shader
-                Shader updatedShader = LoadShader({}, TextFormat(fragShaderFileName, GLSL_VERSION));
+                const Shader updatedShader = LoadShader({}, TextFormat(fragShaderFileName, GLSL_VERSION));
 
                 if (updatedShader.id != rlGetShaderIdDefault())      // It was correctly loaded
                 {

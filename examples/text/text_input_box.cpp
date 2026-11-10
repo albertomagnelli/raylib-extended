@@ -24,15 +24,15 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - input box");
 
     char name[MAX_INPUT_CHARS + 1] = "\0";      // NOTE: One extra space required for null terminator char '\0'
     int letterCount = 0;
 
-    Rectangle textBox = { screenWidth/2.0f - 100, 180, 225, 50 };
+    const Rectangle textBox = { screenWidth/2.0f - 100, 180, 225, 50 };
     bool mouseOnText = false;
 
     int framesCounter = 0;
@@ -126,7 +126,7 @@ int main()
 bool IsAnyKeyPressed()
 {
     bool keyPressed = false;
-    int key = GetKeyPressed();
+    const int key = GetKeyPressed();
 
     if ((key >= 32) && (key <= 126)) keyPressed = true;
 

@@ -25,7 +25,7 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static char const *GetGestureName(int gesture); // Get text string for gesture value
+static const char *GetGestureName(int gesture); // Get text string for gesture value
 static Color GetGestureColor(int gesture); // Get color for gesture value
 
 //------------------------------------------------------------------------------------
@@ -35,16 +35,16 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures testbed");
 
-    Vector2 messagePosition = { 160, 7 };
+    const Vector2 messagePosition = { 160, 7 };
 
     // Last gesture variables definitions
     int lastGesture = 0;
-    Vector2 lastGesturePosition = { 165, 130 };
+    const Vector2 lastGesturePosition = { 165, 130 };
 
     // Gesture log variables definitions
     // NOTE: The gesture log uses an array (as an inverted circular queue) to store the performed gestures
@@ -61,15 +61,15 @@ int main()
     int logMode = 1;
 
     Color gestureColor = { 0, 0, 0, 255 };
-    Rectangle logButton1 = { 53, 7, 48, 26 };
-    Rectangle logButton2 = { 108, 7, 36, 26 };
-    Vector2 gestureLogPosition = { 10, 10 };
+    const Rectangle logButton1 = { 53, 7, 48, 26 };
+    const Rectangle logButton2 = { 108, 7, 36, 26 };
+    const Vector2 gestureLogPosition = { 10, 10 };
 
     // Protractor variables definitions
-    float angleLength = 90.0f;
+    constexpr float angleLength = 90.0f;
     float currentAngleDegrees = 0.0f;
     Vector2 finalVector = { 0.0f, 0.0f };
-    Vector2 protractorPosition = { 266.0f, 315.0f };
+    const Vector2 protractorPosition = { 266.0f, 315.0f };
 
     SetTargetFPS(60);   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -152,7 +152,7 @@ int main()
         else if (currentGesture > 15) currentAngleDegrees = currentDragDegrees; // Swipe Right, Swipe Left, Swipe Up and Swipe Down
         else if (currentGesture > 0) currentAngleDegrees = 0.0f; // Tap, Doubletap, Hold and Grab
 
-        float currentAngleRadians = ((currentAngleDegrees + 90.0f)*PI/180); // Convert the current angle to Radians
+        const float currentAngleRadians = ((currentAngleDegrees + 90.0f)*PI/180); // Convert the current angle to Radians
         // Calculate the final vector for display
         finalVector = Vector2{ (angleLength*sinf(currentAngleRadians)) + protractorPosition.x,
             (angleLength*cosf(currentAngleRadians)) + protractorPosition.y };
@@ -220,9 +220,9 @@ int main()
 
             // Draw protractor
             DrawText("Angle", static_cast<int>(protractorPosition.x) + 55, static_cast<int>(protractorPosition.y) + 76, 10, BLACK);
-            std::string angleString = TextFormat("%f", currentAngleDegrees);
+            const std::string angleString = TextFormat("%f", currentAngleDegrees);
             const int angleStringDot = TextFindIndex(angleString, ".");
-            std::string angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
+            const std::string angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
             DrawText( angleStringTrim, static_cast<int>(protractorPosition.x) + 55, static_cast<int>(protractorPosition.y) + 92, 20, gestureColor);
             DrawCircleV(protractorPosition, 80.0f, WHITE);
             DrawLineEx(Vector2{ protractorPosition.x - 90, protractorPosition.y }, Vector2{ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);
@@ -275,7 +275,7 @@ int main()
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Get text string for gesture value
-static char const *GetGestureName(int gesture)
+static const char *GetGestureName(int gesture)
 {
     switch (gesture)
     {

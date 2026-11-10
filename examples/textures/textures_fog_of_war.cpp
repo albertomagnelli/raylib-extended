@@ -39,8 +39,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    int screenWidth = 800;
-    int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - fog of war");
 
@@ -66,7 +66,7 @@ int main()
     // Render texture to render fog of war
     // NOTE: To get an automatic smooth-fog effect we use a render texture to render fog
     // at a smaller size (one pixel per tile) and scale it on drawing with bilinear filtering
-    RenderTexture2D fogOfWar = LoadRenderTexture(map.tilesX, map.tilesY);
+    const RenderTexture2D fogOfWar = LoadRenderTexture(map.tilesX, map.tilesY);
     SetTextureFilter(fogOfWar.texture, TEXTURE_FILTER_BILINEAR);
     SetTextureWrap(fogOfWar.texture, TEXTURE_WRAP_CLAMP);
 

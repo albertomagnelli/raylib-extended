@@ -27,8 +27,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rounded rectangle drawing");
 
@@ -50,7 +50,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        Rectangle rec = { (static_cast<float>(GetScreenWidth()) - width - 250)/2, (GetScreenHeight() - height)/2.0f, width, height };
+        const Rectangle rec = { (static_cast<float>(GetScreenWidth()) - width - 250)/2, (GetScreenHeight() - height)/2.0f, width, height };
         //----------------------------------------------------------------------------------
 
         // Draw

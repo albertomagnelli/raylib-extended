@@ -1225,7 +1225,7 @@ void rlPopMatrix(void)
 {
     if (RLGL.State.stackCounter > 0)
     {
-        Matrix mat = RLGL.State.stack[RLGL.State.stackCounter - 1];
+        const Matrix mat = RLGL.State.stack[RLGL.State.stackCounter - 1];
         *RLGL.State.currentMatrix = mat;
         RLGL.State.stackCounter--;
     }
@@ -1264,19 +1264,19 @@ void rlRotatef(float angle, float x, float y, float z)
     Matrix matRotation = rlMatrixIdentity();
 
     // Axis vector (x, y, z) normalization
-    float lengthSquared = x*x + y*y + z*z;
+    const float lengthSquared = x*x + y*y + z*z;
     if ((lengthSquared != 1.0f) && (lengthSquared != 0.0f))
     {
-        float inverseLength = 1.0f/sqrtf(lengthSquared);
+        const float inverseLength = 1.0f/sqrtf(lengthSquared);
         x *= inverseLength;
         y *= inverseLength;
         z *= inverseLength;
     }
 
     // Rotation matrix generation
-    float sinres = sinf(DEG2RAD*angle);
-    float cosres = cosf(DEG2RAD*angle);
-    float t = 1.0f - cosres;
+    const float sinres = sinf(DEG2RAD*angle);
+    const float cosres = cosf(DEG2RAD*angle);
+    const float t = 1.0f - cosres;
 
     matRotation[0][0] = x*x*t + cosres;
     matRotation[0][1] = y*x*t + z*sinres;
@@ -1334,9 +1334,9 @@ void rlFrustum(float left, float right, float bottom, float top, float znear, fl
 {
     Matrix matFrustum{};
 
-    float rl = right - left;
-    float tb = top - bottom;
-    float fn = zfar - znear;
+    const float rl = right - left;
+    const float tb = top - bottom;
+    const float fn = zfar - znear;
 
     matFrustum[0][0] = (znear*2.0f)/rl;
     matFrustum[0][1] = 0.0f;
@@ -1368,9 +1368,9 @@ void rlOrtho(float left, float right, float bottom, float top, float znear, floa
     // response to it is platform/compiler dependent
     Matrix matOrtho{};
 
-    float rl = right - left;
-    float tb = top - bottom;
-    float fn = zfar - znear;
+    const float rl = right - left;
+    const float tb = top - bottom;
+    const float fn = zfar - znear;
 
     matOrtho[0][0] = 2.0f/rl;
     matOrtho[0][1] = 0.0f;
@@ -2019,7 +2019,7 @@ void rlSetPointSize(float size)
 // Get the point drawing size
 float rlGetPointSize(void)
 {
-    float size = 1;
+    float size = 1.0f; // NOLINT(misc-const-correctness): written in the OpenGL 1.1 branch
 #if defined(GRAPHICS_API_OPENGL_11)
     glGetFloatv(GL_POINT_SIZE, &size);
 #endif
@@ -2073,10 +2073,10 @@ bool rlIsStereoRenderEnabled(void)
 void rlClearColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     // Color values clamp to 0.0f(0) and 1.0f(255)
-    float cr = static_cast<float>(r)/255;
-    float cg = static_cast<float>(g)/255;
-    float cb = static_cast<float>(b)/255;
-    float ca = static_cast<float>(a)/255;
+    const float cr = static_cast<float>(r)/255;
+    const float cg = static_cast<float>(g)/255;
+    const float cb = static_cast<float>(b)/255;
+    const float ca = static_cast<float>(a)/255;
 
     glClearColor(cr, cg, cb, ca);
 }
@@ -2231,7 +2231,7 @@ static void GLAPIENTRY rlDebugMessageCallback(GLenum source, GLenum type, GLuint
         default: break;
     }
 
-    const char *msgSeverity = "DEFAULT";
+    constexpr const char *msgSeverity = "DEFAULT";
     switch (severity)
     {
         case GL_DEBUG_SEVERITY_LOW: msgSeverity = "LOW"; break;
@@ -3014,8 +3014,8 @@ void rlDrawRenderBatch(rlRenderBatch *batch)
 
     // Draw batch vertex buffers (considering VR stereo if required)
     //------------------------------------------------------------------------------------------------------------
-    Matrix matProjection = RLGL.State.projection;
-    Matrix matModelView = RLGL.State.modelview;
+    const Matrix matProjection = RLGL.State.projection;
+    const Matrix matModelView = RLGL.State.modelview;
 
     int eyeCount = 1;
     if (RLGL.State.stereoRender) eyeCount = 2;
@@ -3040,7 +3040,7 @@ void rlDrawRenderBatch(rlRenderBatch *batch)
             glUseProgram(RLGL.State.currentShaderId);
 
             // Create modelview-projection matrix and upload to shader
-            Matrix matMVP = rlMatrixMultiply(RLGL.State.modelview, RLGL.State.projection);
+            const Matrix matMVP = rlMatrixMultiply(RLGL.State.modelview, RLGL.State.projection);
             glUniformMatrix4fv(RLGL.State.currentShaderLocs[RL_SHADER_LOC_MATRIX_MVP], 1, false, rlMatrixToFloat(matMVP));
 
             if (RLGL.State.currentShaderLocs[RL_SHADER_LOC_MATRIX_PROJECTION] != -1)
@@ -3216,8 +3216,8 @@ bool rlCheckRenderBatchLimit(int vCount)
         overflow = true;
 
         // Store current primitive drawing mode and texture id
-        int currentMode = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].mode;
-        int currentTexture = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].textureId;
+        const int currentMode = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].mode;
+        const int currentTexture = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].textureId;
 
         rlDrawRenderBatch(RLGL.currentBatch);    // NOTE: Stereo rendering is checked inside
 
@@ -3299,7 +3299,7 @@ unsigned int rlLoadTexture(const void *data, int width, int height, int format, 
     // Load the different mipmap levels
     for (int i = 0; i < mipmapCount; i++)
     {
-        unsigned int mipSize = rlGetPixelDataSize(mipWidth, mipHeight, format);
+        const unsigned int mipSize = rlGetPixelDataSize(mipWidth, mipHeight, format);
 
         unsigned int glInternalFormat, glFormat, glType;
         rlGetGlTextureFormats(format, &glInternalFormat, &glFormat, &glType);
@@ -3416,7 +3416,7 @@ unsigned int rlLoadTextureDepth(int width, int height, bool useRenderBuffer)
 
     // NOTE: Letting the implementation to choose the best bit-depth
     // Possible formats: GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24, GL_DEPTH_COMPONENT32 and GL_DEPTH_COMPONENT32F
-    unsigned int glInternalFormat = GL_DEPTH_COMPONENT;
+    unsigned int glInternalFormat = GL_DEPTH_COMPONENT; // NOLINT(misc-const-correctness): reassigned in the ES2/ES3 branches
 
 #if defined(GRAPHICS_API_OPENGL_ES2)
     // WARNING: WebGL platform requires unsized internal format definition (GL_DEPTH_COMPONENT)
@@ -3503,8 +3503,8 @@ unsigned int rlLoadTextureCubemap(const void *data, int size, int format, int mi
         // Load cubemap faces/mipmaps
         for (int i = 0; i < 6*mipmapCount; i++)
         {
-            int mipmapLevel = i/6;
-            int face = i%6;
+            const int mipmapLevel = i/6;
+            const int face = i%6;
 
             if (data == nullptr)
             {
@@ -3725,7 +3725,7 @@ void *rlReadTexturePixels(unsigned int id, int width, int height, int format)
 
     unsigned int glInternalFormat, glFormat, glType;
     rlGetGlTextureFormats(format, &glInternalFormat, &glFormat, &glType);
-    unsigned int size = rlGetPixelDataSize(width, height, format);
+    const unsigned int size = rlGetPixelDataSize(width, height, format);
 
     if ((glInternalFormat != 0) && (format < RL_PIXELFORMAT_COMPRESSED_DXT1_RGB))
     {
@@ -3811,12 +3811,12 @@ unsigned char *rlReadScreenPixels(int width, int height)
     {
         for (int x = 0; x < (width*4); x += 4)
         {
-            unsigned int s = ((height - 1) - y)*width*4 + x;
-            unsigned int e = y*width*4 + x;
+            const unsigned int s = ((height - 1) - y)*width*4 + x;
+            const unsigned int e = y*width*4 + x;
 
-            unsigned char r = imgData[s];
-            unsigned char g = imgData[s+1];
-            unsigned char b = imgData[s+2];
+            const unsigned char r = imgData[s];
+            const unsigned char g = imgData[s+1];
+            const unsigned char b = imgData[s+2];
 
             imgData[s] = imgData[e];
             imgData[s+1] = imgData[e+1];
@@ -3897,7 +3897,7 @@ bool rlFramebufferComplete(unsigned int id)
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2) || defined(GRAPHICS_API_OPENGL_SOFTWARE))
     glBindFramebuffer(GL_FRAMEBUFFER, id);
 
-    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {
@@ -3936,7 +3936,7 @@ void rlUnloadFramebuffer(unsigned int id)
     int depthId = 0;
     glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &depthId);
 
-    unsigned int depthIdU = static_cast<unsigned int>(depthId);
+    const unsigned int depthIdU = static_cast<unsigned int>(depthId);
     if (depthType == GL_RENDERBUFFER) glDeleteRenderbuffers(1, &depthIdU);
     else if (depthType == GL_TEXTURE) glDeleteTextures(1, &depthIdU);
 
@@ -4155,7 +4155,7 @@ void rlSetVertexAttribute(unsigned int index, int compSize, int type, bool norma
     //  - GL_HALF_FLOAT, GL_FLOAT, GL_DOUBLE, GL_FIXED,
     //  - GL_INT_2_10_10_10_REV, GL_UNSIGNED_INT_2_10_10_10_REV, GL_UNSIGNED_INT_10F_11F_11F_REV
 
-    size_t offsetNative = offset;
+    const size_t offsetNative = offset;
     glVertexAttribPointer(index, compSize, type, normalized, stride, reinterpret_cast<void *>(offsetNative));
 #endif
 }
@@ -5268,9 +5268,9 @@ static int rlGetPixelDataSize(int width, int height, int format)
         case RL_PIXELFORMAT_COMPRESSED_PVRT_RGB:
         case RL_PIXELFORMAT_COMPRESSED_PVRT_RGBA: // 8 bytes per each 4x4 block
         {
-            int blockWidth = (width + 3)/4;
-            int blockHeight = (height + 3)/4;
-            unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*8;
+            const int blockWidth = (width + 3)/4;
+            const int blockHeight = (height + 3)/4;
+            const unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*8;
             if (dataSizeBytes < INT_MAX) dataSize = static_cast<int>(dataSizeBytes);
 
         } break;
@@ -5279,17 +5279,17 @@ static int rlGetPixelDataSize(int width, int height, int format)
         case RL_PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA:
         case RL_PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA: // 16 bytes per each 4x4 block
         {
-            int blockWidth = (width + 3)/4;
-            int blockHeight = (height + 3)/4;
-            unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*16;
+            const int blockWidth = (width + 3)/4;
+            const int blockHeight = (height + 3)/4;
+            const unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*16;
             if (dataSizeBytes < INT_MAX) dataSize = static_cast<int>(dataSizeBytes);
 
         } break;
         case RL_PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA: // 4 bytes per each 4x4 block
         {
-            int blockWidth = (width + 3)/4;
-            int blockHeight = (height + 3)/4;
-            unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*4;
+            const int blockWidth = (width + 3)/4;
+            const int blockHeight = (height + 3)/4;
+            const unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*4;
             if (dataSizeBytes < INT_MAX) dataSize = static_cast<int>(dataSizeBytes);
 
         } break;
@@ -5300,7 +5300,7 @@ static int rlGetPixelDataSize(int width, int height, int format)
     if ((format >= RL_PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) &&
         (format <= RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16A16))
     {
-        unsigned long long dataSizeBytes = (static_cast<unsigned long long>(width)*height*bpp) >> 3;  // Get size in bytes (dividing by 8)
+        const unsigned long long dataSizeBytes = (static_cast<unsigned long long>(width)*height*bpp) >> 3;  // Get size in bytes (dividing by 8)
         if (dataSizeBytes < INT_MAX) dataSize = static_cast<int>(dataSizeBytes);
         else TRACELOG(LOG_WARNING, "Requested image size is larger than 2GB, it can not be allocated");
     }
@@ -5405,26 +5405,26 @@ static Matrix rlMatrixInvert(Matrix mat)
     Matrix result{};
 
     // Cache the matrix values (speed optimization)
-    float a00 = mat[0][0], a01 = mat[0][1], a02 = mat[0][2], a03 = mat[0][3];
-    float a10 = mat[1][0], a11 = mat[1][1], a12 = mat[1][2], a13 = mat[1][3];
-    float a20 = mat[2][0], a21 = mat[2][1], a22 = mat[2][2], a23 = mat[2][3];
-    float a30 = mat[3][0], a31 = mat[3][1], a32 = mat[3][2], a33 = mat[3][3];
+    const float a00 = mat[0][0], a01 = mat[0][1], a02 = mat[0][2], a03 = mat[0][3];
+    const float a10 = mat[1][0], a11 = mat[1][1], a12 = mat[1][2], a13 = mat[1][3];
+    const float a20 = mat[2][0], a21 = mat[2][1], a22 = mat[2][2], a23 = mat[2][3];
+    const float a30 = mat[3][0], a31 = mat[3][1], a32 = mat[3][2], a33 = mat[3][3];
 
-    float b00 = a00*a11 - a01*a10;
-    float b01 = a00*a12 - a02*a10;
-    float b02 = a00*a13 - a03*a10;
-    float b03 = a01*a12 - a02*a11;
-    float b04 = a01*a13 - a03*a11;
-    float b05 = a02*a13 - a03*a12;
-    float b06 = a20*a31 - a21*a30;
-    float b07 = a20*a32 - a22*a30;
-    float b08 = a20*a33 - a23*a30;
-    float b09 = a21*a32 - a22*a31;
-    float b10 = a21*a33 - a23*a31;
-    float b11 = a22*a33 - a23*a32;
+    const float b00 = a00*a11 - a01*a10;
+    const float b01 = a00*a12 - a02*a10;
+    const float b02 = a00*a13 - a03*a10;
+    const float b03 = a01*a12 - a02*a11;
+    const float b04 = a01*a13 - a03*a11;
+    const float b05 = a02*a13 - a03*a12;
+    const float b06 = a20*a31 - a21*a30;
+    const float b07 = a20*a32 - a22*a30;
+    const float b08 = a20*a33 - a23*a30;
+    const float b09 = a21*a32 - a22*a31;
+    const float b10 = a21*a33 - a23*a31;
+    const float b11 = a22*a33 - a23*a32;
 
     // Calculate the invert determinant (inlined to avoid double-caching)
-    float invDet = 1.0f/(b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
+    const float invDet = 1.0f/(b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
 
     result[0][0] = (a11*b11 - a12*b10 + a13*b09)*invDet;
     result[0][1] = (-a01*b11 + a02*b10 - a03*b09)*invDet;

@@ -55,8 +55,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // We have multiple options to implement an Undo/Redo system
     // Probably the most professional one is using the Command pattern to
@@ -73,7 +73,7 @@ int main()
     int firstUndoIndex = 0;
     int lastUndoIndex = 0;
     int undoFrameCounter = 0;
-    Vector2 undoInfoPos = { 110, 400 };
+    const Vector2 undoInfoPos = { 110, 400 };
 
     // Init current player state and undo/redo recorded states array
     PlayerState player = {};
@@ -86,7 +86,7 @@ int main()
     for (int i = 0; i < MAX_UNDO_STATES; i++) memcpy(&states[i], &player, sizeof(PlayerState));
 
     // Grid variables
-    Vector2 gridPosition = { 40, 60 };
+    const Vector2 gridPosition = { 40, 60 };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

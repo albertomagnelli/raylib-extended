@@ -35,8 +35,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading");
 
@@ -52,7 +52,7 @@ int main()
     Texture2D texture = LoadTexture("resources/models/obj/castle_diffuse.png"); // Load model texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set map diffuse texture
 
-    Vector3 position = { 0.0f, 0.0f, 0.0f };                    // Set model position
+    const Vector3 position = { 0.0f, 0.0f, 0.0f };                    // Set model position
 
     BoundingBox bounds = GetMeshBoundingBox(model.meshes[0]);   // Set model bounds
 

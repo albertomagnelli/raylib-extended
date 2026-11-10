@@ -28,8 +28,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - basic voxel");
 
@@ -44,8 +44,8 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;              // Camera projection type
 
     // Create a cube model
-    Mesh cubeMesh = GenMeshCube(1.0f, 1.0f, 1.0f);      // Create a unit cube mesh
-    Model cubeModel = LoadModelFromMesh(cubeMesh);       // Convert mesh to a model
+    const Mesh cubeMesh = GenMeshCube(1.0f, 1.0f, 1.0f);      // Create a unit cube mesh
+    const Model cubeModel = LoadModelFromMesh(cubeMesh);       // Convert mesh to a model
     cubeModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = BEIGE;
 
     // Initialize voxel world - fill with voxels
@@ -76,8 +76,8 @@ int main()
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
             // Cast a ray from the screen center (where crosshair would be)
-            Vector2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
-            Ray ray = GetScreenToWorldRay(screenCenter, camera);
+            const Vector2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+            const Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
             // Check ray collision with all voxels
             float closestDistance = 99999.0f;
@@ -92,14 +92,14 @@ int main()
                         if (!voxels[x][y][z]) continue; // Skip empty voxels
 
                         // Build a bounding box for this voxel
-                        Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
-                        BoundingBox box = {
+                        const Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                        const BoundingBox box = {
                             Vector3{ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
                             Vector3{ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
                         };
 
                         // Check ray-box collision
-                        RayCollision collision = GetRayCollisionBox(ray, box);
+                        const RayCollision collision = GetRayCollisionBox(ray, box);
                         if (collision.hit && (collision.distance < closestDistance))
                         {
                             closestDistance = collision.distance;
@@ -139,7 +139,7 @@ int main()
                         {
                             if (!voxels[x][y][z]) continue;
 
-                            Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                            const Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
                             DrawModel(cubeModel, position, 1.0f, BEIGE);
                             DrawCubeWires(position, 1.0f, 1.0f, 1.0f, BLACK);
                         }

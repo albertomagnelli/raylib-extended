@@ -160,8 +160,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [text] example - unicode emojis");
@@ -171,7 +171,7 @@ int main()
     // fontEmoji is the emojis and fontDefault is used for everything else
     Font fontDefault = LoadFont("resources/dejavu.fnt"); // Requires "resources/dejavu.png"
     Font fontAsian = LoadFont("resources/noto_cjk.fnt"); // Requires "resources/noto_cjk.png"
-    Font fontEmoji = LoadFont("resources/symbola.fnt"); // Requires "resources/symbola.png"
+    const Font fontEmoji = LoadFont("resources/symbola.fnt"); // Requires "resources/symbola.png"
 
     Vector2 hoveredPos = { 0.0f, 0.0f };
     Vector2 selectedPos = { 0.0f, 0.0f };
@@ -197,7 +197,7 @@ int main()
             selectedPos = hoveredPos;
         }
 
-        Vector2 mouse = GetMousePosition();
+        const Vector2 mouse = GetMousePosition();
         Vector2 position = { 28.8f, 10.0f };
         hovered = -1;
         //----------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ int main()
             for (int i = 0; i < SIZEOF(emoji); i++)
             {
                 const char *txt = &emojiCodepoints[emoji[i].index];
-                Rectangle emojiRect = { position.x, position.y, static_cast<float>(fontEmoji.baseSize), static_cast<float>(fontEmoji.baseSize) };
+                const Rectangle emojiRect = { position.x, position.y, static_cast<float>(fontEmoji.baseSize), static_cast<float>(fontEmoji.baseSize) };
 
                 if (!CheckCollisionPointRec(mouse, emojiRect))
                 {
@@ -265,7 +265,7 @@ int main()
                     b.y = a.y - 10;
 
                     // Swap values so we can actually render the triangle :(
-                    Vector2 tmp = a;
+                    const Vector2 tmp = a;
                     a = b;
                     b = tmp;
                 }
@@ -277,13 +277,13 @@ int main()
                 DrawTriangle(a, b, c, emoji[selected].color);
 
                 // Draw the main text message
-                Rectangle textRect = { msgRect.x + static_cast<float>(horizontalPadding)/2, msgRect.y + static_cast<float>(verticalPadding)/2, msgRect.width - horizontalPadding, msgRect.height };
+                const Rectangle textRect = { msgRect.x + static_cast<float>(horizontalPadding)/2, msgRect.y + static_cast<float>(verticalPadding)/2, msgRect.width - horizontalPadding, msgRect.height };
                 DrawTextBoxed(*font, messages[message].text, textRect, static_cast<float>(font->baseSize), 1.0f, true, WHITE);
 
                 // Draw the info text below the main message
-                int size = static_cast<int>(strlen(messages[message].text));
-                int length = GetCodepointCount(messages[message].text);
-                std::string info = TextFormat("%s %u characters %i bytes", messages[message].language, length, size);
+                const int size = static_cast<int>(strlen(messages[message].text));
+                const int length = GetCodepointCount(messages[message].text);
+                const std::string info = TextFormat("%s %u characters %i bytes", messages[message].language, length, size);
                 sz = MeasureTextEx(GetFontDefault(), info, 10, 1.0f);
 
                 DrawText(info, static_cast<int>(textRect.x + textRect.width - sz.x), static_cast<int>(msgRect.y + msgRect.height - sz.y - 2), 10, RAYWHITE);
@@ -314,7 +314,7 @@ int main()
 static void RandomizeEmoji(void)
 {
     hovered = selected = -1;
-    int start = GetRandomValue(45, 360);
+    const int start = GetRandomValue(45, 360);
 
     for (int i = 0; i < SIZEOF(emoji); i++)
     {
@@ -342,12 +342,12 @@ static void DrawTextBoxed(Font font, const char *text, Rectangle rec, float font
 // Draw text using font inside rectangle limits with support for text selection
 static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint, int selectStart, int selectLength, Color selectTint, Color selectBackTint)
 {
-    int length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
+    const int length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
 
     float textOffsetY = 0.0f;       // Offset between lines (on line break '\n')
     float textOffsetX = 0.0f;       // Offset X to next character to draw
 
-    float scaleFactor = fontSize/static_cast<float>(font.baseSize);     // Character rectangle scaling factor
+    const float scaleFactor = fontSize/static_cast<float>(font.baseSize);     // Character rectangle scaling factor
 
     // Word/character wrapping mechanism variables
     enum { MEASURE_STATE = 0, DRAW_STATE = 1 };
@@ -361,8 +361,8 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
     {
         // Get next codepoint from byte string and glyph index in font
         int codepointByteCount = 0;
-        int codepoint = GetCodepoint(&text[i], &codepointByteCount);
-        int index = GetGlyphIndex(font, codepoint);
+        const int codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        const int index = GetGlyphIndex(font, codepoint);
 
         // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
         // but we need to draw all of the bad bytes using the '?' symbol moving one byte
@@ -410,7 +410,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 glyphWidth = 0;
 
                 // Save character position when we switch states
-                int tmp = lastk;
+                const int tmp = lastk;
                 lastk = k - 1;
                 k = tmp;
             }

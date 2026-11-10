@@ -22,8 +22,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - heightmap rendering");
 
@@ -35,14 +35,14 @@ int main()
     camera.fovy = 45.0f;                                    // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
-    Image image = LoadImage("resources/heightmap.png");     // Load heightmap image (RAM)
-    Texture2D texture = LoadTextureFromImage(image);        // Convert image to texture (VRAM)
+    const Image image = LoadImage("resources/heightmap.png");     // Load heightmap image (RAM)
+    const Texture2D texture = LoadTextureFromImage(image);        // Convert image to texture (VRAM)
 
-    Mesh mesh = GenMeshHeightmap(image, Vector3{ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
-    Model model = LoadModelFromMesh(mesh);                  // Load model from generated mesh
+    const Mesh mesh = GenMeshHeightmap(image, Vector3{ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
+    const Model model = LoadModelFromMesh(mesh);                  // Load model from generated mesh
 
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Set map diffuse texture
-    Vector3 mapPosition = { -8.0f, 0.0f, -8.0f };           // Define model position
+    const Vector3 mapPosition = { -8.0f, 0.0f, -8.0f };           // Define model position
 
     UnloadImage(image);             // Unload heightmap image from RAM, already uploaded to VRAM
 

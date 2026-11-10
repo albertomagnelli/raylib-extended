@@ -22,15 +22,15 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - sound loading");
 
     InitAudioDevice();      // Initialize audio device
 
-    Sound fxWav = LoadSound("resources/sound.wav");         // Load WAV audio file
-    Sound fxOgg = LoadSound("resources/target.ogg");        // Load OGG audio file
+    const Sound fxWav = LoadSound("resources/sound.wav");         // Load WAV audio file
+    const Sound fxOgg = LoadSound("resources/target.ogg");        // Load OGG audio file
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

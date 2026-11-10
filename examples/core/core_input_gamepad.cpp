@@ -34,23 +34,23 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Set MSAA 4X hint before windows creation
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gamepad");
 
-    Texture2D texPs3Pad = LoadTexture("resources/ps3.png");
-    Texture2D texXboxPad = LoadTexture("resources/xbox.png");
+    const Texture2D texPs3Pad = LoadTexture("resources/ps3.png");
+    const Texture2D texXboxPad = LoadTexture("resources/xbox.png");
 
     // Set axis deadzones
-    const float leftStickDeadzoneX = 0.1f;
-    const float leftStickDeadzoneY = 0.1f;
-    const float rightStickDeadzoneX = 0.1f;
-    const float rightStickDeadzoneY = 0.1f;
-    const float leftTriggerDeadzone = -0.9f;
-    const float rightTriggerDeadzone = -0.9f;
+    constexpr float leftStickDeadzoneX = 0.1f;
+    constexpr float leftStickDeadzoneY = 0.1f;
+    constexpr float rightStickDeadzoneX = 0.1f;
+    constexpr float rightStickDeadzoneY = 0.1f;
+    constexpr float leftTriggerDeadzone = -0.9f;
+    constexpr float rightTriggerDeadzone = -0.9f;
 
     Rectangle vibrateButton = {};
 
@@ -66,7 +66,7 @@ int main()
         //----------------------------------------------------------------------------------
         if (IsKeyPressed(KEY_LEFT) && gamepad > 0) gamepad--;
         if (IsKeyPressed(KEY_RIGHT)) gamepad++;
-        Vector2 mousePosition = GetMousePosition();
+        const Vector2 mousePosition = GetMousePosition();
 
         vibrateButton = Rectangle{ 10, 70.0f + 20*GetGamepadAxisCount(gamepad) + 20, 75, 24 };
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, vibrateButton)) SetGamepadVibration(gamepad, 1.0, 1.0, 1.0);

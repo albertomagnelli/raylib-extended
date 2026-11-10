@@ -308,7 +308,7 @@ static PlatformData platform = {};   // Platform specific
     #undef KEY_KP_EQUAL
 #endif
 
-static const unsigned short RGFW_keyConvertTable[] = {
+static constexpr unsigned short RGFW_keyConvertTable[] = {
     [RGFW_keyNULL] = KEY_NULL,
     [RGFW_keyApostrophe] = KEY_APOSTROPHE,
     [RGFW_keyComma] = KEY_COMMA,

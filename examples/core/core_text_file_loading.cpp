@@ -28,8 +28,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - text file loading");
 
@@ -42,17 +42,17 @@ int main()
     };
 
     // Loading text file from resources/text_file.txt
-    const char *fileName = "resources/text_file.txt";
-    std::string text = LoadFileText(fileName);
+    constexpr const char *fileName = "resources/text_file.txt";
+    const std::string text = LoadFileText(fileName);
 
     // Loading all the text lines
     std::vector<std::string> lines = LoadTextLines(text);
-    int lineCount = static_cast<int>(lines.size());
+    const int lineCount = static_cast<int>(lines.size());
 
     // Stylistic choises
-    int fontSize = 20;
-    int textTop = 25 + fontSize; // Top of the screen from where the text is rendered
-    int wrapWidth = screenWidth - 20;
+    constexpr int fontSize = 20;
+    const int textTop = 25 + fontSize; // Top of the screen from where the text is rendered
+    const int wrapWidth = screenWidth - 20;
 
     // Wrap the lines as needed
     for (int i = 0; i < lineCount; i++)
@@ -65,7 +65,7 @@ int main()
         {
             if (lines[i][j] == ' ' || lines[i][j] == '\0')
             {
-                char before = lines[i][j];
+                const char before = lines[i][j];
                 // Making a C Style string by adding a '\0' at the required location so that we can use the MeasureText function
                 lines[i][j] = '\0';
 
@@ -91,7 +91,7 @@ int main()
 
     for (int i = 0; i < lineCount; i++)
     {
-        Vector2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
+        const Vector2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
         textHeight += static_cast<int>(size.y) + 10;
     }
 
@@ -109,7 +109,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float scroll = GetMouseWheelMove();
+        const float scroll = GetMouseWheelMove();
         cam.target.y -= scroll*fontSize*1.5f;   // Choosing an arbitrary speed for scroll
 
         if (cam.target.y < 0) cam.target.y = 0;  // Snapping to 0 if we go too far back

@@ -32,24 +32,24 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - math sine cosine");
 
     Vector2 sinePoints[WAVE_POINTS];
     Vector2 cosPoints[WAVE_POINTS];
-    Vector2 center = { (screenWidth/2.0f) - 30.0f, screenHeight/2.0f };
-    Rectangle start = { 20.0f, screenHeight - 120.f , 200.0f, 100.0f};
-    float radius = 130.0f;
+    const Vector2 center = { (screenWidth/2.0f) - 30.0f, screenHeight/2.0f };
+    const Rectangle start = { 20.0f, screenHeight - 120.f , 200.0f, 100.0f};
+    constexpr float radius = 130.0f;
     float angle = 0.0f;
     bool pause = false;
 
     for (int i = 0; i < WAVE_POINTS; i++)
     {
-        float t = i/static_cast<float>(WAVE_POINTS - 1);
-        float currentAngle = t*360.0f*DEG2RAD;
+        const float t = i/static_cast<float>(WAVE_POINTS - 1);
+        const float currentAngle = t*360.0f*DEG2RAD;
         sinePoints[i] = Vector2{ start.x + t*start.width, start.y + start.height/2.0f - sinf(currentAngle)*(start.height/2.0f) };
         cosPoints[i] = Vector2{ start.x + t*start.width, start.y + start.height/2.0f - cosf(currentAngle)*(start.height/2.0f) };
     }
@@ -62,22 +62,22 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float angleRad = angle*DEG2RAD;
-        float cosRad = cosf(angleRad);
-        float sinRad = sinf(angleRad);
+        const float angleRad = angle*DEG2RAD;
+        const float cosRad = cosf(angleRad);
+        const float sinRad = sinf(angleRad);
 
-        Vector2 point = { center.x + cosRad*radius, center.y - sinRad*radius };
-        Vector2 limitMin = { center.x - radius, center.y - radius };
-        Vector2 limitMax = { center.x + radius, center.y + radius };
+        const Vector2 point = { center.x + cosRad*radius, center.y - sinRad*radius };
+        const Vector2 limitMin = { center.x - radius, center.y - radius };
+        const Vector2 limitMax = { center.x + radius, center.y + radius };
 
-        float complementary = 90.0f - angle;
-        float supplementary = 180.0f - angle;
-        float explementary = 360.0f - angle;
+        const float complementary = 90.0f - angle;
+        const float supplementary = 180.0f - angle;
+        const float explementary = 360.0f - angle;
 
-        float tangent = Clamp(tanf(angleRad), -10.0f, 10.0f);
-        float cotangent = (fabsf(tangent) > 0.001f) ? Clamp(1.0f/tangent, -radius, radius) : 0.0f;
-        Vector2 tangentPoint = { center.x + radius, center.y - tangent*radius };
-        Vector2 cotangentPoint = { center.x + cotangent*radius, center.y - radius };
+        const float tangent = Clamp(tanf(angleRad), -10.0f, 10.0f);
+        const float cotangent = (fabsf(tangent) > 0.001f) ? Clamp(1.0f/tangent, -radius, radius) : 0.0f;
+        const Vector2 tangentPoint = { center.x + radius, center.y - tangent*radius };
+        const Vector2 cotangentPoint = { center.x + cotangent*radius, center.y - radius };
 
         angle = Wrap(angle + (!pause ? 1.0f : 0.0f), 0.0f, 360.0f);
         //----------------------------------------------------------------------------------

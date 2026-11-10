@@ -29,29 +29,29 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - screen buffer");
 
-    int imageWidth = screenWidth/SCALE_FACTOR;
-    int imageHeight = screenHeight/SCALE_FACTOR;
-    int flameWidth = screenWidth/SCALE_FACTOR;
+    const int imageWidth = screenWidth/SCALE_FACTOR;
+    const int imageHeight = screenHeight/SCALE_FACTOR;
+    const int flameWidth = screenWidth/SCALE_FACTOR;
 
     Color palette[MAX_COLORS] = {};
     unsigned char *indexBuffer = static_cast<unsigned char *>(RL_CALLOC(imageWidth*imageWidth, sizeof(unsigned char)));
     unsigned char *flameRootBuffer = static_cast<unsigned char *>(RL_CALLOC(flameWidth, sizeof(unsigned char)));
 
     Image screenImage = GenImageColor(imageWidth, imageHeight, BLACK);
-    Texture screenTexture = LoadTextureFromImage(screenImage);
+    const Texture screenTexture = LoadTextureFromImage(screenImage);
 
     // Generate flame color palette
     for (int i = 0; i < MAX_COLORS; i++)
     {
-        float t = static_cast<float>(i)/static_cast<float>(MAX_COLORS - 1);
-        float hue = t*t;
-        float saturation = t;
-        float value = t;
+        const float t = static_cast<float>(i)/static_cast<float>(MAX_COLORS - 1);
+        const float hue = t*t;
+        const float saturation = t;
+        const float value = t;
 
         palette[i] = ColorFromHSV(250.0f + 150.0f*hue, saturation, value);
     }
@@ -75,7 +75,7 @@ int main()
         // Transfer flameRoot to indexBuffer
         for (int x = 0; x < flameWidth; x++)
         {
-            int i = x + (imageHeight - 1)*imageWidth;
+            const int i = x + (imageHeight - 1)*imageWidth;
             indexBuffer[i] = flameRootBuffer[x];
         }
 
@@ -90,20 +90,20 @@ int main()
         {
             for (int x = 0; x < imageWidth; x++)
             {
-                unsigned int i = x + y*imageWidth;
+                const unsigned int i = x + y*imageWidth;
                 unsigned char colorIndex = indexBuffer[i];
 
                 if (colorIndex != 0)
                 {
                     // Move pixel a row above
                     indexBuffer[i] = 0;
-                    int moveX = GetRandomValue(0, 2) - 1;
-                    int newX = x + moveX;
+                    const int moveX = GetRandomValue(0, 2) - 1;
+                    const int newX = x + moveX;
 
                     if ((newX > 0) && (newX < imageWidth))
                     {
-                        unsigned int iabove = i - imageWidth + moveX;
-                        int decay = GetRandomValue(0, 3);
+                        const unsigned int iabove = i - imageWidth + moveX;
+                        const int decay = GetRandomValue(0, 3);
                         colorIndex -= (decay < colorIndex)? decay : colorIndex;
                         indexBuffer[iabove] = colorIndex;
                     }
@@ -116,9 +116,9 @@ int main()
         {
             for (int x = 0; x < imageWidth; x++)
             {
-                unsigned int i = x + y*imageWidth;
-                unsigned char colorIndex = indexBuffer[i];
-                Color col = palette[colorIndex];
+                const unsigned int i = x + y*imageWidth;
+                const unsigned char colorIndex = indexBuffer[i];
+                const Color col = palette[colorIndex];
 
                 ImageDrawPixel(&screenImage, x, y, col);
             }

@@ -117,8 +117,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings testbed");
 
@@ -240,7 +240,7 @@ int main()
 static float NoEase(float t, float b, float c, float d)
 {
     // Hack to avoid compiler warning (about unused variables)
-    float burn = t + b + c + d;
+    const float burn = t + b + c + d;
     d += burn;
 
     return b;

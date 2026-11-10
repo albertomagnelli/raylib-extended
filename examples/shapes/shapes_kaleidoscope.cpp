@@ -41,22 +41,22 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - kaleidoscope");
 
     // Line drawing properties
-    int symmetry = 6;
-    float angle = 360.0f/static_cast<float>(symmetry);
-    float thickness = 3.0f;
-    Rectangle resetButtonRec = { screenWidth - 55.0f, 5.0f, 50, 25 };
-    Rectangle backButtonRec = { screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };
-    Rectangle nextButtonRec = { screenWidth - 30.0f, screenHeight - 30.0f, 25, 25 };
+    constexpr int symmetry = 6;
+    const float angle = 360.0f/static_cast<float>(symmetry);
+    constexpr float thickness = 3.0f;
+    const Rectangle resetButtonRec = { screenWidth - 55.0f, 5.0f, 50, 25 };
+    const Rectangle backButtonRec = { screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };
+    const Rectangle nextButtonRec = { screenWidth - 30.0f, screenHeight - 30.0f, 25, 25 };
     Vector2 mousePos = {};
     Vector2 prevMousePos = {};
-    Vector2 scaleVector = { 1.0f, -1.0f };
-    Vector2 offset = { GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    const Vector2 scaleVector = { 1.0f, -1.0f };
+    const Vector2 offset = { GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
 
     Camera2D camera = {};
     camera.target = Vector2{};

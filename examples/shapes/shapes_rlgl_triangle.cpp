@@ -26,20 +26,20 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rlgl triangle");
 
     // Starting postions and rendered triangle positions
-    Vector2 startingPositions[3] = {{ 400.0f, 150.0f }, { 300.0f, 300.0f }, { 500.0f, 300.0f }};
+    const Vector2 startingPositions[3] = {{ 400.0f, 150.0f }, { 300.0f, 300.0f }, { 500.0f, 300.0f }};
     Vector2 trianglePositions[3] = { startingPositions[0], startingPositions[1], startingPositions[2] };
 
     // Currently selected vertex, -1 means none
     int triangleIndex = -1;
     bool linesMode = false;
-    float handleRadius = 8.0f;
+    constexpr float handleRadius = 8.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ int main()
         {
             Vector2 *position = &trianglePositions[triangleIndex];
 
-            Vector2 mouseDelta = GetMouseDelta();
+            const Vector2 mouseDelta = GetMouseDelta();
             position->x += mouseDelta.x;
             position->y += mouseDelta.y;
         }

@@ -32,8 +32,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - unicode ranges");
 
@@ -143,7 +143,7 @@ int main()
             //DrawTextEx(font, "देवनागरी: होला मुंडो!", Vector2{ 50, 350 }, 32, 1, DARKGRAY);     // Devanagari (glyphs not available in font)
 
             // Draw font texture scaled to screen
-            float atlasScale = 380.0f/font.texture.width;
+            const float atlasScale = 380.0f/font.texture.width;
             DrawRectangleRec(Rectangle{ 400.0f, 16.0f, font.texture.width* atlasScale, font.texture.height* atlasScale }, BLACK);
             DrawTexturePro(font.texture, Rectangle{ 0, 0, static_cast<float>(font.texture.width), static_cast<float>(font.texture.height) },
                 Rectangle{ 400.0f, 16.0f, font.texture.width*atlasScale, font.texture.height*atlasScale }, Vector2{ 0, 0 }, 0.0f, WHITE);
@@ -182,13 +182,13 @@ int main()
 // Add codepoint range to existing font
 static void AddCodepointRange(Font *font, const char *fontPath, int start, int stop)
 {
-    int rangeSize = stop - start + 1;
-    int currentRangeSize = font->glyphCount;
+    const int rangeSize = stop - start + 1;
+    const int currentRangeSize = font->glyphCount;
 
     // TODO: Load glyphs from provided vector font (if available),
     // add them to existing font, regenerating font image and texture
 
-    int updatedCodepointCount = currentRangeSize + rangeSize;
+    const int updatedCodepointCount = currentRangeSize + rangeSize;
     int *updatedCodepoints = static_cast<int *>(RL_CALLOC(updatedCodepointCount, sizeof(int)));
 
     // Get current codepoint list

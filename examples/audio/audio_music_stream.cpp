@@ -22,14 +22,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - music stream");
 
     InitAudioDevice();              // Initialize audio device
 
-    Music music = LoadMusicStream("resources/country.mp3");
+    const Music music = LoadMusicStream("resources/country.mp3");
 
     PlayMusicStream(music);
 

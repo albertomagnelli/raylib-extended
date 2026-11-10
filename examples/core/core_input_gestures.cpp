@@ -24,13 +24,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures");
 
     Vector2 touchPosition = { 0, 0 };
-    Rectangle touchArea = { 220, 10, screenWidth - 230.0f, screenHeight - 20.0f };
+    const Rectangle touchArea = { 220, 10, screenWidth - 230.0f, screenHeight - 20.0f };
 
     int gesturesCount = 0;
     std::string gestureStrings[MAX_GESTURE_STRINGS];

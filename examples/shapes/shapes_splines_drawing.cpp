@@ -47,8 +47,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - splines drawing");
@@ -97,7 +97,7 @@ int main()
         if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && (pointCount < MAX_SPLINE_POINTS))
         {
             points[pointCount] = GetMousePosition();
-            int i = pointCount - 1;
+            const int i = pointCount - 1;
             control[i].start = Vector2{ points[i].x + 50, points[i].y };
             control[i].end = Vector2{ points[i + 1].x - 50, points[i + 1].y };
             pointCount++;

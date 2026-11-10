@@ -36,8 +36,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blending");
 
@@ -50,8 +50,8 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
     // Load model
-    Model model = LoadModel("resources/models/gltf/robot.glb"); // Load character model
-    Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
+    const Model model = LoadModel("resources/models/gltf/robot.glb"); // Load character model
+    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
 
 #if SUPPORT_GPU_SKINNING
     // WARNING: SUPPORT_GPU_SKINNING is required to be enabled at raylib compile time (disabled by default)
@@ -87,7 +87,7 @@ int main()
     float animBlendFactor = 0.0f;       // Blend factor from anim0[frame0] --> anim1[frame1], [0.0f..1.0f]
                                         // NOTE: 0.0f results in full anim0[] and 1.0f in full anim1[]
 
-    float animBlendTime = 2.0f;         // Time to blend from one playing animation to another (in seconds)
+    constexpr float animBlendTime = 2.0f;         // Time to blend from one playing animation to another (in seconds)
     float animBlendTimeCounter = 0.0f;  // Time counter (delta time)
 
     bool animPause = false;             // Pause animation

@@ -24,16 +24,16 @@ int main()
 {
     // Initialization
     //---------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bouncing ball");
 
     Vector2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
     Vector2 ballSpeed = { 5.0f, 4.0f };
-    int ballRadius = 20;
-    float gravity = 0.2f;
+    constexpr int ballRadius = 20;
+    constexpr float gravity = 0.2f;
 
     bool useGravity = true;
     bool pause = 0;

@@ -35,8 +35,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
@@ -50,24 +50,24 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Model model = LoadModel("resources/models/barracks.obj");                   // Load OBJ model
-    Texture2D texture = LoadTexture("resources/models/barracks_diffuse.png");   // Load model texture (diffuse map)
+    const Model model = LoadModel("resources/models/barracks.obj");                   // Load OBJ model
+    const Texture2D texture = LoadTexture("resources/models/barracks_diffuse.png");   // Load model texture (diffuse map)
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;                     // Set model diffuse texture
 
-    Vector3 position = { 0.0f, 0.0f, 0.0f };                                    // Set model position
+    const Vector3 position = { 0.0f, 0.0f, 0.0f };                                    // Set model position
 
     // Load postprocessing shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/swirl.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/swirl.fs", GLSL_VERSION));
 
     // Get variable (uniform) location on the shader to connect with the program
     // NOTE: If uniform variable could not be found in the shader, function returns -1
-    int swirlCenterLoc = GetShaderLocation(shader, "center");
+    const int swirlCenterLoc = GetShaderLocation(shader, "center");
 
     float swirlCenter[2] = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
 
     // Create a RenderTexture2D to be used for render to texture
-    RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        Vector2 mousePosition = GetMousePosition();
+        const Vector2 mousePosition = GetMousePosition();
 
         swirlCenter[0] = mousePosition.x;
         swirlCenter[1] = screenHeight - mousePosition.y;

@@ -24,13 +24,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
+    constexpr int screenWidth = 800;
 
-    const int screenHeight = 450;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - vector angle");
 
-    Vector2 v0 = { screenWidth/2.0f, screenHeight/2.0f };
+    const Vector2 v0 = { screenWidth/2.0f, screenHeight/2.0f };
     Vector2 v1 = ((v0) + (Vector2{ 100.0f, 80.0f }));
     Vector2 v2 = {};             // Updated with mouse position
 
@@ -59,8 +59,8 @@ int main()
         if (angleMode == 0)
         {
             // Calculate angle between two vectors, considering a common origin (v0)
-            Vector2 v1Normal = glm::normalize(((v1) - (v0)));
-            Vector2 v2Normal = glm::normalize(((v2) - (v0)));
+            const Vector2 v1Normal = glm::normalize(((v1) - (v0)));
+            const Vector2 v2Normal = glm::normalize(((v2) - (v0)));
 
             angle = Vector2Angle(v1Normal, v2Normal)*RAD2DEG;
         }

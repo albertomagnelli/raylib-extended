@@ -130,7 +130,7 @@ void DrawPixelV(Vector2 position, Color color)
 {
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -182,14 +182,14 @@ void DrawLine(int startPosX, int startPosY, int endPosX, int endPosY, Color colo
 // Draw a line defining thickness
 void DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color)
 {
-    Vector2 delta = { endPos.x - startPos.x, endPos.y - startPos.y };
-    float length = sqrtf(delta.x*delta.x + delta.y*delta.y);
+    const Vector2 delta = { endPos.x - startPos.x, endPos.y - startPos.y };
+    const float length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
     if ((length > 0) && (thick > 0))
     {
-        float scale = thick/(2*length);
+        const float scale = thick/(2*length);
 
-        Vector2 radius = { -scale*delta.y, scale*delta.x };
+        const Vector2 radius = { -scale*delta.y, scale*delta.x };
         Vector2 strip[4] = {
             { startPos.x - radius.x, startPos.y - radius.y },
             { startPos.x + radius.x, startPos.y + radius.y },
@@ -242,9 +242,9 @@ void DrawLineBezier(Vector2 startPos, Vector2 endPos, float thick, Color color)
         current.y = EaseCubicInOut(static_cast<float>(i), startPos.y, endPos.y - startPos.y, static_cast<float>(SPLINE_SEGMENT_DIVISIONS));
         current.x = previous.x + (endPos.x - startPos.x)/static_cast<float>(SPLINE_SEGMENT_DIVISIONS);
 
-        float dy = current.y - previous.y;
-        float dx = current.x - previous.x;
-        float size = 0.5f*thick/sqrtf(dx*dx+dy*dy);
+        const float dy = current.y - previous.y;
+        const float dx = current.x - previous.x;
+        const float size = 0.5f*thick/sqrtf(dx*dx+dy*dy);
 
         if (i == 1)
         {
@@ -269,9 +269,9 @@ void DrawLineBezier(Vector2 startPos, Vector2 endPos, float thick, Color color)
 void DrawLineDashed(Vector2 startPos, Vector2 endPos, int dashSize, int spaceSize, Color color)
 {
     // Calculate the vector and length of the line
-    float dx = endPos.x - startPos.x;
-    float dy = endPos.y - startPos.y;
-    float lineLength = sqrtf(dx*dx + dy*dy);
+    const float dx = endPos.x - startPos.x;
+    const float dy = endPos.y - startPos.y;
+    const float lineLength = sqrtf(dx*dx + dy*dy);
 
     // If the line is too short for dashing or dash size is invalid, draw a solid thick line
     if ((lineLength < (dashSize + spaceSize)) || (dashSize <= 0))
@@ -281,9 +281,9 @@ void DrawLineDashed(Vector2 startPos, Vector2 endPos, int dashSize, int spaceSiz
     }
 
     // Calculate the normalized direction vector of the line
-    float invLineLength = 1.0f/lineLength;
-    float dirX = dx*invLineLength;
-    float dirY = dy*invLineLength;
+    const float invLineLength = 1.0f/lineLength;
+    const float dirX = dx*invLineLength;
+    const float dirY = dy*invLineLength;
 
     Vector2 currentPos = startPos;
     float distanceTraveled = 0;
@@ -297,7 +297,7 @@ void DrawLineDashed(Vector2 startPos, Vector2 endPos, int dashSize, int spaceSiz
             float dashEndDist = distanceTraveled + dashSize;
             if (dashEndDist > lineLength) dashEndDist = lineLength;
 
-            Vector2 dashEndPos = { startPos.x + dashEndDist*dirX, startPos.y + dashEndDist*dirY };
+            const Vector2 dashEndPos = { startPos.x + dashEndDist*dirX, startPos.y + dashEndDist*dirY };
 
             // Draw the dash segment
             rlVertex2f(currentPos.x, currentPos.y);
@@ -323,7 +323,7 @@ void DrawTriangleGradient(Vector2 v1, Vector2 v2, Vector2 v3, Color c1, Color c2
 {
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         rlNormal3f(0.0f, 0.0f, 1.0f);
@@ -397,29 +397,29 @@ void DrawTriangleLinesEx(Vector2 v1, Vector2 v2, Vector2 v3, float thick, Color 
              e1
     */
 
-    Vector2 e1 = { v2.x - v3.x, v2.y - v3.y };
-    Vector2 e2 = { v3.x - v1.x, v3.y - v1.y };
-    Vector2 e3 = { v1.x - v2.x, v1.y - v2.y };
+    const Vector2 e1 = { v2.x - v3.x, v2.y - v3.y };
+    const Vector2 e2 = { v3.x - v1.x, v3.y - v1.y };
+    const Vector2 e3 = { v1.x - v2.x, v1.y - v2.y };
 
-    float e1Length = sqrtf(e1.x*e1.x + e1.y*e1.y);
-    float e2Length = sqrtf(e2.x*e2.x + e2.y*e2.y);
-    float e3Length = sqrtf(e3.x*e3.x + e3.y*e3.y);
+    const float e1Length = sqrtf(e1.x*e1.x + e1.y*e1.y);
+    const float e2Length = sqrtf(e2.x*e2.x + e2.y*e2.y);
+    const float e3Length = sqrtf(e3.x*e3.x + e3.y*e3.y);
 
-    float perimeter = e1Length + e2Length + e3Length;
-    float semiperimeter = perimeter/2.0f;
+    const float perimeter = e1Length + e2Length + e3Length;
+    const float semiperimeter = perimeter/2.0f;
 
     // The incenter of a triangle is equidistant from each edge, which is useful for drawing a nice looking outline
-    Vector2 incenter = {
+    const Vector2 incenter = {
         (e1Length*v1.x + e2Length*v2.x + e3Length*v3.x)/perimeter,
         (e1Length*v1.y + e2Length*v2.y + e3Length*v3.y)/perimeter
     };
 
     // The inradius of a triangle is the radius of the biggest circle that can fit inside of said triangle
     // That circle is also centered on the incenter
-    float inradius = sqrtf(((semiperimeter - e1Length)*(semiperimeter - e2Length)*(semiperimeter - e3Length))/semiperimeter);
+    const float inradius = sqrtf(((semiperimeter - e1Length)*(semiperimeter - e2Length)*(semiperimeter - e3Length))/semiperimeter);
 
     // The triangle (v1, v2, v3) will be scaled by this to get (v4, v5, v6)
-    float scale = 1.0f - thick/inradius;
+    const float scale = 1.0f - thick/inradius;
 
     // Just a filled-in triangle
     if (scale <= 0.0f)
@@ -451,7 +451,7 @@ void DrawTriangleLinesEx(Vector2 v1, Vector2 v2, Vector2 v3, float thick, Color 
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -543,7 +543,7 @@ void DrawTriangleFan(const Vector2 *points, int pointCount, Color color)
     if (pointCount >= 3)
     {
         rlSetTexture(GetShapesTexture().id);
-        Rectangle shapeRect = GetShapesTextureRectangle();
+        const Rectangle shapeRect = GetShapesTextureRectangle();
 
         rlBegin(RL_QUADS);
             rlColor4ub(color.r, color.g, color.b, color.a);
@@ -625,8 +625,8 @@ void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color
     // Only calculate rotation if needed
     if (rotation == 0.0f)
     {
-        float x = rec.x - origin.x;
-        float y = rec.y - origin.y;
+        const float x = rec.x - origin.x;
+        const float y = rec.y - origin.y;
         topLeft = Vector2{ x, y };
         topRight = Vector2{ x + rec.width, y };
         bottomLeft = Vector2{ x, y + rec.height };
@@ -634,12 +634,12 @@ void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color
     }
     else
     {
-        float sinRotation = sinf(rotation*DEG2RAD);
-        float cosRotation = cosf(rotation*DEG2RAD);
-        float x = rec.x;
-        float y = rec.y;
-        float dx = -origin.x;
-        float dy = -origin.y;
+        const float sinRotation = sinf(rotation*DEG2RAD);
+        const float cosRotation = cosf(rotation*DEG2RAD);
+        const float x = rec.x;
+        const float y = rec.y;
+        const float dx = -origin.x;
+        const float dy = -origin.y;
 
         topLeft.x = x + dx*cosRotation - dy*sinRotation;
         topLeft.y = y + dx*sinRotation + dy*cosRotation;
@@ -656,7 +656,7 @@ void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -711,7 +711,7 @@ void DrawRectangleGradientH(int posX, int posY, int width, int height, Color lef
 void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, Color col4)
 {
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         rlNormal3f(0.0f, 0.0f, 1.0f);
@@ -744,8 +744,8 @@ void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, 
 void DrawRectangleLines(int posX, int posY, int width, int height, Color color)
 {
     Matrix mat = rlGetMatrixTransform();
-    float xOffset = 0.5f/mat[0][0];
-    float yOffset = 0.5f/mat[1][1];
+    const float xOffset = 0.5f/mat[0][0];
+    const float yOffset = 0.5f/mat[1][1];
 
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -810,10 +810,10 @@ void DrawRectangleLinesEx(Rectangle rec, float thick, Color color)
         //   BBBBBBBB
         //
 
-        Rectangle top = { rec.x, rec.y, rec.width, thick };
-        Rectangle bottom = { rec.x, rec.y - thick + rec.height, rec.width, thick };
-        Rectangle left = { rec.x, rec.y + thick, thick, rec.height - thick*2.0f };
-        Rectangle right = { rec.x - thick + rec.width, rec.y + thick, thick, rec.height - thick*2.0f };
+        const Rectangle top = { rec.x, rec.y, rec.width, thick };
+        const Rectangle bottom = { rec.x, rec.y - thick + rec.height, rec.width, thick };
+        const Rectangle left = { rec.x, rec.y + thick, thick, rec.height - thick*2.0f };
+        const Rectangle right = { rec.x - thick + rec.width, rec.y + thick, thick, rec.height - thick*2.0f };
 
         DrawRectangleRec(top, color);
         DrawRectangleRec(bottom, color);
@@ -839,10 +839,10 @@ void DrawRectangleLinesEx(Rectangle rec, float thick, Color color)
 
         thick *= -1.0f;
 
-        Rectangle top = { rec.x - thick, rec.y - thick, rec.width + thick*2.0f, thick };
-        Rectangle bottom = { rec.x - thick, rec.y + rec.height, rec.width + thick*2.0f, thick};
-        Rectangle left = { rec.x - thick, rec.y, thick, rec.height };
-        Rectangle right = { rec.x + rec.width, rec.y, thick, rec.height };
+        const Rectangle top = { rec.x - thick, rec.y - thick, rec.width + thick*2.0f, thick };
+        const Rectangle bottom = { rec.x - thick, rec.y + rec.height, rec.width + thick*2.0f, thick};
+        const Rectangle left = { rec.x - thick, rec.y, thick, rec.height };
+        const Rectangle right = { rec.x + rec.width, rec.y, thick, rec.height };
 
         DrawRectangleRec(top, color);
         DrawRectangleRec(bottom, color);
@@ -864,19 +864,19 @@ void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color co
     if (roundness >= 1.0f) roundness = 1.0f;
 
     // Calculate corner radius
-    float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
+    const float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
     if (radius <= 0.0f) return;
 
     // Calculate number of segments to use for the corners
     if (segments < 1)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
         segments = static_cast<int>(ceilf((2*PI/th)/4.0f));
         if (segments <= 0) segments = 4;
     }
 
-    float stepLength = 90.0f/static_cast<float>(segments);
+    const float stepLength = 90.0f/static_cast<float>(segments);
 
     /*
     Quick sketch to make sense of all of this,
@@ -907,7 +907,7 @@ void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color co
     float y2 = (rec.y + rec.height) - radius;
     float y3 = rec.y + rec.height;
 
-    Vector2 points[12] = {
+    const Vector2 points[12] = {
         { x0, y0 }, // P0
         { x1, y0 }, // P1
         { x2, y1 }, // P2
@@ -922,19 +922,19 @@ void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color co
         { x0, y2 }  // P11
     };
 
-    Vector2 centers[4] = { points[8], points[9], points[10], points[11] };
+    const Vector2 centers[4] = { points[8], points[9], points[10], points[11] };
     const float angles[4] = { 180.0f, 270.0f, 0.0f, 90.0f };
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         // Draw all the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right Corner, [7] Lower Left Corner
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            Vector2 center = centers[k];
+            const Vector2 center = centers[k];
 
             // NOTE: Every QUAD actually represents two segments
             for (int i = 0; i < segments/2; i++)
@@ -1109,19 +1109,19 @@ void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Col
     if (roundness >= 1.0f) roundness = 1.0f;
 
     // Calculate corner radius
-    float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
+    const float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
     if (radius <= 0.0f) return;
 
     // Calculate number of segments to use for the corners
     if (segments < 1)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
         segments = static_cast<int>(ceilf((2*PI/th)/4.0f));
         if (segments <= 0) segments = 4;
     }
 
-    float stepLength = 90.0f/static_cast<float>(segments);
+    const float stepLength = 90.0f/static_cast<float>(segments);
 
     /*
     Quick sketch to make sense of all of this,
@@ -1152,7 +1152,7 @@ void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Col
     float y2 = (rec.y + rec.height) - radius - 0.5f;
     float y3 = (rec.y + rec.height) - 0.5f;
 
-    Vector2 points[8] = {
+    const Vector2 points[8] = {
         { x0, y0 }, // P0
         { x1, y0 }, // P1
         { x2, y1 }, // P2
@@ -1163,7 +1163,7 @@ void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Col
         { x3, y1 }, // P7
     };
 
-    Vector2 centers[4] = {
+    const Vector2 centers[4] = {
         { x0, y1 }, // P8
         { x1, y1 }, // P9
         { x1, y2 }, // P10
@@ -1177,7 +1177,7 @@ void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Col
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            Vector2 center = centers[k];
+            const Vector2 center = centers[k];
 
             for (int i = 0; i < segments; i++)
             {
@@ -1216,7 +1216,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
     if (thick >= 0.0f)
     {
         // Calculate corner radius
-        float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
+        const float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
         if (radius <= 0.0f) return;
 
         outerRadius = radius;
@@ -1241,7 +1241,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
         if (segments < 1)
         {
             // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-            float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
+            const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
             segments = static_cast<int>(ceilf((2*PI/th)/4.0f));
             if (segments <= 0) segments = 4;
         }
@@ -1249,7 +1249,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
     else
     {
         // Calculate corner radius
-        float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
+        const float radius = (rec.width > rec.height)? (rec.height*roundness)/2 : (rec.width*roundness)/2;
         if (radius <= 0.0f) return; // Only possible if the rectangle has 0 width or height
 
         // Expand the rectangle
@@ -1266,13 +1266,13 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
         if (segments < 1)
         {
             // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-            float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/innerRadius, 2) - 1);
+            const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/innerRadius, 2) - 1);
             segments = static_cast<int>(ceilf((2*PI/th)/4.0f));
             if (segments <= 0) segments = 4;
         }
     }
 
-    float stepLength = 90.0f/static_cast<float>(segments);
+    const float stepLength = 90.0f/static_cast<float>(segments);
 
     /*
     Quick sketch to make sense of all of this,
@@ -1307,7 +1307,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
     float y4 = rec.y + roundedOutlineThick;
     float y5 = (rec.y + rec.height) - roundedOutlineThick;
 
-    Vector2 points[16] = {
+    const Vector2 points[16] = {
         { x0, y0 }, // P0
         { x1, y0 }, // P1
         { x2, y1 }, // P2
@@ -1326,7 +1326,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
         { x5, y1 }  // P15
     };
 
-    Vector2 centers[4] = {
+    const Vector2 centers[4] = {
         { x0, y1 }, // P16
         { x1, y1 }, // P17
         { x1, y2 }, // P18
@@ -1337,7 +1337,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -1345,7 +1345,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            Vector2 center = centers[k];
+            const Vector2 center = centers[k];
             for (int i = 0; i < segments; i++)
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
@@ -1481,17 +1481,17 @@ void DrawPoly(Vector2 center, int sides, float radius, float rotation, Color col
 {
     if (sides < 3) sides = 3;
     float centralAngle = rotation*DEG2RAD;
-    float angleStep = 360.0f/static_cast<float>(sides)*DEG2RAD;
+    const float angleStep = 360.0f/static_cast<float>(sides)*DEG2RAD;
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         for (int i = 0; i < sides; i++)
         {
             rlColor4ub(color.r, color.g, color.b, color.a);
-            float nextAngle = centralAngle + angleStep;
+            const float nextAngle = centralAngle + angleStep;
 
             rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
             rlVertex2f(center.x, center.y);
@@ -1530,7 +1530,7 @@ void DrawPolyLines(Vector2 center, int sides, float radius, float rotation, Colo
 {
     if (sides < 3) sides = 3;
     float centralAngle = rotation*DEG2RAD;
-    float angleStep = 360.0f/static_cast<float>(sides)*DEG2RAD;
+    const float angleStep = 360.0f/static_cast<float>(sides)*DEG2RAD;
 
     rlBegin(RL_LINES);
         for (int i = 0; i < sides; i++)
@@ -1549,8 +1549,8 @@ void DrawPolyLinesEx(Vector2 center, int sides, float radius, float rotation, fl
 {
     if (sides < 3) sides = 3;
     float centralAngle = rotation*DEG2RAD;
-    float exteriorAngle = 360.0f/static_cast<float>(sides)*DEG2RAD;
-    float apothem = radius*cosf(DEG2RAD*180.0f/static_cast<float>(sides));
+    const float exteriorAngle = 360.0f/static_cast<float>(sides)*DEG2RAD;
+    const float apothem = radius*cosf(DEG2RAD*180.0f/static_cast<float>(sides));
 
     float outerRadius = 0.0f;
     float innerRadius = 0.0f;
@@ -1568,13 +1568,13 @@ void DrawPolyLinesEx(Vector2 center, int sides, float radius, float rotation, fl
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         for (int i = 0; i < sides; i++)
         {
             rlColor4ub(color.r, color.g, color.b, color.a);
-            float nextAngle = centralAngle + exteriorAngle;
+            const float nextAngle = centralAngle + exteriorAngle;
 
             rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
             rlVertex2f(center.x + cosf(centralAngle)*outerRadius, center.y + sinf(centralAngle)*outerRadius);
@@ -1652,7 +1652,7 @@ void DrawCircleSector(Vector2 center, float radius, float startAngle, float endA
     if (endAngle < startAngle)
     {
         // Swap values
-        float tmp = startAngle;
+        const float tmp = startAngle;
         startAngle = endAngle;
         endAngle = tmp;
     }
@@ -1660,23 +1660,23 @@ void DrawCircleSector(Vector2 center, float radius, float startAngle, float endA
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f) endAngle = startAngle + 360.0f;
 
-    int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+    const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
         segments = static_cast<int>(ceilf((endAngle - startAngle)*(2*PI/th)/360.0f));
 
         if (segments <= 0) segments = minSegments;
     }
 
-    float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
+    const float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
     float angle = startAngle;
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -1747,7 +1747,7 @@ void DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float
     if (endAngle < startAngle)
     {
         // Swap values
-        float tmp = startAngle;
+        const float tmp = startAngle;
         startAngle = endAngle;
         endAngle = tmp;
     }
@@ -1760,18 +1760,18 @@ void DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float
         endAngle = startAngle + 360.0f;
     }
 
-    int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+    const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
         segments = static_cast<int>(ceilf((endAngle - startAngle)*(2*PI/th)/360.0f));
 
         if (segments <= 0) segments = minSegments;
     }
 
-    float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
+    const float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
     float angle = startAngle;
 
     rlBegin(RL_LINES);
@@ -1811,7 +1811,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
     if (endAngle < startAngle)
     {
         // Swap values
-        float tmp = startAngle;
+        const float tmp = startAngle;
         startAngle = endAngle;
         endAngle = tmp;
     }
@@ -1824,18 +1824,18 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
         endAngle = startAngle + 360.0f;
     }
 
-    int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+    const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/radius, 2) - 1);
         segments = static_cast<int>(ceilf((endAngle - startAngle)*(2*PI/th)/360.0f));
 
         if (segments <= 0) segments = minSegments;
     }
 
-    float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
+    const float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
     float angle = startAngle;
 
     /*
@@ -1887,8 +1887,8 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
 
     // We are not drawing a circle, we are drawing an n-sided polygon
     // So, we need to adjust the outline thickness of the "circle" for it to look correct with fewer segments
-    float apothem = radius*cosf(DEG2RAD*((endAngle - startAngle)/2.0f)/static_cast<float>(segments));
-    float radiusThick = thick*(radius/apothem);
+    const float apothem = radius*cosf(DEG2RAD*((endAngle - startAngle)/2.0f)/static_cast<float>(segments));
+    const float radiusThick = thick*(radius/apothem);
 
     float outerRadius = radius;
     float innerRadius = radius - radiusThick;
@@ -1903,7 +1903,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
     }
     else
     {
-        float tmp = outerRadius;
+        const float tmp = outerRadius;
         outerRadius = innerRadius;
         innerRadius = tmp;
     }
@@ -1936,7 +1936,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
             // We want C1 and C4 to be `thick` pixels perpendicularly from the `startAngle` and `endAngle` edges
             // and to be on the `innerRadius` edge
 
-            float c1Angle = RAD2DEG*asinf(thick/innerRadius);
+            const float c1Angle = RAD2DEG*asinf(thick/innerRadius);
 
             // There are more segments before C1 than there are segments being drawn,
             // so the whole circle sector must be covered
@@ -1951,8 +1951,8 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
             stepsBeforeC1 = static_cast<int>(c1Angle/stepLength);
 
             // The angles of the vertices on the circle outline before and after C1
-            float vertexAngleBeforeC1 = stepLength*static_cast<float>(stepsBeforeC1);
-            float vertexAngleAfterC1 = stepLength*(static_cast<float>(stepsBeforeC1 + 1));
+            const float vertexAngleBeforeC1 = stepLength*static_cast<float>(stepsBeforeC1);
+            const float vertexAngleAfterC1 = stepLength*(static_cast<float>(stepsBeforeC1 + 1));
 
             /*
             Here is another sketch
@@ -2026,8 +2026,8 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
              S1      [][][][][][][]
             */
 
-            float innerAngleBetweenCapEnds = ((endAngle - 90.0f) - (startAngle + 90.0f))/2.0f;
-            float s1Length = thick/cosf(DEG2RAD*innerAngleBetweenCapEnds);
+            const float innerAngleBetweenCapEnds = ((endAngle - 90.0f) - (startAngle + 90.0f))/2.0f;
+            const float s1Length = thick/cosf(DEG2RAD*innerAngleBetweenCapEnds);
 
             // As `startAngle` and `endAngle` draw more of a circle, S1 goes further out from the center
             // It can go so far that it is outside of the circle, by a lot
@@ -2040,7 +2040,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
             {
                 // S1 is inside of the circle
 
-                float betweenStartAndEndAngle = (endAngle + startAngle)/2.0f;
+                const float betweenStartAndEndAngle = (endAngle + startAngle)/2.0f;
                 c0 = Vector2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
                 c3 = c0;
 
@@ -2048,9 +2048,9 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
                 p2 = Vector2{ c0.x - center.x, c0.y - center.y };
 
                 // Copied from "raymath.h" Vector2Angle()
-                float dot = p1.x*p2.x + p1.y*p2.y;
-                float det = p1.x*p2.y - p1.y*p2.x;
-                float c1ToS1Angle = atan2f(det, dot);
+                const float dot = p1.x*p2.x + p1.y*p2.y;
+                const float det = p1.x*p2.y - p1.y*p2.x;
+                const float c1ToS1Angle = atan2f(det, dot);
 
                 // If C1 and C4 are on the wrong side of S1, the whole circle sector is covered
                 if (c1ToS1Angle < 0.0f)
@@ -2075,8 +2075,8 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
 
                 // Reuse the code for finding C1 and C4 to find C0 and C3
 
-                float vertexAngleBeforeC0 = stepLength*static_cast<float>(stepsBeforeC0);
-                float vertexAngleAfterC0 = stepLength*(static_cast<float>(stepsBeforeC0 + 1));
+                const float vertexAngleBeforeC0 = stepLength*static_cast<float>(stepsBeforeC0);
+                const float vertexAngleAfterC0 = stepLength*(static_cast<float>(stepsBeforeC0 + 1));
 
                 p1 = Vector2{ cosf(DEG2RAD*vertexAngleBeforeC0)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC0)*innerRadius };
                 p2 = Vector2{ cosf(DEG2RAD*vertexAngleAfterC0)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC0)*innerRadius };
@@ -2098,9 +2098,9 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
         }
         else
         {
-            float outerAngleBetweenCapEnds = ((endAngle + 90.0f) - (startAngle - 90.0f))/2.0f;
-            float s1Length = thick/cosf(DEG2RAD*outerAngleBetweenCapEnds);
-            float betweenStartAndEndAngle = 180.0f + (endAngle + startAngle)/2.0f;
+            const float outerAngleBetweenCapEnds = ((endAngle + 90.0f) - (startAngle - 90.0f))/2.0f;
+            const float s1Length = thick/cosf(DEG2RAD*outerAngleBetweenCapEnds);
+            const float betweenStartAndEndAngle = 180.0f + (endAngle + startAngle)/2.0f;
             c0 = Vector2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
             c3 = c0;
 
@@ -2130,9 +2130,9 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
             float rise = circleVertex1.y - circleVertex2.y;
             float run = circleVertex1.x - circleVertex2.x;
             // Get where that line intersects the horizontal line that `c0Translated` is on
-            float c1Rise = c0Translated.y - circleVertex1.y;
-            float c1Run = (c1Rise/rise)*run;
-            float c1DistanceFromC0 = (circleVertex1.x + c1Run) - c0Translated.x;
+            const float c1Rise = c0Translated.y - circleVertex1.y;
+            const float c1Run = (c1Rise/rise)*run;
+            const float c1DistanceFromC0 = (circleVertex1.x + c1Run) - c0Translated.x;
 
             c1 = Vector2{ c0.x + cosf(DEG2RAD*startAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*startAngle)*c1DistanceFromC0 };
             c4 = Vector2{ c0.x + cosf(DEG2RAD*endAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*endAngle)*c1DistanceFromC0 };
@@ -2167,7 +2167,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
                 c1Translated.y -= circleVertex2.y;
 
                 // Make the line between `circleVertex1` and `circleVertex2` a horizontal line
-                float theta = atan2f(circleVertex1.y, circleVertex1.x);
+                const float theta = atan2f(circleVertex1.y, circleVertex1.x);
 
                 // Copied from "raymath.h" Vector2Rotate()
                 tempX = circleVertex1.x;
@@ -2190,10 +2190,10 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
                 // line segment defined by `circleVertex1` and `c1Translated`
                 rise = circleVertex3.y - circleVertex4.y;
                 run = circleVertex3.x - circleVertex4.x;
-                float targetRise = -circleVertex3.y;
-                float targetX = circleVertex3.x + (targetRise/rise)*run;
+                const float targetRise = -circleVertex3.y;
+                const float targetX = circleVertex3.x + (targetRise/rise)*run;
 
-                float t = (c1Translated.x - targetX)/(c1Translated.x - circleVertex1.x);
+                const float t = (c1Translated.x - targetX)/(c1Translated.x - circleVertex1.x);
 
                 c1 = Vector2{ c1.x + (c2.x - c1.x)*t, c1.y + (c2.y - c1.y)*t };
                 c4 = c1;
@@ -2214,7 +2214,7 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -2629,7 +2629,7 @@ void DrawEllipseLinesEx(Vector2 center, float radiusH, float radiusV, float thic
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -2679,7 +2679,7 @@ void DrawRing(Vector2 center, float innerRadius, float outerRadius, float startA
     // Function expects (outerRadius > innerRadius)
     if (outerRadius < innerRadius)
     {
-        float tmp = outerRadius;
+        const float tmp = outerRadius;
         outerRadius = innerRadius;
         innerRadius = tmp;
     }
@@ -2690,7 +2690,7 @@ void DrawRing(Vector2 center, float innerRadius, float outerRadius, float startA
     if (endAngle < startAngle)
     {
         // Swap values
-        float tmp = startAngle;
+        const float tmp = startAngle;
         startAngle = endAngle;
         endAngle = tmp;
     }
@@ -2698,12 +2698,12 @@ void DrawRing(Vector2 center, float innerRadius, float outerRadius, float startA
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f) endAngle = startAngle + 360.0f;
 
-    int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+    const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
         segments = static_cast<int>(ceilf((endAngle - startAngle)*(2*PI/th)/360.0f));
 
         if (segments <= 0) segments = minSegments;
@@ -2716,12 +2716,12 @@ void DrawRing(Vector2 center, float innerRadius, float outerRadius, float startA
         return;
     }
 
-    float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
+    const float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
     float angle = startAngle;
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         for (int i = 0; i < segments; i++)
@@ -2773,7 +2773,7 @@ void DrawRingLines(Vector2 center, float innerRadius, float outerRadius, float s
     // Function expects (outerRadius > innerRadius)
     if (outerRadius < innerRadius)
     {
-        float tmp = outerRadius;
+        const float tmp = outerRadius;
         outerRadius = innerRadius;
         innerRadius = tmp;
     }
@@ -2784,7 +2784,7 @@ void DrawRingLines(Vector2 center, float innerRadius, float outerRadius, float s
     if (endAngle < startAngle)
     {
         // Swap values
-        float tmp = startAngle;
+        const float tmp = startAngle;
         startAngle = endAngle;
         endAngle = tmp;
     }
@@ -2797,12 +2797,12 @@ void DrawRingLines(Vector2 center, float innerRadius, float outerRadius, float s
         endAngle = startAngle + 360.0f;
     }
 
-    int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+    const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
         segments = static_cast<int>(ceilf((endAngle - startAngle)*(2*PI/th)/360.0f));
 
         if (segments <= 0) segments = minSegments;
@@ -2814,7 +2814,7 @@ void DrawRingLines(Vector2 center, float innerRadius, float outerRadius, float s
         return;
     }
 
-    float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
+    const float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
     float angle = startAngle;
 
     rlBegin(RL_LINES);
@@ -2855,7 +2855,7 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
     // Function expects (outerRadius > innerRadius)
     if (outerRadius < innerRadius)
     {
-        float tmp = outerRadius;
+        const float tmp = outerRadius;
         outerRadius = innerRadius;
         innerRadius = tmp;
     }
@@ -2866,7 +2866,7 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
     if (endAngle < startAngle)
     {
         // Swap values
-        float tmp = startAngle;
+        const float tmp = startAngle;
         startAngle = endAngle;
         endAngle = tmp;
     }
@@ -2879,23 +2879,23 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
         endAngle = startAngle + 360.0f;
     }
 
-    int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+    const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
         // Calculate the maximum angle between segments based on the error rate (usually 0.5f)
-        float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
+        const float th = acosf(2*powf(1 - SMOOTH_CIRCLE_ERROR_RATE/outerRadius, 2) - 1);
         segments = static_cast<int>(ceilf((endAngle - startAngle)*(2*PI/th)/360.0f));
 
         if (segments <= 0) segments = minSegments;
     }
 
-    float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
+    const float stepLength = (endAngle - startAngle)/static_cast<float>(segments);
 
     // We are not drawing a circle, we are drawing an n-sided polygon
     // So, we need to adjust the outline thickness of the "circle" for it to look correct with fewer segments
-    float apothem = outerRadius*cosf(DEG2RAD*((endAngle - startAngle)/2.0f)/static_cast<float>(segments));
-    float radiusThick = thick*(outerRadius/apothem);
+    const float apothem = outerRadius*cosf(DEG2RAD*((endAngle - startAngle)/2.0f)/static_cast<float>(segments));
+    const float radiusThick = thick*(outerRadius/apothem);
 
     // These names can be confusing, but they are useful
     // Since 2 rings are being drawn, there are 4 radiuses (or radii)
@@ -2963,8 +2963,8 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
         if (thick >= 0.0f)
         {
             // Get the angle of the arc that has `thick` length along the inner and outer radii
-            float cap1InnerAngleEnd = RAD2DEG*(thick/outerInnerRadius);
-            float cap1OuterAngleEnd = RAD2DEG*(thick/innerOuterRadius);
+            const float cap1InnerAngleEnd = RAD2DEG*(thick/outerInnerRadius);
+            const float cap1OuterAngleEnd = RAD2DEG*(thick/innerOuterRadius);
 
             // Just a filled-in ring
             if (endAngle - startAngle < cap1OuterAngleEnd*2.0f)
@@ -2986,13 +2986,13 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
             //
             // With that, we know these lines intersect when 'y' equals 0,
             // so we just need to solve for 't' (as in `Lerp(start, end, t)`)
-            Vector2 beforeInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
-            Vector2 afterInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
+            const Vector2 beforeInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
+            const Vector2 afterInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
             tInner = beforeInnerVertex.y/(beforeInnerVertex.y - afterInnerVertex.y);
 
             // The same as above, but for the outer edge
-            Vector2 beforeOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
-            Vector2 afterOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
+            const Vector2 beforeOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
+            const Vector2 afterOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
             tOuter = beforeOuterVertex.y/(beforeOuterVertex.y - afterOuterVertex.y);
         }
         else
@@ -3037,12 +3037,12 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
             // We can find O2 by getting its 't' between O1.y and O0.y (which is always greater than 1)
             // We can solve for `t` using `t = (start - value)/(start - end)`
             // Since we know `end = 0` we can simplify it to `t = (start - value)/start`
-            float tOuter = (cap1O1.y - thick)/cap1O1.y;
+            const float tOuter = (cap1O1.y - thick)/cap1O1.y;
             Vector2 cap1O2 = { cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, thick };
 
             //Vector2 cap1I0 = { innerInnerRadius, 0.0f }; // Not used
 
-            float capLongEdgeLength = outerOuterRadius - innerInnerRadius;
+            const float capLongEdgeLength = outerOuterRadius - innerInnerRadius;
             Vector2 cap1I2 = { cap1O2.x - capLongEdgeLength, thick };
 
             Vector2 cap2O0 = { cosf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius };
@@ -3063,12 +3063,12 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
             }
 
             // Rotate the frame of reference so that cap 1's I0->I2 edge is a vertical line
-            float rotateBy = -DEG2RAD*stepLength/2.0f;
+            const float rotateBy = -DEG2RAD*stepLength/2.0f;
 
             // Copied from "raymath.h" Vector2Rotate()
             // Though we only use the x axis, so we ignore the y axis
-            float cosres = cosf(rotateBy);
-            float sinres = sinf(rotateBy);
+            const float cosres = cosf(rotateBy);
+            const float sinres = sinf(rotateBy);
 
             cap1I2.x = cap1I2.x*cosres - cap1I2.y*sinres;
             cap1O2.x = cap1O2.x*cosres - cap1O2.y*sinres;
@@ -3133,7 +3133,7 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    const Rectangle shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -3208,26 +3208,26 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
                 }
 
                 // We've already moved `stepsBeforeOuter` steps from each end
-                int totalStepsLeft = segments - stepsBeforeOuter*2;
-                int innerStepsLeft = stepsBeforeInner - stepsBeforeOuter;
+                const int totalStepsLeft = segments - stepsBeforeOuter*2;
+                const int innerStepsLeft = stepsBeforeInner - stepsBeforeOuter;
 
                 // Cap 1
-                Vector2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
-                Vector2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
-                Vector2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                Vector2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
-                Vector2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
-                Vector2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
+                const Vector2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
+                const Vector2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
+                const Vector2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                const Vector2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                const Vector2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
+                const Vector2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
 
                 // Cap 2
-                Vector2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
-                Vector2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
-                Vector2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                Vector2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
-                Vector2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
-                Vector2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
+                const Vector2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
+                const Vector2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
+                const Vector2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                const Vector2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                const Vector2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
+                const Vector2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
 
-                int stepsCount = (innerAnglesCrossEachOther)? totalStepsLeft/2 : innerStepsLeft;
+                const int stepsCount = (innerAnglesCrossEachOther)? totalStepsLeft/2 : innerStepsLeft;
 
                 // Iterate over pairs of steps
                 for (int i = 0; i < stepsCount/2; i++)
@@ -3302,23 +3302,23 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
                     // That point is then used instead to prevent the outline from intersecting itself
 
                     // Make `cap1InnerVertexEnd` the origin and the angle to `cap1OuterVertexEnd` 0 degrees
-                    Vector2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
-                    Vector2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
-                    Vector2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    const Vector2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    const Vector2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
+                    const Vector2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
 
-                    float rotateBy = -atan2f(tempCap1OuterVertexEnd.y, tempCap1OuterVertexEnd.x);
+                    const float rotateBy = -atan2f(tempCap1OuterVertexEnd.y, tempCap1OuterVertexEnd.x);
                     // We only need the y coordinates, so only rotate the y coordinates
-                    float start = sinf(rotateBy)*tempCap2InnerVertexEnd.x + cosf(rotateBy)*tempCap2InnerVertexEnd.y;
-                    float end = sinf(rotateBy)*tempCap2OuterVertexEnd.x + cosf(rotateBy)*tempCap2OuterVertexEnd.y;
-                    float tCross = start/(start - end);
+                    const float start = sinf(rotateBy)*tempCap2InnerVertexEnd.x + cosf(rotateBy)*tempCap2InnerVertexEnd.y;
+                    const float end = sinf(rotateBy)*tempCap2OuterVertexEnd.x + cosf(rotateBy)*tempCap2OuterVertexEnd.y;
+                    const float tCross = start/(start - end);
 
-                    Vector2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
+                    const Vector2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
 
                     if ((segments%2) == 0)
                     {
                         // There are an even number of segments (which means there's an odd number of vertices), so there's 1 vertex exactly in the middle
 
-                        Vector2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        const Vector2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
 
                         // Cap 1
                         rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
@@ -3350,8 +3350,8 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
                     {
                         // There are an odd number of segments (which means there's an even number of vertices), so there are 2 vertices in the middle
 
-                        Vector2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
-                        Vector2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
+                        const Vector2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        const Vector2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
 
                         // Cap 1
                         rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
@@ -3425,8 +3425,8 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
             else
             {
                 // Cap 1
-                Vector2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
-                Vector2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
+                const Vector2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
+                const Vector2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
 
                 rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
                 rlVertex2f(cap1FirstInnerVertex.x, cap1FirstInnerVertex.y);
@@ -3441,8 +3441,8 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
                 rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
                 // Cap 2
-                Vector2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
-                Vector2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
+                const Vector2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
+                const Vector2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
 
                 rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
                 rlVertex2f(cap2FirstInnerVertex.x, cap2FirstInnerVertex.y);
@@ -3828,7 +3828,7 @@ void DrawSplineLinear(const Vector2 *points, int pointCount, float thick, Color 
 
         if (length > 0) scale = thick/(2*length);
 
-        Vector2 radius = { -scale*delta.y, scale*delta.x };
+        const Vector2 radius = { -scale*delta.y, scale*delta.x };
         Vector2 strip[4] = {
             { points[i].x - radius.x, points[i].y - radius.y },
             { points[i].x + radius.x, points[i].y + radius.y },
@@ -3863,7 +3863,7 @@ void DrawSplineBasis(const Vector2 *points, int pointCount, float thick, Color c
     for (int i = 0; i < (pointCount - 3); i++)
     {
         float t = 0.0f;
-        Vector2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
+        const Vector2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
 
         a[0] = (-p1.x + 3.0f*p2.x - 3.0f*p3.x + p4.x)/6.0f;
         a[1] = (3.0f*p1.x - 6.0f*p2.x + 3.0f*p3.x)/6.0f;
@@ -3940,7 +3940,7 @@ void DrawSplineCatmullRom(const Vector2 *points, int pointCount, float thick, Co
     for (int i = 0; i < (pointCount - 3); i++)
     {
         float t = 0.0f;
-        Vector2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
+        const Vector2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
 
         if (i > 0)
         {
@@ -3954,10 +3954,10 @@ void DrawSplineCatmullRom(const Vector2 *points, int pointCount, float thick, Co
         {
             t = (static_cast<float>(j))/(static_cast<float>(SPLINE_SEGMENT_DIVISIONS));
 
-            float q0 = (-1.0f*t*t*t) + (2.0f*t*t) + (-1.0f*t);
-            float q1 = (3.0f*t*t*t) + (-5.0f*t*t) + 2.0f;
-            float q2 = (-3.0f*t*t*t) + (4.0f*t*t) + t;
-            float q3 = t*t*t - t*t;
+            const float q0 = (-1.0f*t*t*t) + (2.0f*t*t) + (-1.0f*t);
+            const float q1 = (3.0f*t*t*t) + (-5.0f*t*t) + 2.0f;
+            const float q2 = (-3.0f*t*t*t) + (4.0f*t*t) + t;
+            const float q3 = t*t*t - t*t;
 
             nextPoint.x = 0.5f*((p1.x*q0) + (p2.x*q1) + (p3.x*q2) + (p4.x*q3));
             nextPoint.y = 0.5f*((p1.y*q0) + (p2.y*q1) + (p3.y*q2) + (p4.y*q3));
@@ -4018,14 +4018,14 @@ void DrawSplineSegmentLinear(Vector2 p1, Vector2 p2, float thick, Color color)
 {
     // NOTE: For the linear spline no subdivisions are used, only a single quad
 
-    Vector2 delta = { p2.x - p1.x, p2.y - p1.y };
-    float length = sqrtf(delta.x*delta.x + delta.y*delta.y);
+    const Vector2 delta = { p2.x - p1.x, p2.y - p1.y };
+    const float length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
     if ((length > 0) && (thick > 0))
     {
-        float scale = thick/(2*length);
+        const float scale = thick/(2*length);
 
-        Vector2 radius = { -scale*delta.y, scale*delta.x };
+        const Vector2 radius = { -scale*delta.y, scale*delta.x };
         Vector2 strip[4] = {
             { p1.x - radius.x, p1.y - radius.y },
             { p1.x + radius.x, p1.y + radius.y },
@@ -4071,9 +4071,9 @@ void DrawSplineSegmentBasis(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, floa
         nextPoint.x = a[3] + t*(a[2] + t*(a[1] + t*a[0]));
         nextPoint.y = b[3] + t*(b[2] + t*(b[1] + t*b[0]));
 
-        float dy = nextPoint.y - currentPoint.y;
-        float dx = nextPoint.x - currentPoint.x;
-        float size = (0.5f*thick)/sqrtf(dx*dx + dy*dy);
+        const float dy = nextPoint.y - currentPoint.y;
+        const float dx = nextPoint.x - currentPoint.x;
+        const float size = (0.5f*thick)/sqrtf(dx*dx + dy*dy);
 
         if (i == 1)
         {
@@ -4109,17 +4109,17 @@ void DrawSplineSegmentCatmullRom(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4,
     {
         t = step*static_cast<float>(i);
 
-        float q0 = (-1*t*t*t) + (2*t*t) + (-1*t);
-        float q1 = (3*t*t*t) + (-5*t*t) + 2;
-        float q2 = (-3*t*t*t) + (4*t*t) + t;
-        float q3 = t*t*t - t*t;
+        const float q0 = (-1*t*t*t) + (2*t*t) + (-1*t);
+        const float q1 = (3*t*t*t) + (-5*t*t) + 2;
+        const float q2 = (-3*t*t*t) + (4*t*t) + t;
+        const float q3 = t*t*t - t*t;
 
         nextPoint.x = 0.5f*((p1.x*q0) + (p2.x*q1) + (p3.x*q2) + (p4.x*q3));
         nextPoint.y = 0.5f*((p1.y*q0) + (p2.y*q1) + (p3.y*q2) + (p4.y*q3));
 
-        float dy = nextPoint.y - currentPoint.y;
-        float dx = nextPoint.x - currentPoint.x;
-        float size = (0.5f*thick)/sqrtf(dx*dx + dy*dy);
+        const float dy = nextPoint.y - currentPoint.y;
+        const float dx = nextPoint.x - currentPoint.x;
+        const float size = (0.5f*thick)/sqrtf(dx*dx + dy*dy);
 
         if (i == 1)
         {
@@ -4155,17 +4155,17 @@ void DrawSplineSegmentBezierQuadratic(Vector2 p1, Vector2 c2, Vector2 p3, float 
     {
         t = step*static_cast<float>(i);
 
-        float a = powf(1.0f - t, 2);
-        float b = 2.0f*(1.0f - t)*t;
-        float c = powf(t, 2);
+        const float a = powf(1.0f - t, 2);
+        const float b = 2.0f*(1.0f - t)*t;
+        const float c = powf(t, 2);
 
         // NOTE: The easing functions aren't suitable here because they don't take a control point
         current.y = a*p1.y + b*c2.y + c*p3.y;
         current.x = a*p1.x + b*c2.x + c*p3.x;
 
-        float dy = current.y - previous.y;
-        float dx = current.x - previous.x;
-        float size = 0.5f*thick/sqrtf(dx*dx+dy*dy);
+        const float dy = current.y - previous.y;
+        const float dx = current.x - previous.x;
+        const float size = 0.5f*thick/sqrtf(dx*dx+dy*dy);
 
         if (i == 1)
         {
@@ -4201,17 +4201,17 @@ void DrawSplineSegmentBezierCubic(Vector2 p1, Vector2 c2, Vector2 c3, Vector2 p4
     {
         t = step*static_cast<float>(i);
 
-        float a = powf(1.0f - t, 3);
-        float b = 3.0f*powf(1.0f - t, 2)*t;
-        float c = 3.0f*(1.0f - t)*powf(t, 2);
-        float d = powf(t, 3);
+        const float a = powf(1.0f - t, 3);
+        const float b = 3.0f*powf(1.0f - t, 2)*t;
+        const float c = 3.0f*(1.0f - t)*powf(t, 2);
+        const float d = powf(t, 3);
 
         current.y = a*p1.y + b*c2.y + c*c3.y + d*p4.y;
         current.x = a*p1.x + b*c2.x + c*c3.x + d*p4.x;
 
-        float dy = current.y - previous.y;
-        float dx = current.x - previous.x;
-        float size = 0.5f*thick/sqrtf(dx*dx+dy*dy);
+        const float dy = current.y - previous.y;
+        const float dx = current.x - previous.x;
+        const float size = 0.5f*thick/sqrtf(dx*dx+dy*dy);
 
         if (i == 1)
         {
@@ -4272,10 +4272,10 @@ Vector2 GetSplinePointCatmullRom(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4,
 {
     Vector2 point{};
 
-    float q0 = (-1*t*t*t) + (2*t*t) + (-1*t);
-    float q1 = (3*t*t*t) + (-5*t*t) + 2;
-    float q2 = (-3*t*t*t) + (4*t*t) + t;
-    float q3 = t*t*t - t*t;
+    const float q0 = (-1*t*t*t) + (2*t*t) + (-1*t);
+    const float q1 = (3*t*t*t) + (-5*t*t) + 2;
+    const float q2 = (-3*t*t*t) + (4*t*t) + t;
+    const float q3 = t*t*t - t*t;
 
     point.x = 0.5f*((p1.x*q0) + (p2.x*q1) + (p3.x*q2) + (p4.x*q3));
     point.y = 0.5f*((p1.y*q0) + (p2.y*q1) + (p3.y*q2) + (p4.y*q3));
@@ -4288,9 +4288,9 @@ Vector2 GetSplinePointBezierQuadratic(Vector2 startPos, Vector2 controlPos, Vect
 {
     Vector2 point{};
 
-    float a = powf(1.0f - t, 2);
-    float b = 2.0f*(1.0f - t)*t;
-    float c = powf(t, 2);
+    const float a = powf(1.0f - t, 2);
+    const float b = 2.0f*(1.0f - t)*t;
+    const float c = powf(t, 2);
 
     point.y = a*startPos.y + b*controlPos.y + c*endPos.y;
     point.x = a*startPos.x + b*controlPos.x + c*endPos.x;
@@ -4303,10 +4303,10 @@ Vector2 GetSplinePointBezierCubic(Vector2 startPos, Vector2 startControlPos, Vec
 {
     Vector2 point{};
 
-    float a = powf(1.0f - t, 3);
-    float b = 3.0f*powf(1.0f - t, 2)*t;
-    float c = 3.0f*(1.0f - t)*powf(t, 2);
-    float d = powf(t, 3);
+    const float a = powf(1.0f - t, 3);
+    const float b = 3.0f*powf(1.0f - t, 2)*t;
+    const float c = 3.0f*(1.0f - t)*powf(t, 2);
+    const float d = powf(t, 3);
 
     point.y = a*startPos.y + b*startControlPos.y + c*endControlPos.y + d*endPos.y;
     point.x = a*startPos.x + b*startControlPos.x + c*endControlPos.x + d*endPos.x;
@@ -4333,7 +4333,7 @@ bool CheckCollisionPointCircle(Vector2 point, Vector2 center, float radius)
 {
     bool collision = false;
 
-    float distanceSquared = (point.x - center.x)*(point.x - center.x) + (point.y - center.y)*(point.y - center.y);
+    const float distanceSquared = (point.x - center.x)*(point.x - center.x) + (point.y - center.y)*(point.y - center.y);
 
     if (distanceSquared <= radius*radius) collision = true;
 
@@ -4345,13 +4345,13 @@ bool CheckCollisionPointTriangle(Vector2 point, Vector2 p1, Vector2 p2, Vector2 
 {
     bool collision = false;
 
-    float alpha = ((p2.y - p3.y)*(point.x - p3.x) + (p3.x - p2.x)*(point.y - p3.y)) /
+    const float alpha = ((p2.y - p3.y)*(point.x - p3.x) + (p3.x - p2.x)*(point.y - p3.y)) /
                   ((p2.y - p3.y)*(p1.x - p3.x) + (p3.x - p2.x)*(p1.y - p3.y));
 
-    float beta = ((p3.y - p1.y)*(point.x - p3.x) + (p1.x - p3.x)*(point.y - p3.y)) /
+    const float beta = ((p3.y - p1.y)*(point.x - p3.x) + (p1.x - p3.x)*(point.y - p3.y)) /
                  ((p2.y - p3.y)*(p1.x - p3.x) + (p3.x - p2.x)*(p1.y - p3.y));
 
-    float gamma = 1.0f - alpha - beta;
+    const float gamma = 1.0f - alpha - beta;
 
     if ((alpha > 0) && (beta > 0) && (gamma > 0)) collision = true;
 
@@ -4395,11 +4395,11 @@ bool CheckCollisionCircles(Vector2 center1, float radius1, Vector2 center2, floa
 {
     bool collision = false;
 
-    float dx = center2.x - center1.x;      // X distance between centers
-    float dy = center2.y - center1.y;      // Y distance between centers
+    const float dx = center2.x - center1.x;      // X distance between centers
+    const float dy = center2.y - center1.y;      // Y distance between centers
 
-    float distanceSquared = dx*dx + dy*dy; // Distance between centers squared
-    float radiusSum = radius1 + radius2;
+    const float distanceSquared = dx*dx + dy*dy; // Distance between centers squared
+    const float radiusSum = radius1 + radius2;
 
     collision = (distanceSquared <= (radiusSum*radiusSum));
 
@@ -4412,11 +4412,11 @@ bool CheckCollisionCircleRec(Vector2 center, float radius, Rectangle rec)
 {
     bool collision = false;
 
-    float recCenterX = rec.x + rec.width/2.0f;
-    float recCenterY = rec.y + rec.height/2.0f;
+    const float recCenterX = rec.x + rec.width/2.0f;
+    const float recCenterY = rec.y + rec.height/2.0f;
 
-    float dx = fabsf(center.x - recCenterX);
-    float dy = fabsf(center.y - recCenterY);
+    const float dx = fabsf(center.x - recCenterX);
+    const float dy = fabsf(center.y - recCenterY);
 
     if ((dx <= (rec.width/2.0f + radius)) && (dy <= (rec.height/2.0f + radius)))
     {
@@ -4424,7 +4424,7 @@ bool CheckCollisionCircleRec(Vector2 center, float radius, Rectangle rec)
         else if (dy <= (rec.height/2.0f)) collision = true;
         else
         {
-            float cornerDistanceSq = (dx - rec.width/2.0f)*(dx - rec.width/2.0f) +
+            const float cornerDistanceSq = (dx - rec.width/2.0f)*(dx - rec.width/2.0f) +
                 (dy - rec.height/2.0f)*(dy - rec.height/2.0f);
 
             collision = (cornerDistanceSq <= (radius*radius));
@@ -4440,20 +4440,20 @@ bool CheckCollisionLines(Vector2 startPos1, Vector2 endPos1, Vector2 startPos2, 
 {
     bool collision = false;
 
-    float rx = endPos1.x - startPos1.x;
-    float ry = endPos1.y - startPos1.y;
-    float sx = endPos2.x - startPos2.x;
-    float sy = endPos2.y - startPos2.y;
+    const float rx = endPos1.x - startPos1.x;
+    const float ry = endPos1.y - startPos1.y;
+    const float sx = endPos2.x - startPos2.x;
+    const float sy = endPos2.y - startPos2.y;
 
-    float div = rx*sy - ry*sx;
+    const float div = rx*sy - ry*sx;
 
     if (fabsf(div) >= FLT_EPSILON)
     {
-        float s12x = startPos2.x - startPos1.x;
-        float s12y = startPos2.y - startPos1.y;
+        const float s12x = startPos2.x - startPos1.x;
+        const float s12y = startPos2.y - startPos1.y;
 
-        float t = (s12x*sy - s12y*sx)/div;
-        float u = (s12x*ry - s12y*rx)/div;
+        const float t = (s12x*sy - s12y*sx)/div;
+        const float u = (s12x*ry - s12y*rx)/div;
 
         if ((0.0f <= t) && (t <= 1.0f) && (0.0f <= u) && (u <= 1.0f))
         {
@@ -4475,11 +4475,11 @@ bool CheckCollisionPointLine(Vector2 point, Vector2 p1, Vector2 p2, int threshol
 {
     bool collision = false;
 
-    float dxc = point.x - p1.x;
-    float dyc = point.y - p1.y;
-    float dxl = p2.x - p1.x;
-    float dyl = p2.y - p1.y;
-    float cross = dxc*dyl - dyc*dxl;
+    const float dxc = point.x - p1.x;
+    const float dyc = point.y - p1.y;
+    const float dxl = p2.x - p1.x;
+    const float dyl = p2.y - p1.y;
+    const float cross = dxc*dyl - dyc*dxl;
 
     if (fabsf(cross) < (threshold*fmaxf(fabsf(dxl), fabsf(dyl))))
     {
@@ -4495,8 +4495,8 @@ bool CheckCollisionCircleLine(Vector2 center, float radius, Vector2 p1, Vector2 
 {
     bool collision = false;
 
-    float dx = p1.x - p2.x;
-    float dy = p1.y - p2.y;
+    const float dx = p1.x - p2.x;
+    const float dy = p1.y - p2.y;
 
     if ((fabsf(dx) + fabsf(dy)) <= FLT_EPSILON)
     {
@@ -4504,15 +4504,15 @@ bool CheckCollisionCircleLine(Vector2 center, float radius, Vector2 p1, Vector2 
     }
     else
     {
-        float lengthSQ = ((dx*dx) + (dy*dy));
+        const float lengthSQ = ((dx*dx) + (dy*dy));
         float dotProduct = (((center.x - p1.x)*(p2.x - p1.x)) + ((center.y - p1.y)*(p2.y - p1.y)))/(lengthSQ);
 
         if (dotProduct > 1.0f) dotProduct = 1.0f;
         else if (dotProduct < 0.0f) dotProduct = 0.0f;
 
-        float dx2 = (p1.x - (dotProduct*(dx))) - center.x;
-        float dy2 = (p1.y - (dotProduct*(dy))) - center.y;
-        float distanceSQ = ((dx2*dx2) + (dy2*dy2));
+        const float dx2 = (p1.x - (dotProduct*(dx))) - center.x;
+        const float dy2 = (p1.y - (dotProduct*(dy))) - center.y;
+        const float distanceSQ = ((dx2*dx2) + (dy2*dy2));
 
         if (distanceSQ <= radius*radius) collision = true;
     }
@@ -4525,14 +4525,14 @@ Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2)
 {
     Rectangle overlap = { 0 };
 
-    float left = (rec1.x > rec2.x)? rec1.x : rec2.x;
-    float right1 = rec1.x + rec1.width;
-    float right2 = rec2.x + rec2.width;
-    float right = (right1 < right2)? right1 : right2;
-    float top = (rec1.y > rec2.y)? rec1.y : rec2.y;
-    float bottom1 = rec1.y + rec1.height;
-    float bottom2 = rec2.y + rec2.height;
-    float bottom = (bottom1 < bottom2)? bottom1 : bottom2;
+    const float left = (rec1.x > rec2.x)? rec1.x : rec2.x;
+    const float right1 = rec1.x + rec1.width;
+    const float right2 = rec2.x + rec2.width;
+    const float right = (right1 < right2)? right1 : right2;
+    const float top = (rec1.y > rec2.y)? rec1.y : rec2.y;
+    const float bottom1 = rec1.y + rec1.height;
+    const float bottom2 = rec2.y + rec2.height;
+    const float bottom = (bottom1 < bottom2)? bottom1 : bottom2;
 
     if ((left < right) && (top < bottom))
     {

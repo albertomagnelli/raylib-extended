@@ -503,8 +503,8 @@ static float rgVector2Distance(Vector2 v1, Vector2 v2)
 {
     float result;
 
-    float dx = v2.x - v1.x;
-    float dy = v2.y - v1.y;
+    const float dx = v2.x - v1.x;
+    const float dy = v2.y - v1.y;
 
     result = sqrt(dx*dx + dy*dy);
 

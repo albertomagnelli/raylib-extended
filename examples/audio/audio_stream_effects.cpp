@@ -38,14 +38,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - stream effects");
 
     InitAudioDevice();              // Initialize audio device
 
-    Music music = LoadMusicStream("resources/country.mp3");
+    const Music music = LoadMusicStream("resources/country.mp3");
 
     // Allocate buffer for the delay effect
     delayBufferSize = 48000*2;      // 1 second delay (device sampleRate*channels)
@@ -172,8 +172,8 @@ static void AudioProcessEffectDelay(void *buffer, unsigned int frames)
 {
     for (unsigned int i = 0; i < frames*2; i += 2)
     {
-        float leftDelay = delayBuffer[delayReadIndex++];    // ERROR: Reading buffer -> WHY??? Maybe thread related???
-        float rightDelay = delayBuffer[delayReadIndex++];
+        const float leftDelay = delayBuffer[delayReadIndex++];    // ERROR: Reading buffer -> WHY??? Maybe thread related???
+        const float rightDelay = delayBuffer[delayReadIndex++];
 
         if (delayReadIndex == delayBufferSize) delayReadIndex = 0;
 

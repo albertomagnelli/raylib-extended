@@ -31,8 +31,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - raymarching rendering");
@@ -46,13 +46,13 @@ int main()
 
     // Load raymarching shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/raymarching.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/raymarching.fs", GLSL_VERSION));
 
     // Get shader locations for required uniforms
-    int viewEyeLoc = GetShaderLocation(shader, "viewEye");
-    int viewCenterLoc = GetShaderLocation(shader, "viewCenter");
-    int runTimeLoc = GetShaderLocation(shader, "runTime");
-    int resolutionLoc = GetShaderLocation(shader, "resolution");
+    const int viewEyeLoc = GetShaderLocation(shader, "viewEye");
+    const int viewCenterLoc = GetShaderLocation(shader, "viewCenter");
+    const int runTimeLoc = GetShaderLocation(shader, "runTime");
+    const int resolutionLoc = GetShaderLocation(shader, "resolution");
 
     float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
@@ -73,7 +73,7 @@ int main()
         float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         float cameraTarget[3] = { camera.target.x, camera.target.y, camera.target.z };
 
-        float deltaTime = GetFrameTime();
+        const float deltaTime = GetFrameTime();
         runTime += deltaTime;
 
         // Set shader required uniform values

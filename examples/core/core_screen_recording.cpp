@@ -32,8 +32,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - screen recording");
 
@@ -78,7 +78,7 @@ int main()
             {
                 // Stop current recording and save file
                 gifRecording = false;
-                MsfGifResult result = msf_gif_end(&gifState);
+                const MsfGifResult result = msf_gif_end(&gifState);
                 SaveFileData(TextFormat("%s/screenrecording.gif", GetApplicationDirectory().c_str()), result.data, static_cast<unsigned int>(result.dataSize));
                 msf_gif_free(result);
 
@@ -104,7 +104,7 @@ int main()
             {
                 // Get image data for the current frame (from backbuffer)
                 // WARNING: This process is quite slow, it can generate stuttering
-                Image imScreen = LoadImageFromScreen();
+                const Image imScreen = LoadImageFromScreen();
 
                 // Add the frame to the gif recording, providing and "estimated" time for display in centiseconds
                 msf_gif_frame(&gifState, static_cast<uint8_t *>(imScreen.data), static_cast<int>((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);
@@ -154,7 +154,7 @@ int main()
     // If still recording a GIF on close window, just finish
     if (gifRecording)
     {
-        MsfGifResult result = msf_gif_end(&gifState);
+        const MsfGifResult result = msf_gif_end(&gifState);
         msf_gif_free(result);
         gifRecording = false;
     }

@@ -28,8 +28,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - tesseract view");
 
@@ -42,7 +42,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 
     // Find the coordinates by setting XYZW to +-1
-    Vector4 tesseract[16] = {
+    const Vector4 tesseract[16] = {
         {  1,  1,  1, 1 }, {  1,  1,  1, -1 },
         {  1,  1, -1, 1 }, {  1,  1, -1, -1 },
         {  1, -1,  1, 1 }, {  1, -1,  1, -1 },
@@ -72,13 +72,13 @@ int main()
             Vector4 p = tesseract[i];
 
             // Rotate the XW part of the vector
-            Vector2 rotXW = Vector2Rotate(Vector2{ p.x, p.w }, rotation);
+            const Vector2 rotXW = Vector2Rotate(Vector2{ p.x, p.w }, rotation);
             p.x = rotXW.x;
             p.w = rotXW.y;
 
             // Projection from XYZW to XYZ from perspective point (0, 0, 0, 3)
             // NOTE: Trace a ray from (0, 0, 0, 3) > p and continue until W = 0
-            float c = 3.0f/(3.0f - p.w);
+            const float c = 3.0f/(3.0f - p.w);
             p.x = c*p.x;
             p.y = c*p.y;
             p.z = c*p.z;
@@ -105,9 +105,9 @@ int main()
                     {
                         // Two lines are connected if they differ by 1 coordinate
                         // This way we dont have to keep an edge list
-                        Vector4 v1 = tesseract[i];
-                        Vector4 v2 = tesseract[j];
-                        int diff = static_cast<int>(v1.x == v2.x) + static_cast<int>(v1.y == v2.y) + static_cast<int>(v1.z == v2.z) + static_cast<int>(v1.w == v2.w);
+                        const Vector4 v1 = tesseract[i];
+                        const Vector4 v2 = tesseract[j];
+                        const int diff = static_cast<int>(v1.x == v2.x) + static_cast<int>(v1.y == v2.y) + static_cast<int>(v1.z == v2.z) + static_cast<int>(v1.w == v2.w);
 
                         // Draw only differing by 1 coordinate and the lower index only (duplicate lines)
                         if (diff == 3 && i < j) DrawLine3D(transformed[i], transformed[j], MAROON);

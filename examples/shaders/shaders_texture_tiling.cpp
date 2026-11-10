@@ -32,8 +32,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture tiling");
 
@@ -46,16 +46,16 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load a cube model
-    Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    Model model = LoadModelFromMesh(cube);
+    const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    const Model model = LoadModelFromMesh(cube);
 
     // Load a texture and assign to cube model
-    Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");
+    const Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
     // Set the texture tiling using a shader
     float tiling[2] = { 3.0f, 3.0f };
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/tiling.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/tiling.fs", GLSL_VERSION));
     SetTextureWrap(texture, TEXTURE_WRAP_REPEAT);
     SetShaderValue(shader, GetShaderLocation(shader, "tiling"), tiling, SHADER_UNIFORM_VEC2);
     model.materials[0].shader = shader;

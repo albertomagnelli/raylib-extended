@@ -22,19 +22,19 @@ int main()
 {
     // Initialization
     //---------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - render texture");
 
     // Define a render texture to render
-    int renderTextureWidth = 300;
-    int renderTextureHeight = 300;
-    RenderTexture2D target = LoadRenderTexture(renderTextureWidth, renderTextureHeight);
+    constexpr int renderTextureWidth = 300;
+    constexpr int renderTextureHeight = 300;
+    const RenderTexture2D target = LoadRenderTexture(renderTextureWidth, renderTextureHeight);
 
     Vector2 ballPosition = { renderTextureWidth/2.0f, renderTextureHeight/2.0f };
     Vector2 ballSpeed = { 5.0f, 4.0f };
-    int ballRadius = 20;
+    constexpr int ballRadius = 20;
 
     float rotation = 0.0f;
 

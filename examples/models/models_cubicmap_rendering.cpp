@@ -22,8 +22,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - cubicmap rendering");
 
@@ -35,17 +35,17 @@ int main()
     camera.fovy = 45.0f;                                    // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
-    Image image = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
-    Texture2D cubicmap = LoadTextureFromImage(image);       // Convert image to texture to display (VRAM)
+    const Image image = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
+    const Texture2D cubicmap = LoadTextureFromImage(image);       // Convert image to texture to display (VRAM)
 
-    Mesh mesh = GenMeshCubicmap(image, Vector3{ 1.0f, 1.0f, 1.0f });
-    Model model = LoadModelFromMesh(mesh);
+    const Mesh mesh = GenMeshCubicmap(image, Vector3{ 1.0f, 1.0f, 1.0f });
+    const Model model = LoadModelFromMesh(mesh);
 
     // NOTE: By default each cube is mapped to one part of texture atlas
-    Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");    // Load map texture
+    const Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");    // Load map texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;    // Set map diffuse texture
 
-    Vector3 mapPosition = { -16.0f, 0.0f, -8.0f };          // Set model position
+    const Vector3 mapPosition = { -16.0f, 0.0f, -8.0f };          // Set model position
 
     UnloadImage(image);     // Unload cubesmap image from RAM, already uploaded to VRAM
 

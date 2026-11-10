@@ -29,14 +29,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh generation");
 
     // We generate a checked image for texturing
-    Image checked = GenImageChecked(2, 2, 1, 1, RED, GREEN);
-    Texture2D texture = LoadTextureFromImage(checked);
+    const Image checked = GenImageChecked(2, 2, 1, 1, RED, GREEN);
+    const Texture2D texture = LoadTextureFromImage(checked);
     UnloadImage(checked);
 
     Model models[NUM_MODELS] = {};
@@ -60,7 +60,7 @@ int main()
     Camera camera = { { 5.0f, 5.0f, 5.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
 
     // Model drawing position
-    Vector3 position = { 0.0f, 0.0f, 0.0f };
+    const Vector3 position = { 0.0f, 0.0f, 0.0f };
 
     int currentModel = 0;
 

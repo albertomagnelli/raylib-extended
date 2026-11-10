@@ -24,7 +24,7 @@
 void CustomTraceLog(int msgType, std::string_view text, va_list args)
 {
     char timeStr[64] = {};
-    time_t now = time(nullptr);
+    const time_t now = time(nullptr);
     struct tm *tm_info = localtime(&now);
 
     strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", tm_info);
@@ -39,7 +39,7 @@ void CustomTraceLog(int msgType, std::string_view text, va_list args)
         default: break;
     }
 
-    std::string textStr(text);
+    const std::string textStr(text);
     vprintf(textStr.c_str(), args);
     printf("\n");
 }
@@ -51,8 +51,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // Set custom logger
     SetTraceLogCallback(CustomTraceLog);

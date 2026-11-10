@@ -40,8 +40,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - mesh instancing");
 
@@ -54,7 +54,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;                     // Camera projection type
 
     // Define mesh to be instanced
-    Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
 
     // Define transforms to be uploaded to GPU for instances
     Matrix *transforms = static_cast<Matrix *>(RL_CALLOC(MAX_INSTANCES, sizeof(Matrix)));   // Pre-multiplied transformations passed to rlgl
@@ -62,23 +62,23 @@ int main()
     // Translate and rotate cubes randomly
     for (int i = 0; i < MAX_INSTANCES; i++)
     {
-        Matrix translation = glm::translate(Matrix(1.0f), Vector3{static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50))});
-        Vector3 axis = glm::normalize(Vector3{ static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)) });
-        float angle = static_cast<float>(GetRandomValue(0, 180))*DEG2RAD;
-        Matrix rotation = glm::rotate(Matrix(1.0f), angle, axis);
+        const Matrix translation = glm::translate(Matrix(1.0f), Vector3{static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50))});
+        const Vector3 axis = glm::normalize(Vector3{ static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)) });
+        const float angle = static_cast<float>(GetRandomValue(0, 180))*DEG2RAD;
+        const Matrix rotation = glm::rotate(Matrix(1.0f), angle, axis);
 
         transforms[i] = ((translation) * (rotation));
     }
 
     // Load lighting shader
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting_instancing.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/lighting_instancing.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/lighting.fs", GLSL_VERSION));
     // Get shader locations
     shader.locs[SHADER_LOC_MATRIX_MVP] = GetShaderLocation(shader, "mvp");
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
     // Set shader value: ambient light level
-    int ambientLoc = GetShaderLocation(shader, "ambient");
+    const int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.2f, 0.2f, 0.2f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Create one light
@@ -93,7 +93,7 @@ int main()
     // Load default material (using raylib intenral default shader) for non-instanced mesh drawing
     // WARNING: Default shader enables vertex color attribute BUT GenMeshCube() does not generate vertex colors, so,
     // when drawing the color attribute is disabled and a default color value is provided as input for thevertex attribute
-    Material matDefault = LoadMaterialDefault();
+    const Material matDefault = LoadMaterialDefault();
     matDefault.maps[MATERIAL_MAP_DIFFUSE].color = BLUE;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second

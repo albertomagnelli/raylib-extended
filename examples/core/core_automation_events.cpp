@@ -46,8 +46,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - automation events");
 
@@ -91,7 +91,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float deltaTime = 0.015f;//GetFrameTime();
+        constexpr float deltaTime = 0.015f;//GetFrameTime();
 
         // Dropped files logic
         //----------------------------------------------------------------------------------
@@ -221,8 +221,8 @@ int main()
             maxY = fmaxf(element->rect.y + element->rect.height, maxY);
         }
 
-        Vector2 max = GetWorldToScreen2D(Vector2{ maxX, maxY }, camera);
-        Vector2 min = GetWorldToScreen2D(Vector2{ minX, minY }, camera);
+        const Vector2 max = GetWorldToScreen2D(Vector2{ maxX, maxY }, camera);
+        const Vector2 min = GetWorldToScreen2D(Vector2{ minX, minY }, camera);
 
         if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - static_cast<float>(screenWidth)/2);
         if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - static_cast<float>(screenHeight)/2);

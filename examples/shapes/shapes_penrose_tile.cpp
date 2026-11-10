@@ -67,15 +67,15 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - penrose tile");
 
-    float drawLength = 460.0f;
-    int minGenerations = 0;
-    int maxGenerations = 4;
+    constexpr float drawLength = 460.0f;
+    constexpr int minGenerations = 0;
+    constexpr int maxGenerations = 4;
     int generations = 1;
 
     // Initialize new penrose tile
@@ -193,12 +193,12 @@ static void BuildProductionStep(PenroseLSystem *ls)
     char *newProduction = static_cast<char *>(RL_MALLOC(sizeof(char)*STR_MAX_SIZE));
     newProduction[0] = '\0';
 
-    int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
+    const int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
 
     for (int i = 0; i < productionLength; i++)
     {
-        char step = ls->production[i];
-        int remainingSpace = STR_MAX_SIZE - static_cast<int>(strnlen(newProduction, STR_MAX_SIZE)) - 1;
+        const char step = ls->production[i];
+        const int remainingSpace = STR_MAX_SIZE - static_cast<int>(strnlen(newProduction, STR_MAX_SIZE)) - 1;
         switch (step)
         {
             case 'W': strncat(newProduction, ls->ruleW, remainingSpace); break;
@@ -209,7 +209,7 @@ static void BuildProductionStep(PenroseLSystem *ls)
             {
                 if (step != 'F')
                 {
-                    int t = static_cast<int>(strnlen(newProduction, STR_MAX_SIZE));
+                    const int t = static_cast<int>(strnlen(newProduction, STR_MAX_SIZE));
                     newProduction[t] = step;
                     newProduction[t + 1] = '\0';
                 }
@@ -226,7 +226,7 @@ static void BuildProductionStep(PenroseLSystem *ls)
 // Draw penrose tile lines
 static void DrawPenroseLSystem(PenroseLSystem *ls)
 {
-    Vector2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    const Vector2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
     TurtleState turtle = {
         .origin = {},
@@ -234,24 +234,24 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
     };
 
     int repeats = 1;
-    int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
+    const int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
     ls->steps += 12;
 
     if (ls->steps > productionLength) ls->steps = productionLength;
 
     for (int i = 0; i < ls->steps; i++)
     {
-        char step = ls->production[i];
+        const char step = ls->production[i];
         if (step == 'F')
         {
             for (int j = 0; j < repeats; j++)
             {
-                Vector2 startPosWorld = turtle.origin;
-                float radAngle = DEG2RAD*turtle.angle;
+                const Vector2 startPosWorld = turtle.origin;
+                const float radAngle = DEG2RAD*turtle.angle;
                 turtle.origin.x += ls->drawLength*cosf(radAngle);
                 turtle.origin.y += ls->drawLength*sinf(radAngle);
-                Vector2 startPosScreen = { startPosWorld.x + screenCenter.x, startPosWorld.y + screenCenter.y };
-                Vector2 endPosScreen = { turtle.origin.x + screenCenter.x, turtle.origin.y + screenCenter.y };
+                const Vector2 startPosScreen = { startPosWorld.x + screenCenter.x, startPosWorld.y + screenCenter.y };
+                const Vector2 endPosScreen = { turtle.origin.x + screenCenter.x, turtle.origin.y + screenCenter.y };
 
                 DrawLineEx(startPosScreen, endPosScreen, 2, Fade(BLACK, 0.2f));
             }

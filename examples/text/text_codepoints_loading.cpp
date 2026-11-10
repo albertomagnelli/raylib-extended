@@ -36,8 +36,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - codepoints loading");
 
@@ -53,7 +53,7 @@ int main()
 
     // Load font containing all the provided codepoint glyphs
     // A texture font atlas is automatically generated
-    Font font = LoadFontEx("resources/DotGothic16-Regular.ttf", 36, codepointsNoDups, codepointsNoDupsCount);
+    const Font font = LoadFontEx("resources/DotGothic16-Regular.ttf", 36, codepointsNoDups, codepointsNoDupsCount);
 
     // Set bilinear scale filter for better font scaling
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);

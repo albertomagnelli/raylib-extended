@@ -30,8 +30,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font sdf");
 
@@ -71,7 +71,7 @@ int main()
     UnloadFileData(fileData);      // Free memory from loaded file
 
     // Load SDF required shader (we use default vertex shader)
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/sdf.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/sdf.fs", GLSL_VERSION));
     SetTextureFilter(fontSDF.texture, TEXTURE_FILTER_BILINEAR);    // Required for SDF font
 
     Vector2 fontPosition = { 40, screenHeight/2.0f - 50 };

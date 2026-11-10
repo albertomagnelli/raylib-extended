@@ -53,8 +53,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blend custom");
 
@@ -68,12 +68,12 @@ int main()
 
     // Load gltf model
     Model model = LoadModel("resources/models/gltf/greenman.glb");
-    Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
 
     // Load skinning shader
     // WARNING: GPU skinning must be enabled in raylib with a compilation flag,
     // if not enabled, CPU skinning will be used instead
-    Shader skinningShader = LoadShader(TextFormat("resources/shaders/glsl%i/skinning.vs", GLSL_VERSION),
+    const Shader skinningShader = LoadShader(TextFormat("resources/shaders/glsl%i/skinning.vs", GLSL_VERSION),
                                        TextFormat("resources/shaders/glsl%i/skinning.fs", GLSL_VERSION));
     model.materials[1].shader = skinningShader;
 
@@ -116,7 +116,7 @@ int main()
         // Blend the two animations
         // When upperBodyBlend is ON: upper body = attack (1.0), lower body = walk (0.0)
         // When upperBodyBlend is OFF: uniform blend at 0.5 (50% walk, 50% attack)
-        float blendFactor = (upperBodyBlend? 1.0f : 0.5f);
+        const float blendFactor = (upperBodyBlend? 1.0f : 0.5f);
         UpdateModelAnimationBoneCustom(&model, &anim0, animCurrentFrame0,
             &anim1, animCurrentFrame1, blendFactor, upperBodyBlend);
 
@@ -226,7 +226,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             if (upperBodyBlend)
             {
                 const char *boneName = model->skeleton.bones[boneIndex].name;
-                bool isUpperBody = IsUpperBodyBone(boneName);
+                const bool isUpperBody = IsUpperBodyBone(boneName);
 
                 // Upper body: use anim1 (attack), Lower body: use anim0 (walk)
                 // blend = 0.0 means full anim0 (walk), 1.0 means full anim1 (attack)
@@ -246,10 +246,10 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             blended.scale = glm::mix(animTransform0->scale, animTransform1->scale, boneBlendFactor);
 
             // Convert bind pose to matrix
-            Matrix bindMatrix = ((glm::translate(Matrix(1.0f), Vector3{bindTransform->translation.x, bindTransform->translation.y, bindTransform->translation.z})) * (((glm::mat4_cast(bindTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{bindTransform->scale.x, bindTransform->scale.y, bindTransform->scale.z})))));
+            const Matrix bindMatrix = ((glm::translate(Matrix(1.0f), Vector3{bindTransform->translation.x, bindTransform->translation.y, bindTransform->translation.z})) * (((glm::mat4_cast(bindTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{bindTransform->scale.x, bindTransform->scale.y, bindTransform->scale.z})))));
 
             // Convert blended transform to matrix
-            Matrix blendedMatrix = ((glm::translate(Matrix(1.0f), Vector3{blended.translation.x, blended.translation.y, blended.translation.z})) * (((glm::mat4_cast(blended.rotation)) * (glm::scale(Matrix(1.0f), Vector3{blended.scale.x, blended.scale.y, blended.scale.z})))));
+            const Matrix blendedMatrix = ((glm::translate(Matrix(1.0f), Vector3{blended.translation.x, blended.translation.y, blended.translation.z})) * (((glm::mat4_cast(blended.rotation)) * (glm::scale(Matrix(1.0f), Vector3{blended.scale.x, blended.scale.y, blended.scale.z})))));
 
             // Calculate final bone matrix (similar to UpdateModelAnimationBones)
             model->boneMatrices[boneIndex] = ((blendedMatrix) * (glm::inverse(bindMatrix)));
@@ -259,7 +259,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
         // NOTE: Fallback in case GPU skinning is not supported or enabled
         for (int m = 0; m < model->meshCount; m++)
         {
-            Mesh mesh = model->meshes[m];
+            const Mesh mesh = model->meshes[m];
             Vector3 animVertex = {};
             Vector3 animNormal = {};
             const int vertexValuesCount = mesh.vertexCount*3;

@@ -187,7 +187,7 @@ void ToggleFullscreen(void)
 
         // Use current monitor the window is on to get fullscreen required size
         int monitorCount = 0;
-        int monitorIndex = GetCurrentMonitor();
+        const int monitorIndex = GetCurrentMonitor();
         GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
         GLFWmonitor *monitor = (monitorIndex < monitorCount)? monitors[monitorIndex] : nullptr;
 
@@ -230,7 +230,7 @@ void ToggleFullscreen(void)
         // NOTE: On Wayland, GLFW_SCALE_FRAMEBUFFER handles scaling, skip manual resize
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
-            Vector2 scaleDpi = GetWindowScaleDPI();
+            const Vector2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = static_cast<unsigned int>(roundf(CORE.Window.screen.width*scaleDpi.x));
             CORE.Window.screen.height = static_cast<unsigned int>(roundf(CORE.Window.screen.height*scaleDpi.y));
         }
@@ -318,7 +318,7 @@ void ToggleBorderlessWindowed(void)
                 // NOTE: On Wayland, GLFW_SCALE_FRAMEBUFFER handles scaling, skip manual resize
                 if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
                 {
-                    Vector2 scaleDpi = GetWindowScaleDPI();
+                    const Vector2 scaleDpi = GetWindowScaleDPI();
                     CORE.Window.screen.width = static_cast<unsigned int>(roundf(CORE.Window.screen.width*scaleDpi.x));
                     CORE.Window.screen.height = static_cast<unsigned int>(roundf(CORE.Window.screen.height*scaleDpi.y));
                 }
@@ -733,10 +733,10 @@ void SetWindowMinSize(int width, int height)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)) scaleDpi = GetWindowScaleDPI();
 #endif
 
-    int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.width*scaleDpi.x));
-    int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.height*scaleDpi.y));
-    int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.width*scaleDpi.x));
-    int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.height*scaleDpi.y));
+    const int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.width*scaleDpi.x));
+    const int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.height*scaleDpi.y));
+    const int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.width*scaleDpi.x));
+    const int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.height*scaleDpi.y));
 
     glfwSetWindowSizeLimits(platform.handle, minWidth, minHeight, maxWidth, maxHeight);
 }
@@ -752,10 +752,10 @@ void SetWindowMaxSize(int width, int height)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)) scaleDpi = GetWindowScaleDPI();
 #endif
 
-    int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.width*scaleDpi.x));
-    int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.height*scaleDpi.y));
-    int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.width*scaleDpi.x));
-    int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.height*scaleDpi.y));
+    const int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.width*scaleDpi.x));
+    const int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.height*scaleDpi.y));
+    const int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.width*scaleDpi.x));
+    const int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.height*scaleDpi.y));
 
     glfwSetWindowSizeLimits(platform.handle, minWidth, minHeight, maxWidth, maxHeight);
 }
@@ -769,7 +769,7 @@ void SetWindowSize(int width, int height)
 #if !defined(__APPLE__)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND))
     {
-        Vector2 scaleDpi = GetWindowScaleDPI();
+        const Vector2 scaleDpi = GetWindowScaleDPI();
         width = static_cast<int>(roundf(static_cast<float>(width)*scaleDpi.x));
         height = static_cast<int>(roundf(static_cast<float>(height)*scaleDpi.y));
     }
@@ -912,15 +912,15 @@ int GetCurrentMonitor(void)
                     if (wcy < my) yclosest = my;
                     else if (wcy > bottom) yclosest = bottom;
 
-                    int dx = wcx - xclosest;
-                    int dy = wcy - yclosest;
+                    const int dx = wcx - xclosest;
+                    const int dy = wcy - yclosest;
 
                     // Unsigned to dodge signed overflow UB; (-x)^2 == x^2 mod 2^32 so sign drops out.
                     // If |dx| or |dy| >= 65536, dist wraps and the wrong monitor may win.
                     // Not a concern for realistic monitor layouts.
-                    unsigned int ux = static_cast<unsigned int>(dx);
-                    unsigned int uy = static_cast<unsigned int>(dy);
-                    unsigned int dist = ux*ux + uy*uy;
+                    const unsigned int ux = static_cast<unsigned int>(dx);
+                    const unsigned int uy = static_cast<unsigned int>(dy);
+                    const unsigned int dist = ux*ux + uy*uy;
 
                     if (dist < closestDist)
                     {
@@ -1127,7 +1127,7 @@ Image GetClipboardImage(void)
     static Atom property = 0;
 
     Display *display = glfwGetX11Display();
-    XID window = glfwGetX11Window(platform.handle);
+    const XID window = glfwGetX11Window(platform.handle);
 
     // Lazy-load X11 atoms
     if (clipboard == 0)
@@ -1227,7 +1227,7 @@ void SwapScreenBuffer(void)
 // Get elapsed time measure in seconds since InitTimer()
 double GetTime(void)
 {
-    double time = glfwGetTime();   // Elapsed time since glfwInit()
+    const double time = glfwGetTime();   // Elapsed time since glfwInit()
 
     return time;
 }
@@ -1264,7 +1264,7 @@ void OpenURL(std::string_view urlView)
 #if defined(__APPLE__)
         sprintf(cmd, "open '%s'", url);
 #endif
-        int result = system(cmd);
+        const int result = system(cmd);
 
         if (result == -1) TRACELOG(LOG_WARNING, "OpenURL() child process could not be created");
         RL_FREE(cmd);
@@ -1293,7 +1293,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    Vector2 scale = CORE.Input.Mouse.scale;
+    const Vector2 scale = CORE.Input.Mouse.scale;
     CORE.Input.Mouse.currentPosition.x = roundf(static_cast<float>(x)/scale.x);
     CORE.Input.Mouse.currentPosition.y = roundf(static_cast<float>(y)/scale.y);
 
@@ -1387,7 +1387,7 @@ void PollInputEvents(void)
             // Get current gamepad state using internal GLFW mapping, instead of the immediate joystick API
             // NOTE: There is no callback available, getting it manually
             GLFWgamepadstate state = {};
-            int result = glfwGetGamepadState(i, &state); // This remaps all gamepads so they have their buttons mapped like an xbox controller
+            const int result = glfwGetGamepadState(i, &state); // This remaps all gamepads so they have their buttons mapped like an xbox controller
             if (result == GLFW_FALSE) // No joystick is connected, no gamepad mapping or an error occurred
             {
                 // Setting axes to expected resting value instead of GLFW 0.0f default when gamepad is not connected
@@ -1539,7 +1539,7 @@ int InitPlatform(void)
     glfwWindowHint(GLFW_AUTO_ICONIFY, 0);
 
     // Window flags requested before initialization to be applied after initialization
-    unsigned int requestedWindowFlags = CORE.Window.flags;
+    const unsigned int requestedWindowFlags = CORE.Window.flags;
 
     // Check window creation flags
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIDDEN)) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // Visible window
@@ -1599,7 +1599,7 @@ int InitPlatform(void)
     else glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, GLFW_FALSE);
 
     // Multisampling (MSAA), samples are requested by SetWindowSamples() or the MSAA window flags
-    int requestedSamples = GetWindowRequestedSamples();
+    const int requestedSamples = GetWindowRequestedSamples();
     if (requestedSamples > 0)
     {
         // NOTE: MSAA is only enabled for main framebuffer, not user-created FBOs
@@ -1751,7 +1751,7 @@ int InitPlatform(void)
         // Derive display sizes and, if possible, window size in case it was zero at beginning
 
         int monitorCount = 0;
-        int monitorIndex = GetCurrentMonitor();
+        const int monitorIndex = GetCurrentMonitor();
         GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
 
         if (monitorIndex < monitorCount)
@@ -1813,7 +1813,7 @@ int InitPlatform(void)
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
             // Set screen size to logical pixel size, considering content scaling
-            Vector2 scaleDpi = GetWindowScaleDPI();
+            const Vector2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.render.width = static_cast<int>(roundf(CORE.Window.screen.width*scaleDpi.x));
             CORE.Window.render.height = static_cast<int>(roundf(CORE.Window.screen.height*scaleDpi.y));
             //TRACELOG(LOG_INFO, "DPI SCALING: %.2f, %.2f", scaleDpi.x, scaleDpi.y);
@@ -1861,7 +1861,7 @@ int InitPlatform(void)
 
         // Try to center window on screen but avoiding window-bar outside of screen
         int monitorCount = 0;
-        int monitorIndex = GetCurrentMonitor();
+        const int monitorIndex = GetCurrentMonitor();
         GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
         GLFWmonitor *monitor = monitors[monitorIndex];
 
@@ -2054,7 +2054,7 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
             // Set screen size to logical pixel size, considering content scaling
-            Vector2 scaleDpi = GetWindowScaleDPI();
+            const Vector2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = static_cast<int>(roundf(static_cast<float>(width)/scaleDpi.x));
             CORE.Window.screen.height = static_cast<int>(roundf(static_cast<float>(height)/scaleDpi.y));
             CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});

@@ -77,8 +77,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [others] example - OpenGL 4.6 compute particles");
@@ -176,9 +176,9 @@ int main()
         "    finalColor = vec4(fragColor.rgb, smoothstep(1.0, 0.6, radius));\n"
         "}\n";
 
-    GLuint computeShader = CompileShader(GL_COMPUTE_SHADER, computeShaderCode);
-    GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderCode);
-    GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderCode);
+    const GLuint computeShader = CompileShader(GL_COMPUTE_SHADER, computeShaderCode);
+    const GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderCode);
+    const GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderCode);
 
     if ((computeShader == 0) || (vertexShader == 0) || (fragmentShader == 0))
     {
@@ -189,7 +189,7 @@ int main()
     }
 
     // Link compute and graphics programs
-    GLuint computeProgram = glCreateProgram();
+    const GLuint computeProgram = glCreateProgram();
     glAttachShader(computeProgram, computeShader);
     glLinkProgram(computeProgram);
 
@@ -208,7 +208,7 @@ int main()
         return 1;
     }
 
-    GLuint renderProgram = LinkProgram(vertexShader, fragmentShader);
+    const GLuint renderProgram = LinkProgram(vertexShader, fragmentShader);
 
     // Shaders are no longer required once the programs are linked
     glDeleteShader(computeShader);
@@ -223,9 +223,9 @@ int main()
         return 1;
     }
 
-    GLint particleCountLoc = glGetUniformLocation(computeProgram, "particleCount");
-    GLint deltaTimeLoc = glGetUniformLocation(computeProgram, "deltaTime");
-    GLint paletteLoc = glGetUniformLocation(renderProgram, "palette[0]");
+    const GLint particleCountLoc = glGetUniformLocation(computeProgram, "particleCount");
+    const GLint deltaTimeLoc = glGetUniformLocation(computeProgram, "deltaTime");
+    const GLint paletteLoc = glGetUniformLocation(renderProgram, "palette[0]");
 
     //----------------------------------------------------------------------------------
     // Particle data
@@ -244,7 +244,7 @@ int main()
     // Indirect draw commands: PARTICLE_BATCHES draws, one per palette color
     // NOTE: All batches read from the same SSBO, each one starting at a different particle
     DrawArraysIndirectCommand drawCommands[PARTICLE_BATCHES] = {};
-    unsigned int particlesPerBatch = MAX_PARTICLES/PARTICLE_BATCHES;
+    const unsigned int particlesPerBatch = MAX_PARTICLES/PARTICLE_BATCHES;
 
     for (int i = 0; i < PARTICLE_BATCHES; i++)
     {
@@ -312,7 +312,7 @@ int main()
             rlDrawRenderBatchActive();
 
             // 1) Simulate all particles with a compute shader (GPU only)
-            float deltaTime = fminf(GetFrameTime(), 1.0f/30.0f);
+            const float deltaTime = fminf(GetFrameTime(), 1.0f/30.0f);
 
             glUseProgram(computeProgram);
                 glUniform1ui(particleCountLoc, MAX_PARTICLES);
@@ -358,7 +358,7 @@ int main()
 // Compile a shader and report any compilation error
 static GLuint CompileShader(GLenum type, const char *code)
 {
-    GLuint shaderId = glCreateShader(type);
+    const GLuint shaderId = glCreateShader(type);
 
     glShaderSource(shaderId, 1, &code, nullptr);
     glCompileShader(shaderId);
@@ -384,7 +384,7 @@ static GLuint CompileShader(GLenum type, const char *code)
 // Link a vertex and a fragment shader into a program
 static GLuint LinkProgram(GLuint vertexShader, GLuint fragmentShader)
 {
-    GLuint programId = glCreateProgram();
+    const GLuint programId = glCreateProgram();
 
     glAttachShader(programId, vertexShader);
     glAttachShader(programId, fragmentShader);

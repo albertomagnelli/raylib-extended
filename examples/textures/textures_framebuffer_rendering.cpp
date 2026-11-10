@@ -30,8 +30,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
     const int splitWidth = screenWidth/2;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - framebuffer rendering");
@@ -53,19 +53,19 @@ int main()
     observerCamera.projection = CAMERA_PERSPECTIVE;
 
     // Set up render textures
-    RenderTexture2D observerTarget = LoadRenderTexture(splitWidth, screenHeight);
-    Rectangle observerSource = { 0.0f, 0.0f, static_cast<float>(observerTarget.texture.width), -static_cast<float>(observerTarget.texture.height) };
-    Rectangle observerDest = { 0.0f, 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
+    const RenderTexture2D observerTarget = LoadRenderTexture(splitWidth, screenHeight);
+    const Rectangle observerSource = { 0.0f, 0.0f, static_cast<float>(observerTarget.texture.width), -static_cast<float>(observerTarget.texture.height) };
+    const Rectangle observerDest = { 0.0f, 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
 
-    RenderTexture2D subjectTarget = LoadRenderTexture(splitWidth, screenHeight);
-    Rectangle subjectSource = { 0.0f, 0.0f, static_cast<float>(subjectTarget.texture.width), -static_cast<float>(subjectTarget.texture.height) };
-    Rectangle subjectDest = { static_cast<float>(splitWidth), 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
+    const RenderTexture2D subjectTarget = LoadRenderTexture(splitWidth, screenHeight);
+    const Rectangle subjectSource = { 0.0f, 0.0f, static_cast<float>(subjectTarget.texture.width), -static_cast<float>(subjectTarget.texture.height) };
+    const Rectangle subjectDest = { static_cast<float>(splitWidth), 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
     const float textureAspectRatio = static_cast<float>(subjectTarget.texture.width)/static_cast<float>(subjectTarget.texture.height);
 
     // Rectangles for cropping render texture
-    const float captureSize = 128.0f;
-    Rectangle cropSource = { (subjectTarget.texture.width - captureSize)/2.0f, (subjectTarget.texture.height - captureSize)/2.0f, captureSize, -captureSize };
-    Rectangle cropDest = { splitWidth + 20.0f, 20.0f, captureSize, captureSize};
+    constexpr float captureSize = 128.0f;
+    const Rectangle cropSource = { (subjectTarget.texture.width - captureSize)/2.0f, (subjectTarget.texture.height - captureSize)/2.0f, captureSize, -captureSize };
+    const Rectangle cropDest = { splitWidth + 20.0f, 20.0f, captureSize, captureSize};
 
     SetTargetFPS(60);
     DisableCursor();
@@ -160,9 +160,9 @@ int main()
 //----------------------------------------------------------------------------------
 static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
 {
-    float length = glm::distance(camera.position, camera.target);
+    const float length = glm::distance(camera.position, camera.target);
     // Define the 4 corners of the camera's prism plane sliced at the target in Normalized Device Coordinates
-    Vector3 planeNDC[4] = {
+    const Vector3 planeNDC[4] = {
         { -1.0f, -1.0f, 1.0f }, // Bottom Left
         {  1.0f, -1.0f, 1.0f }, // Bottom Right
         {  1.0f,  1.0f, 1.0f }, // Top Right
@@ -170,10 +170,10 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
     };
 
     // Build the matrices
-    Matrix view = GetCameraMatrix(camera);
-    Matrix proj = glm::perspective(camera.fovy * DEG2RAD, aspect, 0.05f, length);
+    const Matrix view = GetCameraMatrix(camera);
+    const Matrix proj = glm::perspective(camera.fovy * DEG2RAD, aspect, 0.05f, length);
     // Combine view and projection so we can reverse the full camera transform
-    Matrix viewProj = ((proj) * (view));
+    const Matrix viewProj = ((proj) * (view));
     // Invert the view-projection matrix to unproject points from NDC space back into world space
     Matrix inverseViewProj = glm::inverse(viewProj);
 
@@ -181,16 +181,16 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
     Vector3 corners[4];
     for (int i = 0; i < 4; i++)
     {
-        float x = planeNDC[i].x;
-        float y = planeNDC[i].y;
-        float z = planeNDC[i].z;
+        const float x = planeNDC[i].x;
+        const float y = planeNDC[i].y;
+        const float z = planeNDC[i].z;
 
         // Multiply NDC position by the inverse view-projection matrix
         // This produces a homogeneous (x, y, z, w) position in world space
-        float vx = inverseViewProj[0][0]*x + inverseViewProj[1][0]*y + inverseViewProj[2][0]*z + inverseViewProj[3][0];
-        float vy = inverseViewProj[0][1]*x + inverseViewProj[1][1]*y + inverseViewProj[2][1]*z + inverseViewProj[3][1];
-        float vz = inverseViewProj[0][2]*x + inverseViewProj[1][2]*y + inverseViewProj[2][2]*z + inverseViewProj[3][2];
-        float vw = inverseViewProj[0][3]*x + inverseViewProj[1][3]*y + inverseViewProj[2][3]*z + inverseViewProj[3][3];
+        const float vx = inverseViewProj[0][0]*x + inverseViewProj[1][0]*y + inverseViewProj[2][0]*z + inverseViewProj[3][0];
+        const float vy = inverseViewProj[0][1]*x + inverseViewProj[1][1]*y + inverseViewProj[2][1]*z + inverseViewProj[3][1];
+        const float vz = inverseViewProj[0][2]*x + inverseViewProj[1][2]*y + inverseViewProj[2][2]*z + inverseViewProj[3][2];
+        const float vw = inverseViewProj[0][3]*x + inverseViewProj[1][3]*y + inverseViewProj[2][3]*z + inverseViewProj[3][3];
 
         corners[i] = Vector3{ vx/vw, vy/vw, vz/vw };
     }

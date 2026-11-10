@@ -39,8 +39,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bullet hell");
 
@@ -48,10 +48,10 @@ int main()
     Bullet *bullets = static_cast<Bullet *>(RL_CALLOC(MAX_BULLETS, sizeof(Bullet))); // Bullets array
     int bulletCount = 0;
     int bulletDisabledCount = 0; // Used to calculate how many bullets are on screen
-    int bulletRadius = 10;
+    constexpr int bulletRadius = 10;
     float bulletSpeed = 3.0f;
     int bulletRows = 6;
-    Color bulletColor[2] = { RED, BLUE };
+    const Color bulletColor[2] = { RED, BLUE };
 
     // Spawner variables
     float baseDirection = 0;
@@ -63,7 +63,7 @@ int main()
     float magicCircleRotation = 0;
 
     // Used on performance drawing
-    RenderTexture bulletTexture = LoadRenderTexture(24, 24);
+    const RenderTexture bulletTexture = LoadRenderTexture(24, 24);
 
     // Draw circle to bullet texture, then draw bullet using DrawTexture()
     // NOTE: This is done to improve the performance, since DrawCircle() is very slow
@@ -96,7 +96,7 @@ int main()
             spawnCooldownTimer = spawnCooldown;
 
             // Spawn bullets
-            float degreesPerRow = 360.0f/bulletRows;
+            const float degreesPerRow = 360.0f/bulletRows;
             for (int row = 0; row < bulletRows; row++)
             {
                 if (bulletCount < MAX_BULLETS)
@@ -105,7 +105,7 @@ int main()
                     bullets[bulletCount].disabled = false;
                     bullets[bulletCount].color = bulletColor[row%2];
 
-                    float bulletDirection = baseDirection + (degreesPerRow*row);
+                    const float bulletDirection = baseDirection + (degreesPerRow*row);
 
                     // Bullet speed*bullet direction, this will determine how much pixels will be incremented/decremented
                     // from the bullet position every frame. Since the bullets doesn't change its direction and speed,

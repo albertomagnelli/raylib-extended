@@ -32,8 +32,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - polygon drawing");
 
@@ -67,7 +67,7 @@ int main()
     for (int i = 0; i < MAX_POINTS; i++) positions[i] = points[i];
 
     // Load texture to be mapped to poly
-    Texture texture = LoadTexture("resources/cat.png");
+    const Texture texture = LoadTexture("resources/cat.png");
 
     float angle = 0.0f;             // Rotation angle (in degrees)
 

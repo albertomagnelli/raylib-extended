@@ -30,8 +30,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - compute hash");
 
@@ -60,7 +60,7 @@ int main()
         //----------------------------------------------------------------------------------
         if (btnComputeHashes)
         {
-            int textInputLen = static_cast<int>(strlen(textInput));
+            const int textInputLen = static_cast<int>(strlen(textInput));
 
             // Encode data to Base64 string (includes NULL terminator), memory must be MemFree()
             base64Text = EncodeDataBase64(reinterpret_cast<unsigned char *>(textInput), textInputLen, &base64TextSize);

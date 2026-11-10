@@ -77,8 +77,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera fps");
 
@@ -105,16 +105,16 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        Vector2 mouseDelta = GetMouseDelta();
+        const Vector2 mouseDelta = GetMouseDelta();
         lookRotation.x -= mouseDelta.x*sensitivity.x;
         lookRotation.y += mouseDelta.y*sensitivity.y;
 
-        char sideway = (IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
-        char forward = (IsKeyDown(KEY_W) - IsKeyDown(KEY_S));
-        bool crouching = IsKeyDown(KEY_LEFT_CONTROL);
+        const char sideway = (IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
+        const char forward = (IsKeyDown(KEY_W) - IsKeyDown(KEY_S));
+        const bool crouching = IsKeyDown(KEY_LEFT_CONTROL);
         UpdateBody(&player, lookRotation.x, sideway, forward, IsKeyPressed(KEY_SPACE), crouching);
 
-        float delta = GetFrameTime();
+        const float delta = GetFrameTime();
         headLerp = Lerp(headLerp, (crouching ? CROUCH_HEIGHT : STAND_HEIGHT), 20.0f*delta);
         camera.position = Vector3{
             player.position.x,
@@ -184,7 +184,7 @@ void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed
     if ((side != 0) && (forward != 0)) input = glm::normalize(input);
 #endif
 
-    float delta = GetFrameTime();
+    const float delta = GetFrameTime();
 
     if (!body->isGrounded) body->velocity.y -= GRAVITY*delta;
 
@@ -198,26 +198,26 @@ void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed
         //PlaySound(fxJump);
     }
 
-    Vector3 front = Vector3{ sinf(rot), 0.f, cosf(rot) };
-    Vector3 right = Vector3{ cosf(-rot), 0.f, sinf(-rot) };
+    const Vector3 front = Vector3{ sinf(rot), 0.f, cosf(rot) };
+    const Vector3 right = Vector3{ cosf(-rot), 0.f, sinf(-rot) };
 
-    Vector3 desiredDir = Vector3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
+    const Vector3 desiredDir = Vector3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
     body->dir = glm::mix(body->dir, desiredDir, CONTROL*delta);
 
-    float decel = (body->isGrounded ? FRICTION : AIR_DRAG);
+    const float decel = (body->isGrounded ? FRICTION : AIR_DRAG);
     Vector3 hvel = Vector3{ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
 
-    float hvelLength = glm::length(hvel); // Magnitude
+    const float hvelLength = glm::length(hvel); // Magnitude
     if (hvelLength < (MAX_SPEED*0.01f)) hvel = Vector3{};
 
     // This is what creates strafing
-    float speed = glm::dot(hvel, body->dir);
+    const float speed = glm::dot(hvel, body->dir);
 
     // Whenever the amount of acceleration to add is clamped by the maximum acceleration constant,
     // a Player can make the speed faster by bringing the direction closer to horizontal velocity angle
     // More info here: https://youtu.be/v3zT3Z5apaM?t=165
-    float maxSpeed = (crouchHold? CROUCH_SPEED : MAX_SPEED);
-    float accel = Clamp(maxSpeed - speed, 0.f, MAX_ACCEL*delta);
+    const float maxSpeed = (crouchHold? CROUCH_SPEED : MAX_SPEED);
+    const float accel = Clamp(maxSpeed - speed, 0.f, MAX_ACCEL*delta);
     hvel.x += body->dir.x*accel;
     hvel.z += body->dir.z*accel;
 
@@ -244,7 +244,7 @@ static void UpdateCameraFPS(Camera *camera)
     const Vector3 targetOffset = Vector3{ 0.0f, 0.0f, -1.0f };
 
     // Left and right
-    Vector3 yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
+    const Vector3 yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
 
     // Clamp view up
     float maxAngleUp = Vector3Angle(up, yaw);
@@ -258,23 +258,23 @@ static void UpdateCameraFPS(Camera *camera)
     if ( -(lookRotation.y) < maxAngleDown) { lookRotation.y = -maxAngleDown; }
 
     // Up and down
-    Vector3 right = glm::normalize(glm::cross(yaw, up));
+    const Vector3 right = glm::normalize(glm::cross(yaw, up));
 
     // Rotate view vector around right axis
     float pitchAngle = -lookRotation.y - lean.y;
     pitchAngle = Clamp(pitchAngle, -PI/2 + 0.0001f, PI/2 - 0.0001f); // Clamp angle so it doesn't go past straight up or straight down
-    Vector3 pitch = Vector3RotateByAxisAngle(yaw, right, pitchAngle);
+    const Vector3 pitch = Vector3RotateByAxisAngle(yaw, right, pitchAngle);
 
     // Head animation
     // Rotate up direction around forward axis
-    float headSin = sinf(headTimer*PI);
-    float headCos = cosf(headTimer*PI);
-    const float stepRotation = 0.01f;
+    const float headSin = sinf(headTimer*PI);
+    const float headCos = cosf(headTimer*PI);
+    constexpr float stepRotation = 0.01f;
     camera->up = Vector3RotateByAxisAngle(up, pitch, headSin*stepRotation + lean.x);
 
     // Camera BOB
-    const float bobSide = 0.1f;
-    const float bobUp = 0.15f;
+    constexpr float bobSide = 0.1f;
+    constexpr float bobUp = 0.15f;
     Vector3 bobbing = ((right) * (headSin*bobSide));
     bobbing.y = fabsf(headCos*bobUp);
 
@@ -285,8 +285,8 @@ static void UpdateCameraFPS(Camera *camera)
 // Draw game level
 static void DrawLevel(void)
 {
-    const int floorExtent = 25;
-    const float tileSize = 5.0f;
+    constexpr int floorExtent = 25;
+    constexpr float tileSize = 5.0f;
     const Color tileColor1 = Color{ 150, 200, 200, 255 };
 
     // Floor tiles

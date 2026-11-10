@@ -26,13 +26,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - mouse painting");
 
     // Colors to choose from
-    Color colors[MAX_COLORS_COUNT] = {
+    const Color colors[MAX_COLORS_COUNT] = {
         RAYWHITE, YELLOW, GOLD, ORANGE, PINK, RED, MAROON, GREEN, LIME, DARKGREEN,
         SKYBLUE, BLUE, DARKBLUE, PURPLE, VIOLET, DARKPURPLE, BEIGE, BROWN, DARKBROWN,
         LIGHTGRAY, GRAY, DARKGRAY, BLACK };
@@ -54,13 +54,13 @@ int main()
     float brushSize = 20.0f;
     bool mouseWasPressed = false;
 
-    Rectangle btnSaveRec = { 750, 10, 40, 30 };
+    const Rectangle btnSaveRec = { 750, 10, 40, 30 };
     bool btnSaveMouseHover = false;
     bool showSaveMessage = false;
     int saveMessageCounter = 0;
 
     // Create a RenderTexture2D to use as a canvas
-    RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     // Clear render texture before entering the game loop
     BeginTextureMode(target);
@@ -75,7 +75,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        Vector2 mousePos = GetMousePosition();
+        const Vector2 mousePos = GetMousePosition();
 
         // Move between colors with keys
         if (IsKeyPressed(KEY_RIGHT)) colorSelected++;

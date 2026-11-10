@@ -64,8 +64,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - digital clock");
@@ -113,7 +113,7 @@ int main()
                 // Draw clock using default raylib font
                 // Get pointer to formated clock time string
                 // WARNING: Pointing to an internal static string that is reused between TextFormat() calls
-                std::string clockTime = TextFormat("%02i:%02i:%02i", clock.hour.value, clock.minute.value, clock.second.value);
+                const std::string clockTime = TextFormat("%02i:%02i:%02i", clock.hour.value, clock.minute.value, clock.second.value);
                 DrawText(clockTime, GetScreenWidth()/2 - MeasureText(clockTime, 150)/2, 300, 150, BLACK);
             }
 
@@ -240,9 +240,9 @@ static void DrawDisplayValue(Vector2 position, int value, Color colorOn, Color c
 // Parameter: segments, defines in binary the segments to be activated
 static void Draw7SDisplay(Vector2 position, char segments, Color colorOn, Color colorOff)
 {
-    int segmentLen = 60;
-    int segmentThick = 20;
-    float offsetYAdjust = segmentThick*0.3f; // HACK: Adjust gap space between segment limits
+    constexpr int segmentLen = 60;
+    constexpr int segmentThick = 20;
+    const float offsetYAdjust = segmentThick*0.3f; // HACK: Adjust gap space between segment limits
 
     // Segment A
     DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen/2.0f, position.y + segmentThick },

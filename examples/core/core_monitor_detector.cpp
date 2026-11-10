@@ -37,8 +37,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - monitor detector");
 
@@ -139,7 +139,7 @@ int main()
                 if (i == currentMonitorIndex)
                 {
                     DrawRectangleLinesEx(rec, 5, RED);
-                    Vector2 windowPosition = Vector2{ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
+                    const Vector2 windowPosition = Vector2{ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
 
                     // Draw window position based on monitors
                     DrawRectangleV(windowPosition, Vector2{screenWidth*monitorScale, screenHeight*monitorScale}, Fade(GREEN, 0.5));

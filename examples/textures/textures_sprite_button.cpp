@@ -24,22 +24,22 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite button");
 
     InitAudioDevice();      // Initialize audio device
 
-    Sound fxButton = LoadSound("resources/buttonfx.wav");   // Load button sound
-    Texture2D button = LoadTexture("resources/button.png"); // Load button texture
+    const Sound fxButton = LoadSound("resources/buttonfx.wav");   // Load button sound
+    const Texture2D button = LoadTexture("resources/button.png"); // Load button texture
 
     // Define frame rectangle for drawing
-    float frameHeight = static_cast<float>(button.height)/NUM_FRAMES;
+    const float frameHeight = static_cast<float>(button.height)/NUM_FRAMES;
     Rectangle sourceRec = { 0, 0, static_cast<float>(button.width), frameHeight };
 
     // Define button bounds on screen
-    Rectangle btnBounds = { screenWidth/2.0f - button.width/2.0f, screenHeight/2.0f - static_cast<float>(button.height)/NUM_FRAMES/2.0f, static_cast<float>(button.width), frameHeight };
+    const Rectangle btnBounds = { screenWidth/2.0f - button.width/2.0f, screenHeight/2.0f - static_cast<float>(button.height)/NUM_FRAMES/2.0f, static_cast<float>(button.width), frameHeight };
 
     int btnState = 0;               // Button state: 0-NORMAL, 1-MOUSE_HOVER, 2-PRESSED
     bool btnAction = false;         // Button action should be activated

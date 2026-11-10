@@ -99,14 +99,14 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - scissor shapes");
 
     Vector2 circleCenter = { screenWidth/2.0f - 120, screenHeight/2.0f };
-    Vector2 hexCenter = { screenWidth/2.0f + 120, screenHeight/2.0f };
-    float maskRadius = 100.0f;
+    const Vector2 hexCenter = { screenWidth/2.0f + 120, screenHeight/2.0f };
+    constexpr float maskRadius = 100.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

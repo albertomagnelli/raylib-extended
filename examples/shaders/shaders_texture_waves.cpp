@@ -37,24 +37,24 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture waves");
 
     // Load texture texture to apply shaders
-    Texture2D texture = LoadTexture("resources/space.png");
+    const Texture2D texture = LoadTexture("resources/space.png");
 
     // Load shader and setup location points and values
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/wave.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/wave.fs", GLSL_VERSION));
 
-    int secondsLoc = GetShaderLocation(shader, "seconds");
-    int freqXLoc = GetShaderLocation(shader, "freqX");
-    int freqYLoc = GetShaderLocation(shader, "freqY");
-    int ampXLoc = GetShaderLocation(shader, "ampX");
-    int ampYLoc = GetShaderLocation(shader, "ampY");
-    int speedXLoc = GetShaderLocation(shader, "speedX");
-    int speedYLoc = GetShaderLocation(shader, "speedY");
+    const int secondsLoc = GetShaderLocation(shader, "seconds");
+    const int freqXLoc = GetShaderLocation(shader, "freqX");
+    const int freqYLoc = GetShaderLocation(shader, "freqY");
+    const int ampXLoc = GetShaderLocation(shader, "ampX");
+    const int ampYLoc = GetShaderLocation(shader, "ampY");
+    const int speedXLoc = GetShaderLocation(shader, "speedX");
+    const int speedYLoc = GetShaderLocation(shader, "speedY");
 
     // Shader uniform values that can be updated at any time
     float freqX = 25.0f;

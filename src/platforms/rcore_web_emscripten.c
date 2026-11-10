@@ -74,7 +74,7 @@ extern CoreData CORE;                   // Global CORE state context
 
 static PlatformData platform = {};   // Platform specific data
 
-static const KeyboardKey mapDomCodeToKey[DOM_PK_CODE_MAPPED_NUM] = {
+static constexpr KeyboardKey mapDomCodeToKey[DOM_PK_CODE_MAPPED_NUM] = {
     [DOM_PK_ESCAPE] = KEY_ESCAPE,
     [DOM_PK_0] = KEY_ZERO,
     [DOM_PK_1] = KEY_ONE,
@@ -166,7 +166,7 @@ static const KeyboardKey mapDomCodeToKey[DOM_PK_CODE_MAPPED_NUM] = {
 };
 
 // Emscripten places keys with extended scan codes (right-side modifiers, navigation and some keypad keys) in the 0xE0xx range
-static const KeyboardKey mapDomCodeToKeyExtended[DOM_PK_CODE_MAPPED_NUM] = {
+static constexpr KeyboardKey mapDomCodeToKeyExtended[DOM_PK_CODE_MAPPED_NUM] = {
     [DOM_PK_NUMPAD_ENTER - DOM_PK_CODE_EXTENDED_OFFSET] = KEY_KP_ENTER,
     [DOM_PK_CONTROL_RIGHT - DOM_PK_CODE_EXTENDED_OFFSET] = KEY_RIGHT_CONTROL,
     [DOM_PK_AUDIO_VOLUME_DOWN - DOM_PK_CODE_EXTENDED_OFFSET] = KEY_VOLUME_DOWN,
@@ -189,7 +189,7 @@ static const KeyboardKey mapDomCodeToKeyExtended[DOM_PK_CODE_MAPPED_NUM] = {
     [DOM_PK_CONTEXT_MENU - DOM_PK_CODE_EXTENDED_OFFSET] = KEY_KB_MENU
 };
 
-static const char cursorLUT[11][12] = {
+static constexpr char cursorLUT[11][12] = {
     "default",     // 0  MOUSE_CURSOR_DEFAULT
     "default",     // 1  MOUSE_CURSOR_ARROW
     "text",        // 2  MOUSE_CURSOR_IBEAM

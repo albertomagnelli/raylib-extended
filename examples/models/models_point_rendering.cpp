@@ -38,8 +38,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - point rendering");
 
@@ -51,7 +51,7 @@ int main()
         .projection = CAMERA_PERSPECTIVE
     };
 
-    Vector3 position = { 0.0f, 0.0f, 0.0f };
+    const Vector3 position = { 0.0f, 0.0f, 0.0f };
     bool useDrawModelPoints = true;
     bool numPointsChanged = false;
     int numPoints = 1000;
@@ -105,12 +105,12 @@ int main()
                     // The old method must continually draw the "points" (lines)
                     for (int i = 0; i < numPoints; i++)
                     {
-                        Vector3 pos = {
+                        const Vector3 pos = {
                             mesh.vertices[i*3 + 0],
                             mesh.vertices[i*3 + 1],
                             mesh.vertices[i*3 + 2],
                         };
-                        Color color = {
+                        const Color color = {
                             mesh.colors[i*4 + 0],
                             mesh.colors[i*4 + 1],
                             mesh.colors[i*4 + 2],
@@ -164,15 +164,15 @@ static Mesh GenMeshPoints(int numPoints)
     // REF: https://en.wikipedia.org/wiki/Spherical_coordinate_system
     for (int i = 0; i < numPoints; i++)
     {
-        float theta = (PI*rand())/(static_cast<float>(RAND_MAX));
-        float phi = (2.0f*PI*rand())/(static_cast<float>(RAND_MAX));
-        float r = (10.0f*rand())/(static_cast<float>(RAND_MAX));
+        const float theta = (PI*rand())/(static_cast<float>(RAND_MAX));
+        const float phi = (2.0f*PI*rand())/(static_cast<float>(RAND_MAX));
+        const float r = (10.0f*rand())/(static_cast<float>(RAND_MAX));
 
         mesh.vertices[i*3 + 0] = r*sinf(theta)*cosf(phi);
         mesh.vertices[i*3 + 1] = r*sinf(theta)*sinf(phi);
         mesh.vertices[i*3 + 2] = r*cosf(theta);
 
-        Color color = ColorFromHSV(r*360.0f, 1.0f, 1.0f);
+        const Color color = ColorFromHSV(r*360.0f, 1.0f, 1.0f);
 
         mesh.colors[i*4 + 0] = color.r;
         mesh.colors[i*4 + 1] = color.g;

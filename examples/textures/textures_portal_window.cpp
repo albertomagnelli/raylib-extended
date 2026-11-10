@@ -41,8 +41,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - portal window");
 
@@ -56,16 +56,16 @@ int main()
 
     // The archway opening, in Dimension A world space (used both to draw the frame and
     // as the window rectangle the oblique projection is built from)
-    Vector3 archBottomLeft  = { -1.5f, 0.0f, 0.0f };
-    Vector3 archBottomRight = {  1.5f, 0.0f, 0.0f };
-    Vector3 archTopLeft     = { -1.5f, 4.0f, 0.0f };
+    const Vector3 archBottomLeft  = { -1.5f, 0.0f, 0.0f };
+    const Vector3 archBottomRight = {  1.5f, 0.0f, 0.0f };
+    const Vector3 archTopLeft     = { -1.5f, 4.0f, 0.0f };
 
     // The archway sits at portalA and looks out onto portalB, far away in world space.
     // Every frame, Dimension B gets rendered to a texture using the same relative eye
     // and window position, shifted by the offset between the two portals
-    Vector3 portalA = { 0.0f, 0.0f, 0.0f };
-    Vector3 portalB = { 0.0f, 0.0f, -60.0f };
-    RenderTexture2D portalView = LoadRenderTexture(480, 640);
+    const Vector3 portalA = { 0.0f, 0.0f, 0.0f };
+    const Vector3 portalB = { 0.0f, 0.0f, -60.0f };
+    const RenderTexture2D portalView = LoadRenderTexture(480, 640);
 
     DisableCursor();        // Lock cursor for first-person free camera controls
     SetTargetFPS(60);
@@ -77,15 +77,15 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
-        float time = static_cast<float>(GetTime());
+        const float time = static_cast<float>(GetTime());
 
         // Eye and window corners, shifted into Dimension B so they match the player's
         // actual position and viewing angle relative to the archway
-        Vector3 offset = ((portalB) - (portalA));
-        Vector3 eyeInB = ((camera.position) + (offset));
-        Vector3 blInB = ((archBottomLeft) + (offset));
-        Vector3 brInB = ((archBottomRight) + (offset));
-        Vector3 tlInB = ((archTopLeft) + (offset));
+        const Vector3 offset = ((portalB) - (portalA));
+        const Vector3 eyeInB = ((camera.position) + (offset));
+        const Vector3 blInB = ((archBottomLeft) + (offset));
+        const Vector3 brInB = ((archBottomRight) + (offset));
+        const Vector3 tlInB = ((archTopLeft) + (offset));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -101,15 +101,15 @@ int main()
                 DrawGrid(30, 0.8f);
 
                 // Floating pulsing core sphere
-                Vector3 corePos = ((portalB) + (Vector3{ 0.0f, 2.0f + sinf(time * 2.5f) * 0.4f, -4.0f }));
+                const Vector3 corePos = ((portalB) + (Vector3{ 0.0f, 2.0f + sinf(time * 2.5f) * 0.4f, -4.0f }));
                 DrawSphere(corePos, 1.2f, PURPLE);
                 DrawSphereWires(corePos, 1.25f, 16, 16, MAGENTA);
 
                 // Orbiting cubes
                 for (int i = 0; i < 4; i++)
                 {
-                    float angle = time * 1.5f + i * (PI / 2.0f);
-                    Vector3 pos = ((portalB) + (Vector3{
+                    const float angle = time * 1.5f + i * (PI / 2.0f);
+                    const Vector3 pos = ((portalB) + (Vector3{
                         sinf(angle) * 2.5f,
                         2.0f + cosf(time * 3.0f + i) * 0.5f,
                         -4.0f + cosf(angle) * 2.5f }));
@@ -192,20 +192,20 @@ int main()
 // eye position, instead of behaving like a flat image pasted onto the window
 static void BeginPortalMode3D(Vector3 eye, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topLeft, float nearPlane, float farPlane)
 {
-    Vector3 right = glm::normalize(((bottomRight) - (bottomLeft)));
-    Vector3 up = glm::normalize(((topLeft) - (bottomLeft)));
-    Vector3 normal = glm::normalize(glm::cross(right, up));
+    const Vector3 right = glm::normalize(((bottomRight) - (bottomLeft)));
+    const Vector3 up = glm::normalize(((topLeft) - (bottomLeft)));
+    const Vector3 normal = glm::normalize(glm::cross(right, up));
 
     // Vectors from the eye to 3 corners of the window, used to project the window onto
     // the near plane and read off how far it extends left/right/bottom/top of the eye
-    Vector3 toBL = ((bottomLeft) - (eye));
-    Vector3 toBR = ((bottomRight) - (eye));
-    Vector3 toTL = ((topLeft) - (eye));
+    const Vector3 toBL = ((bottomLeft) - (eye));
+    const Vector3 toBR = ((bottomRight) - (eye));
+    const Vector3 toTL = ((topLeft) - (eye));
 
     float dist = -glm::dot(toBL, normal);
     if (dist < 0.01f) dist = 0.01f; // Keep the eye from crossing the window plane
 
-    float scale = nearPlane/dist;
+    const float scale = nearPlane/dist;
 
     rlDrawRenderBatchActive();
 

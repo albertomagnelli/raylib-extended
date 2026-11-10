@@ -30,22 +30,22 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - ascii rendering");
 
     // Texture to test static drawing
-    Texture2D fudesumi = LoadTexture("resources/fudesumi.png");
+    const Texture2D fudesumi = LoadTexture("resources/fudesumi.png");
     // Texture to test moving drawing
-    Texture2D raysan = LoadTexture("resources/raysan.png");
+    const Texture2D raysan = LoadTexture("resources/raysan.png");
 
     // Load shader to be used on postprocessing
-    Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/ascii.fs", GLSL_VERSION));
+    const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/ascii.fs", GLSL_VERSION));
 
     // These locations are used to send data to the GPU
-    int resolutionLoc = GetShaderLocation(shader, "resolution");
-    int fontSizeLoc = GetShaderLocation(shader, "fontSize");
+    const int resolutionLoc = GetShaderLocation(shader, "resolution");
+    const int fontSizeLoc = GetShaderLocation(shader, "fontSize");
 
     // Set the character size for the ASCII effect
     // Fontsize should be 9 or more
@@ -59,7 +59,7 @@ int main()
     float circleSpeed = 1.0f;
 
     // RenderTexture to apply the postprocessing later
-    RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

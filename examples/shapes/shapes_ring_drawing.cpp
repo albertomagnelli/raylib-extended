@@ -27,12 +27,12 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ring drawing");
 
-    Vector2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
+    const Vector2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
     float innerRadius = 80.0f;
     float outerRadius = 190.0f;
@@ -84,7 +84,7 @@ int main()
             GuiCheckBox(Rectangle{ 600, 380, 20, 20 }, "Draw CircleLines", &drawCircleLines);
             //------------------------------------------------------------------------------
 
-            int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+            const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
             DrawText(TextFormat("MODE: %s", (segments >= minSegments)? "MANUAL" : "AUTO"), 600, 270, 10, (segments >= minSegments)? MAROON : DARKGRAY);
 
             DrawFPS(10, 10);

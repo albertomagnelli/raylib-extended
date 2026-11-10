@@ -63,8 +63,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input actions");
 
@@ -74,7 +74,7 @@ int main()
     bool releaseAction = false;
 
     Vector2 position = Vector2{ 400.0f, 200.0f };
-    Vector2 size = Vector2{ 40.0f, 40.0f };
+    const Vector2 size = Vector2{ 40.0f, 40.0f };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

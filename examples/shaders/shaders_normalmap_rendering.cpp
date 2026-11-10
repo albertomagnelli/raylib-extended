@@ -35,8 +35,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - normalmap rendering");
@@ -49,7 +49,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load basic normal map lighting shader
-    Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/normalmap.vs", GLSL_VERSION),
+    const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/normalmap.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/normalmap.fs", GLSL_VERSION));
 
     // Get some required shader locations
@@ -62,7 +62,7 @@ int main()
 
     // This example uses just 1 point light
     Vector3 lightPosition = { 0.0f, 1.0f, 0.0f };
-    int lightPosLoc = GetShaderLocation(shader, "lightPos");
+    const int lightPosLoc = GetShaderLocation(shader, "lightPos");
 
     // Load a plane model that has proper normals and tangents
     Model plane = LoadModel("resources/models/plane.glb");
@@ -81,11 +81,11 @@ int main()
 
     // Specular exponent AKA shininess of the material
     float specularExponent = 8.0f;
-    int specularExponentLoc = GetShaderLocation(shader, "specularExponent");
+    const int specularExponentLoc = GetShaderLocation(shader, "specularExponent");
 
     // Allow toggling the normal map on and off for comparison purposes
     int useNormalMap = 1;
-    int useNormalMapLoc = GetShaderLocation(shader, "useNormalMap");
+    const int useNormalMapLoc = GetShaderLocation(shader, "useNormalMap");
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -146,11 +146,11 @@ int main()
 
             EndMode3D();
 
-            Color textColor = (useNormalMap) ? DARKGREEN : RED;
+            const Color textColor = (useNormalMap) ? DARKGREEN : RED;
             const char *toggleStr = (useNormalMap) ? "On" : "Off";
             DrawText(TextFormat("Use key [N] to toggle normal map: %s", toggleStr), 10, 10, 10, textColor);
 
-            int yOffset = 24;
+            constexpr int yOffset = 24;
             DrawText("Use keys [W][A][S][D] to move the light", 10, 10 + yOffset*1, 10, BLACK);
             DrawText("Use keys [Up][Down] to change specular exponent", 10, 10 + yOffset*2, 10, BLACK);
             DrawText(TextFormat("Specular Exponent: %.2f", specularExponent), 10, 10 + yOffset*3, 10, BLUE);

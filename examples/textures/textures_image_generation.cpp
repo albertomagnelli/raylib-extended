@@ -26,20 +26,20 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image generation");
 
-    Image verticalGradient = GenImageGradientLinear(screenWidth, screenHeight, 0, RED, BLUE);
-    Image horizontalGradient = GenImageGradientLinear(screenWidth, screenHeight, 90, RED, BLUE);
-    Image diagonalGradient = GenImageGradientLinear(screenWidth, screenHeight, 45, RED, BLUE);
-    Image radialGradient = GenImageGradientRadial(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
-    Image squareGradient = GenImageGradientSquare(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
-    Image checked = GenImageChecked(screenWidth, screenHeight, 32, 32, RED, BLUE);
-    Image whiteNoise = GenImageWhiteNoise(screenWidth, screenHeight, 0.5f);
-    Image perlinNoise = GenImagePerlinNoise(screenWidth, screenHeight, 50, 50, 4.0f);
-    Image cellular = GenImageCellular(screenWidth, screenHeight, 32);
+    const Image verticalGradient = GenImageGradientLinear(screenWidth, screenHeight, 0, RED, BLUE);
+    const Image horizontalGradient = GenImageGradientLinear(screenWidth, screenHeight, 90, RED, BLUE);
+    const Image diagonalGradient = GenImageGradientLinear(screenWidth, screenHeight, 45, RED, BLUE);
+    const Image radialGradient = GenImageGradientRadial(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
+    const Image squareGradient = GenImageGradientSquare(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
+    const Image checked = GenImageChecked(screenWidth, screenHeight, 32, 32, RED, BLUE);
+    const Image whiteNoise = GenImageWhiteNoise(screenWidth, screenHeight, 0.5f);
+    const Image perlinNoise = GenImagePerlinNoise(screenWidth, screenHeight, 50, 50, 4.0f);
+    const Image cellular = GenImageCellular(screenWidth, screenHeight, 32);
 
     Texture2D textures[NUM_TEXTURES] = {};
 

@@ -28,8 +28,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - raw stream");
 
@@ -40,7 +40,7 @@ int main()
     float buffer[BUFFER_SIZE] = {};
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
-    AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
+    const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
     float pan = 0.0f;
     SetAudioStreamPan(stream, pan);
     PlayAudioStream(stream);
@@ -89,7 +89,7 @@ int main()
         {
             for (int i = 0; i < BUFFER_SIZE; i++)
             {
-                int wavelength = SAMPLE_RATE/sineFrequency;
+                const int wavelength = SAMPLE_RATE/sineFrequency;
                 buffer[i] = sinf(2*PI*sineIndex/wavelength);
                 sineIndex++;
 
@@ -116,17 +116,17 @@ int main()
             DrawText("Up/down to change frequency", 10, 10, 20, DARKGRAY);
             DrawText("Left/right to pan", 10, 30, 20, DARKGRAY);
 
-            int windowStart = static_cast<int>((GetTime() - sineStartTime)*SAMPLE_RATE);
-            int windowSize = SAMPLE_RATE/10;
-            int wavelength = SAMPLE_RATE/sineFrequency;
+            const int windowStart = static_cast<int>((GetTime() - sineStartTime)*SAMPLE_RATE);
+            const int windowSize = SAMPLE_RATE/10;
+            const int wavelength = SAMPLE_RATE/sineFrequency;
 
             // Draw a sine wave with the same frequency as the one being sent to the audio stream
             for (int i = 0; i < screenWidth; i++)
             {
-                int t0 = windowStart + i*windowSize/screenWidth;
-                int t1 = windowStart + (i + 1)*windowSize/screenWidth;
-                Vector2 startPos = { static_cast<float>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
-                Vector2 endPos = { static_cast<float>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
+                const int t0 = windowStart + i*windowSize/screenWidth;
+                const int t1 = windowStart + (i + 1)*windowSize/screenWidth;
+                const Vector2 startPos = { static_cast<float>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
+                const Vector2 endPos = { static_cast<float>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
                 DrawLineV(startPos, endPos, RED);
             }
 

@@ -39,13 +39,13 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - animations");
 
     char animations[3][MAX_TEXT_LENGTH] = { "Waving", "Flashing", "Shaking" };
-    int animationsSize = sizeof(animations)/sizeof(animations[0]);
+    const int animationsSize = sizeof(animations)/sizeof(animations[0]);
     int currentAnimation = 0;
 
     AnimatedText text = { "This is an animated text!", { 200, 250 }, 24.0f, 6, 60 };
@@ -88,7 +88,7 @@ int main()
             {
                 for (unsigned int i = 0; i < TextLength(text.str); i++)
                 {
-                    float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
+                    const float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
 
                     if (time < text.duration/2) glyphPosition[i].y = EaseSineIn(time, text.position.y, text.delta, text.duration);
                     else glyphPosition[i].y = EaseSineOut(time, text.position.y + text.delta, -text.delta, text.duration);
@@ -98,7 +98,7 @@ int main()
             {
                 for (unsigned int i = 0; i < TextLength(text.str); i++)
                 {
-                    float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
+                    const float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
                     glyphAlpha[i] = static_cast<unsigned char>(EaseSineInOut(time, 255.0f, -255.0f, text.duration));
                 }
             } break;
@@ -106,9 +106,9 @@ int main()
             {
                 for (unsigned int i = 0; i < TextLength(text.str); i++)
                 {
-                    float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
-                    float deltaX = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
-                    float deltaY = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
+                    const float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
+                    const float deltaX = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
+                    const float deltaY = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
 
                     if (time < (text.duration/2))
                     {

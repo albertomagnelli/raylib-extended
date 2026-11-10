@@ -34,10 +34,10 @@ static void DrawHud(const CameraController &camera, const char **modeNames, int 
 
 int main()
 {
-    const int screenWidth = 1280;
-    const int screenHeight = 720;
+    constexpr int screenWidth = 1280;
+    constexpr int screenHeight = 720;
 
-    const char *windowTitle = "raylib-extended [camera_controller] - smooth camera3d movement and rotation";
+    constexpr const char *windowTitle = "raylib-extended [camera_controller] - smooth camera3d movement and rotation";
 
     // MSAA samples requested for the window, cycled with the M key
     // NOTE: SetWindowSamples() must be called before InitWindow(), samples can not be changed once the GL context exists
@@ -49,7 +49,7 @@ int main()
     SetTargetFPS(60);
 
     // Camera the controller starts with, it is also the camera restored by the R key
-    Camera3D initialCamera = { { 12.0f, 8.0f, 12.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE };
+    const Camera3D initialCamera = { { 12.0f, 8.0f, 12.0f }, { 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, CAMERA_PERSPECTIVE };
 
     CameraController camera(initialCamera, CAMERA_CONTROLLER_THIRD_PERSON);
     camera.SetMoveSpeed(8.0f);
@@ -60,16 +60,16 @@ int main()
     camera.SetGamepadEnabled(true);
 
     const char *modeNames[] = { "FIRST_PERSON", "THIRD_PERSON", "ORBIT", "FREE" };
-    const int modeCount = 4;
+    constexpr int modeCount = 4;
 
-    Color backgroundColor = { 24, 24, 32, 255 };
+    const Color backgroundColor = { 24, 24, 32, 255 };
 
     while (!WindowShouldClose())
     {
         // Cycle the camera modes
         if (IsKeyPressed(KEY_TAB))
         {
-            int nextMode = (static_cast<int>(camera.GetMode()) + 1)%modeCount;
+            const int nextMode = (static_cast<int>(camera.GetMode()) + 1)%modeCount;
             camera.SetMode(static_cast<CameraControllerMode>(nextMode));
         }
 
@@ -118,10 +118,10 @@ static void DrawScene(const CameraController &camera)
     DrawGrid(40, 1.0f);
 
     // A few boxes to judge the movement smoothness
-    Vector3 centerBox = { 0.0f, 0.5f, 0.0f };
-    Vector3 blueBox = { -6.0f, 2.0f, 4.0f };
-    Vector3 greenBox = { 7.0f, 1.0f, -5.0f };
-    Vector3 goldBox = { 4.0f, 6.0f, 8.0f };
+    const Vector3 centerBox = { 0.0f, 0.5f, 0.0f };
+    const Vector3 blueBox = { -6.0f, 2.0f, 4.0f };
+    const Vector3 greenBox = { 7.0f, 1.0f, -5.0f };
+    const Vector3 goldBox = { 4.0f, 6.0f, 8.0f };
 
     DrawCube(centerBox, 2.0f, 1.0f, 2.0f, MAROON);
     DrawCubeWires(centerBox, 2.0f, 1.0f, 2.0f, ORANGE);
@@ -136,14 +136,14 @@ static void DrawScene(const CameraController &camera)
     DrawCubeWires(goldBox, 2.0f, 2.0f, 2.0f, YELLOW);
 
     // The pivot the controller moves: the camera position in first-person/free, the look-at point in third-person/orbit
-    Vector3 pivot = camera.GetTarget();
-    Vector3 pivotOnGround = { pivot.x, 0.0f, pivot.z };
+    const Vector3 pivot = camera.GetTarget();
+    const Vector3 pivotOnGround = { pivot.x, 0.0f, pivot.z };
 
     DrawSphere(pivot, 0.25f, RED);
     DrawLine3D(pivot, pivotOnGround, RED);
 
     // Camera basis vectors: forward (red), right (green), up (blue)
-    Vector3 position = camera.GetPosition();
+    const Vector3 position = camera.GetPosition();
     DrawLine3D(position, position + camera.GetForward()*2.0f, RED);
     DrawLine3D(position, position + camera.GetRight()*2.0f, GREEN);
     DrawLine3D(position, position + camera.GetUp()*2.0f, BLUE);
@@ -154,10 +154,10 @@ static void DrawHud(const CameraController &camera, const char **modeNames, int 
 {
     const char *mode = modeNames[static_cast<int>(camera.GetMode())%modeCount];
 
-    Vector3 position = camera.GetPosition();
-    Vector3 velocity = camera.GetVelocity();
+    const Vector3 position = camera.GetPosition();
+    const Vector3 velocity = camera.GetVelocity();
 
-    int providedSamples = GetWindowSamples();
+    const int providedSamples = GetWindowSamples();
 
     DrawText(TextFormat("mode: %s", mode), 16, 12, 20, RAYWHITE);
     DrawText("TAB change mode | R reset | K camera kick | M cycle msaa", 16, 40, 16, GRAY);

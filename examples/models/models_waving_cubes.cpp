@@ -26,8 +26,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - waving cubes");
 
@@ -40,7 +40,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Specify the amount of blocks in each direction
-    const int numBlocks = 15;
+    constexpr int numBlocks = 15;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -50,13 +50,13 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        double time = GetTime();
+        const double time = GetTime();
 
         // Calculate time scale for cube position and size
-        float scale = (2.0f + static_cast<float>(sin(time)))*0.7f;
+        const float scale = (2.0f + static_cast<float>(sin(time)))*0.7f;
 
         // Move camera around the scene
-        double cameraTime = time*0.3;
+        const double cameraTime = time*0.3;
         camera.position.x = static_cast<float>(cos(cameraTime))*40.0f;
         camera.position.z = static_cast<float>(sin(cameraTime))*40.0f;
         //----------------------------------------------------------------------------------
@@ -78,13 +78,13 @@ int main()
                         for (int z = 0; z < numBlocks; z++)
                         {
                             // Scale of the blocks depends on x/y/z positions
-                            float blockScale = (x + y + z)/30.0f;
+                            const float blockScale = (x + y + z)/30.0f;
 
                             // Scatter makes the waving effect by adding blockScale over time
-                            float scatter = sinf(blockScale*20.0f + static_cast<float>(time*4.0f));
+                            const float scatter = sinf(blockScale*20.0f + static_cast<float>(time*4.0f));
 
                             // Calculate the cube position
-                            Vector3 cubePos = {
+                            const Vector3 cubePos = {
                                 (x - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter,
                                 (y - static_cast<float>(numBlocks)/2)*(scale*2.0f) + scatter,
                                 (z - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter
@@ -93,10 +93,10 @@ int main()
                             // Pick a color with a hue depending on cube position for the rainbow color effect
                             // NOTE: This function is quite costly to be done per cube and frame,
                             // pre-catching the results into a separate array could improve performance
-                            Color cubeColor = ColorFromHSV(static_cast<float>(((x + y + z)*18)%360), 0.75f, 0.9f);
+                            const Color cubeColor = ColorFromHSV(static_cast<float>(((x + y + z)*18)%360), 0.75f, 0.9f);
 
                             // Calculate cube size
-                            float cubeSize = (2.4f - scale)*blockScale;
+                            const float cubeSize = (2.4f - scale)*blockScale;
 
                             // And finally, draw the cube!
                             DrawCube(cubePos, cubeSize, cubeSize, cubeSize, cubeColor);

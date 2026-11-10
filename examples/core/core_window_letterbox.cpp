@@ -27,19 +27,19 @@
 //------------------------------------------------------------------------------------
 int main()
 {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     // Enable config flags for resizable window and vertical synchro
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - window letterbox");
     SetWindowMinSize(320, 240);
 
-    int gameScreenWidth = 640;
-    int gameScreenHeight = 480;
+    constexpr int gameScreenWidth = 640;
+    constexpr int gameScreenHeight = 480;
 
     // Render texture initialization, used to hold the rendering result so we can easily resize it
-    RenderTexture2D target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
+    const RenderTexture2D target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);  // Texture scale filter to use
 
     Color colors[10] = {};
@@ -54,7 +54,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Compute required framebuffer scaling
-        float scale = MIN(static_cast<float>(GetScreenWidth())/gameScreenWidth, static_cast<float>(GetScreenHeight())/gameScreenHeight);
+        const float scale = MIN(static_cast<float>(GetScreenWidth())/gameScreenWidth, static_cast<float>(GetScreenHeight())/gameScreenHeight);
 
         if (IsKeyPressed(KEY_SPACE))
         {
@@ -63,7 +63,7 @@ int main()
         }
 
         // Update virtual mouse (clamped mouse value behind game screen)
-        Vector2 mouse = GetMousePosition();
+        const Vector2 mouse = GetMousePosition();
         Vector2 virtualMouse = {};
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.5f)/scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.5f)/scale;

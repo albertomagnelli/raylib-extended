@@ -27,8 +27,8 @@ int main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    constexpr int screenWidth = 800;
+    constexpr int screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - clock of clocks");
@@ -36,9 +36,9 @@ int main()
     const Color bgColor = ColorLerp(DARKBLUE, BLACK, 0.75f);
     const Color handsColor = ColorLerp(YELLOW, RAYWHITE, .25f);
 
-    const float clockFaceSize = 24;
-    const float clockFaceSpacing = 8.0f;
-    const float sectionSpacing = 16.0f;
+    constexpr float clockFaceSize = 24;
+    constexpr float clockFaceSpacing = 8.0f;
+    constexpr float sectionSpacing = 16.0f;
 
     const Vector2 TL = Vector2{   0.0f,  90.0f }; // Top-left corner
     const Vector2 TR = Vector2{  90.0f, 180.0f }; // Top-right corner
@@ -62,7 +62,7 @@ int main()
     };
 
     // Time for the hands to move to the new position (in seconds); this must be <1s
-    const float handsMoveDuration = 0.5f;
+    constexpr float handsMoveDuration = 0.5f;
 
     int prevSeconds = -1;
     Vector2 currentAngles[6][24] = {};
@@ -156,7 +156,7 @@ int main()
                 {
                     for (int col = 0; col < 4; col++)
                     {
-                        Vector2 centre = Vector2{
+                        const Vector2 centre = Vector2{
                             xOffset + col*(clockFaceSize+clockFaceSpacing) + clockFaceSize*0.5f,
                             100 + row*(clockFaceSize+clockFaceSpacing) + clockFaceSize*0.5f
                         };

@@ -47,12 +47,12 @@
 #include <cstdlib>
 #include <vector>
 
-const int screenWidth = 1280;
-const int screenHeight = 720;
+constexpr int screenWidth = 1280;
+constexpr int screenHeight = 720;
 
-const int shadowSize = 2048;
-const int shadowUnit = 15;
-const float shadowExtent = 10.0f;
+constexpr int shadowSize = 2048;
+constexpr int shadowUnit = 15;
+constexpr float shadowExtent = 10.0f;
 
 const Color background = { 4, 5, 8, 255 };
 const Color panelColor = { 0, 0, 0, 140 };
@@ -207,7 +207,7 @@ struct OrbitCamera
 
 static glm::vec3 OrbitPosition(const OrbitCamera &camera)
 {
-    float cosPitch = cosf(camera.pitch);
+    const float cosPitch = cosf(camera.pitch);
 
     return camera.target + glm::vec3(camera.distance*cosPitch*sinf(camera.yaw),
                                      camera.distance*sinf(camera.pitch),
@@ -328,8 +328,8 @@ int main()
 
     // --- Programs -----------------------------------------------------------
 
-    Shader litShader = LoadShaderFromMemory(litVertexShader, litFragmentShader);
-    Shader shadowShader = LoadShaderFromMemory(shadowVertexShader, shadowFragmentShader);
+    const Shader litShader = LoadShaderFromMemory(litVertexShader, litFragmentShader);
+    const Shader shadowShader = LoadShaderFromMemory(shadowVertexShader, shadowFragmentShader);
 
     if (litShader.id == 0 || shadowShader.id == 0)
     {
@@ -349,7 +349,7 @@ int main()
 
     // --- Shadow map ---------------------------------------------------------
 
-    RenderTexture2D shadowMap = LoadShadowMapRenderTexture(shadowSize, shadowSize);
+    const RenderTexture2D shadowMap = LoadShadowMapRenderTexture(shadowSize, shadowSize);
     if (shadowMap.id == 0)
     {
         TraceLog(LOG_ERROR, "FBO: Konnte die Shadow-Map nicht anlegen");
@@ -359,20 +359,20 @@ int main()
 
     // --- Uniforms -----------------------------------------------------------
 
-    int litModel = GetShaderLocation(litShader, "uModel");
-    int litViewProjection = GetShaderLocation(litShader, "uViewProjection");
-    int litLightViewProjection = GetShaderLocation(litShader, "uLightViewProjection");
-    int litColor = GetShaderLocation(litShader, "uColor");
-    int litCameraPosition = GetShaderLocation(litShader, "uCameraPosition");
-    int litLightDirection = GetShaderLocation(litShader, "uLightDirection");
-    int litLightColor = GetShaderLocation(litShader, "uLightColor");
-    int litAmbient = GetShaderLocation(litShader, "uAmbient");
-    int litShadowMap = GetShaderLocation(litShader, "uShadowMap");
-    int litShadowBias = GetShaderLocation(litShader, "uShadowBias");
-    int litShadowTexelSize = GetShaderLocation(litShader, "uShadowTexelSize");
+    const int litModel = GetShaderLocation(litShader, "uModel");
+    const int litViewProjection = GetShaderLocation(litShader, "uViewProjection");
+    const int litLightViewProjection = GetShaderLocation(litShader, "uLightViewProjection");
+    const int litColor = GetShaderLocation(litShader, "uColor");
+    const int litCameraPosition = GetShaderLocation(litShader, "uCameraPosition");
+    const int litLightDirection = GetShaderLocation(litShader, "uLightDirection");
+    const int litLightColor = GetShaderLocation(litShader, "uLightColor");
+    const int litAmbient = GetShaderLocation(litShader, "uAmbient");
+    const int litShadowMap = GetShaderLocation(litShader, "uShadowMap");
+    const int litShadowBias = GetShaderLocation(litShader, "uShadowBias");
+    const int litShadowTexelSize = GetShaderLocation(litShader, "uShadowTexelSize");
 
-    int shadowModel = GetShaderLocation(shadowShader, "uModel");
-    int shadowLightViewProjection = GetShaderLocation(shadowShader, "uLightViewProjection");
+    const int shadowModel = GetShaderLocation(shadowShader, "uModel");
+    const int shadowLightViewProjection = GetShaderLocation(shadowShader, "uLightViewProjection");
 
     int samplerSlot = shadowUnit;
     SetShaderValue(litShader, litShadowMap, &samplerSlot, SHADER_UNIFORM_SAMPLER2D);
@@ -395,9 +395,9 @@ int main()
     bool lightAnimated = true;
     float lightTime = 0.0f;
 
-    glm::vec3 lightBaseDirection = glm::normalize(glm::vec3(-0.65F, -0.60F, -0.45F));
-    glm::vec3 lightTarget = { 0.0F, 0.6F, 0.0F };
-    glm::vec3 worldUp = { 0.0F, 1.0F, 0.0F };
+    const glm::vec3 lightBaseDirection = glm::normalize(glm::vec3(-0.65F, -0.60F, -0.45F));
+    const glm::vec3 lightTarget = { 0.0F, 0.6F, 0.0F };
+    const glm::vec3 worldUp = { 0.0F, 1.0F, 0.0F };
 
     while (!WindowShouldClose())
     {
@@ -407,28 +407,28 @@ int main()
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
-            Vector2 mouseDelta = GetMouseDelta();
+            const Vector2 mouseDelta = GetMouseDelta();
             camera.yaw -= mouseDelta.x*0.005f;
             camera.pitch = std::clamp(camera.pitch + mouseDelta.y*0.005f, 0.08f, 1.45f);
         }
 
-        float wheel = GetMouseWheelMove();
+        const float wheel = GetMouseWheelMove();
         if (wheel != 0.0f) camera.distance = std::clamp(camera.distance - wheel*0.8f, 4.0f, 28.0f);
 
         BeginDrawing();
             ClearBackground(background);
 
-            float delta = GetFrameTime();
-            double time = GetTime();
+            const float delta = GetFrameTime();
+            const double time = GetTime();
             if (lightAnimated) lightTime += delta;
 
-            glm::mat4 lightRotation = glm::rotate(glm::mat4(1.0F), lightTime*0.25f, worldUp);
+            const glm::mat4 lightRotation = glm::rotate(glm::mat4(1.0F), lightTime*0.25f, worldUp);
             glm::vec3 lightDirection = glm::normalize(glm::vec3(lightRotation*glm::vec4(lightBaseDirection, 0.0F)));
 
-            glm::vec3 lightPosition = lightTarget - lightDirection*22.0F;
-            glm::mat4 lightView = glm::lookAt(lightPosition, lightTarget, worldUp);
-            glm::mat4 lightProjection = glm::ortho(-shadowExtent, shadowExtent, -shadowExtent, shadowExtent, 1.0f, 45.0f);
-            glm::mat4 lightViewProjection = lightProjection*lightView;
+            const glm::vec3 lightPosition = lightTarget - lightDirection*22.0F;
+            const glm::mat4 lightView = glm::lookAt(lightPosition, lightTarget, worldUp);
+            const glm::mat4 lightProjection = glm::ortho(-shadowExtent, shadowExtent, -shadowExtent, shadowExtent, 1.0f, 45.0f);
+            const glm::mat4 lightViewProjection = lightProjection*lightView;
 
             glm::vec3 cameraPosition = OrbitPosition(camera);
 
@@ -494,10 +494,10 @@ int main()
             rlDisableFramebuffer();
             rlViewport(0, 0, GetRenderWidth(), GetRenderHeight());
 
-            float aspect = (GetRenderWidth() > 0 && GetRenderHeight() > 0)?
+            const float aspect = (GetRenderWidth() > 0 && GetRenderHeight() > 0)?
                 static_cast<float>(GetRenderWidth())/static_cast<float>(GetRenderHeight()) : 1.0f;
-            glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
-            glm::mat4 view = glm::lookAt(cameraPosition, camera.target, worldUp);
+            const glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+            const glm::mat4 view = glm::lookAt(cameraPosition, camera.target, worldUp);
 
             rlEnableShader(litShader.id);
             rlEnableBackfaceCulling();
