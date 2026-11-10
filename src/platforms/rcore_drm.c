@@ -2708,7 +2708,7 @@ static void SetupFramebuffer(int width, int height)
 
         // Screen scaling required
         float scaleRatio = (float)CORE.Window.render.width/(float)CORE.Window.screen.width;
-        CORE.Window.screenScale = MatrixScale(scaleRatio, scaleRatio, 1.0f);
+        CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleRatio, scaleRatio, 1.0f});
 
         // NOTE: Rendering to full display resolution,
         // calculate above parameters for downscale matrix and offsets

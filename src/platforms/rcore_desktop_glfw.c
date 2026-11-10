@@ -2031,7 +2031,7 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
                 float scaleX = (float)width/winWidth;
                 float scaleY = (float)height/winHeight;
 
-                CORE.Window.screenScale = MatrixScale(scaleX, scaleY, 1.0f);
+                CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleX, scaleY, 1.0f});
             }
         }
 #endif

@@ -1261,8 +1261,8 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
         float projOffset = 4.0f*lensShift;      // Scaled to projection space coordinates [-1..1]
         Matrix proj = glm::perspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
 
-        config.projection[0] = proj*glm::translate(Matrix(1.0f), Vector3{projOffset, 0.0f, 0.0f});
-        config.projection[1] = proj*glm::translate(Matrix(1.0f), Vector3{-projOffset, 0.0f, 0.0f});
+        config.projection[0] = glm::translate(Matrix(1.0f), Vector3{projOffset, 0.0f, 0.0f})*proj;
+        config.projection[1] = glm::translate(Matrix(1.0f), Vector3{-projOffset, 0.0f, 0.0f})*proj;
 
         // Compute camera transformation matrices
         // NOTE: Camera movement might seem more natural if modelling the head
@@ -1579,7 +1579,7 @@ Matrix GetCameraMatrix2D(Camera2D camera)
     Matrix matScale = glm::scale(Matrix(1.0f), Vector3{camera.zoom, camera.zoom, 1.0f});
     Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{camera.offset.x, camera.offset.y, 0.0f});
 
-    matTransform = matOrigin*(matScale*matRotation)*matTranslation;
+    matTransform = matTranslation*(matRotation*matScale)*matOrigin;
 
     return matTransform;
 }

@@ -510,7 +510,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
         {
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
             SetupViewport(platform.window->w*currentMonitor->pixelRatio, platform.window->h*currentMonitor->pixelRatio);
-            CORE.Window.screenScale = MatrixScale(currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.screen.width = platform.window->w;
             CORE.Window.screen.height = platform.window->h;
@@ -539,7 +539,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
             Vector2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = (int)(platform.window->w/scaleDpi.x);
             CORE.Window.screen.height = (int)(platform.window->h/scaleDpi.y);
-            CORE.Window.screenScale = MatrixScale(scaleDpi.x, scaleDpi.y, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
         }
         else
         {
@@ -554,7 +554,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
     #if defined(GRAPHICS_API_OPENGL_SOFTWARE)
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = MatrixScale(currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
             SetupViewport(platform.window->w*currentMonitor->pixelRatio, platform.window->h*currentMonitor->pixelRatio);
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
@@ -1095,7 +1095,7 @@ void SetWindowSize(int width, int height)
 
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = MatrixScale(currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
             CORE.Window.render.height = CORE.Window.screen.height*currentMonitor->pixelRatio;
@@ -1103,7 +1103,7 @@ void SetWindowSize(int width, int height)
             CORE.Window.currentFbo.height = CORE.Window.render.height;
         #else
             SetMouseScale(1.0f/scaleDpi.x, 1.0f/scaleDpi.y);
-            CORE.Window.screenScale = MatrixScale(scaleDpi.x, scaleDpi.y, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
         #endif
 
         CORE.Window.currentFbo.width = CORE.Window.render.width;
@@ -1864,7 +1864,7 @@ int InitPlatform(void)
 
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = MatrixScale(currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
             CORE.Window.render.height = CORE.Window.screen.height*currentMonitor->pixelRatio;
@@ -1872,7 +1872,7 @@ int InitPlatform(void)
             CORE.Window.currentFbo.height = CORE.Window.render.height;
         #else
             SetMouseScale(1.0f/scaleDpi.x, 1.0f/scaleDpi.y);
-            CORE.Window.screenScale = MatrixScale(scaleDpi.x, scaleDpi.y, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
             CORE.Window.screen.width /= scaleDpi.x;
             CORE.Window.screen.height /= scaleDpi.y;
         #endif
@@ -1882,7 +1882,7 @@ int InitPlatform(void)
         // apple always scales for retina
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = MatrixScale(currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
             CORE.Window.render.height = CORE.Window.screen.height*currentMonitor->pixelRatio;

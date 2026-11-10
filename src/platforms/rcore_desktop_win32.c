@@ -2708,8 +2708,8 @@ static void HandleWindowResize(HWND hwnd, int *width, int *height)
         *height = screenHeight;
     }
 
-    CORE.Window.screenScale = MatrixScale( (float)CORE.Window.render.width/CORE.Window.screen.width,
-        (float)CORE.Window.render.height/CORE.Window.screen.height, 1.0f);
+    CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{(float)CORE.Window.render.width/CORE.Window.screen.width,
+        (float)CORE.Window.render.height/CORE.Window.screen.height, 1.0f});
 
     if (CORE.Window.flags & FLAG_WINDOW_HIGHDPI)
     {

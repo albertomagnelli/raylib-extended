@@ -1572,7 +1572,7 @@ static void WindowSizeCallback(GLFWwindow *window, int width, int height)
 // GLFW3: Called on window content (framebuffer) scaled
 static void WindowContentScaleCallback(GLFWwindow *window, float scalex, float scaley)
 {
-    CORE.Window.screenScale = MatrixScale(scalex, scaley, 1.0f);
+    CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scalex, scaley, 1.0f});
 }
 
 // GLFW3: Called on windows minimized/restored

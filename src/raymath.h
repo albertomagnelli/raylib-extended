@@ -37,7 +37,6 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 #ifndef EPSILON
     #define EPSILON 0.000001f
@@ -154,7 +153,7 @@ inline Vector3 Vector3Perpendicular(Vector3 v)
 inline float Vector3Angle(Vector3 v1, Vector3 v2)
 {
     Vector3 cross = glm::cross(v1, v2);
-    return std::atan2(std::sqrt(glm::dot(cross, cross)), glm::dot(v1, v2))*RAD2DEG;
+    return std::atan2(std::sqrt(glm::dot(cross, cross)), glm::dot(v1, v2));
 }
 
 // Calculate the projection of the vector v1 on to v2
@@ -253,7 +252,7 @@ inline Vector3 Vector3Barycenter(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
 // Project point from world coordinate system to the normalized device coordinate (NDC) space
 inline Vector3 Vector3Unproject(Vector3 source, Matrix projection, Matrix view)
 {
-    Matrix matViewProjInv = glm::inverse(view*projection);
+    Matrix matViewProjInv = glm::inverse(projection*view);
 
     Vector4 qtransformed = matViewProjInv*Vector4{source, 1.0f};
 
@@ -355,6 +354,16 @@ inline Quaternion QuaternionFromVector3ToVector3(Vector3 from, Vector3 to)
     }
 
     return glm::normalize(Quaternion{w, x, y, z});
+}
+
+// Calculate slerp-optimized interpolation between two quaternions
+// NOTE: Takes the shorter path (negates q2 when the dot product is negative), which
+// glm does not expose as a single call.
+inline Quaternion QuaternionNlerp(Quaternion q1, Quaternion q2, float amount)
+{
+    if (glm::dot(q1, q2) < 0.0f) q2 = -q2;
+
+    return glm::normalize(glm::lerp(q1, q2, amount));
 }
 
 // Calculate quaternion cubic spline interpolation using Cubic Hermite Spline algorithm

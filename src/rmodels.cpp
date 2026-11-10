@@ -1537,13 +1537,13 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     // Accumulate several model transformations:
     //    transform: model transformation provided (includes DrawModel() params combined with model.transform)
     //    rlGetMatrixTransform(): rlgl internal transform matrix due to push/pop matrix stack
-    matModel = ((transform) * (rlGetMatrixTransform()));
+    matModel = ((rlGetMatrixTransform()) * (transform));
 
     // Model transformation matrix is sent to shader uniform location: SHADER_LOC_MATRIX_MODEL
     if (material.shader.locs[SHADER_LOC_MATRIX_MODEL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_MODEL], matModel);
 
     // Get model-view matrix
-    matModelView = ((matModel) * (matView));
+    matModelView = ((matView) * (matModel));
 
     // Upload model normal matrix (if locations available)
     if (material.shader.locs[SHADER_LOC_MATRIX_NORMAL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_NORMAL], glm::transpose(glm::inverse(matModel)));
@@ -1654,12 +1654,12 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     {
         // Calculate model-view-projection matrix (MVP)
         Matrix matModelViewProjection = Matrix(1.0f);
-        if (eyeCount == 1) matModelViewProjection = ((matModelView) * (matProjection));
+        if (eyeCount == 1) matModelViewProjection = ((matProjection) * (matModelView));
         else
         {
             // Setup current eye viewport (half screen width)
             rlViewport(eye*rlGetFramebufferWidth()/2, 0, rlGetFramebufferWidth()/2, rlGetFramebufferHeight());
-            matModelViewProjection = ((((matModelView) * (rlGetMatrixViewOffsetStereo(eye)))) * (rlGetMatrixProjectionStereo(eye)));
+            matModelViewProjection = ((rlGetMatrixProjectionStereo(eye)) * (((rlGetMatrixViewOffsetStereo(eye)) * (matModelView))));
         }
 
         // Send combined model-view-projection matrix to shader
@@ -1784,7 +1784,7 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
 
     // Accumulate internal matrix transform (push/pop) and view matrix
     // NOTE: In this case, model instance transformation must be computed in the shader
-    matModelView = ((rlGetMatrixTransform()) * (matView));
+    matModelView = ((matView) * (rlGetMatrixTransform()));
 
     // Upload model normal matrix (if locations available)
     if (material.shader.locs[SHADER_LOC_MATRIX_NORMAL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_NORMAL], glm::transpose(glm::inverse(matModel)));
@@ -1893,12 +1893,12 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
     {
         // Calculate model-view-projection matrix (MVP)
         Matrix matModelViewProjection = Matrix(1.0f);
-        if (eyeCount == 1) matModelViewProjection = ((matModelView) * (matProjection));
+        if (eyeCount == 1) matModelViewProjection = ((matProjection) * (matModelView));
         else
         {
             // Setup current eye viewport (half screen width)
             rlViewport(eye*rlGetFramebufferWidth()/2, 0, rlGetFramebufferWidth()/2, rlGetFramebufferHeight());
-            matModelViewProjection = ((((matModelView) * (rlGetMatrixViewOffsetStereo(eye)))) * (rlGetMatrixProjectionStereo(eye)));
+            matModelViewProjection = ((rlGetMatrixProjectionStereo(eye)) * (((rlGetMatrixViewOffsetStereo(eye)) * (matModelView))));
         }
 
         // Send combined model-view-projection matrix to shader
@@ -2338,12 +2338,12 @@ void UpdateModelAnimationBones(Model model, ModelAnimation anim, float frame)
             // Compute runtime bone matrix from model current pose
             //-----------------------------------------------------------------------------------
             Transform *bindPoseTransform = &model.skeleton.bindPose[boneIndex];
-            bindPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})) * (glm::mat4_cast(bindPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})));
+            bindPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})) * (((glm::mat4_cast(bindPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})))));
 
             Transform *currentPoseTransform = &model.currentPose[boneIndex];
-            currentPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})) * (glm::mat4_cast(currentPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})));
+            currentPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})) * (((glm::mat4_cast(currentPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})))));
 
-            model.boneMatrices[boneIndex] = ((glm::inverse(bindPoseMatrix)) * (currentPoseMatrix));
+            model.boneMatrices[boneIndex] = ((currentPoseMatrix) * (glm::inverse(bindPoseMatrix)));
             //-----------------------------------------------------------------------------------
         }
     }
@@ -2416,12 +2416,12 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
             // Compute runtime bone matrix from model current pose
             //-----------------------------------------------------------------------------------
             Transform *bindPoseTransform = &model.skeleton.bindPose[boneIndex];
-            bindPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})) * (glm::mat4_cast(bindPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})));
+            bindPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})) * (((glm::mat4_cast(bindPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})))));
 
             Transform *currentPoseTransform = &model.currentPose[boneIndex];
-            currentPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})) * (glm::mat4_cast(currentPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})));
+            currentPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})) * (((glm::mat4_cast(currentPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})))));
 
-            model.boneMatrices[boneIndex] = ((glm::inverse(bindPoseMatrix)) * (currentPoseMatrix));
+            model.boneMatrices[boneIndex] = ((currentPoseMatrix) * (glm::inverse(bindPoseMatrix)));
             //-----------------------------------------------------------------------------------
 
             /*
@@ -3961,10 +3961,10 @@ void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rota
     Matrix matRotation = glm::rotate(Matrix(1.0f), rotationAngle*DEG2RAD, rotationAxis);
     Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z});
 
-    Matrix matTransform = ((((matScale) * (matRotation))) * (matTranslation));
+    Matrix matTransform = ((matTranslation) * (((matRotation) * (matScale))));
 
     // Combine model transformation matrix (model.transform) with matrix generated by function parameters (matTransform)
-    model.transform = ((model.transform) * (matTransform));
+    model.transform = ((matTransform) * (model.transform));
 
     for (int i = 0; i < model.meshCount; i++)
     {
@@ -4038,7 +4038,7 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
 {
     // Compute the up vector and the right vector
     Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
-    Vector3 right = { matView[0][0], matView[0][1], matView[0][2] };
+    Vector3 right = { matView[0][0], matView[1][0], matView[2][0] };
     right = ((right) * (size.x));
     up = ((up) * (size.y));
 
@@ -5719,10 +5719,10 @@ static Model LoadGLTF(const char *fileName)
             cgltf_node_transform_world(node, worldTransform);
 
             Matrix worldMatrix = {
-                worldTransform[0], worldTransform[4], worldTransform[8], worldTransform[12],
-                worldTransform[1], worldTransform[5], worldTransform[9], worldTransform[13],
-                worldTransform[2], worldTransform[6], worldTransform[10], worldTransform[14],
-                worldTransform[3], worldTransform[7], worldTransform[11], worldTransform[15]
+                worldTransform[0], worldTransform[1], worldTransform[2], worldTransform[3],
+                worldTransform[4], worldTransform[5], worldTransform[6], worldTransform[7],
+                worldTransform[8], worldTransform[9], worldTransform[10], worldTransform[11],
+                worldTransform[12], worldTransform[13], worldTransform[14], worldTransform[15]
             };
 
             Matrix worldMatrixNormals = glm::transpose(glm::inverse(worldMatrix));
@@ -6209,11 +6209,11 @@ static Model LoadGLTF(const char *fileName)
                     cgltf_accessor_read_float(skin.inverse_bind_matrices, i, inverseBindTransform, 16))
                 {
                     Matrix inverseBindMatrix = {
-                        inverseBindTransform[0], inverseBindTransform[4], inverseBindTransform[8], inverseBindTransform[12],
-                        inverseBindTransform[1], inverseBindTransform[5], inverseBindTransform[9], inverseBindTransform[13],
-                        inverseBindTransform[2], inverseBindTransform[6], inverseBindTransform[10], inverseBindTransform[14],
-                        inverseBindTransform[3], inverseBindTransform[7], inverseBindTransform[11], inverseBindTransform[15]
-                    };
+                inverseBindTransform[0], inverseBindTransform[1], inverseBindTransform[2], inverseBindTransform[3],
+                inverseBindTransform[4], inverseBindTransform[5], inverseBindTransform[6], inverseBindTransform[7],
+                inverseBindTransform[8], inverseBindTransform[9], inverseBindTransform[10], inverseBindTransform[11],
+                inverseBindTransform[12], inverseBindTransform[13], inverseBindTransform[14], inverseBindTransform[15]
+            };
                     bindMatrix = glm::inverse(inverseBindMatrix);
                 }
                 else
@@ -6222,11 +6222,11 @@ static Model LoadGLTF(const char *fileName)
                     cgltf_node_transform_world(skin.joints[i], worldTransform);
 
                     Matrix worldMatrix = {
-                        worldTransform[0], worldTransform[4], worldTransform[8], worldTransform[12],
-                        worldTransform[1], worldTransform[5], worldTransform[9], worldTransform[13],
-                        worldTransform[2], worldTransform[6], worldTransform[10], worldTransform[14],
-                        worldTransform[3], worldTransform[7], worldTransform[11], worldTransform[15]
-                    };
+                worldTransform[0], worldTransform[1], worldTransform[2], worldTransform[3],
+                worldTransform[4], worldTransform[5], worldTransform[6], worldTransform[7],
+                worldTransform[8], worldTransform[9], worldTransform[10], worldTransform[11],
+                worldTransform[12], worldTransform[13], worldTransform[14], worldTransform[15]
+            };
                     bindMatrix = worldMatrix;
                 }
 
@@ -6647,9 +6647,9 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     Matrix nodeScale = glm::scale(Matrix(1.0f), Vector3{n->scale[0], n->scale[1], n->scale[2]});
                     Matrix nodeRotation = glm::mat4_cast(Quaternion{n->rotation[3], n->rotation[0], n->rotation[1], n->rotation[2]});
                     Matrix nodeTranslation = glm::translate(Matrix(1.0f), Vector3{n->translation[0], n->translation[1], n->translation[2]});
-                    Matrix nodeTransform = ((((nodeScale) * (nodeRotation))) * (nodeTranslation));
+                    Matrix nodeTransform = ((nodeTranslation) * (((nodeRotation) * (nodeScale))));
 
-                    extOffset[k] = ((extOffset[k]) * (nodeTransform));
+                    extOffset[k] = ((nodeTransform) * (extOffset[k]));
                     n = n->parent;
                 }
             }
@@ -6751,8 +6751,8 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                         Matrix S = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
                         Matrix R = glm::mat4_cast(rotation);
                         Matrix T = glm::translate(Matrix(1.0f), Vector3{translation.x, translation.y, translation.z});
-                        Matrix jointLocal = ((((S) * (R))) * (T));
-                        Matrix combined = ((jointLocal) * (extOffset[k]));
+                        Matrix jointLocal = ((T) * (((R) * (S))));
+                        Matrix combined = ((extOffset[k]) * (jointLocal));
 
                         Transform tr;
                         MatrixDecompose(combined, &tr.translation, &tr.rotation, &tr.scale);

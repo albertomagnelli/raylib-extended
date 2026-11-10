@@ -1255,9 +1255,9 @@ void rlTranslatef(float x, float y, float z)
     Matrix matTranslation = rlMatrixIdentity();
 
     // Set translation component of matrix
-    matTranslation[0][3] = x;
-    matTranslation[1][3] = y;
-    matTranslation[2][3] = z;
+    matTranslation[3][0] = x;
+    matTranslation[3][1] = y;
+    matTranslation[3][2] = z;
 
     // NOTE: Transposing matrix by multiplication order
     *RLGL.State.currentMatrix = rlMatrixMultiply(matTranslation, *RLGL.State.currentMatrix);
@@ -1285,23 +1285,23 @@ void rlRotatef(float angle, float x, float y, float z)
     float t = 1.0f - cosres;
 
     matRotation[0][0] = x*x*t + cosres;
-    matRotation[1][0] = y*x*t + z*sinres;
-    matRotation[2][0] = z*x*t - y*sinres;
-    matRotation[3][0] = 0.0f;
-
-    matRotation[0][1] = x*y*t - z*sinres;
-    matRotation[1][1] = y*y*t + cosres;
-    matRotation[2][1] = z*y*t + x*sinres;
-    matRotation[3][1] = 0.0f;
-
-    matRotation[0][2] = x*z*t + y*sinres;
-    matRotation[1][2] = y*z*t - x*sinres;
-    matRotation[2][2] = z*z*t + cosres;
-    matRotation[3][2] = 0.0f;
-
+    matRotation[0][1] = y*x*t + z*sinres;
+    matRotation[0][2] = z*x*t - y*sinres;
     matRotation[0][3] = 0.0f;
+
+    matRotation[1][0] = x*y*t - z*sinres;
+    matRotation[1][1] = y*y*t + cosres;
+    matRotation[1][2] = z*y*t + x*sinres;
     matRotation[1][3] = 0.0f;
+
+    matRotation[2][0] = x*z*t + y*sinres;
+    matRotation[2][1] = y*z*t - x*sinres;
+    matRotation[2][2] = z*z*t + cosres;
     matRotation[2][3] = 0.0f;
+
+    matRotation[3][0] = 0.0f;
+    matRotation[3][1] = 0.0f;
+    matRotation[3][2] = 0.0f;
     matRotation[3][3] = 1.0f;
 
     // NOTE: Transposing matrix by multiplication order
@@ -1325,12 +1325,12 @@ void rlScalef(float x, float y, float z)
 // Multiply the current matrix by another matrix
 void rlMultMatrixf(const float *matf)
 {
-    // Matrix creation from array
-    // Conversion from column-major to row-major memory order
-    Matrix mat = { matf[0], matf[4], matf[8], matf[12],
-                   matf[1], matf[5], matf[9], matf[13],
-                   matf[2], matf[6], matf[10], matf[14],
-                   matf[3], matf[7], matf[11], matf[15] };
+    // Matrix creation from array (both are column-major, matf[col*4 + row])
+    Matrix mat{};
+    for (int col = 0; col < 4; col++)
+    {
+        for (int row = 0; row < 4; row++) mat[col][row] = matf[col*4 + row];
+    }
 
     *RLGL.State.currentMatrix = rlMatrixMultiply(mat, *RLGL.State.currentMatrix);
 }
@@ -1345,23 +1345,23 @@ void rlFrustum(float left, float right, float bottom, float top, float znear, fl
     float fn = zfar - znear;
 
     matFrustum[0][0] = (znear*2.0f)/rl;
-    matFrustum[1][0] = 0.0f;
-    matFrustum[2][0] = 0.0f;
-    matFrustum[3][0] = 0.0f;
-
     matFrustum[0][1] = 0.0f;
-    matFrustum[1][1] = (znear*2.0f)/tb;
-    matFrustum[2][1] = 0.0f;
-    matFrustum[3][1] = 0.0f;
-
-    matFrustum[0][2] = (right + left)/rl;
-    matFrustum[1][2] = (top + bottom)/tb;
-    matFrustum[2][2] = -(zfar + znear)/fn;
-    matFrustum[3][2] = -1.0f;
-
+    matFrustum[0][2] = 0.0f;
     matFrustum[0][3] = 0.0f;
+
+    matFrustum[1][0] = 0.0f;
+    matFrustum[1][1] = (znear*2.0f)/tb;
+    matFrustum[1][2] = 0.0f;
     matFrustum[1][3] = 0.0f;
-    matFrustum[2][3] = -(zfar*znear*2.0f)/fn;
+
+    matFrustum[2][0] = (right + left)/rl;
+    matFrustum[2][1] = (top + bottom)/tb;
+    matFrustum[2][2] = -(zfar + znear)/fn;
+    matFrustum[2][3] = -1.0f;
+
+    matFrustum[3][0] = 0.0f;
+    matFrustum[3][1] = 0.0f;
+    matFrustum[3][2] = -(zfar*znear*2.0f)/fn;
     matFrustum[3][3] = 0.0f;
 
     *RLGL.State.currentMatrix = rlMatrixMultiply(*RLGL.State.currentMatrix, matFrustum);
@@ -1379,20 +1379,20 @@ void rlOrtho(float left, float right, float bottom, float top, float znear, floa
     float fn = zfar - znear;
 
     matOrtho[0][0] = 2.0f/rl;
-    matOrtho[1][0] = 0.0f;
-    matOrtho[2][0] = 0.0f;
-    matOrtho[3][0] = 0.0f;
     matOrtho[0][1] = 0.0f;
-    matOrtho[1][1] = 2.0f/tb;
-    matOrtho[2][1] = 0.0f;
-    matOrtho[3][1] = 0.0f;
     matOrtho[0][2] = 0.0f;
+    matOrtho[0][3] = 0.0f;
+    matOrtho[1][0] = 0.0f;
+    matOrtho[1][1] = 2.0f/tb;
     matOrtho[1][2] = 0.0f;
+    matOrtho[1][3] = 0.0f;
+    matOrtho[2][0] = 0.0f;
+    matOrtho[2][1] = 0.0f;
     matOrtho[2][2] = -2.0f/fn;
-    matOrtho[3][2] = 0.0f;
-    matOrtho[0][3] = -(left + right)/rl;
-    matOrtho[1][3] = -(top + bottom)/tb;
-    matOrtho[2][3] = -(zfar + znear)/fn;
+    matOrtho[2][3] = 0.0f;
+    matOrtho[3][0] = -(left + right)/rl;
+    matOrtho[3][1] = -(top + bottom)/tb;
+    matOrtho[3][2] = -(zfar + znear)/fn;
     matOrtho[3][3] = 1.0f;
 
     *RLGL.State.currentMatrix = rlMatrixMultiply(*RLGL.State.currentMatrix, matOrtho);
@@ -1505,9 +1505,9 @@ void rlVertex3f(float x, float y, float z)
     // Transform provided vector if required
     if (RLGL.State.transformRequired)
     {
-        tx = RLGL.State.transform[0][0]*x + RLGL.State.transform[0][1]*y + RLGL.State.transform[0][2]*z + RLGL.State.transform[0][3];
-        ty = RLGL.State.transform[1][0]*x + RLGL.State.transform[1][1]*y + RLGL.State.transform[1][2]*z + RLGL.State.transform[1][3];
-        tz = RLGL.State.transform[2][0]*x + RLGL.State.transform[2][1]*y + RLGL.State.transform[2][2]*z + RLGL.State.transform[2][3];
+        tx = RLGL.State.transform[0][0]*x + RLGL.State.transform[1][0]*y + RLGL.State.transform[2][0]*z + RLGL.State.transform[3][0];
+        ty = RLGL.State.transform[0][1]*x + RLGL.State.transform[1][1]*y + RLGL.State.transform[2][1]*z + RLGL.State.transform[3][1];
+        tz = RLGL.State.transform[0][2]*x + RLGL.State.transform[1][2]*y + RLGL.State.transform[2][2]*z + RLGL.State.transform[3][2];
     }
 
     // WARNING: Be careful with primitives breaking when launching a new batch!
@@ -1588,9 +1588,9 @@ void rlNormal3f(float x, float y, float z)
     float normalz = z;
     if (RLGL.State.transformRequired)
     {
-        normalx = RLGL.State.transform[0][0]*x + RLGL.State.transform[0][1]*y + RLGL.State.transform[0][2]*z;
-        normaly = RLGL.State.transform[1][0]*x + RLGL.State.transform[1][1]*y + RLGL.State.transform[1][2]*z;
-        normalz = RLGL.State.transform[2][0]*x + RLGL.State.transform[2][1]*y + RLGL.State.transform[2][2]*z;
+        normalx = RLGL.State.transform[0][0]*x + RLGL.State.transform[1][0]*y + RLGL.State.transform[2][0]*z;
+        normaly = RLGL.State.transform[0][1]*x + RLGL.State.transform[1][1]*y + RLGL.State.transform[2][1]*z;
+        normalz = RLGL.State.transform[0][2]*x + RLGL.State.transform[1][2]*y + RLGL.State.transform[2][2]*z;
     }
 
     // NOTE: Default behavior assumes the normal vector is in the correct space for what the shader expects,
@@ -4715,20 +4715,20 @@ Matrix rlGetMatrixModelview(void)
     float mat[16];
     glGetFloatv(GL_MODELVIEW_MATRIX, mat);
     matrix[0][0] = mat[0];
-    matrix[1][0] = mat[1];
-    matrix[2][0] = mat[2];
-    matrix[3][0] = mat[3];
-    matrix[0][1] = mat[4];
+    matrix[0][1] = mat[1];
+    matrix[0][2] = mat[2];
+    matrix[0][3] = mat[3];
+    matrix[1][0] = mat[4];
     matrix[1][1] = mat[5];
-    matrix[2][1] = mat[6];
-    matrix[3][1] = mat[7];
-    matrix[0][2] = mat[8];
-    matrix[1][2] = mat[9];
+    matrix[1][2] = mat[6];
+    matrix[1][3] = mat[7];
+    matrix[2][0] = mat[8];
+    matrix[2][1] = mat[9];
     matrix[2][2] = mat[10];
-    matrix[3][2] = mat[11];
-    matrix[0][3] = mat[12];
-    matrix[1][3] = mat[13];
-    matrix[2][3] = mat[14];
+    matrix[2][3] = mat[11];
+    matrix[3][0] = mat[12];
+    matrix[3][1] = mat[13];
+    matrix[3][2] = mat[14];
     matrix[3][3] = mat[15];
 #else
     matrix = RLGL.State.modelview;
@@ -4744,20 +4744,20 @@ Matrix rlGetMatrixProjection(void)
     glGetFloatv(GL_PROJECTION_MATRIX,mat);
     Matrix m;
     m[0][0] = mat[0];
-    m[1][0] = mat[1];
-    m[2][0] = mat[2];
-    m[3][0] = mat[3];
-    m[0][1] = mat[4];
+    m[0][1] = mat[1];
+    m[0][2] = mat[2];
+    m[0][3] = mat[3];
+    m[1][0] = mat[4];
     m[1][1] = mat[5];
-    m[2][1] = mat[6];
-    m[3][1] = mat[7];
-    m[0][2] = mat[8];
-    m[1][2] = mat[9];
+    m[1][2] = mat[6];
+    m[1][3] = mat[7];
+    m[2][0] = mat[8];
+    m[2][1] = mat[9];
     m[2][2] = mat[10];
-    m[3][2] = mat[11];
-    m[0][3] = mat[12];
-    m[1][3] = mat[13];
-    m[2][3] = mat[14];
+    m[2][3] = mat[11];
+    m[3][0] = mat[12];
+    m[3][1] = mat[13];
+    m[3][2] = mat[14];
     m[3][3] = mat[15];
     return m;
 #else
@@ -5317,20 +5317,20 @@ static rl_float16 rlMatrixToFloatV(Matrix mat)
     rl_float16 result = { 0 };
 
     result.v[0] = mat[0][0];
-    result.v[1] = mat[1][0];
-    result.v[2] = mat[2][0];
-    result.v[3] = mat[3][0];
-    result.v[4] = mat[0][1];
+    result.v[1] = mat[0][1];
+    result.v[2] = mat[0][2];
+    result.v[3] = mat[0][3];
+    result.v[4] = mat[1][0];
     result.v[5] = mat[1][1];
-    result.v[6] = mat[2][1];
-    result.v[7] = mat[3][1];
-    result.v[8] = mat[0][2];
-    result.v[9] = mat[1][2];
+    result.v[6] = mat[1][2];
+    result.v[7] = mat[1][3];
+    result.v[8] = mat[2][0];
+    result.v[9] = mat[2][1];
     result.v[10] = mat[2][2];
-    result.v[11] = mat[3][2];
-    result.v[12] = mat[0][3];
-    result.v[13] = mat[1][3];
-    result.v[14] = mat[2][3];
+    result.v[11] = mat[2][3];
+    result.v[12] = mat[3][0];
+    result.v[13] = mat[3][1];
+    result.v[14] = mat[3][2];
     result.v[15] = mat[3][3];
 
     return result;
@@ -5342,22 +5342,22 @@ static Matrix rlMatrixMultiply(Matrix left, Matrix right)
 {
     Matrix result{};
 
-    result[0][0] = left[0][0]*right[0][0] + left[1][0]*right[0][1] + left[2][0]*right[0][2] + left[3][0]*right[0][3];
-    result[1][0] = left[0][0]*right[1][0] + left[1][0]*right[1][1] + left[2][0]*right[1][2] + left[3][0]*right[1][3];
-    result[2][0] = left[0][0]*right[2][0] + left[1][0]*right[2][1] + left[2][0]*right[2][2] + left[3][0]*right[2][3];
-    result[3][0] = left[0][0]*right[3][0] + left[1][0]*right[3][1] + left[2][0]*right[3][2] + left[3][0]*right[3][3];
-    result[0][1] = left[0][1]*right[0][0] + left[1][1]*right[0][1] + left[2][1]*right[0][2] + left[3][1]*right[0][3];
-    result[1][1] = left[0][1]*right[1][0] + left[1][1]*right[1][1] + left[2][1]*right[1][2] + left[3][1]*right[1][3];
-    result[2][1] = left[0][1]*right[2][0] + left[1][1]*right[2][1] + left[2][1]*right[2][2] + left[3][1]*right[2][3];
-    result[3][1] = left[0][1]*right[3][0] + left[1][1]*right[3][1] + left[2][1]*right[3][2] + left[3][1]*right[3][3];
-    result[0][2] = left[0][2]*right[0][0] + left[1][2]*right[0][1] + left[2][2]*right[0][2] + left[3][2]*right[0][3];
-    result[1][2] = left[0][2]*right[1][0] + left[1][2]*right[1][1] + left[2][2]*right[1][2] + left[3][2]*right[1][3];
-    result[2][2] = left[0][2]*right[2][0] + left[1][2]*right[2][1] + left[2][2]*right[2][2] + left[3][2]*right[2][3];
-    result[3][2] = left[0][2]*right[3][0] + left[1][2]*right[3][1] + left[2][2]*right[3][2] + left[3][2]*right[3][3];
-    result[0][3] = left[0][3]*right[0][0] + left[1][3]*right[0][1] + left[2][3]*right[0][2] + left[3][3]*right[0][3];
-    result[1][3] = left[0][3]*right[1][0] + left[1][3]*right[1][1] + left[2][3]*right[1][2] + left[3][3]*right[1][3];
-    result[2][3] = left[0][3]*right[2][0] + left[1][3]*right[2][1] + left[2][3]*right[2][2] + left[3][3]*right[2][3];
-    result[3][3] = left[0][3]*right[3][0] + left[1][3]*right[3][1] + left[2][3]*right[3][2] + left[3][3]*right[3][3];
+    result[0][0] = left[0][0]*right[0][0] + left[0][1]*right[1][0] + left[0][2]*right[2][0] + left[0][3]*right[3][0];
+    result[0][1] = left[0][0]*right[0][1] + left[0][1]*right[1][1] + left[0][2]*right[2][1] + left[0][3]*right[3][1];
+    result[0][2] = left[0][0]*right[0][2] + left[0][1]*right[1][2] + left[0][2]*right[2][2] + left[0][3]*right[3][2];
+    result[0][3] = left[0][0]*right[0][3] + left[0][1]*right[1][3] + left[0][2]*right[2][3] + left[0][3]*right[3][3];
+    result[1][0] = left[1][0]*right[0][0] + left[1][1]*right[1][0] + left[1][2]*right[2][0] + left[1][3]*right[3][0];
+    result[1][1] = left[1][0]*right[0][1] + left[1][1]*right[1][1] + left[1][2]*right[2][1] + left[1][3]*right[3][1];
+    result[1][2] = left[1][0]*right[0][2] + left[1][1]*right[1][2] + left[1][2]*right[2][2] + left[1][3]*right[3][2];
+    result[1][3] = left[1][0]*right[0][3] + left[1][1]*right[1][3] + left[1][2]*right[2][3] + left[1][3]*right[3][3];
+    result[2][0] = left[2][0]*right[0][0] + left[2][1]*right[1][0] + left[2][2]*right[2][0] + left[2][3]*right[3][0];
+    result[2][1] = left[2][0]*right[0][1] + left[2][1]*right[1][1] + left[2][2]*right[2][1] + left[2][3]*right[3][1];
+    result[2][2] = left[2][0]*right[0][2] + left[2][1]*right[1][2] + left[2][2]*right[2][2] + left[2][3]*right[3][2];
+    result[2][3] = left[2][0]*right[0][3] + left[2][1]*right[1][3] + left[2][2]*right[2][3] + left[2][3]*right[3][3];
+    result[3][0] = left[3][0]*right[0][0] + left[3][1]*right[1][0] + left[3][2]*right[2][0] + left[3][3]*right[3][0];
+    result[3][1] = left[3][0]*right[0][1] + left[3][1]*right[1][1] + left[3][2]*right[2][1] + left[3][3]*right[3][1];
+    result[3][2] = left[3][0]*right[0][2] + left[3][1]*right[1][2] + left[3][2]*right[2][2] + left[3][3]*right[3][2];
+    result[3][3] = left[3][0]*right[0][3] + left[3][1]*right[1][3] + left[3][2]*right[2][3] + left[3][3]*right[3][3];
 
     return result;
 }
@@ -5368,20 +5368,20 @@ static Matrix rlMatrixTranspose(Matrix mat)
     Matrix result{};
 
     result[0][0] = mat[0][0];
-    result[1][0] = mat[0][1];
-    result[2][0] = mat[0][2];
-    result[3][0] = mat[0][3];
     result[0][1] = mat[1][0];
-    result[1][1] = mat[1][1];
-    result[2][1] = mat[1][2];
-    result[3][1] = mat[1][3];
     result[0][2] = mat[2][0];
-    result[1][2] = mat[2][1];
-    result[2][2] = mat[2][2];
-    result[3][2] = mat[2][3];
     result[0][3] = mat[3][0];
+    result[1][0] = mat[0][1];
+    result[1][1] = mat[1][1];
+    result[1][2] = mat[2][1];
     result[1][3] = mat[3][1];
+    result[2][0] = mat[0][2];
+    result[2][1] = mat[1][2];
+    result[2][2] = mat[2][2];
     result[2][3] = mat[3][2];
+    result[3][0] = mat[0][3];
+    result[3][1] = mat[1][3];
+    result[3][2] = mat[2][3];
     result[3][3] = mat[3][3];
 
     return result;
@@ -5393,10 +5393,10 @@ static Matrix rlMatrixInvert(Matrix mat)
     Matrix result{};
 
     // Cache the matrix values (speed optimization)
-    float a00 = mat[0][0], a01 = mat[1][0], a02 = mat[2][0], a03 = mat[3][0];
-    float a10 = mat[0][1], a11 = mat[1][1], a12 = mat[2][1], a13 = mat[3][1];
-    float a20 = mat[0][2], a21 = mat[1][2], a22 = mat[2][2], a23 = mat[3][2];
-    float a30 = mat[0][3], a31 = mat[1][3], a32 = mat[2][3], a33 = mat[3][3];
+    float a00 = mat[0][0], a01 = mat[0][1], a02 = mat[0][2], a03 = mat[0][3];
+    float a10 = mat[1][0], a11 = mat[1][1], a12 = mat[1][2], a13 = mat[1][3];
+    float a20 = mat[2][0], a21 = mat[2][1], a22 = mat[2][2], a23 = mat[2][3];
+    float a30 = mat[3][0], a31 = mat[3][1], a32 = mat[3][2], a33 = mat[3][3];
 
     float b00 = a00*a11 - a01*a10;
     float b01 = a00*a12 - a02*a10;
@@ -5415,20 +5415,20 @@ static Matrix rlMatrixInvert(Matrix mat)
     float invDet = 1.0f/(b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
 
     result[0][0] = (a11*b11 - a12*b10 + a13*b09)*invDet;
-    result[1][0] = (-a01*b11 + a02*b10 - a03*b09)*invDet;
-    result[2][0] = (a31*b05 - a32*b04 + a33*b03)*invDet;
-    result[3][0] = (-a21*b05 + a22*b04 - a23*b03)*invDet;
-    result[0][1] = (-a10*b11 + a12*b08 - a13*b07)*invDet;
+    result[0][1] = (-a01*b11 + a02*b10 - a03*b09)*invDet;
+    result[0][2] = (a31*b05 - a32*b04 + a33*b03)*invDet;
+    result[0][3] = (-a21*b05 + a22*b04 - a23*b03)*invDet;
+    result[1][0] = (-a10*b11 + a12*b08 - a13*b07)*invDet;
     result[1][1] = (a00*b11 - a02*b08 + a03*b07)*invDet;
-    result[2][1] = (-a30*b05 + a32*b02 - a33*b01)*invDet;
-    result[3][1] = (a20*b05 - a22*b02 + a23*b01)*invDet;
-    result[0][2] = (a10*b10 - a11*b08 + a13*b06)*invDet;
-    result[1][2] = (-a00*b10 + a01*b08 - a03*b06)*invDet;
+    result[1][2] = (-a30*b05 + a32*b02 - a33*b01)*invDet;
+    result[1][3] = (a20*b05 - a22*b02 + a23*b01)*invDet;
+    result[2][0] = (a10*b10 - a11*b08 + a13*b06)*invDet;
+    result[2][1] = (-a00*b10 + a01*b08 - a03*b06)*invDet;
     result[2][2] = (a30*b04 - a31*b02 + a33*b00)*invDet;
-    result[3][2] = (-a20*b04 + a21*b02 - a23*b00)*invDet;
-    result[0][3] = (-a10*b09 + a11*b07 - a12*b06)*invDet;
-    result[1][3] = (a00*b09 - a01*b07 + a02*b06)*invDet;
-    result[2][3] = (-a30*b03 + a31*b01 - a32*b00)*invDet;
+    result[2][3] = (-a20*b04 + a21*b02 - a23*b00)*invDet;
+    result[3][0] = (-a10*b09 + a11*b07 - a12*b06)*invDet;
+    result[3][1] = (a00*b09 - a01*b07 + a02*b06)*invDet;
+    result[3][2] = (-a30*b03 + a31*b01 - a32*b00)*invDet;
     result[3][3] = (a20*b03 - a21*b01 + a22*b00)*invDet;
 
     return result;
