@@ -19,13 +19,15 @@
 *       raymath.h - 3D math library
 *
 *   WINDOWS COMPILATION:
-*       gcc -o rlgl_standalone.exe rlgl_standalone.c -s -Iexternal\include -I..\..\src  \
-*           -L. -Lexternal\lib -lglfw3 -lopengl32 -lgdi32 -Wall -std=c99 -DGRAPHICS_API_OPENGL_33
+*       g++ -o rlgl_standalone.exe rlgl_standalone.cpp -s -Iexternal\include -I..\..\src -I<glm> \
+*           -L. -Lexternal\lib -lglfw3 -lopengl32 -lgdi32 -Wall -std=c++20 -DGRAPHICS_API_OPENGL_33
 *
 *   APPLE COMPILATION:
-*       gcc -o rlgl_standalone rlgl_standalone.c -I../../src -Iexternal/include -Lexternal/lib \
+*       g++ -o rlgl_standalone rlgl_standalone.cpp -I../../src -Iexternal/include -I<glm> -Lexternal/lib \
 *           -lglfw3 -framework CoreVideo -framework OpenGL -framework IOKit -framework Cocoa -framework QuartzCore
-*           -Wno-deprecated-declarations -std=c99 -DGRAPHICS_API_OPENGL_33
+*           -Wno-deprecated-declarations -std=c++20 -DGRAPHICS_API_OPENGL_33
+*
+*   NOTE: <glm> is the glm header directory, raylib's math types are glm types.
 *
 *
 *   LICENSE: zlib/libpng
