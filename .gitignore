@@ -1,68 +1,140 @@
-# Prerequisites
-*.d
+# Ignore generated files
+# ...
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Ignore VIM's backup generated files
+*.swp
+*.swo
+*~
 
-# Precompiled Headers
-*.gch
-*.pch
+# Ignore thumbnails created by windows
+Thumbs.db
 
-# Linker files
-*.ilk
-
-# Debugger Files
+# Ignore files build by Visual Studio
+# *.obj --> Can be confused with 3d model!
 *.pdb
+*.aps
+*.user
+# *.vcproj
+# *.vcxproj*
+# *.sln
+*.vspscc
+*_i.c
+*.i
+*.icf
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+.vs
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-*.so.*
+[Bb]in
+[Dd]ebug/
+*.sbr
+*.sdf
+obj/
+[R]elease/
+_ReSharper*/
+[Tt]est[Rr]esult*
+ipch/
+*.opensdf
+*.db
+*.opendb
+packages/
+!examples/models/resources/models/obj/
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
+# Ignore compiled binaries
+*.o
 *.exe
-*.out
-*.app
+*.a
+*.bc
+*.so
+*.so.*
+*.dll
+*.h.pch
+./*.obj
 
-# Build directories
-build/
-Build/
-build-*/
+# Ignore SDL libs for testing
+src/external/SDL2
+src/external/SDL3
 
-# CMake generated files
-CMakeFiles/
+# Emscripten
+emsdk
+
+# Ignore binaries generated in examples/
+examples/**/*
+!examples/**/*.*
+!examples/**/*/
+examples/**/*.exe
+examples/**/*.wasm
+examples/**/*.data
+examples/**/*.js
+examples/**/*.html
+examples/**/logs/*
+
+# Ignore files build by xcode
+*.mode*v*
+*.pbxuser
+*.xcbkptlist
+*.xcscheme
+*.xcworkspacedata
+*.xcuserstate
+*.xccheckout
+xcschememanagement.plist
+.DS_Store
+._.*
+xcuserdata/
+DerivedData/
+
+# VSCode project
+.vscode
+.clangd
+
+# Jetbrains project
+.idea/
+cmake-build-*/
+
+# CMake stuff
 CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
 cmake_install.cmake
-Makefile
+cmake_uninstall.cmake
 install_manifest.txt
 compile_commands.json
+CTestTestfile.cmake
+build
 
-# Temporary files
-*.tmp
-*.log
-*.bak
-*.swp
+# Ignore GNU global tags
+GPATH
+GRTAGS
+GTAGS
 
-# vcpkg
-vcpkg_installed/
+# Zig programming language
+.zig-cache/
+zig-cache/
+zig-pkg/
+zig-out/
+build/
+build-*/
+docgen_tmp/
 
-# debug information files
-*.dwo
+# Tools stuff
+tools/rlparser/rlparser.exe
+tools/rlparser/rlparser
+tools/rexm/rexm.exe
+tools/rexm/rexm
 
-# test output & cache
-Testing/
-.cache/
+# CI
+emsdk-cache/
+raylib.com/
+
+# Wayland files
+src/*protocol.h
+src/*protocol-code.h
+src/*protocol-code.c
