@@ -496,7 +496,7 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
             float cosslice = cosf(sliceangle);
             float sinslice = sinf(sliceangle);
 
-            Vector3 vertices[4] = { 0 }; // Required to store face vertices
+            Vector3 vertices[4]{}; // Required to store face vertices
             vertices[2] = Vector3{ 0, 1, 0 };
             vertices[3] = Vector3{ sinring, cosring, 0 };
 
@@ -550,7 +550,7 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
             float cosslice = cosf(sliceangle);
             float sinslice = sinf(sliceangle);
 
-            Vector3 vertices[4] = { 0 }; // Required to store face vertices
+            Vector3 vertices[4]{}; // Required to store face vertices
             vertices[2] = Vector3{ 0, 1, 0 };
             vertices[3] = Vector3{ sinring, cosring, 0 };
 
@@ -652,8 +652,8 @@ void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float e
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
-    Vector3 b1 = Vector3Normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = Vector3Normalize(Vector3CrossProduct(b1, direction));
+    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
 
     float baseAngle = (2.0f*PI)/sides;
 
@@ -743,8 +743,8 @@ void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, fl
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
-    Vector3 b1 = Vector3Normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = Vector3Normalize(Vector3CrossProduct(b1, direction));
+    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
 
     float baseAngle = (2.0f*PI)/slices;
 
@@ -791,9 +791,9 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
     if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
-    Vector3 b0 = Vector3Normalize(direction);
-    Vector3 b1 = Vector3Normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = Vector3Normalize(Vector3CrossProduct(b1, direction));
+    Vector3 b0 = glm::normalize(direction);
+    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
     Vector3 capCenter = endPos;
 
     float baseSliceAngle = (2.0f*PI)/slices;
@@ -866,7 +866,7 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
                 }
             }
             capCenter = startPos;
-            b0 = Vector3Scale(b0, -1.0f);
+            b0 = ((b0) * (-1.0f));
         }
         // render middle
         if (!sphereCase)
@@ -930,9 +930,9 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
     if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
-    Vector3 b0 = Vector3Normalize(direction);
-    Vector3 b1 = Vector3Normalize(Vector3Perpendicular(direction));
-    Vector3 b2 = Vector3Normalize(Vector3CrossProduct(b1, direction));
+    Vector3 b0 = glm::normalize(direction);
+    Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    Vector3 b2 = glm::normalize(glm::cross(b1, direction));
     Vector3 capCenter = endPos;
 
     float baseSliceAngle = (2.0f*PI)/slices;
@@ -998,7 +998,7 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
                 }
             }
             capCenter = startPos;
-            b0 = Vector3Scale(b0, -1.0f);
+            b0 = ((b0) * (-1.0f));
         }
         // render middle
         if (!sphereCase)
@@ -1131,7 +1131,7 @@ Model LoadModel(const char *fileName)
 #endif
 
     // Make sure model transform is set to identity matrix!
-    model.transform = MatrixIdentity();
+    model.transform = Matrix(1.0f);
 
     if ((model.meshCount != 0) && (model.meshes != NULL))
     {
@@ -1162,7 +1162,7 @@ Model LoadModelFromMesh(Mesh mesh)
 {
     Model model = { 0 };
 
-    model.transform = MatrixIdentity();
+    model.transform = Matrix(1.0f);
 
     model.meshCount = 1;
     model.meshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
@@ -1242,11 +1242,11 @@ void UnloadModel(Model model)
 // Compute model bounding box limits (considers all meshes)
 BoundingBox GetModelBoundingBox(Model model)
 {
-    BoundingBox bounds = { 0 };
+    BoundingBox bounds{};
 
     if (model.meshCount > 0)
     {
-        Vector3 temp = { 0 };
+        Vector3 temp{};
         bounds = GetMeshBoundingBox(model.meshes[0]);
 
         for (int i = 1; i < model.meshCount; i++)
@@ -1268,8 +1268,8 @@ BoundingBox GetModelBoundingBox(Model model)
     // Apply model.transform to bounding box
     // WARNING: Current BoundingBox structure design does not support rotation transformations,
     // in those cases is up to the user to calculate the proper box bounds (8 vertices transformed)
-    bounds.min = Vector3Transform(bounds.min, model.transform);
-    bounds.max = Vector3Transform(bounds.max, model.transform);
+    bounds.min = Vector3((model.transform)*Vector4(bounds.min, 1.0f));
+    bounds.max = Vector3((model.transform)*Vector4(bounds.max, 1.0f));
 
     return bounds;
 }
@@ -1525,9 +1525,9 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     // NOTE: At this point the modelview matrix contains the view matrix (camera)
     // That's because BeginMode3D() sets it and there is no model-drawing function
     // that modifies it, all use rlPushMatrix() and rlPopMatrix()
-    Matrix matModel = MatrixIdentity();
+    Matrix matModel = Matrix(1.0f);
     Matrix matView = rlGetMatrixModelview();
-    Matrix matModelView = MatrixIdentity();
+    Matrix matModelView = Matrix(1.0f);
     Matrix matProjection = rlGetMatrixProjection();
 
     // Upload view and projection matrices (if locations available)
@@ -1537,16 +1537,16 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     // Accumulate several model transformations:
     //    transform: model transformation provided (includes DrawModel() params combined with model.transform)
     //    rlGetMatrixTransform(): rlgl internal transform matrix due to push/pop matrix stack
-    matModel = MatrixMultiply(transform, rlGetMatrixTransform());
+    matModel = ((transform) * (rlGetMatrixTransform()));
 
     // Model transformation matrix is sent to shader uniform location: SHADER_LOC_MATRIX_MODEL
     if (material.shader.locs[SHADER_LOC_MATRIX_MODEL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_MODEL], matModel);
 
     // Get model-view matrix
-    matModelView = MatrixMultiply(matModel, matView);
+    matModelView = ((matModel) * (matView));
 
     // Upload model normal matrix (if locations available)
-    if (material.shader.locs[SHADER_LOC_MATRIX_NORMAL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_NORMAL], MatrixTranspose(MatrixInvert(matModel)));
+    if (material.shader.locs[SHADER_LOC_MATRIX_NORMAL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_NORMAL], glm::transpose(glm::inverse(matModel)));
     //-----------------------------------------------------
 
     // Bind active texture maps (if available)
@@ -1653,13 +1653,13 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     for (int eye = 0; eye < eyeCount; eye++)
     {
         // Calculate model-view-projection matrix (MVP)
-        Matrix matModelViewProjection = MatrixIdentity();
-        if (eyeCount == 1) matModelViewProjection = MatrixMultiply(matModelView, matProjection);
+        Matrix matModelViewProjection = Matrix(1.0f);
+        if (eyeCount == 1) matModelViewProjection = ((matModelView) * (matProjection));
         else
         {
             // Setup current eye viewport (half screen width)
             rlViewport(eye*rlGetFramebufferWidth()/2, 0, rlGetFramebufferWidth()/2, rlGetFramebufferHeight());
-            matModelViewProjection = MatrixMultiply(MatrixMultiply(matModelView, rlGetMatrixViewOffsetStereo(eye)), rlGetMatrixProjectionStereo(eye));
+            matModelViewProjection = ((((matModelView) * (rlGetMatrixViewOffsetStereo(eye)))) * (rlGetMatrixProjectionStereo(eye)));
         }
 
         // Send combined model-view-projection matrix to shader
@@ -1744,9 +1744,9 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
     // NOTE: At this point the modelview matrix contains the view matrix (camera)
     // That's because BeginMode3D() sets it and there is no model-drawing function
     // that modifies it, all use rlPushMatrix() and rlPopMatrix()
-    Matrix matModel = MatrixIdentity();
+    Matrix matModel = Matrix(1.0f);
     Matrix matView = rlGetMatrixModelview();
-    Matrix matModelView = MatrixIdentity();
+    Matrix matModelView = Matrix(1.0f);
     Matrix matProjection = rlGetMatrixProjection();
 
     // Upload view and projection matrices (if locations available)
@@ -1784,10 +1784,10 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
 
     // Accumulate internal matrix transform (push/pop) and view matrix
     // NOTE: In this case, model instance transformation must be computed in the shader
-    matModelView = MatrixMultiply(rlGetMatrixTransform(), matView);
+    matModelView = ((rlGetMatrixTransform()) * (matView));
 
     // Upload model normal matrix (if locations available)
-    if (material.shader.locs[SHADER_LOC_MATRIX_NORMAL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_NORMAL], MatrixTranspose(MatrixInvert(matModel)));
+    if (material.shader.locs[SHADER_LOC_MATRIX_NORMAL] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_NORMAL], glm::transpose(glm::inverse(matModel)));
     //-----------------------------------------------------
 
     // Bind active texture maps (if available)
@@ -1892,13 +1892,13 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
     for (int eye = 0; eye < eyeCount; eye++)
     {
         // Calculate model-view-projection matrix (MVP)
-        Matrix matModelViewProjection = MatrixIdentity();
-        if (eyeCount == 1) matModelViewProjection = MatrixMultiply(matModelView, matProjection);
+        Matrix matModelViewProjection = Matrix(1.0f);
+        if (eyeCount == 1) matModelViewProjection = ((matModelView) * (matProjection));
         else
         {
             // Setup current eye viewport (half screen width)
             rlViewport(eye*rlGetFramebufferWidth()/2, 0, rlGetFramebufferWidth()/2, rlGetFramebufferHeight());
-            matModelViewProjection = MatrixMultiply(MatrixMultiply(matModelView, rlGetMatrixViewOffsetStereo(eye)), rlGetMatrixProjectionStereo(eye));
+            matModelViewProjection = ((((matModelView) * (rlGetMatrixViewOffsetStereo(eye)))) * (rlGetMatrixProjectionStereo(eye)));
         }
 
         // Send combined model-view-projection matrix to shader
@@ -2323,39 +2323,27 @@ void UpdateModelAnimationBones(Model model, ModelAnimation anim, float frame)
         if (currentFrame >= anim.keyframeCount) currentFrame = currentFrame%anim.keyframeCount;
         if (nextFrame >= anim.keyframeCount) nextFrame = nextFrame%anim.keyframeCount;
 
-        Matrix bindPoseMatrix = { 0 };
-        Matrix currentPoseMatrix = { 0 };
+        Matrix bindPoseMatrix{};
+        Matrix currentPoseMatrix{};
 
         // Update all bones and bone matrices of model
         for (unsigned int boneIndex = 0; boneIndex < model.skeleton.boneCount; boneIndex++)
         {
             // Compute interpolated pose between current and next frame
             // NOTE: Storing animation frame data in model.currentPose
-            model.currentPose[boneIndex].translation = Vector3Lerp(
-                anim.keyframePoses[currentFrame][boneIndex].translation,
-                anim.keyframePoses[nextFrame][boneIndex].translation, blend);
-            model.currentPose[boneIndex].rotation = QuaternionSlerp(
-                anim.keyframePoses[currentFrame][boneIndex].rotation,
-                anim.keyframePoses[nextFrame][boneIndex].rotation, blend);
-            model.currentPose[boneIndex].scale = Vector3Lerp(
-                anim.keyframePoses[currentFrame][boneIndex].scale,
-                anim.keyframePoses[nextFrame][boneIndex].scale, blend);
+            model.currentPose[boneIndex].translation = glm::mix(anim.keyframePoses[currentFrame][boneIndex].translation, anim.keyframePoses[nextFrame][boneIndex].translation, blend);
+            model.currentPose[boneIndex].rotation = glm::slerp(anim.keyframePoses[currentFrame][boneIndex].rotation, anim.keyframePoses[nextFrame][boneIndex].rotation, blend);
+            model.currentPose[boneIndex].scale = glm::mix(anim.keyframePoses[currentFrame][boneIndex].scale, anim.keyframePoses[nextFrame][boneIndex].scale, blend);
 
             // Compute runtime bone matrix from model current pose
             //-----------------------------------------------------------------------------------
             Transform *bindPoseTransform = &model.skeleton.bindPose[boneIndex];
-            bindPoseMatrix = MatrixMultiply(
-                MatrixMultiply(MatrixScale(bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z),
-                    QuaternionToMatrix(bindPoseTransform->rotation)),
-                MatrixTranslate(bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z));
+            bindPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})) * (glm::mat4_cast(bindPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})));
 
             Transform *currentPoseTransform = &model.currentPose[boneIndex];
-            currentPoseMatrix = MatrixMultiply(
-                MatrixMultiply(MatrixScale(currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z),
-                    QuaternionToMatrix(currentPoseTransform->rotation)),
-                MatrixTranslate(currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z));
+            currentPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})) * (glm::mat4_cast(currentPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})));
 
-            model.boneMatrices[boneIndex] = MatrixMultiply(MatrixInvert(bindPoseMatrix), currentPoseMatrix);
+            model.boneMatrices[boneIndex] = ((glm::inverse(bindPoseMatrix)) * (currentPoseMatrix));
             //-----------------------------------------------------------------------------------
         }
     }
@@ -2404,54 +2392,36 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
         if (currentFrameB >= animB.keyframeCount) currentFrameB = currentFrameB%animB.keyframeCount;
         if (nextFrameB >= animB.keyframeCount) nextFrameB = nextFrameB%animB.keyframeCount;
 
-        Matrix bindPoseMatrix = { 0 };
-        Matrix currentPoseMatrix = { 0 };
+        Matrix bindPoseMatrix{};
+        Matrix currentPoseMatrix{};
 
         for (unsigned int boneIndex = 0; boneIndex < model.skeleton.boneCount; boneIndex++)
         {
             // Get frame-interpolation for first animation
-            Vector3 frameATranslation = Vector3Lerp(
-                animA.keyframePoses[currentFrameA][boneIndex].translation,
-                animA.keyframePoses[nextFrameA][boneIndex].translation, blendA);
-            Quaternion frameARotation = QuaternionSlerp(
-                animA.keyframePoses[currentFrameA][boneIndex].rotation,
-                animA.keyframePoses[nextFrameA][boneIndex].rotation, blendA);
-            Vector3 frameAScale = Vector3Lerp(
-                animA.keyframePoses[currentFrameA][boneIndex].scale,
-                animA.keyframePoses[nextFrameA][boneIndex].scale, blendA);
+            Vector3 frameATranslation = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].translation, animA.keyframePoses[nextFrameA][boneIndex].translation, blendA);
+            Quaternion frameARotation = glm::slerp(animA.keyframePoses[currentFrameA][boneIndex].rotation, animA.keyframePoses[nextFrameA][boneIndex].rotation, blendA);
+            Vector3 frameAScale = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].scale, animA.keyframePoses[nextFrameA][boneIndex].scale, blendA);
 
             // Get frame-interpolation for second animation
-            Vector3 frameBTranslation = Vector3Lerp(
-                animB.keyframePoses[currentFrameB][boneIndex].translation,
-                animB.keyframePoses[nextFrameB][boneIndex].translation, blendB);
-            Quaternion frameBRotation = QuaternionSlerp(
-                animB.keyframePoses[currentFrameB][boneIndex].rotation,
-                animB.keyframePoses[nextFrameB][boneIndex].rotation, blendB);
-            Vector3 frameBScale = Vector3Lerp(
-                animB.keyframePoses[currentFrameB][boneIndex].scale,
-                animB.keyframePoses[nextFrameB][boneIndex].scale, blendB);
+            Vector3 frameBTranslation = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].translation, animB.keyframePoses[nextFrameB][boneIndex].translation, blendB);
+            Quaternion frameBRotation = glm::slerp(animB.keyframePoses[currentFrameB][boneIndex].rotation, animB.keyframePoses[nextFrameB][boneIndex].rotation, blendB);
+            Vector3 frameBScale = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].scale, animB.keyframePoses[nextFrameB][boneIndex].scale, blendB);
 
             // Compute interpolated pose between both animations frames
             // NOTE: Storing animation frame data in model.currentPose
-            model.currentPose[boneIndex].translation = Vector3Lerp(frameATranslation, frameBTranslation, blend);
-            model.currentPose[boneIndex].rotation = QuaternionSlerp(frameARotation, frameBRotation, blend);
-            model.currentPose[boneIndex].scale = Vector3Lerp(frameAScale, frameBScale, blend);
+            model.currentPose[boneIndex].translation = glm::mix(frameATranslation, frameBTranslation, blend);
+            model.currentPose[boneIndex].rotation = glm::slerp(frameARotation, frameBRotation, blend);
+            model.currentPose[boneIndex].scale = glm::mix(frameAScale, frameBScale, blend);
 
             // Compute runtime bone matrix from model current pose
             //-----------------------------------------------------------------------------------
             Transform *bindPoseTransform = &model.skeleton.bindPose[boneIndex];
-            bindPoseMatrix = MatrixMultiply(
-                MatrixMultiply(MatrixScale(bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z),
-                    QuaternionToMatrix(bindPoseTransform->rotation)),
-                MatrixTranslate(bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z));
+            bindPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})) * (glm::mat4_cast(bindPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})));
 
             Transform *currentPoseTransform = &model.currentPose[boneIndex];
-            currentPoseMatrix = MatrixMultiply(
-                MatrixMultiply(MatrixScale(currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z),
-                    QuaternionToMatrix(currentPoseTransform->rotation)),
-                MatrixTranslate(currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z));
+            currentPoseMatrix = ((((glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})) * (glm::mat4_cast(currentPoseTransform->rotation)))) * (glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})));
 
-            model.boneMatrices[boneIndex] = MatrixMultiply(MatrixInvert(bindPoseMatrix), currentPoseMatrix);
+            model.boneMatrices[boneIndex] = ((glm::inverse(bindPoseMatrix)) * (currentPoseMatrix));
             //-----------------------------------------------------------------------------------
 
             /*
@@ -2511,14 +2481,14 @@ void UpdateModelAnimationEx(Model model, ModelAnimation animA, float frameA, Mod
 // NOTE: Required for CPU skinning, uploads animated vertex buffers to GPU
 static void UpdateModelAnimationVertexBuffers(Model model)
 {
-    static Matrix boneNormalMatrices[256] = { 0 }; // Normal matrix per bone, bone indices are unsigned char
+    static Matrix boneNormalMatrices[256]{}; // Normal matrix per bone, bone indices are unsigned char
     bool boneNormalsReady = false;
 
     for (int m = 0; m < model.meshCount; m++)
     {
         Mesh *mesh = model.meshes + m; // don't copy the mesh, we may need to allocate buffers
-        Vector3 animVertex = { 0 };
-        Vector3 animNormal = { 0 };
+        Vector3 animVertex{};
+        Vector3 animNormal{};
         const int vertexValuesCount = mesh->vertexCount*3;
 
         int boneIndex = 0;
@@ -2551,7 +2521,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
         if ((mesh->normals != NULL) && !boneNormalsReady)
         {
             memset(boneNormalMatrices, 0, 256*sizeof(Matrix));
-            for (unsigned int b = 0; (b < model.skeleton.boneCount) && (b < 256); b++) boneNormalMatrices[b] = MatrixTranspose(MatrixInvert(model.boneMatrices[b]));
+            for (unsigned int b = 0; (b < model.skeleton.boneCount) && (b < 256); b++) boneNormalMatrices[b] = glm::transpose(glm::inverse(model.boneMatrices[b]));
             boneNormalsReady = true;
         }
 
@@ -2576,7 +2546,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
                 // Early stop when no transformation will be applied
                 if (boneWeight == 0.0f) continue;
                 animVertex = Vector3{ mesh->vertices[vCounter], mesh->vertices[vCounter + 1], mesh->vertices[vCounter + 2] };
-                animVertex = Vector3Transform(animVertex, model.boneMatrices[boneIndex]);
+                animVertex = Vector3((model.boneMatrices[boneIndex])*Vector4(animVertex, 1.0f));
                 mesh->animVertices[vCounter] += animVertex.x*boneWeight;
                 mesh->animVertices[vCounter + 1] += animVertex.y*boneWeight;
                 mesh->animVertices[vCounter + 2] += animVertex.z*boneWeight;
@@ -2587,7 +2557,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
                 if ((mesh->normals != NULL) && (mesh->animNormals != NULL ))
                 {
                     animNormal = Vector3{ mesh->normals[vCounter], mesh->normals[vCounter + 1], mesh->normals[vCounter + 2] };
-                    animNormal = Vector3Transform(animNormal, MatrixTranspose(MatrixInvert(model.boneMatrices[boneIndex])));
+                    animNormal = Vector3((glm::transpose(glm::inverse(model.boneMatrices[boneIndex])))*Vector4(animNormal, 1.0f));
                     mesh->animNormals[vCounter] += animNormal.x*boneWeight;
                     mesh->animNormals[vCounter + 1] += animNormal.y*boneWeight;
                     mesh->animNormals[vCounter + 2] += animNormal.z*boneWeight;
@@ -3324,10 +3294,10 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
 
     Vector3 scaleFactor = { size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
 
-    Vector3 vA = { 0 };
-    Vector3 vB = { 0 };
-    Vector3 vC = { 0 };
-    Vector3 vN = { 0 };
+    Vector3 vA{};
+    Vector3 vB{};
+    Vector3 vC{};
+    Vector3 vN{};
 
     for (int z = 0; z < mapZ-1; z++)
     {
@@ -3400,7 +3370,7 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
                 vC.y = mesh.vertices[nCounter + i + 7];
                 vC.z = mesh.vertices[nCounter + i + 8];
 
-                vN = Vector3Normalize(Vector3CrossProduct(Vector3Subtract(vB, vA), Vector3Subtract(vC, vA)));
+                vN = glm::normalize(glm::cross(((vB) - (vA)), ((vC) - (vA))));
 
                 mesh.normals[nCounter + i] = vN.x;
                 mesh.normals[nCounter + i + 1] = vN.y;
@@ -3782,8 +3752,8 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
 BoundingBox GetMeshBoundingBox(Mesh mesh)
 {
     // Get min and max vertex to construct bounds (AABB)
-    Vector3 minVertex = { 0 };
-    Vector3 maxVertex = { 0 };
+    Vector3 minVertex{};
+    Vector3 maxVertex{};
 
     if (mesh.vertices != NULL)
     {
@@ -3792,13 +3762,13 @@ BoundingBox GetMeshBoundingBox(Mesh mesh)
 
         for (int i = 1; i < mesh.vertexCount; i++)
         {
-            minVertex = Vector3Min(minVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
-            maxVertex = Vector3Max(maxVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
+            minVertex = glm::min(minVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
+            maxVertex = glm::max(maxVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
         }
     }
 
     // Create the bounding box
-    BoundingBox box = { 0 };
+    BoundingBox box{};
     box.min = minVertex;
     box.max = maxVertex;
 
@@ -3890,13 +3860,13 @@ void GenMeshTangents(Mesh *mesh)
         Vector3 tdir = { (s1*x2 - s2*x1)*r, (s1*y2 - s2*y1)*r, (s1*z2 - s2*z1)*r };
 
         // Accumulate tangents and bitangents for each vertex of the triangle
-        tan1[i0] = Vector3Add(tan1[i0], sdir);
-        tan1[i1] = Vector3Add(tan1[i1], sdir);
-        tan1[i2] = Vector3Add(tan1[i2], sdir);
+        tan1[i0] = ((tan1[i0]) + (sdir));
+        tan1[i1] = ((tan1[i1]) + (sdir));
+        tan1[i2] = ((tan1[i2]) + (sdir));
 
-        tan2[i0] = Vector3Add(tan2[i0], tdir);
-        tan2[i1] = Vector3Add(tan2[i1], tdir);
-        tan2[i2] = Vector3Add(tan2[i2], tdir);
+        tan2[i0] = ((tan2[i0]) + (tdir));
+        tan2[i1] = ((tan2[i1]) + (tdir));
+        tan2[i2] = ((tan2[i2]) + (tdir));
     }
 
     // Calculate final tangents for each vertex
@@ -3906,11 +3876,11 @@ void GenMeshTangents(Mesh *mesh)
         Vector3 tangent = tan1[i];
 
         // Handle zero tangent (can happen with degenerate UVs)
-        if (Vector3Length(tangent) < 0.0001f)
+        if (glm::length(tangent) < 0.0001f)
         {
             // Create a tangent perpendicular to the normal
             if (fabsf(normal.z) > 0.707f) tangent = Vector3{ 1.0f, 0.0f, 0.0f };
-            else tangent = Vector3Normalize(Vector3{ -normal.y, normal.x, 0.0f });
+            else tangent = glm::normalize(Vector3{ -normal.y, normal.x, 0.0f });
 
             mesh->tangents[i*4 + 0] = tangent.x;
             mesh->tangents[i*4 + 1] = tangent.y;
@@ -3921,19 +3891,19 @@ void GenMeshTangents(Mesh *mesh)
 
         // Gram-Schmidt orthogonalization to make tangent orthogonal to normal
         // T_prime = T - N*dot(N, T)
-        Vector3 orthogonalized = Vector3Subtract(tangent, Vector3Scale(normal, Vector3DotProduct(normal, tangent)));
+        Vector3 orthogonalized = ((tangent) - (((normal) * (glm::dot(normal, tangent)))));
 
         // Handle cases where orthogonalized vector is too small
-        if (Vector3Length(orthogonalized) < 0.0001f)
+        if (glm::length(orthogonalized) < 0.0001f)
         {
             // Create a tangent perpendicular to the normal
             if (fabsf(normal.z) > 0.707f) orthogonalized = Vector3{ 1.0f, 0.0f, 0.0f };
-            else orthogonalized = Vector3Normalize(Vector3{ -normal.y, normal.x, 0.0f });
+            else orthogonalized = glm::normalize(Vector3{ -normal.y, normal.x, 0.0f });
         }
         else
         {
             // Normalize the orthogonalized tangent
-            orthogonalized = Vector3Normalize(orthogonalized);
+            orthogonalized = glm::normalize(orthogonalized);
         }
 
         // Store the calculated tangent
@@ -3942,7 +3912,7 @@ void GenMeshTangents(Mesh *mesh)
         mesh->tangents[i*4 + 2] = orthogonalized.z;
 
         // Calculate the handedness (w component)
-        mesh->tangents[i*4 + 3] = (Vector3DotProduct(Vector3CrossProduct(normal, orthogonalized), tan2[i]) < 0.0f)? -1.0f : 1.0f;
+        mesh->tangents[i*4 + 3] = (glm::dot(glm::cross(normal, orthogonalized), tan2[i]) < 0.0f)? -1.0f : 1.0f;
     }
 
     // Free temporary arrays
@@ -3987,14 +3957,14 @@ void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rota
 {
     // Calculate transformation matrix from function parameters
     // Get transform matrix (rotation -> scale -> translation)
-    Matrix matScale = MatrixScale(scale.x, scale.y, scale.z);
-    Matrix matRotation = MatrixRotate(rotationAxis, rotationAngle*DEG2RAD);
-    Matrix matTranslation = MatrixTranslate(position.x, position.y, position.z);
+    Matrix matScale = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
+    Matrix matRotation = glm::rotate(Matrix(1.0f), rotationAngle*DEG2RAD, rotationAxis);
+    Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z});
 
-    Matrix matTransform = MatrixMultiply(MatrixMultiply(matScale, matRotation), matTranslation);
+    Matrix matTransform = ((((matScale) * (matRotation))) * (matTranslation));
 
     // Combine model transformation matrix (model.transform) with matrix generated by function parameters (matTransform)
-    model.transform = MatrixMultiply(model.transform, matTransform);
+    model.transform = ((model.transform) * (matTransform));
 
     for (int i = 0; i < model.meshCount; i++)
     {
@@ -4060,31 +4030,31 @@ void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
     // NOTE: Billboard locked on axis-Y
     Vector3 up = { 0.0f, 1.0f, 0.0f };
 
-    DrawBillboardPro(camera, texture, rec, position, up, size, Vector2Scale(size, 0.5), 0.0f, tint);
+    DrawBillboardPro(camera, texture, rec, position, up, size, size*0.5f, 0.0f, tint);
 }
 
 // Draw a billboard texture defined by source rectangle with scaling and rotation
 void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 position, Vector3 up, Vector2 size, Vector2 origin, float rotation, Color tint)
 {
     // Compute the up vector and the right vector
-    Matrix matView = MatrixLookAt(camera.position, camera.target, camera.up);
-    Vector3 right = { matView.m0, matView.m4, matView.m8 };
-    right = Vector3Scale(right, size.x);
-    up = Vector3Scale(up, size.y);
+    Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+    Vector3 right = { matView[0][0], matView[0][1], matView[0][2] };
+    right = ((right) * (size.x));
+    up = ((up) * (size.y));
 
     // Flip the content of the billboard while maintaining the counterclockwise edge rendering order
     if (size.x < 0.0f)
     {
         rec.x -= size.x;
         rec.width *= -1.0;
-        right = Vector3Negate(right);
+        right = (-(right));
         origin.x *= -1.0f;
     }
     if (size.y < 0.0f)
     {
         rec.y -= size.y;
         rec.height *= -1.0;
-        up = Vector3Negate(up);
+        up = (-(up));
         origin.y *= -1.0f;
     }
 
@@ -4102,21 +4072,21 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
     //  0 +---------------------------> 1
     //                right
     Vector3 forward;
-    if (rotation != 0.0) forward = Vector3CrossProduct(right, up);
+    if (rotation != 0.0) forward = glm::cross(right, up);
 
-    Vector3 origin3D = Vector3Add(Vector3Scale(Vector3Normalize(right), origin.x), Vector3Scale(Vector3Normalize(up), origin.y));
+    Vector3 origin3D = ((((glm::normalize(right)) * (origin.x))) + (((glm::normalize(up)) * (origin.y))));
 
     Vector3 points[4];
-    points[0] = Vector3Zero();
+    points[0] = Vector3{};
     points[1] = right;
-    points[2] = Vector3Add(up, right);
+    points[2] = ((up) + (right));
     points[3] = up;
 
     for (int i = 0; i < 4; i++)
     {
-        points[i] = Vector3Subtract(points[i], origin3D);
+        points[i] = ((points[i]) - (origin3D));
         if (rotation != 0.0) points[i] = Vector3RotateByAxisAngle(points[i], forward, rotation*DEG2RAD);
-        points[i] = Vector3Add(points[i], position);
+        points[i] = ((points[i]) + (position));
     }
 
     Vector2 texcoords[4];
@@ -4142,7 +4112,7 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
 // Draw a bounding box with wires
 void DrawBoundingBox(BoundingBox box, Color color)
 {
-    Vector3 size = { 0 };
+    Vector3 size{};
 
     size.x = fabsf(box.max.x - box.min.x);
     size.y = fabsf(box.max.y - box.min.y);
@@ -4172,7 +4142,7 @@ bool CheckCollisionSpheres(Vector3 center1, float radius1, Vector3 center2, floa
 
     // Check for distances squared to avoid sqrtf()
     float radSum = radius1 + radius2;
-    if (Vector3DistanceSqr(center1, center2) <= (radSum*radSum)) collision = true;
+    if (glm::dot((center1) - (center2), (center1) - (center2)) <= (radSum*radSum)) collision = true;
 
     return collision;
 }
@@ -4204,7 +4174,7 @@ bool CheckCollisionBoxSphere(BoundingBox box, Vector3 center, float radius)
         Clamp(center.z, box.min.z, box.max.z)
     };
 
-    if (Vector3DistanceSqr(center, closestPoint) <= (radius*radius)) collision = true;
+    if (glm::dot((center) - (closestPoint), (center) - (closestPoint)) <= (radius*radius)) collision = true;
 
     return collision;
 }
@@ -4214,16 +4184,16 @@ RayCollision GetRayCollisionSphere(Ray ray, Vector3 center, float radius)
 {
     RayCollision collision = { 0 };
 
-    Vector3 raySpherePos = Vector3Subtract(center, ray.position);
-    float vector = Vector3DotProduct(raySpherePos, ray.direction);
-    float distanceToCenter = Vector3Length(raySpherePos);
+    Vector3 raySpherePos = ((center) - (ray.position));
+    float vector = glm::dot(raySpherePos, ray.direction);
+    float distanceToCenter = glm::length(raySpherePos);
     float d = radius*radius - (distanceToCenter*distanceToCenter - vector*vector);
 
     // Check if the ray's line intersects with the sphere
     if (d >= 0.0f)
     {
-        Vector3 point = { 0 };
-        Vector3 normal = { 0 };
+        Vector3 point{};
+        Vector3 normal{};
         float hitDistance = 0.0f;
 
         // Check if ray origin is inside the sphere to calculate the correct collision point
@@ -4232,20 +4202,20 @@ RayCollision GetRayCollisionSphere(Ray ray, Vector3 center, float radius)
             hitDistance = vector + sqrtf(d);
 
             // Calculate collision point
-            point = Vector3Add(ray.position, Vector3Scale(ray.direction, hitDistance));
+            point = ((ray.position) + (((ray.direction) * (hitDistance))));
 
             // Calculate collision normal (pointing outwards)
-            normal = Vector3Negate(Vector3Normalize(Vector3Subtract(point, center)));
+            normal = (-(glm::normalize(((point) - (center)))));
         }
         else
         {
             hitDistance = vector - sqrtf(d);
 
             // Calculate collision point
-            point = Vector3Add(ray.position, Vector3Scale(ray.direction, hitDistance));
+            point = ((ray.position) + (((ray.direction) * (hitDistance))));
 
             // Calculate collision normal (pointing inwards)
-            normal = Vector3Normalize(Vector3Subtract(point, center));
+            normal = glm::normalize(((point) - (center)));
         }
 
         if (hitDistance >= 0.0f)
@@ -4271,7 +4241,7 @@ RayCollision GetRayCollisionBox(Ray ray, BoundingBox box)
                      (ray.position.y > box.min.y) && (ray.position.y < box.max.y) &&
                      (ray.position.z > box.min.z) && (ray.position.z < box.max.z);
 
-    if (insideBox) ray.direction = Vector3Negate(ray.direction);
+    if (insideBox) ray.direction = (-(ray.direction));
 
     float t[11] = { 0 };
 
@@ -4290,31 +4260,31 @@ RayCollision GetRayCollisionBox(Ray ray, BoundingBox box)
 
     collision.hit = !((t[7] < 0) || (t[6] > t[7]));
     collision.distance = t[6];
-    collision.point = Vector3Add(ray.position, Vector3Scale(ray.direction, collision.distance));
+    collision.point = ((ray.position) + (((ray.direction) * (collision.distance))));
 
     // Get box center point
-    collision.normal = Vector3Lerp(box.min, box.max, 0.5f);
+    collision.normal = glm::mix(box.min, box.max, 0.5f);
     // Get vector center point->hit point
-    collision.normal = Vector3Subtract(collision.point, collision.normal);
+    collision.normal = ((collision.point) - (collision.normal));
     // Scale vector to unit cube
     // NOTE: Use an additional .01 to fix numerical errors
-    collision.normal = Vector3Scale(collision.normal, 2.01f);
-    collision.normal = Vector3Divide(collision.normal, Vector3Subtract(box.max, box.min));
+    collision.normal = ((collision.normal) * (2.01f));
+    collision.normal = ((collision.normal) / (((box.max) - (box.min))));
     // The relevant elements of the vector are now slightly larger than 1.0f (or smaller than -1.0f)
     // and the others are somewhere between -1.0 and 1.0 casting to int is exactly our wanted normal!
     collision.normal.x = (float)((int)collision.normal.x);
     collision.normal.y = (float)((int)collision.normal.y);
     collision.normal.z = (float)((int)collision.normal.z);
 
-    collision.normal = Vector3Normalize(collision.normal);
+    collision.normal = glm::normalize(collision.normal);
 
     if (insideBox)
     {
         // Reset ray.direction
-        ray.direction = Vector3Negate(ray.direction);
+        ray.direction = (-(ray.direction));
         // Fix result
         collision.distance *= -1.0f;
-        collision.normal = Vector3Negate(collision.normal);
+        collision.normal = (-(collision.normal));
     }
 
     return collision;
@@ -4330,21 +4300,21 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
     {
         // Transform the ray into model space by the inverse of the transform, 
         // so it can be tested against the untransformed vertex data
-        Matrix inverseMatrix = MatrixInvert(transform);
-        ray.position = Vector3Transform(ray.position, inverseMatrix);
+        Matrix inverseMatrix = glm::inverse(transform);
+        ray.position = Vector3((inverseMatrix)*Vector4(ray.position, 1.0f));
 
         // Direction does not get translation, just rotation
-        Quaternion invRot = QuaternionFromMatrix(inverseMatrix);
-        ray.direction = Vector3RotateByQuaternion(ray.direction, invRot);
+        Quaternion invRot = glm::quat_cast(glm::mat3(inverseMatrix));
+        ray.direction = ((invRot)*(ray.direction));
 
         int triangleCount = mesh.triangleCount;
 
         // Test against all triangles in mesh
         for (int i = 0; i < triangleCount; i++)
         {
-            Vector3 a = { 0 };
-            Vector3 b = { 0 };
-            Vector3 c = { 0 };
+            Vector3 a{};
+            Vector3 b{};
+            Vector3 c{};
             Vector3 *vertdata = (Vector3 *)mesh.vertices;
 
             if (mesh.indices)
@@ -4373,8 +4343,8 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
     // Set the hit point and normal back in world space
     if (collision.hit)
     {
-        collision.point = Vector3Transform(collision.point, transform);
-        collision.normal = Vector3RotateByQuaternion(collision.normal, QuaternionFromMatrix(transform));
+        collision.point = Vector3((transform)*Vector4(collision.point, 1.0f));
+        collision.normal = ((glm::quat_cast(glm::mat3(transform)))*(collision.normal));
     }
 
     return collision;
@@ -4388,22 +4358,22 @@ RayCollision GetRayCollisionTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3
     #define EPSILON 0.000001f        // A small number
 
     RayCollision collision = { 0 };
-    Vector3 edge1 = { 0 };
-    Vector3 edge2 = { 0 };
-    Vector3 p = { 0 };
-    Vector3 q = { 0 };
-    Vector3 tv = { 0 };
+    Vector3 edge1{};
+    Vector3 edge2{};
+    Vector3 p{};
+    Vector3 q{};
+    Vector3 tv{};
     float det = 0.0f, invDet = 0.0f, u = 0.0f, v = 0.0f, t = 0.0f;
 
     // Find vectors for two edges sharing V1
-    edge1 = Vector3Subtract(p2, p1);
-    edge2 = Vector3Subtract(p3, p1);
+    edge1 = ((p2) - (p1));
+    edge2 = ((p3) - (p1));
 
     // Begin calculating determinant - also used to calculate u parameter
-    p = Vector3CrossProduct(ray.direction, edge2);
+    p = glm::cross(ray.direction, edge2);
 
     // If determinant is near zero, ray lies in plane of triangle or ray is parallel to plane of triangle
-    det = Vector3DotProduct(edge1, p);
+    det = glm::dot(edge1, p);
 
     // Avoid culling!
     if ((det > -EPSILON) && (det < EPSILON)) return collision;
@@ -4411,32 +4381,32 @@ RayCollision GetRayCollisionTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3
     invDet = 1.0f/det;
 
     // Calculate distance from V1 to ray origin
-    tv = Vector3Subtract(ray.position, p1);
+    tv = ((ray.position) - (p1));
 
     // Calculate u parameter and test bound
-    u = Vector3DotProduct(tv, p)*invDet;
+    u = glm::dot(tv, p)*invDet;
 
     // The intersection lies outside the triangle
     if ((u < 0.0f) || (u > 1.0f)) return collision;
 
     // Prepare to test v parameter
-    q = Vector3CrossProduct(tv, edge1);
+    q = glm::cross(tv, edge1);
 
     // Calculate V parameter and test bound
-    v = Vector3DotProduct(ray.direction, q)*invDet;
+    v = glm::dot(ray.direction, q)*invDet;
 
     // The intersection lies outside the triangle
     if ((v < 0.0f) || ((u + v) > 1.0f)) return collision;
 
-    t = Vector3DotProduct(edge2, q)*invDet;
+    t = glm::dot(edge2, q)*invDet;
 
     if (t > EPSILON)
     {
         // Ray hit, get hit point and normal
         collision.hit = true;
         collision.distance = t;
-        collision.normal = Vector3Normalize(Vector3CrossProduct(edge1, edge2));
-        collision.point = Vector3Add(ray.position, Vector3Scale(ray.direction, t));
+        collision.normal = glm::normalize(glm::cross(edge1, edge2));
+        collision.point = ((ray.position) + (((ray.direction) * (t))));
     }
 
     return collision;
@@ -4472,11 +4442,11 @@ static void BuildPoseFromParentJoints(BoneInfo *bones, int boneCount, Transform 
                 TRACELOG(LOG_WARNING, "Skipping bone not topologically sorted: Bone %d has parent %d", i, bones[i].parent);
                 continue;
             }
-            transforms[i].rotation = QuaternionMultiply(transforms[bones[i].parent].rotation, transforms[i].rotation);
-            transforms[i].scale = Vector3Multiply(transforms[i].scale, transforms[bones[i].parent].scale);
-            transforms[i].translation = Vector3Multiply(transforms[i].translation, transforms[bones[i].parent].scale);
-            transforms[i].translation = Vector3RotateByQuaternion(transforms[i].translation, transforms[bones[i].parent].rotation);
-            transforms[i].translation = Vector3Add(transforms[i].translation, transforms[bones[i].parent].translation);
+            transforms[i].rotation = ((transforms[bones[i].parent].rotation) * (transforms[i].rotation));
+            transforms[i].scale = ((transforms[i].scale) * (transforms[bones[i].parent].scale));
+            transforms[i].translation = ((transforms[i].translation) * (transforms[bones[i].parent].scale));
+            transforms[i].translation = ((transforms[bones[i].parent].rotation)*(transforms[i].translation));
+            transforms[i].translation = ((transforms[i].translation) + (transforms[bones[i].parent].translation));
         }
     }
 }
@@ -4498,7 +4468,7 @@ static Model LoadOBJ(const char *fileName)
     unsigned int objMaterialCount = 0;
 
     Model model = { 0 };
-    model.transform = MatrixIdentity();
+    model.transform = Matrix(1.0f);
 
     char *fileText = LoadFileText(fileName);
 
@@ -5098,7 +5068,7 @@ static Model LoadIQM(const char *fileName)
     // Initialize runtime animation data: current pose and bone matrices
     model.currentPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
     model.boneMatrices = (Matrix *)RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix));
-    for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = MatrixIdentity();
+    for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = Matrix(1.0f);
 
     UnloadFileData(fileData);
 
@@ -5319,7 +5289,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, int *animCou
                     dcounter++;
                 }
 
-                animations[a].keyframePoses[frame][i].rotation = QuaternionNormalize(animations[a].keyframePoses[frame][i].rotation);
+                animations[a].keyframePoses[frame][i].rotation = glm::normalize(animations[a].keyframePoses[frame][i].rotation);
             }
         }
 
@@ -5330,10 +5300,10 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, int *animCou
             {
                 if (bones[i].parent >= 0)
                 {
-                    animations[a].keyframePoses[frame][i].rotation = QuaternionMultiply(animations[a].keyframePoses[frame][bones[i].parent].rotation, animations[a].keyframePoses[frame][i].rotation);
-                    animations[a].keyframePoses[frame][i].translation = Vector3RotateByQuaternion(animations[a].keyframePoses[frame][i].translation, animations[a].keyframePoses[frame][bones[i].parent].rotation);
-                    animations[a].keyframePoses[frame][i].translation = Vector3Add(animations[a].keyframePoses[frame][i].translation, animations[a].keyframePoses[frame][bones[i].parent].translation);
-                    animations[a].keyframePoses[frame][i].scale = Vector3Multiply(animations[a].keyframePoses[frame][i].scale, animations[a].keyframePoses[frame][bones[i].parent].scale);
+                    animations[a].keyframePoses[frame][i].rotation = ((animations[a].keyframePoses[frame][bones[i].parent].rotation) * (animations[a].keyframePoses[frame][i].rotation));
+                    animations[a].keyframePoses[frame][i].translation = ((animations[a].keyframePoses[frame][bones[i].parent].rotation)*(animations[a].keyframePoses[frame][i].translation));
+                    animations[a].keyframePoses[frame][i].translation = ((animations[a].keyframePoses[frame][i].translation) + (animations[a].keyframePoses[frame][bones[i].parent].translation));
+                    animations[a].keyframePoses[frame][i].scale = ((animations[a].keyframePoses[frame][i].scale) * (animations[a].keyframePoses[frame][bones[i].parent].scale));
                 }
             }
         }
@@ -5755,7 +5725,7 @@ static Model LoadGLTF(const char *fileName)
                 worldTransform[3], worldTransform[7], worldTransform[11], worldTransform[15]
             };
 
-            Matrix worldMatrixNormals = MatrixTranspose(MatrixInvert(worldMatrix));
+            Matrix worldMatrixNormals = glm::transpose(glm::inverse(worldMatrix));
 
             for (unsigned int p = 0; p < mesh->primitives_count; p++)
             {
@@ -5791,7 +5761,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3Transform(Vector3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, worldMatrix);
+                                    Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k+1] = vt.y;
                                     vertices[3*k+2] = vt.z;
@@ -5816,7 +5786,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3Transform(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, worldMatrix);
+                                    Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5841,7 +5811,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 vt = Vector3Transform(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, worldMatrix);
+                                    Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5869,7 +5839,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Transform(Vector3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, worldMatrixNormals);
+                                    Vector3 nt = Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, 1.0f));
                                     normals[3*k] = nt.x;
                                     normals[3*k+1] = nt.y;
                                     normals[3*k+2] = nt.z;
@@ -5893,7 +5863,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Normalize(Vector3Transform(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
+                                    Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5917,7 +5887,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Normalize(Vector3Transform(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
+                                    Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5941,7 +5911,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 nt = Vector3Normalize(Vector3Transform(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, worldMatrixNormals));
+                                    Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5969,7 +5939,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *tangents = model.meshes[meshIndex].tangents;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    Vector3 tt = Vector3Transform(Vector3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, worldMatrix);
+                                    Vector3 tt = Vector3((worldMatrix)*Vector4(Vector3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, 1.0f));
                                     tangents[4*k] = tt.x;
                                     tangents[4*k+1] = tt.y;
                                     tangents[4*k+2] = tt.z;
@@ -6231,7 +6201,7 @@ static Model LoadGLTF(const char *fileName)
 
             for (unsigned int i = 0; i < model.skeleton.boneCount; i++)
             {
-                Matrix bindMatrix = { 0 };
+                Matrix bindMatrix{};
                 cgltf_float inverseBindTransform[16] = { 0 };
 
                 if ((skin.inverse_bind_matrices != NULL) &&
@@ -6244,7 +6214,7 @@ static Model LoadGLTF(const char *fileName)
                         inverseBindTransform[2], inverseBindTransform[6], inverseBindTransform[10], inverseBindTransform[14],
                         inverseBindTransform[3], inverseBindTransform[7], inverseBindTransform[11], inverseBindTransform[15]
                     };
-                    bindMatrix = MatrixInvert(inverseBindMatrix);
+                    bindMatrix = glm::inverse(inverseBindMatrix);
                 }
                 else
                 {
@@ -6425,7 +6395,7 @@ static Model LoadGLTF(const char *fileName)
         // Initialize runtime animation data: current pose and bone matrices
         model.currentPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
         model.boneMatrices = (Matrix *)RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix));
-        for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = MatrixIdentity();
+        for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = Matrix(1.0f);
         //----------------------------------------------------------------------------------------------------
 
         // Free unused allocated memory in case of no bones defined
@@ -6525,7 +6495,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
                 Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
                 Vector3 *r = (Vector3 *)data;
 
-                *r = Vector3Lerp(v1, v2, t);
+                *r = glm::mix(v1, v2, t);
             } break;
             case cgltf_interpolation_type_cubic_spline:
             {
@@ -6554,47 +6524,43 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 4);
-                Vector4 v1 = {tmp[0], tmp[1], tmp[2], tmp[3]};
-                Vector4 *r = (Vector4 *)data;
+                Quaternion *r = (Quaternion *)data;
 
-                *r = v1;
+                *r = Quaternion{tmp[3], tmp[0], tmp[1], tmp[2]};
             } break;
             case cgltf_interpolation_type_linear:
             {
                 float tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 4);
-                Vector4 v1 = {tmp[0], tmp[1], tmp[2], tmp[3]};
+                Quaternion q1 = {tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 4);
-                Vector4 v2 = {tmp[0], tmp[1], tmp[2], tmp[3]};
-                Vector4 *r = (Vector4 *)data;
+                Quaternion q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
+                Quaternion *r = (Quaternion *)data;
 
-                *r = QuaternionSlerp(v1, v2, t);
+                *r = glm::slerp(q1, q2, t);
             } break;
             case cgltf_interpolation_type_cubic_spline:
             {
                 float tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, 3*keyframe+1, tmp, 4);
-                Vector4 v1 = {tmp[0], tmp[1], tmp[2], tmp[3]};
+                Quaternion q1 = {tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*keyframe+2, tmp, 4);
-                Vector4 outTangent1 = {tmp[0], tmp[1], tmp[2], 0.0f};
+                Quaternion outTangent1 = {0.0f, tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1)+1, tmp, 4);
-                Vector4 v2 = {tmp[0], tmp[1], tmp[2], tmp[3]};
+                Quaternion q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1), tmp, 4);
-                Vector4 inTangent2 = {tmp[0], tmp[1], tmp[2], 0.0f};
-                Vector4 *r = (Vector4 *)data;
+                Quaternion inTangent2 = {0.0f, tmp[0], tmp[1], tmp[2]};
+                Quaternion *r = (Quaternion *)data;
 
-                v1 = QuaternionNormalize(v1);
-                v2 = QuaternionNormalize(v2);
+                q1 = glm::normalize(q1);
+                q2 = glm::normalize(q2);
 
-                if (Vector4DotProduct(v1, v2) < 0.0f)
-                {
-                    v2 = Vector4Negate(v2);
-                }
+                if (glm::dot(q1, q2) < 0.0f) q2 = -q2;
 
-                outTangent1 = Vector4Scale(outTangent1, duration);
-                inTangent2 = Vector4Scale(inTangent2, duration);
+                outTangent1 = QuaternionScale(outTangent1, duration);
+                inTangent2 = QuaternionScale(inTangent2, duration);
 
-                *r = QuaternionCubicHermiteSpline(v1, outTangent1, v2, inTangent2, t);
+                *r = QuaternionCubicHermiteSpline(q1, outTangent1, q2, inTangent2, t);
             } break;
             default: break;
         }
@@ -6660,7 +6626,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
 
             for (int k = 0; k < jointCount; k++)
             {
-                extOffset[k] = MatrixIdentity();
+                extOffset[k] = Matrix(1.0f);
                 cgltf_node *n = skin.joints[k]->parent;
 
                 while (n != NULL)
@@ -6678,12 +6644,12 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     if (isJoint) break;
 
                     // Compose the intermediate node's local TRS (scale, then rotation, then translation)
-                    Matrix nodeScale = MatrixScale(n->scale[0], n->scale[1], n->scale[2]);
-                    Matrix nodeRotation = QuaternionToMatrix((Quaternion){ n->rotation[0], n->rotation[1], n->rotation[2], n->rotation[3] });
-                    Matrix nodeTranslation = MatrixTranslate(n->translation[0], n->translation[1], n->translation[2]);
-                    Matrix nodeTransform = MatrixMultiply(MatrixMultiply(nodeScale, nodeRotation), nodeTranslation);
+                    Matrix nodeScale = glm::scale(Matrix(1.0f), Vector3{n->scale[0], n->scale[1], n->scale[2]});
+                    Matrix nodeRotation = glm::mat4_cast(Quaternion{n->rotation[3], n->rotation[0], n->rotation[1], n->rotation[2]});
+                    Matrix nodeTranslation = glm::translate(Matrix(1.0f), Vector3{n->translation[0], n->translation[1], n->translation[2]});
+                    Matrix nodeTransform = ((((nodeScale) * (nodeRotation))) * (nodeTranslation));
 
-                    extOffset[k] = MatrixMultiply(extOffset[k], nodeTransform);
+                    extOffset[k] = ((extOffset[k]) * (nodeTransform));
                     n = n->parent;
                 }
             }
@@ -6752,7 +6718,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     for (unsigned int k = 0; k < animations[a].boneCount; k++)
                     {
                         Vector3 translation = {skin.joints[k]->translation[0], skin.joints[k]->translation[1], skin.joints[k]->translation[2]};
-                        Quaternion rotation = {skin.joints[k]->rotation[0], skin.joints[k]->rotation[1], skin.joints[k]->rotation[2], skin.joints[k]->rotation[3]};
+                        Quaternion rotation = {skin.joints[k]->rotation[3], skin.joints[k]->rotation[0], skin.joints[k]->rotation[1], skin.joints[k]->rotation[2]};
                         Vector3 scale = {skin.joints[k]->scale[0], skin.joints[k]->scale[1], skin.joints[k]->scale[2]};
 
                         if (boneChannels[k].translate)
@@ -6782,11 +6748,11 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                         // Compose joint local TRS, then prepend the static
                         // intermediate non-joint offsets so the final TRS is
                         // expressed relative to the joint's skeleton parent.
-                        Matrix S = MatrixScale(scale.x, scale.y, scale.z);
-                        Matrix R = QuaternionToMatrix(rotation);
-                        Matrix T = MatrixTranslate(translation.x, translation.y, translation.z);
-                        Matrix jointLocal = MatrixMultiply(MatrixMultiply(S, R), T);
-                        Matrix combined = MatrixMultiply(jointLocal, extOffset[k]);
+                        Matrix S = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
+                        Matrix R = glm::mat4_cast(rotation);
+                        Matrix T = glm::translate(Matrix(1.0f), Vector3{translation.x, translation.y, translation.z});
+                        Matrix jointLocal = ((((S) * (R))) * (T));
+                        Matrix combined = ((jointLocal) * (extOffset[k]));
 
                         Transform tr;
                         MatrixDecompose(combined, &tr.translation, &tr.rotation, &tr.scale);
@@ -6859,7 +6825,7 @@ static Model LoadVOX(const char *fileName)
     }
 
     // Build models from meshes
-    model.transform = MatrixIdentity();
+    model.transform = Matrix(1.0f);
 
     model.meshCount = meshescount;
     model.meshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
@@ -7230,16 +7196,16 @@ static Model LoadM3D(const char *fileName)
                 model.skeleton.bindPose[i].rotation.w = m3d->vertex[m3d->bone[i].ori].w;
 
                 // NOTE: If the orientation quaternion is not normalized, then that's encoding scaling
-                model.skeleton.bindPose[i].rotation = QuaternionNormalize(model.skeleton.bindPose[i].rotation);
+                model.skeleton.bindPose[i].rotation = glm::normalize(model.skeleton.bindPose[i].rotation);
                 model.skeleton.bindPose[i].scale.x = model.skeleton.bindPose[i].scale.y = model.skeleton.bindPose[i].scale.z = 1.0f;
 
                 // Child bones are stored in parent bone relative space, convert that into model space
                 if (model.skeleton.bones[i].parent >= 0)
                 {
-                    model.skeleton.bindPose[i].rotation = QuaternionMultiply(model.skeleton.bindPose[model.skeleton.bones[i].parent].rotation, model.skeleton.bindPose[i].rotation);
-                    model.skeleton.bindPose[i].translation = Vector3RotateByQuaternion(model.skeleton.bindPose[i].translation, model.skeleton.bindPose[model.skeleton.bones[i].parent].rotation);
-                    model.skeleton.bindPose[i].translation = Vector3Add(model.skeleton.bindPose[i].translation, model.skeleton.bindPose[model.skeleton.bones[i].parent].translation);
-                    model.skeleton.bindPose[i].scale = Vector3Multiply(model.skeleton.bindPose[i].scale, model.skeleton.bindPose[model.skeleton.bones[i].parent].scale);
+                    model.skeleton.bindPose[i].rotation = ((model.skeleton.bindPose[model.skeleton.bones[i].parent].rotation) * (model.skeleton.bindPose[i].rotation));
+                    model.skeleton.bindPose[i].translation = ((model.skeleton.bindPose[model.skeleton.bones[i].parent].rotation)*(model.skeleton.bindPose[i].translation));
+                    model.skeleton.bindPose[i].translation = ((model.skeleton.bindPose[i].translation) + (model.skeleton.bindPose[model.skeleton.bones[i].parent].translation));
+                    model.skeleton.bindPose[i].scale = ((model.skeleton.bindPose[i].scale) * (model.skeleton.bindPose[model.skeleton.bones[i].parent].scale));
                 }
             }
 
@@ -7268,7 +7234,7 @@ static Model LoadM3D(const char *fileName)
             // Initialize runtime animation data: current pose and bone matrices
             model.currentPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
             model.boneMatrices = (Matrix *)RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix));
-            for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = MatrixIdentity();
+            for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = Matrix(1.0f);
         }
 
         m3d_free(m3d);
@@ -7355,16 +7321,16 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, int *animCou
                         animations[a].keyframePoses[i][j].rotation.y = m3d->vertex[pose[j].ori].y;
                         animations[a].keyframePoses[i][j].rotation.z = m3d->vertex[pose[j].ori].z;
                         animations[a].keyframePoses[i][j].rotation.w = m3d->vertex[pose[j].ori].w;
-                        animations[a].keyframePoses[i][j].rotation = QuaternionNormalize(animations[a].keyframePoses[i][j].rotation);
+                        animations[a].keyframePoses[i][j].rotation = glm::normalize(animations[a].keyframePoses[i][j].rotation);
                         animations[a].keyframePoses[i][j].scale.x = animations[a].keyframePoses[i][j].scale.y = animations[a].keyframePoses[i][j].scale.z = 1.0f;
 
                         // Child bones are stored in parent bone relative space, convert that into model space
                         if (bones[j].parent >= 0)
                         {
-                            animations[a].keyframePoses[i][j].rotation = QuaternionMultiply(animations[a].keyframePoses[i][bones[j].parent].rotation, animations[a].keyframePoses[i][j].rotation);
-                            animations[a].keyframePoses[i][j].translation = Vector3RotateByQuaternion(animations[a].keyframePoses[i][j].translation, animations[a].keyframePoses[i][bones[j].parent].rotation);
-                            animations[a].keyframePoses[i][j].translation = Vector3Add(animations[a].keyframePoses[i][j].translation, animations[a].keyframePoses[i][bones[j].parent].translation);
-                            animations[a].keyframePoses[i][j].scale = Vector3Multiply(animations[a].keyframePoses[i][j].scale, animations[a].keyframePoses[i][bones[j].parent].scale);
+                            animations[a].keyframePoses[i][j].rotation = ((animations[a].keyframePoses[i][bones[j].parent].rotation) * (animations[a].keyframePoses[i][j].rotation));
+                            animations[a].keyframePoses[i][j].translation = ((animations[a].keyframePoses[i][bones[j].parent].rotation)*(animations[a].keyframePoses[i][j].translation));
+                            animations[a].keyframePoses[i][j].translation = ((animations[a].keyframePoses[i][j].translation) + (animations[a].keyframePoses[i][bones[j].parent].translation));
+                            animations[a].keyframePoses[i][j].scale = ((animations[a].keyframePoses[i][j].scale) * (animations[a].keyframePoses[i][bones[j].parent].scale));
                         }
                     }
 

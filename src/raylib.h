@@ -141,20 +141,15 @@
     #define RL_FREE(ptr)        free(ptr)
 #endif
 
-// NOTE: MSVC C++ compiler does not support compound literals (C99 feature)
-// Plain structures in C++ (without constructors) can be initialized with { }
-// This is called aggregate initialization (C++11 feature)
-#if defined(__cplusplus)
-    #define CLITERAL(type)      type
-#else
-    #define CLITERAL(type)      (type)
-#endif
+// NOTE: raylib is a C++ library. Plain structures are initialized with { }
+// (aggregate initialization). CLITERAL() is kept so the color macros below read
+// the same in every caller.
+#define CLITERAL(type)      type
 
-// Some compilers (mostly macos clang) default to C++98,
-// where aggregate initialization can't be used
-// So, give a more clear error stating how to fix this
-#if !defined(_MSC_VER) && (defined(__cplusplus) && __cplusplus < 201103L)
-    #error "C++11 or later is required. Add -std=c++11"
+#if defined(_MSVC_LANG) && (_MSVC_LANG < 201703L)
+    #error "C++17 or later is required"
+#elif !defined(_MSVC_LANG) && (__cplusplus < 201703L)
+    #error "C++17 or later is required"
 #endif
 
 // NOTE: Set some defines with some data types declared by raylib
@@ -202,88 +197,37 @@
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
-// Boolean type
-#if !defined(__cplusplus)
-#if (defined(__STDC__) && __STDC_VERSION__ >= 199901L) || (defined(_MSC_VER) && _MSC_VER >= 1800)
-    #include <stdbool.h>
-#elif !defined(bool)
-    typedef enum bool { false = 0, true = !false } bool;
-    #define RL_BOOL_TYPE
-#endif
+
+// raylib's math vocabulary is glm: these aliases are the public API types.
+// The C ABI layout is unchanged (vec2/3/4 and mat4 are bit-identical to the
+// structs raylib used to declare), so exported symbols keep working.
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+
+static_assert(sizeof(glm::vec2) == 8,  "glm::vec2 must match the raylib Vector2 ABI");
+static_assert(sizeof(glm::vec3) == 12, "glm::vec3 must match the raylib Vector3 ABI");
+static_assert(sizeof(glm::vec4) == 16, "glm::vec4 must match the raylib Vector4 ABI");
+static_assert(sizeof(glm::mat4) == 64, "glm::mat4 must match the raylib Matrix ABI");
+static_assert(sizeof(glm::quat) == 16, "glm::quat must match the raylib Quaternion ABI");
+
+#if defined(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
+    #error "GLM_FORCE_DEFAULT_ALIGNED_GENTYPES changes the raylib type layout and is not supported"
 #endif
 
 // Vector2, 2 components
-typedef struct Vector2 {
-    float x;                // Vector x component
-    float y;                // Vector y component
-
-#if defined(__cplusplus)
-    Vector2() : x(0.0f), y(0.0f) {}
-    // NOTE: Defaulted components preserve C partial-init semantics: Vector2 v = { 0 } -> { 0, 0 }
-    constexpr Vector2(float x, float y = 0.0f) : x(x), y(y) {}
-
-    // NOTE: Binary/comparison operators live in raymath.h (free functions);
-    // only unary minus and compound assignment are defined here
-    constexpr Vector2 operator-() const { return Vector2(-x, -y); }
-
-    Vector2 &operator+=(const Vector2 &v) { x += v.x; y += v.y; return *this; }
-    Vector2 &operator-=(const Vector2 &v) { x -= v.x; y -= v.y; return *this; }
-    Vector2 &operator*=(float s) { x *= s; y *= s; return *this; }
-    Vector2 &operator/=(float s) { x /= s; y /= s; return *this; }
-#endif
-} Vector2;
+using Vector2 = glm::vec2;
 
 // Vector3, 3 components
-typedef struct Vector3 {
-    float x;                // Vector x component
-    float y;                // Vector y component
-    float z;                // Vector z component
-
-#if defined(__cplusplus)
-    Vector3() : x(0.0f), y(0.0f), z(0.0f) {}
-    constexpr Vector3(float x, float y = 0.0f, float z = 0.0f) : x(x), y(y), z(z) {}
-
-    constexpr Vector3 operator-() const { return Vector3(-x, -y, -z); }
-
-    Vector3 &operator+=(const Vector3 &v) { x += v.x; y += v.y; z += v.z; return *this; }
-    Vector3 &operator-=(const Vector3 &v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
-    Vector3 &operator*=(float s) { x *= s; y *= s; z *= s; return *this; }
-    Vector3 &operator/=(float s) { x /= s; y /= s; z /= s; return *this; }
-#endif
-} Vector3;
+using Vector3 = glm::vec3;
 
 // Vector4, 4 components
-typedef struct Vector4 {
-    float x;                // Vector x component
-    float y;                // Vector y component
-    float z;                // Vector z component
-    float w;                // Vector w component
+using Vector4 = glm::vec4;
 
-#if defined(__cplusplus)
-    Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
-    constexpr Vector4(float x, float y = 0.0f, float z = 0.0f, float w = 0.0f) : x(x), y(y), z(z), w(w) {}
-
-    constexpr Vector4 operator-() const { return Vector4(-x, -y, -z, -w); }
-
-    Vector4 &operator+=(const Vector4 &v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
-    Vector4 &operator-=(const Vector4 &v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
-    Vector4 &operator*=(float s) { x *= s; y *= s; z *= s; w *= s; return *this; }
-    Vector4 &operator/=(float s) { x /= s; y /= s; z /= s; w /= s; return *this; }
-#endif
-} Vector4;
-
-// Quaternion, 4 components (Vector4 alias)
-typedef Vector4 Quaternion;
+// Quaternion, 4 components (rotation, w is the scalar part, as in glm)
+using Quaternion = glm::quat;
 
 // Matrix, 4x4 components, column major, OpenGL style, right-handed
-// NOTE: Kept as a pure aggregate (no constructors) so brace-init like Matrix m = { 0 } keeps native aggregate semantics;
-// all operators (+, -, *, scalar *) are provided by raymath.h as free functions
-typedef struct Matrix {
-    float m0, m4, m8, m12;  // Matrix first row (4 components)
-    float m1, m5, m9, m13;  // Matrix second row (4 components)
-    float m2, m6, m10, m14; // Matrix third row (4 components)
-    float m3, m7, m11, m15; // Matrix fourth row (4 components)
-} Matrix;
+using Matrix = glm::mat4;
 
 // Color, 4 components, R8G8B8A8 (32bit)
 typedef struct Color {
@@ -292,14 +236,12 @@ typedef struct Color {
     unsigned char b;        // Color blue value
     unsigned char a;        // Color alpha value
 
-#if defined(__cplusplus)
     Color() : r(0), g(0), b(0), a(0) {}
-    // NOTE: Defaulted components preserve C partial-init semantics: Color c = { 255 } -> { 255, 0, 0, 0 }
+    // NOTE: Defaulted components preserve partial-init semantics: Color c = { 255 } -> { 255, 0, 0, 0 }
     constexpr Color(unsigned char r, unsigned char g = 0, unsigned char b = 0, unsigned char a = 0) : r(r), g(g), b(b), a(a) {}
 
     constexpr bool operator==(const Color &c) const { return (r == c.r) && (g == c.g) && (b == c.b) && (a == c.a); }
     constexpr bool operator!=(const Color &c) const { return !(*this == c); }
-#endif
 } Color;
 
 // Rectangle, 4 components
@@ -309,13 +251,11 @@ typedef struct Rectangle {
     float width;            // Rectangle width
     float height;           // Rectangle height
 
-#if defined(__cplusplus)
     Rectangle() : x(0.0f), y(0.0f), width(0.0f), height(0.0f) {}
     constexpr Rectangle(float x, float y = 0.0f, float width = 0.0f, float height = 0.0f) : x(x), y(y), width(width), height(height) {}
 
     constexpr bool operator==(const Rectangle &r) const { return (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height); }
     constexpr bool operator!=(const Rectangle &r) const { return !(*this == r); }
-#endif
 } Rectangle;
 
 // Image, pixel data stored in CPU memory (RAM)
@@ -1040,9 +980,7 @@ typedef bool (*SaveFileTextCallback)(const char *fileName, const char *text); //
 // Window and Graphics Device Functions (Module: core)
 //------------------------------------------------------------------------------------
 
-#if defined(__cplusplus)
-extern "C" {            // Prevents name mangling of functions
-#endif
+extern "C" {            // Keep unmangled symbol names for bindings and prebuilt consumers
 
 // Window-related functions
 RLAPI void InitWindow(int width, int height, const char *title);  // Initialize window and OpenGL context
@@ -1819,8 +1757,6 @@ RLAPI void DetachAudioStreamProcessor(AudioStream stream, AudioCallback processo
 RLAPI void AttachAudioMixedProcessor(AudioCallback processor); // Attach audio stream processor to the entire audio pipeline, receives frames x 2 samples as 'float' (stereo)
 RLAPI void DetachAudioMixedProcessor(AudioCallback processor); // Detach audio stream processor from the entire audio pipeline
 
-#if defined(__cplusplus)
 }
-#endif
 
 #endif // RAYLIB_H

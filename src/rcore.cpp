@@ -723,7 +723,7 @@ void InitWindow(int width, int height, const char *title)
     CORE.Window.screen.height = height;
 
     CORE.Window.eventWaiting = false;
-    CORE.Window.screenScale = MatrixIdentity(); // No draw scaling required by default
+    CORE.Window.screenScale = Matrix(1.0f); // No draw scaling required by default
     if ((title != NULL) && (title[0] != 0)) CORE.Window.title = title;
 
     // Initialize global input state
@@ -1062,7 +1062,7 @@ void BeginMode3D(Camera camera)
     rlLoadIdentity();               // Reset current matrix (modelview)
 
     // Setup Camera view
-    Matrix matView = MatrixLookAt(camera.position, camera.target, camera.up);
+    Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
     rlMultMatrixf(MatrixToFloat(matView));      // Multiply modelview matrix by view matrix (camera)
 
     rlEnableDepthTest();            // Enable DEPTH_TEST for 3D
@@ -1259,17 +1259,17 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
 
         // Compute camera projection matrices
         float projOffset = 4.0f*lensShift;      // Scaled to projection space coordinates [-1..1]
-        Matrix proj = MatrixPerspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        Matrix proj = glm::perspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
 
-        config.projection[0] = MatrixMultiply(proj, MatrixTranslate(projOffset, 0.0f, 0.0f));
-        config.projection[1] = MatrixMultiply(proj, MatrixTranslate(-projOffset, 0.0f, 0.0f));
+        config.projection[0] = proj*glm::translate(Matrix(1.0f), Vector3{projOffset, 0.0f, 0.0f});
+        config.projection[1] = proj*glm::translate(Matrix(1.0f), Vector3{-projOffset, 0.0f, 0.0f});
 
         // Compute camera transformation matrices
         // NOTE: Camera movement might seem more natural if modelling the head
         // Axis of rotation is the base of the head, so adding some y (base of head to eye level
         // and -z (center of head to eye protrusion) to the camera positions
-        config.viewOffset[0] = MatrixTranslate(device.interpupillaryDistance*0.5f, 0.075f, 0.045f);
-        config.viewOffset[1] = MatrixTranslate(-device.interpupillaryDistance*0.5f, 0.075f, 0.045f);
+        config.viewOffset[0] = glm::translate(Matrix(1.0f), Vector3{device.interpupillaryDistance*0.5f, 0.075f, 0.045f});
+        config.viewOffset[1] = glm::translate(Matrix(1.0f), Vector3{-device.interpupillaryDistance*0.5f, 0.075f, 0.045f});
 
         // Compute eyes Viewports
         /*
@@ -1495,7 +1495,7 @@ Ray GetScreenToWorldRay(Vector2 position, Camera camera)
 // Get a ray trace from the screen position (i.e mouse) within a specific section of the screen
 Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height)
 {
-    Ray ray = { 0 };
+    Ray ray{};
 
     // Calculate normalized device coordinates
     // NOTE: y value is negative
@@ -1507,14 +1507,14 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
     Vector3 deviceCoords = { x, y, z };
 
     // Calculate view matrix from camera look at
-    Matrix matView = MatrixLookAt(camera.position, camera.target, camera.up);
+    Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
 
-    Matrix matProj = MatrixIdentity();
+    Matrix matProj = Matrix(1.0f);
 
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Calculate projection matrix from perspective
-        matProj = MatrixPerspective(camera.fovy*DEG2RAD, (float)width/(float)height, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::perspective(camera.fovy*DEG2RAD, (float)width/(float)height, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
@@ -1523,7 +1523,7 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
         float right = top*aspect;
 
         // Calculate projection matrix from orthographic
-        matProj = MatrixOrtho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::ortho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
 
     // Unproject far/near points
@@ -1537,7 +1537,7 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
     Vector3 cameraPlanePointerPos = Vector3Unproject(Vector3{ deviceCoords.x, deviceCoords.y, -1.0f }, matProj, matView);
 
     // Calculate normalized direction vector
-    Vector3 direction = Vector3Normalize(Vector3Subtract(farPoint, nearPoint));
+    Vector3 direction = glm::normalize(farPoint - nearPoint);
 
     if (camera.projection == CAMERA_PERSPECTIVE) ray.position = camera.position;
     else if (camera.projection == CAMERA_ORTHOGRAPHIC) ray.position = cameraPlanePointerPos;
@@ -1551,7 +1551,7 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
 // Get transform matrix for camera
 Matrix GetCameraMatrix(Camera camera)
 {
-    Matrix mat = MatrixLookAt(camera.position, camera.target, camera.up);
+    Matrix mat = glm::lookAt(camera.position, camera.target, camera.up);
 
     return mat;
 }
@@ -1559,7 +1559,7 @@ Matrix GetCameraMatrix(Camera camera)
 // Get camera 2d transform matrix
 Matrix GetCameraMatrix2D(Camera2D camera)
 {
-    Matrix matTransform = { 0 };
+    Matrix matTransform{};
     // The camera in world-space is set by
     //   1. Move it to target
     //   2. Rotate by -rotation and scale by (1/zoom)
@@ -1574,12 +1574,12 @@ Matrix GetCameraMatrix2D(Camera2D camera)
     //   1. Move to offset
     //   2. Rotate and Scale
     //   3. Move by -target
-    Matrix matOrigin = MatrixTranslate(-camera.target.x, -camera.target.y, 0.0f);
-    Matrix matRotation = MatrixRotate(Vector3{ 0.0f, 0.0f, 1.0f }, camera.rotation*DEG2RAD);
-    Matrix matScale = MatrixScale(camera.zoom, camera.zoom, 1.0f);
-    Matrix matTranslation = MatrixTranslate(camera.offset.x, camera.offset.y, 0.0f);
+    Matrix matOrigin = glm::translate(Matrix(1.0f), Vector3{-camera.target.x, -camera.target.y, 0.0f});
+    Matrix matRotation = glm::rotate(Matrix(1.0f), camera.rotation*DEG2RAD, Vector3{0.0f, 0.0f, 1.0f});
+    Matrix matScale = glm::scale(Matrix(1.0f), Vector3{camera.zoom, camera.zoom, 1.0f});
+    Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{camera.offset.x, camera.offset.y, 0.0f});
 
-    matTransform = MatrixMultiply(MatrixMultiply(matOrigin, MatrixMultiply(matScale, matRotation)), matTranslation);
+    matTransform = matOrigin*(matScale*matRotation)*matTranslation;
 
     return matTransform;
 }
@@ -1596,12 +1596,12 @@ Vector2 GetWorldToScreen(Vector3 position, Camera camera)
 Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int height)
 {
     // Calculate projection matrix (from perspective instead of frustum
-    Matrix matProj = MatrixIdentity();
+    Matrix matProj = Matrix(1.0f);
 
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Calculate projection matrix from perspective
-        matProj = MatrixPerspective(camera.fovy*DEG2RAD, (float)width/(float)height, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::perspective(camera.fovy*DEG2RAD, (float)width/(float)height, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
@@ -1610,20 +1610,20 @@ Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int heigh
         float right = top*aspect;
 
         // Calculate projection matrix from orthographic
-        matProj = MatrixOrtho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::ortho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
 
     // Calculate view matrix from camera look at (and transpose it)
-    Matrix matView = MatrixLookAt(camera.position, camera.target, camera.up);
+    Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
 
-    // Convert world position vector to quaternion
-    Quaternion worldPos = { position.x, position.y, position.z, 1.0f };
+    // Convert world position vector to homogeneous clip-space position
+    Vector4 worldPos = { position.x, position.y, position.z, 1.0f };
 
     // Transform world position to view
-    worldPos = QuaternionTransform(worldPos, matView);
+    worldPos = matView*worldPos;
 
     // Transform result to projection (clip space position)
-    worldPos = QuaternionTransform(worldPos, matProj);
+    worldPos = matProj*worldPos;
 
     // Calculate normalized device coordinates (inverted y)
     Vector3 ndcPos = { worldPos.x/worldPos.w, -worldPos.y/worldPos.w, worldPos.z/worldPos.w };
@@ -1638,7 +1638,7 @@ Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int heigh
 Vector2 GetWorldToScreen2D(Vector2 position, Camera2D camera)
 {
     Matrix matCamera = GetCameraMatrix2D(camera);
-    Vector3 transform = Vector3Transform(Vector3{ position.x, position.y, 0 }, matCamera);
+    Vector3 transform = Vector3(matCamera*Vector4(position.x, position.y, 0.0f, 1.0f));
 
     return Vector2{ transform.x, transform.y };
 }
@@ -1646,8 +1646,8 @@ Vector2 GetWorldToScreen2D(Vector2 position, Camera2D camera)
 // Get world space position for a 2d camera screen space position
 Vector2 GetScreenToWorld2D(Vector2 position, Camera2D camera)
 {
-    Matrix invMatCamera = MatrixInvert(GetCameraMatrix2D(camera));
-    Vector3 transform = Vector3Transform(Vector3{ position.x, position.y, 0 }, invMatCamera);
+    Matrix invMatCamera = glm::inverse(GetCameraMatrix2D(camera));
+    Vector3 transform = Vector3(invMatCamera*Vector4(position.x, position.y, 0.0f, 1.0f));
 
     return Vector2{ transform.x, transform.y };
 }
@@ -4296,7 +4296,7 @@ int GetMouseY(void)
 // Get mouse position XY
 Vector2 GetMousePosition(void)
 {
-    Vector2 position = { 0 };
+    Vector2 position{};
 
     position.x = (CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x;
     position.y = (CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y;
@@ -4307,7 +4307,7 @@ Vector2 GetMousePosition(void)
 // Get mouse delta between frames
 Vector2 GetMouseDelta(void)
 {
-    Vector2 delta = { 0 };
+    Vector2 delta{};
 
     delta.x = (CORE.Input.Mouse.currentPosition.x - CORE.Input.Mouse.previousPosition.x)*CORE.Input.Mouse.scale.x;
     delta.y = (CORE.Input.Mouse.currentPosition.y - CORE.Input.Mouse.previousPosition.y)*CORE.Input.Mouse.scale.y;
@@ -4343,7 +4343,7 @@ float GetMouseWheelMove(void)
 // Get mouse wheel movement X/Y as a vector
 Vector2 GetMouseWheelMoveV(void)
 {
-    Vector2 result = { 0 };
+    Vector2 result{};
 
     result = CORE.Input.Mouse.currentWheelMove;
 

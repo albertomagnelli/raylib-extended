@@ -77,26 +77,11 @@
 // NOTE: Below types are required for standalone usage
 //----------------------------------------------------------------------------------
 #if defined(RCAMERA_STANDALONE)
-    // Vector2, 2 components
-    typedef struct Vector2 {
-        float x;                // Vector x component
-        float y;                // Vector y component
-    } Vector2;
+    #include <glm/glm.hpp>
 
-    // Vector3, 3 components
-    typedef struct Vector3 {
-        float x;                // Vector x component
-        float y;                // Vector y component
-        float z;                // Vector z component
-    } Vector3;
-
-    // Matrix, 4x4 components, column major, OpenGL style, right-handed
-    typedef struct Matrix {
-        float m0, m4, m8, m12;  // Matrix first row (4 components)
-        float m1, m5, m9, m13;  // Matrix second row (4 components)
-        float m2, m6, m10, m14; // Matrix third row (4 components)
-        float m3, m7, m11, m15; // Matrix fourth row (4 components)
-    } Matrix;
+    using Vector2 = glm::vec2;
+    using Vector3 = glm::vec3;
+    using Matrix = glm::mat4;
 
     // Camera type, defines a camera position/orientation in 3d space
     typedef struct Camera3D {
@@ -170,20 +155,14 @@ RLAPI Matrix GetCameraProjectionMatrix(Camera *camera, float aspect);
 
 #if defined(RCAMERA_IMPLEMENTATION)
 
-#include "raymath.h"        // Required for vector maths:
-                            // Vector3Add()
-                            // Vector3Subtract()
-                            // Vector3Scale()
-                            // Vector3Normalize()
-                            // Vector3Distance()
-                            // Vector3CrossProduct()
-                            // Vector3RotateByAxisAngle()
-                            // Vector3Angle()
-                            // Vector3Negate()
-                            // MatrixLookAt()
-                            // MatrixPerspective()
-                            // MatrixOrtho()
-                            // MatrixIdentity()
+#include <glm/glm.hpp>      // Required for vector and matrix maths
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/vector_angle.hpp>
+
+#if defined(RCAMERA_STANDALONE)
+    #define DEG2RAD (3.14159265358979323846f/180.0f)
+#endif
 
 // raylib required functionality:
                             // GetMouseDelta()
@@ -228,14 +207,14 @@ RLAPI Matrix GetCameraProjectionMatrix(Camera *camera, float aspect);
 // Returns the cameras forward vector (normalized)
 Vector3 GetCameraForward(Camera *camera)
 {
-    return Vector3Normalize(Vector3Subtract(camera->target, camera->position));
+    return glm::normalize(camera->target - camera->position);
 }
 
 // Returns the cameras up vector (normalized)
 // Note: The up vector might not be perpendicular to the forward vector
 Vector3 GetCameraUp(Camera *camera)
 {
-    return Vector3Normalize(camera->up);
+    return glm::normalize(camera->up);
 }
 
 // Returns the cameras right vector (normalized)
@@ -244,7 +223,7 @@ Vector3 GetCameraRight(Camera *camera)
     Vector3 forward = GetCameraForward(camera);
     Vector3 up = GetCameraUp(camera);
 
-    return Vector3Normalize(Vector3CrossProduct(forward, up));
+    return glm::normalize(glm::cross(forward, up));
 }
 
 // Moves the camera in its forward direction
@@ -259,15 +238,15 @@ void CameraMoveForward(Camera *camera, float distance, bool moveInWorldPlane)
         else if (fabsf(camera->up.x) > 0.7071f) forward.x = 0;
         else forward.y = 0;
 
-        forward = Vector3Normalize(forward);
+        forward = glm::normalize(forward);
     }
 
     // Scale by distance
-    forward = Vector3Scale(forward, distance);
+    forward *= distance;
 
     // Move position and target
-    camera->position = Vector3Add(camera->position, forward);
-    camera->target = Vector3Add(camera->target, forward);
+    camera->position += forward;
+    camera->target += forward;
 }
 
 // Moves the camera in its up direction
@@ -276,11 +255,11 @@ void CameraMoveUp(Camera *camera, float distance)
     Vector3 up = GetCameraUp(camera);
 
     // Scale by distance
-    up = Vector3Scale(up, distance);
+    up *= distance;
 
     // Move position and target
-    camera->position = Vector3Add(camera->position, up);
-    camera->target = Vector3Add(camera->target, up);
+    camera->position += up;
+    camera->target += up;
 }
 
 // Moves the camera target in its current right direction
@@ -295,21 +274,21 @@ void CameraMoveRight(Camera *camera, float distance, bool moveInWorldPlane)
         else if (fabsf(camera->up.x) > 0.7071f) right.x = 0;
         else right.y = 0;
 
-        right = Vector3Normalize(right);
+        right = glm::normalize(right);
     }
 
     // Scale by distance
-    right = Vector3Scale(right, distance);
+    right *= distance;
 
     // Move position and target
-    camera->position = Vector3Add(camera->position, right);
-    camera->target = Vector3Add(camera->target, right);
+    camera->position += right;
+    camera->target += right;
 }
 
 // Moves the camera position closer/farther to/from the camera target
 void CameraMoveToTarget(Camera *camera, float delta)
 {
-    float distance = Vector3Distance(camera->position, camera->target);
+    float distance = glm::distance(camera->position, camera->target);
 
     // Apply delta
     distance += delta;
@@ -319,7 +298,7 @@ void CameraMoveToTarget(Camera *camera, float delta)
 
     // Set new distance by moving the position along the forward vector
     Vector3 forward = GetCameraForward(camera);
-    camera->position = Vector3Add(camera->target, Vector3Scale(forward, -distance));
+    camera->position = camera->target - forward*distance;
 }
 
 // Rotates the camera around its up vector
@@ -332,20 +311,20 @@ void CameraYaw(Camera *camera, float angle, bool rotateAroundTarget)
     Vector3 up = GetCameraUp(camera);
 
     // View vector
-    Vector3 targetPosition = Vector3Subtract(camera->target, camera->position);
+    Vector3 targetPosition = camera->target - camera->position;
 
     // Rotate view vector around up axis
-    targetPosition = Vector3RotateByAxisAngle(targetPosition, up, angle);
+    targetPosition = glm::angleAxis(angle, glm::normalize(up))*targetPosition;
 
     if (rotateAroundTarget)
     {
         // Move position relative to target
-        camera->position = Vector3Subtract(camera->target, targetPosition);
+        camera->position = camera->target - targetPosition;
     }
     else // rotate around camera.position
     {
         // Move target relative to position
-        camera->target = Vector3Add(camera->position, targetPosition);
+        camera->target = camera->position + targetPosition;
     }
 }
 
@@ -360,7 +339,7 @@ void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTa
     Vector3 up = GetCameraUp(camera);
 
     // View vector
-    Vector3 targetPosition = Vector3Subtract(camera->target, camera->position);
+    Vector3 targetPosition = camera->target - camera->position;
 
     if (lockView)
     {
@@ -368,12 +347,12 @@ void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTa
         // to allow only viewing straight up or down
 
         // Clamp view up
-        float maxAngleUp = Vector3Angle(up, targetPosition);
+        float maxAngleUp = glm::degrees(glm::angle(up, targetPosition));
         maxAngleUp -= 0.001f; // avoid numerical errors
         if (angle > maxAngleUp) angle = maxAngleUp;
 
         // Clamp view down
-        float maxAngleDown = Vector3Angle(Vector3Negate(up), targetPosition);
+        float maxAngleDown = glm::degrees(glm::angle(-up, targetPosition));
         maxAngleDown *= -1.0f; // downwards angle is negative
         maxAngleDown += 0.001f; // avoid numerical errors
         if (angle < maxAngleDown) angle = maxAngleDown;
@@ -383,23 +362,23 @@ void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTa
     Vector3 right = GetCameraRight(camera);
 
     // Rotate view vector around right axis
-    targetPosition = Vector3RotateByAxisAngle(targetPosition, right, angle);
+    targetPosition = glm::angleAxis(angle, glm::normalize(right))*targetPosition;
 
     if (rotateAroundTarget)
     {
         // Move position relative to target
-        camera->position = Vector3Subtract(camera->target, targetPosition);
+        camera->position = camera->target - targetPosition;
     }
     else // Rotate around camera.position
     {
         // Move target relative to position
-        camera->target = Vector3Add(camera->position, targetPosition);
+        camera->target = camera->position + targetPosition;
     }
 
     if (rotateUp)
     {
         // Rotate up direction around right axis
-        camera->up = Vector3RotateByAxisAngle(camera->up, right, angle);
+        camera->up = glm::angleAxis(angle, glm::normalize(right))*camera->up;
     }
 }
 
@@ -412,13 +391,13 @@ void CameraRoll(Camera *camera, float angle)
     Vector3 forward = GetCameraForward(camera);
 
     // Rotate up direction around forward axis
-    camera->up = Vector3RotateByAxisAngle(camera->up, forward, angle);
+    camera->up = glm::angleAxis(angle, glm::normalize(forward))*camera->up;
 }
 
 // Returns the camera view matrix
 Matrix GetCameraViewMatrix(Camera *camera)
 {
-    return MatrixLookAt(camera->position, camera->target, camera->up);
+    return glm::lookAt(camera->position, camera->target, camera->up);
 }
 
 // Returns the camera projection matrix
@@ -426,17 +405,17 @@ Matrix GetCameraProjectionMatrix(Camera *camera, float aspect)
 {
     if (camera->projection == CAMERA_PERSPECTIVE)
     {
-        return MatrixPerspective(camera->fovy*DEG2RAD, aspect, CAMERA_CULL_DISTANCE_NEAR, CAMERA_CULL_DISTANCE_FAR);
+        return glm::perspective(camera->fovy*DEG2RAD, aspect, CAMERA_CULL_DISTANCE_NEAR, CAMERA_CULL_DISTANCE_FAR);
     }
     else if (camera->projection == CAMERA_ORTHOGRAPHIC)
     {
         float top = camera->fovy/2.0f;
         float right = top*aspect;
 
-        return MatrixOrtho(-right, right, -top, top, CAMERA_CULL_DISTANCE_NEAR, CAMERA_CULL_DISTANCE_FAR);
+        return glm::ortho(-right, right, -top, top, CAMERA_CULL_DISTANCE_NEAR, CAMERA_CULL_DISTANCE_FAR);
     }
 
-    return MatrixIdentity();
+    return Matrix(1.0f);
 }
 
 #if !defined(RCAMERA_STANDALONE)
@@ -460,10 +439,10 @@ void UpdateCamera(Camera *camera, int mode)
     if (mode == CAMERA_CUSTOM) {}
     else if (mode == CAMERA_ORBITAL)
     {
-        Matrix rotation = MatrixRotate(GetCameraUp(camera), cameraOrbitalSpeed);
-        Vector3 view = Vector3Subtract(camera->position, camera->target);
-        view = Vector3Transform(view, rotation);
-        camera->position = Vector3Add(camera->target, view);
+        Matrix rotation = glm::rotate(Matrix(1.0f), cameraOrbitalSpeed, GetCameraUp(camera));
+        Vector3 view = camera->position - camera->target;
+        view = Vector3(rotation*Vector4(view, 1.0f));
+        camera->position = camera->target + view;
     }
     else
     {

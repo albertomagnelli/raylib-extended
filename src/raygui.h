@@ -4245,7 +4245,7 @@ int GuiColorPickerHSV(Rectangle bounds, const char *text, Vector3 *colorHsv)
 {
     int result = RESULT_NONE;
 
-    Vector3 tempHsv = { 0 };
+    Vector3 tempHsv{};
 
     if (colorHsv == NULL)
     {
@@ -4270,7 +4270,7 @@ int GuiColorPanelHSV(Rectangle bounds, const char *text, Vector3 *colorHsv)
     GuiState state = guiState;
 
     Vector3 prevColorHsv = *colorHsv;
-    Vector2 pickerSelector = { 0 };
+    Vector2 pickerSelector{};
     const Color colWhite = { 255, 255, 255, 255 };
     const Color colBlack = { 0, 0, 0, 255 };
 
@@ -5393,7 +5393,7 @@ static int GetLineWidth(const char *text)
     #define RAYGUI_ICON_TEXT_PADDING   4
 #endif
 
-    Vector2 textSize = { 0 };
+    Vector2 textSize{};
     int textIconOffset = 0;
 
     if ((text != NULL) && (text[0] != '\0'))
@@ -5790,7 +5790,7 @@ static void GuiDrawRectangle(Rectangle rec, int borderWidth, Color borderColor, 
 // TODO: Consider multiline text
 static Vector2 GuiMeasureText(const char *text)
 {
-    Vector2 textSize = { 0 };
+    Vector2 textSize{};
 
     if ((guiFont.texture.id > 0) && (text != NULL))
     {
@@ -6150,7 +6150,7 @@ static char **GuiTextSplit(const char *text, char delimiter, int *count)
 // NOTE: Color data should be passed normalized
 static Vector3 ConvertRGBtoHSV(Vector3 rgb)
 {
-    Vector3 hsv = { 0 };
+    Vector3 hsv{};
     float min = 0.0f;
     float max = 0.0f;
     float delta = 0.0f;
@@ -6203,7 +6203,7 @@ static Vector3 ConvertRGBtoHSV(Vector3 rgb)
 // NOTE: Color data should be passed normalized
 static Vector3 ConvertHSVtoRGB(Vector3 hsv)
 {
-    Vector3 rgb = { 0 };
+    Vector3 rgb{};
     float hh = 0.0f, p = 0.0f, q = 0.0f, t = 0.0f, ff = 0.0f;
     long i = 0;
 

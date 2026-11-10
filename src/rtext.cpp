@@ -1360,7 +1360,7 @@ int MeasureText(const char *text, int fontSize)
 // Measure string size for Font
 Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing)
 {
-    Vector2 textSize = { 0 };
+    Vector2 textSize{};
 
     if ((font.texture.id == 0) || (text == NULL) || (text[0] == '\0')) return textSize; // Security check
 
@@ -1416,7 +1416,7 @@ Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing
 // Measure string size for an existing array of codepoints for Font
 Vector2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing)
 {
-    Vector2 textSize = { 0 };
+    Vector2 textSize{};
 
     if ((font.texture.id == 0) || (codepoints == NULL) || (length == 0)) return textSize; // Security check
 

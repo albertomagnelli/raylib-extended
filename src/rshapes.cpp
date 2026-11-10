@@ -231,9 +231,9 @@ void DrawLineStrip(const Vector2 *points, int pointCount, Color color)
 void DrawLineBezier(Vector2 startPos, Vector2 endPos, float thick, Color color)
 {
     Vector2 previous = startPos;
-    Vector2 current = { 0 };
+    Vector2 current{};
 
-    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2] = { 0 };
+    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 1; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -617,10 +617,10 @@ void DrawRectangleRec(Rectangle rec, Color color)
 // Draw a color-filled rectangle with pro parameters
 void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color)
 {
-    Vector2 topLeft = { 0 };
-    Vector2 topRight = { 0 };
-    Vector2 bottomLeft = { 0 };
-    Vector2 bottomRight = { 0 };
+    Vector2 topLeft{};
+    Vector2 topRight{};
+    Vector2 bottomLeft{};
+    Vector2 bottomRight{};
 
     // Only calculate rotation if needed
     if (rotation == 0.0f)
@@ -744,8 +744,8 @@ void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, 
 void DrawRectangleLines(int posX, int posY, int width, int height, Color color)
 {
     Matrix mat = rlGetMatrixTransform();
-    float xOffset = 0.5f/mat.m0;
-    float yOffset = 0.5f/mat.m5;
+    float xOffset = 0.5f/mat[0][0];
+    float yOffset = 0.5f/mat[1][1];
 
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -1909,14 +1909,14 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
     }
 
     // Cap 1 vertices
-    Vector2 c0 = { 0 };
-    Vector2 c1 = { 0 };
-    Vector2 c2 = { 0 };
+    Vector2 c0{};
+    Vector2 c1{};
+    Vector2 c2{};
 
     // Cap 2 vertices
-    Vector2 c3 = { 0 };
-    Vector2 c4 = { 0 };
-    Vector2 c5 = { 0 };
+    Vector2 c3{};
+    Vector2 c4{};
+    Vector2 c5{};
 
     // The number of angle steps that come before C1 (from `startAngle`, counter clockwise)
     int stepsBeforeC1 = 0;
@@ -2951,12 +2951,12 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
     bool innerAnglesCrossEachOther = false;
 
     // For negative `thick` values
-    Vector2 cap1SecondInnerVertex = { 0 };
-    Vector2 cap1SecondOuterVertex = { 0 };
-    Vector2 cap2SecondInnerVertex = { 0 };
-    Vector2 cap2SecondOuterVertex = { 0 };
+    Vector2 cap1SecondInnerVertex{};
+    Vector2 cap1SecondOuterVertex{};
+    Vector2 cap2SecondInnerVertex{};
+    Vector2 cap2SecondOuterVertex{};
     bool capsIntersect = false;
-    Vector2 capIntersectionVertex = { 0 };
+    Vector2 capIntersectionVertex{};
 
     if (showCapLines)
     {
@@ -3755,7 +3755,7 @@ void DrawSplineLinear(const Vector2 *points, int pointCount, float thick, Color 
 
     for (int i = 0; i < pointCount - 1; i++)
     {
-        Vector2 normal = { 0 };
+        Vector2 normal{};
 
         if (i < pointCount - 2)
         {
@@ -3817,7 +3817,7 @@ void DrawSplineLinear(const Vector2 *points, int pointCount, float thick, Color 
 
 #else   // !SUPPORT_SPLINE_MITERS
 
-    Vector2 delta = { 0 };
+    Vector2 delta{};
     float length = 0.0f;
     float scale = 0.0f;
 
@@ -3856,9 +3856,9 @@ void DrawSplineBasis(const Vector2 *points, int pointCount, float thick, Color c
     float dx = 0.0f;
     float size = 0.0f;
 
-    Vector2 currentPoint = { 0 };
-    Vector2 nextPoint = { 0 };
-    Vector2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2] = { 0 };
+    Vector2 currentPoint{};
+    Vector2 nextPoint{};
+    Vector2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 0; i < (pointCount - 3); i++)
     {
@@ -3932,8 +3932,8 @@ void DrawSplineCatmullRom(const Vector2 *points, int pointCount, float thick, Co
     float size = 0.0f;
 
     Vector2 currentPoint = points[1];
-    Vector2 nextPoint = { 0 };
-    Vector2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2] = { 0 };
+    Vector2 nextPoint{};
+    Vector2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     DrawCircleV(currentPoint, thick/2.0f, color);   // Draw init line circle-cap
 
@@ -4042,11 +4042,11 @@ void DrawSplineSegmentBasis(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, floa
 {
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
-    Vector2 currentPoint = { 0 };
-    Vector2 nextPoint = { 0 };
+    Vector2 currentPoint{};
+    Vector2 nextPoint{};
     float t = 0.0f;
 
-    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2] = { 0 };
+    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     float a[4] = { 0 };
     float b[4] = { 0 };
@@ -4100,10 +4100,10 @@ void DrawSplineSegmentCatmullRom(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4,
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
     Vector2 currentPoint = p1;
-    Vector2 nextPoint = { 0 };
+    Vector2 nextPoint{};
     float t = 0.0f;
 
-    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2] = { 0 };
+    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 0; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -4146,10 +4146,10 @@ void DrawSplineSegmentBezierQuadratic(Vector2 p1, Vector2 c2, Vector2 p3, float 
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
     Vector2 previous = p1;
-    Vector2 current = { 0 };
+    Vector2 current{};
     float t = 0.0f;
 
-    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2] = { 0 };
+    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 1; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -4192,10 +4192,10 @@ void DrawSplineSegmentBezierCubic(Vector2 p1, Vector2 c2, Vector2 c3, Vector2 p4
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
     Vector2 previous = p1;
-    Vector2 current = { 0 };
+    Vector2 current{};
     float t = 0.0f;
 
-    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2] = { 0 };
+    Vector2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 1; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -4235,7 +4235,7 @@ void DrawSplineSegmentBezierCubic(Vector2 p1, Vector2 c2, Vector2 c3, Vector2 p4
 // Get spline point for a given t [0.0f .. 1.0f], Linear
 Vector2 GetSplinePointLinear(Vector2 startPos, Vector2 endPos, float t)
 {
-    Vector2 point = { 0 };
+    Vector2 point{};
 
     point.x = startPos.x*(1.0f - t) + endPos.x*t;
     point.y = startPos.y*(1.0f - t) + endPos.y*t;
@@ -4246,7 +4246,7 @@ Vector2 GetSplinePointLinear(Vector2 startPos, Vector2 endPos, float t)
 // Get spline point for a given t [0.0f .. 1.0f], B-Spline
 Vector2 GetSplinePointBasis(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, float t)
 {
-    Vector2 point = { 0 };
+    Vector2 point{};
 
     float a[4] = { 0 };
     float b[4] = { 0 };
@@ -4270,7 +4270,7 @@ Vector2 GetSplinePointBasis(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, floa
 // Get spline point for a given t [0.0f .. 1.0f], Catmull-Rom
 Vector2 GetSplinePointCatmullRom(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, float t)
 {
-    Vector2 point = { 0 };
+    Vector2 point{};
 
     float q0 = (-1*t*t*t) + (2*t*t) + (-1*t);
     float q1 = (3*t*t*t) + (-5*t*t) + 2;
@@ -4286,7 +4286,7 @@ Vector2 GetSplinePointCatmullRom(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4,
 // Get spline point for a given t [0.0f .. 1.0f], Quadratic Bezier
 Vector2 GetSplinePointBezierQuadratic(Vector2 startPos, Vector2 controlPos, Vector2 endPos, float t)
 {
-    Vector2 point = { 0 };
+    Vector2 point{};
 
     float a = powf(1.0f - t, 2);
     float b = 2.0f*(1.0f - t)*t;
@@ -4301,7 +4301,7 @@ Vector2 GetSplinePointBezierQuadratic(Vector2 startPos, Vector2 controlPos, Vect
 // Get spline point for a given t [0.0f .. 1.0f], Cubic Bezier
 Vector2 GetSplinePointBezierCubic(Vector2 startPos, Vector2 startControlPos, Vector2 endControlPos, Vector2 endPos, float t)
 {
-    Vector2 point = { 0 };
+    Vector2 point{};
 
     float a = powf(1.0f - t, 3);
     float b = 3.0f*powf(1.0f - t, 2)*t;

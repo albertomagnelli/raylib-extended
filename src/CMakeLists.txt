@@ -42,7 +42,6 @@ set(raylib_sources
     rshapes.cpp
     rtext.cpp
     rtextures.cpp
-    raymath_impl.c  # raymath out-of-line definitions (compiled as C, see file header)
     )
 
 # Only build raudio if it's enabled
@@ -116,6 +115,12 @@ endif ()
 
 target_link_libraries(raylib PRIVATE $<BUILD_INTERFACE:${LIBS_PRIVATE}>)
 target_link_libraries(raylib PUBLIC ${LIBS_PUBLIC})
+
+# glm, the math library. It is part of the public interface: Vector2/Vector3/Vector4,
+# Matrix and Quaternion are glm types, so consumers inherit the dependency.
+# GLM_ENABLE_EXPERIMENTAL unlocks gtx/matrix_decompose and gtx/euler_angles.
+target_link_libraries(raylib PUBLIC $<BUILD_INTERFACE:glm::glm>)
+target_compile_definitions(raylib PRIVATE GLM_ENABLE_EXPERIMENTAL)
 
 # Static libraries must export their private link dependencies for installed consumers.
 # LINK_ONLY keeps those dependencies out of the compile interface.

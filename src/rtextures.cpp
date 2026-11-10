@@ -4889,10 +4889,10 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, Vecto
         if (dstrec.width < 0) dstrec.width *= -1;
         if (dstrec.height < 0) dstrec.height *= -1;
 
-        Vector2 topLeft = { 0 };
-        Vector2 topRight = { 0 };
-        Vector2 bottomLeft = { 0 };
-        Vector2 bottomRight = { 0 };
+        Vector2 topLeft{};
+        Vector2 topRight{};
+        Vector2 bottomLeft{};
+        Vector2 bottomRight{};
 
         // Only calculate rotation if needed
         if (rotation == 0.0f)
@@ -5036,10 +5036,10 @@ void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstre
             bottomBorder = patchHeight - topBorder;
         }
 
-        Vector2 vertA = { 0 };
-        Vector2 vertB = { 0 };
-        Vector2 vertC = { 0 };
-        Vector2 vertD = { 0 };
+        Vector2 vertA{};
+        Vector2 vertB{};
+        Vector2 vertC{};
+        Vector2 vertD{};
         vertA.x = 0.0f;                             // Outer left
         vertA.y = 0.0f;                             // Outer top
         vertB.x = leftBorder;                       // Inner left
@@ -5049,10 +5049,10 @@ void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstre
         vertD.x = patchWidth;                       // Outer right
         vertD.y = patchHeight;                      // Outer bottom
 
-        Vector2 coordA = { 0 };
-        Vector2 coordB = { 0 };
-        Vector2 coordC = { 0 };
-        Vector2 coordD = { 0 };
+        Vector2 coordA{};
+        Vector2 coordB{};
+        Vector2 coordC{};
+        Vector2 coordD{};
         coordA.x = nPatchInfo.source.x/width;
         coordA.y = nPatchInfo.source.y/height;
         coordB.x = (nPatchInfo.source.x + leftBorder)/width;
@@ -5266,7 +5266,7 @@ Color ColorFromNormalized(Vector4 normalized)
 // NOTE: Hue is returned as degrees [0..360]
 Vector3 ColorToHSV(Color color)
 {
-    Vector3 hsv = { 0 };
+    Vector3 hsv{};
     Vector3 rgb = { (float)color.r/255.0f, (float)color.g/255.0f, (float)color.b/255.0f };
     float min = 0.0f;
     float max = 0.0f;
@@ -5496,7 +5496,7 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
         Vector4 fdst = ColorNormalize(dst);
         Vector4 fsrc = ColorNormalize(src);
         Vector4 ftint = ColorNormalize(tint);
-        Vector4 fout = { 0 };
+        Vector4 fout{};
 
         fout.w = fsrc.w + fdst.w*(1.0f - fsrc.w);
 

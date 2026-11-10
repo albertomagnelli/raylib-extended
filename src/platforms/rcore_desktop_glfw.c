@@ -936,7 +936,7 @@ int GetCurrentMonitor(void)
 // Get selected monitor position
 Vector2 GetMonitorPosition(int monitor)
 {
-    Vector2 position = { 0 };
+    Vector2 position{};
     
     int monitorCount = 0;
     GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
@@ -1058,7 +1058,7 @@ const char *GetMonitorName(int monitor)
 // Get window position XY on monitor
 Vector2 GetWindowPosition(void)
 {
-    Vector2 position = { 0 };
+    Vector2 position{};
     
     glfwGetWindowPos(platform.handle, &CORE.Window.position.x, &CORE.Window.position.y);
     position = (Vector2){ (float)CORE.Window.position.x, (float)CORE.Window.position.y };
@@ -1807,7 +1807,7 @@ int InitPlatform(void)
             //TRACELOG(LOG_INFO, "DPI SCALING: %.2f, %.2f", scaleDpi.x, scaleDpi.y);
 
             // Screen scaling matrix is required in case desired screen area is different from display area
-            CORE.Window.screenScale = MatrixScale(scaleDpi.x, scaleDpi.y, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
 
             // NOTE: On APPLE platforms system manage window and input scaling
             // Framebuffer scaling is activated with: glfwWindowHint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE);
@@ -2013,7 +2013,7 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
         // Set screen size to render size (physical pixel size)
         CORE.Window.screen.width = width;
         CORE.Window.screen.height = height;
-        CORE.Window.screenScale = MatrixScale(1.0f, 1.0f, 1.0f);
+        CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{1.0f, 1.0f, 1.0f});
         SetMouseScale(1.0f, 1.0f);
 
         // On Wayland with GLFW_SCALE_FRAMEBUFFER, the framebuffer is still scaled in fullscreen, use logical window size as screen and apply screenScale
@@ -2045,7 +2045,7 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
             Vector2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = (int)roundf((float)width/scaleDpi.x);
             CORE.Window.screen.height = (int)roundf((float)height/scaleDpi.y);
-            CORE.Window.screenScale = MatrixScale(scaleDpi.x, scaleDpi.y, 1.0f);
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
 #if !defined(__APPLE__) && !defined(_GLFW_WAYLAND)
             // On macOS and Linux-Wayland, mouse coords are already in logical space
             SetMouseScale(1.0f/scaleDpi.x, 1.0f/scaleDpi.y);
@@ -2074,7 +2074,7 @@ static void WindowContentScaleCallback(GLFWwindow *window, float scalex, float s
 
     // NOTE: On APPLE platforms system should manage window/input scaling and also framebuffer scaling
     // Framebuffer scaling is activated with: glfwWindowHint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE);
-    CORE.Window.screenScale = MatrixScale(scalex, scaley, 1.0f);
+    CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scalex, scaley, 1.0f});
 
 #if !defined(__APPLE__) && !defined(_GLFW_WAYLAND)
     // On macOS and Linux-Wayland, mouse coords are already in logical space

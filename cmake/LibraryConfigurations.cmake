@@ -31,7 +31,7 @@ int main(void)
     endif ()
 endfunction()
 
-set(RAYLIB_DEPENDENCIES "include(CMakeFindDependencyMacro)")
+set(RAYLIB_DEPENDENCIES "include(CMakeFindDependencyMacro)\nfind_dependency(glm 1.0 REQUIRED)")
 
 if (${PLATFORM} STREQUAL "Desktop")
     set(PLATFORM_CPP "PLATFORM_DESKTOP")
