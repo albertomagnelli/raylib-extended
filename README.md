@@ -34,9 +34,9 @@ Ready to learn? Jump to [code examples!](https://www.raylib.com/examples.html)
 
 features
 --------
-  - **NO external dependencies**, all required libraries are [included in raylib](https://github.com/raysan5/raylib/tree/master/src/external)
+  - **Bundled dependencies**, all required native libraries are [included in raylib](https://github.com/raysan5/raylib/tree/master/src/external); the math types come from [glm](https://github.com/g-truc/glm), fetched by CMake
   - Multiple platforms supported: **Windows, Linux, MacOS, RPI, Android, HTML5... and more!**
-  - Written in plain C code (C99) using PascalCase/camelCase notation
+  - Written in **C++20** using [glm](https://github.com/g-truc/glm) for vectors, matrices and quaternions, with PascalCase/camelCase notation
   - Hardware accelerated with OpenGL: **1.1, 2.1, 3.3, 4.3, 4.6, ES 2.0, ES 3.0**
   - **Unique OpenGL abstraction layer** (usable as standalone module): [rlgl](https://github.com/raysan5/raylib/blob/master/src/rlgl.h)
   - **Software Renderer** backend (no OpenGL required!): [rlsw](https://github.com/raysan5/raylib/blob/master/src/external/rlsw.h)
@@ -46,7 +46,7 @@ features
   - Flexible Materials system, supporting classic maps and **PBR maps**
   - **Animated 3D models** supported (skeletal bones animation, GPU-skinning) (IQM, M3D, glTF)
   - Shaders support, including model shaders and **postprocessing** shaders
-  - **Powerful math module** for Vector, Matrix and Quaternion operations: [raymath](https://github.com/raysan5/raylib/blob/master/src/raymath.h)
+  - **Powerful math foundation**: `Vector2/3/4`, `Quaternion` and `Matrix` are glm types, plus [raymath](https://github.com/raysan5/raylib/blob/master/src/raymath.h) helpers for the operations glm does not express directly
   - Audio loading and playing with streaming support (WAV, QOA, OGG, MP3, FLAC, XM, MOD)
   - **VR stereo rendering** support with configurable HMD device parameters
   - Huge examples collection with [+220 code examples](https://github.com/raysan5/raylib/tree/master/examples)!
@@ -67,10 +67,10 @@ raylib presents some limitations by design for code simplicity. Some forks, alte
 basic example
 --------------
 This is a basic raylib example, it creates a window and draws the text `"Congrats! You created your first window!"` in the middle of the screen. Check this example [running live on web here](https://www.raylib.com/examples/core/loader.html?name=core_basic_window).
-```c
+```cpp
 #include "raylib.h"
 
-int main(void)
+int main()
 {
     InitWindow(800, 450, "raylib example - basic window");
 
@@ -113,7 +113,7 @@ raylib is also available via multiple package managers on multiple OS distributi
 
 #### Selecting the OpenGL backend
 
-raylib is built for **OpenGL 3.3 Core** by default. The graphics backend is selected at **build time** through the `GRAPHICS_API_OPENGL_*` define used when compiling the library (the implementation lives in `src/rcore.c`, which includes `rlgl.h`), so the library must be rebuilt after changing it.
+raylib is built for **OpenGL 3.3 Core** by default. The graphics backend is selected at **build time** through the `GRAPHICS_API_OPENGL_*` define used when compiling the library (the implementation lives in `src/rcore.cpp`, which includes `rlgl.h`), so the library must be rebuilt after changing it.
 
 Supported backends: `GRAPHICS_API_OPENGL_SOFTWARE`, `GRAPHICS_API_OPENGL_11`, `GRAPHICS_API_OPENGL_21`, `GRAPHICS_API_OPENGL_33`, `GRAPHICS_API_OPENGL_43`, `GRAPHICS_API_OPENGL_46`, `GRAPHICS_API_OPENGL_ES2`, `GRAPHICS_API_OPENGL_ES3`.
 
@@ -142,7 +142,7 @@ const raylib = b.dependency("raylib", .{
 });
 ```
 
-**IDEs (CLion, Visual Studio, ...)** - pass the CMake option `-DOPENGL_VERSION=4.6` in the project's CMake settings, then **reset the CMake cache and reload** and do a full rebuild. Note that adding `-DGRAPHICS_API_OPENGL_46` to the CMake options does *not* work: it only creates an unused CMake cache variable, it is not a compiler definition. If you prefer to set the macro directly, it has to reach the compiler, e.g. `-DCMAKE_C_FLAGS=-DGRAPHICS_API_OPENGL_46`.
+**IDEs (CLion, Visual Studio, ...)** - pass the CMake option `-DOPENGL_VERSION=4.6` in the project's CMake settings, then **reset the CMake cache and reload** and do a full rebuild. Note that adding `-DGRAPHICS_API_OPENGL_46` to the CMake options does *not* work: it only creates an unused CMake cache variable, it is not a compiler definition. If you prefer to set the macro directly, it has to reach the compiler, e.g. `-DCMAKE_CXX_FLAGS=-DGRAPHICS_API_OPENGL_46`.
 
 To verify the selected backend at runtime, check `rlGetVersion() == RL_OPENGL_46` or the `GL: Version:` line in the startup log. Note that OpenGL 4.3/4.6 require a GPU and driver that actually expose that version; if they are unavailable, `InitWindow()` fails, and a lower backend must be used.
 

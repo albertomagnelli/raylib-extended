@@ -4,6 +4,20 @@ changelog
 Current Release:    raylib 6.2 (15 October 2026)
 
 -------------------------------------------------------------------------
+Fork:        glm math migration (C++20)
+-------------------------------------------------------------------------
+ - CHANGED: Public math types are glm: Vector2/3/4 = glm::vec2/3/4, Quaternion = glm::quat, Matrix = glm::mat4
+ - CHANGED: raylib.h is C++-only (C++17+); the exported API keeps its `extern "C"` block
+ - CHANGED: raymath.h is reduced to the helpers glm does not express directly (Euler conventions,
+            MatrixCompose/Decompose, MoveTowards, Project/Reject, Unproject, CubicHermite, 2D helpers,
+            and the float3/float16 upload buffers)
+ - REMOVED: src/raymath_impl.c, the math is header-only glm code now
+ - CHANGED: Examples, project templates and extensions are C++ (.cpp) and use glm vocabulary
+ - REVIEWED: MatrixMultiply(a, b) keeps its "apply a, then b" order (glm `b * a`); glTF quaternions
+             are reordered from (x, y, z, w) to glm's (w, x, y, z)
+ - REVIEWED: Matrix layout is column-major, mN maps to mat[N/4][N%4]
+
+-------------------------------------------------------------------------
 Release:     raylib 6.2 (15 October 2026)
 -------------------------------------------------------------------------
 KEY CHANGES:
