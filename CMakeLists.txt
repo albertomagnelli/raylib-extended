@@ -54,4 +54,9 @@ if (${BUILD_EXAMPLES})
   add_subdirectory(examples)
 endif()
 
+if (${BUILD_EXTENSIONS})
+  message(STATUS "Building extensions is enabled")
+  add_subdirectory(extensions)
+endif()
+
 enable_testing()
