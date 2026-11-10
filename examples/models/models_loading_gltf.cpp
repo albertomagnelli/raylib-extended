@@ -70,7 +70,7 @@ int main()
 
         // Update model animation
         animCurrentFrame = (animCurrentFrame + 1)%anims[animIndex].keyframeCount;
-        UpdateModelAnimation(model, anims[animIndex], (float)animCurrentFrame);
+        UpdateModelAnimation(model, anims[animIndex], static_cast<float>(animCurrentFrame));
         //----------------------------------------------------------------------------------
 
         // Draw

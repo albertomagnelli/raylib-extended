@@ -64,7 +64,7 @@ int main()
 
     TextParticle textParticles[MAX_TEXT_PARTICLES] = {};
     int particleCount = 0;
-    TextParticle *grabbedTextParticle = NULL;
+    TextParticle *grabbedTextParticle = nullptr;
     Vector2 pressOffset = {};
 
     PrepareFirstTextParticle("raylib => fun videogames programming!", textParticles, &particleCount);
@@ -100,10 +100,10 @@ int main()
         // Releases any text particle the was grabbed
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (grabbedTextParticle != NULL)
+            if (grabbedTextParticle != nullptr)
             {
                 grabbedTextParticle->grabbed = false;
-                grabbedTextParticle = NULL;
+                grabbedTextParticle = nullptr;
             }
         }
 
@@ -133,7 +133,7 @@ int main()
         {
             for (int i = 0; i < particleCount; i++)
             {
-                if (!textParticles[i].grabbed) textParticles[i].vel = Vector2{ (float)GetRandomValue(-2000, 2000), (float)GetRandomValue(-2000, 2000) };
+                if (!textParticles[i].grabbed) textParticles[i].vel = Vector2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
             }
         }
 
@@ -235,7 +235,7 @@ int main()
                 TextParticle *tp = &textParticles[i];
                 DrawRectangleRec(Rectangle{ tp->rect.x - tp->borderWidth, tp->rect.y - tp->borderWidth, tp->rect.width + tp->borderWidth * 2, tp->rect.height + tp->borderWidth * 2 }, BLACK);
                 DrawRectangleRec(tp->rect, tp->color);
-                DrawText(tp->text, (int)(tp->rect.x+tp->padding), (int)(tp->rect.y+tp->padding), FONT_SIZE, BLACK);
+                DrawText(tp->text, static_cast<int>(tp->rect.x+tp->padding), static_cast<int>(tp->rect.y+tp->padding), FONT_SIZE, BLACK);
             }
 
             DrawText("grab a text particle by pressing with the mouse and throw it by releasing", 10, 10, 10, DARKGRAY);
@@ -277,7 +277,7 @@ TextParticle CreateTextParticle(std::string_view text, float x, float y, Color c
     TextParticle tp = {
         .text = "",
         .rect = { x, y, 30, 30 },
-        .vel = { (float)GetRandomValue(-200, 200), (float)GetRandomValue(-200, 200) },
+        .vel = { static_cast<float>(GetRandomValue(-200, 200)), static_cast<float>(GetRandomValue(-200, 200)) },
         .ppos = {},
         .padding = 5.0f,
         .borderWidth = 5.0f,
@@ -306,7 +306,7 @@ void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextP
                 text,
                 tp->rect.x + i * tp->rect.width/length,
                 tp->rect.y,
-                Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 }
+                Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 }
             );
         }
         RealocateTextParticles(tps, particlePos, particleCount);
@@ -316,7 +316,7 @@ void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextP
 void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, int *particleCount)
 {
     std::vector<std::string> tokens = TextSplit(tp->text, charToSlice);
-    int tokenCount = (int)tokens.size();
+    int tokenCount = static_cast<int>(tokens.size());
 
     if (tokenCount > 1)
     {
@@ -329,7 +329,7 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
                     TextFormat("%c", charToSlice),
                     tp->rect.x,
                     tp->rect.y,
-                    Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 }
+                    Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 }
                 );
             }
         }
@@ -340,7 +340,7 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
                 tokens[i],
                 tp->rect.x + i * tp->rect.width/tokenLength,
                 tp->rect.y,
-                Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 }
+                Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 }
             );
         }
         if (tokenCount)

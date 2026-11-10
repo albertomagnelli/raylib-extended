@@ -46,7 +46,7 @@ int main()
     float value = 1.0f;
 
     // The center of the screen
-    Vector2 center = { (float)screenWidth/2.0f, (float)screenHeight/2.0f };
+    Vector2 center = { static_cast<float>(screenWidth)/2.0f, static_cast<float>(screenHeight)/2.0f };
     // The location of the color wheel
     Vector2 circlePosition = center;
 
@@ -75,7 +75,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         float wheel = roundf(GetMouseWheelMove());
-        triangleCount = (unsigned int)Clamp((float)triangleCount + wheel, (float)pointsMin, (float)pointsMax);
+        triangleCount = static_cast<unsigned int>(Clamp(static_cast<float>(triangleCount) + wheel, static_cast<float>(pointsMin), static_cast<float>(pointsMax)));
 
         Rectangle sliderRectangle = { 42.0f, 16.0f + 64.0f + 45.0f, 64.0f, 16.0f };
         Vector2 mousePosition = GetMousePosition();
@@ -97,9 +97,9 @@ int main()
         {
             pointScale *= 1.025f;
 
-            if (pointScale > (float)screenHeight/2.0f)
+            if (pointScale > static_cast<float>(screenHeight)/2.0f)
             {
-                pointScale = (float)screenHeight/2.0f;
+                pointScale = static_cast<float>(screenHeight)/2.0f;
             }
             else
             {
@@ -161,7 +161,7 @@ int main()
 
             float angle360 = angle*360.0f;
             float valueActual = Clamp(distance, 0.0f, 1.0f);
-            color = ColorLerp(Color{ (unsigned char)(value*255.0f), (unsigned char)(value*255.0f), (unsigned char)(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
+            color = ColorLerp(Color{ static_cast<unsigned char>(value*255.0f), static_cast<unsigned char>(value*255.0f), static_cast<unsigned char>(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
         }
         //----------------------------------------------------------------------------------
 
@@ -175,9 +175,9 @@ int main()
         rlBegin(renderType);
         for (unsigned int i = 0; i < triangleCount; i++)
         {
-            float angleOffset = ((PI*2.0f)/(float)triangleCount);
-            float angle = angleOffset*(float)i;
-            float angleOffsetCalculated = ((float)i + 1)*angleOffset;
+            float angleOffset = ((PI*2.0f)/static_cast<float>(triangleCount));
+            float angle = angleOffset*static_cast<float>(i);
+            float angleOffsetCalculated = (static_cast<float>(i) + 1)*angleOffset;
             Vector2 scale = Vector2{ pointScale, pointScale };
 
             Vector2 offset = ((Vector2{ sinf(angle), -cosf(angle) }) * (scale));

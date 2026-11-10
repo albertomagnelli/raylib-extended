@@ -25,7 +25,7 @@ static float averageVolume[400] = {};   // Average volume history
 //------------------------------------------------------------------------------------
 void ProcessAudio(void *buffer, unsigned int frames)
 {
-    float *samples = (float *)buffer;   // Samples internally stored as <float>s
+    float *samples = static_cast<float *>(buffer);   // Samples internally stored as <float>s
     float average = 0.0f;               // Temporary average volume
 
     for (unsigned int frame = 0; frame < frames; frame++)
@@ -99,7 +99,7 @@ int main()
             DrawRectangle(199, 199, 402, 34, LIGHTGRAY);
             for (int i = 0; i < 400; i++)
             {
-                DrawLine(201 + i, 232 - (int)(averageVolume[i]*32), 201 + i, 232, MAROON);
+                DrawLine(201 + i, 232 - static_cast<int>(averageVolume[i]*32), 201 + i, 232, MAROON);
             }
             DrawRectangleLines(199, 199, 402, 34, GRAY);
 

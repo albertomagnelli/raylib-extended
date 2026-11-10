@@ -82,7 +82,7 @@ static int RandomIndex(int count)
 
 static Color WithAlpha(Color color, float alpha)
 {
-    color.a = (unsigned char)(std::clamp(alpha, 0.0f, 1.0f)*255.0f);
+    color.a = static_cast<unsigned char>(std::clamp(alpha, 0.0f, 1.0f)*255.0f);
     return color;
 }
 
@@ -91,9 +91,9 @@ static Color MixColor(Color first, Color second, float t)
     t = std::clamp(t, 0.0f, 1.0f);
 
     Color result = {
-        (unsigned char)((float)first.r + (float)(second.r - first.r)*t),
-        (unsigned char)((float)first.g + (float)(second.g - first.g)*t),
-        (unsigned char)((float)first.b + (float)(second.b - first.b)*t),
+        static_cast<unsigned char>(static_cast<float>(first.r) + static_cast<float>(second.r - first.r)*t),
+        static_cast<unsigned char>(static_cast<float>(first.g) + static_cast<float>(second.g - first.g)*t),
+        static_cast<unsigned char>(static_cast<float>(first.b) + static_cast<float>(second.b - first.b)*t),
         255,
     };
 
@@ -117,12 +117,12 @@ static const char *FindSystemFont(void)
         if (FileExists(candidate)) return candidate;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 static void SpawnParticle(std::vector<Particle> &particles, Vector2 origin, Vector2 direction, float speed)
 {
-    if ((int)particles.size() >= maxParticles) return;
+    if (static_cast<int>(particles.size()) >= maxParticles) return;
 
     Particle particle;
     particle.position = { origin.x + RandomFloat(-12.0f, 12.0f), origin.y + RandomFloat(-12.0f, 12.0f) };
@@ -139,7 +139,7 @@ static void SpawnBurst(std::vector<Particle> &particles, Vector2 origin, int cou
 {
     for (int i = 0; i < count; i++)
     {
-        float angle = RandomFloat(0.0f, 2.0f*(float)std::numbers::pi);
+        float angle = RandomFloat(0.0f, 2.0f*static_cast<float>(std::numbers::pi));
         SpawnParticle(particles, origin, { cosf(angle), sinf(angle) }, RandomFloat(120.0f, 460.0f));
     }
 }
@@ -198,13 +198,13 @@ static void UpdateParticles(std::vector<Particle> &particles, Vector2 mouse, boo
 
 static void DrawBackground(Vector2 size, float time)
 {
-    int width = (int)size.x;
-    int height = (int)size.y;
+    int width = static_cast<int>(size.x);
+    int height = static_cast<int>(size.y);
 
     // Vertical gradient, one line pair of pixels per rectangle
     for (int y = 0; y < height; y += 2)
     {
-        float t = (float)y/size.y;
+        float t = static_cast<float>(y)/size.y;
         DrawRectangle(0, y, size.x, 2.0f, MixColor(backgroundTop, backgroundBottom, t));
     }
 
@@ -215,16 +215,16 @@ static void DrawBackground(Vector2 size, float time)
 
     for (int layer = 18; layer > 0; layer--)
     {
-        float t = (float)layer/18.0f;
+        float t = static_cast<float>(layer)/18.0f;
         DrawCircleV(center, maxRadius*t, WithAlpha(MixColor(accent, accentWarm, t), 0.012f));
     }
 
     // Faint grid
     for (int x = 0; x < width; x += 64)
-        DrawLineEx({ (float)x, 0.0f }, { (float)x, size.y }, 1.0f, WithAlpha(RAYWHITE, 0.025f));
+        DrawLineEx({ static_cast<float>(x), 0.0f }, { static_cast<float>(x), size.y }, 1.0f, WithAlpha(RAYWHITE, 0.025f));
 
     for (int y = 0; y < height; y += 64)
-        DrawLineEx({ 0.0f, (float)y }, { size.x, (float)y }, 1.0f, WithAlpha(RAYWHITE, 0.025f));
+        DrawLineEx({ 0.0f, static_cast<float>(y) }, { size.x, static_cast<float>(y) }, 1.0f, WithAlpha(RAYWHITE, 0.025f));
 }
 
 static void DrawOrbit(Vector2 center, Vector2 size, float time)
@@ -243,7 +243,7 @@ static void DrawOrbit(Vector2 center, Vector2 size, float time)
     float orbitRadius = screenMin*0.24f;
     for (int i = 0; i < 8; i++)
     {
-        float angle = rotation*0.03f + 2.0f*(float)std::numbers::pi*(float)i/8.0f;
+        float angle = rotation*0.03f + 2.0f*static_cast<float>(std::numbers::pi)*static_cast<float>(i)/8.0f;
         DrawCircleV({ center.x + cosf(angle)*orbitRadius, center.y + sinf(angle)*orbitRadius }, 3.0f, WithAlpha(accent, 0.55f));
     }
 }
@@ -305,9 +305,9 @@ int main()
     bool fontLoaded = false;
 
     const char *fontPath = FindSystemFont();
-    if (fontPath != NULL)
+    if (fontPath != nullptr)
     {
-        font = LoadFontEx(fontPath, 64, NULL, 0);
+        font = LoadFontEx(fontPath, 64, nullptr, 0);
         fontLoaded = true;
         TraceLog(LOG_INFO, "FONT: Loaded system font: %s", fontPath);
     }
@@ -319,7 +319,7 @@ int main()
 
     std::vector<Particle> particles;
     particles.reserve(maxParticles);
-    SpawnBurst(particles, { (float)screenWidth*0.5f, (float)screenHeight*0.5f }, 120);
+    SpawnBurst(particles, { static_cast<float>(screenWidth)*0.5f, static_cast<float>(screenHeight)*0.5f }, 120);
 
     float time = 0.0f;
     float spawnAccumulator = 0.0f;
@@ -334,7 +334,7 @@ int main()
         time += delta;
         frames++;
 
-        Vector2 size = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+        Vector2 size = { static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
         Vector2 mouse = GetMousePosition();
 
         bool attracting = IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
@@ -348,7 +348,7 @@ int main()
 
             while (spawnAccumulator >= 1.0f)
             {
-                float angle = RandomFloat(0.0f, 2.0f*(float)std::numbers::pi);
+                float angle = RandomFloat(0.0f, 2.0f*static_cast<float>(std::numbers::pi));
                 SpawnParticle(particles, mouse, { cosf(angle), sinf(angle) }, RandomFloat(20.0f, 140.0f));
                 spawnAccumulator -= 1.0f;
             }
@@ -372,7 +372,7 @@ int main()
             DrawCircleV(mouse, 14.0f + 2.0f*sinf(time*5.0f), WithAlpha(accent, 0.10f));
             DrawCircleLinesEx(mouse, 9.0f, 1.0f, WithAlpha(accent, 0.55f));
 
-            DrawHud(font, size, (int)particles.size(), time, delta);
+            DrawHud(font, size, static_cast<int>(particles.size()), time, delta);
         EndDrawing();
     }
 

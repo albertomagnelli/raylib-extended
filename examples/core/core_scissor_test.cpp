@@ -53,7 +53,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            if (scissorMode) BeginScissorMode((int)scissorArea.x, (int)scissorArea.y, (int)scissorArea.width, (int)scissorArea.height);
+            if (scissorMode) BeginScissorMode(static_cast<int>(scissorArea.x), static_cast<int>(scissorArea.y), static_cast<int>(scissorArea.width), static_cast<int>(scissorArea.height));
 
             // Draw full screen rectangle and some text
             // NOTE: Only part defined by scissor area will be rendered

@@ -107,12 +107,12 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        float time = (float)GetTime();
+        float time = static_cast<float>(GetTime());
 
         // Orbital path for each point light, its own radius/height offset by index
         for (int i = 0; i < MAX_LIGHTS; i++)
         {
-            float angle = (i/(float)MAX_LIGHTS)*2.0f*PI + time*0.6f;
+            float angle = (i/static_cast<float>(MAX_LIGHTS))*2.0f*PI + time*0.6f;
             float radius = 4.2f + sinf(time*1.2f + i)*0.4f;
             float height = 1.0f + sinf(time*1.8f + i)*0.6f;
 
@@ -140,9 +140,9 @@ int main()
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
                     Color bulbColor = Color{
-                        (unsigned char)(lightColors[i].x*255),
-                        (unsigned char)(lightColors[i].y*255),
-                        (unsigned char)(lightColors[i].z*255),
+                        static_cast<unsigned char>(lightColors[i].x*255),
+                        static_cast<unsigned char>(lightColors[i].y*255),
+                        static_cast<unsigned char>(lightColors[i].z*255),
                         255 };
 
                     DrawSphere(lightPositions[i], 0.15f, bulbColor);
@@ -157,7 +157,7 @@ int main()
 
             ClearBackground(BLACK);
 
-            Rectangle srcRec = { 0, 0, (float)target.texture.width, (float)-target.texture.height };
+            Rectangle srcRec = { 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) };
 
             BeginShaderMode(bloomShader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)

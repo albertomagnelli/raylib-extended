@@ -102,15 +102,15 @@ int main()
     // 16-bit precision ensures OpenGL ES 3 compatibility, though it may lack precision for real scenarios
     // But as mentioned above, the positions could be reconstructed instead of stored. If not targeting OpenGL ES
     // and you wish to maintain this approach, consider using `RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32`
-    gBuffer.positionTextureId = rlLoadTexture(NULL, screenWidth, screenHeight, RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16, 1);
+    gBuffer.positionTextureId = rlLoadTexture(nullptr, screenWidth, screenHeight, RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16, 1);
 
     // Similarly, 16-bit precision is used for normals ensures OpenGL ES 3 compatibility
     // This is generally sufficient, but a 16-bit fixed-point format offer a better uniform precision in all orientations
-    gBuffer.normalTextureId = rlLoadTexture(NULL, screenWidth, screenHeight, RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16, 1);
+    gBuffer.normalTextureId = rlLoadTexture(nullptr, screenWidth, screenHeight, RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16, 1);
 
     // Albedo (diffuse color) and specular strength can be combined into one texture
     // The color in RGB, and the specular strength in the alpha channel
-    gBuffer.albedoSpecTextureId = rlLoadTexture(NULL, screenWidth, screenHeight, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1);
+    gBuffer.albedoSpecTextureId = rlLoadTexture(nullptr, screenWidth, screenHeight, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1);
 
     // Activate the draw buffers for our framebufferId
     rlActiveDrawBuffers(3);
@@ -159,12 +159,12 @@ int main()
     for (int i = 0; i < MAX_CUBES; i++)
     {
         cubePositions[i] = Vector3{
-            (float)(rand()%10) - 5,
-            (float)(rand()%5),
-            (float)(rand()%10) - 5,
+            static_cast<float>(rand()%10) - 5,
+            static_cast<float>(rand()%5),
+            static_cast<float>(rand()%10) - 5,
         };
 
-        cubeRotations[i] = (float)(rand()%360);
+        cubeRotations[i] = static_cast<float>(rand()%360);
     }
 
     int mode = DEFERRED_SHADING;
@@ -283,7 +283,7 @@ int main()
                         .id = gBuffer.positionTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight }, Vector2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{}, RAYWHITE);
 
                     DrawText("POSITION TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;
@@ -293,7 +293,7 @@ int main()
                         .id = gBuffer.normalTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight }, Vector2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{}, RAYWHITE);
 
                     DrawText("NORMAL TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;
@@ -303,7 +303,7 @@ int main()
                         .id = gBuffer.albedoSpecTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight }, Vector2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{}, RAYWHITE);
 
                     DrawText("ALBEDO TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;

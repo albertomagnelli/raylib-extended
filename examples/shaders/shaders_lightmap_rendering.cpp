@@ -56,10 +56,10 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Mesh mesh = GenMeshPlane((float)MAP_SIZE, (float)MAP_SIZE, 1, 1);
+    Mesh mesh = GenMeshPlane(static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE), 1, 1);
 
     // GenMeshPlane doesn't generate texcoords2 so we will upload them separately
-    mesh.texcoords2 = (float *)RL_MALLOC(mesh.vertexCount*2*sizeof(float));
+    mesh.texcoords2 = static_cast<float *>(RL_MALLOC(mesh.vertexCount*2*sizeof(float)));
 
     // X                          // Y
     mesh.texcoords2[0] = 0.0f;    mesh.texcoords2[1] = 0.0f;
@@ -100,25 +100,25 @@ int main()
         BeginBlendMode(BLEND_ADDITIVE);
             DrawTexturePro(
                 light,
-                Rectangle{ 0, 0, (float)light.width, (float)light.height },
+                Rectangle{ 0, 0, static_cast<float>(light.width), static_cast<float>(light.height) },
                 Rectangle{ 0, 0, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
-                Vector2{ (float)MAP_SIZE, (float)MAP_SIZE },
+                Vector2{ static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
                 0.0,
                 RED
             );
             DrawTexturePro(
                 light,
-                Rectangle{ 0, 0, (float)light.width, (float)light.height },
-                Rectangle{ (float)MAP_SIZE*0.8f, (float)MAP_SIZE/2.0f, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
-                Vector2{ (float)MAP_SIZE, (float)MAP_SIZE },
+                Rectangle{ 0, 0, static_cast<float>(light.width), static_cast<float>(light.height) },
+                Rectangle{ static_cast<float>(MAP_SIZE)*0.8f, static_cast<float>(MAP_SIZE)/2.0f, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
+                Vector2{ static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
                 0.0,
                 BLUE
             );
             DrawTexturePro(
                 light,
-                Rectangle{ 0, 0, (float)light.width, (float)light.height },
-                Rectangle{ (float)MAP_SIZE*0.8f, (float)MAP_SIZE*0.8f, (float)MAP_SIZE, (float)MAP_SIZE },
-                Vector2{ (float)MAP_SIZE/2.0f, (float)MAP_SIZE/2.0f },
+                Rectangle{ 0, 0, static_cast<float>(light.width), static_cast<float>(light.height) },
+                Rectangle{ static_cast<float>(MAP_SIZE)*0.8f, static_cast<float>(MAP_SIZE)*0.8f, static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
+                Vector2{ static_cast<float>(MAP_SIZE)/2.0f, static_cast<float>(MAP_SIZE)/2.0f },
                 0.0,
                 GREEN
             );
@@ -151,7 +151,7 @@ int main()
             EndMode3D();
 
             DrawTexturePro(lightmap.texture, Rectangle{ 0, 0, -MAP_SIZE, -MAP_SIZE },
-                Rectangle{ (float)GetRenderWidth() - MAP_SIZE*8 - 10, 10, (float)MAP_SIZE*8, (float)MAP_SIZE*8 },
+                Rectangle{ static_cast<float>(GetRenderWidth()) - MAP_SIZE*8 - 10, 10, static_cast<float>(MAP_SIZE)*8, static_cast<float>(MAP_SIZE)*8 },
                 Vector2{ 0.0, 0.0 }, 0.0, WHITE);
 
             DrawText(TextFormat("LIGHTMAP: %ix%i pixels", MAP_SIZE, MAP_SIZE), GetRenderWidth() - 130, 20 + MAP_SIZE*8, 10, GREEN);

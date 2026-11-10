@@ -105,24 +105,24 @@ int main()
 
             if (GetMeshHitUV(ray, model, modelBBox, &hitUV))
             {
-                int px = (int)(hitUV.x * CANVAS_SIZE);
-                int py = (int)(hitUV.y * CANVAS_SIZE);
+                int px = static_cast<int>(hitUV.x * CANVAS_SIZE);
+                int py = static_cast<int>(hitUV.y * CANVAS_SIZE);
 
                 if (currentTool == TOOL_PAINT)
                 {
                     // Stroke from the last hit to this one, guarding against jumps across a UV seam
                     if (hasLastHit && (fabsf(hitUV.x - lastHitUV.x) < 0.25f) && (fabsf(hitUV.y - lastHitUV.y) < 0.25f))
                     {
-                        int lastPx = (int)(lastHitUV.x * CANVAS_SIZE);
-                        int lastPy = (int)(lastHitUV.y * CANVAS_SIZE);
-                        float dist = glm::distance(Vector2{ (float)lastPx, (float)lastPy }, Vector2{ (float)px, (float)py });
-                        int steps = (int)(dist / 2.0f) + 1;
+                        int lastPx = static_cast<int>(lastHitUV.x * CANVAS_SIZE);
+                        int lastPy = static_cast<int>(lastHitUV.y * CANVAS_SIZE);
+                        float dist = glm::distance(Vector2{ static_cast<float>(lastPx), static_cast<float>(lastPy) }, Vector2{ static_cast<float>(px), static_cast<float>(py) });
+                        int steps = static_cast<int>(dist / 2.0f) + 1;
 
                         for (int i = 0; i <= steps; i++)
                         {
-                            float t = (float)i / (float)steps;
-                            ImageDrawCircle(&canvasImage, (int)Lerp((float)lastPx, (float)px, t),
-                                (int)Lerp((float)lastPy, (float)py, t), brushRadius, activeColor);
+                            float t = static_cast<float>(i) / static_cast<float>(steps);
+                            ImageDrawCircle(&canvasImage, static_cast<int>(Lerp(static_cast<float>(lastPx), static_cast<float>(px), t)),
+                                static_cast<int>(Lerp(static_cast<float>(lastPy), static_cast<float>(py), t)), brushRadius, activeColor);
                         }
                     }
                     else ImageDrawCircle(&canvasImage, px, py, brushRadius, activeColor);
@@ -283,7 +283,7 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
     {
         int i0, i1, i2;
 
-        if (mesh.indices != NULL)
+        if (mesh.indices != nullptr)
         {
             i0 = mesh.indices[3*tri + 0];
             i1 = mesh.indices[3*tri + 1];
@@ -317,7 +317,7 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
         }
     }
 
-    if (found && (outUV != NULL)) *outUV = hitUV;
+    if (found && (outUV != nullptr)) *outUV = hitUV;
 
     return found;
 }

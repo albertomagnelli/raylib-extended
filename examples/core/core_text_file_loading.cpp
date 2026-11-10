@@ -47,7 +47,7 @@ int main()
 
     // Loading all the text lines
     std::vector<std::string> lines = LoadTextLines(text);
-    int lineCount = (int)lines.size();
+    int lineCount = static_cast<int>(lines.size());
 
     // Stylistic choises
     int fontSize = 20;
@@ -91,13 +91,13 @@ int main()
 
     for (int i = 0; i < lineCount; i++)
     {
-        Vector2 size = MeasureTextEx(GetFontDefault(), lines[i], (float)fontSize, 2);
-        textHeight += (int)size.y + 10;
+        Vector2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
+        textHeight += static_cast<int>(size.y) + 10;
     }
 
     // A simple scrollbar on the side to show how far we have read into the file
     Rectangle scrollBar = {
-        (float)screenWidth - 5, 0, 5,
+        static_cast<float>(screenWidth) - 5, 0, 5,
         screenHeight*100.0f/(textHeight - screenHeight) // Scrollbar height is just a percentage
     };
 
@@ -116,10 +116,10 @@ int main()
 
         // Ensuring that the camera does not scroll past all text
         if (cam.target.y > textHeight - screenHeight + textTop)
-            cam.target.y = (float)textHeight - screenHeight + textTop;
+            cam.target.y = static_cast<float>(textHeight) - screenHeight + textTop;
 
         // Computing the position of the scrollBar depending on the percentage of text covered
-        scrollBar.y = Lerp((float)textTop, (float)screenHeight - scrollBar.height, (float)(cam.target.y - textTop)/(textHeight - screenHeight));
+        scrollBar.y = Lerp(static_cast<float>(textTop), static_cast<float>(screenHeight) - scrollBar.height, static_cast<float>(cam.target.y - textTop)/(textHeight - screenHeight));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -136,16 +136,16 @@ int main()
                     Vector2 size;
                     if(strcmp(lines[i].c_str(), "")){
                         // Fix for empty line in the text file
-                        size = MeasureTextEx( GetFontDefault(), lines[i], (float)fontSize, 2);
+                        size = MeasureTextEx( GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
                     }else{
-                        size = MeasureTextEx( GetFontDefault(), " ", (float)fontSize, 2);
+                        size = MeasureTextEx( GetFontDefault(), " ", static_cast<float>(fontSize), 2);
                     }
 
                     DrawText(lines[i], 10, t, fontSize, RED);
 
                     // Inserting extra space for real newlines,
                     // wrapped lines are rendered closer together
-                    t += (int)size.y + 10;
+                    t += static_cast<int>(size.y) + 10;
                 }
             EndMode2D();
 

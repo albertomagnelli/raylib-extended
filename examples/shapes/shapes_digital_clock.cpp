@@ -183,15 +183,15 @@ static void DrawClockAnalog(Clock clock, Vector2 position)
         }
 
         // Draw hand seconds
-        DrawRectanglePro(Rectangle{ position.x, position.y, (float)clock.second.length, (float)clock.second.thickness },
+        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.second.length), static_cast<float>(clock.second.thickness) },
             Vector2{ 0.0f, clock.second.thickness/2.0f }, clock.second.angle, clock.second.color);
 
         // Draw hand minutes
-        DrawRectanglePro(Rectangle{ position.x, position.y, (float)clock.minute.length, (float)clock.minute.thickness },
+        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.minute.length), static_cast<float>(clock.minute.thickness) },
             Vector2{ 0.0f, clock.minute.thickness/2.0f }, clock.minute.angle, clock.minute.color);
 
         // Draw hand hours
-        DrawRectanglePro(Rectangle{ position.x, position.y, (float)clock.hour.length, (float)clock.hour.thickness },
+        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.hour.length), static_cast<float>(clock.hour.thickness) },
             Vector2{ 0.0f, clock.hour.thickness/2.0f }, clock.hour.angle, clock.hour.color);
 }
 
@@ -203,14 +203,14 @@ static void DrawClockDigital(Clock clock, Vector2 position)
     DrawDisplayValue(Vector2{ position.x, position.y }, clock.hour.value/10, RED, Fade(LIGHTGRAY, 0.3f));
     DrawDisplayValue(Vector2{ position.x + 120, position.y }, clock.hour.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
-    DrawCircle((int)position.x + 240, (int)position.y + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
-    DrawCircle((int)position.x + 240, (int)position.y + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<int>(position.x) + 240, static_cast<int>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<int>(position.x) + 240, static_cast<int>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
     DrawDisplayValue(Vector2{ position.x + 260, position.y }, clock.minute.value/10, RED, Fade(LIGHTGRAY, 0.3f));
     DrawDisplayValue(Vector2{ position.x + 380, position.y }, clock.minute.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
-    DrawCircle((int)position.x + 500, (int)position.y + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
-    DrawCircle((int)position.x + 500, (int)position.y + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<int>(position.x) + 500, static_cast<int>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<int>(position.x) + 500, static_cast<int>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
     DrawDisplayValue(Vector2{ position.x + 520, position.y }, clock.second.value/10, RED, Fade(LIGHTGRAY, 0.3f));
     DrawDisplayValue(Vector2{ position.x + 640, position.y }, clock.second.value%10, RED, Fade(LIGHTGRAY, 0.3f));
@@ -300,7 +300,7 @@ static void DrawDisplaySegment(Vector2 center, int length, int thick, bool verti
             Vector2{ center.x + thick/2.0f, center.y - length/2.0f },   // Point 3
             Vector2{ center.x - thick/2.0f,  center.y + length/2.0f },  // Point 4
             Vector2{ center.x + thick/2.0f,  center.y + length/2.0f },  // Point 5
-            Vector2{ center.x,  center.y + (float)length/2 + thick/2.0f },     // Point 6
+            Vector2{ center.x,  center.y + static_cast<float>(length)/2 + thick/2.0f },     // Point 6
         };
 
         DrawTriangleStrip(segmentPointsV, 6, color);

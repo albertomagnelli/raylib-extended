@@ -164,8 +164,8 @@ void DrawCubeTextureRec(Texture2D texture, Rectangle source, Vector3 position, f
     float x = position.x;
     float y = position.y;
     float z = position.z;
-    float texWidth = (float)texture.width;
-    float texHeight = (float)texture.height;
+    float texWidth = static_cast<float>(texture.width);
+    float texHeight = static_cast<float>(texture.height);
 
     // Set desired texture to be enabled while drawing following vertex data
     rlSetTexture(texture.id);

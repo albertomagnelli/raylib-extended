@@ -156,13 +156,13 @@ int main()
             if (IsFileExtension(droppedFiles.paths[0], ".ttf"))
             {
                 UnloadFont(font);
-                font = LoadFontEx(droppedFiles.paths[0], (int)fontSize, 0, 0);
+                font = LoadFontEx(droppedFiles.paths[0], static_cast<int>(fontSize), nullptr, 0);
             }
             else if (IsFileExtension(droppedFiles.paths[0], ".fnt"))
             {
                 UnloadFont(font);
                 font = LoadFont(droppedFiles.paths[0]);
-                fontSize = (float)font.baseSize;
+                fontSize = static_cast<float>(font.baseSize);
             }
 
 
@@ -459,20 +459,20 @@ static void DrawTextCodepoint3D(Font font, int codepoint, Vector3 position, floa
     // Character index position in sprite font
     // NOTE: In case a codepoint is not available in the font, index returned points to '?'
     int index = GetGlyphIndex(font, codepoint);
-    float scale = fontSize/(float)font.baseSize;
+    float scale = fontSize/static_cast<float>(font.baseSize);
 
     // Character destination rectangle on screen
     // NOTE: We consider charsPadding on drawing
-    position.x += (float)(font.glyphs[index].offsetX - font.glyphPadding)*scale;
-    position.z += (float)(font.glyphs[index].offsetY - font.glyphPadding)*scale;
+    position.x += static_cast<float>(font.glyphs[index].offsetX - font.glyphPadding)*scale;
+    position.z += static_cast<float>(font.glyphs[index].offsetY - font.glyphPadding)*scale;
 
     // Character source rectangle from font texture atlas
     // NOTE: We consider chars padding when drawing, it could be required for outline/glow shader effects
-    Rectangle srcRec = { font.recs[index].x - (float)font.glyphPadding, font.recs[index].y - (float)font.glyphPadding,
+    Rectangle srcRec = { font.recs[index].x - static_cast<float>(font.glyphPadding), font.recs[index].y - static_cast<float>(font.glyphPadding),
                          font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding };
 
-    float width = (float)(font.recs[index].width + 2.0f*font.glyphPadding)*scale;
-    float height = (float)(font.recs[index].height + 2.0f*font.glyphPadding)*scale;
+    float width = (font.recs[index].width + 2.0f*font.glyphPadding)*scale;
+    float height = (font.recs[index].height + 2.0f*font.glyphPadding)*scale;
 
     if (font.texture.id > 0)
     {
@@ -528,7 +528,7 @@ static void DrawText3D(Font font, std::string_view text, Vector3 position, float
     float textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
     float textOffsetX = 0.0f;               // Offset X to next character to draw
 
-    float scale = fontSize/(float)font.baseSize;
+    float scale = fontSize/static_cast<float>(font.baseSize);
 
     for (int i = 0; i < length;)
     {
@@ -553,8 +553,8 @@ static void DrawText3D(Font font, std::string_view text, Vector3 position, float
                 DrawTextCodepoint3D(font, codepoint, Vector3{ position.x + textOffsetX, position.y, position.z + textOffsetY }, fontSize, backface, tint);
             }
 
-            if (font.glyphs[index].advanceX == 0) textOffsetX += (float)font.recs[index].width*scale + fontSpacing;
-            else textOffsetX += (float)font.glyphs[index].advanceX*scale + fontSpacing;
+            if (font.glyphs[index].advanceX == 0) textOffsetX += font.recs[index].width*scale + fontSpacing;
+            else textOffsetX += static_cast<float>(font.glyphs[index].advanceX)*scale + fontSpacing;
         }
 
         i += codepointByteCount;   // Move text bytes counter to next codepoint
@@ -570,7 +570,7 @@ static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, f
     float textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
     float textOffsetX = 0.0f;               // Offset X to next character to draw
 
-    float scale = fontSize/(float)font.baseSize;
+    float scale = fontSize/static_cast<float>(font.baseSize);
 
     bool wave = false;
 
@@ -614,8 +614,8 @@ static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, f
                 DrawTextCodepoint3D(font, codepoint, Vector3{ pos.x + textOffsetX, pos.y, pos.z + textOffsetY }, fontSize, backface, tint);
             }
 
-            if (font.glyphs[index].advanceX == 0) textOffsetX += (float)font.recs[index].width*scale + fontSpacing;
-            else textOffsetX += (float)font.glyphs[index].advanceX*scale + fontSpacing;
+            if (font.glyphs[index].advanceX == 0) textOffsetX += font.recs[index].width*scale + fontSpacing;
+            else textOffsetX += static_cast<float>(font.glyphs[index].advanceX)*scale + fontSpacing;
         }
 
         i += codepointByteCount;   // Move text bytes counter to next codepoint
@@ -631,7 +631,7 @@ static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSiz
 
     float tempTextWidth = 0.0f;     // Used to count longer text line width
 
-    float scale = fontSize/(float)font.baseSize;
+    float scale = fontSize/static_cast<float>(font.baseSize);
     float textHeight = scale;
     float textWidth = 0.0f;
 
@@ -676,7 +676,7 @@ static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSiz
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
     Vector3 vec = {};
-    vec.x = tempTextWidth + (float)((tempLen - 1)*fontSpacing); // Adds chars spacing to measure
+    vec.x = tempTextWidth + ((tempLen - 1)*fontSpacing); // Adds chars spacing to measure
     vec.y = 0.25f;
     vec.z = textHeight;
 
@@ -687,7 +687,7 @@ static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSiz
 static Color GenerateRandomColor(float s, float v)
 {
     const float Phi = 0.618033988749895f; // Golden ratio conjugate
-    float h = (float)GetRandomValue(0, 360);
+    float h = static_cast<float>(GetRandomValue(0, 360));
     h = fmodf((h + h*Phi), 360.0f);
     return ColorFromHSV(h, s, v);
 }

@@ -114,7 +114,7 @@ int main()
             // Draw floating specular highlight on the glass
             float rx = mPos.x/800;
             float ry = mPos.y/800;
-            DrawCircle((int)(mPos.x - 64*rx) - 32, (int)(mPos.y - 64*ry) - 32, 4, ColorAlpha(WHITE, 0.5));
+            DrawCircle(static_cast<int>(mPos.x - 64*rx) - 32, static_cast<int>(mPos.y - 64*ry) - 32, 4, ColorAlpha(WHITE, 0.5));
 
         EndDrawing();
         //----------------------------------------------------------------------------------

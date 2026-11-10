@@ -158,15 +158,15 @@ static Mesh GenMeshPoints(int numPoints)
     Mesh mesh{};
     mesh.vertexCount = numPoints;
     mesh.triangleCount = 1;
-    mesh.vertices = (float *)MemAlloc(numPoints*3*sizeof(float));
-    mesh.colors = (unsigned char *)MemAlloc(numPoints*4*sizeof(unsigned char));
+    mesh.vertices = static_cast<float *>(MemAlloc(numPoints*3*sizeof(float)));
+    mesh.colors = static_cast<unsigned char *>(MemAlloc(numPoints*4*sizeof(unsigned char)));
 
     // REF: https://en.wikipedia.org/wiki/Spherical_coordinate_system
     for (int i = 0; i < numPoints; i++)
     {
-        float theta = ((float)PI*rand())/((float)RAND_MAX);
-        float phi = (2.0f*PI*rand())/((float)RAND_MAX);
-        float r = (10.0f*rand())/((float)RAND_MAX);
+        float theta = (PI*rand())/(static_cast<float>(RAND_MAX));
+        float phi = (2.0f*PI*rand())/(static_cast<float>(RAND_MAX));
+        float r = (10.0f*rand())/(static_cast<float>(RAND_MAX));
 
         mesh.vertices[i*3 + 0] = r*sinf(theta)*cosf(phi);
         mesh.vertices[i*3 + 1] = r*sinf(theta)*sinf(phi);

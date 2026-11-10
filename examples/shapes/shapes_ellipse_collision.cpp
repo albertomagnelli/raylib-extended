@@ -62,11 +62,11 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ellipse collision");
     SetTargetFPS(60);
 
-    Vector2 ellipseACenter = { (float)screenWidth/4, (float)screenHeight/2 };
+    Vector2 ellipseACenter = { static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2 };
     float ellipseARx = 120.0f;
     float ellipseARy = 70.0f;
 
-    Vector2 ellipseBCenter = { (float)screenWidth*3/4, (float)screenHeight/2 };
+    Vector2 ellipseBCenter = { static_cast<float>(screenWidth)*3/4, static_cast<float>(screenHeight)/2 };
     float ellipseBRx = 90.0f;
     float ellipseBRy = 140.0f;
 
@@ -101,13 +101,13 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawEllipse((int)ellipseACenter.x, (int)ellipseACenter.y, ellipseARx, ellipseARy, ellipsesCollide ? RED : BLUE);
+            DrawEllipse(static_cast<int>(ellipseACenter.x), static_cast<int>(ellipseACenter.y), ellipseARx, ellipseARy, ellipsesCollide ? RED : BLUE);
 
-            DrawEllipse((int)ellipseBCenter.x, (int)ellipseBCenter.y, ellipseBRx, ellipseBRy, ellipsesCollide ? RED : GREEN);
+            DrawEllipse(static_cast<int>(ellipseBCenter.x), static_cast<int>(ellipseBCenter.y), ellipseBRx, ellipseBRy, ellipsesCollide ? RED : GREEN);
 
-            DrawEllipseLines((int)ellipseACenter.x, (int)ellipseACenter.y, ellipseARx, ellipseARy, WHITE);
+            DrawEllipseLines(static_cast<int>(ellipseACenter.x), static_cast<int>(ellipseACenter.y), ellipseARx, ellipseARy, WHITE);
 
-            DrawEllipseLines((int)ellipseBCenter.x, (int)ellipseBCenter.y, ellipseBRx, ellipseBRy, WHITE);
+            DrawEllipseLines(static_cast<int>(ellipseBCenter.x), static_cast<int>(ellipseBCenter.y), ellipseBRx, ellipseBRy, WHITE);
 
             DrawCircleV(ellipseACenter, 4, WHITE);
             DrawCircleV(ellipseBCenter, 4, WHITE);

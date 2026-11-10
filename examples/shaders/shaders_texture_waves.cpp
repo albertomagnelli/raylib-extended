@@ -64,7 +64,7 @@ int main()
     float speedX = 8.0f;
     float speedY = 8.0f;
 
-    float screenSize[2] = { (float)GetScreenWidth(), (float)GetScreenHeight() };
+    float screenSize[2] = { static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
     SetShaderValue(shader, GetShaderLocation(shader, "size"), &screenSize, SHADER_UNIFORM_VEC2);
     SetShaderValue(shader, freqXLoc, &freqX, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, freqYLoc, &freqY, SHADER_UNIFORM_FLOAT);

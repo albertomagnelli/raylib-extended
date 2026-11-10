@@ -177,7 +177,7 @@ int main()
 // Update body considering current world state
 void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed, bool crouchHold)
 {
-    Vector2 input = Vector2{ (float)side, (float)-forward };
+    Vector2 input = Vector2{ static_cast<float>(side), static_cast<float>(-forward) };
 
 #if defined(NORMALIZE_INPUT)
     // Slow down diagonal movement

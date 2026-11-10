@@ -38,17 +38,17 @@ int main()
 
     for (int i = 0; i < MAX_BUILDINGS; i++)
     {
-        buildings[i].width = (float)GetRandomValue(50, 200);
-        buildings[i].height = (float)GetRandomValue(100, 800);
+        buildings[i].width = static_cast<float>(GetRandomValue(50, 200));
+        buildings[i].height = static_cast<float>(GetRandomValue(100, 800));
         buildings[i].y = screenHeight - 130.0f - buildings[i].height;
         buildings[i].x = -6000.0f + spacing;
 
-        spacing += (int)buildings[i].width;
+        spacing += static_cast<int>(buildings[i].width);
 
         buildColors[i] = Color{
-            (unsigned char)GetRandomValue(200, 240),
-            (unsigned char)GetRandomValue(200, 240),
-            (unsigned char)GetRandomValue(200, 250),
+            static_cast<unsigned char>(GetRandomValue(200, 240)),
+            static_cast<unsigned char>(GetRandomValue(200, 240)),
+            static_cast<unsigned char>(GetRandomValue(200, 250)),
             255};
     }
 
@@ -83,7 +83,7 @@ int main()
 
         // Camera zoom controls
         // Uses log scaling to provide consistent zoom speed
-        camera.zoom = expf(logf(camera.zoom) + ((float)GetMouseWheelMove()*0.1f));
+        camera.zoom = expf(logf(camera.zoom) + (GetMouseWheelMove()*0.1f));
 
         if (camera.zoom > 3.0f) camera.zoom = 3.0f;
         else if (camera.zoom < 0.1f) camera.zoom = 0.1f;
@@ -110,8 +110,8 @@ int main()
 
                 DrawRectangleRec(player, RED);
 
-                DrawLine((int)camera.target.x, -screenHeight*10, (int)camera.target.x, screenHeight*10, GREEN);
-                DrawLine(-screenWidth*10, (int)camera.target.y, screenWidth*10, (int)camera.target.y, GREEN);
+                DrawLine(static_cast<int>(camera.target.x), -screenHeight*10, static_cast<int>(camera.target.x), screenHeight*10, GREEN);
+                DrawLine(-screenWidth*10, static_cast<int>(camera.target.y), screenWidth*10, static_cast<int>(camera.target.y), GREEN);
 
             EndMode2D();
 

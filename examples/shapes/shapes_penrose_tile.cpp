@@ -79,7 +79,7 @@ int main()
     int generations = 1;
 
     // Initialize new penrose tile
-    PenroseLSystem ls = LoadPenroseLSystem(drawLength*(generations/(float)maxGenerations));
+    PenroseLSystem ls = LoadPenroseLSystem(drawLength*(generations/static_cast<float>(maxGenerations)));
     for (int i = 0; i < generations; i++) BuildProductionStep(&ls);
 
     SetTargetFPS(120);              // Set our game to run at 120 frames-per-second
@@ -111,7 +111,7 @@ int main()
         if (rebuild)
         {
             UnloadPenroseLSystem(ls); // Free previous production for re-creation
-            ls = LoadPenroseLSystem(drawLength*(generations/(float)maxGenerations));
+            ls = LoadPenroseLSystem(drawLength*(generations/static_cast<float>(maxGenerations)));
             for (int i = 0; i < generations; i++) BuildProductionStep(&ls);
         }
         //----------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ static PenroseLSystem LoadPenroseLSystem(float drawLength)
         .theta = 36.0f // Degrees
     };
 
-    ls.production = (char *)RL_MALLOC(sizeof(char)*STR_MAX_SIZE);
+    ls.production = static_cast<char *>(RL_MALLOC(sizeof(char)*STR_MAX_SIZE));
     ls.production[0] = '\0';
     strncpy(ls.production, "[X]++[X]++[X]++[X]++[X]", STR_MAX_SIZE);
 
@@ -190,15 +190,15 @@ static void UnloadPenroseLSystem(PenroseLSystem ls)
 // Build next penrose step
 static void BuildProductionStep(PenroseLSystem *ls)
 {
-    char *newProduction = (char *)RL_MALLOC(sizeof(char)*STR_MAX_SIZE);
+    char *newProduction = static_cast<char *>(RL_MALLOC(sizeof(char)*STR_MAX_SIZE));
     newProduction[0] = '\0';
 
-    int productionLength = (int)strnlen(ls->production, STR_MAX_SIZE);
+    int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
 
     for (int i = 0; i < productionLength; i++)
     {
         char step = ls->production[i];
-        int remainingSpace = STR_MAX_SIZE - (int)strnlen(newProduction, STR_MAX_SIZE) - 1;
+        int remainingSpace = STR_MAX_SIZE - static_cast<int>(strnlen(newProduction, STR_MAX_SIZE)) - 1;
         switch (step)
         {
             case 'W': strncat(newProduction, ls->ruleW, remainingSpace); break;
@@ -209,7 +209,7 @@ static void BuildProductionStep(PenroseLSystem *ls)
             {
                 if (step != 'F')
                 {
-                    int t = (int)strnlen(newProduction, STR_MAX_SIZE);
+                    int t = static_cast<int>(strnlen(newProduction, STR_MAX_SIZE));
                     newProduction[t] = step;
                     newProduction[t + 1] = '\0';
                 }
@@ -234,7 +234,7 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
     };
 
     int repeats = 1;
-    int productionLength = (int)strnlen(ls->production, STR_MAX_SIZE);
+    int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
     ls->steps += 12;
 
     if (ls->steps > productionLength) ls->steps = productionLength;
@@ -272,7 +272,7 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
         }
         else if (step == '[') PushTurtleState(turtle);
         else if (step == ']') turtle = PopTurtleState();
-        else if ((step >= 48) && (step <= 57)) repeats = (int) step - 48;
+        else if ((step >= 48) && (step <= 57)) repeats = static_cast<int>(step) - 48;
     }
 
     turtleTop = -1;

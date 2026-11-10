@@ -114,20 +114,20 @@ bool SaveStorageValue(unsigned int position, int value)
     int dataSize = 0;
     unsigned int newDataSize = 0;
     unsigned char *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
-    unsigned char *newFileData = NULL;
+    unsigned char *newFileData = nullptr;
 
-    if (fileData != NULL)
+    if (fileData != nullptr)
     {
         if (dataSize <= (position*sizeof(int)))
         {
             // Increase data size up to position and store value
             newDataSize = (position + 1)*sizeof(int);
-            newFileData = (unsigned char *)RL_REALLOC(fileData, newDataSize);
+            newFileData = static_cast<unsigned char *>(RL_REALLOC(fileData, newDataSize));
 
-            if (newFileData != NULL)
+            if (newFileData != nullptr)
             {
                 // RL_REALLOC succeded
-                int *dataPtr = (int *)newFileData;
+                int *dataPtr = reinterpret_cast<int *>(newFileData);
                 dataPtr[position] = value;
             }
             else
@@ -147,7 +147,7 @@ bool SaveStorageValue(unsigned int position, int value)
             newDataSize = dataSize;
 
             // Replace value on selected position
-            int *dataPtr = (int *)newFileData;
+            int *dataPtr = reinterpret_cast<int *>(newFileData);
             dataPtr[position] = value;
         }
 
@@ -161,8 +161,8 @@ bool SaveStorageValue(unsigned int position, int value)
         TraceLog(LOG_INFO, "FILEIO: [%s] File created successfully", STORAGE_DATA_FILE);
 
         dataSize = (position + 1)*sizeof(int);
-        fileData = (unsigned char *)RL_MALLOC(dataSize);
-        int *dataPtr = (int *)fileData;
+        fileData = static_cast<unsigned char *>(RL_MALLOC(dataSize));
+        int *dataPtr = reinterpret_cast<int *>(fileData);
         dataPtr[position] = value;
 
         success = SaveFileData(STORAGE_DATA_FILE, fileData, dataSize);
@@ -182,12 +182,12 @@ int LoadStorageValue(unsigned int position)
     int dataSize = 0;
     unsigned char *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
 
-    if (fileData != NULL)
+    if (fileData != nullptr)
     {
-        if (dataSize < ((int)(position*4))) TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to find storage position: %i", STORAGE_DATA_FILE, position);
+        if (dataSize < (static_cast<int>(position*4))) TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to find storage position: %i", STORAGE_DATA_FILE, position);
         else
         {
-            int *dataPtr = (int *)fileData;
+            int *dataPtr = reinterpret_cast<int *>(fileData);
             value = dataPtr[position];
         }
 

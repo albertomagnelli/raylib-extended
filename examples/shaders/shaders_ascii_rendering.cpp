@@ -52,10 +52,10 @@ int main()
     float fontSize = 9.0f;
 
     // Send the updated values to the shader
-    float resolution[2] = { (float)screenWidth, (float)screenHeight };
+    float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    Vector2 circlePos = Vector2{40.0f, (float)screenHeight*0.5f};
+    Vector2 circlePos = Vector2{40.0f, static_cast<float>(screenHeight)*0.5f};
     float circleSpeed = 1.0f;
 
     // RenderTexture to apply the postprocessing later
@@ -95,7 +95,7 @@ int main()
                 // Draw the scene texture (that we rendered earlier) to the screen
                 // The shader will process every pixel of this texture
                 DrawTextureRec(target.texture,
-                    Rectangle{ 0, 0, (float)target.texture.width, (float)-target.texture.height },
+                    Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
                     Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 

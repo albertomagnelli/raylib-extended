@@ -60,7 +60,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - rlgl compute");
 
-    const Vector2 resolution = { (float)screenWidth, (float)screenHeight };
+    const Vector2 resolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     unsigned int brushSize = 8;
 
     // Game of Life logic compute shader
@@ -78,9 +78,9 @@ int main()
     unsigned int golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
 
     // Load shader storage buffer object (SSBO), id returned
-    unsigned int ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), NULL, RL_DYNAMIC_COPY);
-    unsigned int ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), NULL, RL_DYNAMIC_COPY);
-    unsigned int ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), NULL, RL_DYNAMIC_COPY);
+    unsigned int ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), nullptr, RL_DYNAMIC_COPY);
+    unsigned int ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), nullptr, RL_DYNAMIC_COPY);
+    unsigned int ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), nullptr, RL_DYNAMIC_COPY);
 
     GolUpdateSSBO transfertBuffer = {};
 
@@ -98,7 +98,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        brushSize += (int)GetMouseWheelMove();
+        brushSize += static_cast<int>(GetMouseWheelMove());
 
         if ((IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
             && (transfertBuffer.count < MAX_BUFFERED_TRANSFERTS))

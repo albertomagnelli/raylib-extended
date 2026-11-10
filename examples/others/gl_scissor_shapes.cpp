@@ -81,14 +81,14 @@ static void EndScissorModeShape(void)
 typedef struct { Vector2 center; float radius; } CircleMask;
 static void DrawCircleMask(void *userData)
 {
-    CircleMask *m = (CircleMask *)userData;
+    CircleMask *m = static_cast<CircleMask *>(userData);
     DrawCircleV(m->center, m->radius, WHITE);
 }
 
 typedef struct { Vector2 center; float radius; int sides; } PolyMask;
 static void DrawPolyMask(void *userData)
 {
-    PolyMask *m = (PolyMask *)userData;
+    PolyMask *m = static_cast<PolyMask *>(userData);
     DrawPoly(m->center, m->sides, m->radius, 0.0f, WHITE);
 }
 
@@ -116,7 +116,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        circleCenter.y = screenHeight/2.0f + sinf((float)GetTime())*40.0f;
+        circleCenter.y = screenHeight/2.0f + sinf(static_cast<float>(GetTime()))*40.0f;
         //----------------------------------------------------------------------------------
 
         // Draw

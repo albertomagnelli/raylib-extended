@@ -292,7 +292,7 @@ static const int CursorsLUT[] = {
 const char *SDL_GameControllerNameForIndex(int joystickIndex)
 {
     // NOTE: SDL3 uses the IDs itself (SDL_JoystickID) instead of SDL2 joystick_index
-    const char *name = NULL;
+    const char *name = nullptr;
     int numJoysticks = 0;
     SDL_JoystickID *joysticks = SDL_GetJoysticks(&numJoysticks);
 
@@ -341,7 +341,7 @@ void SDL_GetCurrentDisplayMode_Adapter(SDL_DisplayID displayID, SDL_DisplayMode 
 {
     const SDL_DisplayMode *currentMode = SDL_GetCurrentDisplayMode(displayID);
 
-    if (currentMode == NULL) TRACELOG(LOG_WARNING, "SDL: No possible to get current display mode");
+    if (currentMode == nullptr) TRACELOG(LOG_WARNING, "SDL: No possible to get current display mode");
     else *mode = *currentMode;
 }
 
@@ -361,9 +361,9 @@ int SDL_GetDisplayDPI(int displayIndex, float *ddpi, float *hdpi, float *vdpi)
 {
     float dpi = SDL_GetWindowDisplayScale(platform.window)*96.0;
 
-    if (ddpi != NULL) *ddpi = dpi;
-    if (hdpi != NULL) *hdpi = dpi;
-    if (vdpi != NULL) *vdpi = dpi;
+    if (ddpi != nullptr) *ddpi = dpi;
+    if (hdpi != nullptr) *hdpi = dpi;
+    if (vdpi != nullptr) *vdpi = dpi;
 
     return 0;
 }
@@ -436,7 +436,7 @@ void *SDL_GetClipboardData(const char *mime_type, size_t *size)
 
     // TODO: Implement getting clipboard data
 
-    return NULL;
+    return nullptr;
 }
 #endif // USING_VERSION_SDL3
 
@@ -709,7 +709,7 @@ void ClearWindowState(unsigned int flags)
 // Set icon for window
 void SetWindowIcon(Image image)
 {
-    SDL_Surface *iconSurface = NULL;
+    SDL_Surface *iconSurface = nullptr;
 
     unsigned int rmask = 0, gmask = 0, bmask = 0, amask = 0;
     int depth = 0;  // Depth in bits
@@ -936,13 +936,13 @@ void SetWindowFocused(void)
 // NOTE: Handle type depends on OS and windowing system
 void *GetWindowHandle(void)
 {
-    void *handle = NULL;
+    void *handle = nullptr;
 
 #if defined(USING_SDL3_PROJECT)
     // REF: https://github.com/libsdl-org/SDL/blob/main/include/SDL3/SDL_video.h#L1590
     SDL_PropertiesID props = SDL_GetWindowProperties(platform.window);
     #if defined(_WIN32)
-    handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL); // Type: HWND
+    handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr); // Type: HWND
     #elif defined(__linux__)
     unsigned long windowId = (unsigned long)SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0); // Type: unsigned long (XID, Window)
     if (windowId != 0)
@@ -955,10 +955,10 @@ void *GetWindowHandle(void)
     {
         // Wayland, get display surface pointer
         // NOTE: Alternative SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER
-        handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, NULL); // Type: struct wl_surface*
+        handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, nullptr); // Type: struct wl_surface*
     }
     #elif defined(__APPLE__)
-    handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, NULL); // Type: NSWindow*
+    handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr); // Type: NSWindow*
     #endif
 #elif defined(USING_SDL2_PROJECT)
     SDL_SysWMinfo wmInfo = {};
@@ -1079,7 +1079,7 @@ int GetMonitorPhysicalWidth(int monitor)
 #endif
     {
         float ddpi = 0.0f;
-        SDL_GetDisplayDPI(monitor, &ddpi, NULL, NULL);
+        SDL_GetDisplayDPI(monitor, &ddpi, nullptr, nullptr);
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
         // Calculate size on inches, then convert to millimeter
@@ -1102,7 +1102,7 @@ int GetMonitorPhysicalHeight(int monitor)
 #endif
     {
         float ddpi = 0.0f;
-        SDL_GetDisplayDPI(monitor, &ddpi, NULL, NULL);
+        SDL_GetDisplayDPI(monitor, &ddpi, nullptr, nullptr);
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
         // Calculate size on inches, then convert to millimeter
@@ -1243,7 +1243,7 @@ Image GetClipboardImage(void)
     };
 
     size_t dataSize = 0;
-    void  *fileData = NULL;
+    void  *fileData = nullptr;
 
     for (int i = 0; i < SDL_arraysize(imageFormats); i++)
     {
@@ -1344,7 +1344,7 @@ void OpenURL(std::string_view urlView)
     const char *url = urlStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
+    if ((strchr(url, '\'') != nullptr) || (strchr(url, '\"') != nullptr))
     {
         // Filter characters: ' and "
         TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'\"] characters");
@@ -1373,13 +1373,13 @@ int SetGamepadMappings(std::string_view mappingsView)
     char *p = strtok(buffer, "\n");
     bool succeed = true;
 
-    while (p != NULL)
+    while (p != nullptr)
     {
         if (SDL_GameControllerAddMapping(p) == -1)
         {
             succeed = false;
         }
-        p = strtok(NULL, "\n");
+        p = strtok(nullptr, "\n");
     }
 
     RL_FREE(buffer);
@@ -1496,7 +1496,7 @@ void PollInputEvents(void)
 
     if ((CORE.Window.eventWaiting) || (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_MINIMIZED) && !FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_ALWAYS_RUN)))
     {
-        SDL_WaitEvent(NULL);
+        SDL_WaitEvent(nullptr);
         CORE.Time.previous = GetTime();
     }
 
@@ -1516,14 +1516,14 @@ void PollInputEvents(void)
                 // Reallocate array to fit the new file path pointer
                 char **tempPaths = (char **)RL_REALLOC(CORE.Window.dropFilepaths, newCount*sizeof(char *));
 
-                if (tempPaths != NULL)
+                if (tempPaths != nullptr)
                 {
                     CORE.Window.dropFilepaths = tempPaths;
 
                     // Allocate memory for the file path string itself
                     CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = (char *)RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
 
-                    if (CORE.Window.dropFilepaths[CORE.Window.dropFileCount] != NULL)
+                    if (CORE.Window.dropFilepaths[CORE.Window.dropFileCount] != nullptr)
                     {
                         // Copy the path data from SDL to our internal list
                         #if defined(USING_VERSION_SDL3)
@@ -1808,7 +1808,7 @@ void PollInputEvents(void)
                         CORE.Input.Gamepad.axisState[nextAvailableSlot][GAMEPAD_AXIS_RIGHT_TRIGGER] = -1.0f;
                         memset(CORE.Input.Gamepad.name[nextAvailableSlot], 0, MAX_GAMEPAD_NAME_LENGTH);
                         const char *controllerName = SDL_GameControllerNameForIndex(nextAvailableSlot);
-                        if (controllerName != NULL) snprintf(CORE.Input.Gamepad.name[nextAvailableSlot], MAX_GAMEPAD_NAME_LENGTH, "%s", controllerName);
+                        if (controllerName != nullptr) snprintf(CORE.Input.Gamepad.name[nextAvailableSlot], MAX_GAMEPAD_NAME_LENGTH, "%s", controllerName);
                         else memcpy(CORE.Input.Gamepad.name[nextAvailableSlot], "noname", 6);
                     }
                     else TRACELOG(LOG_WARNING, "PLATFORM: Unable to open game controller [ERROR: %s]", SDL_GetError());
@@ -2110,9 +2110,9 @@ int InitPlatform(void)
     // it is needed to be enabled manually to keep GetCharPressed() working
     // REF: https://github.com/libsdl-org/SDL/commit/72fc6f86e5d605a3787222bc7dc18c5379047f4a
     const char *enableOSK = SDL_GetHint(SDL_HINT_ENABLE_SCREEN_KEYBOARD);
-    if (enableOSK == NULL) SDL_SetHint(SDL_HINT_ENABLE_SCREEN_KEYBOARD, "0");
+    if (enableOSK == nullptr) SDL_SetHint(SDL_HINT_ENABLE_SCREEN_KEYBOARD, "0");
     if (!SDL_StartTextInput(platform.window)) TRACELOG(LOG_WARNING, "SDL: Failed to start text input: %s", SDL_GetError());
-    if (enableOSK == NULL) SDL_SetHint(SDL_HINT_ENABLE_SCREEN_KEYBOARD, NULL);
+    if (enableOSK == nullptr) SDL_SetHint(SDL_HINT_ENABLE_SCREEN_KEYBOARD, nullptr);
 #else
     platform.window = SDL_CreateWindow(CORE.Window.title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, CORE.Window.screen.width, CORE.Window.screen.height, flags);
 #endif
@@ -2123,7 +2123,7 @@ int InitPlatform(void)
         platform.glContext = SDL_GL_CreateContext(platform.window);
     }
 
-    if ((platform.window != NULL) && ((rlGetVersion() == RL_OPENGL_SOFTWARE) || (platform.glContext != NULL)))
+    if ((platform.window != nullptr) && ((rlGetVersion() == RL_OPENGL_SOFTWARE) || (platform.glContext != nullptr)))
     {
         CORE.Window.ready = true;
 
@@ -2145,7 +2145,7 @@ int InitPlatform(void)
         TRACELOG(LOG_INFO, "    > Render size:  %i x %i", CORE.Window.render.width, CORE.Window.render.height);
         TRACELOG(LOG_INFO, "    > Viewport offsets: %i, %i", CORE.Window.renderOffset.x, CORE.Window.renderOffset.y);
 
-        if (platform.glContext != NULL)
+        if (platform.glContext != nullptr)
         {
             SDL_GL_SetSwapInterval((FLAG_IS_SET(CORE.Window.flags, FLAG_VSYNC_HINT))? 1: 0);
 
@@ -2244,7 +2244,7 @@ void ClosePlatform(void)
 {
     SDL_FreeCursor(platform.cursor); // Free cursor
 
-    if (platform.glContext != NULL) SDL_GL_DeleteContext(platform.glContext); // Deinitialize OpenGL context
+    if (platform.glContext != nullptr) SDL_GL_DeleteContext(platform.glContext); // Deinitialize OpenGL context
     SDL_DestroyWindow(platform.window);
 
     SDL_Quit(); // Deinitialize SDL internal global state

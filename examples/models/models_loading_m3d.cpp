@@ -88,7 +88,7 @@ int main()
                 else
                 {
                     // Draw the animated skeleton
-                    DrawModelSkeleton(model.skeleton, anims[animIndex].keyframePoses[(int)animCurrentFrame], 1.0f, RED);
+                    DrawModelSkeleton(model.skeleton, anims[animIndex].keyframePoses[static_cast<int>(animCurrentFrame)], 1.0f, RED);
                 }
 
                 DrawGrid(10, 1.0f);

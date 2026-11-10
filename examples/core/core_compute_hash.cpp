@@ -42,9 +42,9 @@ int main()
 
     // Data hash values
     unsigned int hashCRC32 = 0;
-    unsigned int *hashMD5 = NULL;
-    unsigned int *hashSHA1 = NULL;
-    unsigned int *hashSHA256 = NULL;
+    unsigned int *hashMD5 = nullptr;
+    unsigned int *hashSHA1 = nullptr;
+    unsigned int *hashSHA256 = nullptr;
 
     // Base64 encoded data
     std::string base64Text;
@@ -60,15 +60,15 @@ int main()
         //----------------------------------------------------------------------------------
         if (btnComputeHashes)
         {
-            int textInputLen = (int)strlen(textInput);
+            int textInputLen = static_cast<int>(strlen(textInput));
 
             // Encode data to Base64 string (includes NULL terminator), memory must be MemFree()
-            base64Text = EncodeDataBase64((unsigned char *)textInput, textInputLen, &base64TextSize);
+            base64Text = EncodeDataBase64(reinterpret_cast<unsigned char *>(textInput), textInputLen, &base64TextSize);
 
-            hashCRC32 = ComputeCRC32((unsigned char *)textInput, textInputLen);     // Compute CRC32 hash code (4 bytes)
-            hashMD5 = ComputeMD5((unsigned char *)textInput, textInputLen);         // Compute MD5 hash code, returns static int[4] (16 bytes)
-            hashSHA1 = ComputeSHA1((unsigned char *)textInput, textInputLen);       // Compute SHA1 hash code, returns static int[5] (20 bytes)
-            hashSHA256 = ComputeSHA256((unsigned char *)textInput, textInputLen);   // Compute SHA256 hash code, returns static int[8] (32 bytes)
+            hashCRC32 = ComputeCRC32(reinterpret_cast<unsigned char *>(textInput), textInputLen);     // Compute CRC32 hash code (4 bytes)
+            hashMD5 = ComputeMD5(reinterpret_cast<unsigned char *>(textInput), textInputLen);         // Compute MD5 hash code, returns static int[4] (16 bytes)
+            hashSHA1 = ComputeSHA1(reinterpret_cast<unsigned char *>(textInput), textInputLen);       // Compute SHA1 hash code, returns static int[5] (20 bytes)
+            hashSHA256 = ComputeSHA256(reinterpret_cast<unsigned char *>(textInput), textInputLen);   // Compute SHA256 hash code, returns static int[8] (32 bytes)
         }
         //----------------------------------------------------------------------------------
 
@@ -132,7 +132,7 @@ static char *GetDataAsHexText(const unsigned int *data, int dataSize)
     static char text[128] = {};
     memset(text, 0, 128);
 
-    if ((data != NULL) && (dataSize > 0) && (dataSize < ((128/8) - 1)))
+    if ((data != nullptr) && (dataSize > 0) && (dataSize < ((128/8) - 1)))
     {
         for (int i = 0; i < dataSize; i++) snprintf(text + i*8, 128 - i*8, "%08X", data[i]);
     }

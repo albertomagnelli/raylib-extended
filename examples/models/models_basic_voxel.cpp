@@ -92,7 +92,7 @@ int main()
                         if (!voxels[x][y][z]) continue; // Skip empty voxels
 
                         // Build a bounding box for this voxel
-                        Vector3 position = { (float)x, (float)y, (float)z };
+                        Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
                         BoundingBox box = {
                             Vector3{ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
                             Vector3{ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
@@ -103,7 +103,7 @@ int main()
                         if (collision.hit && (collision.distance < closestDistance))
                         {
                             closestDistance = collision.distance;
-                            closestVoxelPosition = Vector3{ (float)x, (float)y, (float)z };
+                            closestVoxelPosition = Vector3{ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
                             voxelFound = true;
                         }
                     }
@@ -113,9 +113,9 @@ int main()
             // Remove the closest voxel if one was hit
             if (voxelFound)
             {
-                voxels[(int)closestVoxelPosition.x]
-                      [(int)closestVoxelPosition.y]
-                      [(int)closestVoxelPosition.z] = false;
+                voxels[static_cast<int>(closestVoxelPosition.x)]
+                      [static_cast<int>(closestVoxelPosition.y)]
+                      [static_cast<int>(closestVoxelPosition.z)] = false;
             }
         }
         //----------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ int main()
                         {
                             if (!voxels[x][y][z]) continue;
 
-                            Vector3 position = { (float)x, (float)y, (float)z };
+                            Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
                             DrawModel(cubeModel, position, 1.0f, BEIGE);
                             DrawCubeWires(position, 1.0f, 1.0f, 1.0f, BLACK);
                         }

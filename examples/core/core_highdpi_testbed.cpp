@@ -75,7 +75,7 @@ int main()
             // Draw UI info
             DrawText(TextFormat("CURRENT MONITOR: %i/%i (%ix%i)", currentMonitor + 1, GetMonitorCount(),
                 GetMonitorWidth(currentMonitor), GetMonitorHeight(currentMonitor)), 50, 50, 20, DARKGRAY);
-            DrawText(TextFormat("WINDOW POSITION: %ix%i", (int)windowPos.x, (int)windowPos.y), 50, 90, 20, DARKGRAY);
+            DrawText(TextFormat("WINDOW POSITION: %ix%i", static_cast<int>(windowPos.x), static_cast<int>(windowPos.y)), 50, 90, 20, DARKGRAY);
             DrawText(TextFormat("SCREEN SIZE: %ix%i", GetScreenWidth(), GetScreenHeight()), 50, 130, 20, DARKGRAY);
             DrawText(TextFormat("RENDER SIZE: %ix%i", GetRenderWidth(), GetRenderHeight()), 50, 170, 20, DARKGRAY);
             DrawText(TextFormat("SCALE FACTOR: %.2fx%.2f", scaleDpi.x, scaleDpi.y), 50, 210, 20, GRAY);
@@ -88,8 +88,8 @@ int main()
             DrawCircleV(GetMousePosition(), 20, MAROON);
             DrawRectangleRec(Rectangle{ mousePos.x - 25, mousePos.y, 50, 2 }, BLACK);
             DrawRectangleRec(Rectangle{ mousePos.x, mousePos.y - 25, 2, 50 }, BLACK);
-            DrawText(TextFormat("[%i,%i]", GetMouseX(), GetMouseY()), (int)mousePos.x - 44,
-                (mousePos.y > GetScreenHeight() - 60)? (int)mousePos.y - 46 : (int)mousePos.y + 30, 20, BLACK);
+            DrawText(TextFormat("[%i,%i]", GetMouseX(), GetMouseY()), static_cast<int>(mousePos.x) - 44,
+                (mousePos.y > GetScreenHeight() - 60)? static_cast<int>(mousePos.y) - 46 : static_cast<int>(mousePos.y) + 30, 20, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

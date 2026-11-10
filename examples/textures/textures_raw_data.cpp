@@ -44,7 +44,7 @@ int main()
     // WARNING: Using raylib provided MemAlloc() that uses default raylib
     // internal memory allocator, so this data can be freed using UnloadImage()
     // that also uses raylib internal memory de-allocator
-    Color *pixels = (Color *)MemAlloc(imWidth*imHeight*sizeof(Color));
+    Color *pixels = static_cast<Color *>(MemAlloc(imWidth*imHeight*sizeof(Color)));
 
     for (int y = 0; y < imHeight; y++)
     {

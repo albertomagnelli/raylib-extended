@@ -111,7 +111,7 @@ int main()
 
         UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
 
-        camera.zoom += ((float)GetMouseWheelMove()*0.05f);
+        camera.zoom += (GetMouseWheelMove()*0.05f);
 
         if (camera.zoom > 3.0f) camera.zoom = 3.0f;
         else if (camera.zoom < 0.25f) camera.zoom = 0.25f;
@@ -227,10 +227,10 @@ void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envI
     Vector2 max = GetWorldToScreen2D(Vector2{ maxX, maxY }, *camera);
     Vector2 min = GetWorldToScreen2D(Vector2{ minX, minY }, *camera);
 
-    if (max.x < width) camera->offset.x = width - (max.x - (float)width/2);
-    if (max.y < height) camera->offset.y = height - (max.y - (float)height/2);
-    if (min.x > 0) camera->offset.x = (float)width/2 - min.x;
-    if (min.y > 0) camera->offset.y = (float)height/2 - min.y;
+    if (max.x < width) camera->offset.x = width - (max.x - static_cast<float>(width)/2);
+    if (max.y < height) camera->offset.y = height - (max.y - static_cast<float>(height)/2);
+    if (min.x > 0) camera->offset.x = static_cast<float>(width)/2 - min.x;
+    if (min.y > 0) camera->offset.y = static_cast<float>(height)/2 - min.y;
 }
 
 void UpdateCameraCenterSmoothFollow(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)

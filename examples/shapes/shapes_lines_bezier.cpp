@@ -29,7 +29,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - lines bezier");
 
     Vector2 startPoint = { 30, 30 };
-    Vector2 endPoint = { (float)screenWidth - 30, (float)screenHeight - 30 };
+    Vector2 endPoint = { static_cast<float>(screenWidth) - 30, static_cast<float>(screenHeight) - 30 };
     bool moveStartPoint = false;
     bool moveEndPoint = false;
 

@@ -137,7 +137,7 @@ int main()
                 DrawModel(modelB, Vector3{ -2.6f, 0, 0 }, 1.0f, WHITE);
                 DrawModel(modelC, Vector3{ 2.6f, 0, 0 }, 1.0f, WHITE);
 
-                for (int i = -20; i < 20; i += 2) DrawModel(modelA,Vector3{ (float)i, 0, 2 }, 1.0f, WHITE);
+                for (int i = -20; i < 20; i += 2) DrawModel(modelA,Vector3{ static_cast<float>(i), 0, 2 }, 1.0f, WHITE);
 
             EndMode3D();
 

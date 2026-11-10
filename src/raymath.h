@@ -563,7 +563,7 @@ inline Matrix MatrixCompose(Vector3 translation, Quaternion rotation, Vector3 sc
 // Decompose a transformation matrix into its rotational, translational and scaling components and remove shear
 inline void MatrixDecompose(Matrix mat, Vector3 *translation, Quaternion *rotation, Vector3 *scale)
 {
-    float eps = (float)1e-9;
+    float eps = static_cast<float>(1e-9);
 
     // Extract Translation
     *translation = Vector3{mat[3][0], mat[3][1], mat[3][2]};

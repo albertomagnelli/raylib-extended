@@ -70,7 +70,7 @@ int main()
 
             // Update GPU texture data with next frame image data
             // WARNING: Data size (frame size) and pixel format must match already created texture
-            UpdateTexture(texScarfyAnim, ((unsigned char *)imScarfyAnim.data) + nextFrameDataOffset);
+            UpdateTexture(texScarfyAnim, (static_cast<unsigned char *>(imScarfyAnim.data)) + nextFrameDataOffset);
 
             frameCounter = 0;
         }

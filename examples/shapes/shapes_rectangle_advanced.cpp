@@ -113,7 +113,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
 
     if (radiusRight <= 0.0f && radiusLeft <= 0.0f) return;
 
-    float stepLength = 90.0f/(float)segments;
+    float stepLength = 90.0f/static_cast<float>(segments);
 
     /*
     Diagram Copied here for reference, original at 'DrawRectangleRounded()' source code
@@ -134,15 +134,15 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
     // Coordinates of the 12 points also apdated from `DrawRectangleRounded`
     const Vector2 point[12] = {
         // PO, P1, P2
-        {(float)rec.x + radiusLeft, rec.y}, {(float)(rec.x + rec.width) - radiusRight, rec.y}, { rec.x + rec.width, (float)rec.y + radiusRight },
+        {rec.x + radiusLeft, rec.y}, {(rec.x + rec.width) - radiusRight, rec.y}, { rec.x + rec.width, rec.y + radiusRight },
         // P3, P4
-        {rec.x + rec.width, (float)(rec.y + rec.height) - radiusRight}, {(float)(rec.x + rec.width) - radiusRight, rec.y + rec.height},
+        {rec.x + rec.width, (rec.y + rec.height) - radiusRight}, {(rec.x + rec.width) - radiusRight, rec.y + rec.height},
         // P5, P6, P7
-        {(float)rec.x + radiusLeft, rec.y + rec.height}, { rec.x, (float)(rec.y + rec.height) - radiusLeft}, {rec.x, (float)rec.y + radiusLeft},
+        {rec.x + radiusLeft, rec.y + rec.height}, { rec.x, (rec.y + rec.height) - radiusLeft}, {rec.x, rec.y + radiusLeft},
         // P8, P9
-        {(float)rec.x + radiusLeft, (float)rec.y + radiusLeft}, {(float)(rec.x + rec.width) - radiusRight, (float)rec.y + radiusRight},
+        {rec.x + radiusLeft, rec.y + radiusLeft}, {(rec.x + rec.width) - radiusRight, rec.y + radiusRight},
         // P10, P11
-        {(float)(rec.x + rec.width) - radiusRight, (float)(rec.y + rec.height) - radiusRight}, {(float)rec.x + radiusLeft, (float)(rec.y + rec.height) - radiusLeft}
+        {(rec.x + rec.width) - radiusRight, (rec.y + rec.height) - radiusRight}, {rec.x + radiusLeft, (rec.y + rec.height) - radiusLeft}
     };
 
     const Vector2 centers[4] = { point[8], point[9], point[10], point[11] };

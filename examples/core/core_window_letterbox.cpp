@@ -43,7 +43,7 @@ int main()
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);  // Texture scale filter to use
 
     Color colors[10] = {};
-    for (int i = 0; i < 10; i++) colors[i] = Color{ (unsigned char)GetRandomValue(100, 250), (unsigned char)GetRandomValue(50, 150), (unsigned char)GetRandomValue(10, 100), 255 };
+    for (int i = 0; i < 10; i++) colors[i] = Color{ static_cast<unsigned char>(GetRandomValue(100, 250)), static_cast<unsigned char>(GetRandomValue(50, 150)), static_cast<unsigned char>(GetRandomValue(10, 100)), 255 };
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ int main()
         if (IsKeyPressed(KEY_SPACE))
         {
             // Recalculate random colors for the bars
-            for (int i = 0; i < 10; i++) colors[i] = Color{ (unsigned char)GetRandomValue(100, 250), (unsigned char)GetRandomValue(50, 150), (unsigned char)GetRandomValue(10, 100), 255 };
+            for (int i = 0; i < 10; i++) colors[i] = Color{ static_cast<unsigned char>(GetRandomValue(100, 250)), static_cast<unsigned char>(GetRandomValue(50, 150)), static_cast<unsigned char>(GetRandomValue(10, 100)), 255 };
         }
 
         // Update virtual mouse (clamped mouse value behind game screen)
@@ -67,7 +67,7 @@ int main()
         Vector2 virtualMouse = {};
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.5f)/scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.5f)/scale;
-        virtualMouse = glm::clamp(virtualMouse, Vector2{ 0, 0 }, Vector2{ (float)gameScreenWidth, (float)gameScreenHeight });
+        virtualMouse = glm::clamp(virtualMouse, Vector2{ 0, 0 }, Vector2{ static_cast<float>(gameScreenWidth), static_cast<float>(gameScreenHeight) });
 
         // Apply the same transformation as the virtual mouse to the real mouse (i.e. to work with raygui)
         //SetMouseOffset(-(GetScreenWidth() - (gameScreenWidth*scale))*0.5f, -(GetScreenHeight() - (gameScreenHeight*scale))*0.5f);
@@ -83,17 +83,17 @@ int main()
             for (int i = 0; i < 10; i++) DrawRectangle(0, (gameScreenHeight/10)*i, gameScreenWidth, gameScreenHeight/10, colors[i]);
 
             DrawText("If executed inside a window,\nyou can resize the window,\nand see the screen scaling!", 10, 25, 20, WHITE);
-            DrawText(TextFormat("Default Mouse: [%i , %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, GREEN);
-            DrawText(TextFormat("Virtual Mouse: [%i , %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+            DrawText(TextFormat("Default Mouse: [%i , %i]", static_cast<int>(mouse.x), static_cast<int>(mouse.y)), 350, 25, 20, GREEN);
+            DrawText(TextFormat("Virtual Mouse: [%i , %i]", static_cast<int>(virtualMouse.x), static_cast<int>(virtualMouse.y)), 350, 55, 20, YELLOW);
         EndTextureMode();
 
         BeginDrawing();
             ClearBackground(BLACK);     // Clear screen background
 
             // Draw render texture to screen, properly scaled
-            DrawTexturePro(target.texture, Rectangle{ 0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height },
-                           Rectangle{ (GetScreenWidth() - ((float)gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float)gameScreenHeight*scale))*0.5f,
-                           (float)gameScreenWidth*scale, (float)gameScreenHeight*scale }, Vector2{ 0, 0 }, 0.0f, WHITE);
+            DrawTexturePro(target.texture, Rectangle{ 0.0f, 0.0f, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
+                           Rectangle{ (GetScreenWidth() - (static_cast<float>(gameScreenWidth)*scale))*0.5f, (GetScreenHeight() - (static_cast<float>(gameScreenHeight)*scale))*0.5f,
+                           static_cast<float>(gameScreenWidth)*scale, static_cast<float>(gameScreenHeight)*scale }, Vector2{ 0, 0 }, 0.0f, WHITE);
         EndDrawing();
         //--------------------------------------------------------------------------------------
     }

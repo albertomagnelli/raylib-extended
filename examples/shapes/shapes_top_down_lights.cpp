@@ -146,7 +146,7 @@ int main()
                 // Merge in all the light masks
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
-                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, Rectangle{ 0, 0, (float)GetScreenWidth(), -(float)GetScreenHeight() }, Vector2{}, WHITE);
+                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, Vector2{}, WHITE);
                 }
 
                 rlDrawRenderBatchActive();
@@ -164,15 +164,15 @@ int main()
             ClearBackground(BLACK);
 
             // Draw the tile background
-            DrawTextureRec(backgroundTexture, Rectangle{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, Vector2{}, WHITE);
+            DrawTextureRec(backgroundTexture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) }, Vector2{}, WHITE);
 
             // Overlay the shadows from all the lights
-            DrawTextureRec(lightMask.texture, Rectangle{ 0, 0, (float)GetScreenWidth(), -(float)GetScreenHeight() }, Vector2{}, ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
+            DrawTextureRec(lightMask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, Vector2{}, ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
 
             // Draw the lights
             for (int i = 0; i < MAX_LIGHTS; i++)
             {
-                if (lights[i].active) DrawCircle((int)lights[i].position.x, (int)lights[i].position.y, 10, (i == 0)? YELLOW : WHITE);
+                if (lights[i].active) DrawCircle(static_cast<int>(lights[i].position.x), static_cast<int>(lights[i].position.y), 10, (i == 0)? YELLOW : WHITE);
             }
 
             if (showLines)
@@ -186,7 +186,7 @@ int main()
                 {
                     if (CheckCollisionRecs(boxes[b],lights[0].bounds)) DrawRectangleRec(boxes[b], PURPLE);
 
-                    DrawRectangleLines((int)boxes[b].x, (int)boxes[b].y, (int)boxes[b].width, (int)boxes[b].height, DARKBLUE);
+                    DrawRectangleLines(static_cast<int>(boxes[b].x), static_cast<int>(boxes[b].y), static_cast<int>(boxes[b].width), static_cast<int>(boxes[b].height), DARKBLUE);
                 }
 
                 DrawText("(F1) Hide Shadow Volumes", 10, 50, 10, GREEN);
@@ -375,7 +375,7 @@ static void SetupBoxes(Rectangle *boxes, int *count)
 
     for (int i = 5; i < MAX_BOXES; i++)
     {
-        boxes[i] = Rectangle{(float)GetRandomValue(0,GetScreenWidth()), (float)GetRandomValue(0,GetScreenHeight()), (float)GetRandomValue(10,100), (float)GetRandomValue(10,100) };
+        boxes[i] = Rectangle{static_cast<float>(GetRandomValue(0,GetScreenWidth())), static_cast<float>(GetRandomValue(0,GetScreenHeight())), static_cast<float>(GetRandomValue(10,100)), static_cast<float>(GetRandomValue(10,100)) };
     }
 
     *count = MAX_BOXES;

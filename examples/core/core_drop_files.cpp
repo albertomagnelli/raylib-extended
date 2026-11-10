@@ -40,7 +40,7 @@ int main()
     // Allocate space for the required file paths
     for (int i = 0; i < MAX_FILEPATH_RECORDED; i++)
     {
-        filePaths[i] = (char *)RL_CALLOC(MAX_FILEPATH_SIZE, 1);
+        filePaths[i] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_SIZE, 1));
     }
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -55,7 +55,7 @@ int main()
         {
             FilePathList droppedFiles = LoadDroppedFiles();
 
-            for (int i = 0, offset = filePathCounter; i < (int)droppedFiles.paths.size(); i++)
+            for (int i = 0, offset = filePathCounter; i < static_cast<int>(droppedFiles.paths.size()); i++)
             {
                 if (filePathCounter < (MAX_FILEPATH_RECORDED - 1))
                 {

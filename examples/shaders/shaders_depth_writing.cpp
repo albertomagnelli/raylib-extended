@@ -93,7 +93,7 @@ int main()
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(target.texture, Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight }, Vector2{ 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{ 0, 0 }, WHITE);
 
             DrawFPS(10, 10);
         EndDrawing();
@@ -126,7 +126,7 @@ static RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
         rlEnableFramebuffer(target.id);
 
         // Create color texture (default to RGBA)
-        target.texture.id = rlLoadTexture(0, width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1);
+        target.texture.id = rlLoadTexture(nullptr, width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1);
         target.texture.width = width;
         target.texture.height = height;
         target.texture.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;

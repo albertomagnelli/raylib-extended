@@ -147,7 +147,7 @@ int main()
         {
             Vector3 lookTarget = ((collision.point) + (collision.normal));
             Matrix splat = glm::lookAt(collision.point, lookTarget, Vector3{ 0.0f, 1.0f, 0.0f });
-            splat = ((glm::rotate(Matrix(1.0f), DEG2RAD*(float)GetRandomValue(-180, 180), Vector3{0.0f, 0.0f, 1.0f})) * (splat));
+            splat = ((glm::rotate(Matrix(1.0f), DEG2RAD*static_cast<float>(GetRandomValue(-180, 180)), Vector3{0.0f, 0.0f, 1.0f})) * (splat));
 
             Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset);
 
@@ -251,7 +251,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 v0, Vector3 v1, Ve
     if (mb->vertexCapacity <= (mb->vertexCount + 3))
     {
         int newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
-        Vector3 *newVertices = (Vector3 *)MemAlloc(newVertexCapacity*sizeof(Vector3));
+        Vector3 *newVertices = static_cast<Vector3 *>(MemAlloc(newVertexCapacity*sizeof(Vector3)));
 
         if (mb->vertexCapacity > 0)
         {
@@ -274,8 +274,8 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 v0, Vector3 v1, Ve
 // Frees a mesh builder's backing buffers
 static void FreeMeshBuilder(MeshBuilder *mb)
 {
-    if (mb->vertices != NULL) MemFree(mb->vertices);
-    if (mb->uvs != NULL) MemFree(mb->uvs);
+    if (mb->vertices != nullptr) MemFree(mb->vertices);
+    if (mb->uvs != nullptr) MemFree(mb->uvs);
     *mb = {};
 }
 
@@ -286,8 +286,8 @@ static Mesh BuildMesh(MeshBuilder *mb)
 
     outMesh.vertexCount = mb->vertexCount;
     outMesh.triangleCount = mb->vertexCount/3;
-    outMesh.vertices = (float *)MemAlloc(outMesh.vertexCount*3*sizeof(float));
-    if (mb->uvs != NULL) outMesh.texcoords = (float *)MemAlloc(outMesh.vertexCount*2*sizeof(float));
+    outMesh.vertices = static_cast<float *>(MemAlloc(outMesh.vertexCount*3*sizeof(float)));
+    if (mb->uvs != nullptr) outMesh.texcoords = static_cast<float *>(MemAlloc(outMesh.vertexCount*2*sizeof(float)));
 
     for (int i = 0; i < mb->vertexCount; i++)
     {
@@ -295,7 +295,7 @@ static Mesh BuildMesh(MeshBuilder *mb)
         outMesh.vertices[3*i + 1] = mb->vertices[i].y;
         outMesh.vertices[3*i + 2] = mb->vertices[i].z;
 
-        if (mb->uvs != NULL)
+        if (mb->uvs != nullptr)
         {
             outMesh.texcoords[2*i + 0] = mb->uvs[i].x;
             outMesh.texcoords[2*i + 1] = mb->uvs[i].y;
@@ -338,7 +338,7 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
         {
             Vector3 vertices[3] = {};
 
-            if (mesh.indices == NULL)
+            if (mesh.indices == nullptr)
             {
                 for (int v = 0; v < 3; v++)
                 {
@@ -481,7 +481,7 @@ static Mesh GenMeshDecal(Model model, Matrix projection, float decalSize, float 
 
     if (finalMesh->vertexCount > 0)
     {
-        finalMesh->uvs = (Vector2 *)MemAlloc(sizeof(Vector2)*finalMesh->vertexCount);
+        finalMesh->uvs = static_cast<Vector2 *>(MemAlloc(sizeof(Vector2)*finalMesh->vertexCount));
 
         for (int i = 0; i < finalMesh->vertexCount; i++)
         {

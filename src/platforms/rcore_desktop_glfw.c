@@ -189,9 +189,9 @@ void ToggleFullscreen(void)
         int monitorCount = 0;
         int monitorIndex = GetCurrentMonitor();
         GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
-        GLFWmonitor *monitor = (monitorIndex < monitorCount)? monitors[monitorIndex] : NULL;
+        GLFWmonitor *monitor = (monitorIndex < monitorCount)? monitors[monitorIndex] : nullptr;
 
-        if (monitor != NULL)
+        if (monitor != nullptr)
         {
             // Get current monitor video mode
             const GLFWvidmode *mode = glfwGetVideoMode(monitors[monitorIndex]);
@@ -237,7 +237,7 @@ void ToggleFullscreen(void)
 #endif
 
         // WARNING: This function launches FramebufferSizeCallback()
-        glfwSetWindowMonitor(platform.handle, NULL, CORE.Window.position.x, CORE.Window.position.y,
+        glfwSetWindowMonitor(platform.handle, nullptr, CORE.Window.position.x, CORE.Window.position.y,
             CORE.Window.screen.width, CORE.Window.screen.height, GLFW_DONT_CARE);
 
 #if defined(_GLFW_X11) || defined(_GLFW_WAYLAND)
@@ -268,7 +268,7 @@ void ToggleBorderlessWindowed(void)
     {
         const GLFWvidmode *mode = glfwGetVideoMode(monitors[monitor]);
 
-        if (mode != NULL)
+        if (mode != nullptr)
         {
             if (!FLAG_IS_SET(CORE.Window.flags, FLAG_BORDERLESS_WINDOWED_MODE))
             {
@@ -289,7 +289,7 @@ void ToggleBorderlessWindowed(void)
                 // Set screen position and size
             #if defined(_WIN32)
                 // NOTE: To prevent the fullscreen window from always staying on top, don't pass a monitor at this point.
-                glfwSetWindowMonitor(platform.handle, NULL, CORE.Window.position.x, CORE.Window.position.y,
+                glfwSetWindowMonitor(platform.handle, nullptr, CORE.Window.position.x, CORE.Window.position.y,
                     CORE.Window.screen.width, CORE.Window.screen.height, mode->refreshRate);
             #else
                 glfwSetWindowMonitor(platform.handle, monitors[monitor], CORE.Window.position.x, CORE.Window.position.y,
@@ -325,7 +325,7 @@ void ToggleBorderlessWindowed(void)
             #endif
 
                 // Return to previous screen size and position
-                glfwSetWindowMonitor(platform.handle, NULL, CORE.Window.position.x, CORE.Window.position.y,
+                glfwSetWindowMonitor(platform.handle, nullptr, CORE.Window.position.x, CORE.Window.position.y,
                     CORE.Window.screen.width, CORE.Window.screen.height, mode->refreshRate);
 
                 // Refocus window
@@ -604,10 +604,10 @@ void ClearWindowState(unsigned int flags)
 // NOTE 2: Image is scaled by the OS for all required sizes
 void SetWindowIcon(Image image)
 {
-    if (image.data == NULL)
+    if (image.data == nullptr)
     {
         // Revert to the default window icon, pass in an empty image array
-        glfwSetWindowIcon(platform.handle, 0, NULL);
+        glfwSetWindowIcon(platform.handle, 0, nullptr);
     }
     else
     {
@@ -633,10 +633,10 @@ void SetWindowIcon(Image image)
 // Standard Windows icon sizes: 256, 128, 96, 64, 48, 32, 24, 16
 void SetWindowIcons(Image *images, int count)
 {
-    if ((images == NULL) || (count <= 0))
+    if ((images == nullptr) || (count <= 0))
     {
         // Revert to the default window icon, pass in an empty image array
-        glfwSetWindowIcon(platform.handle, 0, NULL);
+        glfwSetWindowIcon(platform.handle, 0, nullptr);
     }
     else
     {
@@ -795,7 +795,7 @@ void SetWindowFocused(void)
 // Get native window handle
 void *GetWindowHandle(void)
 {
-    void *handle = NULL;
+    void *handle = nullptr;
 
 #if defined(_WIN32)
     handle = glfwGetWin32Window(platform.handle); // Type: HWND
@@ -845,7 +845,7 @@ int GetCurrentMonitor(void)
     int index = 0;
     int monitorCount = 0;
     GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
-    GLFWmonitor *monitor = NULL;
+    GLFWmonitor *monitor = nullptr;
 
     if (monitorCount >= 1)
     {
@@ -1002,7 +1002,7 @@ int GetMonitorPhysicalWidth(int monitor)
     int monitorCount = 0;
     GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
 
-    if ((monitor >= 0) && (monitor < monitorCount)) glfwGetMonitorPhysicalSize(monitors[monitor], &width, NULL);
+    if ((monitor >= 0) && (monitor < monitorCount)) glfwGetMonitorPhysicalSize(monitors[monitor], &width, nullptr);
     else TRACELOG(LOG_WARNING, "GLFW: Failed to find selected monitor");
 
     return width;
@@ -1015,7 +1015,7 @@ int GetMonitorPhysicalHeight(int monitor)
     int monitorCount = 0;
     GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
 
-    if ((monitor >= 0) && (monitor < monitorCount)) glfwGetMonitorPhysicalSize(monitors[monitor], NULL, &height);
+    if ((monitor >= 0) && (monitor < monitorCount)) glfwGetMonitorPhysicalSize(monitors[monitor], nullptr, &height);
     else TRACELOG(LOG_WARNING, "GLFW: Failed to find selected monitor");
 
     return height;
@@ -1044,7 +1044,7 @@ int GetMonitorRefreshRate(int monitor)
 // Get the human-readable, UTF-8 encoded name of the selected monitor
 std::string GetMonitorName(int monitor)
 {
-    const char *name = NULL;
+    const char *name = nullptr;
     
     int monitorCount = 0;
     GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
@@ -1105,13 +1105,13 @@ Image GetClipboardImage(void)
 #if defined(_WIN32)
 
     unsigned int dataSize = 0;
-    void *bmpData = NULL;
+    void *bmpData = nullptr;
     int width = 0;
     int height = 0;
 
     bmpData = (void *)Win32GetClipboardImageData(&width, &height, &dataSize);
 
-    if (bmpData == NULL) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data.");
+    if (bmpData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data.");
     else
     {
         image = LoadImageFromMemory(".bmp", (const unsigned char *)bmpData, (int)dataSize);
@@ -1149,12 +1149,12 @@ Image GetClipboardImage(void)
     int actualFormat = 0;
     unsigned long nitems = 0;
     unsigned long bytesAfter = 0;
-    unsigned char *data = NULL;
+    unsigned char *data = nullptr;
 
     XGetWindowProperty(display, window, property, 0, ~0L, False, AnyPropertyType,
                        &actualType, &actualFormat, &nitems, &bytesAfter, &data);
 
-    if (data != NULL)
+    if (data != nullptr)
     {
         image = LoadImageFromMemory(".png", data, (int)nitems);
         XFree(data);
@@ -1242,7 +1242,7 @@ void OpenURL(std::string_view urlView)
     const char *url = urlStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
+    if ((strchr(url, '\'') != nullptr) || (strchr(url, '\"') != nullptr))
     {
         // Filter characters: ' and "
         TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'\"] characters");
@@ -1305,7 +1305,7 @@ void SetMousePosition(int x, int y)
 void SetMouseCursor(int cursor)
 {
     CORE.Input.Mouse.cursor = cursor;
-    if (cursor == MOUSE_CURSOR_DEFAULT) glfwSetCursor(platform.handle, NULL);
+    if (cursor == MOUSE_CURSOR_DEFAULT) glfwSetCursor(platform.handle, nullptr);
     else
     {
         // NOTE: Mapping internal GLFW enum values to MouseCursor enum values
@@ -1397,7 +1397,7 @@ void PollInputEvents(void)
 
             const unsigned char *buttons = state.buttons;
 
-            for (int k = 0; (buttons != NULL) && (k < MAX_GAMEPAD_BUTTONS); k++)
+            for (int k = 0; (buttons != nullptr) && (k < MAX_GAMEPAD_BUTTONS); k++)
             {
                 int button = -1; // GamepadButton enum values assigned
 
@@ -1439,7 +1439,7 @@ void PollInputEvents(void)
             // Get current state of axes
             const float *axes = state.axes;
 
-            for (int k = 0; (axes != NULL) && (k < GLFW_GAMEPAD_AXIS_LAST + 1); k++)
+            for (int k = 0; (axes != nullptr) && (k < GLFW_GAMEPAD_AXIS_LAST + 1); k++)
             {
                 CORE.Input.Gamepad.axisState[i][k] = axes[k];
             }
@@ -1509,7 +1509,7 @@ int InitPlatform(void)
         .allocate = AllocateWrapper,
         .reallocate = ReallocateWrapper,
         .deallocate = DeallocateWrapper,
-        .user = NULL, // RL_*ALLOC macros are not capable of handling user-provided data
+        .user = nullptr, // RL_*ALLOC macros are not capable of handling user-provided data
     };
 
     glfwInitAllocator(&allocator);
@@ -1669,7 +1669,7 @@ int InitPlatform(void)
     // Forcing this initialization here avoids doing it on PollInputEvents() called by EndDrawing() after first frame has been drawn
     // The initialization will still happen and possible delays still occur, but before the window is shown, which is a nicer experience
     // REF: https://github.com/raysan5/raylib/issues/1554
-    glfwSetJoystickCallback(NULL);
+    glfwSetJoystickCallback(nullptr);
 
     if ((CORE.Window.screen.width == 0) || (CORE.Window.screen.height == 0)) FLAG_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE);
 
@@ -1711,7 +1711,7 @@ int InitPlatform(void)
             CORE.Window.screen = CORE.Window.display;
         }
 
-        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), monitor, NULL);
+        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), monitor, nullptr);
         if (!platform.handle)
         {
             glfwTerminate();
@@ -1739,7 +1739,7 @@ int InitPlatform(void)
         if ((workWidth > 0) && (CORE.Window.screen.width > (unsigned int)workWidth)) CORE.Window.screen.width = workWidth;
         if ((workHeight > 0) && (CORE.Window.screen.height > (unsigned int)workHeight)) CORE.Window.screen.height = workHeight;
 
-        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), NULL, NULL);
+        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), nullptr, nullptr);
         if (!platform.handle)
         {
             glfwTerminate();
@@ -1791,7 +1791,7 @@ int InitPlatform(void)
     }
 
     glfwMakeContextCurrent(platform.handle);
-    result = glfwGetError(NULL);
+    result = glfwGetError(nullptr);
     if ((result != GLFW_NO_WINDOW_CONTEXT) && (result != GLFW_PLATFORM_ERROR)) CORE.Window.ready = true; // Checking context activation
 
     if (CORE.Window.ready)
@@ -2136,7 +2136,7 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
             RL_FREE(CORE.Window.dropFilepaths);
 
             CORE.Window.dropFileCount = 0;
-            CORE.Window.dropFilepaths = NULL;
+            CORE.Window.dropFilepaths = nullptr;
         }
 
         // WARNING: Paths are freed by GLFW when the callback returns, keeping an internal copy

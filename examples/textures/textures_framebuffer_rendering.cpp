@@ -54,13 +54,13 @@ int main()
 
     // Set up render textures
     RenderTexture2D observerTarget = LoadRenderTexture(splitWidth, screenHeight);
-    Rectangle observerSource = { 0.0f, 0.0f, (float)observerTarget.texture.width, -(float)observerTarget.texture.height };
-    Rectangle observerDest = { 0.0f, 0.0f, (float)splitWidth, (float)screenHeight };
+    Rectangle observerSource = { 0.0f, 0.0f, static_cast<float>(observerTarget.texture.width), -static_cast<float>(observerTarget.texture.height) };
+    Rectangle observerDest = { 0.0f, 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
 
     RenderTexture2D subjectTarget = LoadRenderTexture(splitWidth, screenHeight);
-    Rectangle subjectSource = { 0.0f, 0.0f, (float)subjectTarget.texture.width, -(float)subjectTarget.texture.height };
-    Rectangle subjectDest = { (float)splitWidth, 0.0f, (float)splitWidth, (float)screenHeight };
-    const float textureAspectRatio = (float)subjectTarget.texture.width/(float)subjectTarget.texture.height;
+    Rectangle subjectSource = { 0.0f, 0.0f, static_cast<float>(subjectTarget.texture.width), -static_cast<float>(subjectTarget.texture.height) };
+    Rectangle subjectDest = { static_cast<float>(splitWidth), 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
+    const float textureAspectRatio = static_cast<float>(subjectTarget.texture.width)/static_cast<float>(subjectTarget.texture.height);
 
     // Rectangles for cropping render texture
     const float captureSize = 128.0f;
@@ -115,7 +115,7 @@ int main()
 
             EndMode3D();
 
-            DrawRectangleLines((int)((subjectTarget.texture.width - captureSize)/2.0f), (int)((subjectTarget.texture.height - captureSize)/2.0f), (int)captureSize, (int)captureSize, GREEN);
+            DrawRectangleLines(static_cast<int>((subjectTarget.texture.width - captureSize)/2.0f), static_cast<int>((subjectTarget.texture.height - captureSize)/2.0f), static_cast<int>(captureSize), static_cast<int>(captureSize), GREEN);
             DrawText("Subject View", 10, subjectTarget.texture.height - 30, 20, BLACK);
 
         EndTextureMode();

@@ -117,7 +117,7 @@ int main()
         SetShaderValue(celShader, numBandsLoc, &numBands, SHADER_UNIFORM_FLOAT);
 
         // Spin light opposite to CAMERA_ORBITAL (0.5 rad/s), angled 45 degrees off vertical
-        float t = (float)GetTime();
+        float t = static_cast<float>(GetTime());
         lights[0].position = Vector3{ sinf(-t*0.3f)*5.0f, 5.0f, cosf(-t*0.3f)*5.0f };
 
         for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(celShader, lights[i]);

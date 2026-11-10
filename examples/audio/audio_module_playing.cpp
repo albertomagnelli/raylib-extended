@@ -50,10 +50,10 @@ int main()
     for (int i = MAX_CIRCLES - 1; i >= 0; i--)
     {
         circles[i].alpha = 0.0f;
-        circles[i].radius = (float)GetRandomValue(10, 40);
-        circles[i].position.x = (float)GetRandomValue((int)circles[i].radius, (int)(screenWidth - circles[i].radius));
-        circles[i].position.y = (float)GetRandomValue((int)circles[i].radius, (int)(screenHeight - circles[i].radius));
-        circles[i].speed = (float)GetRandomValue(1, 100)/2000.0f;
+        circles[i].radius = static_cast<float>(GetRandomValue(10, 40));
+        circles[i].position.x = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenWidth - circles[i].radius)));
+        circles[i].position.y = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenHeight - circles[i].radius)));
+        circles[i].speed = static_cast<float>(GetRandomValue(1, 100))/2000.0f;
         circles[i].color = colors[GetRandomValue(0, 13)];
     }
 
@@ -112,11 +112,11 @@ int main()
             if (circles[i].alpha <= 0.0f)
             {
                 circles[i].alpha = 0.0f;
-                circles[i].radius = (float)GetRandomValue(10, 40);
-                circles[i].position.x = (float)GetRandomValue((int)circles[i].radius, (int)(screenWidth - circles[i].radius));
-                circles[i].position.y = (float)GetRandomValue((int)circles[i].radius, (int)(screenHeight - circles[i].radius));
+                circles[i].radius = static_cast<float>(GetRandomValue(10, 40));
+                circles[i].position.x = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenWidth - circles[i].radius)));
+                circles[i].position.y = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenHeight - circles[i].radius)));
                 circles[i].color = colors[GetRandomValue(0, 13)];
-                circles[i].speed = (float)GetRandomValue(1, 100)/2000.0f;
+                circles[i].speed = static_cast<float>(GetRandomValue(1, 100))/2000.0f;
             }
         }
         //----------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ int main()
 
             // Draw time bar
             DrawRectangle(20, screenHeight - 20 - 12, screenWidth - 40, 12, LIGHTGRAY);
-            DrawRectangle(20, screenHeight - 20 - 12, (int)timePlayed, 12, MAROON);
+            DrawRectangle(20, screenHeight - 20 - 12, static_cast<int>(timePlayed), 12, MAROON);
             DrawRectangleLines(20, screenHeight - 20 - 12, screenWidth - 40, 12, GRAY);
 
             // Draw help instructions

@@ -24,7 +24,7 @@
 void CustomTraceLog(int msgType, std::string_view text, va_list args)
 {
     char timeStr[64] = {};
-    time_t now = time(NULL);
+    time_t now = time(nullptr);
     struct tm *tm_info = localtime(&now);
 
     strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", tm_info);

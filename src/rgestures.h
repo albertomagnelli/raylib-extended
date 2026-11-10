@@ -307,7 +307,7 @@ void ProcessGestureEvent(GestureEvent event)
 
             // NOTE: GESTURES.Drag.intensity is dependent on the resolution of the screen
             GESTURES.Drag.distance = rgVector2Distance(GESTURES.Touch.downPositionA, GESTURES.Touch.upPosition);
-            GESTURES.Drag.intensity = GESTURES.Drag.distance/(float)((rgGetCurrentTime() - GESTURES.Swipe.startTime));
+            GESTURES.Drag.intensity = GESTURES.Drag.distance/static_cast<float>((rgGetCurrentTime() - GESTURES.Swipe.startTime));
 
             // Detect GESTURE_SWIPE
             if ((GESTURES.Drag.intensity > FORCE_TO_SWIPE) && (GESTURES.current != GESTURE_DRAG))
@@ -448,7 +448,7 @@ float GetGestureHoldDuration(void)
 
     if (GESTURES.current == GESTURE_HOLD) time = rgGetCurrentTime() - GESTURES.Hold.timeDuration;
 
-    return (float)time;
+    return static_cast<float>(time);
 }
 
 // Get drag vector (between initial touch point to current)
@@ -506,7 +506,7 @@ static float rgVector2Distance(Vector2 v1, Vector2 v2)
     float dx = v2.x - v1.x;
     float dy = v2.y - v1.y;
 
-    result = (float)sqrt(dx*dx + dy*dy);
+    result = sqrt(dx*dx + dy*dy);
 
     return result;
 }

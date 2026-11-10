@@ -53,12 +53,12 @@ int main()
         double time = GetTime();
 
         // Calculate time scale for cube position and size
-        float scale = (2.0f + (float)sin(time))*0.7f;
+        float scale = (2.0f + static_cast<float>(sin(time)))*0.7f;
 
         // Move camera around the scene
         double cameraTime = time*0.3;
-        camera.position.x = (float)cos(cameraTime)*40.0f;
-        camera.position.z = (float)sin(cameraTime)*40.0f;
+        camera.position.x = static_cast<float>(cos(cameraTime))*40.0f;
+        camera.position.z = static_cast<float>(sin(cameraTime))*40.0f;
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -81,19 +81,19 @@ int main()
                             float blockScale = (x + y + z)/30.0f;
 
                             // Scatter makes the waving effect by adding blockScale over time
-                            float scatter = sinf(blockScale*20.0f + (float)(time*4.0f));
+                            float scatter = sinf(blockScale*20.0f + static_cast<float>(time*4.0f));
 
                             // Calculate the cube position
                             Vector3 cubePos = {
-                                (float)(x - (float)numBlocks/2)*(scale*3.0f) + scatter,
-                                (float)(y - (float)numBlocks/2)*(scale*2.0f) + scatter,
-                                (float)(z - (float)numBlocks/2)*(scale*3.0f) + scatter
+                                (x - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter,
+                                (y - static_cast<float>(numBlocks)/2)*(scale*2.0f) + scatter,
+                                (z - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter
                             };
 
                             // Pick a color with a hue depending on cube position for the rainbow color effect
                             // NOTE: This function is quite costly to be done per cube and frame,
                             // pre-catching the results into a separate array could improve performance
-                            Color cubeColor = ColorFromHSV((float)(((x + y + z)*18)%360), 0.75f, 0.9f);
+                            Color cubeColor = ColorFromHSV(static_cast<float>(((x + y + z)*18)%360), 0.75f, 0.9f);
 
                             // Calculate cube size
                             float cubeSize = (2.4f - scale)*blockScale;

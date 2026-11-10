@@ -157,8 +157,8 @@ int main()
             Vector2 offsetVelocity;
             // Find the velocity at which to change the camera. Take the distance of the mouse
             // From the center of the screen as the direction, and adjust magnitude based on the current zoom
-            offsetVelocity.x = (mousePos.x/(float)screenWidth - 0.5f)*offsetSpeedMul/zoom;
-            offsetVelocity.y = (mousePos.y/(float)screenHeight - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.x = (mousePos.x/static_cast<float>(screenWidth) - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.y = (mousePos.y/static_cast<float>(screenHeight) - 0.5f)*offsetSpeedMul/zoom;
 
             // Apply move velocity to camera
             offset[0] += GetFrameTime()*offsetVelocity.x;
@@ -172,7 +172,7 @@ int main()
         {
             // As we zoom in, increase the number of max iterations to get more detail
             // Aproximate formula, but it works-ish
-            maxIterations = (int)(sqrtf(2.0f*sqrtf(fabsf(1.0f - sqrtf(37.5f*zoom))))*maxIterationsMultiplier);
+            maxIterations = static_cast<int>(sqrtf(2.0f*sqrtf(fabsf(1.0f - sqrtf(37.5f*zoom))))*maxIterationsMultiplier);
 
             // Update the shader uniform values!
             SetShaderValue(shader, zoomLoc, &zoom, SHADER_UNIFORM_FLOAT);

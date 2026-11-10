@@ -69,8 +69,8 @@ int main()
         // Cycle the camera modes
         if (IsKeyPressed(KEY_TAB))
         {
-            int nextMode = ((int)camera.GetMode() + 1)%modeCount;
-            camera.SetMode((CameraControllerMode)nextMode);
+            int nextMode = (static_cast<int>(camera.GetMode()) + 1)%modeCount;
+            camera.SetMode(static_cast<CameraControllerMode>(nextMode));
         }
 
         // Camera knockback, the controller damps it out on its own
@@ -152,7 +152,7 @@ static void DrawScene(const CameraController &camera)
 // Draws the controller state, useful to see what the smoothing is doing
 static void DrawHud(const CameraController &camera, const char **modeNames, int modeCount, int requestedSamples)
 {
-    const char *mode = modeNames[(int)camera.GetMode()%modeCount];
+    const char *mode = modeNames[static_cast<int>(camera.GetMode())%modeCount];
 
     Vector3 position = camera.GetPosition();
     Vector3 velocity = camera.GetVelocity();

@@ -54,7 +54,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        time = (float)GetTime();
+        time = static_cast<float>(GetTime());
         SetShaderValue(shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
         //----------------------------------------------------------------------------------
 

@@ -92,7 +92,7 @@ int main()
 
     const Rectangle optionsBackground = { 510, 0, 290, 450 };
 
-    const Vector2 zoomPoint = {((float)screenWidth - optionsBackground.width)/2.0f, (float)screenHeight/2.0f};
+    const Vector2 zoomPoint = {(static_cast<float>(screenWidth) - optionsBackground.width)/2.0f, static_cast<float>(screenHeight)/2.0f};
 
     GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, ColorToInt(WHITE));
 
@@ -127,17 +127,17 @@ int main()
                 camera.target.x -= mouseDelta.x/camera.zoom;
                 camera.target.y -= mouseDelta.y/camera.zoom;
 
-                const int mouseMaxX = (int)optionsBackground.x;
+                const int mouseMaxX = static_cast<int>(optionsBackground.x);
                 const int mouseMaxY = screenHeight;
 
-                int newX = (int)mousePosScreen.x;
-                int newY = (int)mousePosScreen.y;
+                int newX = static_cast<int>(mousePosScreen.x);
+                int newY = static_cast<int>(mousePosScreen.y);
 
                 // In C, the '%' operator computes the remainder, we want the modulus
                 newX = (newX%mouseMaxX + mouseMaxX)%mouseMaxX;
                 newY = (newY%mouseMaxY + mouseMaxY)%mouseMaxY;
 
-                if ((newX != (int)mousePosScreen.x) || (newY != (int)mousePosScreen.y)) SetMousePosition(newX, newY);
+                if ((newX != static_cast<int>(mousePosScreen.x)) || (newY != static_cast<int>(mousePosScreen.y))) SetMousePosition(newX, newY);
             }
         }
 
@@ -169,7 +169,7 @@ int main()
 
         if (IsKeyPressed(KEY_Z))
         {
-            const Vector2 zoomPoint = {((float)screenWidth - optionsBackground.width)/2.0f, (float)screenHeight/2.0f};
+            const Vector2 zoomPoint = {(static_cast<float>(screenWidth) - optionsBackground.width)/2.0f, static_cast<float>(screenHeight)/2.0f};
             const Vector2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
             camera.zoom = 1.0f;
@@ -188,7 +188,7 @@ int main()
             ClearBackground(Color{ 50, 50, 55, 255 });
 
             Color colorOutline = COLOR_OUTLINE;
-            colorOutline.a = (unsigned char)lineOpacity;
+            colorOutline.a = static_cast<unsigned char>(lineOpacity);
 
             BeginMode2D(camera);
 
@@ -208,40 +208,40 @@ int main()
 
             // ----------------------------------------
             // Draw*Lines()
-            float posY = shapeOffset + shapePaddingY*(float)ORDER_LINES;
+            float posY = shapeOffset + shapePaddingY*static_cast<float>(ORDER_LINES);
 
             // Rectangle
-            float posX = shapeOffset + shapePaddingX*(float)ORDER_RECTANGLE;
+            float posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RECTANGLE);
             DrawRectangleRec(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, COLOR_FILLED);
             DrawRectangleLines(posX, posY, SHAPE_SIZE, SHAPE_SIZE, colorOutline);
 
             // Rectangle Rounded
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RECTANGLE_ROUNDED;
-            DrawRectangleRounded(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, (int)rectangleSegments, COLOR_FILLED);
-            DrawRectangleRoundedLines(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, (int)rectangleSegments, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RECTANGLE_ROUNDED);
+            DrawRectangleRounded(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, static_cast<int>(rectangleSegments), COLOR_FILLED);
+            DrawRectangleRoundedLines(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, static_cast<int>(rectangleSegments), colorOutline);
 
             // Circle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_CIRCLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE);
             DrawCircleV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
             DrawCircleLinesV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, colorOutline);
 
             // Ellipse
-            posX = shapeOffset + shapePaddingX*(float)ORDER_ELLIPSE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_ELLIPSE);
             DrawEllipseV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
             DrawEllipseLinesV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, colorOutline);
 
             // Circle Sector
-            posX = shapeOffset + shapePaddingX*(float)ORDER_CIRCLE_SECTOR;
-            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, (int)circleSegments, COLOR_FILLED);
-            DrawCircleSectorLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, (int)circleSegments, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE_SECTOR);
+            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawCircleSectorLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), colorOutline);
 
             // Ring
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RING;
-            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, (int)circleSegments, COLOR_FILLED);
-            DrawRingLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, (int)circleSegments, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RING);
+            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawRingLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), colorOutline);
 
             // Triangle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_TRIANGLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_TRIANGLE);
             DrawTriangle(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
                          Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
                          Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
@@ -252,9 +252,9 @@ int main()
                               colorOutline);
 
             // Polygon
-            posX = shapeOffset + shapePaddingX*(float)ORDER_POLYGON;
-            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, (int)polygonSides, radiusX, 0.0f, COLOR_FILLED);
-            DrawPolyLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, (int)polygonSides, radiusX, 0.0f, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_POLYGON);
+            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
+            DrawPolyLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, colorOutline);
 
             // Group the shapes
             GuiGroupBox(Rectangle{ shapeOffset - BOX_SPACING, posY - BOX_SPACING, BOX_WIDTH, BOX_HEIGHT }, "Draw*Lines()");
@@ -262,40 +262,40 @@ int main()
 
             // ----------------------------------------
             // Draw*LinesEx() with world space pixel thickness
-            posY = shapeOffset + shapePaddingY*(float)ORDER_LINES_EX_WORLD;
+            posY = shapeOffset + shapePaddingY*static_cast<float>(ORDER_LINES_EX_WORLD);
 
             // Rectangle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RECTANGLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RECTANGLE);
             DrawRectangleRec(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, COLOR_FILLED);
             DrawRectangleLinesEx(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, lineThickness, colorOutline);
 
             // Rectangle Rounded
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RECTANGLE_ROUNDED;
-            DrawRectangleRounded(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, (int)rectangleSegments, COLOR_FILLED);
-            DrawRectangleRoundedLinesEx(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, (int)rectangleSegments, lineThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RECTANGLE_ROUNDED);
+            DrawRectangleRounded(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, static_cast<int>(rectangleSegments), COLOR_FILLED);
+            DrawRectangleRoundedLinesEx(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, static_cast<int>(rectangleSegments), lineThickness, colorOutline);
 
             // Circle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_CIRCLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE);
             DrawCircleV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
             DrawCircleLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, lineThickness, colorOutline);
 
             // Ellipse
-            posX = shapeOffset + shapePaddingX*(float)ORDER_ELLIPSE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_ELLIPSE);
             DrawEllipseV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
             DrawEllipseLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, lineThickness, colorOutline);
 
             // Circle Sector
-            posX = shapeOffset + shapePaddingX*(float)ORDER_CIRCLE_SECTOR;
-            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, (int)circleSegments, COLOR_FILLED);
-            DrawCircleSectorLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, (int)circleSegments, lineThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE_SECTOR);
+            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawCircleSectorLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), lineThickness, colorOutline);
 
             // Ring
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RING;
-            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, (int)circleSegments, COLOR_FILLED);
-            DrawRingLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, (int)circleSegments, lineThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RING);
+            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawRingLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), lineThickness, colorOutline);
 
             // Triangle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_TRIANGLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_TRIANGLE);
             DrawTriangle(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
                          Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
                          Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
@@ -306,9 +306,9 @@ int main()
                                 lineThickness, colorOutline);
 
             // Polygon
-            posX = shapeOffset + shapePaddingX*(float)ORDER_POLYGON;
-            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, (int)polygonSides, radiusX, 0.0f, COLOR_FILLED);
-            DrawPolyLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, (int)polygonSides, radiusX, 0.0f, lineThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_POLYGON);
+            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
+            DrawPolyLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, lineThickness, colorOutline);
 
             // Group the shapes
             GuiGroupBox(Rectangle{ shapeOffset - BOX_SPACING, posY - BOX_SPACING, BOX_WIDTH, BOX_HEIGHT }, "Draw*LinesEx() with *world space* pixel thickness");
@@ -316,42 +316,42 @@ int main()
 
             // ----------------------------------------
             // Draw*LinesEx() with screen space pixel thickness
-            posY = shapeOffset + shapePaddingY*(float)ORDER_LINES_EX_SCREEN;
+            posY = shapeOffset + shapePaddingY*static_cast<float>(ORDER_LINES_EX_SCREEN);
 
             float constantThickness = lineThickness/camera.zoom;
 
             // Rectangle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RECTANGLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RECTANGLE);
             DrawRectangleRec(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, COLOR_FILLED);
             DrawRectangleLinesEx(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, constantThickness, colorOutline);
 
             // Rectangle Rounded
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RECTANGLE_ROUNDED;
-            DrawRectangleRounded(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, (int)rectangleSegments, COLOR_FILLED);
-            DrawRectangleRoundedLinesEx(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, (int)rectangleSegments, constantThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RECTANGLE_ROUNDED);
+            DrawRectangleRounded(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, static_cast<int>(rectangleSegments), COLOR_FILLED);
+            DrawRectangleRoundedLinesEx(Rectangle{ posX, posY, SHAPE_SIZE, SHAPE_SIZE }, rectangleRoundness, static_cast<int>(rectangleSegments), constantThickness, colorOutline);
 
             // Circle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_CIRCLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE);
             DrawCircleV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
             DrawCircleLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, constantThickness, colorOutline);
 
             // Ellipse
-            posX = shapeOffset + shapePaddingX*(float)ORDER_ELLIPSE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_ELLIPSE);
             DrawEllipseV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
             DrawEllipseLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, constantThickness, colorOutline);
 
             // Circle Sector
-            posX = shapeOffset + shapePaddingX*(float)ORDER_CIRCLE_SECTOR;
-            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, (int)circleSegments, COLOR_FILLED);
-            DrawCircleSectorLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, (int)circleSegments, constantThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE_SECTOR);
+            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawCircleSectorLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), constantThickness, colorOutline);
 
             // Ring
-            posX = shapeOffset + shapePaddingX*(float)ORDER_RING;
-            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, (int)circleSegments, COLOR_FILLED);
-            DrawRingLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, (int)circleSegments, constantThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RING);
+            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawRingLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), constantThickness, colorOutline);
 
             // Triangle
-            posX = shapeOffset + shapePaddingX*(float)ORDER_TRIANGLE;
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_TRIANGLE);
             DrawTriangle(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
                          Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
                          Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
@@ -362,9 +362,9 @@ int main()
                                 constantThickness, colorOutline);
 
             // Polygon
-            posX = shapeOffset + shapePaddingX*(float)ORDER_POLYGON;
-            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, (int)polygonSides, radiusX, 0.0f, COLOR_FILLED);
-            DrawPolyLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, (int)polygonSides, radiusX, 0.0f, constantThickness, colorOutline);
+            posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_POLYGON);
+            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
+            DrawPolyLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, constantThickness, colorOutline);
 
             // Group the shapes
             GuiGroupBox(Rectangle{ shapeOffset - BOX_SPACING, posY - BOX_SPACING, BOX_WIDTH, BOX_HEIGHT }, "Draw*LinesEx() with *screen space* pixel thickness");
@@ -377,23 +377,23 @@ int main()
             DrawRectangleRec(Rectangle{ optionsBackground.x, 360, optionsBackground.width, 90 }, Fade(BLACK, 0.4f));
             DrawLineEx(Vector2{ optionsBackground.x, 360 }, Vector2{ optionsBackground.x + optionsBackground.width, 360 }, 1.0f, BLACK);
 
-            DrawText("Move with the mouse or WASD keys", (int)optionsBackground.x + 10, 370, 10, ORANGE);
-            DrawText("Zoom with the mouse or UP and DOWN keys", (int)optionsBackground.x + 10, 390, 10, ORANGE);
-            DrawText("Press C to reset position", (int)optionsBackground.x + 10, 410, 10, ORANGE);
-            DrawText("Press Z to reset zoom", (int)optionsBackground.x + 10, 430, 10, ORANGE);
+            DrawText("Move with the mouse or WASD keys", static_cast<int>(optionsBackground.x) + 10, 370, 10, ORANGE);
+            DrawText("Zoom with the mouse or UP and DOWN keys", static_cast<int>(optionsBackground.x) + 10, 390, 10, ORANGE);
+            DrawText("Press C to reset position", static_cast<int>(optionsBackground.x) + 10, 410, 10, ORANGE);
+            DrawText("Press Z to reset zoom", static_cast<int>(optionsBackground.x) + 10, 430, 10, ORANGE);
 
             DrawLineEx(Vector2{ optionsBackground.x, optionsBackground.y }, Vector2{ optionsBackground.x, optionsBackground.y + optionsBackground.height }, 1.0f, BLACK);
 
-            GuiSliderBar(Rectangle{ 605,  10, 150, 25 }, "Line Opacity"    , TextFormat("%d"  , (int)lineOpacity).c_str()      , &lineOpacity         ,  0     , 255);
+            GuiSliderBar(Rectangle{ 605,  10, 150, 25 }, "Line Opacity"    , TextFormat("%d"  , static_cast<int>(lineOpacity)).c_str()      , &lineOpacity         ,  0     , 255);
             GuiSliderBar(Rectangle{ 605,  45, 150, 25 }, "Thickness"       , TextFormat("%.2f", lineThickness).c_str()         , &lineThickness       , -20.0f , 40.0f);
             GuiSliderBar(Rectangle{ 605,  80, 150, 25 }, "Rect Roundness"  , TextFormat("%.2f", rectangleRoundness).c_str()    , &rectangleRoundness  , -1.0f  , 2.0f);
-            GuiSliderBar(Rectangle{ 605, 115, 150, 25 }, "Rect Segments"   , TextFormat("%d"  , (int)rectangleSegments).c_str(), &rectangleSegments   , -1     , 100);
+            GuiSliderBar(Rectangle{ 605, 115, 150, 25 }, "Rect Segments"   , TextFormat("%d"  , static_cast<int>(rectangleSegments)).c_str(), &rectangleSegments   , -1     , 100);
             GuiSliderBar(Rectangle{ 605, 150, 150, 25 }, "Ellipse Radius Y", TextFormat("%.2f", ellipseRadiusY).c_str()        , &ellipseRadiusY      , 0.0f   , 1.25f);
             GuiSliderBar(Rectangle{ 605, 185, 150, 25 }, "Start Angle"     , TextFormat("%.2f", circleStartAngle).c_str()      , &circleStartAngle    , -360.0f, 360.0f);
             GuiSliderBar(Rectangle{ 605, 220, 150, 25 }, "End Angle"       , TextFormat("%.2f", circleEndAngle).c_str()        , &circleEndAngle      , -360.0f, 360.0f);
-            GuiSliderBar(Rectangle{ 605, 255, 150, 25 }, "Circle Segments" , TextFormat("%d"  , (int)circleSegments).c_str()   , &circleSegments      , -1     , 100);
+            GuiSliderBar(Rectangle{ 605, 255, 150, 25 }, "Circle Segments" , TextFormat("%d"  , static_cast<int>(circleSegments)).c_str()   , &circleSegments      , -1     , 100);
             GuiSliderBar(Rectangle{ 605, 290, 150, 25 }, "Ring Radius"     , TextFormat("%.2f", ringInnerRadiusScale).c_str()  , &ringInnerRadiusScale, -1.0f  , 2.0f);
-            GuiSliderBar(Rectangle{ 605, 325, 150, 25 }, "Poly Sides"      , TextFormat("%d"  , (int)polygonSides).c_str()     , &polygonSides        , -1     , 100);
+            GuiSliderBar(Rectangle{ 605, 325, 150, 25 }, "Poly Sides"      , TextFormat("%d"  , static_cast<int>(polygonSides)).c_str()     , &polygonSides        , -1     , 100);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

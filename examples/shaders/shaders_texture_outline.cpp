@@ -44,7 +44,7 @@ int main()
 
     float outlineSize = 2.0f;
     float outlineColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };     // Normalized RED color
-    float textureSize[2] = { (float)texture.width, (float)texture.height };
+    float textureSize[2] = { static_cast<float>(texture.width), static_cast<float>(texture.height) };
 
     // Get shader locations
     int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
@@ -84,7 +84,7 @@ int main()
 
             DrawText("Shader-based\ntexture\noutline", 10, 10, 20, GRAY);
             DrawText("Scroll mouse wheel to\nchange outline size", 10, 72, 20, GRAY);
-            DrawText(TextFormat("Outline size: %i px", (int)outlineSize), 10, 120, 20, MAROON);
+            DrawText(TextFormat("Outline size: %i px", static_cast<int>(outlineSize)), 10, 120, 20, MAROON);
 
             DrawFPS(710, 10);
 

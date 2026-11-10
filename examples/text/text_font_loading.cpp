@@ -47,7 +47,7 @@ int main()
 
     // TTF font : Font data and atlas are generated directly from TTF
     // NOTE: We define a font base size of 32 pixels tall and up-to 250 characters
-    Font fontTtf = LoadFontEx("resources/pixantiqua.ttf", 32, 0, 250);
+    Font fontTtf = LoadFontEx("resources/pixantiqua.ttf", 32, nullptr, 250);
 
     SetTextLineSpacing(16);         // Set line spacing for multiline text (when line breaks are included '\n')
 
@@ -75,12 +75,12 @@ int main()
 
             if (!useTtf)
             {
-                DrawTextEx(fontBm, msg, Vector2{ 20.0f, 100.0f }, (float)fontBm.baseSize, 2, MAROON);
+                DrawTextEx(fontBm, msg, Vector2{ 20.0f, 100.0f }, static_cast<float>(fontBm.baseSize), 2, MAROON);
                 DrawText("Using BMFont (Angelcode) imported", 20, GetScreenHeight() - 30, 20, GRAY);
             }
             else
             {
-                DrawTextEx(fontTtf, msg, Vector2{ 20.0f, 100.0f }, (float)fontTtf.baseSize, 2, LIME);
+                DrawTextEx(fontTtf, msg, Vector2{ 20.0f, 100.0f }, static_cast<float>(fontTtf.baseSize), 2, LIME);
                 DrawText("Using TTF font generated", 20, GetScreenHeight() - 30, 20, GRAY);
             }
 

@@ -34,7 +34,7 @@ int main()
     Texture2D scarfy = LoadTexture("resources/scarfy.png");        // Texture loading
 
     Vector2 position = { 350.0f, 280.0f };
-    Rectangle frameRec = { 0.0f, 0.0f, (float)scarfy.width/6, (float)scarfy.height };
+    Rectangle frameRec = { 0.0f, 0.0f, static_cast<float>(scarfy.width)/6, static_cast<float>(scarfy.height) };
     int currentFrame = 0;
 
     int framesCounter = 0;
@@ -57,7 +57,7 @@ int main()
 
             if (currentFrame > 5) currentFrame = 0;
 
-            frameRec.x = (float)currentFrame*(float)scarfy.width/6;
+            frameRec.x = static_cast<float>(currentFrame)*static_cast<float>(scarfy.width)/6;
         }
 
         // Control frames speed
@@ -76,7 +76,7 @@ int main()
 
             DrawTexture(scarfy, 15, 40, WHITE);
             DrawRectangleLines(15, 40, scarfy.width, scarfy.height, LIME);
-            DrawRectangleLines(15 + (int)frameRec.x, 40 + (int)frameRec.y, (int)frameRec.width, (int)frameRec.height, RED);
+            DrawRectangleLines(15 + static_cast<int>(frameRec.x), 40 + static_cast<int>(frameRec.y), static_cast<int>(frameRec.width), static_cast<int>(frameRec.height), RED);
 
             DrawText("FRAME SPEED: ", 165, 210, 10, DARKGRAY);
             DrawText(TextFormat("%02i FPS", framesSpeed), 575, 210, 10, DARKGRAY);

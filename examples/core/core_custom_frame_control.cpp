@@ -92,10 +92,10 @@ int main()
 
             for (int i = 0; i < GetScreenWidth()/200; i++) DrawRectangle(200*i, 0, 1, GetScreenHeight(), SKYBLUE);
 
-            DrawCircle((int)position, GetScreenHeight()/2 - 25, 50, RED);
+            DrawCircle(static_cast<int>(position), GetScreenHeight()/2 - 25, 50, RED);
 
-            DrawText(TextFormat("%03.0f ms", timeCounter*1000.0f), (int)position - 40, GetScreenHeight()/2 - 100, 20, MAROON);
-            DrawText(TextFormat("PosX: %03.0f", position), (int)position - 50, GetScreenHeight()/2 + 40, 20, BLACK);
+            DrawText(TextFormat("%03.0f ms", timeCounter*1000.0f), static_cast<int>(position) - 40, GetScreenHeight()/2 - 100, 20, MAROON);
+            DrawText(TextFormat("PosX: %03.0f", position), static_cast<int>(position) - 50, GetScreenHeight()/2 + 40, 20, BLACK);
 
             DrawText("Circle is moving at a constant 200 pixels/sec,\nindependently of the frame rate.", 10, 10, 20, DARKGRAY);
             DrawText("PRESS SPACE to PAUSE MOVEMENT", 10, GetScreenHeight() - 60, 20, GRAY);
@@ -103,7 +103,7 @@ int main()
             DrawText(TextFormat("TARGET FPS: %i", targetFPS), GetScreenWidth() - 220, 10, 20, LIME);
             if (deltaTime != 0)
             {
-                DrawText(TextFormat("CURRENT FPS: %i", (int)(1.0f/deltaTime)), GetScreenWidth() - 220, 40, 20, GREEN);
+                DrawText(TextFormat("CURRENT FPS: %i", static_cast<int>(1.0f/deltaTime)), GetScreenWidth() - 220, 40, 20, GREEN);
             }
 
         EndDrawing();
@@ -118,15 +118,15 @@ int main()
 
         if (targetFPS > 0)          // We want a fixed frame rate
         {
-            waitTime = (1.0f/(float)targetFPS) - updateDrawTime;
+            waitTime = (1.0f/static_cast<float>(targetFPS)) - updateDrawTime;
             if (waitTime > 0.0)
             {
-                WaitTime((float)waitTime);
+                WaitTime(static_cast<float>(waitTime));
                 currentTime = GetTime();
-                deltaTime = (float)(currentTime - previousTime);
+                deltaTime = static_cast<float>(currentTime - previousTime);
             }
         }
-        else deltaTime = (float)updateDrawTime;    // Framerate could be variable
+        else deltaTime = static_cast<float>(updateDrawTime);    // Framerate could be variable
 
         previousTime = currentTime;
         //----------------------------------------------------------------------------------

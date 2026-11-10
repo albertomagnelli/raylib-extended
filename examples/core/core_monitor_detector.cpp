@@ -75,10 +75,10 @@ int main()
                 GetMonitorRefreshRate(i)
             };
 
-            if (monitors[i].position.x < monitorOffsetX) monitorOffsetX = -(int)monitors[i].position.x;
+            if (monitors[i].position.x < monitorOffsetX) monitorOffsetX = -static_cast<int>(monitors[i].position.x);
 
-            const int width = (int)monitors[i].position.x + monitors[i].width;
-            const int height = (int)monitors[i].position.y + monitors[i].height;
+            const int width = static_cast<int>(monitors[i].position.x) + monitors[i].width;
+            const int height = static_cast<int>(monitors[i].position.y) + monitors[i].height;
 
             if (maxWidth < width) maxWidth = width;
             if (maxHeight < height) maxHeight = height;
@@ -97,8 +97,8 @@ int main()
 
         float monitorScale = 0.6f;
 
-        if (maxHeight > (maxWidth + monitorOffsetX)) monitorScale *= ((float)screenHeight/(float)maxHeight);
-        else monitorScale *= ((float)screenWidth/(float)(maxWidth + monitorOffsetX));
+        if (maxHeight > (maxWidth + monitorOffsetX)) monitorScale *= (static_cast<float>(screenHeight)/static_cast<float>(maxHeight));
+        else monitorScale *= (static_cast<float>(screenWidth)/static_cast<float>(maxWidth + monitorOffsetX));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -123,7 +123,7 @@ int main()
                 };
 
                 // Draw monitor name and information inside the rectangle
-                DrawText(TextFormat("[%i] %s", i, monitors[i].name.c_str()), (int)rec.x + 10, (int)rec.y + (int)(100*monitorScale), (int)(120*monitorScale), BLUE);
+                DrawText(TextFormat("[%i] %s", i, monitors[i].name.c_str()), static_cast<int>(rec.x) + 10, static_cast<int>(rec.y) + static_cast<int>(100*monitorScale), static_cast<int>(120*monitorScale), BLUE);
                 DrawText(
                     TextFormat("Resolution: [%ipx x %ipx]\nRefreshRate: [%ihz]\nPhysical Size: [%imm x %imm]\nPosition: %3.0f x %3.0f",
                         monitors[i].width,
@@ -133,7 +133,7 @@ int main()
                         monitors[i].physicalHeight,
                         monitors[i].position.x,
                         monitors[i].position.y
-                    ), (int)rec.x + 10, (int)rec.y + (int)(200*monitorScale), (int)(120*monitorScale), DARKGRAY);
+                    ), static_cast<int>(rec.x) + 10, static_cast<int>(rec.y) + static_cast<int>(200*monitorScale), static_cast<int>(120*monitorScale), DARKGRAY);
 
                 // Highlight current monitor
                 if (i == currentMonitorIndex)

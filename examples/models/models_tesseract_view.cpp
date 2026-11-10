@@ -65,7 +65,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        rotation = DEG2RAD*45.0f*(float)GetTime();
+        rotation = DEG2RAD*45.0f*static_cast<float>(GetTime());
 
         for (int i = 0; i < 16; i++)
         {
@@ -107,7 +107,7 @@ int main()
                         // This way we dont have to keep an edge list
                         Vector4 v1 = tesseract[i];
                         Vector4 v2 = tesseract[j];
-                        int diff = (int)(v1.x == v2.x) + (int)(v1.y == v2.y) + (int)(v1.z == v2.z) + (int)(v1.w == v2.w);
+                        int diff = static_cast<int>(v1.x == v2.x) + static_cast<int>(v1.y == v2.y) + static_cast<int>(v1.z == v2.z) + static_cast<int>(v1.w == v2.w);
 
                         // Draw only differing by 1 coordinate and the lower index only (duplicate lines)
                         if (diff == 3 && i < j) DrawLine3D(transformed[i], transformed[j], MAROON);

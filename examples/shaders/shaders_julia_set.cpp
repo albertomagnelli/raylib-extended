@@ -135,8 +135,8 @@ int main()
             Vector2 offsetVelocity;
             // Find the velocity at which to change the camera. Take the distance of the mouse
             // from the center of the screen as the direction, and adjust magnitude based on the current zoom
-            offsetVelocity.x = (mousePos.x/(float)screenWidth - 0.5f)*offsetSpeedMul/zoom;
-            offsetVelocity.y = (mousePos.y/(float)screenHeight - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.x = (mousePos.x/static_cast<float>(screenWidth) - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.y = (mousePos.y/static_cast<float>(screenHeight) - 0.5f)*offsetSpeedMul/zoom;
 
             // Apply move velocity to camera
             offset[0] += GetFrameTime()*offsetVelocity.x;
@@ -148,7 +148,7 @@ int main()
         }
 
         // Increment c value with time
-        const float dc = GetFrameTime()*(float)incrementSpeed*0.0005f;
+        const float dc = GetFrameTime()*static_cast<float>(incrementSpeed)*0.0005f;
         c[0] += dc;
         c[1] += dc;
         SetShaderValue(shader, cLoc, c, SHADER_UNIFORM_VEC2);

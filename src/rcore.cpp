@@ -409,15 +409,15 @@ RLAPI const char *raylib_version = RAYLIB_VERSION;  // raylib version exported s
 CoreData CORE = {};                              // Global CORE state context
 
 // Convert a C string that may be NULL into a std::string
-static std::string GetStringOrEmpty(const char *str) { return (str != NULL)? std::string(str) : std::string(); }
+static std::string GetStringOrEmpty(const char *str) { return (str != nullptr)? std::string(str) : std::string(); }
 
 static int logTypeLevel = LOG_INFO;                 // Minimum log type level
 
-static TraceLogCallback traceLog = NULL;            // TraceLog callback function pointer
-static LoadFileDataCallback loadFileData = NULL;    // LoadFileData callback function pointer
-static SaveFileDataCallback saveFileData = NULL;    // SaveFileText callback function pointer
-static LoadFileTextCallback loadFileText = NULL;    // LoadFileText callback function pointer
-static SaveFileTextCallback saveFileText = NULL;    // SaveFileText callback function pointer
+static TraceLogCallback traceLog = nullptr;            // TraceLog callback function pointer
+static LoadFileDataCallback loadFileData = nullptr;    // LoadFileData callback function pointer
+static SaveFileDataCallback saveFileData = nullptr;    // SaveFileText callback function pointer
+static LoadFileTextCallback loadFileText = nullptr;    // LoadFileText callback function pointer
+static SaveFileTextCallback saveFileText = nullptr;    // SaveFileText callback function pointer
 
 #if SUPPORT_SCREEN_CAPTURE
 static int screenshotCounter = 0;                   // Screenshots counter
@@ -485,7 +485,7 @@ static const char *autoEventTypeName[MAX_AUTOMATION_EVENT_TYPES] = {
     "ACTION_SETTARGETFPS"
 };
 
-static AutomationEventList *currentEventList = NULL;        // Current automation events list, set by user, keep internal pointer
+static AutomationEventList *currentEventList = nullptr;        // Current automation events list, set by user, keep internal pointer
 static bool automationEventRecording = false;               // Recording automation events flag
 //static short automationEventEnabled = 0b0000001111111111; // Automation events enabled for recording/playing
 #endif
@@ -728,7 +728,7 @@ void InitWindow(int width, int height, std::string_view titleView)
 
     CORE.Window.eventWaiting = false;
     CORE.Window.screenScale = Matrix(1.0f); // No draw scaling required by default
-    if ((title != NULL) && (title[0] != 0)) CORE.Window.title = title;
+    if ((title != nullptr) && (title[0] != 0)) CORE.Window.title = title;
 
     // Initialize global input state
     CORE.Input.Keyboard.exitKey = KEY_ESCAPE;
@@ -805,7 +805,7 @@ void InitWindow(int width, int height, std::string_view titleView)
 
     // Initialize random seed using available timer source instead of standard time() on embedded platforms
 #ifndef PICO_RP2350
-    SetRandomSeed((unsigned int)time(NULL));
+    SetRandomSeed(static_cast<unsigned int>(time(nullptr)));
 #else
     SetRandomSeed(get_rand_32());
 #endif
@@ -1042,7 +1042,7 @@ void BeginMode3D(Camera camera)
     rlPushMatrix();                 // Save previous matrix, which contains the settings for the 2d ortho projection
     rlLoadIdentity();               // Reset current matrix (projection)
 
-    float aspect = (float)CORE.Window.currentFbo.width/(float)CORE.Window.currentFbo.height;
+    float aspect = static_cast<float>(CORE.Window.currentFbo.width)/static_cast<float>(CORE.Window.currentFbo.height);
 
     // NOTE: zNear and zFar values are important when computing depth buffer values
     if (camera.projection == CAMERA_PERSPECTIVE)
@@ -1105,7 +1105,7 @@ void BeginTextureMode(RenderTexture2D target)
 
     // Set orthographic projection to current framebuffer size
     // NOTE: Configured top-left corner as (0, 0)
-    rlOrtho(0.0f, (float)target.texture.width, (float)target.texture.height, 0.0f, 0.0f, 1.0f);
+    rlOrtho(0.0f, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height), 0.0f, 0.0f, 1.0f);
 
     rlMatrixMode(RL_MODELVIEW);     // Switch back to modelview matrix
     rlLoadIdentity();               // Reset current matrix (modelview)
@@ -1183,7 +1183,7 @@ void BeginScissorMode(int x, int y, int width, int height)
     if (!CORE.Window.usingFbo && FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
         Vector2 scale = GetWindowScaleDPI();
-        rlScissor((int)(x*scale.x), (int)(CORE.Window.currentFbo.height - (y + height)*scale.y), (int)(width*scale.x), (int)(height*scale.y));
+        rlScissor(static_cast<int>(x*scale.x), static_cast<int>(CORE.Window.currentFbo.height - (y + height)*scale.y), static_cast<int>(width*scale.x), static_cast<int>(height*scale.y));
     }
 #endif
     else
@@ -1227,7 +1227,7 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
     if (rlGetVersion() != RL_OPENGL_11)
     {
         // Compute aspect ratio
-        float aspect = ((float)device.hResolution*0.5f)/(float)device.vResolution;
+        float aspect = (static_cast<float>(device.hResolution)*0.5f)/static_cast<float>(device.vResolution);
 
         // Compute lens parameters
         float lensShift = (device.hScreenSize*0.25f - device.lensSeparationDistance*0.5f)/device.hScreenSize;
@@ -1343,7 +1343,7 @@ Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCode
     {
         // Shader could not be loaded but still loading the location points to avoid potential crashes
         // NOTE: All locations set to -1 (no location found)
-        shader.locs = (int *)RL_CALLOC(RL_MAX_SHADER_LOCATIONS, sizeof(int));
+        shader.locs = static_cast<int *>(RL_CALLOC(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
         for (int i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
     }
     else if (shader.id == rlGetShaderIdDefault()) shader.locs = rlGetShaderLocsDefault();
@@ -1364,7 +1364,7 @@ Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCode
 
         // Load shader locations array
         // NOTE: All locations set to -1 (no location)
-        shader.locs = (int *)RL_CALLOC(RL_MAX_SHADER_LOCATIONS, sizeof(int));
+        shader.locs = static_cast<int *>(RL_CALLOC(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
         for (int i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
 
         // Get handles to GLSL input attribute locations
@@ -1400,7 +1400,7 @@ Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCode
 bool IsShaderValid(Shader shader)
 {
     return ((shader.id > 0) &&          // Validate shader id (GPU loaded successfully)
-            (shader.locs != NULL));     // Validate memory has been allocated for default shader locations
+            (shader.locs != nullptr));     // Validate memory has been allocated for default shader locations
 
     // The following locations are tried to be set automatically (locs[i] >= 0),
     // any of them can be checked for validation but the only mandatory one is, afaik, SHADER_LOC_VERTEX_POSITION
@@ -1516,8 +1516,8 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
 
     // Calculate normalized device coordinates
     // NOTE: y value is negative
-    float x = (2.0f*position.x)/(float)width - 1.0f;
-    float y = 1.0f - (2.0f*position.y)/(float)height;
+    float x = (2.0f*position.x)/static_cast<float>(width) - 1.0f;
+    float y = 1.0f - (2.0f*position.y)/static_cast<float>(height);
     float z = 1.0f;
 
     // Store values in a vector
@@ -1531,11 +1531,11 @@ Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Calculate projection matrix from perspective
-        matProj = glm::perspective(camera.fovy*DEG2RAD, (float)width/(float)height, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(width)/static_cast<float>(height), rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
-        float aspect = (float)width/(float)height;
+        float aspect = static_cast<float>(width)/static_cast<float>(height);
         float top = camera.fovy/2.0f;
         float right = top*aspect;
 
@@ -1618,11 +1618,11 @@ Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int heigh
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Calculate projection matrix from perspective
-        matProj = glm::perspective(camera.fovy*DEG2RAD, (float)width/(float)height, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(width)/static_cast<float>(height), rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
-        float aspect = (float)width/(float)height;
+        float aspect = static_cast<float>(width)/static_cast<float>(height);
         float top = camera.fovy/2.0f;
         float right = top*aspect;
 
@@ -1646,7 +1646,7 @@ Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int heigh
     Vector3 ndcPos = { worldPos.x/worldPos.w, -worldPos.y/worldPos.w, worldPos.z/worldPos.w };
 
     // Calculate 2d screen position vector
-    Vector2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*(float)width, (ndcPos.y + 1.0f)/2.0f*(float)height };
+    Vector2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*static_cast<float>(width), (ndcPos.y + 1.0f)/2.0f*static_cast<float>(height) };
 
     return screenPosition;
 }
@@ -1680,7 +1680,7 @@ Vector2 GetScreenToWorld2D(Vector2 position, Camera2D camera)
 void SetTargetFPS(int fps)
 {
     if (fps < 1) CORE.Time.target = 0.0;
-    else CORE.Time.target = 1.0/(double)fps;
+    else CORE.Time.target = 1.0/static_cast<double>(fps);
 
     TRACELOG(LOG_INFO, "TIMER: Target time per frame: %02.03f milliseconds", (float)CORE.Time.target*1000.0f);
 }
@@ -1717,7 +1717,7 @@ int GetFPS(void)
     {
         if ((GetTime() - last) > FPS_STEP)
         {
-            last = (float)GetTime();
+            last = static_cast<float>(GetTime());
             index = (index + 1)%FPS_CAPTURE_FRAMES_COUNT;
             average -= history[index];
             history[index] = fpsFrame/FPS_CAPTURE_FRAMES_COUNT;
@@ -1726,7 +1726,7 @@ int GetFPS(void)
             if (captureFramesCounted < FPS_CAPTURE_FRAMES_COUNT) captureFramesCounted += 1;
         }
 
-        if (captureFramesCounted > 0) fps = (int)roundf(captureFramesCounted/(average*FPS_CAPTURE_FRAMES_COUNT));
+        if (captureFramesCounted > 0) fps = static_cast<int>(roundf(captureFramesCounted/(average*FPS_CAPTURE_FRAMES_COUNT)));
     }
     else fps = 0;
 #endif
@@ -1737,7 +1737,7 @@ int GetFPS(void)
 // Get time in seconds for last frame drawn (delta time)
 float GetFrameTime(void)
 {
-    return (float)CORE.Time.frame;
+    return static_cast<float>(CORE.Time.frame);
 }
 
 //----------------------------------------------------------------------------------
@@ -1869,7 +1869,7 @@ int GetRandomValue(int min, int max)
 // Load random values sequence, no values repeated, min and max included
 int *LoadRandomSequence(unsigned int count, int min, int max)
 {
-    int *values = NULL;
+    int *values = nullptr;
 
 #if SUPPORT_RPRAND_GENERATOR
     values = rprand_load_sequence(count, min, max);
@@ -1924,14 +1924,14 @@ void TakeScreenshot(std::string_view fileNameView)
 
 #if SUPPORT_MODULE_RTEXTURES
     // Security check to (partially) avoid malicious code
-    if (strchr(fileName, '\'') != NULL) { TRACELOG(LOG_WARNING, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
+    if (strchr(fileName, '\'') != nullptr) { TRACELOG(LOG_WARNING, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
 
     // Apply content scaling if required
     Vector2 scale = { 1.0f, 1.0f };
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)) scale = GetWindowScaleDPI();
 
-    unsigned char *imgData = rlReadScreenPixels((int)((float)CORE.Window.render.width*scale.x), (int)((float)CORE.Window.render.height*scale.y));
-    Image image = { imgData, (int)((float)CORE.Window.render.width*scale.x), (int)((float)CORE.Window.render.height*scale.y), 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    unsigned char *imgData = rlReadScreenPixels(static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y));
+    Image image = { imgData, static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y), 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
     char path[MAX_FILEPATH_LENGTH] = { 0 };
     if (!IsPathAbsolute(fileName)) snprintf(path, MAX_FILEPATH_LENGTH, "%s", TextFormat("%s/%s", CORE.Storage.basePath.c_str(), fileName).c_str());
@@ -1979,7 +1979,7 @@ void TraceLog(int logType, std::string_view textView, ...)
     va_list args;
     va_start(args, textView);
 
-    if (traceLog != NULL)
+    if (traceLog != nullptr)
     {
         traceLog(logType, text, args);
         va_end(args);
@@ -2011,7 +2011,7 @@ void TraceLog(int logType, std::string_view textView, ...)
         default: break;
     }
 
-    unsigned int textLength = (unsigned int)strlen(text);
+    unsigned int textLength = static_cast<unsigned int>(strlen(text));
     memcpy(buffer + strlen(buffer), text, (textLength < (MAX_TRACELOG_MSG_LENGTH - 12))? textLength : (MAX_TRACELOG_MSG_LENGTH - 12));
     strcat(buffer, "\n");
     vprintf(buffer, args);
@@ -2063,16 +2063,16 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    unsigned char *data = NULL;
+    unsigned char *data = nullptr;
     *dataSize = 0;
 
-    if (fileName != NULL)
+    if (fileName != nullptr)
     {
-        if (loadFileData != NULL) return loadFileData(fileName, dataSize);
+        if (loadFileData != nullptr) return loadFileData(fileName, dataSize);
 
         FILE *file = fopen(fileName, "rb");
 
-        if (file != NULL)
+        if (file != nullptr)
         {
             // WARNING: On binary streams SEEK_END could not be found,
             // using fseek() and ftell() could not work in some (rare) cases
@@ -2082,9 +2082,9 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
 
             if (size > 0)
             {
-                data = (unsigned char *)RL_CALLOC(size, sizeof(unsigned char));
+                data = static_cast<unsigned char *>(RL_CALLOC(size, sizeof(unsigned char)));
 
-                if (data != NULL)
+                if (data != nullptr)
                 {
                     // NOTE: fread() returns number of read elements instead of bytes, so reading [1 byte, size elements]
                     size_t count = fread(data, sizeof(unsigned char), size, file);
@@ -2096,11 +2096,11 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                         TRACELOG(LOG_WARNING, "FILEIO: [%s] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName);
 
                         RL_FREE(data);
-                        data = NULL;
+                        data = nullptr;
                     }
                     else
                     {
-                        *dataSize = (int)count;
+                        *dataSize = static_cast<int>(count);
 
                         if ((*dataSize) != size) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially loaded (%i bytes out of %i)", fileName, *dataSize, size);
                         else TRACELOG(LOG_INFO, "FILEIO: [%s] File loaded successfully", fileName);
@@ -2133,17 +2133,17 @@ bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
 
     bool result = false;
 
-    if (fileName != NULL)
+    if (fileName != nullptr)
     {
-        if (saveFileData != NULL) return saveFileData(fileName, data, dataSize);
+        if (saveFileData != nullptr) return saveFileData(fileName, data, dataSize);
 
         FILE *file = fopen(fileName, "wb");
 
-        if (file != NULL)
+        if (file != nullptr)
         {
             // WARNING: fwrite() returns a size_t value, usually 'unsigned int' (32bit compilation) and 'unsigned long long' (64bit compilation)
             // and expects a size_t input value but as dataSize is limited to INT_MAX (2147483647 bytes), there shouldn't be a problem
-            int count = (int)fwrite(data, sizeof(unsigned char), dataSize, file);
+            int count = static_cast<int>(fwrite(data, sizeof(unsigned char), dataSize, file));
 
             if (count == 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write file", fileName);
             else if (count != dataSize) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially written", fileName);
@@ -2173,7 +2173,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
 
     // NOTE: Text data buffer size is estimated considering raw data size in bytes
     // and requiring 6 char bytes for every byte: "0x00, "
-    char *txtData = (char *)RL_CALLOC(dataSize*6 + 2000, sizeof(char));
+    char *txtData = static_cast<char *>(RL_CALLOC(dataSize*6 + 2000, sizeof(char)));
 
     int byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
@@ -2221,35 +2221,35 @@ std::string LoadFileText(std::string_view fileNameView)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    char *text = NULL;
+    char *text = nullptr;
     size_t textLength = 0;
 
-    if (fileName != NULL)
+    if (fileName != nullptr)
     {
-        if (loadFileText != NULL) return loadFileText(fileName);
+        if (loadFileText != nullptr) return loadFileText(fileName);
 
         FILE *file = fopen(fileName, "rt");
 
-        if (file != NULL)
+        if (file != nullptr)
         {
             // WARNING: When reading a file as 'text' file,
             // text mode causes carriage return-linefeed translation...
             // ...but using fseek() should return correct byte-offset
             fseek(file, 0, SEEK_END);
-            unsigned int size = (unsigned int)ftell(file);
+            unsigned int size = static_cast<unsigned int>(ftell(file));
             fseek(file, 0, SEEK_SET);
 
             if (size > 0)
             {
-                text = (char *)RL_CALLOC(size + 1, sizeof(char));
+                text = static_cast<char *>(RL_CALLOC(size + 1, sizeof(char)));
 
-                if (text != NULL)
+                if (text != nullptr)
                 {
-                    unsigned int count = (unsigned int)fread(text, sizeof(char), size, file);
+                    unsigned int count = static_cast<unsigned int>(fread(text, sizeof(char), size, file));
 
                     // WARNING: \r\n is converted to \n on reading, so,
                     // read bytes count gets reduced by the number of lines
-                    if (count < size) text = (char *)RL_REALLOC(text, count + 1);
+                    if (count < size) text = static_cast<char *>(RL_REALLOC(text, count + 1));
 
                     // Zero-terminate the string
                     text[count] = '\0';
@@ -2268,7 +2268,7 @@ std::string LoadFileText(std::string_view fileNameView)
     else TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
 
     std::string fileText;
-    if (text != NULL) fileText.assign(text, textLength);
+    if (text != nullptr) fileText.assign(text, textLength);
     RL_FREE(text);
 
     return fileText;
@@ -2290,13 +2290,13 @@ bool SaveFileText(std::string_view fileNameView, std::string_view textView)
 
     bool result = false;
 
-    if (fileName != NULL)
+    if (fileName != nullptr)
     {
-        if (saveFileText != NULL) return saveFileText(fileName, text);
+        if (saveFileText != nullptr) return saveFileText(fileName, text);
 
         FILE *file = fopen(fileName, "wt");
 
-        if (file != NULL)
+        if (file != nullptr)
         {
             int count = fprintf(file, "%s", text);
 
@@ -2388,7 +2388,7 @@ int FileCopy(std::string_view srcPathView, std::string_view dstPathView)
     int srcDataSize = 0;
     unsigned char *srcFileData = LoadFileData(srcPath, &srcDataSize);
 
-    if ((srcFileData != NULL) && (srcDataSize > 0))
+    if ((srcFileData != nullptr) && (srcDataSize > 0))
     {
         // Get full destination directory path
         std::string dstDirPath = GetDirectoryPath(dstPath);
@@ -2485,7 +2485,7 @@ int FileTextFindIndex(std::string_view fileNameView, std::string_view searchView
         if (!fileText.empty())
         {
             size_t pos = fileText.find(search);
-            if (pos != std::string::npos) result = (int)pos;
+            if (pos != std::string::npos) result = static_cast<int>(pos);
         }
     }
 
@@ -2500,7 +2500,7 @@ bool FileExists(std::string_view fileNameView)
 
     bool result = false;
 
-    if ((fileName != NULL) && (ACCESS(fileName) != -1)) result = true;
+    if ((fileName != nullptr) && (ACCESS(fileName) != -1)) result = true;
 
     // NOTE: Alternatively, stat() can be used instead of access()
     //#include <sys/stat.h>
@@ -2528,7 +2528,7 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
 
     if (!fileExt.empty())
     {
-        int fileExtLength = (int)fileExt.size();
+        int fileExtLength = static_cast<int>(fileExt.size());
         char fileExtLower[16] = { 0 };
         for (int i = 0; (i < fileExtLength) && (i < 15); i++)
         {
@@ -2538,9 +2538,9 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
         }
 
         int extCount = 1;
-        int extLength = (int)strlen(ext);
-        char *extList = (char *)RL_CALLOC(extLength + 1, 1);
-        char *extListPtrs[MAX_FILE_EXTENSIONS] = { 0 };
+        int extLength = static_cast<int>(strlen(ext));
+        char *extList = static_cast<char *>(RL_CALLOC(extLength + 1, 1));
+        char *extListPtrs[MAX_FILE_EXTENSIONS] = { nullptr };
         memcpy(extList, ext, extLength);
         extListPtrs[0] = extList;
 
@@ -2596,7 +2596,7 @@ bool IsFileHidden(std::string_view filePathView)
     if ((attribs != -1) && ((attribs & 0x2UL) != 0)) result = true;
 #else
     const char *basePath = strrchr(filePath, '/');
-    basePath = ((basePath != NULL)? basePath + 1 : filePath);
+    basePath = ((basePath != nullptr)? basePath + 1 : filePath);
 
     if ((basePath[0] == '.') && (strcmp(basePath, ".") != 0) && (strcmp(basePath, "..") != 0)) result = true;
 #endif
@@ -2612,7 +2612,7 @@ bool DirectoryExists(std::string_view dirPathView)
     bool result = false;
     DIR *dir = opendir(dirPath);
 
-    if (dir != NULL)
+    if (dir != nullptr)
     {
         result = true;
         closedir(dir);
@@ -2638,14 +2638,14 @@ int GetFileLength(std::string_view fileNameView)
 
     FILE *file = fopen(fileName, "rb");
 
-    if (file != NULL)
+    if (file != nullptr)
     {
         fseek(file, 0L, SEEK_END);
         long int fileSize = ftell(file);
 
         // Check for size overflow (INT_MAX)
         if (fileSize > 2147483647) TRACELOG(LOG_WARNING, "[%s] File size overflows expected limit, do not use GetFileLength()", fileName);
-        else size = (int)fileSize;
+        else size = static_cast<int>(fileSize);
 
         fclose(file);
     }
@@ -2665,7 +2665,7 @@ long GetFileModTime(std::string_view fileNameView)
     if (stat(fileName, &result) == 0)
     {
         time_t mod = result.st_mtime;
-        modTime = (long)mod;
+        modTime = static_cast<long>(mod);
     }
 
     return modTime;
@@ -2690,9 +2690,9 @@ std::string GetFileExtension(std::string_view fileNameView)
 // String pointer reverse break: returns right-most occurrence of charset in s
 static const char *strprbrk(const char *text, const char *charset)
 {
-    const char *latestMatch = NULL;
+    const char *latestMatch = nullptr;
 
-    for (; (text != NULL) && ((text = strpbrk(text, charset)) != NULL); latestMatch = text++) { }
+    for (; (text != nullptr) && ((text = strpbrk(text, charset)) != nullptr); latestMatch = text++) { }
 
     return latestMatch;
 }
@@ -2703,11 +2703,11 @@ std::string GetFileName(std::string_view filePathView)
     const std::string filePathStr(filePathView);
     const char *filePath = filePathStr.c_str();
 
-    const char *fileName = NULL;
+    const char *fileName = nullptr;
 
-    if (filePath != NULL) fileName = strprbrk(filePath, "\\/");
+    if (filePath != nullptr) fileName = strprbrk(filePath, "\\/");
 
-    if (fileName == NULL) return filePath;
+    if (fileName == nullptr) return filePath;
 
     return fileName + 1;
 }
@@ -2723,11 +2723,11 @@ std::string GetFileNameWithoutExt(std::string_view filePathView)
     static char fileName[MAX_FILENAME_LENGTH] = { 0 };
     memset(fileName, 0, MAX_FILENAME_LENGTH);
 
-    if (filePath != NULL)
+    if (filePath != nullptr)
     {
         std::string baseName = GetFileName(filePath);
         snprintf(fileName, MAX_FILENAME_LENGTH, "%s", baseName.c_str()); // Get filename.ext without path
-        int fileNameLength = (int)strlen(fileName); // Get size in bytes
+        int fileNameLength = static_cast<int>(strlen(fileName)); // Get size in bytes
 
         for (int i = fileNameLength; i > 0; i--) // Reverse search '.'
         {
@@ -2758,7 +2758,7 @@ std::string GetDirectoryPath(std::string_view filePathView)
         char separator = '/';
     #endif
     */
-    const char *lastSlash = NULL;
+    const char *lastSlash = nullptr;
     static char dirPath[MAX_FILEPATH_LENGTH] = { 0 };
     memset(dirPath, 0, MAX_FILEPATH_LENGTH);
 
@@ -2774,7 +2774,7 @@ std::string GetDirectoryPath(std::string_view filePathView)
     }
 
     lastSlash = strprbrk(filePath, "\\/");
-    if (lastSlash != NULL)
+    if (lastSlash != nullptr)
     {
         if (lastSlash == filePath)
         {
@@ -2785,7 +2785,7 @@ std::string GetDirectoryPath(std::string_view filePathView)
         else
         {
             int dirPathOffset = isRelative? 2 : 0;          // Skip "./" added for relative paths
-            int dirPathLength = (int)(lastSlash - filePath);
+            int dirPathLength = static_cast<int>(lastSlash - filePath);
 
             if ((dirPathOffset + dirPathLength) < MAX_FILEPATH_LENGTH)
             {
@@ -2812,7 +2812,7 @@ std::string GetPrevDirectoryPath(std::string_view dirPathView)
     static char prevDirPath[MAX_FILEPATH_LENGTH] = { 0 };
     memset(prevDirPath, 0, MAX_FILEPATH_LENGTH);
 
-    const int lastIndex = (int)strlen(dirPath) - 1;
+    const int lastIndex = static_cast<int>(strlen(dirPath)) - 1;
     bool isFile = IsPathFile(dirPath);
     for (int i = lastIndex; i >= 0; i--)
     {
@@ -2860,10 +2860,10 @@ std::string GetApplicationDirectory(void)
 
     #if defined(UNICODE)
     unsigned short widePath[MAX_PATH];
-    len = GetModuleFileNameW(NULL, (wchar_t *)widePath, MAX_PATH);
-    len = WideCharToMultiByte(0, 0, (wchar_t *)widePath, len, appDir, MAX_PATH, NULL, NULL);
+    len = GetModuleFileNameW(nullptr, (wchar_t *)widePath, MAX_PATH);
+    len = WideCharToMultiByte(0, 0, (wchar_t *)widePath, len, appDir, MAX_PATH, nullptr, nullptr);
     #else
-    len = GetModuleFileNameA(NULL, appDir, MAX_PATH);
+    len = GetModuleFileNameA(nullptr, appDir, MAX_PATH);
     #endif
 
     if (len > 0)
@@ -2932,7 +2932,7 @@ std::string GetApplicationDirectory(void)
     size_t size = sizeof(appDir);
     int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
 
-    if (sysctl(mib, 4, appDir, &size, NULL, 0) == 0)
+    if (sysctl(mib, 4, appDir, &size, nullptr, 0) == 0)
     {
         int appDirLength = (int)strlen(appDir);
         for (int i = appDirLength; i >= 0; i--)
@@ -3005,12 +3005,12 @@ int MakeDirectory(std::string_view dirPathView)
     const std::string dirPathStr(dirPathView);
     const char *dirPath = dirPathStr.c_str();
 
-    if ((dirPath == NULL) || (dirPath[0] == '\0')) return -1; // Path is not valid
+    if ((dirPath == nullptr) || (dirPath[0] == '\0')) return -1; // Path is not valid
     if (DirectoryExists(dirPath)) return 0; // Path already exists (is valid)
 
     // Copy path string to avoid modifying original
-    int dirPathLength = (int)strlen(dirPath) + 1;
-    char *pathcpy = (char *)RL_CALLOC(dirPathLength, 1);
+    int dirPathLength = static_cast<int>(strlen(dirPath)) + 1;
+    char *pathcpy = static_cast<char *>(RL_CALLOC(dirPathLength, 1));
     memcpy(pathcpy, dirPath, dirPathLength);
 
     // Iterate over pathcpy, create each subdirectory as needed
@@ -3093,7 +3093,7 @@ bool IsPathAbsolute(std::string_view pathView)
 
     int result = false;
 
-    if ((path != NULL) && (path[0] != '\0'))
+    if ((path != nullptr) && (path[0] != '\0'))
     {
 #if defined(_WIN32)
         // Check UNC path (\\server\share)
@@ -3118,9 +3118,9 @@ bool IsFileNameValid(std::string_view fileNameView)
 
     bool valid = true;
 
-    if ((fileName != NULL) && (fileName[0] != '\0'))
+    if ((fileName != nullptr) && (fileName[0] != '\0'))
     {
-        int fileNameLength = (int)strlen(fileName);
+        int fileNameLength = static_cast<int>(strlen(fileName));
         bool allPeriods = true;
 
         for (int i = 0; i < fileNameLength; i++)
@@ -3137,7 +3137,7 @@ bool IsFileNameValid(std::string_view fileNameView)
                 (fileName[i] == '*')) { valid = false; break; }
 
             // Check non-glyph characters
-            if ((unsigned char)fileName[i] < 32) { valid = false; break; }
+            if (static_cast<unsigned char>(fileName[i]) < 32) { valid = false; break; }
 
             // Check if filename is not all periods
             if (fileName[i] != '.') allPeriods = false;
@@ -3216,9 +3216,9 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
     struct dirent *entity;
     DIR *dir = opendir(basePath);
 
-    if (dir != NULL) // It's a directory
+    if (dir != nullptr) // It's a directory
     {
-        while ((entity = readdir(dir)) != NULL)
+        while ((entity = readdir(dir)) != nullptr)
         {
             // NOTE: Skipping '.' (current dir) and '..' (parent dir) filepaths
             if ((strcmp(entity->d_name, ".") != 0) && (strcmp(entity->d_name, "..") != 0))
@@ -3236,12 +3236,12 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
                 }
                 else if (IsPathFile(path))
                 {
-                    if ((filter == NULL) || (filter[0] == '\0') || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL) ||
-                        (strstr(filter, FILE_FILTER_TAG_FILE_ONLY) != NULL) || IsFileExtension(path, filter)) fileCounter++;
+                    if ((filter == nullptr) || (filter[0] == '\0') || (strstr(filter, FILE_FILTER_TAG_ALL) != nullptr) ||
+                        (strstr(filter, FILE_FILTER_TAG_FILE_ONLY) != nullptr) || IsFileExtension(path, filter)) fileCounter++;
                 }
                 else
                 {
-                    if (!filterStr.empty() && ((strstr(filter, FILE_FILTER_TAG_ALL) != NULL) || (strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != NULL))) fileCounter++;
+                    if (!filterStr.empty() && ((strstr(filter, FILE_FILTER_TAG_ALL) != nullptr) || (strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != nullptr))) fileCounter++;
                     if (scanSubdirs) fileCounter += GetDirectoryFileCountEx(path, filter, scanSubdirs);
                 }
             }
@@ -3261,13 +3261,13 @@ unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDa
 {
     #define COMPRESSION_QUALITY_DEFLATE  8
 
-    unsigned char *compData = NULL;
+    unsigned char *compData = nullptr;
 
 #if SUPPORT_COMPRESSION_API
     // Compress data and generate a valid DEFLATE stream
-    struct sdefl *sdefl = (struct sdefl *)RL_CALLOC(1, sizeof(struct sdefl));   // WARNING: Possible stack overflow, struct sdefl is almost 1MB
+    struct sdefl *sdefl = static_cast<struct sdefl *>(RL_CALLOC(1, sizeof(struct sdefl)));   // WARNING: Possible stack overflow, struct sdefl is almost 1MB
     int bounds = sdefl_bound(dataSize);
-    compData = (unsigned char *)RL_CALLOC(bounds, 1);
+    compData = static_cast<unsigned char *>(RL_CALLOC(bounds, 1));
 
     *compDataSize = sdeflate(sdefl, compData, data, dataSize, COMPRESSION_QUALITY_DEFLATE);   // Compression level 8, same as stbiw
     RL_FREE(sdefl);
@@ -3281,17 +3281,17 @@ unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDa
 // Decompress data (DEFLATE algorithm)
 unsigned char *DecompressData(const unsigned char *compData, int compDataSize, int *dataSize)
 {
-    unsigned char *data = NULL;
+    unsigned char *data = nullptr;
 
 #if SUPPORT_COMPRESSION_API
     // Decompress data from a valid DEFLATE stream
-    unsigned char *data0 = (unsigned char *)RL_CALLOC(MAX_DECOMPRESSION_SIZE*1024*1024, 1);
+    unsigned char *data0 = static_cast<unsigned char *>(RL_CALLOC(MAX_DECOMPRESSION_SIZE*1024*1024, 1));
     int size = sinflate(data0, MAX_DECOMPRESSION_SIZE*1024*1024, compData, compDataSize);
 
     // WARNING: RL_REALLOC can make (and leave) data copies in memory,
     // that can be a security concern in case of compression of sensitive data
     // So, using a second buffer to copy data manually, wiping original buffer memory
-    data = (unsigned char *)RL_CALLOC(size, 1);
+    data = static_cast<unsigned char *>(RL_CALLOC(size, 1));
     memcpy(data, data0, size);
     memset(data0, 0, MAX_DECOMPRESSION_SIZE*1024*1024); // Wipe memory, is memset() safe?
     RL_FREE(data0);
@@ -3322,7 +3322,7 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
     estimatedOutputSize += 1;
 
     // Load some memory to store encoded string
-    char *encodedData = (char *)RL_CALLOC(estimatedOutputSize, 1);
+    char *encodedData = static_cast<char *>(RL_CALLOC(estimatedOutputSize, 1));
 
     int outputCount = 0;
     for (int i = 0; i < dataSize;)
@@ -3338,10 +3338,10 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
 
         octetPack = (octetA << 16) | (octetB << 8) | octetC;
 
-        encodedData[outputCount + 0] = (unsigned char)(base64EncodeTable[(octetPack >> 18) & 0x3f]);
-        encodedData[outputCount + 1] = (unsigned char)(base64EncodeTable[(octetPack >> 12) & 0x3f]);
-        encodedData[outputCount + 2] = (unsigned char)(base64EncodeTable[(octetPack >> 6) & 0x3f]);
-        encodedData[outputCount + 3] = (unsigned char)(base64EncodeTable[octetPack & 0x3f]);
+        encodedData[outputCount + 0] = static_cast<unsigned char>(base64EncodeTable[(octetPack >> 18) & 0x3f]);
+        encodedData[outputCount + 1] = static_cast<unsigned char>(base64EncodeTable[(octetPack >> 12) & 0x3f]);
+        encodedData[outputCount + 2] = static_cast<unsigned char>(base64EncodeTable[(octetPack >> 6) & 0x3f]);
+        encodedData[outputCount + 3] = static_cast<unsigned char>(base64EncodeTable[octetPack & 0x3f]);
         outputCount += 4;
         i += 3;
     }
@@ -3375,19 +3375,19 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
     // NOTE: Built with a lambda initializer, designated initializers (['A'] = 0) are not valid C++
     static const std::array<unsigned char, 256> base64DecodeTable = []() {
         std::array<unsigned char, 256> table{};
-        for (int c = 'A'; c <= 'Z'; c++) table[c] = (unsigned char)(c - 'A');
-        for (int c = 'a'; c <= 'z'; c++) table[c] = (unsigned char)(c - 'a' + 26);
-        for (int c = '0'; c <= '9'; c++) table[c] = (unsigned char)(c - '0' + 52);
+        for (int c = 'A'; c <= 'Z'; c++) table[c] = static_cast<unsigned char>(c - 'A');
+        for (int c = 'a'; c <= 'z'; c++) table[c] = static_cast<unsigned char>(c - 'a' + 26);
+        for (int c = '0'; c <= '9'; c++) table[c] = static_cast<unsigned char>(c - '0' + 52);
         table['+'] = 62;
         table['/'] = 63;
         return table;
     }();
 
     *outputSize = 0;
-    if (text == NULL) return NULL;
+    if (text == nullptr) return nullptr;
 
     // Compute expected size and padding
-    int dataSize = (int)strlen(text); // WARNING: Expecting NULL terminated strings!
+    int dataSize = static_cast<int>(strlen(text)); // WARNING: Expecting NULL terminated strings!
     int ending = dataSize - 1;
     int padding = 0;
     while ((ending >= 0) && (text[ending] == '=')) { padding++; ending--; }
@@ -3397,7 +3397,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
 
     // Load some memory to store decoded data
     // NOTE: Allocated enough size to include padding
-    unsigned char *decodedData = (unsigned char *)RL_CALLOC(maxOutputSize, 1);
+    unsigned char *decodedData = static_cast<unsigned char *>(RL_CALLOC(maxOutputSize, 1));
 
     int outputCount = 0;
     for (int i = 0; i < dataSize;)
@@ -3409,10 +3409,10 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
             break;
         }
 
-        unsigned int sixtetA = base64DecodeTable[(unsigned char)text[i]];
-        unsigned int sixtetB = base64DecodeTable[(unsigned char)text[i + 1]];
-        unsigned int sixtetC = (((i + 2) < dataSize) && (unsigned char)text[i + 2] != '=')? base64DecodeTable[(unsigned char)text[i + 2]] : 0;
-        unsigned int sixtetD = (((i + 3) < dataSize) && (unsigned char)text[i + 3] != '=')? base64DecodeTable[(unsigned char)text[i + 3]] : 0;
+        unsigned int sixtetA = base64DecodeTable[static_cast<unsigned char>(text[i])];
+        unsigned int sixtetB = base64DecodeTable[static_cast<unsigned char>(text[i + 1])];
+        unsigned int sixtetC = (((i + 2) < dataSize) && static_cast<unsigned char>(text[i + 2]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 2])] : 0;
+        unsigned int sixtetD = (((i + 3) < dataSize) && static_cast<unsigned char>(text[i + 3]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 3])] : 0;
 
         unsigned int octetPack = (sixtetA << 18) | (sixtetB << 12)  | (sixtetC << 6) | sixtetD;
 
@@ -3534,7 +3534,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
 
     int newDataSize = ((((dataSize + 8)/64) + 1)*64) - 8;
 
-    unsigned char *msg = (unsigned char *)RL_CALLOC(newDataSize + 64, 1); // Initialize with '0' bits, allocating 64 extra bytes
+    unsigned char *msg = static_cast<unsigned char *>(RL_CALLOC(newDataSize + 64, 1)); // Initialize with '0' bits, allocating 64 extra bytes
     memcpy(msg, data, dataSize);
     msg[dataSize] = 128; // Write the '1' bit
 
@@ -3545,7 +3545,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
     for (int offset = 0; offset < newDataSize; offset += 64)  // 512/8
     {
         // Break chunk into sixteen 32-bit words w[j], 0 <= j <= 15
-        unsigned int *w = (unsigned int *)(msg + offset);
+        unsigned int *w = reinterpret_cast<unsigned int *>(msg + offset);
 
         // Initialize hash value for this chunk
         unsigned int a = hash[0];
@@ -3624,19 +3624,19 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
 
     int newDataSize = ((((dataSize + 8)/64) + 1)*64);
 
-    unsigned char *msg = (unsigned char *)RL_CALLOC(newDataSize, 1); // Initialize with '0' bits
+    unsigned char *msg = static_cast<unsigned char *>(RL_CALLOC(newDataSize, 1)); // Initialize with '0' bits
     memcpy(msg, data, dataSize);
     msg[dataSize] = 128; // Write the '1' bit
 
     unsigned long long bitsLen = 8ULL*dataSize;
-    msg[newDataSize - 1] = (unsigned char)(bitsLen);
-    msg[newDataSize - 2] = (unsigned char)(bitsLen >> 8);
-    msg[newDataSize - 3] = (unsigned char)(bitsLen >> 16);
-    msg[newDataSize - 4] = (unsigned char)(bitsLen >> 24);
-    msg[newDataSize - 5] = (unsigned char)(bitsLen >> 32);
-    msg[newDataSize - 6] = (unsigned char)(bitsLen >> 40);
-    msg[newDataSize - 7] = (unsigned char)(bitsLen >> 48);
-    msg[newDataSize - 8] = (unsigned char)(bitsLen >> 56);
+    msg[newDataSize - 1] = static_cast<unsigned char>(bitsLen);
+    msg[newDataSize - 2] = static_cast<unsigned char>(bitsLen >> 8);
+    msg[newDataSize - 3] = static_cast<unsigned char>(bitsLen >> 16);
+    msg[newDataSize - 4] = static_cast<unsigned char>(bitsLen >> 24);
+    msg[newDataSize - 5] = static_cast<unsigned char>(bitsLen >> 32);
+    msg[newDataSize - 6] = static_cast<unsigned char>(bitsLen >> 40);
+    msg[newDataSize - 7] = static_cast<unsigned char>(bitsLen >> 48);
+    msg[newDataSize - 8] = static_cast<unsigned char>(bitsLen >> 56);
 
     // Process the message in successive 512-bit chunks
     for (int offset = 0; offset < newDataSize; offset += 64)  // 512/8
@@ -3645,10 +3645,10 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
         unsigned int w[80] = { 0 };
         for (int i = 0; i < 16; i++)
         {
-            w[i] = ((unsigned int)msg[offset + (i*4) + 0] << 24) |
-                   ((unsigned int)msg[offset + (i*4) + 1] << 16) |
-                   ((unsigned int)msg[offset + (i*4) + 2] << 8) |
-                   ((unsigned int)msg[offset + (i*4) + 3]);
+            w[i] = (static_cast<unsigned int>(msg[offset + (i*4) + 0]) << 24) |
+                   (static_cast<unsigned int>(msg[offset + (i*4) + 1]) << 16) |
+                   (static_cast<unsigned int>(msg[offset + (i*4) + 2]) << 8) |
+                   (static_cast<unsigned int>(msg[offset + (i*4) + 3]));
         }
 
         // Message schedule: extend the sixteen 32-bit words into eighty 32-bit words:
@@ -3748,7 +3748,7 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
     const unsigned long long bitLen = 8ULL*dataSize;
     unsigned long long paddedSize = dataSize + sizeof(bitLen); // Reserve room for the 64 bit message length appended at the end
     paddedSize += (64 - (paddedSize%64));
-    unsigned char *buffer = (unsigned char *)RL_CALLOC(paddedSize, sizeof(unsigned char));
+    unsigned char *buffer = static_cast<unsigned char *>(RL_CALLOC(paddedSize, sizeof(unsigned char)));
 
     memcpy(buffer, data, dataSize);
     buffer[dataSize] = 0x80;
@@ -3772,10 +3772,10 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
         unsigned int w[64] = { 0 };
         for (int i = 0; i < 16; i++)
         {
-            w[i] = ((unsigned int)block[i*4 + 0] << 24) |
-                   ((unsigned int)block[i*4 + 1] << 16) |
-                   ((unsigned int)block[i*4 + 2] << 8)  |
-                   ((unsigned int)block[i*4 + 3]);
+            w[i] = (static_cast<unsigned int>(block[i*4 + 0]) << 24) |
+                   (static_cast<unsigned int>(block[i*4 + 1]) << 16) |
+                   (static_cast<unsigned int>(block[i*4 + 2]) << 8)  |
+                   (static_cast<unsigned int>(block[i*4 + 3]));
         }
         for (int t = 16; t < 64; t++) w[t] = SHA256_A1(w[t - 2]) + w[t - 7] + SHA256_A0(w[t - 15]) + w[t - 16];
 
@@ -3827,7 +3827,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 
 #if SUPPORT_AUTOMATION_EVENTS
     // Allocate and empty automation event list, ready to record new events
-    list.events = (AutomationEvent *)RL_CALLOC(MAX_AUTOMATION_EVENTS, sizeof(AutomationEvent));
+    list.events = static_cast<AutomationEvent *>(RL_CALLOC(MAX_AUTOMATION_EVENTS, sizeof(AutomationEvent)));
     list.capacity = MAX_AUTOMATION_EVENTS;
 
     if (fileNameView.empty()) TRACELOG(LOG_INFO, "AUTOMATION: New empty events list loaded successfully");
@@ -3857,7 +3857,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
         //unsigned char *buffer = LoadFileText(fileName);
         FILE *raeFile = fopen(fileName, "rt");
 
-        if (raeFile != NULL)
+        if (raeFile != nullptr)
         {
             unsigned int counter = 0;
             char buffer[256] = { 0 };
@@ -3945,7 +3945,7 @@ bool ExportAutomationEventList(AutomationEventList list, std::string_view fileNa
 
     // Export events as text
     // NOTE: Save to memory buffer and SaveFileText()
-    char *txtData = (char *)RL_CALLOC(256*list.count + 2048, sizeof(char)); // 256 characters per line plus some header
+    char *txtData = static_cast<char *>(RL_CALLOC(256*list.count + 2048, sizeof(char))); // 256 characters per line plus some header
 
     int byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "#\n");
@@ -4038,20 +4038,20 @@ void PlayAutomationEvent(AutomationEvent event)
             case INPUT_MOUSE_BUTTON_DOWN: CORE.Input.Mouse.currentButtonState[event.params[0]] = true; break;   // param[0]: key
             case INPUT_MOUSE_POSITION:      // param[0]: x, param[1]: y
             {
-                CORE.Input.Mouse.currentPosition.x = (float)event.params[0];
-                CORE.Input.Mouse.currentPosition.y = (float)event.params[1];
+                CORE.Input.Mouse.currentPosition.x = static_cast<float>(event.params[0]);
+                CORE.Input.Mouse.currentPosition.y = static_cast<float>(event.params[1]);
             } break;
             case INPUT_MOUSE_WHEEL_MOTION:  // param[0]: x delta, param[1]: y delta
             {
-                CORE.Input.Mouse.currentWheelMove.x = (float)event.params[0];
-                CORE.Input.Mouse.currentWheelMove.y = (float)event.params[1];
+                CORE.Input.Mouse.currentWheelMove.x = static_cast<float>(event.params[0]);
+                CORE.Input.Mouse.currentWheelMove.y = static_cast<float>(event.params[1]);
             } break;
             case INPUT_TOUCH_UP: CORE.Input.Touch.currentTouchState[event.params[0]] = false; break;            // param[0]: id
             case INPUT_TOUCH_DOWN: CORE.Input.Touch.currentTouchState[event.params[0]] = true; break;           // param[0]: id
             case INPUT_TOUCH_POSITION:      // param[0]: id, param[1]: x, param[2]: y
             {
-                CORE.Input.Touch.position[event.params[0]].x = (float)event.params[1];
-                CORE.Input.Touch.position[event.params[0]].y = (float)event.params[2];
+                CORE.Input.Touch.position[event.params[0]].x = static_cast<float>(event.params[1]);
+                CORE.Input.Touch.position[event.params[0]].y = static_cast<float>(event.params[2]);
             } break;
             case INPUT_GAMEPAD_CONNECT: CORE.Input.Gamepad.ready[event.params[0]] = true; break;                // param[0]: gamepad
             case INPUT_GAMEPAD_DISCONNECT: CORE.Input.Gamepad.ready[event.params[0]] = false; break;            // param[0]: gamepad
@@ -4059,7 +4059,7 @@ void PlayAutomationEvent(AutomationEvent event)
             case INPUT_GAMEPAD_BUTTON_DOWN: CORE.Input.Gamepad.currentButtonState[event.params[0]][event.params[1]] = true; break;   // param[0]: gamepad, param[1]: button
             case INPUT_GAMEPAD_AXIS_MOTION: // param[0]: gamepad, param[1]: axis, param[2]: delta
             {
-                CORE.Input.Gamepad.axisState[event.params[0]][event.params[1]] = ((float)event.params[2]/32768.0f);
+                CORE.Input.Gamepad.axisState[event.params[0]][event.params[1]] = (static_cast<float>(event.params[2])/32768.0f);
             } break;
     #if SUPPORT_GESTURES_SYSTEM
             case INPUT_GESTURE: GESTURES.current = event.params[0]; break;     // param[0]: gesture (enum Gesture) -> rgestures.h: GESTURES.current
@@ -4226,7 +4226,7 @@ bool IsGamepadAvailable(int gamepad)
 // Get gamepad internal name id
 std::string GetGamepadName(int gamepad)
 {
-    const char *name = NULL;
+    const char *name = nullptr;
 
     if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS)) name = CORE.Input.Gamepad.name[gamepad];
 
@@ -4392,7 +4392,7 @@ bool IsMouseButtonUp(int button)
 // Get mouse position X
 int GetMouseX(void)
 {
-    int mouseX = (int)((CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x);
+    int mouseX = static_cast<int>((CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x);
 
     return mouseX;
 }
@@ -4400,7 +4400,7 @@ int GetMouseX(void)
 // Get mouse position Y
 int GetMouseY(void)
 {
-    int mouseY = (int)((CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y);
+    int mouseY = static_cast<int>((CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y);
 
     return mouseY;
 }
@@ -4431,7 +4431,7 @@ Vector2 GetMouseDelta(void)
 // NOTE: Useful when rendering to different size targets
 void SetMouseOffset(int offsetX, int offsetY)
 {
-    CORE.Input.Mouse.offset = Vector2{ (float)offsetX, (float)offsetY };
+    CORE.Input.Mouse.offset = Vector2{ static_cast<float>(offsetX), static_cast<float>(offsetY) };
 }
 
 // Set mouse scaling
@@ -4469,14 +4469,14 @@ Vector2 GetMouseWheelMoveV(void)
 // Get touch position X for touch point 0 (relative to screen size)
 int GetTouchX(void)
 {
-    int touchX = (int)CORE.Input.Touch.position[0].x;
+    int touchX = static_cast<int>(CORE.Input.Touch.position[0].x);
     return touchX;
 }
 
 // Get touch position Y for touch point 0 (relative to screen size)
 int GetTouchY(void)
 {
-    int touchY = (int)CORE.Input.Touch.position[0].y;
+    int touchY = static_cast<int>(CORE.Input.Touch.position[0].y);
     return touchY;
 }
 
@@ -4531,7 +4531,7 @@ void InitTimer(void)
 
     if (clock_gettime(CLOCK_MONOTONIC, &now) == 0) // Success
     {
-        CORE.Time.base = (unsigned long long)now.tv_sec*1000000000LLU + (unsigned long long)now.tv_nsec;
+        CORE.Time.base = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
     }
     else TRACELOG(LOG_WARNING, "TIMER: Hi-resolution timer not available");
 #endif
@@ -4553,7 +4553,7 @@ void SetupViewport(int width, int height)
 
     // Set orthographic projection to current framebuffer size
     // NOTE: Configured top-left corner as (0, 0)
-    rlOrtho(0.0f, (float)CORE.Window.render.width, (float)CORE.Window.render.height, 0.0f, 0.0f, 1.0f);
+    rlOrtho(0.0f, static_cast<float>(CORE.Window.render.width), static_cast<float>(CORE.Window.render.height), 0.0f, 0.0f, 1.0f);
 
     rlMatrixMode(RL_MODELVIEW);         // Switch back to modelview matrix
     rlLoadIdentity();                   // Reset current matrix (modelview)
@@ -4568,12 +4568,12 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
     char path[MAX_FILEPATH_LENGTH] = { 0 };
     memset(path, 0, MAX_FILEPATH_LENGTH);
 
-    struct dirent *dp = NULL;
+    struct dirent *dp = nullptr;
     DIR *dir = opendir(basePath);
 
-    if (dir != NULL)
+    if (dir != nullptr)
     {
-        while ((dp = readdir(dir)) != NULL)
+        while ((dp = readdir(dir)) != nullptr)
         {
             if ((strcmp(dp->d_name, ".") != 0) && (strcmp(dp->d_name, "..") != 0))
             {
@@ -4590,15 +4590,15 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
                 }
                 else if (IsPathFile(path))
                 {
-                    if ((filter == NULL) || (filter[0] == '\0') || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL) ||
-                        (strstr(filter, FILE_FILTER_TAG_FILE_ONLY) != NULL) || IsFileExtension(path, filter))
+                    if ((filter == nullptr) || (filter[0] == '\0') || (strstr(filter, FILE_FILTER_TAG_ALL) != nullptr) ||
+                        (strstr(filter, FILE_FILTER_TAG_FILE_ONLY) != nullptr) || IsFileExtension(path, filter))
                     {
                         files->paths.emplace_back(path, pathLength);
                     }
                 }
                 else
                 {
-                    if ((filter != NULL) && (filter[0] != '\0') && ((strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != NULL) || (strstr(filter, FILE_FILTER_TAG_ALL) != NULL)))
+                    if ((filter != nullptr) && (filter[0] != '\0') && ((strstr(filter, FILE_FILTER_TAG_DIR_ONLY) != nullptr) || (strstr(filter, FILE_FILTER_TAG_ALL) != nullptr)))
                     {
                         files->paths.emplace_back(path, pathLength);
                     }
@@ -4693,13 +4693,13 @@ static void RecordAutomationEvent(void)
     }
 
     // Event type: INPUT_MOUSE_POSITION (only saved if changed)
-    if (((int)CORE.Input.Mouse.currentPosition.x != (int)CORE.Input.Mouse.previousPosition.x) ||
-        ((int)CORE.Input.Mouse.currentPosition.y != (int)CORE.Input.Mouse.previousPosition.y))
+    if ((static_cast<int>(CORE.Input.Mouse.currentPosition.x) != static_cast<int>(CORE.Input.Mouse.previousPosition.x)) ||
+        (static_cast<int>(CORE.Input.Mouse.currentPosition.y) != static_cast<int>(CORE.Input.Mouse.previousPosition.y)))
     {
         currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
         currentEventList->events[currentEventList->count].type = INPUT_MOUSE_POSITION;
-        currentEventList->events[currentEventList->count].params[0] = (int)CORE.Input.Mouse.currentPosition.x;
-        currentEventList->events[currentEventList->count].params[1] = (int)CORE.Input.Mouse.currentPosition.y;
+        currentEventList->events[currentEventList->count].params[0] = static_cast<int>(CORE.Input.Mouse.currentPosition.x);
+        currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Mouse.currentPosition.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
         TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_MOUSE_POSITION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
@@ -4709,13 +4709,13 @@ static void RecordAutomationEvent(void)
     }
 
     // Event type: INPUT_MOUSE_WHEEL_MOTION
-    if (((int)CORE.Input.Mouse.currentWheelMove.x != (int)CORE.Input.Mouse.previousWheelMove.x) ||
-        ((int)CORE.Input.Mouse.currentWheelMove.y != (int)CORE.Input.Mouse.previousWheelMove.y))
+    if ((static_cast<int>(CORE.Input.Mouse.currentWheelMove.x) != static_cast<int>(CORE.Input.Mouse.previousWheelMove.x)) ||
+        (static_cast<int>(CORE.Input.Mouse.currentWheelMove.y) != static_cast<int>(CORE.Input.Mouse.previousWheelMove.y)))
     {
         currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
         currentEventList->events[currentEventList->count].type = INPUT_MOUSE_WHEEL_MOTION;
-        currentEventList->events[currentEventList->count].params[0] = (int)CORE.Input.Mouse.currentWheelMove.x;
-        currentEventList->events[currentEventList->count].params[1] = (int)CORE.Input.Mouse.currentWheelMove.y;
+        currentEventList->events[currentEventList->count].params[0] = static_cast<int>(CORE.Input.Mouse.currentWheelMove.x);
+        currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Mouse.currentWheelMove.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
         TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_MOUSE_WHEEL_MOTION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
@@ -4760,14 +4760,14 @@ static void RecordAutomationEvent(void)
         if (currentEventList->count == currentEventList->capacity) return;    // Security check
 
         // Event type: INPUT_TOUCH_POSITION
-        if (((int)CORE.Input.Touch.position[id].x != (int)CORE.Input.Touch.previousPosition[id].x) ||
-            ((int)CORE.Input.Touch.position[id].y != (int)CORE.Input.Touch.previousPosition[id].y))
+        if ((static_cast<int>(CORE.Input.Touch.position[id].x) != static_cast<int>(CORE.Input.Touch.previousPosition[id].x)) ||
+            (static_cast<int>(CORE.Input.Touch.position[id].y) != static_cast<int>(CORE.Input.Touch.previousPosition[id].y)))
         {
             currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
             currentEventList->events[currentEventList->count].type = INPUT_TOUCH_POSITION;
             currentEventList->events[currentEventList->count].params[0] = id;
-            currentEventList->events[currentEventList->count].params[1] = (int)CORE.Input.Touch.position[id].x;
-            currentEventList->events[currentEventList->count].params[2] = (int)CORE.Input.Touch.position[id].y;
+            currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Touch.position[id].x);
+            currentEventList->events[currentEventList->count].params[2] = static_cast<int>(CORE.Input.Touch.position[id].y);
 
             TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_TOUCH_POSITION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
@@ -4843,7 +4843,7 @@ static void RecordAutomationEvent(void)
                 currentEventList->events[currentEventList->count].type = INPUT_GAMEPAD_AXIS_MOTION;
                 currentEventList->events[currentEventList->count].params[0] = gamepad;
                 currentEventList->events[currentEventList->count].params[1] = axis;
-                currentEventList->events[currentEventList->count].params[2] = (int)(CORE.Input.Gamepad.axisState[gamepad][axis]*32768.0f);
+                currentEventList->events[currentEventList->count].params[2] = static_cast<int>(CORE.Input.Gamepad.axisState[gamepad][axis]*32768.0f);
 
                 TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_GAMEPAD_AXIS_MOTION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
                 currentEventList->count++;
@@ -4898,7 +4898,7 @@ std::string TextFormat(std::string_view textView, ...)
     char *currentBuffer = buffers[index];
     memset(currentBuffer, 0, MAX_TEXT_BUFFER_LENGTH);   // Clear buffer before using
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         va_list args;
         va_start(args, text);

@@ -57,14 +57,14 @@ int main()
     Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
 
     // Define transforms to be uploaded to GPU for instances
-    Matrix *transforms = (Matrix *)RL_CALLOC(MAX_INSTANCES, sizeof(Matrix));   // Pre-multiplied transformations passed to rlgl
+    Matrix *transforms = static_cast<Matrix *>(RL_CALLOC(MAX_INSTANCES, sizeof(Matrix)));   // Pre-multiplied transformations passed to rlgl
 
     // Translate and rotate cubes randomly
     for (int i = 0; i < MAX_INSTANCES; i++)
     {
-        Matrix translation = glm::translate(Matrix(1.0f), Vector3{(float)GetRandomValue(-50, 50), (float)GetRandomValue(-50, 50), (float)GetRandomValue(-50, 50)});
-        Vector3 axis = glm::normalize(Vector3{ (float)GetRandomValue(0, 360), (float)GetRandomValue(0, 360), (float)GetRandomValue(0, 360) });
-        float angle = (float)GetRandomValue(0, 180)*DEG2RAD;
+        Matrix translation = glm::translate(Matrix(1.0f), Vector3{static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50))});
+        Vector3 axis = glm::normalize(Vector3{ static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)) });
+        float angle = static_cast<float>(GetRandomValue(0, 180))*DEG2RAD;
         Matrix rotation = glm::rotate(Matrix(1.0f), angle, axis);
 
         transforms[i] = ((translation) * (rotation));

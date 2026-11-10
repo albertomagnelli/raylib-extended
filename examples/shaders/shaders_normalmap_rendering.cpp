@@ -113,7 +113,7 @@ int main()
         if (IsKeyPressed(KEY_N)) useNormalMap = !useNormalMap;
 
         // Spin plane model at a constant rate
-        plane.transform = glm::rotate(Matrix(1.0f), (float)GetTime()*0.5f, Vector3{0.0f, 1.0f, 0.0f});
+        plane.transform = glm::rotate(Matrix(1.0f), static_cast<float>(GetTime())*0.5f, Vector3{0.0f, 1.0f, 0.0f});
 
         // Update shader values
         float lightPos[3] = {lightPosition.x, lightPosition.y, lightPosition.z};

@@ -158,7 +158,7 @@ extern void LoadFontDefault(void)
 
     // Check to see if the font for an image has already been allocated,
     // and if no need to upload, then return
-    if (defaultFont.glyphs != NULL) return;
+    if (defaultFont.glyphs != nullptr) return;
 
     // NOTE: Using UTF-8 encoding table for Unicode U+0000..U+00FF Basic Latin + Latin-1 Supplement
     // REF: http://www.utf8-chartable.de/unicode-utf8-table.pl
@@ -244,12 +244,12 @@ extern void LoadFontDefault(void)
             {
                 // NOTE: Unreferencing data as short, so,
                 // considering data as little-endian (alpha + gray)
-                ((unsigned short *)imFont.data)[i + j] = 0xffff;
+                (static_cast<unsigned short *>(imFont.data))[i + j] = 0xffff;
             }
             else
             {
-                ((unsigned char *)imFont.data)[(i + j)*sizeof(short)] = 0xff;
-                ((unsigned char *)imFont.data)[(i + j)*sizeof(short) + 1] = 0x00;
+                (static_cast<unsigned char *>(imFont.data))[(i + j)*sizeof(short)] = 0xff;
+                (static_cast<unsigned char *>(imFont.data))[(i + j)*sizeof(short) + 1] = 0x00;
             }
         }
 
@@ -260,7 +260,7 @@ extern void LoadFontDefault(void)
 
     // Check again if font glyph data has been already loaded
     // to avoid reallocating the glyphs and rects
-    if (defaultFont.glyphs != NULL)
+    if (defaultFont.glyphs != nullptr)
     {
         UnloadImage(imFont);
         return;
@@ -270,8 +270,8 @@ extern void LoadFontDefault(void)
     //------------------------------------------------------------------------------
     // Allocate space for our characters info data
     // NOTE: This memory must be freed at end! --> Done by CloseWindow()
-    defaultFont.glyphs = (GlyphInfo *)RL_CALLOC(defaultFont.glyphCount, sizeof(GlyphInfo));
-    defaultFont.recs = (Rectangle *)RL_CALLOC(defaultFont.glyphCount, sizeof(Rectangle));
+    defaultFont.glyphs = static_cast<GlyphInfo *>(RL_CALLOC(defaultFont.glyphCount, sizeof(GlyphInfo)));
+    defaultFont.recs = static_cast<Rectangle *>(RL_CALLOC(defaultFont.glyphCount, sizeof(Rectangle)));
 
     int currentLine = 0;
     int currentPosX = charsDivisor;
@@ -281,12 +281,12 @@ extern void LoadFontDefault(void)
     {
         defaultFont.glyphs[i].value = 32 + i;  // First char is 32
 
-        defaultFont.recs[i].x = (float)currentPosX;
-        defaultFont.recs[i].y = (float)(charsDivisor + currentLine*(charsHeight + charsDivisor));
-        defaultFont.recs[i].width = (float)charsWidth[i];
-        defaultFont.recs[i].height = (float)charsHeight;
+        defaultFont.recs[i].x = static_cast<float>(currentPosX);
+        defaultFont.recs[i].y = static_cast<float>(charsDivisor + currentLine*(charsHeight + charsDivisor));
+        defaultFont.recs[i].width = static_cast<float>(charsWidth[i]);
+        defaultFont.recs[i].height = static_cast<float>(charsHeight);
 
-        testPosX += (int)(defaultFont.recs[i].width + (float)charsDivisor);
+        testPosX += static_cast<int>(defaultFont.recs[i].width + static_cast<float>(charsDivisor));
 
         if (testPosX >= imFont.width)
         {
@@ -294,8 +294,8 @@ extern void LoadFontDefault(void)
             currentPosX = 2*charsDivisor + charsWidth[i];
             testPosX = currentPosX;
 
-            defaultFont.recs[i].x = (float)charsDivisor;
-            defaultFont.recs[i].y = (float)(charsDivisor + currentLine*(charsHeight + charsDivisor));
+            defaultFont.recs[i].x = static_cast<float>(charsDivisor);
+            defaultFont.recs[i].y = static_cast<float>(charsDivisor + currentLine*(charsHeight + charsDivisor));
         }
         else currentPosX = testPosX;
 
@@ -310,7 +310,7 @@ extern void LoadFontDefault(void)
 
     UnloadImage(imFont);
 
-    defaultFont.baseSize = (int)defaultFont.recs[0].height;
+    defaultFont.baseSize = static_cast<int>(defaultFont.recs[0].height);
 
     TRACELOG(LOG_INFO, "FONT: Default font loaded successfully (%i glyphs)", defaultFont.glyphCount);
 }
@@ -323,8 +323,8 @@ extern void UnloadFontDefault(void)
     RL_FREE(defaultFont.glyphs);
     RL_FREE(defaultFont.recs);
     defaultFont.glyphCount = 0;
-    defaultFont.glyphs = NULL;
-    defaultFont.recs = NULL;
+    defaultFont.glyphs = nullptr;
+    defaultFont.recs = nullptr;
 }
 
 // Get the default font
@@ -356,7 +356,7 @@ Font LoadFont(std::string_view fileNameView)
     Font font = { 0 };
 
 #if SUPPORT_FILEFORMAT_TTF
-    if (IsFileExtension(fileName, ".ttf") || IsFileExtension(fileName, ".otf")) font = LoadFontEx(fileName, FONT_TTF_DEFAULT_SIZE, NULL, FONT_TTF_DEFAULT_NUMCHARS);
+    if (IsFileExtension(fileName, ".ttf") || IsFileExtension(fileName, ".otf")) font = LoadFontEx(fileName, FONT_TTF_DEFAULT_SIZE, nullptr, FONT_TTF_DEFAULT_NUMCHARS);
     else
 #endif
 #if SUPPORT_FILEFORMAT_FNT
@@ -364,12 +364,12 @@ Font LoadFont(std::string_view fileNameView)
     else
 #endif
 #if SUPPORT_FILEFORMAT_BDF
-    if (IsFileExtension(fileName, ".bdf")) font = LoadFontEx(fileName, FONT_TTF_DEFAULT_SIZE, NULL, FONT_TTF_DEFAULT_NUMCHARS);
+    if (IsFileExtension(fileName, ".bdf")) font = LoadFontEx(fileName, FONT_TTF_DEFAULT_SIZE, nullptr, FONT_TTF_DEFAULT_NUMCHARS);
     else
 #endif
     {
         Image image = LoadImage(fileName);
-        if (image.data != NULL) font = LoadFontFromImage(image, MAGENTA, FONT_TTF_DEFAULT_FIRST_CHAR);
+        if (image.data != nullptr) font = LoadFontFromImage(image, MAGENTA, FONT_TTF_DEFAULT_FIRST_CHAR);
         else font = GetFontDefault();
         UnloadImage(image);
     }
@@ -398,7 +398,7 @@ Font LoadFontEx(std::string_view fileNameView, int fontSize, const int *codepoin
     int dataSize = 0;
     unsigned char *fileData = LoadFileData(fileName, &dataSize);
 
-    if (fileData != NULL)
+    if (fileData != nullptr)
     {
         // Loading font from memory data
         font = LoadFontFromMemory(GetFileExtension(fileName), fileData, dataSize, fontSize, codepoints, codepointCount);
@@ -474,16 +474,16 @@ Font LoadFontFromImage(Image image, Color key, int firstChar)
         {
             tempCharValues[index] = firstChar + index;
 
-            tempCharRecs[index].x = (float)xPosToRead;
-            tempCharRecs[index].y = (float)(lineSpacing + lineToRead*(charHeight + lineSpacing));
-            tempCharRecs[index].height = (float)charHeight;
+            tempCharRecs[index].x = static_cast<float>(xPosToRead);
+            tempCharRecs[index].y = static_cast<float>(lineSpacing + lineToRead*(charHeight + lineSpacing));
+            tempCharRecs[index].height = static_cast<float>(charHeight);
 
             int charWidth = 0;
 
             while (((xPosToRead + charWidth) < image.width) &&
                   !COLOR_EQUAL(pixels[(lineSpacing + (charHeight + lineSpacing)*lineToRead)*image.width + xPosToRead + charWidth], key)) charWidth++;
 
-            tempCharRecs[index].width = (float)charWidth;
+            tempCharRecs[index].width = static_cast<float>(charWidth);
 
             index++;
 
@@ -514,8 +514,8 @@ Font LoadFontFromImage(Image image, Color key, int firstChar)
 
     // Populate tempCharValues and tempCharsRecs with glyphs data
     // Move temp data to sized charValues and charRecs arrays
-    font.glyphs = (GlyphInfo *)RL_CALLOC(font.glyphCount, sizeof(GlyphInfo));
-    font.recs = (Rectangle *)RL_CALLOC(font.glyphCount, sizeof(Rectangle));
+    font.glyphs = static_cast<GlyphInfo *>(RL_CALLOC(font.glyphCount, sizeof(GlyphInfo)));
+    font.recs = static_cast<Rectangle *>(RL_CALLOC(font.glyphCount, sizeof(Rectangle)));
 
     for (int i = 0; i < font.glyphCount; i++)
     {
@@ -535,7 +535,7 @@ Font LoadFontFromImage(Image image, Color key, int firstChar)
 
     UnloadImage(fontClear);     // Unload processed image once converted to texture
 
-    font.baseSize = (int)font.recs[0].height;
+    font.baseSize = static_cast<int>(font.recs[0].height);
 
     return font;
 }
@@ -571,11 +571,11 @@ Font LoadFontFromMemory(std::string_view fileTypeView, const unsigned char *file
     else
 #endif
     {
-        font.glyphs = NULL;
+        font.glyphs = nullptr;
     }
 
 #if SUPPORT_FILEFORMAT_TTF || SUPPORT_FILEFORMAT_BDF
-    if (font.glyphs != NULL)
+    if (font.glyphs != nullptr)
     {
         font.glyphPadding = FONT_TTF_DEFAULT_CHARS_PADDING;
 
@@ -612,8 +612,8 @@ bool IsFontValid(Font font)
 {
     return ((font.baseSize > 0) &&      // Validate font size
             (font.glyphCount > 0) &&    // Validate font contains some glyph
-            (font.recs != NULL) &&      // Validate font recs defining glyphs on texture atlas
-            (font.glyphs != NULL));     // Validate glyph data is loaded
+            (font.recs != nullptr) &&      // Validate font recs defining glyphs on texture atlas
+            (font.glyphs != nullptr));     // Validate glyph data is loaded
 
     // NOTE: Further validations could be done to verify if recs and glyphs contain valid data (glyphs values, metrics...)
 }
@@ -637,22 +637,22 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
     #define FONT_BITMAP_ALPHA_THRESHOLD     80      // Bitmap (B&W) font generation alpha threshold
 #endif
 
-    GlyphInfo *glyphs = NULL;
+    GlyphInfo *glyphs = nullptr;
     int glyphCounter = 0;
 
 #if SUPPORT_FILEFORMAT_TTF
     // Load font data (including pixel data) from TTF memory file
     // NOTE: Loaded information should be enough to generate font image atlas, using any packaging method
-    if (fileData != NULL)
+    if (fileData != nullptr)
     {
         bool genFontChars = false;
-        stbtt_fontinfo fontInfo = { 0 };
-        int *requiredCodepoints = (int *)codepoints;
+        stbtt_fontinfo fontInfo = { nullptr };
+        int *requiredCodepoints = const_cast<int *>(codepoints);
 
-        if (stbtt_InitFont(&fontInfo, (unsigned char *)fileData, 0)) // Initialize font for data reading
+        if (stbtt_InitFont(&fontInfo, const_cast<unsigned char *>(fileData), 0)) // Initialize font for data reading
         {
             // Calculate font scale factor
-            float scaleFactor = stbtt_ScaleForPixelHeight(&fontInfo, (float)fontSize);
+            float scaleFactor = stbtt_ScaleForPixelHeight(&fontInfo, static_cast<float>(fontSize));
 
             // Calculate font basic metrics
             // NOTE: ascent is equivalent to font baseline
@@ -666,9 +666,9 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
 
             // Fill fontChars in case not provided externally
             // NOTE: By default filling glyphCount consecutively, starting at 32 (Space)
-            if (requiredCodepoints == NULL)
+            if (requiredCodepoints == nullptr)
             {
-                requiredCodepoints = (int *)RL_CALLOC(codepointCount, sizeof(int));
+                requiredCodepoints = static_cast<int *>(RL_CALLOC(codepointCount, sizeof(int)));
                 for (int i = 0; i < codepointCount; i++) requiredCodepoints[i] = i + 32;
                 genFontChars = true;
             }
@@ -681,7 +681,7 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
             }
 
             // WARNING: Allocating space for maximum number of codepoints
-            glyphs = (GlyphInfo *)RL_CALLOC(glyphCounter, sizeof(GlyphInfo));
+            glyphs = static_cast<GlyphInfo *>(RL_CALLOC(glyphCounter, sizeof(GlyphInfo)));
             glyphCounter = 0; // Reset to reuse
 
             int k = 0;
@@ -725,10 +725,10 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
                         default: break;
                     }
 
-                    if (glyphs[k].image.data != NULL) // Glyph data has been found in the font
+                    if (glyphs[k].image.data != nullptr) // Glyph data has been found in the font
                     {
-                        stbtt_GetCodepointHMetrics(&fontInfo, cp, &glyphs[k].advanceX, NULL);
-                        glyphs[k].advanceX = (int)((float)glyphs[k].advanceX*scaleFactor);
+                        stbtt_GetCodepointHMetrics(&fontInfo, cp, &glyphs[k].advanceX, nullptr);
+                        glyphs[k].advanceX = static_cast<int>(static_cast<float>(glyphs[k].advanceX)*scaleFactor);
 
                         // WARNING: If requested SDF font, sdf-glyph height is definitely bigger than fontSize due to FONT_SDF_CHAR_PADDING
                         if ((type != FONT_SDF) && (cpHeight > fontSize)) TRACELOG(LOG_WARNING, "FONT: [0x%04x] Glyph height is bigger than requested font size: %i > %i", cp, cpHeight, (int)fontSize);
@@ -739,7 +739,7 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
                         glyphs[k].image.mipmaps = 1;
                         glyphs[k].image.format = PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
 
-                        glyphs[k].offsetY += (int)((float)ascent*scaleFactor);
+                        glyphs[k].offsetY += static_cast<int>(static_cast<float>(ascent)*scaleFactor);
                     }
                     //else TRACELOG(LOG_WARNING, "FONT: Glyph [0x%08x] has no image data available", cp); // Only reported for 0x20 and 0x3000
 
@@ -762,11 +762,11 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
                         (cp == 0x205F) || // Medium Mathematical Space
                         (cp == 0x3000))   // Ideographic Space
                     {
-                        stbtt_GetCodepointHMetrics(&fontInfo, cp, &glyphs[k].advanceX, NULL);
-                        glyphs[k].advanceX = (int)((float)glyphs[k].advanceX*scaleFactor);
+                        stbtt_GetCodepointHMetrics(&fontInfo, cp, &glyphs[k].advanceX, nullptr);
+                        glyphs[k].advanceX = static_cast<int>(static_cast<float>(glyphs[k].advanceX)*scaleFactor);
 
                         Image imSpace = {
-                            .data = NULL,
+                            .data = nullptr,
                             .width = glyphs[k].advanceX,
                             .height = fontSize,
                             .mipmaps = 1,
@@ -786,9 +786,9 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
                         // NOTE: For optimum results, bitmap font should be generated at base pixel size
                         for (int p = 0; p < cpWidth*cpHeight; p++)
                         {
-                            if (((unsigned char *)glyphs[k].image.data)[p] < FONT_BITMAP_ALPHA_THRESHOLD)
-                                ((unsigned char *)glyphs[k].image.data)[p] = 0;
-                            else ((unsigned char *)glyphs[k].image.data)[p] = 255;
+                            if ((static_cast<unsigned char *>(glyphs[k].image.data))[p] < FONT_BITMAP_ALPHA_THRESHOLD)
+                                (static_cast<unsigned char *>(glyphs[k].image.data))[p] = 0;
+                            else (static_cast<unsigned char *>(glyphs[k].image.data))[p] = 255;
                         }
                     }
 
@@ -818,21 +818,21 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
 #if SUPPORT_FILEFORMAT_TTF || SUPPORT_FILEFORMAT_BDF
 Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyphCount, int fontSize, int padding, int packMethod)
 {
-    Image atlas = { 0 };
+    Image atlas = { nullptr };
 
-    if (glyphs == NULL)
+    if (glyphs == nullptr)
     {
         TRACELOG(LOG_WARNING, "FONT: Provided glyphs info not valid, returning empty image atlas");
         return atlas;
     }
 
-    *glyphRecs = NULL;
+    *glyphRecs = nullptr;
 
     // In case no chars count provided, suppose default of 95
     glyphCount = (glyphCount > 0)? glyphCount : 95;
 
     // NOTE: Rectangles memory is loaded here!
-    Rectangle *recs = (Rectangle *)RL_CALLOC(glyphCount, sizeof(Rectangle));
+    Rectangle *recs = static_cast<Rectangle *>(RL_CALLOC(glyphCount, sizeof(Rectangle)));
 
     // Calculate image size based on total glyph width and glyph row count
     int totalWidth = 0;
@@ -851,7 +851,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
     // some glyphs do not fit, the atlas height is scaled x2 to fit them
     float totalArea = totalWidth*paddedFontSize*1.2f;
     float imageMinSize = sqrtf(totalArea);
-    int imageSize = (int)powf(2, ceilf(logf(imageMinSize)/logf(2)));
+    int imageSize = static_cast<int>(powf(2, ceilf(logf(imageMinSize)/logf(2))));
 
     if (totalArea < ((imageSize*imageSize)/2))
     {
@@ -865,7 +865,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
     }
 
     int atlasDataSize = atlas.width*atlas.height; // Save total size for bounds checking
-    atlas.data = (unsigned char *)RL_CALLOC(atlasDataSize, 1); // Create a bitmap to store characters (8 bpp)
+    atlas.data = static_cast<unsigned char *>(RL_CALLOC(atlasDataSize, 1)); // Create a bitmap to store characters (8 bpp)
     atlas.format = PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
     atlas.mipmaps = 1;
 
@@ -897,7 +897,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
                     // Update atlas size to fit all characters
                     int updatedAtlasHeight = atlas.height*2;
                     int updatedAtlasDataSize = atlas.width*updatedAtlasHeight;
-                    unsigned char *updatedAtlasData = (unsigned char *)RL_CALLOC(updatedAtlasDataSize, 1);
+                    unsigned char *updatedAtlasData = static_cast<unsigned char *>(RL_CALLOC(updatedAtlasDataSize, 1));
 
                     memcpy(updatedAtlasData, atlas.data, atlasDataSize);
                     RL_FREE(atlas.data);
@@ -918,17 +918,17 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
                     // Security: check both lower and upper bounds
                     if ((destX >= 0) && (destX < atlas.width) && (destY >= 0) && (destY < atlas.height))
                     {
-                        ((unsigned char *)atlas.data)[destY*atlas.width + destX] =
-                            ((unsigned char *)glyphs[i].image.data)[y*glyphs[i].image.width + x];
+                        (static_cast<unsigned char *>(atlas.data))[destY*atlas.width + destX] =
+                            (static_cast<unsigned char *>(glyphs[i].image.data))[y*glyphs[i].image.width + x];
                     }
                 }
             }
 
             // Fill chars rectangles in atlas info
-            recs[i].x = (float)offsetX;
-            recs[i].y = (float)offsetY;
-            recs[i].width = (float)glyphs[i].image.width;
-            recs[i].height = (float)glyphs[i].image.height;
+            recs[i].x = static_cast<float>(offsetX);
+            recs[i].y = static_cast<float>(offsetY);
+            recs[i].width = static_cast<float>(glyphs[i].image.width);
+            recs[i].height = static_cast<float>(glyphs[i].image.height);
 
             // Move atlas position X for next character drawing
             offsetX += (glyphs[i].image.width + 2*padding);
@@ -936,11 +936,11 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
     }
     else if (packMethod == 1) // Use Skyline rect packing algorithm (stb_pack_rect)
     {
-        stbrp_context *context = (stbrp_context *)RL_CALLOC(1, sizeof(stbrp_context));
-        stbrp_node *nodes = (stbrp_node *)RL_CALLOC(glyphCount, sizeof(stbrp_node));
+        stbrp_context *context = static_cast<stbrp_context *>(RL_CALLOC(1, sizeof(stbrp_context)));
+        stbrp_node *nodes = static_cast<stbrp_node *>(RL_CALLOC(glyphCount, sizeof(stbrp_node)));
 
         stbrp_init_target(context, atlas.width, atlas.height, nodes, glyphCount);
-        stbrp_rect *rects = (stbrp_rect *)RL_CALLOC(glyphCount, sizeof(stbrp_rect));
+        stbrp_rect *rects = static_cast<stbrp_rect *>(RL_CALLOC(glyphCount, sizeof(stbrp_rect)));
 
         // Fill rectangles for packaging
         for (int i = 0; i < glyphCount; i++)
@@ -956,10 +956,10 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
         for (int i = 0; i < glyphCount; i++)
         {
             // It returns char rectangles in atlas
-            recs[i].x = rects[i].x + (float)padding;
-            recs[i].y = rects[i].y + (float)padding;
-            recs[i].width = (float)glyphs[i].image.width;
-            recs[i].height = (float)glyphs[i].image.height;
+            recs[i].x = rects[i].x + static_cast<float>(padding);
+            recs[i].y = rects[i].y + static_cast<float>(padding);
+            recs[i].width = static_cast<float>(glyphs[i].image.width);
+            recs[i].height = static_cast<float>(glyphs[i].image.height);
 
             if (rects[i].was_packed)
             {
@@ -974,8 +974,8 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
                         // Security fix: check both lower and upper bounds
                         if (destX >= 0 && destX < atlas.width && destY >= 0 && destY < atlas.height)
                         {
-                            ((unsigned char *)atlas.data)[destY*atlas.width + destX] =
-                                ((unsigned char *)glyphs[i].image.data)[y*glyphs[i].image.width + x];
+                            (static_cast<unsigned char *>(atlas.data))[destY*atlas.width + destX] =
+                                (static_cast<unsigned char *>(glyphs[i].image.data))[y*glyphs[i].image.width + x];
                         }
                     }
                 }
@@ -995,20 +995,20 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
     {
         for (int i = 0, k = atlas.width*atlas.height - 1; i < FONT_ATLAS_CORNER_REC_SIZE; i++)
         {
-            ((unsigned char *)atlas.data)[k - 0] = 255;
-            ((unsigned char *)atlas.data)[k - 1] = 255;
-            ((unsigned char *)atlas.data)[k - 2] = 255;
+            (static_cast<unsigned char *>(atlas.data))[k - 0] = 255;
+            (static_cast<unsigned char *>(atlas.data))[k - 1] = 255;
+            (static_cast<unsigned char *>(atlas.data))[k - 2] = 255;
             k -= atlas.width;
         }
     }
 
     // Convert image data from GRAYSCALE to GRAY_ALPHA
-    unsigned char *dataGrayAlpha = (unsigned char *)RL_CALLOC(atlas.width*atlas.height*2, sizeof(unsigned char)); // Two channels
+    unsigned char *dataGrayAlpha = static_cast<unsigned char *>(RL_CALLOC(atlas.width*atlas.height*2, sizeof(unsigned char))); // Two channels
 
     for (int i = 0, k = 0; i < atlas.width*atlas.height; i++, k += 2)
     {
         dataGrayAlpha[k] = 255;
-        dataGrayAlpha[k + 1] = ((unsigned char *)atlas.data)[i];
+        dataGrayAlpha[k + 1] = (static_cast<unsigned char *>(atlas.data))[i];
     }
 
     RL_FREE(atlas.data);
@@ -1024,7 +1024,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
 // Unload font glyphs info data (RAM)
 void UnloadFontData(GlyphInfo *glyphs, int glyphCount)
 {
-    if (glyphs != NULL)
+    if (glyphs != nullptr)
     {
         for (int i = 0; i < glyphCount; i++) UnloadImage(glyphs[i].image);
 
@@ -1077,7 +1077,7 @@ bool ExportFontAsCode(Font font, std::string_view fileNameView)
     //  - font.glyphs[] data is stored as "{ %i, %i, %i, %i, { 0 }},\n", let's reserve 64 per glyph
     //  - Comments and additional code, let's reserve 32KB
     int txtDataSize = imageDataSize*6 + font.glyphCount*64 + font.glyphCount*64 + 32768;
-    char *txtData = (char *)RL_CALLOC(txtDataSize, sizeof(char));
+    char *txtData = static_cast<char *>(RL_CALLOC(txtDataSize, sizeof(char)));
 
     int byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
@@ -1107,7 +1107,7 @@ bool ExportFontAsCode(Font font, std::string_view fileNameView)
 
     // Compress font image data
     int compDataSize = 0;
-    unsigned char *compData = CompressData((const unsigned char *)image.data, imageDataSize, &compDataSize);
+    unsigned char *compData = CompressData(static_cast<const unsigned char *>(image.data), imageDataSize, &compDataSize);
 
     // Save font image data (compressed)
     byteCount += sprintf(txtData + byteCount, "#define COMPRESSED_DATA_SIZE_FONT_%s %i\n\n", TextToUpper(fileNamePascal).c_str(), compDataSize);
@@ -1228,13 +1228,13 @@ void DrawText(std::string_view textView, int posX, int posY, int fontSize, Color
     // Check if default font has been loaded
     if (GetFontDefault().texture.id != 0)
     {
-        Vector2 position = { (float)posX, (float)posY };
+        Vector2 position = { static_cast<float>(posX), static_cast<float>(posY) };
 
         int defaultFontSize = 10;   // Default Font chars height in pixel
         if (fontSize < defaultFontSize) fontSize = defaultFontSize;
         int spacing = fontSize/defaultFontSize;
 
-        DrawTextEx(GetFontDefault(), text, position, (float)fontSize, (float)spacing, color);
+        DrawTextEx(GetFontDefault(), text, position, static_cast<float>(fontSize), static_cast<float>(spacing), color);
     }
 }
 
@@ -1275,7 +1275,7 @@ void DrawTextEx(Font font, std::string_view textView, Vector2 position, float fo
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += (font.recs[index].width*scaleFactor + spacing);
-            else textOffsetX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
+            else textOffsetX += (static_cast<float>(font.glyphs[index].advanceX)*scaleFactor + spacing);
         }
 
         i += codepointByteCount;   // Move text bytes counter to next codepoint
@@ -1309,14 +1309,14 @@ void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSiz
 
     // Character destination rectangle on screen
     // NOTE: Considering glyph padding on drawing
-    Rectangle dstRec = { position.x + font.glyphs[index].offsetX*scaleFactor - (float)font.glyphPadding*scaleFactor,
-                      position.y + font.glyphs[index].offsetY*scaleFactor - (float)font.glyphPadding*scaleFactor,
+    Rectangle dstRec = { position.x + font.glyphs[index].offsetX*scaleFactor - static_cast<float>(font.glyphPadding)*scaleFactor,
+                      position.y + font.glyphs[index].offsetY*scaleFactor - static_cast<float>(font.glyphPadding)*scaleFactor,
                       (font.recs[index].width + 2.0f*font.glyphPadding)*scaleFactor,
                       (font.recs[index].height + 2.0f*font.glyphPadding)*scaleFactor };
 
     // Character source rectangle from font texture atlas
     // NOTE: Considering glyphs padding when drawing, it could be required for outline/glow shader effects
-    Rectangle srcRec = { font.recs[index].x - (float)font.glyphPadding, font.recs[index].y - (float)font.glyphPadding,
+    Rectangle srcRec = { font.recs[index].x - static_cast<float>(font.glyphPadding), font.recs[index].y - static_cast<float>(font.glyphPadding),
                          font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding };
 
     // Draw the character texture on the screen
@@ -1349,7 +1349,7 @@ void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, Ve
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += (font.recs[index].width*scaleFactor + spacing);
-            else textOffsetX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
+            else textOffsetX += (static_cast<float>(font.glyphs[index].advanceX)*scaleFactor + spacing);
         }
     }
 }
@@ -1375,10 +1375,10 @@ int MeasureText(std::string_view textView, int fontSize)
         if (fontSize < defaultFontSize) fontSize = defaultFontSize;
         int spacing = fontSize/defaultFontSize;
 
-        textSize = MeasureTextEx(GetFontDefault(), text, (float)fontSize, (float)spacing);
+        textSize = MeasureTextEx(GetFontDefault(), text, static_cast<float>(fontSize), static_cast<float>(spacing));
     }
 
-    return (int)textSize.x;
+    return static_cast<int>(textSize.x);
 }
 
 // Measure string size for Font
@@ -1389,7 +1389,7 @@ Vector2 MeasureTextEx(Font font, std::string_view textView, float fontSize, floa
 
     Vector2 textSize{};
 
-    if ((font.texture.id == 0) || (text == NULL) || (text[0] == '\0')) return textSize; // Security check
+    if ((font.texture.id == 0) || (text == nullptr) || (text[0] == '\0')) return textSize; // Security check
 
     int size = TextLength(text);    // Get size in bytes of text
     int tempByteCounter = 0;        // Used to count longer text line num chars
@@ -1399,7 +1399,7 @@ Vector2 MeasureTextEx(Font font, std::string_view textView, float fontSize, floa
     float tempTextWidth = 0.0f;     // Used to count longer text line width
 
     float textHeight = fontSize;
-    float scaleFactor = fontSize/(float)font.baseSize;
+    float scaleFactor = fontSize/static_cast<float>(font.baseSize);
 
     int letter = 0;                 // Current character
     int index = 0;                  // Index position in sprite font
@@ -1434,7 +1434,7 @@ Vector2 MeasureTextEx(Font font, std::string_view textView, float fontSize, floa
 
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-    textSize.x = tempTextWidth*scaleFactor + (float)((tempByteCounter - 1)*spacing);
+    textSize.x = tempTextWidth*scaleFactor + ((tempByteCounter - 1)*spacing);
     textSize.y = textHeight;
 
     return textSize;
@@ -1445,7 +1445,7 @@ Vector2 MeasureTextCodepoints(Font font, const int *codepoints, int length, floa
 {
     Vector2 textSize{};
 
-    if ((font.texture.id == 0) || (codepoints == NULL) || (length == 0)) return textSize; // Security check
+    if ((font.texture.id == 0) || (codepoints == nullptr) || (length == 0)) return textSize; // Security check
 
     float textWidth = 0.0f;
     // Used to count longer text line width
@@ -1456,7 +1456,7 @@ Vector2 MeasureTextCodepoints(Font font, const int *codepoints, int length, floa
     int glyphCounter = 0;
 
     float textHeight = fontSize;
-    float scaleFactor = fontSize/(float)font.baseSize;
+    float scaleFactor = fontSize/static_cast<float>(font.baseSize);
 
     // Current character
     int letter = 0;
@@ -1491,7 +1491,7 @@ Vector2 MeasureTextCodepoints(Font font, const int *codepoints, int length, floa
 
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-    textSize.x = tempTextWidth*scaleFactor + (float)((tempGlyphCounter - 1)*spacing);
+    textSize.x = tempTextWidth*scaleFactor + ((tempGlyphCounter - 1)*spacing);
     textSize.y = textHeight;
 
     return textSize;
@@ -1584,7 +1584,7 @@ unsigned int TextLength(std::string_view textView)
 
     unsigned int length = 0;
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         while (text[length] != '\0') length++;
     }
@@ -1610,7 +1610,7 @@ std::string TextFormat(std::string_view textView, ...)
     char *currentBuffer = buffers[index];
     memset(currentBuffer, 0, MAX_TEXT_BUFFER_LENGTH); // Clear buffer before using
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         va_list args;
         va_start(args, textView);
@@ -1642,7 +1642,7 @@ int TextToInteger(std::string_view textView)
     int value = 0;
     int sign = 1;
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         if ((text[0] == '+') || (text[0] == '-'))
         {
@@ -1650,7 +1650,7 @@ int TextToInteger(std::string_view textView)
             text++;
         }
 
-        for (int i = 0; ((text[i] >= '0') && (text[i] <= '9')); i++) value = value*10 + (int)(text[i] - '0');
+        for (int i = 0; ((text[i] >= '0') && (text[i] <= '9')); i++) value = value*10 + (text[i] - '0');
     }
 
     return value*sign;
@@ -1667,7 +1667,7 @@ float TextToFloat(std::string_view textView)
     float value = 0.0f;
     float sign = 1.0f;
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         if ((text[0] == '+') || (text[0] == '-'))
         {
@@ -1676,14 +1676,14 @@ float TextToFloat(std::string_view textView)
         }
 
         int i = 0;
-        for (; ((text[i] >= '0') && (text[i] <= '9')); i++) value = value*10.0f + (float)(text[i] - '0');
+        for (; ((text[i] >= '0') && (text[i] <= '9')); i++) value = value*10.0f + static_cast<float>(text[i] - '0');
 
         if (text[i++] == '.')
         {
             float divisor = 10.0f;
             for (; ((text[i] >= '0') && (text[i] <= '9')); i++)
             {
-                value += ((float)(text[i] - '0'))/divisor;
+                value += (static_cast<float>(text[i] - '0'))/divisor;
                 divisor = divisor*10.0f;
             }
         }
@@ -1707,7 +1707,7 @@ bool TextIsEqual(std::string_view text1View, std::string_view text2View)
 
     bool result = false;
 
-    if ((text1 != NULL) && (text2 != NULL))
+    if ((text1 != nullptr) && (text2 != nullptr))
     {
         if (strcmp(text1, text2) == 0) result = true;
     }
@@ -1724,7 +1724,7 @@ std::string TextSubtext(std::string_view textView, int position, int length)
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if ((text != NULL) && (position >= 0) && (length > 0))
+    if ((text != nullptr) && (position >= 0) && (length > 0))
     {
         int textLength = TextLength(text);
 
@@ -1754,7 +1754,7 @@ std::string TextRemoveSpaces(std::string_view textView)
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         // Avoid copying the ' ' characters
         for (int i = 0, j = 0; (i < MAX_TEXT_BUFFER_LENGTH - 1) && (text[i] != '\0'); i++)
@@ -1816,8 +1816,8 @@ std::string TextReplace(std::string_view textView, std::string_view searchView, 
     if (!textStr.empty() && !searchStr.empty())
     {
 
-        const char *insertPoint = NULL;    // Next insert point
-        char *tempPtr = NULL;              // Temp pointer
+        const char *insertPoint = nullptr;    // Next insert point
+        char *tempPtr = nullptr;              // Temp pointer
         int textLen = 0;            // Text string length
         int searchLen = 0;          // Search string length of (the string to remove)
         int replaceLen = 0;         // Replacement length (the string to replace by)
@@ -1843,7 +1843,7 @@ std::string TextReplace(std::string_view textView, std::string_view searchView, 
             while (count > 0)
             {
                 insertPoint = strstr(text, search);
-                lastReplacePos = (int)(insertPoint - text);
+                lastReplacePos = static_cast<int>(insertPoint - text);
 
                 memcpy(tempPtr, text, lastReplacePos);
                 tempPtr += lastReplacePos;
@@ -1904,7 +1904,7 @@ std::string TextReplaceBetween(std::string_view textView, std::string_view begin
                 endIndex += (beginIndex + beginLen);
 
                 int textLen = TextLength(text);
-                int replaceLen = (int)replacementStr.size();
+                int replaceLen = static_cast<int>(replacementStr.size());
                 //int toreplaceLen = endIndex - beginIndex - beginLen;
 
                 if ((beginIndex + beginLen + replaceLen + (textLen - endIndex)) < (MAX_TEXT_BUFFER_LENGTH - 1))
@@ -2016,11 +2016,11 @@ int TextFindIndex(std::string_view textView, std::string_view searchView)
 
     int position = -1;
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         const char *ptr = strstr(text, search);
 
-        if (ptr != NULL) position = (int)(ptr - text);
+        if (ptr != nullptr) position = static_cast<int>(ptr - text);
     }
 
     return position;
@@ -2037,7 +2037,7 @@ std::string TextToUpper(std::string_view textView)
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         for (int i = 0; (i < MAX_TEXT_BUFFER_LENGTH - 1) && (text[i] != '\0'); i++)
         {
@@ -2059,7 +2059,7 @@ std::string TextToLower(std::string_view textView)
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         for (int i = 0; (i < MAX_TEXT_BUFFER_LENGTH - 1) && (text[i] != '\0'); i++)
         {
@@ -2081,7 +2081,7 @@ std::string TextToPascal(std::string_view textView)
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if ((text != NULL) && (text[0] != '\0'))
+    if ((text != nullptr) && (text[0] != '\0'))
     {
         // Upper case first character
         if ((text[0] >= 'a') && (text[0] <= 'z')) buffer[0] = text[0] - 32;
@@ -2115,7 +2115,7 @@ std::string TextToSnake(std::string_view textView)
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         // Check for next separator to upper case another character
         for (int i = 0, j = 0; (i < MAX_TEXT_BUFFER_LENGTH - 1) && (text[j] != '\0'); j++)
@@ -2171,7 +2171,7 @@ std::string TextToCamel(std::string_view textView)
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
 
-    if ((text != NULL) && (text[0] != '\0'))
+    if ((text != nullptr) && (text[0] != '\0'))
     {
         // Lower case first character
         if ((text[0] >= 'A') && (text[0] <= 'Z')) buffer[0] = text[0] + 32;
@@ -2201,7 +2201,7 @@ std::string TextToCamel(std::string_view textView)
 std::string LoadUTF8(const int *codepoints, int length)
 {
     std::string text;
-    text.reserve((size_t)length*4);
+    text.reserve(static_cast<size_t>(length)*4);
 
     for (int i = 0; i < length; i++) text += CodepointToUTF8(codepoints[i]);
 
@@ -2217,15 +2217,15 @@ int * LoadCodepoints(std::string_view textView, int *count)
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    int *codepoints = NULL;
+    int *codepoints = nullptr;
     int codepointCount = 0;
 
-    if (text != NULL)
+    if (text != nullptr)
     {
         int textLength = TextLength(text);
 
         // Allocate a big enough buffer to store as many codepoints as text bytes
-        codepoints = (int *)RL_CALLOC(textLength, sizeof(int));
+        codepoints = static_cast<int *>(RL_CALLOC(textLength, sizeof(int)));
 
         int codepointSize = 0;
         for (int i = 0; i < textLength; codepointCount++)
@@ -2235,7 +2235,7 @@ int * LoadCodepoints(std::string_view textView, int *count)
         }
 
         // Create second buffer and copy data manually to it
-        int *temp = (int *)RL_CALLOC(codepointCount, sizeof(int));
+        int *temp = static_cast<int *>(RL_CALLOC(codepointCount, sizeof(int)));
         for (int i = 0; i < codepointCount; i++) temp[i] = codepoints[i];
         RL_FREE(codepoints);
         codepoints = temp;
@@ -2261,7 +2261,7 @@ int GetCodepointCount(std::string_view textView)
     unsigned int length = 0;
     const char *ptr = text;
 
-    if (ptr != NULL)
+    if (ptr != nullptr)
     {
         while (*ptr != '\0')
         {
@@ -2284,28 +2284,28 @@ std::string CodepointToUTF8(int codepoint)
 
     if (codepoint < 0x80)
     {
-        utf8[0] = (char)codepoint;
+        utf8[0] = static_cast<char>(codepoint);
         size = 1;
     }
     else if (codepoint < 0x800)
     {
-        utf8[0] = (char)(((codepoint >> 6) & 0x1f) | 0xc0);
-        utf8[1] = (char)((codepoint & 0x3f) | 0x80);
+        utf8[0] = static_cast<char>(((codepoint >> 6) & 0x1f) | 0xc0);
+        utf8[1] = static_cast<char>((codepoint & 0x3f) | 0x80);
         size = 2;
     }
     else if (codepoint <= 0xffff)
     {
-        utf8[0] = (char)(((codepoint >> 12) & 0x0f) | 0xe0);
-        utf8[1] = (char)(((codepoint >>  6) & 0x3f) | 0x80);
-        utf8[2] = (char)((codepoint & 0x3f) | 0x80);
+        utf8[0] = static_cast<char>(((codepoint >> 12) & 0x0f) | 0xe0);
+        utf8[1] = static_cast<char>(((codepoint >>  6) & 0x3f) | 0x80);
+        utf8[2] = static_cast<char>((codepoint & 0x3f) | 0x80);
         size = 3;
     }
     else if (codepoint <= 0x10ffff)
     {
-        utf8[0] = (char)(((codepoint >> 18) & 0x07) | 0xf0);
-        utf8[1] = (char)(((codepoint >> 12) & 0x3f) | 0x80);
-        utf8[2] = (char)(((codepoint >>  6) & 0x3f) | 0x80);
-        utf8[3] = (char)((codepoint & 0x3f) | 0x80);
+        utf8[0] = static_cast<char>(((codepoint >> 18) & 0x07) | 0xf0);
+        utf8[1] = static_cast<char>(((codepoint >> 12) & 0x3f) | 0x80);
+        utf8[2] = static_cast<char>(((codepoint >>  6) & 0x3f) | 0x80);
+        utf8[3] = static_cast<char>((codepoint & 0x3f) | 0x80);
         size = 4;
     }
 
@@ -2336,10 +2336,10 @@ int GetCodepoint(std::string_view textView, int *codepointSize)
 
     int codepoint = 0x3f;   // Codepoint (defaults to '?')
     *codepointSize = 1;
-    if (text == NULL) return codepoint;
+    if (text == nullptr) return codepoint;
 
     // NOTE: On decoding errors, return as soon as possible
-    int octet = (unsigned char)(text[0]); // The first UTF8 octet
+    int octet = static_cast<unsigned char>(text[0]); // The first UTF8 octet
 
     if (octet <= 0x7f)
     {
@@ -2434,7 +2434,7 @@ int GetCodepointNext(std::string_view textView, int *codepointSize)
     const char *ptr = text;
     int codepoint = 0x3f;       // Codepoint (defaults to '?')
     *codepointSize = 1;
-    if (text == NULL) return codepoint;
+    if (text == nullptr) return codepoint;
 
     // Get current codepoint and bytes processed
     if (0xf0 == (0xf8 & ptr[0]))
@@ -2477,7 +2477,7 @@ int GetCodepointPrevious(std::string_view textView, int *codepointSize)
     const char *ptr = text;
     int codepoint = 0x3f;       // Codepoint (defaults to '?')
     *codepointSize = 1;
-    if (text == NULL) return codepoint;
+    if (text == nullptr) return codepoint;
 
     // Move to previous codepoint
     do ptr--;
@@ -2518,7 +2518,7 @@ static Font LoadBMFont(const char *fileName)
     Font font = { 0 };
 
     char buffer[MAX_BUFFER_SIZE] = { 0 };
-    char *searchPoint = NULL;
+    char *searchPoint = nullptr;
 
     int fontSize = 0;
     int glyphCount = 0;
@@ -2574,7 +2574,7 @@ static Font LoadBMFont(const char *fileName)
     if (readVars < 1) return font; // No glyphCount read
 
     // Load all required images for further compose
-    Image *imFonts = (Image *)RL_CALLOC(pageCount, sizeof(Image)); // Font atlases, multiple images
+    Image *imFonts = static_cast<Image *>(RL_CALLOC(pageCount, sizeof(Image))); // Font atlases, multiple images
 
     for (int i = 0; i < pageCount; i++)
     {
@@ -2593,8 +2593,8 @@ static Font LoadBMFont(const char *fileName)
 
             for (int p = 0, pi = 0; p < (imFonts[i].width*imFonts[i].height*2); p += 2, pi++)
             {
-                ((unsigned char *)(imFontAlpha.data))[p] = 0xff;
-                ((unsigned char *)(imFontAlpha.data))[p + 1] = ((unsigned char *)imFonts[i].data)[pi];
+                (static_cast<unsigned char *>(imFontAlpha.data))[p] = 0xff;
+                (static_cast<unsigned char *>(imFontAlpha.data))[p + 1] = (static_cast<unsigned char *>(imFonts[i].data))[pi];
             }
 
             UnloadImage(imFonts[i]);
@@ -2614,8 +2614,8 @@ static Font LoadBMFont(const char *fileName)
 
         for (int i = 1; i < pageCount; i++)
         {
-            Rectangle srcRec = { 0.0f, 0.0f, (float)imWidth, (float)imHeight };
-            Rectangle dstRec = { 0.0f, (float)imHeight*(float)i, (float)imWidth, (float)imHeight };
+            Rectangle srcRec = { 0.0f, 0.0f, static_cast<float>(imWidth), static_cast<float>(imHeight) };
+            Rectangle dstRec = { 0.0f, static_cast<float>(imHeight)*static_cast<float>(i), static_cast<float>(imWidth), static_cast<float>(imHeight) };
             ImageDrawImagePro(&fullFont, imFonts[i], srcRec, dstRec, Vector2{ 0 }, 0.0f, WHITE);
         }
     }
@@ -2628,8 +2628,8 @@ static Font LoadBMFont(const char *fileName)
     font.baseSize = fontSize;
     font.glyphCount = glyphCount;
     font.glyphPadding = 0;
-    font.glyphs = (GlyphInfo *)RL_CALLOC(glyphCount, sizeof(GlyphInfo));
-    font.recs = (Rectangle *)RL_CALLOC(glyphCount, sizeof(Rectangle));
+    font.glyphs = static_cast<GlyphInfo *>(RL_CALLOC(glyphCount, sizeof(GlyphInfo)));
+    font.recs = static_cast<Rectangle *>(RL_CALLOC(glyphCount, sizeof(Rectangle)));
 
     int charId = 0;
     int charX = 0;
@@ -2651,7 +2651,7 @@ static Font LoadBMFont(const char *fileName)
         if (readVars == 9) // Make sure all char data has been properly read
         {
             // Get character rectangle in the font atlas texture
-            font.recs[i] = Rectangle{ (float)charX, (float)charY + (float)imHeight*pageID, (float)charWidth, (float)charHeight };
+            font.recs[i] = Rectangle{ static_cast<float>(charX), static_cast<float>(charY) + static_cast<float>(imHeight)*pageID, static_cast<float>(charWidth), static_cast<float>(charHeight) };
 
             // Save data properly in sprite font
             font.glyphs[i].value = charId;
@@ -2664,7 +2664,7 @@ static Font LoadBMFont(const char *fileName)
         }
         else
         {
-            font.glyphs[i].image = GenImageColor((int)font.recs[i].width, (int)font.recs[i].height, BLACK);
+            font.glyphs[i].image = GenImageColor(static_cast<int>(font.recs[i].width), static_cast<int>(font.recs[i].height), BLACK);
             TRACELOG(LOG_WARNING, "FONT: [%s] Some characters data not correctly provided", fileName);
         }
     }
@@ -2701,8 +2701,8 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
 
     char buffer[MAX_BUFFER_SIZE] = { 0 };
 
-    GlyphInfo *glyphs = NULL;
-    GlyphInfo *outGlyphPtr = NULL;  // Pointer to output glyph info (NULL if not set)
+    GlyphInfo *glyphs = nullptr;
+    GlyphInfo *outGlyphPtr = nullptr;  // Pointer to output glyph info (NULL if not set)
     bool internalCodepoints = false;
 
     int totalReadBytes = 0;         // Data bytes read (total)
@@ -2731,13 +2731,13 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
     int charDWidthX = 0;            // Character advance X
     int charDWidthY = 0;            // Character advance Y (unused)
 
-    if (fileData == NULL) return glyphs;
+    if (fileData == nullptr) return glyphs;
 
     // In case no chars count provided, default to 95
     codepointCount = (codepointCount > 0)? codepointCount : 95;
     int *requiredCodepoints = (int *)RL_CALLOC(codepointCount, sizeof(int));
 
-    if (codepoints == NULL)
+    if (codepoints == nullptr)
     {
         // Fill internal codepoints array in case not provided externally
         // NOTE: By default, filling glyph count consecutively, starting at 32 (Space)
@@ -2758,12 +2758,12 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
         fileTextPtr += (readBytes + 1);
 
         // Line: COMMENT
-        if (strstr(buffer, "COMMENT") != NULL) continue; // Ignore line
+        if (strstr(buffer, "COMMENT") != nullptr) continue; // Ignore line
 
         if (charStarted)
         {
             // Line: ENDCHAR
-            if (strstr(buffer, "ENDCHAR") != NULL)
+            if (strstr(buffer, "ENDCHAR") != nullptr)
             {
                 charStarted = false;
                 continue;
@@ -2771,7 +2771,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
 
             if (charBitmapStarted)
             {
-                if (outGlyphPtr != NULL)
+                if (outGlyphPtr != nullptr)
                 {
                     int pixelY = charBitmapNextRow++;
 
@@ -2795,31 +2795,31 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
             }
 
             // Line: ENCODING
-            if (strstr(buffer, "ENCODING") != NULL)
+            if (strstr(buffer, "ENCODING") != nullptr)
             {
                 readVars = sscanf(buffer, "ENCODING %i", &charEncoding);
                 continue;
             }
 
             // Line: BBX
-            if (strstr(buffer, "BBX") != NULL)
+            if (strstr(buffer, "BBX") != nullptr)
             {
                 readVars = sscanf(buffer, "BBX %i %i %i %i", &charBBw, &charBBh, &charBBxoff0, &charBByoff0);
                 continue;
             }
 
             // Line: DWIDTH
-            if (strstr(buffer, "DWIDTH") != NULL)
+            if (strstr(buffer, "DWIDTH") != nullptr)
             {
                 readVars = sscanf(buffer, "DWIDTH %i %i", &charDWidthX, &charDWidthY);
                 continue;
             }
 
             // Line: BITMAP
-            if (strstr(buffer, "BITMAP") != NULL)
+            if (strstr(buffer, "BITMAP") != nullptr)
             {
                 // Search for glyph index in codepoints
-                outGlyphPtr = NULL;
+                outGlyphPtr = nullptr;
 
                 for (int index = 0; index < codepointCount; index++)
                 {
@@ -2831,7 +2831,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
                 }
 
                 // Init glyph info
-                if (outGlyphPtr != NULL)
+                if (outGlyphPtr != nullptr)
                 {
                     outGlyphPtr->value = charEncoding;
                     // BBX offsets place the glyph bitmap relative to the pen position on the baseline,
@@ -2856,28 +2856,28 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
         else if (fontStarted)
         {
             // Line: ENDFONT
-            if (strstr(buffer, "ENDFONT") != NULL)
+            if (strstr(buffer, "ENDFONT") != nullptr)
             {
                 fontStarted = false;
                 break;
             }
 
             // Line: SIZE
-            if (strstr(buffer, "SIZE") != NULL)
+            if (strstr(buffer, "SIZE") != nullptr)
             {
-                if (outFontSize != NULL) readVars = sscanf(buffer, "SIZE %i", outFontSize);
+                if (outFontSize != nullptr) readVars = sscanf(buffer, "SIZE %i", outFontSize);
                 continue;
             }
 
             // PIXEL_SIZE
-            if (strstr(buffer, "PIXEL_SIZE") != NULL)
+            if (strstr(buffer, "PIXEL_SIZE") != nullptr)
             {
-                if (outFontSize != NULL) readVars = sscanf(buffer, "PIXEL_SIZE %i", outFontSize);
+                if (outFontSize != nullptr) readVars = sscanf(buffer, "PIXEL_SIZE %i", outFontSize);
                 continue;
             }
 
             // FONTBOUNDINGBOX
-            if (strstr(buffer, "FONTBOUNDINGBOX") != NULL)
+            if (strstr(buffer, "FONTBOUNDINGBOX") != nullptr)
             {
                 readVars = sscanf(buffer, "FONTBOUNDINGBOX %i %i %i %i", &fontBBw, &fontBBh, &fontBBxoff0, &fontBByoff0);
                 fontAscent = fontBBh + fontBByoff0; // Default if FONT_ASCENT property is not provided
@@ -2885,25 +2885,25 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
             }
 
             // FONT_ASCENT
-            if (strstr(buffer, "FONT_ASCENT") != NULL)
+            if (strstr(buffer, "FONT_ASCENT") != nullptr)
             {
                 readVars = sscanf(buffer, "FONT_ASCENT %i", &fontAscent);
                 continue;
             }
 
             // STARTCHAR
-            if (strstr(buffer, "STARTCHAR") != NULL)
+            if (strstr(buffer, "STARTCHAR") != nullptr)
             {
                 charStarted = true;
                 charEncoding = -1;
-                outGlyphPtr = NULL;
+                outGlyphPtr = nullptr;
                 charBBw = 0;
                 charBBh = 0;
                 charBBxoff0 = 0;
                 charBByoff0 = 0;
                 charDWidthX = 0;
                 charDWidthY = 0;
-                outGlyphPtr = NULL;
+                outGlyphPtr = nullptr;
                 charBitmapStarted = false;
                 charBitmapNextRow = 0;
                 continue;
@@ -2912,7 +2912,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
         else
         {
             // STARTFONT
-            if (strstr(buffer, "STARTFONT") != NULL)
+            if (strstr(buffer, "STARTFONT") != nullptr)
             {
                 if (fontStarted)
                 {
@@ -2933,7 +2933,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
     if (fontMalformed)
     {
         RL_FREE(glyphs);
-        glyphs = NULL;
+        glyphs = nullptr;
     }
 
     return glyphs;

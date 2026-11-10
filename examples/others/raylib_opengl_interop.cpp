@@ -87,12 +87,12 @@ int main()
 
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
-        particles[i].x = (float)GetRandomValue(20, screenWidth - 20);
-        particles[i].y = (float)GetRandomValue(50, screenHeight - 20);
+        particles[i].x = static_cast<float>(GetRandomValue(20, screenWidth - 20));
+        particles[i].y = static_cast<float>(GetRandomValue(50, screenHeight - 20));
 
         // Give each particle a slightly different period. But don't spread it to much
         // This way the particles line up every so often and you get a glimps of what is going on
-        particles[i].period = (float)GetRandomValue(10, 30)/10.0f;
+        particles[i].period = static_cast<float>(GetRandomValue(10, 30))/10.0f;
     }
 
     // Create a plain OpenGL vertex buffer with the data and an vertex array object
@@ -105,7 +105,7 @@ int main()
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, MAX_PARTICLES*sizeof(Particle), particles, GL_STATIC_DRAW);
         // Note: LoadShader() automatically fetches the attribute index of "vertexPosition" and saves it in shader.locs[SHADER_LOC_VERTEX_POSITION]
-        glVertexAttribPointer(shader.locs[SHADER_LOC_VERTEX_POSITION], 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glVertexAttribPointer(shader.locs[SHADER_LOC_VERTEX_POSITION], 3, GL_FLOAT, GL_FALSE, 0, nullptr);
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -138,7 +138,7 @@ int main()
                 glUniform1f(currentTimeLoc, GetTime());
 
                 Vector4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
-                glUniform4fv(colorLoc, 1, (float *)&color);
+                glUniform4fv(colorLoc, 1, reinterpret_cast<float *>(&color));
 
                 // Get the current modelview and projection matrix so the particle system is displayed and transformed
                 Matrix modelViewProjection = ((rlGetMatrixProjection()) * (rlGetMatrixModelview()));

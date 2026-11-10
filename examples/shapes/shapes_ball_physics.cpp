@@ -51,7 +51,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ball physics");
 
-    Ball *balls = (Ball*)RL_MALLOC(sizeof(Ball)*MAX_BALLS);
+    Ball *balls = static_cast<Ball*>(RL_MALLOC(sizeof(Ball)*MAX_BALLS));
 
     // Init first ball in the array
     balls[0] = Ball{
@@ -66,7 +66,7 @@ int main()
     };
 
     int ballCount = 1;
-    Ball *grabbedBall = NULL;       // A pointer to the current ball that is grabbed
+    Ball *grabbedBall = nullptr;       // A pointer to the current ball that is grabbed
     Vector2 pressOffset = {};    // Mouse press offset relative to the ball that grabbedd
 
     float gravity = 100;            // World gravity
@@ -107,10 +107,10 @@ int main()
         // Releases any ball the was grabbed
         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
         {
-            if (grabbedBall != NULL)
+            if (grabbedBall != nullptr)
             {
                 grabbedBall->grabbed = false;
-                grabbedBall = NULL;
+                grabbedBall = nullptr;
             }
         }
 
@@ -121,12 +121,12 @@ int main()
             {
                 balls[ballCount++] = Ball{
                     .position = mousePos,
-                    .speed = { (float)GetRandomValue(-300, 300), (float)GetRandomValue(-300, 300) },
+                    .speed = { static_cast<float>(GetRandomValue(-300, 300)), static_cast<float>(GetRandomValue(-300, 300)) },
                     .prevPosition = {},
-                    .radius = 20.0f + (float)GetRandomValue(0, 30),
+                    .radius = 20.0f + static_cast<float>(GetRandomValue(0, 30)),
                     .friction = 0.99f,
                     .elasticity = 0.9f,
-                    .color = { (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 },
+                    .color = { static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 },
                     .grabbed = false
                 };
             }
@@ -148,7 +148,7 @@ int main()
         {
             for (int i = 0; i < ballCount; i++)
             {
-                if (!balls[i].grabbed) balls[i].speed = Vector2{ (float)GetRandomValue(-2000, 2000), (float)GetRandomValue(-2000, 2000) };
+                if (!balls[i].grabbed) balls[i].speed = Vector2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
             }
         }
 

@@ -70,7 +70,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawCircleV(ballPosition, (float)ballRadius, MAROON);
+            DrawCircleV(ballPosition, static_cast<float>(ballRadius), MAROON);
             DrawText("PRESS SPACE to PAUSE BALL MOVEMENT", 10, GetScreenHeight() - 25, 20, LIGHTGRAY);
 
             if (useGravity) DrawText("GRAVITY: ON (Press G to disable)", 10, GetScreenHeight() - 50, 20, DARKGREEN);

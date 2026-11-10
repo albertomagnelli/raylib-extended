@@ -88,7 +88,7 @@ int main()
     int pressedButton = BUTTON_NONE;
     Vector2 inputPosition = { 0, 0 };
 
-    Vector2 playerPosition = { (float)screenWidth/2, (float)screenHeight/2 };
+    Vector2 playerPosition = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
     float playerSpeed = 75;
 
     SetTargetFPS(60);

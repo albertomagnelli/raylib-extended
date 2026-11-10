@@ -71,7 +71,7 @@ int main()
     Rectangle toggleRecs[NUM_PROCESSES] = {};
     int mouseHoverRec = -1;
 
-    for (int i = 0; i < NUM_PROCESSES; i++) toggleRecs[i] = Rectangle{ 40.0f, (float)(50 + 32*i), 150.0f, 30.0f };
+    for (int i = 0; i < NUM_PROCESSES; i++) toggleRecs[i] = Rectangle{ 40.0f, static_cast<float>(50 + 32*i), 150.0f, 30.0f };
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------
@@ -155,8 +155,8 @@ int main()
             for (int i = 0; i < NUM_PROCESSES; i++)
             {
                 DrawRectangleRec(toggleRecs[i], ((i == currentProcess) || (i == mouseHoverRec)) ? SKYBLUE : LIGHTGRAY);
-                DrawRectangleLines((int)toggleRecs[i].x, (int) toggleRecs[i].y, (int) toggleRecs[i].width, (int) toggleRecs[i].height, ((i == currentProcess) || (i == mouseHoverRec)) ? BLUE : GRAY);
-                DrawText( processText[i], (int)( toggleRecs[i].x + toggleRecs[i].width/2 - (float)MeasureText(processText[i], 10)/2), (int) toggleRecs[i].y + 11, 10, ((i == currentProcess) || (i == mouseHoverRec)) ? DARKBLUE : DARKGRAY);
+                DrawRectangleLines(static_cast<int>(toggleRecs[i].x), static_cast<int>(toggleRecs[i].y), static_cast<int>(toggleRecs[i].width), static_cast<int>(toggleRecs[i].height), ((i == currentProcess) || (i == mouseHoverRec)) ? BLUE : GRAY);
+                DrawText( processText[i], static_cast<int>( toggleRecs[i].x + toggleRecs[i].width/2 - static_cast<float>(MeasureText(processText[i], 10))/2), static_cast<int>(toggleRecs[i].y) + 11, 10, ((i == currentProcess) || (i == mouseHoverRec)) ? DARKBLUE : DARKGRAY);
             }
 
             DrawTexture(texture, screenWidth - texture.width - 60, screenHeight/2 - texture.height/2, WHITE);

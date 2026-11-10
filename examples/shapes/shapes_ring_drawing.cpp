@@ -65,9 +65,9 @@ int main()
             DrawLine(500, 0, 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.6f));
             DrawRectangle(500, 0, GetScreenWidth() - 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.3f));
 
-            if (drawRing) DrawRing(center, innerRadius, outerRadius, startAngle, endAngle, (int)segments, Fade(MAROON, 0.3f));
-            if (drawRingLines) DrawRingLines(center, innerRadius, outerRadius, startAngle, endAngle, (int)segments, Fade(BLACK, 0.4f));
-            if (drawCircleLines) DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, (int)segments, Fade(BLACK, 0.4f));
+            if (drawRing) DrawRing(center, innerRadius, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(MAROON, 0.3f));
+            if (drawRingLines) DrawRingLines(center, innerRadius, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(BLACK, 0.4f));
+            if (drawCircleLines) DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(BLACK, 0.4f));
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ int main()
             GuiCheckBox(Rectangle{ 600, 380, 20, 20 }, "Draw CircleLines", &drawCircleLines);
             //------------------------------------------------------------------------------
 
-            int minSegments = (int)ceilf((endAngle - startAngle)/90);
+            int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
             DrawText(TextFormat("MODE: %s", (segments >= minSegments)? "MANUAL" : "AUTO"), 600, 270, 10, (segments >= minSegments)? MAROON : DARKGRAY);
 
             DrawFPS(10, 10);

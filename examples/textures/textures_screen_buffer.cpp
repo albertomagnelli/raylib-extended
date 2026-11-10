@@ -39,8 +39,8 @@ int main()
     int flameWidth = screenWidth/SCALE_FACTOR;
 
     Color palette[MAX_COLORS] = {};
-    unsigned char *indexBuffer = (unsigned char *)RL_CALLOC(imageWidth*imageWidth, sizeof(unsigned char));
-    unsigned char *flameRootBuffer = (unsigned char *)RL_CALLOC(flameWidth, sizeof(unsigned char));
+    unsigned char *indexBuffer = static_cast<unsigned char *>(RL_CALLOC(imageWidth*imageWidth, sizeof(unsigned char)));
+    unsigned char *flameRootBuffer = static_cast<unsigned char *>(RL_CALLOC(flameWidth, sizeof(unsigned char)));
 
     Image screenImage = GenImageColor(imageWidth, imageHeight, BLACK);
     Texture screenTexture = LoadTextureFromImage(screenImage);
@@ -48,7 +48,7 @@ int main()
     // Generate flame color palette
     for (int i = 0; i < MAX_COLORS; i++)
     {
-        float t = (float)i/(float)(MAX_COLORS - 1);
+        float t = static_cast<float>(i)/static_cast<float>(MAX_COLORS - 1);
         float hue = t*t;
         float saturation = t;
         float value = t;
@@ -67,9 +67,9 @@ int main()
         // Grow flameRoot
         for (int x = 2; x < flameWidth; x++)
         {
-            int flame = (int)flameRootBuffer[x];
+            int flame = static_cast<int>(flameRootBuffer[x]);
             flame += GetRandomValue(0, 2);
-            flameRootBuffer[x] = (flame > 255)? 255: (unsigned char)flame;
+            flameRootBuffer[x] = (flame > 255)? 255: static_cast<unsigned char>(flame);
         }
 
         // Transfer flameRoot to indexBuffer

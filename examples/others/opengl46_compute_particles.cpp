@@ -94,9 +94,9 @@ int main()
         return 1;
     }
 
-    TraceLog(LOG_INFO, "GL: OpenGL version: %s", (const char *)glGetString(GL_VERSION));
-    TraceLog(LOG_INFO, "GL: GLSL version: %s", (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
-    TraceLog(LOG_INFO, "GL: Renderer: %s", (const char *)glGetString(GL_RENDERER));
+    TraceLog(LOG_INFO, "GL: OpenGL version: %s", reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+    TraceLog(LOG_INFO, "GL: GLSL version: %s", reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
+    TraceLog(LOG_INFO, "GL: Renderer: %s", reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
 
     //----------------------------------------------------------------------------------
     // Shaders
@@ -199,7 +199,7 @@ int main()
     if (computeLinked == GL_FALSE)
     {
         char log[1024] = {};
-        glGetProgramInfoLog(computeProgram, sizeof(log), NULL, log);
+        glGetProgramInfoLog(computeProgram, sizeof(log), nullptr, log);
 
         TraceLog(LOG_ERROR, "EXAMPLE: Compute program link failed");
         TraceLog(LOG_ERROR, "SHADER: %s", log);
@@ -325,10 +325,10 @@ int main()
 
             // 2) Draw all particle batches with a single OpenGL 4.6 multi-draw call
             glUseProgram(renderProgram);
-                glUniform3fv(paletteLoc, PARTICLE_BATCHES, (float *)palette);
+                glUniform3fv(paletteLoc, PARTICLE_BATCHES, reinterpret_cast<float *>(palette));
 
                 glBindVertexArray(vertexArray);
-                    glMultiDrawArraysIndirectCount(GL_POINTS, 0, 0, PARTICLE_BATCHES, 0);
+                    glMultiDrawArraysIndirectCount(GL_POINTS, nullptr, 0, PARTICLE_BATCHES, 0);
                 glBindVertexArray(0);
             glUseProgram(0);
 
@@ -360,7 +360,7 @@ static GLuint CompileShader(GLenum type, const char *code)
 {
     GLuint shaderId = glCreateShader(type);
 
-    glShaderSource(shaderId, 1, &code, NULL);
+    glShaderSource(shaderId, 1, &code, nullptr);
     glCompileShader(shaderId);
 
     GLint success = 0;
@@ -369,7 +369,7 @@ static GLuint CompileShader(GLenum type, const char *code)
     if (success == GL_FALSE)
     {
         char log[1024] = {};
-        glGetShaderInfoLog(shaderId, sizeof(log), NULL, log);
+        glGetShaderInfoLog(shaderId, sizeof(log), nullptr, log);
 
         TraceLog(LOG_ERROR, "SHADER: Failed to compile shader (type: 0x%04X)", type);
         TraceLog(LOG_ERROR, "SHADER: %s", log);
@@ -396,7 +396,7 @@ static GLuint LinkProgram(GLuint vertexShader, GLuint fragmentShader)
     if (success == GL_FALSE)
     {
         char log[1024] = {};
-        glGetProgramInfoLog(programId, sizeof(log), NULL, log);
+        glGetProgramInfoLog(programId, sizeof(log), nullptr, log);
 
         TraceLog(LOG_ERROR, "SHADER: Failed to link program");
         TraceLog(LOG_ERROR, "SHADER: %s", log);
@@ -413,12 +413,12 @@ static void InitParticles(Particle *particles)
 {
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
-        particles[i].positionSize[0] = (float)GetRandomValue(-1000, 1000)/1000.0f;
-        particles[i].positionSize[1] = (float)GetRandomValue(-1000, 1000)/1000.0f;
+        particles[i].positionSize[0] = static_cast<float>(GetRandomValue(-1000, 1000))/1000.0f;
+        particles[i].positionSize[1] = static_cast<float>(GetRandomValue(-1000, 1000))/1000.0f;
 
         // Random velocity in the [-0.15, 0.15] range (normalized device coordinates per second)
-        particles[i].velocity[0] = (float)GetRandomValue(-150, 150)/1000.0f;
-        particles[i].velocity[1] = (float)GetRandomValue(-150, 150)/1000.0f;
+        particles[i].velocity[0] = static_cast<float>(GetRandomValue(-150, 150))/1000.0f;
+        particles[i].velocity[1] = static_cast<float>(GetRandomValue(-150, 150))/1000.0f;
 
         // Keep particles above a minimum speed so they do not stay frozen
         if ((fabsf(particles[i].velocity[0]) < 0.03f) && (fabsf(particles[i].velocity[1]) < 0.03f))
@@ -428,6 +428,6 @@ static void InitParticles(Particle *particles)
         }
 
         // Point size in pixels (stored in positionSize.w, as expected by the vertex shader)
-        particles[i].positionSize[3] = (float)GetRandomValue(15, 45)/10.0f;
+        particles[i].positionSize[3] = static_cast<float>(GetRandomValue(15, 45))/10.0f;
     }
 }

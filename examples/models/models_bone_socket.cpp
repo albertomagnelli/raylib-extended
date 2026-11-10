@@ -116,7 +116,7 @@ int main()
         // Update model animation
         ModelAnimation anim = modelAnimations[animIndex];
         animCurrentFrame = (animCurrentFrame + 1)%anim.keyframeCount;
-        UpdateModelAnimation(characterModel, anim, (float)animCurrentFrame);
+        UpdateModelAnimation(characterModel, anim, static_cast<float>(animCurrentFrame));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -129,7 +129,7 @@ int main()
                 // Draw character
                 Quaternion characterRotate = glm::angleAxis(angle*DEG2RAD, glm::normalize(Vector3{ 0.0f, 1.0f, 0.0f }));
                 characterModel.transform = ((glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z})) * (glm::mat4_cast(characterRotate)));
-                UpdateModelAnimation(characterModel, anim, (float)animCurrentFrame);
+                UpdateModelAnimation(characterModel, anim, static_cast<float>(animCurrentFrame));
                 DrawMesh(characterModel.meshes[0], characterModel.materials[1], characterModel.transform);
 
                 // Draw equipments (hat, sword, shield)

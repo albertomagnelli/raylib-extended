@@ -51,7 +51,7 @@ int main()
     int mouseLoc = GetShaderLocation(shader, "mouse");
     int timeLoc = GetShaderLocation(shader, "time");
 
-    float resolution[2] = { (float)screenWidth, (float)screenHeight };
+    float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
     float totalTime = 0.0f;

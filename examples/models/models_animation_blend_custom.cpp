@@ -182,10 +182,10 @@ static bool IsUpperBodyBone(const char *boneName)
     }
 
     // Check if bone name contains upper body keywords
-    if (strstr(boneName, "spine") != NULL || strstr(boneName, "chest") != NULL ||
-        strstr(boneName, "neck") != NULL || strstr(boneName, "head") != NULL ||
-        strstr(boneName, "shoulder") != NULL || strstr(boneName, "arm") != NULL ||
-        strstr(boneName, "hand") != NULL || strstr(boneName, "clavicle") != NULL)
+    if (strstr(boneName, "spine") != nullptr || strstr(boneName, "chest") != nullptr ||
+        strstr(boneName, "neck") != nullptr || strstr(boneName, "head") != nullptr ||
+        strstr(boneName, "shoulder") != nullptr || strstr(boneName, "arm") != nullptr ||
+        strstr(boneName, "hand") != nullptr || strstr(boneName, "clavicle") != nullptr)
     {
         return true;
     }
@@ -198,9 +198,9 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
     ModelAnimation *anim1, int frame1, float blend, bool upperBodyBlend)
 {
     // Validate inputs
-    if ((anim0->boneCount != 0) && (anim0->keyframePoses != NULL) &&
-        (anim1->boneCount != 0) && (anim1->keyframePoses != NULL) &&
-        (model->skeleton.boneCount != 0) && (model->skeleton.bindPose != NULL))
+    if ((anim0->boneCount != 0) && (anim0->keyframePoses != nullptr) &&
+        (anim1->boneCount != 0) && (anim1->keyframePoses != nullptr) &&
+        (model->skeleton.boneCount != 0) && (model->skeleton.bindPose != nullptr))
     {
         // Clamp blend factor to [0, 1]
         blend = fminf(1.0f, fmaxf(0.0f, blend));
@@ -270,15 +270,15 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             bool bufferUpdateRequired = false; // Flag to check when anim vertex information is updated
 
             // Skip if missing bone data or missing anim buffers initialization
-            if ((mesh.boneWeights == NULL) || (mesh.boneIndices == NULL) ||
-                (mesh.animVertices == NULL) || (mesh.animNormals == NULL)) continue;
+            if ((mesh.boneWeights == nullptr) || (mesh.boneIndices == nullptr) ||
+                (mesh.animVertices == nullptr) || (mesh.animNormals == nullptr)) continue;
 
             for (int vCounter = 0; vCounter < vertexValuesCount; vCounter += 3)
             {
                 mesh.animVertices[vCounter] = 0;
                 mesh.animVertices[vCounter + 1] = 0;
                 mesh.animVertices[vCounter + 2] = 0;
-                if (mesh.animNormals != NULL)
+                if (mesh.animNormals != nullptr)
                 {
                     mesh.animNormals[vCounter] = 0;
                     mesh.animNormals[vCounter + 1] = 0;
@@ -302,7 +302,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
 
                     // Normals processing
                     // NOTE: We use meshes.baseNormals (default normal) to calculate meshes.normals (animated normals)
-                    if ((mesh.normals != NULL) && (mesh.animNormals != NULL ))
+                    if ((mesh.normals != nullptr) && (mesh.animNormals != nullptr ))
                     {
                         animNormal = Vector3{ mesh.normals[vCounter], mesh.normals[vCounter + 1], mesh.normals[vCounter + 2] };
                         animNormal = Vector3((glm::transpose(glm::inverse(model->boneMatrices[boneIndex])))*Vector4(animNormal, 1.0f));
@@ -317,7 +317,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             {
                 // Update GPU vertex buffers with updated data (position + normals)
                 rlUpdateVertexBuffer(mesh.vboId[SHADER_LOC_VERTEX_POSITION], mesh.animVertices, mesh.vertexCount*3*sizeof(float), 0);
-                if (mesh.normals != NULL) rlUpdateVertexBuffer(mesh.vboId[SHADER_LOC_VERTEX_NORMAL], mesh.animNormals, mesh.vertexCount*3*sizeof(float), 0);
+                if (mesh.normals != nullptr) rlUpdateVertexBuffer(mesh.vboId[SHADER_LOC_VERTEX_NORMAL], mesh.animNormals, mesh.vertexCount*3*sizeof(float), 0);
             }
         }
     }

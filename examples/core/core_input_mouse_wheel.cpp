@@ -38,7 +38,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        boxPositionY -= (int)(GetMouseWheelMove()*scrollSpeed);
+        boxPositionY -= static_cast<int>(GetMouseWheelMove()*scrollSpeed);
         //----------------------------------------------------------------------------------
 
         // Draw

@@ -71,15 +71,15 @@ int main()
 
             for (int i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
             {
-                recs[i].height = EaseCircOut((float)framesCounter, RECS_HEIGHT, -RECS_HEIGHT, PLAY_TIME_IN_FRAMES);
-                recs[i].width = EaseCircOut((float)framesCounter, RECS_WIDTH, -RECS_WIDTH, PLAY_TIME_IN_FRAMES);
+                recs[i].height = EaseCircOut(static_cast<float>(framesCounter), RECS_HEIGHT, -RECS_HEIGHT, PLAY_TIME_IN_FRAMES);
+                recs[i].width = EaseCircOut(static_cast<float>(framesCounter), RECS_WIDTH, -RECS_WIDTH, PLAY_TIME_IN_FRAMES);
 
                 if (recs[i].height < 0) recs[i].height = 0;
                 if (recs[i].width < 0) recs[i].width = 0;
 
                 if ((recs[i].height == 0) && (recs[i].width == 0)) state = 1;   // Finish playing
 
-                rotation = EaseLinearIn((float)framesCounter, 0.0f, 360.0f, PLAY_TIME_IN_FRAMES);
+                rotation = EaseLinearIn(static_cast<float>(framesCounter), 0.0f, 360.0f, PLAY_TIME_IN_FRAMES);
             }
         }
         else if ((state == 1) && IsKeyPressed(KEY_SPACE))

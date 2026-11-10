@@ -39,7 +39,7 @@ static Vector2 curveStartPositionTangent = {};
 static Vector2 curveEndPosition = {};
 static Vector2 curveEndPositionTangent = {};
 
-static Vector2 *curveSelectedPoint = NULL;
+static Vector2 *curveSelectedPoint = nullptr;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -92,10 +92,10 @@ int main()
 
         // Update curve logic
         // If the mouse is not down, we are not editing the curve so clear the selection
-        if (!IsMouseButtonDown(MOUSE_LEFT_BUTTON))  curveSelectedPoint = NULL;
+        if (!IsMouseButtonDown(MOUSE_LEFT_BUTTON))  curveSelectedPoint = nullptr;
 
         // If a point was selected, move it
-        if (curveSelectedPoint != NULL) *curveSelectedPoint = ((*curveSelectedPoint) + (GetMouseDelta()));
+        if (curveSelectedPoint != nullptr) *curveSelectedPoint = ((*curveSelectedPoint) + (GetMouseDelta()));
 
         // The mouse is down, and nothing was selected, so see if anything was picked
         Vector2 mouse = GetMousePosition();
@@ -172,7 +172,7 @@ static void DrawTexturedCurve(void)
 
     for (int i = 1; i <= curveSegments; i++)
     {
-        t = step*(float)i;
+        t = step*static_cast<float>(i);
 
         float a = powf(1.0f - t, 3);
         float b = 3.0f*powf(1.0f - t, 2)*t;
@@ -190,7 +190,7 @@ static void DrawTexturedCurve(void)
         Vector2 normal = glm::normalize(Vector2{ -delta.y, delta.x });
 
         // The v texture coordinate of the segment (add up the length of all the segments so far)
-        float v = previousV + glm::length(delta) / (float)(texRoad.height * 2);
+        float v = previousV + glm::length(delta) / static_cast<float>(texRoad.height * 2);
 
         // Make sure the start point has a normal
         if (!tangentSet)

@@ -83,7 +83,7 @@ int main()
     Image fftImage = GenImageColor(BUFFER_SIZE, TEXTURE_HEIGHT, WHITE);
     Texture2D fftTexture = LoadTextureFromImage(fftImage);
     RenderTexture2D bufferA = LoadRenderTexture(screenWidth, screenHeight);
-    Vector2 iResolution = { (float)screenWidth, (float)screenHeight };
+    Vector2 iResolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
 
     Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
 
@@ -102,13 +102,13 @@ int main()
     AudioStream audioStream = LoadAudioStream(SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
     PlayAudioStream(audioStream);
 
-    int fftHistoryLen = (int)ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME) + 1;
+    int fftHistoryLen = static_cast<int>(ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME)) + 1;
 
     FFTData fft = {
-        .spectrum = (FFTComplex *)RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE),
-        .workBuffer = (FFTComplex *)RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE),
-        .prevMagnitudes = (float *)RL_CALLOC(BUFFER_SIZE, sizeof(float)),
-        .fftHistory = (float (*)[BUFFER_SIZE])RL_CALLOC(fftHistoryLen, sizeof(float[BUFFER_SIZE])),
+        .spectrum = static_cast<FFTComplex *>(RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
+        .workBuffer = static_cast<FFTComplex *>(RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
+        .prevMagnitudes = static_cast<float *>(RL_CALLOC(BUFFER_SIZE, sizeof(float))),
+        .fftHistory = static_cast<float (*)[BUFFER_SIZE]>(RL_CALLOC(fftHistoryLen, sizeof(float[BUFFER_SIZE]))),
         .fftHistoryLen = fftHistoryLen,
         .historyPos = 0,
         .lastFftTime = 0.0,
@@ -116,7 +116,7 @@ int main()
     };
 
     unsigned int wavCursor = 0;
-    const short *wavPCM16 = (const short *)wav.data;
+    const short *wavPCM16 = static_cast<const short *>(wav.data);
 
     short chunkSamples[AUDIO_STREAM_RING_BUFFER_SIZE] = {};
     float audioSamples[FFT_WINDOW_SIZE] = {};
@@ -135,7 +135,7 @@ int main()
             {
                 int left = (wav.channels == 2)? wavPCM16[wavCursor*2 + 0] : wavPCM16[wavCursor];
                 int right = (wav.channels == 2)? wavPCM16[wavCursor*2 + 1] : left;
-                chunkSamples[i] = (short)((left + right)/2);
+                chunkSamples[i] = static_cast<short>((left + right)/2);
 
                 if (++wavCursor >= wav.frameCount) wavCursor = 0;
             }
@@ -159,7 +159,7 @@ int main()
             BeginShaderMode(shader);
                 SetShaderValueTexture(shader, iChannel0Location, fftTexture);
                 DrawTextureRec(bufferA.texture,
-                    Rectangle{ 0, 0, (float)screenWidth, (float)-screenHeight },
+                    Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) },
                     Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 
@@ -274,10 +274,10 @@ static void CaptureFrame(FFTData *fftData, const float *audioSamples)
 
 static void RenderFrame(const FFTData *fftData, Image *fftImage)
 {
-    float framesSinceTapback = floorf((float)(fftData->tapbackPos/WINDOW_TIME));
-    framesSinceTapback = Clamp(framesSinceTapback, 0.0f, (float)(fftData->fftHistoryLen - 1));
+    float framesSinceTapback = floorf(static_cast<float>(fftData->tapbackPos/WINDOW_TIME));
+    framesSinceTapback = Clamp(framesSinceTapback, 0.0f, static_cast<float>(fftData->fftHistoryLen - 1));
 
-    int historyPosition = (fftData->historyPos - 1 - (int)framesSinceTapback)%fftData->fftHistoryLen;
+    int historyPosition = (fftData->historyPos - 1 - static_cast<int>(framesSinceTapback))%fftData->fftHistoryLen;
     if (historyPosition < 0) historyPosition += fftData->fftHistoryLen;
 
     const float *amplitude = fftData->fftHistory[historyPosition];

@@ -253,10 +253,10 @@ int main()
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
                     Color lightColor = Color{
-                        (unsigned char)(lights[i].color[0]*255),
-                        (unsigned char)(lights[i].color[1]*255),
-                        (unsigned char)(lights[i].color[2]*255),
-                        (unsigned char)(lights[i].color[3]*255) };
+                        static_cast<unsigned char>(lights[i].color[0]*255),
+                        static_cast<unsigned char>(lights[i].color[1]*255),
+                        static_cast<unsigned char>(lights[i].color[2]*255),
+                        static_cast<unsigned char>(lights[i].color[3]*255) };
 
                     if (lights[i].enabled) DrawSphereEx(lights[i].position, 0.2f, 8, 8, lightColor);
                     else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lightColor, 0.3f));
@@ -280,12 +280,12 @@ int main()
     // to avoid UnloadMaterial() trying to unload it automatically
     car.materials[0].shader = {};
     UnloadMaterial(car.materials[0]);
-    car.materials[0].maps = NULL;
+    car.materials[0].maps = nullptr;
     UnloadModel(car);
 
     floor.materials[0].shader = {};
     UnloadMaterial(floor.materials[0]);
-    floor.materials[0].maps = NULL;
+    floor.materials[0].maps = nullptr;
     UnloadModel(floor);
 
     UnloadShader(shader);       // Unload Shader
@@ -311,10 +311,10 @@ static Light CreateLight(int type, Vector3 position, Vector3 target, Color color
         light.type = type;
         light.position = position;
         light.target = target;
-        light.color[0] = (float)color.r/255.0f;
-        light.color[1] = (float)color.g/255.0f;
-        light.color[2] = (float)color.b/255.0f;
-        light.color[3] = (float)color.a/255.0f;
+        light.color[0] = static_cast<float>(color.r)/255.0f;
+        light.color[1] = static_cast<float>(color.g)/255.0f;
+        light.color[2] = static_cast<float>(color.b)/255.0f;
+        light.color[3] = static_cast<float>(color.a)/255.0f;
         light.intensity = intensity;
 
         // NOTE: Shader parameters names for lights must match the requested ones

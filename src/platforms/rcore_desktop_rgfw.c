@@ -573,13 +573,13 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
             platform.surfaceHeight *= scaleDpi.y;
         }
 
-        if (platform.surfacePixels != NULL)
+        if (platform.surfacePixels != nullptr)
         {
             RL_FREE(platform.surfacePixels);
             platform.surfacePixels = RL_CALLOC(platform.surfaceWidth*platform.surfaceHeight*4, 1);
         }
 
-        if (platform.surface != NULL)
+        if (platform.surface != nullptr)
         {
             RGFW_surface_free(platform.surface);
             platform.surface = RGFW_window_createSurface(platform.window, platform.surfacePixels, platform.surfaceWidth, platform.surfaceHeight, RGFW_formatBGRA8);
@@ -1023,14 +1023,14 @@ void SetWindowIcon(Image image)
 // Set icon for window
 void SetWindowIcons(Image *images, int count)
 {
-    if ((images == NULL) || (count <= 0))
+    if ((images == nullptr) || (count <= 0))
     {
-        RGFW_window_setIcon(platform.window, NULL, 0, 0, 0);
+        RGFW_window_setIcon(platform.window, nullptr, 0, 0, 0);
     }
     else
     {
-        Image *bigIcon = NULL;
-        Image *smallIcon = NULL;
+        Image *bigIcon = nullptr;
+        Image *smallIcon = nullptr;
 
         for (int i = 0; i < count; i++)
         {
@@ -1039,12 +1039,12 @@ void SetWindowIcons(Image *images, int count)
                 TRACELOG(LOG_WARNING, "RGFW: Window icon image must be in R8G8B8A8 pixel format");
                 continue;
             }
-            if ((bigIcon == NULL) || ((images[i].width > bigIcon->width) && (images[i].height > bigIcon->height))) bigIcon = &images[i];
-            if ((smallIcon == NULL) || ((images[i].width < smallIcon->width) && (images[i].height > smallIcon->height))) smallIcon = &images[i];
+            if ((bigIcon == nullptr) || ((images[i].width > bigIcon->width) && (images[i].height > bigIcon->height))) bigIcon = &images[i];
+            if ((smallIcon == nullptr) || ((images[i].width < smallIcon->width) && (images[i].height > smallIcon->height))) smallIcon = &images[i];
         }
 
-        if (smallIcon != NULL) RGFW_window_setIconEx(platform.window, (u8 *)smallIcon->data, smallIcon->width, smallIcon->height, RGFW_formatRGBA8, RGFW_iconWindow);
-        if (bigIcon != NULL) RGFW_window_setIconEx(platform.window, (u8 *)bigIcon->data, bigIcon->width, bigIcon->height, RGFW_formatRGBA8, RGFW_iconTaskbar);
+        if (smallIcon != nullptr) RGFW_window_setIconEx(platform.window, (u8 *)smallIcon->data, smallIcon->width, smallIcon->height, RGFW_formatRGBA8, RGFW_iconWindow);
+        if (bigIcon != nullptr) RGFW_window_setIconEx(platform.window, (u8 *)bigIcon->data, bigIcon->width, bigIcon->height, RGFW_formatRGBA8, RGFW_iconTaskbar);
     }
 }
 
@@ -1067,7 +1067,7 @@ void SetWindowPosition(int x, int y)
 // Set monitor for the current window
 void SetWindowMonitor(int monitor)
 {
-    RGFW_window_moveToMonitor(platform.window, RGFW_getMonitors(NULL)[monitor]);
+    RGFW_window_moveToMonitor(platform.window, RGFW_getMonitors(nullptr)[monitor]);
 }
 
 // Set window minimum dimensions (FLAG_WINDOW_RESIZABLE)
@@ -1141,9 +1141,9 @@ void SetWindowFocused(void)
 // Get native window handle
 void *GetWindowHandle(void)
 {
-    void *handle = NULL;
+    void *handle = nullptr;
 
-    if (platform.window != NULL)
+    if (platform.window != nullptr)
     {
 #if defined(_WIN32)
         handle = (void *)platform.window->src.window; // Type: HWND
@@ -1174,8 +1174,8 @@ int GetMonitorCount(void)
 // Get current monitor where window is placed
 int GetCurrentMonitor(void)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
-    RGFW_monitor *mon = NULL;
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
+    RGFW_monitor *mon = nullptr;
 
     if (platform.window) mon = RGFW_window_getMonitor(platform.window);
     else mon = RGFW_getPrimaryMonitor();
@@ -1191,7 +1191,7 @@ int GetCurrentMonitor(void)
 // Get selected monitor position
 Vector2 GetMonitorPosition(int monitor)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
     return Vector2{ (float)mons[monitor]->x, (float)mons[monitor]->y };
 }
@@ -1199,7 +1199,7 @@ Vector2 GetMonitorPosition(int monitor)
 // Get selected monitor width (currently used by monitor)
 int GetMonitorWidth(int monitor)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
     return mons[monitor]->mode.w;
 }
@@ -1207,7 +1207,7 @@ int GetMonitorWidth(int monitor)
 // Get selected monitor height (currently used by monitor)
 int GetMonitorHeight(int monitor)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
     return mons[monitor]->mode.h;
 }
@@ -1215,7 +1215,7 @@ int GetMonitorHeight(int monitor)
 // Get selected monitor physical width in millimetres
 int GetMonitorPhysicalWidth(int monitor)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
     return mons[monitor]->physW;
 }
@@ -1223,7 +1223,7 @@ int GetMonitorPhysicalWidth(int monitor)
 // Get selected monitor physical height in millimetres
 int GetMonitorPhysicalHeight(int monitor)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
     return (int)mons[monitor]->physH;
 }
@@ -1231,7 +1231,7 @@ int GetMonitorPhysicalHeight(int monitor)
 // Get selected monitor refresh rate
 int GetMonitorRefreshRate(int monitor)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
     return (int)mons[monitor]->mode.refreshRate;
 }
@@ -1239,7 +1239,7 @@ int GetMonitorRefreshRate(int monitor)
 // Get the human-readable, UTF-8 encoded name of the selected monitor
 std::string GetMonitorName(int monitor)
 {
-    RGFW_monitor **mons = RGFW_getMonitors(NULL);
+    RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
     return GetStringOrEmpty(mons[monitor]->name);
 }
@@ -1247,7 +1247,7 @@ std::string GetMonitorName(int monitor)
 // Get window position XY on monitor
 Vector2 GetWindowPosition(void)
 {
-    if (platform.window == NULL)
+    if (platform.window == nullptr)
     {
         return Vector2{ 0.0f, 0.0f };
     }
@@ -1262,7 +1262,7 @@ Vector2 GetWindowPosition(void)
 // Get window scale DPI factor for current monitor
 Vector2 GetWindowScaleDPI(void)
 {
-    RGFW_monitor *monitor = NULL;
+    RGFW_monitor *monitor = nullptr;
 
     if (platform.window) monitor = RGFW_window_getMonitor(platform.window);
     else monitor = RGFW_getPrimaryMonitor();
@@ -1281,7 +1281,7 @@ Vector2 GetWindowScaleDPI(void)
 // WARNING: Function not used, neither exposed by raylib
 float GetMonitorPixelRatio(void)
 {
-    RGFW_monitor *monitor = NULL;
+    RGFW_monitor *monitor = nullptr;
 
     if (platform.window) monitor = RGFW_window_getMonitor(platform.window);
     else monitor = RGFW_getPrimaryMonitor();
@@ -1303,7 +1303,7 @@ void SetClipboardText(std::string_view textView)
 // NOTE: returned string is allocated and freed by RGFW
 std::string GetClipboardText(void)
 {
-    return GetStringOrEmpty(RGFW_readClipboard(NULL));
+    return GetStringOrEmpty(RGFW_readClipboard(nullptr));
 }
 
 #if SUPPORT_CLIPBOARD_IMAGE
@@ -1328,13 +1328,13 @@ Image GetClipboardImage(void)
 #if defined(_WIN32)
 
     unsigned int dataSize = 0;
-    void *fileData = NULL;
+    void *fileData = nullptr;
 
     int width = 0;
     int height = 0;
     fileData = (void *)Win32GetClipboardImageData(&width, &height, &dataSize);
 
-    if (fileData == NULL) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data");
+    if (fileData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data");
     else
     {
         image = LoadImageFromMemory(".bmp", (const unsigned char *)fileData, (int)dataSize);
@@ -1345,7 +1345,7 @@ Image GetClipboardImage(void)
 #elif defined(__linux__) && defined(DRGFW_X11)
 
     // REF: https://github.com/ColleagueRiley/Clipboard-Copy-Paste/blob/main/x11.c
-    Display *dpy = XOpenDisplay(NULL);
+    Display *dpy = XOpenDisplay(nullptr);
     if (!dpy) return image;
 
     Window root = DefaultRootWindow(dpy);
@@ -1374,13 +1374,13 @@ Image GetClipboardImage(void)
     int actualFormat = 0;
     unsigned long nitems = 0;
     unsigned long bytesAfter = 0;
-    unsigned char *data = NULL;
+    unsigned char *data = nullptr;
 
     // Read the data from our ghost window's property
     XGetWindowProperty(dpy, win, property, 0, ~0L, False, AnyPropertyType,
         &actualType, &actualFormat, &nitems, &bytesAfter, &data);
 
-    if (data != NULL)
+    if (data != nullptr)
     {
         image = LoadImageFromMemory(".png", data, (int)nitems);
         XFree(data);
@@ -1446,7 +1446,7 @@ void SwapScreenBuffer(void)
             // Mac wants a different pixel order. I cant seem to get this to work any other way
             #if defined(__APPLE__)
                 unsigned char temp = 0;
-                unsigned char *p = NULL;
+                unsigned char *p = nullptr;
                 for (int i = 0; i < (platform.surfaceWidth*platform.surfaceHeight); i += 1)
                 {
                     p = platform.surfacePixels + (i*4);
@@ -1491,7 +1491,7 @@ void OpenURL(std::string_view urlView)
     const char *url = urlStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
+    if ((strchr(url, '\'') != nullptr) || (strchr(url, '\"') != nullptr))
     {
         // Filter characters: ' and "
         TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'\"] characters");
@@ -1840,7 +1840,7 @@ int InitPlatform(void)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_VSYNC_HINT)) RGFW_window_swapInterval_OpenGL(platform.window, 1);
 
     // Check surface and context activation
-    if (platform.window != NULL)
+    if (platform.window != nullptr)
     {
         CORE.Window.ready = true;
 
@@ -1908,7 +1908,7 @@ int InitPlatform(void)
 
         platform.surface = RGFW_window_createSurface(platform.window, platform.surfacePixels, platform.surfaceWidth, platform.surfaceHeight, RGFW_formatBGRA8);
 
-        if (platform.surface == NULL)
+        if (platform.surface == nullptr)
         {
             RL_FREE(platform.surfacePixels);
 
@@ -2037,8 +2037,8 @@ void ClosePlatform(void)
     RGFW_window_close(platform.window);
 
 #if defined(GRAPHICS_API_OPENGL_SOFTWARE)
-    if (platform.surfacePixels != NULL) RL_FREE(platform.surfacePixels);
-    if (platform.surface != NULL) RGFW_surface_free(platform.surface);
+    if (platform.surfacePixels != nullptr) RL_FREE(platform.surfacePixels);
+    if (platform.surface != nullptr) RGFW_surface_free(platform.surface);
 #endif
 }
 

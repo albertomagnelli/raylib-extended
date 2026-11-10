@@ -64,7 +64,7 @@ int main()
     // NOTE: If uniform variable could not be found in the shader, function returns -1
     int swirlCenterLoc = GetShaderLocation(shader, "center");
 
-    float swirlCenter[2] = { (float)screenWidth/2, (float)screenHeight/2 };
+    float swirlCenter[2] = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
 
     // Create a RenderTexture2D to be used for render to texture
     RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
@@ -107,7 +107,7 @@ int main()
             // Enable shader using the custom uniform
             BeginShaderMode(shader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, (float)target.texture.width, (float)-target.texture.height }, Vector2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw some 2d text over drawn texture

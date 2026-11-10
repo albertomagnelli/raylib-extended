@@ -67,7 +67,7 @@ int main()
             listItemFocused = -1;
         }
 
-        if ((listItemActive >= 0) && (listItemActive < (int)files.paths.size()) && DirectoryExists(files.paths[listItemActive]))
+        if ((listItemActive >= 0) && (listItemActive < static_cast<int>(files.paths.size())) && DirectoryExists(files.paths[listItemActive]))
         {
             directory = files.paths[listItemActive];
             files = LoadDirectoryFilesEx(directory, FILE_FILTER, false);
@@ -95,8 +95,8 @@ int main()
             filePathPtrs.reserve(files.paths.size());
             for (std::string &path : files.paths) filePathPtrs.push_back(path.data());
 
-            GuiListViewEx(Rectangle{ 0, 50, (float)GetScreenWidth(), (float)GetScreenHeight() - 50 },
-                filePathPtrs.data(), (int)filePathPtrs.size(), &listScrollIndex, &listItemActive, &listItemFocused);
+            GuiListViewEx(Rectangle{ 0, 50, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) - 50 },
+                filePathPtrs.data(), static_cast<int>(filePathPtrs.size()), &listScrollIndex, &listItemActive, &listItemFocused);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static float *delayBuffer = NULL;
+static float *delayBuffer = nullptr;
 static unsigned int delayBufferSize = 0;
 static unsigned int delayReadIndex = 2;
 static unsigned int delayWriteIndex = 0;
@@ -49,7 +49,7 @@ int main()
 
     // Allocate buffer for the delay effect
     delayBufferSize = 48000*2;      // 1 second delay (device sampleRate*channels)
-    delayBuffer = (float *)RL_CALLOC(delayBufferSize, sizeof(float));
+    delayBuffer = static_cast<float *>(RL_CALLOC(delayBufferSize, sizeof(float)));
 
     PlayMusicStream(music);
 
@@ -116,7 +116,7 @@ int main()
             DrawText("MUSIC SHOULD BE PLAYING!", 245, 150, 20, LIGHTGRAY);
 
             DrawRectangle(200, 180, 400, 12, LIGHTGRAY);
-            DrawRectangle(200, 180, (int)(timePlayed*400.0f), 12, MAROON);
+            DrawRectangle(200, 180, static_cast<int>(timePlayed*400.0f), 12, MAROON);
             DrawRectangleLines(200, 180, 400, 12, GRAY);
 
             DrawText("PRESS SPACE TO RESTART MUSIC", 215, 230, 20, LIGHTGRAY);
@@ -154,7 +154,7 @@ static void AudioProcessEffectLPF(void *buffer, unsigned int frames)
     const float k = cutoff/(cutoff + 0.1591549431f); // RC filter formula
 
     // Converts the buffer data before using it
-    float *bufferData = (float *)buffer;
+    float *bufferData = static_cast<float *>(buffer);
     for (unsigned int i = 0; i < frames*2; i += 2)
     {
         const float l = bufferData[i];
@@ -177,11 +177,11 @@ static void AudioProcessEffectDelay(void *buffer, unsigned int frames)
 
         if (delayReadIndex == delayBufferSize) delayReadIndex = 0;
 
-        ((float *)buffer)[i] = 0.5f*((float *)buffer)[i] + 0.5f*leftDelay;
-        ((float *)buffer)[i + 1] = 0.5f*((float *)buffer)[i + 1] + 0.5f*rightDelay;
+        (static_cast<float *>(buffer))[i] = 0.5f*(static_cast<float *>(buffer))[i] + 0.5f*leftDelay;
+        (static_cast<float *>(buffer))[i + 1] = 0.5f*(static_cast<float *>(buffer))[i + 1] + 0.5f*rightDelay;
 
-        delayBuffer[delayWriteIndex++] = ((float *)buffer)[i];
-        delayBuffer[delayWriteIndex++] = ((float *)buffer)[i + 1];
+        delayBuffer[delayWriteIndex++] = (static_cast<float *>(buffer))[i];
+        delayBuffer[delayWriteIndex++] = (static_cast<float *>(buffer))[i + 1];
         if (delayWriteIndex == delayBufferSize) delayWriteIndex = 0;
     }
 }

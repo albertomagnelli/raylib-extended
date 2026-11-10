@@ -152,7 +152,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
     float textOffsetY = 0;          // Offset between lines (on line break '\n')
     float textOffsetX = 0.0f;       // Offset X to next character to draw
 
-    float scaleFactor = fontSize/(float)font.baseSize;     // Character rectangle scaling factor
+    float scaleFactor = fontSize/static_cast<float>(font.baseSize);     // Character rectangle scaling factor
 
     // Word/character wrapping mechanism variables
     enum { MEASURE_STATE = 0, DRAW_STATE = 1 };
@@ -226,7 +226,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
             {
                 if (!wordWrap)
                 {
-                    textOffsetY += (font.baseSize + (float)font.baseSize/2)*scaleFactor;
+                    textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
                     textOffsetX = 0;
                 }
             }
@@ -234,7 +234,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
             {
                 if (!wordWrap && ((textOffsetX + glyphWidth) > rec.width))
                 {
-                    textOffsetY += (font.baseSize + (float)font.baseSize/2)*scaleFactor;
+                    textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
                     textOffsetX = 0;
                 }
 
@@ -245,7 +245,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 bool isGlyphSelected = false;
                 if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
                 {
-                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, (float)font.baseSize*scaleFactor }, selectBackTint);
+                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, static_cast<float>(font.baseSize)*scaleFactor }, selectBackTint);
                     isGlyphSelected = true;
                 }
 
@@ -258,7 +258,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
 
             if (wordWrap && (i == endLine))
             {
-                textOffsetY += (font.baseSize + (float)font.baseSize/2)*scaleFactor;
+                textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
                 textOffsetX = 0;
                 startLine = endLine;
                 endLine = -1;

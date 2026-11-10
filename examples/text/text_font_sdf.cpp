@@ -50,7 +50,7 @@ int main()
 
     // Loading font data from memory data
     // Parameters > font size: 16, no glyphs array provided (0), glyphs count: 95 (autogenerate chars array)
-    fontDefault.glyphs = LoadFontData(fileData, fileSize, 16, 0, 95, FONT_DEFAULT, &fontDefault.glyphCount);
+    fontDefault.glyphs = LoadFontData(fileData, fileSize, 16, nullptr, 95, FONT_DEFAULT, &fontDefault.glyphCount);
     // Parameters > glyphs count: 95, font size: 16, glyphs padding in image: 4 px, pack method: 0 (default)
     Image atlas = GenImageFontAtlas(fontDefault.glyphs, &fontDefault.recs, 95, 16, 4, 0);
     fontDefault.texture = LoadTextureFromImage(atlas);
@@ -61,7 +61,7 @@ int main()
     fontSDF.baseSize = 16;
     fontSDF.glyphCount = 95;
     // Parameters > font size: 16, no glyphs array provided (0), glyphs count: 0 (defaults to 95)
-    fontSDF.glyphs = LoadFontData(fileData, fileSize, 16, 0, 0, FONT_SDF, &
+    fontSDF.glyphs = LoadFontData(fileData, fileSize, 16, nullptr, 0, FONT_SDF, &
     fontSDF.glyphCount);
     // Parameters > glyphs count: 95, font size: 16, glyphs padding in image: 0 px, pack method: 1 (Skyline algorythm)
     atlas = GenImageFontAtlas(fontSDF.glyphs, &fontSDF.recs, 95, 16, 0, 1);
@@ -97,8 +97,8 @@ int main()
         if (currentFont == 0) textSize = MeasureTextEx(fontDefault, msg, fontSize, 0);
         else textSize = MeasureTextEx(fontSDF, msg, fontSize, 0);
 
-        fontPosition.x = (float)GetScreenWidth()/2 - textSize.x/2;
-        fontPosition.y = (float)GetScreenHeight()/2 - textSize.y/2 + 80;
+        fontPosition.x = static_cast<float>(GetScreenWidth())/2 - textSize.x/2;
+        fontPosition.y = static_cast<float>(GetScreenHeight())/2 - textSize.y/2 + 80;
         //----------------------------------------------------------------------------------
 
         // Draw

@@ -1100,11 +1100,11 @@ void DrawGrid(int slices, float spacing)
                 rlColor3f(0.75f, 0.75f, 0.75f);
             }
 
-            rlVertex3f((float)i*spacing, 0.0f, (float)-halfSlices*spacing);
-            rlVertex3f((float)i*spacing, 0.0f, (float)halfSlices*spacing);
+            rlVertex3f(static_cast<float>(i)*spacing, 0.0f, static_cast<float>(-halfSlices)*spacing);
+            rlVertex3f(static_cast<float>(i)*spacing, 0.0f, static_cast<float>(halfSlices)*spacing);
 
-            rlVertex3f((float)-halfSlices*spacing, 0.0f, (float)i*spacing);
-            rlVertex3f((float)halfSlices*spacing, 0.0f, (float)i*spacing);
+            rlVertex3f(static_cast<float>(-halfSlices)*spacing, 0.0f, static_cast<float>(i)*spacing);
+            rlVertex3f(static_cast<float>(halfSlices)*spacing, 0.0f, static_cast<float>(i)*spacing);
         }
     rlEnd();
 }
@@ -1136,7 +1136,7 @@ Model LoadModel(std::string_view fileNameView)
     // Make sure model transform is set to identity matrix!
     model.transform = Matrix(1.0f);
 
-    if ((model.meshCount != 0) && (model.meshes != NULL))
+    if ((model.meshCount != 0) && (model.meshes != nullptr))
     {
         // Upload vertex data to GPU (static meshes)
         for (int i = 0; i < model.meshCount; i++) UploadMesh(&model.meshes[i], false);
@@ -1148,10 +1148,10 @@ Model LoadModel(std::string_view fileNameView)
         TRACELOG(LOG_WARNING, "MATERIAL: [%s] Failed to load model material data, default to white material", fileName);
 
         model.materialCount = 1;
-        model.materials = (Material *)RL_CALLOC(model.materialCount, sizeof(Material));
+        model.materials = static_cast<Material *>(RL_CALLOC(model.materialCount, sizeof(Material)));
         model.materials[0] = LoadMaterialDefault();
 
-        if (model.meshMaterial == NULL) model.meshMaterial = (int *)RL_CALLOC(model.meshCount, sizeof(int));
+        if (model.meshMaterial == nullptr) model.meshMaterial = static_cast<int *>(RL_CALLOC(model.meshCount, sizeof(int)));
     }
 
     return model;
@@ -1168,14 +1168,14 @@ Model LoadModelFromMesh(Mesh mesh)
     model.transform = Matrix(1.0f);
 
     model.meshCount = 1;
-    model.meshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
+    model.meshes = static_cast<Mesh *>(RL_CALLOC(model.meshCount, sizeof(Mesh)));
     model.meshes[0] = mesh;
 
     model.materialCount = 1;
-    model.materials = (Material *)RL_CALLOC(model.materialCount, sizeof(Material));
+    model.materials = static_cast<Material *>(RL_CALLOC(model.materialCount, sizeof(Material)));
     model.materials[0] = LoadMaterialDefault();
 
-    model.meshMaterial = (int *)RL_CALLOC(model.meshCount, sizeof(int));
+    model.meshMaterial = static_cast<int *>(RL_CALLOC(model.meshCount, sizeof(int)));
     model.meshMaterial[0] = 0;  // First material index
 
     return model;
@@ -1186,9 +1186,9 @@ bool IsModelValid(Model model)
 {
     bool result = false;
 
-    if ((model.meshes != NULL) &&           // Validate model contains some mesh
-        (model.materials != NULL) &&        // Validate model contains some material (at least default one)
-        (model.meshMaterial != NULL) &&     // Validate mesh-material linkage
+    if ((model.meshes != nullptr) &&           // Validate model contains some mesh
+        (model.materials != nullptr) &&        // Validate model contains some material (at least default one)
+        (model.meshMaterial != nullptr) &&     // Validate mesh-material linkage
         (model.meshCount > 0) &&            // Validate mesh count
         (model.materialCount > 0)) result = true; // Validate material count
 
@@ -1196,16 +1196,16 @@ bool IsModelValid(Model model)
     // but some VBOs could not be used, it depends on Mesh vertex data
     for (int i = 0; i < model.meshCount; i++)
     {
-        if ((model.meshes[i].vertices != NULL) && (model.meshes[i].vboId[0] == 0)) { result = false; break; }   // Vertex position buffer not uploaded to GPU
-        if ((model.meshes[i].texcoords != NULL) && (model.meshes[i].vboId[1] == 0)) { result = false; break; }  // Vertex textcoords buffer not uploaded to GPU
-        if ((model.meshes[i].normals != NULL) && (model.meshes[i].vboId[2] == 0)) { result = false; break; }    // Vertex normals buffer not uploaded to GPU
-        if ((model.meshes[i].colors != NULL) && (model.meshes[i].vboId[3] == 0)) { result = false; break; }     // Vertex colors buffer not uploaded to GPU
-        if ((model.meshes[i].tangents != NULL) && (model.meshes[i].vboId[4] == 0)) { result = false; break; }   // Vertex tangents buffer not uploaded to GPU
-        if ((model.meshes[i].texcoords2 != NULL) && (model.meshes[i].vboId[5] == 0)) { result = false; break; } // Vertex texcoords2 buffer not uploaded to GPU
-        if ((model.meshes[i].indices != NULL) && (model.meshes[i].vboId[6] == 0)) { result = false; break; }    // Vertex indices buffer not uploaded to GPU
+        if ((model.meshes[i].vertices != nullptr) && (model.meshes[i].vboId[0] == 0)) { result = false; break; }   // Vertex position buffer not uploaded to GPU
+        if ((model.meshes[i].texcoords != nullptr) && (model.meshes[i].vboId[1] == 0)) { result = false; break; }  // Vertex textcoords buffer not uploaded to GPU
+        if ((model.meshes[i].normals != nullptr) && (model.meshes[i].vboId[2] == 0)) { result = false; break; }    // Vertex normals buffer not uploaded to GPU
+        if ((model.meshes[i].colors != nullptr) && (model.meshes[i].vboId[3] == 0)) { result = false; break; }     // Vertex colors buffer not uploaded to GPU
+        if ((model.meshes[i].tangents != nullptr) && (model.meshes[i].vboId[4] == 0)) { result = false; break; }   // Vertex tangents buffer not uploaded to GPU
+        if ((model.meshes[i].texcoords2 != nullptr) && (model.meshes[i].vboId[5] == 0)) { result = false; break; } // Vertex texcoords2 buffer not uploaded to GPU
+        if ((model.meshes[i].indices != nullptr) && (model.meshes[i].vboId[6] == 0)) { result = false; break; }    // Vertex indices buffer not uploaded to GPU
 #if SUPPORT_GPU_SKINNING
-        if ((model.meshes[i].boneIndices != NULL) && (model.meshes[i].vboId[7] == 0)) { result = false; break; } // Vertex boneIndices buffer not uploaded to GPU
-        if ((model.meshes[i].boneWeights != NULL) && (model.meshes[i].vboId[8] == 0)) { result = false; break; } // Vertex boneWeights buffer not uploaded to GPU
+        if ((model.meshes[i].boneIndices != nullptr) && (model.meshes[i].vboId[7] == 0)) { result = false; break; } // Vertex boneIndices buffer not uploaded to GPU
+        if ((model.meshes[i].boneWeights != nullptr) && (model.meshes[i].vboId[8] == 0)) { result = false; break; } // Vertex boneWeights buffer not uploaded to GPU
 #endif
         // NOTE: Some OpenGL versions do not support VAO, so avoid below check
         //if (model.meshes[i].vaoId == 0) { result = false; break }
@@ -1287,7 +1287,7 @@ void UploadMesh(Mesh *mesh, bool dynamic)
         return;
     }
 
-    mesh->vboId = (unsigned int *)RL_CALLOC(MAX_MESH_VERTEX_BUFFERS, sizeof(unsigned int));
+    mesh->vboId = static_cast<unsigned int *>(RL_CALLOC(MAX_MESH_VERTEX_BUFFERS, sizeof(unsigned int)));
 
     mesh->vaoId = 0;        // Vertex Array Object
     mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION] = 0;     // Vertex buffer: positions
@@ -1310,14 +1310,14 @@ void UploadMesh(Mesh *mesh, bool dynamic)
     // NOTE: Vertex attributes must be uploaded considering default locations points and available vertex data
 
     // Enable vertex attributes: position (shader-location = 0)
-    void *vertices = (mesh->animVertices != NULL)? mesh->animVertices : mesh->vertices;
+    void *vertices = (mesh->animVertices != nullptr)? mesh->animVertices : mesh->vertices;
     mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION] = rlLoadVertexBuffer(vertices, mesh->vertexCount*3*sizeof(float), dynamic);
     rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION, 3, RL_FLOAT, 0, 0, 0);
     rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION);
 
     // Enable vertex attributes: texcoords (shader-location = 1)
 
-    if (mesh->texcoords != NULL)
+    if (mesh->texcoords != nullptr)
     {
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD] = rlLoadVertexBuffer(mesh->texcoords, mesh->vertexCount*2*sizeof(float), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD, 2, RL_FLOAT, 0, 0, 0);
@@ -1332,10 +1332,10 @@ void UploadMesh(Mesh *mesh, bool dynamic)
     // WARNING: When setting default vertex attribute values, the values for each generic vertex attribute
     // is part of current state, and it is maintained even if a different program object is used
 
-    if (mesh->normals != NULL)
+    if (mesh->normals != nullptr)
     {
         // Enable vertex attributes: normals (shader-location = 2)
-        void *normals = (mesh->animNormals != NULL)? mesh->animNormals : mesh->normals;
+        void *normals = (mesh->animNormals != nullptr)? mesh->animNormals : mesh->normals;
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL] = rlLoadVertexBuffer(normals, mesh->vertexCount*3*sizeof(float), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL, 3, RL_FLOAT, 0, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL);
@@ -1349,7 +1349,7 @@ void UploadMesh(Mesh *mesh, bool dynamic)
         rlDisableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL);
     }
 
-    if (mesh->colors != NULL)
+    if (mesh->colors != nullptr)
     {
         // Enable vertex attribute: color (shader-location = 3)
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_COLOR] = rlLoadVertexBuffer(mesh->colors, mesh->vertexCount*4*sizeof(unsigned char), dynamic);
@@ -1365,7 +1365,7 @@ void UploadMesh(Mesh *mesh, bool dynamic)
         rlDisableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_COLOR);
     }
 
-    if (mesh->tangents != NULL)
+    if (mesh->tangents != nullptr)
     {
         // Enable vertex attribute: tangent (shader-location = 4)
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TANGENT] = rlLoadVertexBuffer(mesh->tangents, mesh->vertexCount*4*sizeof(float), dynamic);
@@ -1381,7 +1381,7 @@ void UploadMesh(Mesh *mesh, bool dynamic)
         rlDisableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TANGENT);
     }
 
-    if (mesh->texcoords2 != NULL)
+    if (mesh->texcoords2 != nullptr)
     {
         // Enable vertex attribute: texcoord2 (shader-location = 5)
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD2] = rlLoadVertexBuffer(mesh->texcoords2, mesh->vertexCount*2*sizeof(float), dynamic);
@@ -1398,7 +1398,7 @@ void UploadMesh(Mesh *mesh, bool dynamic)
     }
 
 #if SUPPORT_GPU_SKINNING
-    if (mesh->boneIndices != NULL)
+    if (mesh->boneIndices != nullptr)
     {
         // Enable vertex attribute: boneIndices (shader-location = 7)
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEINDICES] = rlLoadVertexBuffer(mesh->boneIndices, mesh->vertexCount*4*sizeof(unsigned char), dynamic);
@@ -1414,7 +1414,7 @@ void UploadMesh(Mesh *mesh, bool dynamic)
         rlDisableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEINDICES);
     }
 
-    if (mesh->boneWeights != NULL)
+    if (mesh->boneWeights != nullptr)
     {
         // Enable vertex attribute: boneWeights (shader-location = 8)
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEWEIGHTS] = rlLoadVertexBuffer(mesh->boneWeights, mesh->vertexCount*4*sizeof(float), dynamic);
@@ -1431,7 +1431,7 @@ void UploadMesh(Mesh *mesh, bool dynamic)
     }
 #endif
 
-    if (mesh->indices != NULL)
+    if (mesh->indices != nullptr)
     {
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES] = rlLoadVertexBufferElement(mesh->indices, mesh->triangleCount*3*sizeof(unsigned short), dynamic);
     }
@@ -1458,17 +1458,17 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     #define GL_COLOR_ARRAY          0x8076
     #define GL_TEXTURE_COORD_ARRAY  0x8078
 
-    if ((mesh.texcoords != NULL) && (material.maps[MATERIAL_MAP_DIFFUSE].texture.id > 0)) rlEnableTexture(material.maps[MATERIAL_MAP_DIFFUSE].texture.id);
+    if ((mesh.texcoords != nullptr) && (material.maps[MATERIAL_MAP_DIFFUSE].texture.id > 0)) rlEnableTexture(material.maps[MATERIAL_MAP_DIFFUSE].texture.id);
 
-    if (mesh.animVertices != NULL) rlEnableStatePointer(GL_VERTEX_ARRAY, mesh.animVertices);
+    if (mesh.animVertices != nullptr) rlEnableStatePointer(GL_VERTEX_ARRAY, mesh.animVertices);
     else rlEnableStatePointer(GL_VERTEX_ARRAY, mesh.vertices);
 
     if (mesh.texcoords) rlEnableStatePointer(GL_TEXTURE_COORD_ARRAY, mesh.texcoords);
 
-    if (mesh.animNormals != NULL) rlEnableStatePointer(GL_NORMAL_ARRAY, mesh.animNormals);
-    else if (mesh.normals != NULL) rlEnableStatePointer(GL_NORMAL_ARRAY, mesh.normals);
+    if (mesh.animNormals != nullptr) rlEnableStatePointer(GL_NORMAL_ARRAY, mesh.animNormals);
+    else if (mesh.normals != nullptr) rlEnableStatePointer(GL_NORMAL_ARRAY, mesh.normals);
 
-    if (mesh.colors != NULL) rlEnableStatePointer(GL_COLOR_ARRAY, mesh.colors);
+    if (mesh.colors != nullptr) rlEnableStatePointer(GL_COLOR_ARRAY, mesh.colors);
 
     rlPushMatrix();
         rlMultMatrixf(MatrixToFloat(transform));
@@ -1477,7 +1477,7 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
                    material.maps[MATERIAL_MAP_DIFFUSE].color.b,
                    material.maps[MATERIAL_MAP_DIFFUSE].color.a);
 
-        if (mesh.indices != NULL) rlDrawVertexArrayElements(0, mesh.triangleCount*3, mesh.indices);
+        if (mesh.indices != nullptr) rlDrawVertexArrayElements(0, mesh.triangleCount*3, mesh.indices);
         else rlDrawVertexArray(0, mesh.vertexCount);
     rlPopMatrix();
 
@@ -1493,7 +1493,7 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     // Bind shader program
     rlEnableShader(material.shader.id);
 
-    if (material.shader.locs == NULL) return;
+    if (material.shader.locs == nullptr) return;
 
     // Send required data to shader (matrices, values)
     //-----------------------------------------------------
@@ -1501,10 +1501,10 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     if (material.shader.locs[SHADER_LOC_COLOR_DIFFUSE] != -1)
     {
         float values[4] = {
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.r/255.0f,
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.g/255.0f,
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.b/255.0f,
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.a/255.0f
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.r)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.g)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.b)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.a)/255.0f
         };
 
         rlSetUniform(material.shader.locs[SHADER_LOC_COLOR_DIFFUSE], values, SHADER_UNIFORM_VEC4, 1);
@@ -1514,10 +1514,10 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
     if (material.shader.locs[SHADER_LOC_COLOR_SPECULAR] != -1)
     {
         float values[4] = {
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.r/255.0f,
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.g/255.0f,
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.b/255.0f,
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.a/255.0f
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.r)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.g)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.b)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.a)/255.0f
         };
 
         rlSetUniform(material.shader.locs[SHADER_LOC_COLOR_SPECULAR], values, SHADER_UNIFORM_VEC4, 1);
@@ -1647,7 +1647,7 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
         }
 #endif
 
-        if (mesh.indices != NULL) rlEnableVertexBufferElement(mesh.vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES]);
+        if (mesh.indices != nullptr) rlEnableVertexBufferElement(mesh.vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES]);
     }
 
     int eyeCount = 1;
@@ -1669,7 +1669,7 @@ void DrawMesh(Mesh mesh, Material material, Matrix transform)
         rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_MVP], matModelViewProjection);
 
         // Draw mesh
-        if (mesh.indices != NULL) rlDrawVertexArrayElements(0, mesh.triangleCount*3, 0);
+        if (mesh.indices != nullptr) rlDrawVertexArrayElements(0, mesh.triangleCount*3, nullptr);
         else rlDrawVertexArray(0, mesh.vertexCount);
     }
 
@@ -1708,7 +1708,7 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     // Instancing required variables
-    float16 *instanceTransform = NULL;
+    float16 *instanceTransform = nullptr;
     unsigned int instancesVboId = 0;
 
     // Bind shader program
@@ -1720,10 +1720,10 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
     if (material.shader.locs[SHADER_LOC_COLOR_DIFFUSE] != -1)
     {
         float values[4] = {
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.r/255.0f,
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.g/255.0f,
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.b/255.0f,
-            (float)material.maps[MATERIAL_MAP_DIFFUSE].color.a/255.0f
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.r)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.g)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.b)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_DIFFUSE].color.a)/255.0f
         };
 
         rlSetUniform(material.shader.locs[SHADER_LOC_COLOR_DIFFUSE], values, SHADER_UNIFORM_VEC4, 1);
@@ -1733,10 +1733,10 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
     if (material.shader.locs[SHADER_LOC_COLOR_SPECULAR] != -1)
     {
         float values[4] = {
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.r/255.0f,
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.g/255.0f,
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.b/255.0f,
-            (float)material.maps[MATERIAL_MAP_SPECULAR].color.a/255.0f
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.r)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.g)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.b)/255.0f,
+            static_cast<float>(material.maps[MATERIAL_MAP_SPECULAR].color.a)/255.0f
         };
 
         rlSetUniform(material.shader.locs[SHADER_LOC_COLOR_SPECULAR], values, SHADER_UNIFORM_VEC4, 1);
@@ -1757,7 +1757,7 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
     if (material.shader.locs[SHADER_LOC_MATRIX_PROJECTION] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_PROJECTION], matProjection);
 
     // Create instances buffer
-    instanceTransform = (float16 *)RL_CALLOC(instances, sizeof(float16));
+    instanceTransform = static_cast<float16 *>(RL_CALLOC(instances, sizeof(float16)));
 
     // Fill buffer with instances transformations as float16 arrays
     for (int i = 0; i < instances; i++) instanceTransform[i] = MatrixToFloatV(transforms[i]);
@@ -1886,7 +1886,7 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
         }
 #endif
 
-        if (mesh.indices != NULL) rlEnableVertexBufferElement(mesh.vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES]);
+        if (mesh.indices != nullptr) rlEnableVertexBufferElement(mesh.vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES]);
     }
 
     int eyeCount = 1;
@@ -1908,7 +1908,7 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
         rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_MVP], matModelViewProjection);
 
         // Draw mesh instanced
-        if (mesh.indices != NULL) rlDrawVertexArrayElementsInstanced(0, mesh.triangleCount*3, 0, instances);
+        if (mesh.indices != nullptr) rlDrawVertexArrayElementsInstanced(0, mesh.triangleCount*3, nullptr, instances);
         else rlDrawVertexArrayInstanced(0, mesh.vertexCount, instances);
     }
 
@@ -1948,7 +1948,7 @@ void UnloadMesh(Mesh mesh)
     // Unload rlgl mesh vboId data
     rlUnloadVertexArray(mesh.vaoId);
 
-    if (mesh.vboId != NULL) for (int i = 0; i < MAX_MESH_VERTEX_BUFFERS; i++) rlUnloadVertexBuffer(mesh.vboId[i]);
+    if (mesh.vboId != nullptr) for (int i = 0; i < MAX_MESH_VERTEX_BUFFERS; i++) rlUnloadVertexBuffer(mesh.vboId[i]);
     RL_FREE(mesh.vboId);
 
     // Unload mesh vertex buffers
@@ -1981,13 +1981,13 @@ bool ExportMesh(Mesh mesh, std::string_view fileNameView)
     {
         // Estimated data size, it should be enough...
         int vc = mesh.vertexCount;
-        int dataSize = vc*(int)strlen("v -0000.000000f -0000.000000f -0000.000000f\n") +
-                       vc*(int)strlen("vt -0.000000f -0.000000f\n") +
-                       vc*(int)strlen("vn -0.0000f -0.0000f -0.0000f\n") +
-                       mesh.triangleCount*snprintf(NULL, 0, "f %i/%i/%i %i/%i/%i %i/%i/%i\n", vc, vc, vc, vc, vc, vc, vc, vc, vc);
+        int dataSize = vc*static_cast<int>(strlen("v -0000.000000f -0000.000000f -0000.000000f\n")) +
+                       vc*static_cast<int>(strlen("vt -0.000000f -0.000000f\n")) +
+                       vc*static_cast<int>(strlen("vn -0.0000f -0.0000f -0.0000f\n")) +
+                       mesh.triangleCount*snprintf(nullptr, 0, "f %i/%i/%i %i/%i/%i %i/%i/%i\n", vc, vc, vc, vc, vc, vc, vc, vc, vc);
 
         // NOTE: Text data buffer size is estimated considering mesh data size
-        char *txtData = (char *)RL_CALLOC(dataSize + 1000, sizeof(char));
+        char *txtData = static_cast<char *>(RL_CALLOC(dataSize + 1000, sizeof(char)));
 
         int byteCount = 0;
         byteCount += sprintf(txtData + byteCount, "# //////////////////////////////////////////////////////////////////////////////////\n");
@@ -2020,7 +2020,7 @@ bool ExportMesh(Mesh mesh, std::string_view fileNameView)
             byteCount += sprintf(txtData + byteCount, "vn %.4f %.4f %.4f\n", mesh.normals[v], mesh.normals[v + 1], mesh.normals[v + 2]);
         }
 
-        if (mesh.indices != NULL)
+        if (mesh.indices != nullptr)
         {
             for (int i = 0, v = 0; i < mesh.triangleCount; i++, v += 3)
             {
@@ -2077,7 +2077,7 @@ bool ExportMeshAsCode(Mesh mesh, std::string_view fileNameView)
 #endif
 
     // NOTE: Text data buffer size is fixed to 64MB
-    char *txtData = (char *)RL_CALLOC(64*1024*1024, sizeof(char));  // 64 MB
+    char *txtData = static_cast<char *>(RL_CALLOC(64*1024*1024, sizeof(char)));  // 64 MB
 
     int byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
@@ -2103,49 +2103,49 @@ bool ExportMeshAsCode(Mesh mesh, std::string_view fileNameView)
 
     // Define vertex attributes data as separate arrays
     //-----------------------------------------------------------------------------------------
-    if (mesh.vertices != NULL)      // Vertex position (XYZ - 3 components per vertex - float)
+    if (mesh.vertices != nullptr)      // Vertex position (XYZ - 3 components per vertex - float)
     {
         byteCount += sprintf(txtData + byteCount, "static float %s_VERTEX_DATA[%i] = { ", varFileName, mesh.vertexCount*3);
         for (int i = 0; i < mesh.vertexCount*3 - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "%.3ff,\n" : "%.3ff, "), mesh.vertices[i]);
         byteCount += sprintf(txtData + byteCount, "%.3ff };\n\n", mesh.vertices[mesh.vertexCount*3 - 1]);
     }
 
-    if (mesh.texcoords != NULL)      // Vertex texture coordinates (UV - 2 components per vertex - float)
+    if (mesh.texcoords != nullptr)      // Vertex texture coordinates (UV - 2 components per vertex - float)
     {
         byteCount += sprintf(txtData + byteCount, "static float %s_TEXCOORD_DATA[%i] = { ", varFileName, mesh.vertexCount*2);
         for (int i = 0; i < mesh.vertexCount*2 - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "%.3ff,\n" : "%.3ff, "), mesh.texcoords[i]);
         byteCount += sprintf(txtData + byteCount, "%.3ff };\n\n", mesh.texcoords[mesh.vertexCount*2 - 1]);
     }
 
-    if (mesh.texcoords2 != NULL)      // Vertex texture coordinates (UV - 2 components per vertex - float)
+    if (mesh.texcoords2 != nullptr)      // Vertex texture coordinates (UV - 2 components per vertex - float)
     {
         byteCount += sprintf(txtData + byteCount, "static float %s_TEXCOORD2_DATA[%i] = { ", varFileName, mesh.vertexCount*2);
         for (int i = 0; i < mesh.vertexCount*2 - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "%.3ff,\n" : "%.3ff, "), mesh.texcoords2[i]);
         byteCount += sprintf(txtData + byteCount, "%.3ff };\n\n", mesh.texcoords2[mesh.vertexCount*2 - 1]);
     }
 
-    if (mesh.normals != NULL)      // Vertex normals (XYZ - 3 components per vertex - float)
+    if (mesh.normals != nullptr)      // Vertex normals (XYZ - 3 components per vertex - float)
     {
         byteCount += sprintf(txtData + byteCount, "static float %s_NORMAL_DATA[%i] = { ", varFileName, mesh.vertexCount*3);
         for (int i = 0; i < mesh.vertexCount*3 - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "%.3ff,\n" : "%.3ff, "), mesh.normals[i]);
         byteCount += sprintf(txtData + byteCount, "%.3ff };\n\n", mesh.normals[mesh.vertexCount*3 - 1]);
     }
 
-    if (mesh.tangents != NULL)      // Vertex tangents (XYZW - 4 components per vertex - float)
+    if (mesh.tangents != nullptr)      // Vertex tangents (XYZW - 4 components per vertex - float)
     {
         byteCount += sprintf(txtData + byteCount, "static float %s_TANGENT_DATA[%i] = { ", varFileName, mesh.vertexCount*4);
         for (int i = 0; i < mesh.vertexCount*4 - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "%.3ff,\n" : "%.3ff, "), mesh.tangents[i]);
         byteCount += sprintf(txtData + byteCount, "%.3ff };\n\n", mesh.tangents[mesh.vertexCount*4 - 1]);
     }
 
-    if (mesh.colors != NULL)        // Vertex colors (RGBA - 4 components per vertex - unsigned char)
+    if (mesh.colors != nullptr)        // Vertex colors (RGBA - 4 components per vertex - unsigned char)
     {
         byteCount += sprintf(txtData + byteCount, "static unsigned char %s_COLOR_DATA[%i] = { ", varFileName, mesh.vertexCount*4);
         for (int i = 0; i < mesh.vertexCount*4 - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%x,\n" : "0x%x, "), mesh.colors[i]);
         byteCount += sprintf(txtData + byteCount, "0x%x };\n\n", mesh.colors[mesh.vertexCount*4 - 1]);
     }
 
-    if (mesh.indices != NULL)       // Vertex indices (3 index per triangle - unsigned short)
+    if (mesh.indices != nullptr)       // Vertex indices (3 index per triangle - unsigned short)
     {
         byteCount += sprintf(txtData + byteCount, "static unsigned short %s_INDEX_DATA[%i] = { ", varFileName, mesh.triangleCount*3);
         for (int i = 0; i < mesh.triangleCount*3 - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "%i,\n" : "%i, "), mesh.indices[i]);
@@ -2175,27 +2175,27 @@ static void ProcessMaterialsOBJ(Material *materials, tinyobj_material_t *mats, i
         // NOTE: Uses default shader, which only supports MATERIAL_MAP_DIFFUSE
         materials[m] = LoadMaterialDefault();
 
-        if (mats == NULL) continue;
+        if (mats == nullptr) continue;
 
         // Get default texture, in case no texture is defined
         // NOTE: rlgl default texture is a 1x1 pixel UNCOMPRESSED_R8G8B8A8
         materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = (Texture2D){ rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
-        if (mats[m].diffuse_texname != NULL) materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture(mats[m].diffuse_texname);  //char *diffuse_texname; // map_Kd
-        else materials[m].maps[MATERIAL_MAP_DIFFUSE].color = Color{ (unsigned char)(mats[m].diffuse[0]*255.0f), (unsigned char)(mats[m].diffuse[1]*255.0f), (unsigned char)(mats[m].diffuse[2]*255.0f), 255 }; //float diffuse[3];
+        if (mats[m].diffuse_texname != nullptr) materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture(mats[m].diffuse_texname);  //char *diffuse_texname; // map_Kd
+        else materials[m].maps[MATERIAL_MAP_DIFFUSE].color = Color{ static_cast<unsigned char>(mats[m].diffuse[0]*255.0f), static_cast<unsigned char>(mats[m].diffuse[1]*255.0f), static_cast<unsigned char>(mats[m].diffuse[2]*255.0f), 255 }; //float diffuse[3];
         materials[m].maps[MATERIAL_MAP_DIFFUSE].value = 0.0f;
 
-        if (mats[m].specular_texname != NULL) materials[m].maps[MATERIAL_MAP_SPECULAR].texture = LoadTexture(mats[m].specular_texname);  //char *specular_texname; // map_Ks
-        materials[m].maps[MATERIAL_MAP_SPECULAR].color = Color{ (unsigned char)(mats[m].specular[0]*255.0f), (unsigned char)(mats[m].specular[1]*255.0f), (unsigned char)(mats[m].specular[2]*255.0f), 255 }; //float specular[3];
+        if (mats[m].specular_texname != nullptr) materials[m].maps[MATERIAL_MAP_SPECULAR].texture = LoadTexture(mats[m].specular_texname);  //char *specular_texname; // map_Ks
+        materials[m].maps[MATERIAL_MAP_SPECULAR].color = Color{ static_cast<unsigned char>(mats[m].specular[0]*255.0f), static_cast<unsigned char>(mats[m].specular[1]*255.0f), static_cast<unsigned char>(mats[m].specular[2]*255.0f), 255 }; //float specular[3];
         materials[m].maps[MATERIAL_MAP_SPECULAR].value = 0.0f;
 
-        if (mats[m].bump_texname != NULL) materials[m].maps[MATERIAL_MAP_NORMAL].texture = LoadTexture(mats[m].bump_texname);  //char *bump_texname; // map_bump, bump
+        if (mats[m].bump_texname != nullptr) materials[m].maps[MATERIAL_MAP_NORMAL].texture = LoadTexture(mats[m].bump_texname);  //char *bump_texname; // map_bump, bump
         materials[m].maps[MATERIAL_MAP_NORMAL].color = WHITE;
         materials[m].maps[MATERIAL_MAP_NORMAL].value = mats[m].shininess;
 
-        materials[m].maps[MATERIAL_MAP_EMISSION].color = Color{ (unsigned char)(mats[m].emission[0]*255.0f), (unsigned char)(mats[m].emission[1]*255.0f), (unsigned char)(mats[m].emission[2]*255.0f), 255 }; //float emission[3];
+        materials[m].maps[MATERIAL_MAP_EMISSION].color = Color{ static_cast<unsigned char>(mats[m].emission[0]*255.0f), static_cast<unsigned char>(mats[m].emission[1]*255.0f), static_cast<unsigned char>(mats[m].emission[2]*255.0f), 255 }; //float emission[3];
 
-        if (mats[m].displacement_texname != NULL) materials[m].maps[MATERIAL_MAP_HEIGHT].texture = LoadTexture(mats[m].displacement_texname);  //char *displacement_texname; // disp
+        if (mats[m].displacement_texname != nullptr) materials[m].maps[MATERIAL_MAP_HEIGHT].texture = LoadTexture(mats[m].displacement_texname);  //char *displacement_texname; // disp
     }
 }
 #endif
@@ -2206,18 +2206,18 @@ Material * LoadMaterials(std::string_view fileNameView, int *materialCount)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    Material *materials = NULL;
+    Material *materials = nullptr;
     unsigned int count = 0;
 
 #if SUPPORT_FILEFORMAT_MTL
     if (IsFileExtension(fileName, ".mtl"))
     {
-        tinyobj_material_t *mats = NULL;
+        tinyobj_material_t *mats = nullptr;
 
         int result = tinyobj_parse_mtl_file(&mats, &count, fileName);
         if (result != TINYOBJ_SUCCESS) TRACELOG(LOG_WARNING, "MATERIAL: [%s] Failed to parse materials file", fileName);
 
-        materials = (Material *)RL_CALLOC(count, sizeof(Material));
+        materials = static_cast<Material *>(RL_CALLOC(count, sizeof(Material)));
         ProcessMaterialsOBJ(materials, mats, count);
 
         tinyobj_materials_free(mats, count);
@@ -2234,7 +2234,7 @@ Material * LoadMaterials(std::string_view fileNameView, int *materialCount)
 Material LoadMaterialDefault(void)
 {
     Material material = { 0 };
-    material.maps = (MaterialMap *)RL_CALLOC(MAX_MATERIAL_MAPS, sizeof(MaterialMap));
+    material.maps = static_cast<MaterialMap *>(RL_CALLOC(MAX_MATERIAL_MAPS, sizeof(MaterialMap)));
 
     // Using rlgl default shader
     material.shader.id = rlGetShaderIdDefault();
@@ -2256,7 +2256,7 @@ bool IsMaterialValid(Material material)
 {
     bool result = false;
 
-    if ((material.maps != NULL) && // Validate material contain some map
+    if ((material.maps != nullptr) && // Validate material contain some map
         (material.shader.id > 0)) result = true; // Validate material shader is valid
 
     // NOTE: Checking if available maps contain loaded textures does not determine if
@@ -2272,7 +2272,7 @@ void UnloadMaterial(Material material)
     if (material.shader.id != rlGetShaderIdDefault()) UnloadShader(material.shader);
 
     // Unload loaded texture maps (avoid unloading default texture, managed by raylib)
-    if (material.maps != NULL)
+    if (material.maps != nullptr)
     {
         for (int i = 0; i < MAX_MATERIAL_MAPS; i++)
         {
@@ -2304,7 +2304,7 @@ ModelAnimation * LoadModelAnimations(std::string_view fileNameView, int *animCou
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    ModelAnimation *animations = NULL;
+    ModelAnimation *animations = nullptr;
 
 #if SUPPORT_FILEFORMAT_IQM
     if (IsFileExtension(fileName, ".iqm")) animations = LoadModelAnimationsIQM(fileName, animCount);
@@ -2323,15 +2323,15 @@ ModelAnimation * LoadModelAnimations(std::string_view fileNameView, int *animCou
 // NOTE 1: Request frame could be fractional, using a lerp interpolation between two frames
 void UpdateModelAnimationBones(Model model, ModelAnimation anim, float frame)
 {
-    if (model.boneMatrices == NULL) return;
+    if (model.boneMatrices == nullptr) return;
 
     //UpdateModelAnimationEx(model, anim, frame, anim, frame, 0.0f);
 
     // Update model animated bones transform matrices for a given frame
-    if ((anim.keyframeCount > 0) && (model.skeleton.bones != NULL) && (anim.keyframePoses != NULL))
+    if ((anim.keyframeCount > 0) && (model.skeleton.bones != nullptr) && (anim.keyframePoses != nullptr))
     {
         // Get frame and blending from frame factor required
-        int currentFrame = (int)frame;
+        int currentFrame = static_cast<int>(frame);
         int nextFrame = currentFrame + 1;
         float blend = frame - currentFrame;
         blend = Clamp(blend, 0.0f, 1.0f);
@@ -2370,7 +2370,7 @@ void UpdateModelAnimationBones(Model model, ModelAnimation anim, float frame)
 // for GPU skinning, bone matrices are uploaded to shader on DrawModelEx()
 void UpdateModelAnimation(Model model, ModelAnimation anim, float frame)
 {
-    if ((anim.keyframeCount > 0) && (model.skeleton.bones != NULL) && (anim.keyframePoses != NULL))
+    if ((anim.keyframeCount > 0) && (model.skeleton.bones != nullptr) && (anim.keyframePoses != nullptr))
     {
         UpdateModelAnimationBones(model, anim, frame);
 
@@ -2385,14 +2385,14 @@ void UpdateModelAnimation(Model model, ModelAnimation anim, float frame)
 // NOTE 1: Request frames could be fractional, using a lerp interpolation between two frames
 void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA, ModelAnimation animB, float frameB, float blend)
 {
-    if (model.boneMatrices == NULL) return;
+    if (model.boneMatrices == nullptr) return;
 
-    if ((animA.keyframeCount > 0) && (animA.keyframePoses != NULL) &&
-        (animB.keyframeCount > 0) && (animB.keyframePoses != NULL) &&
+    if ((animA.keyframeCount > 0) && (animA.keyframePoses != nullptr) &&
+        (animB.keyframeCount > 0) && (animB.keyframePoses != nullptr) &&
         (blend >= 0.0f) && (blend <= 1.0f))
     {
         // Inter-frame interpolation values for first animation
-        int currentFrameA = (int)frameA%animA.keyframeCount;
+        int currentFrameA = static_cast<int>(frameA)%animA.keyframeCount;
         int nextFrameA = currentFrameA + 1;
         float blendA = frameA - currentFrameA;
         blendA = Clamp(blendA, 0.0f, 1.0f);
@@ -2400,7 +2400,7 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
         if (nextFrameA >= animA.keyframeCount) nextFrameA = nextFrameA%animA.keyframeCount;
 
         // Inter-frame interpolation values for second animation
-        int currentFrameB = (int)frameB%animB.keyframeCount;
+        int currentFrameB = static_cast<int>(frameB)%animB.keyframeCount;
         int nextFrameB = currentFrameB + 1;
         float blendB = frameB - currentFrameB;
         blendB = Clamp(blendB, 0.0f, 1.0f);
@@ -2478,10 +2478,10 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
 // for GPU skinning, bone matrices are uploaded to shader on DrawModelEx()
 void UpdateModelAnimationEx(Model model, ModelAnimation animA, float frameA, ModelAnimation animB, float frameB, float blend)
 {
-    if (model.boneMatrices == NULL) return;
+    if (model.boneMatrices == nullptr) return;
 
-    if ((animA.keyframeCount > 0) && (animA.keyframePoses != NULL) &&
-        (animB.keyframeCount > 0) && (animB.keyframePoses != NULL) &&
+    if ((animA.keyframeCount > 0) && (animA.keyframePoses != nullptr) &&
+        (animB.keyframeCount > 0) && (animB.keyframePoses != nullptr) &&
         (blend >= 0.0f) && (blend <= 1.0f))
     {
         UpdateModelAnimationBonesEx(model, animA, frameA, animB, frameB, blend);
@@ -2512,28 +2512,28 @@ static void UpdateModelAnimationVertexBuffers(Model model)
         bool bufferUpdateRequired = false; // Flag to check when anim vertex information is updated
 
         // Skip if missing bone data or missing anim buffers initialization
-        if ((mesh->boneWeights == NULL) || (mesh->boneIndices == NULL)) continue;
+        if ((mesh->boneWeights == nullptr) || (mesh->boneIndices == nullptr)) continue;
 
         // Skip if the shader is using the bones directly
 #if SUPPORT_GPU_SKINNING
         Material material = model.materials[model.meshMaterial[m]];
-        if ((material.shader.locs != NULL) && (material.shader.locs[SHADER_LOC_VERTEX_BONEIDS] != -1)) continue;
+        if ((material.shader.locs != nullptr) && (material.shader.locs[SHADER_LOC_VERTEX_BONEIDS] != -1)) continue;
 #endif
         // Lazy allocation of CPU animation buffers for vertex positions and normals, 
         // to be used on CPU software skinning
-        if (mesh->animVertices == NULL)
+        if (mesh->animVertices == nullptr)
         {
-            mesh->animVertices = (float *)RL_CALLOC(mesh->vertexCount*3, sizeof(float));
+            mesh->animVertices = static_cast<float *>(RL_CALLOC(mesh->vertexCount*3, sizeof(float)));
             memcpy(mesh->animVertices, mesh->vertices, mesh->vertexCount*3*sizeof(float));
         }
-        if ((mesh->normals != NULL) && (mesh->animNormals == NULL))
+        if ((mesh->normals != nullptr) && (mesh->animNormals == nullptr))
         {
-            mesh->animNormals = (float *)RL_CALLOC(mesh->vertexCount*3, sizeof(float));
+            mesh->animNormals = static_cast<float *>(RL_CALLOC(mesh->vertexCount*3, sizeof(float)));
             memcpy(mesh->animNormals, mesh->normals, mesh->vertexCount*3*sizeof(float));
         }
 
         // Normal matrix only depends on the bone, compute it once per bone instead of per vertex
-        if ((mesh->normals != NULL) && !boneNormalsReady)
+        if ((mesh->normals != nullptr) && !boneNormalsReady)
         {
             memset(boneNormalMatrices, 0, 256*sizeof(Matrix));
             for (unsigned int b = 0; (b < model.skeleton.boneCount) && (b < 256); b++) boneNormalMatrices[b] = glm::transpose(glm::inverse(model.boneMatrices[b]));
@@ -2545,7 +2545,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
             mesh->animVertices[vCounter] = 0;
             mesh->animVertices[vCounter + 1] = 0;
             mesh->animVertices[vCounter + 2] = 0;
-            if (mesh->animNormals != NULL)
+            if (mesh->animNormals != nullptr)
             {
                 mesh->animNormals[vCounter] = 0;
                 mesh->animNormals[vCounter + 1] = 0;
@@ -2569,7 +2569,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
 
                 // Normals processing
                 // NOTE: Using meshes.baseNormals (default normal) to calculate meshes.normals (animated normals)
-                if ((mesh->normals != NULL) && (mesh->animNormals != NULL ))
+                if ((mesh->normals != nullptr) && (mesh->animNormals != nullptr ))
                 {
                     animNormal = Vector3{ mesh->normals[vCounter], mesh->normals[vCounter + 1], mesh->normals[vCounter + 2] };
                     animNormal = Vector3((glm::transpose(glm::inverse(model.boneMatrices[boneIndex])))*Vector4(animNormal, 1.0f));
@@ -2584,7 +2584,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
         {
             // Update GPU vertex buffers with updated data (position + normals)
             rlUpdateVertexBuffer(mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION], mesh->animVertices, mesh->vertexCount*3*sizeof(float), 0);
-            if (mesh->normals != NULL) rlUpdateVertexBuffer(mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL], mesh->animNormals, mesh->vertexCount*3*sizeof(float), 0);
+            if (mesh->normals != nullptr) rlUpdateVertexBuffer(mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL], mesh->animNormals, mesh->vertexCount*3*sizeof(float), 0);
         }
     }
 }
@@ -2625,7 +2625,7 @@ Mesh GenMeshPoly(int sides, float radius)
     int vertexCount = sides*3;
 
     // Vertices definition
-    Vector3 *vertices = (Vector3 *)RL_CALLOC(vertexCount, sizeof(Vector3));
+    Vector3 *vertices = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
 
     float d = 0.0f, dStep = 360.0f/sides;
     for (int v = 0; v < vertexCount - 2; v += 3)
@@ -2637,18 +2637,18 @@ Mesh GenMeshPoly(int sides, float radius)
     }
 
     // Normals definition
-    Vector3 *normals = (Vector3 *)RL_CALLOC(vertexCount, sizeof(Vector3));
+    Vector3 *normals = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
     for (int n = 0; n < vertexCount; n++) normals[n] = Vector3{ 0.0f, 1.0f, 0.0f };   // Vector3.up;
 
     // TexCoords definition
-    Vector2 *texcoords = (Vector2 *)RL_CALLOC(vertexCount, sizeof(Vector2));
+    Vector2 *texcoords = static_cast<Vector2 *>(RL_CALLOC(vertexCount, sizeof(Vector2)));
     for (int n = 0; n < vertexCount; n++) texcoords[n] = Vector2{ 0.0f, 0.0f };
 
     mesh.vertexCount = vertexCount;
     mesh.triangleCount = sides;
-    mesh.vertices = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
-    mesh.texcoords = (float *)RL_CALLOC(mesh.vertexCount*2, sizeof(float));
-    mesh.normals = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
+    mesh.vertices = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
+    mesh.texcoords = static_cast<float *>(RL_CALLOC(mesh.vertexCount*2, sizeof(float)));
+    mesh.normals = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
 
     // Mesh vertices position array
     for (int i = 0; i < mesh.vertexCount; i++)
@@ -2697,36 +2697,36 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
     // Vertices definition
     int vertexCount = resX*resZ; // vertices get reused for the faces
 
-    Vector3 *vertices = (Vector3 *)RL_CALLOC(vertexCount, sizeof(Vector3));
+    Vector3 *vertices = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
     for (int z = 0; z < resZ; z++)
     {
         // [-length/2, length/2]
-        float zPos = ((float)z/(resZ - 1) - 0.5f)*length;
+        float zPos = (static_cast<float>(z)/(resZ - 1) - 0.5f)*length;
         for (int x = 0; x < resX; x++)
         {
             // [-width/2, width/2]
-            float xPos = ((float)x/(resX - 1) - 0.5f)*width;
+            float xPos = (static_cast<float>(x)/(resX - 1) - 0.5f)*width;
             vertices[x + z*resX] = Vector3{ xPos, 0.0f, zPos };
         }
     }
 
     // Normals definition
-    Vector3 *normals = (Vector3 *)RL_CALLOC(vertexCount, sizeof(Vector3));
+    Vector3 *normals = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
     for (int n = 0; n < vertexCount; n++) normals[n] = Vector3{ 0.0f, 1.0f, 0.0f };   // Vector3.up;
 
     // TexCoords definition
-    Vector2 *texcoords = (Vector2 *)RL_CALLOC(vertexCount, sizeof(Vector2));
+    Vector2 *texcoords = static_cast<Vector2 *>(RL_CALLOC(vertexCount, sizeof(Vector2)));
     for (int v = 0; v < resZ; v++)
     {
         for (int u = 0; u < resX; u++)
         {
-            texcoords[u + v*resX] = Vector2{ (float)u/(resX - 1), (float)v/(resZ - 1) };
+            texcoords[u + v*resX] = Vector2{ static_cast<float>(u)/(resX - 1), static_cast<float>(v)/(resZ - 1) };
         }
     }
 
     // Triangles definition (indices)
     int numFaces = (resX - 1)*(resZ - 1);
-    int *triangles = (int *)RL_CALLOC(numFaces*6, sizeof(int));
+    int *triangles = static_cast<int *>(RL_CALLOC(numFaces*6, sizeof(int)));
     int t = 0;
     for (int face = 0; face < numFaces; face++)
     {
@@ -2744,10 +2744,10 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
 
     mesh.vertexCount = vertexCount;
     mesh.triangleCount = numFaces*2;
-    mesh.vertices = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
-    mesh.texcoords = (float *)RL_CALLOC(mesh.vertexCount*2, sizeof(float));
-    mesh.normals = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
-    mesh.indices = (unsigned short *)RL_CALLOC(mesh.triangleCount*3, sizeof(unsigned short));
+    mesh.vertices = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
+    mesh.texcoords = static_cast<float *>(RL_CALLOC(mesh.vertexCount*2, sizeof(float)));
+    mesh.normals = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
+    mesh.indices = static_cast<unsigned short *>(RL_CALLOC(mesh.triangleCount*3, sizeof(unsigned short)));
 
     // Mesh vertices position array
     for (int i = 0; i < mesh.vertexCount; i++)
@@ -2905,16 +2905,16 @@ Mesh GenMeshCube(float width, float height, float length)
         -1.0f, 0.0f, 0.0f
     };
 
-    mesh.vertices = (float *)RL_CALLOC(24*3, sizeof(float));
+    mesh.vertices = static_cast<float *>(RL_CALLOC(24*3, sizeof(float)));
     memcpy(mesh.vertices, vertices, 24*3*sizeof(float));
 
-    mesh.texcoords = (float *)RL_CALLOC(24*2, sizeof(float));
+    mesh.texcoords = static_cast<float *>(RL_CALLOC(24*2, sizeof(float)));
     memcpy(mesh.texcoords, texcoords, 24*2*sizeof(float));
 
-    mesh.normals = (float *)RL_CALLOC(24*3, sizeof(float));
+    mesh.normals = static_cast<float *>(RL_CALLOC(24*3, sizeof(float)));
     memcpy(mesh.normals, normals, 24*3*sizeof(float));
 
-    mesh.indices = (unsigned short *)RL_CALLOC(36, sizeof(unsigned short));
+    mesh.indices = static_cast<unsigned short *>(RL_CALLOC(36, sizeof(unsigned short)));
 
     int k = 0;
 
@@ -2994,9 +2994,9 @@ Mesh GenMeshSphere(float radius, int rings, int slices)
         par_shapes_scale(sphere, radius, radius, radius);
         // NOTE: Soft normals are computed internally
 
-        mesh.vertices = (float *)RL_CALLOC(sphere->ntriangles*3*3, sizeof(float));
-        mesh.texcoords = (float *)RL_CALLOC(sphere->ntriangles*3*2, sizeof(float));
-        mesh.normals = (float *)RL_CALLOC(sphere->ntriangles*3*3, sizeof(float));
+        mesh.vertices = static_cast<float *>(RL_CALLOC(sphere->ntriangles*3*3, sizeof(float)));
+        mesh.texcoords = static_cast<float *>(RL_CALLOC(sphere->ntriangles*3*2, sizeof(float)));
+        mesh.normals = static_cast<float *>(RL_CALLOC(sphere->ntriangles*3*3, sizeof(float)));
 
         mesh.vertexCount = sphere->ntriangles*3;
         mesh.triangleCount = sphere->ntriangles;
@@ -3038,9 +3038,9 @@ Mesh GenMeshHemiSphere(float radius, int rings, int slices)
         par_shapes_scale(sphere, radius, radius, radius);
         // NOTE: Soft normals are computed internally
 
-        mesh.vertices = (float *)RL_CALLOC(sphere->ntriangles*3*3, sizeof(float));
-        mesh.texcoords = (float *)RL_CALLOC(sphere->ntriangles*3*2, sizeof(float));
-        mesh.normals = (float *)RL_CALLOC(sphere->ntriangles*3*3, sizeof(float));
+        mesh.vertices = static_cast<float *>(RL_CALLOC(sphere->ntriangles*3*3, sizeof(float)));
+        mesh.texcoords = static_cast<float *>(RL_CALLOC(sphere->ntriangles*3*2, sizeof(float)));
+        mesh.normals = static_cast<float *>(RL_CALLOC(sphere->ntriangles*3*3, sizeof(float)));
 
         mesh.vertexCount = sphere->ntriangles*3;
         mesh.triangleCount = sphere->ntriangles;
@@ -3102,9 +3102,9 @@ Mesh GenMeshCylinder(float radius, float height, int slices)
         par_shapes_merge_and_free(cylinder, capTop);
         par_shapes_merge_and_free(cylinder, capBottom);
 
-        mesh.vertices = (float *)RL_CALLOC(cylinder->ntriangles*3*3, sizeof(float));
-        mesh.texcoords = (float *)RL_CALLOC(cylinder->ntriangles*3*2, sizeof(float));
-        mesh.normals = (float *)RL_CALLOC(cylinder->ntriangles*3*3, sizeof(float));
+        mesh.vertices = static_cast<float *>(RL_CALLOC(cylinder->ntriangles*3*3, sizeof(float)));
+        mesh.texcoords = static_cast<float *>(RL_CALLOC(cylinder->ntriangles*3*2, sizeof(float)));
+        mesh.normals = static_cast<float *>(RL_CALLOC(cylinder->ntriangles*3*3, sizeof(float)));
 
         mesh.vertexCount = cylinder->ntriangles*3;
         mesh.triangleCount = cylinder->ntriangles;
@@ -3157,9 +3157,9 @@ Mesh GenMeshCone(float radius, float height, int slices)
 
         par_shapes_merge_and_free(cone, capBottom);
 
-        mesh.vertices = (float *)RL_CALLOC(cone->ntriangles*3*3, sizeof(float));
-        mesh.texcoords = (float *)RL_CALLOC(cone->ntriangles*3*2, sizeof(float));
-        mesh.normals = (float *)RL_CALLOC(cone->ntriangles*3*3, sizeof(float));
+        mesh.vertices = static_cast<float *>(RL_CALLOC(cone->ntriangles*3*3, sizeof(float)));
+        mesh.texcoords = static_cast<float *>(RL_CALLOC(cone->ntriangles*3*2, sizeof(float)));
+        mesh.normals = static_cast<float *>(RL_CALLOC(cone->ntriangles*3*3, sizeof(float)));
 
         mesh.vertexCount = cone->ntriangles*3;
         mesh.triangleCount = cone->ntriangles;
@@ -3205,9 +3205,9 @@ Mesh GenMeshTorus(float radius, float size, int radSeg, int sides)
         par_shapes_mesh *torus = par_shapes_create_torus(radSeg, sides, radius);
         par_shapes_scale(torus, size/2, size/2, size/2);
 
-        mesh.vertices = (float *)RL_CALLOC(torus->ntriangles*3*3, sizeof(float));
-        mesh.texcoords = (float *)RL_CALLOC(torus->ntriangles*3*2, sizeof(float));
-        mesh.normals = (float *)RL_CALLOC(torus->ntriangles*3*3, sizeof(float));
+        mesh.vertices = static_cast<float *>(RL_CALLOC(torus->ntriangles*3*3, sizeof(float)));
+        mesh.texcoords = static_cast<float *>(RL_CALLOC(torus->ntriangles*3*2, sizeof(float)));
+        mesh.normals = static_cast<float *>(RL_CALLOC(torus->ntriangles*3*3, sizeof(float)));
 
         mesh.vertexCount = torus->ntriangles*3;
         mesh.triangleCount = torus->ntriangles;
@@ -3249,9 +3249,9 @@ Mesh GenMeshKnot(float radius, float size, int radSeg, int sides)
         par_shapes_mesh *knot = par_shapes_create_trefoil_knot(radSeg, sides, radius);
         par_shapes_scale(knot, size, size, size);
 
-        mesh.vertices = (float *)RL_CALLOC(knot->ntriangles*3*3, sizeof(float));
-        mesh.texcoords = (float *)RL_CALLOC(knot->ntriangles*3*2, sizeof(float));
-        mesh.normals = (float *)RL_CALLOC(knot->ntriangles*3*3, sizeof(float));
+        mesh.vertices = static_cast<float *>(RL_CALLOC(knot->ntriangles*3*3, sizeof(float)));
+        mesh.texcoords = static_cast<float *>(RL_CALLOC(knot->ntriangles*3*2, sizeof(float)));
+        mesh.normals = static_cast<float *>(RL_CALLOC(knot->ntriangles*3*3, sizeof(float)));
 
         mesh.vertexCount = knot->ntriangles*3;
         mesh.triangleCount = knot->ntriangles;
@@ -3298,10 +3298,10 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
 
     mesh.vertexCount = mesh.triangleCount*3;
 
-    mesh.vertices = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
-    mesh.normals = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
-    mesh.texcoords = (float *)RL_CALLOC(mesh.vertexCount*2, sizeof(float));
-    mesh.colors = NULL;
+    mesh.vertices = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
+    mesh.normals = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
+    mesh.texcoords = static_cast<float *>(RL_CALLOC(mesh.vertexCount*2, sizeof(float)));
+    mesh.colors = nullptr;
 
     int vCounter = 0;       // Used to count vertices float by float
     int tcCounter = 0;      // Used to count texcoords float by float
@@ -3322,17 +3322,17 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
             //----------------------------------------------------------
 
             // one triangle - 3 vertex
-            mesh.vertices[vCounter] = (float)x*scaleFactor.x;
+            mesh.vertices[vCounter] = static_cast<float>(x)*scaleFactor.x;
             mesh.vertices[vCounter + 1] = GRAY_VALUE(pixels[x + z*mapX])*scaleFactor.y;
-            mesh.vertices[vCounter + 2] = (float)z*scaleFactor.z;
+            mesh.vertices[vCounter + 2] = static_cast<float>(z)*scaleFactor.z;
 
-            mesh.vertices[vCounter + 3] = (float)x*scaleFactor.x;
+            mesh.vertices[vCounter + 3] = static_cast<float>(x)*scaleFactor.x;
             mesh.vertices[vCounter + 4] = GRAY_VALUE(pixels[x + (z + 1)*mapX])*scaleFactor.y;
-            mesh.vertices[vCounter + 5] = (float)(z + 1)*scaleFactor.z;
+            mesh.vertices[vCounter + 5] = static_cast<float>(z + 1)*scaleFactor.z;
 
-            mesh.vertices[vCounter + 6] = (float)(x + 1)*scaleFactor.x;
+            mesh.vertices[vCounter + 6] = static_cast<float>(x + 1)*scaleFactor.x;
             mesh.vertices[vCounter + 7] = GRAY_VALUE(pixels[(x + 1) + z*mapX])*scaleFactor.y;
-            mesh.vertices[vCounter + 8] = (float)z*scaleFactor.z;
+            mesh.vertices[vCounter + 8] = static_cast<float>(z)*scaleFactor.z;
 
             // Another triangle - 3 vertex
             mesh.vertices[vCounter + 9] = mesh.vertices[vCounter + 6];
@@ -3343,21 +3343,21 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
             mesh.vertices[vCounter + 13] = mesh.vertices[vCounter + 4];
             mesh.vertices[vCounter + 14] = mesh.vertices[vCounter + 5];
 
-            mesh.vertices[vCounter + 15] = (float)(x + 1)*scaleFactor.x;
+            mesh.vertices[vCounter + 15] = static_cast<float>(x + 1)*scaleFactor.x;
             mesh.vertices[vCounter + 16] = GRAY_VALUE(pixels[(x + 1) + (z + 1)*mapX])*scaleFactor.y;
-            mesh.vertices[vCounter + 17] = (float)(z + 1)*scaleFactor.z;
+            mesh.vertices[vCounter + 17] = static_cast<float>(z + 1)*scaleFactor.z;
             vCounter += 18;     // 6 vertex, 18 floats
 
             // Fill texcoords array with data
             //--------------------------------------------------------------
-            mesh.texcoords[tcCounter] = (float)x/(mapX - 1);
-            mesh.texcoords[tcCounter + 1] = (float)z/(mapZ - 1);
+            mesh.texcoords[tcCounter] = static_cast<float>(x)/(mapX - 1);
+            mesh.texcoords[tcCounter + 1] = static_cast<float>(z)/(mapZ - 1);
 
-            mesh.texcoords[tcCounter + 2] = (float)x/(mapX - 1);
-            mesh.texcoords[tcCounter + 3] = (float)(z + 1)/(mapZ - 1);
+            mesh.texcoords[tcCounter + 2] = static_cast<float>(x)/(mapX - 1);
+            mesh.texcoords[tcCounter + 3] = static_cast<float>(z + 1)/(mapZ - 1);
 
-            mesh.texcoords[tcCounter + 4] = (float)(x + 1)/(mapX - 1);
-            mesh.texcoords[tcCounter + 5] = (float)z/(mapZ - 1);
+            mesh.texcoords[tcCounter + 4] = static_cast<float>(x + 1)/(mapX - 1);
+            mesh.texcoords[tcCounter + 5] = static_cast<float>(z)/(mapZ - 1);
 
             mesh.texcoords[tcCounter + 6] = mesh.texcoords[tcCounter + 4];
             mesh.texcoords[tcCounter + 7] = mesh.texcoords[tcCounter + 5];
@@ -3365,8 +3365,8 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
             mesh.texcoords[tcCounter + 8] = mesh.texcoords[tcCounter + 2];
             mesh.texcoords[tcCounter + 9] = mesh.texcoords[tcCounter + 3];
 
-            mesh.texcoords[tcCounter + 10] = (float)(x + 1)/(mapX - 1);
-            mesh.texcoords[tcCounter + 11] = (float)(z + 1)/(mapZ - 1);
+            mesh.texcoords[tcCounter + 10] = static_cast<float>(x + 1)/(mapX - 1);
+            mesh.texcoords[tcCounter + 11] = static_cast<float>(z + 1)/(mapZ - 1);
             tcCounter += 12;    // 6 texcoords, 12 floats
 
             // Fill normals array with data
@@ -3433,9 +3433,9 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
     float h = cubeSize.z;
     float h2 = cubeSize.y;
 
-    Vector3 *mapVertices = (Vector3 *)RL_CALLOC(maxTriangles*3, sizeof(Vector3));
-    Vector2 *mapTexcoords = (Vector2 *)RL_CALLOC(maxTriangles*3, sizeof(Vector2));
-    Vector3 *mapNormals = (Vector3 *)RL_CALLOC(maxTriangles*3, sizeof(Vector3));
+    Vector3 *mapVertices = static_cast<Vector3 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector3)));
+    Vector2 *mapTexcoords = static_cast<Vector2 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector2)));
+    Vector3 *mapNormals = static_cast<Vector3 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector3)));
 
     // Define the 6 normals of the cube, combined accordingly later
     Vector3 n1 = { 1.0f, 0.0f, 0.0f };
@@ -3712,10 +3712,10 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
     mesh.vertexCount = vCounter;
     mesh.triangleCount = vCounter/3;
 
-    mesh.vertices = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
-    mesh.normals = (float *)RL_CALLOC(mesh.vertexCount*3, sizeof(float));
-    mesh.texcoords = (float *)RL_CALLOC(mesh.vertexCount*2, sizeof(float));
-    mesh.colors = NULL;
+    mesh.vertices = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
+    mesh.normals = static_cast<float *>(RL_CALLOC(mesh.vertexCount*3, sizeof(float)));
+    mesh.texcoords = static_cast<float *>(RL_CALLOC(mesh.vertexCount*2, sizeof(float)));
+    mesh.colors = nullptr;
 
     int fCounter = 0;
 
@@ -3770,7 +3770,7 @@ BoundingBox GetMeshBoundingBox(Mesh mesh)
     Vector3 minVertex{};
     Vector3 maxVertex{};
 
-    if (mesh.vertices != NULL)
+    if (mesh.vertices != nullptr)
     {
         minVertex = Vector3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
         maxVertex = Vector3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
@@ -3794,25 +3794,25 @@ BoundingBox GetMeshBoundingBox(Mesh mesh)
 void GenMeshTangents(Mesh *mesh)
 {
     // Check if input mesh data is useful
-    if ((mesh == NULL) || (mesh->vertices == NULL) || (mesh->texcoords == NULL) || (mesh->normals == NULL))
+    if ((mesh == nullptr) || (mesh->vertices == nullptr) || (mesh->texcoords == nullptr) || (mesh->normals == nullptr))
     {
         TRACELOG(LOG_WARNING, "MESH: Tangents generation requires vertices, texcoords and normals vertex attribute data");
         return;
     }
 
     // Allocate or reallocate tangents data
-    if (mesh->tangents == NULL) mesh->tangents = (float *)RL_CALLOC(mesh->vertexCount*4, sizeof(float));
+    if (mesh->tangents == nullptr) mesh->tangents = static_cast<float *>(RL_CALLOC(mesh->vertexCount*4, sizeof(float)));
     else
     {
         RL_FREE(mesh->tangents);
-        mesh->tangents = (float *)RL_CALLOC(mesh->vertexCount*4, sizeof(float));
+        mesh->tangents = static_cast<float *>(RL_CALLOC(mesh->vertexCount*4, sizeof(float)));
     }
 
     // Allocate temporary arrays for tangents calculation
-    Vector3 *tan1 = (Vector3 *)RL_CALLOC(mesh->vertexCount, sizeof(Vector3));
-    Vector3 *tan2 = (Vector3 *)RL_CALLOC(mesh->vertexCount, sizeof(Vector3));
+    Vector3 *tan1 = static_cast<Vector3 *>(RL_CALLOC(mesh->vertexCount, sizeof(Vector3)));
+    Vector3 *tan2 = static_cast<Vector3 *>(RL_CALLOC(mesh->vertexCount, sizeof(Vector3)));
 
-    if (tan1 == NULL || tan2 == NULL)
+    if (tan1 == nullptr || tan2 == nullptr)
     {
         TRACELOG(LOG_WARNING, "MESH: Failed to allocate temporary memory for tangent calculation");
         if (tan1) RL_FREE(tan1);
@@ -3827,7 +3827,7 @@ void GenMeshTangents(Mesh *mesh)
         // Get triangle vertex indices
         int i0 = 0, i1 = 0, i2 = 0;
 
-        if (mesh->indices != NULL)
+        if (mesh->indices != nullptr)
         {
             // Use indices if available
             i0 = mesh->indices[t*3 + 0];
@@ -3935,7 +3935,7 @@ void GenMeshTangents(Mesh *mesh)
     RL_FREE(tan2);
 
     // Update vertex buffers if available
-    if (mesh->vboId != NULL)
+    if (mesh->vboId != nullptr)
     {
         if (mesh->vboId[SHADER_LOC_VERTEX_TANGENT] != 0)
         {
@@ -3989,16 +3989,16 @@ void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rota
         // Applying color tint directly to material diffuse map,
         // because it comes as an input parameter to the function
         Color colTinted = { 0 };
-        colTinted.r = (unsigned char)(((int)colDiffuse.r*(int)tint.r)/255);
-        colTinted.g = (unsigned char)(((int)colDiffuse.g*(int)tint.g)/255);
-        colTinted.b = (unsigned char)(((int)colDiffuse.b*(int)tint.b)/255);
-        colTinted.a = (unsigned char)(((int)colDiffuse.a*(int)tint.a)/255);
+        colTinted.r = static_cast<unsigned char>((static_cast<int>(colDiffuse.r)*static_cast<int>(tint.r))/255);
+        colTinted.g = static_cast<unsigned char>((static_cast<int>(colDiffuse.g)*static_cast<int>(tint.g))/255);
+        colTinted.b = static_cast<unsigned char>((static_cast<int>(colDiffuse.b)*static_cast<int>(tint.b))/255);
+        colTinted.a = static_cast<unsigned char>((static_cast<int>(colDiffuse.a)*static_cast<int>(tint.a))/255);
 
         mat.maps[MATERIAL_MAP_DIFFUSE].color = colTinted;
 
         // Upload runtime bone transforms matrices, to compute skinning on the shader (GPU-skinning)
         // NOTE: Required location must be found and Mesh bones indices and weights must be also uploaded to shader
-        if ((mat.shader.locs != NULL) && (mat.shader.locs[SHADER_LOC_MATRIX_BONETRANSFORMS] != -1) && (model.boneMatrices != NULL))
+        if ((mat.shader.locs != nullptr) && (mat.shader.locs[SHADER_LOC_MATRIX_BONETRANSFORMS] != -1) && (model.boneMatrices != nullptr))
         {
             rlEnableShader(mat.shader.id); // Enable shader to set bone transform matrices
             rlSetUniformMatrices(mat.shader.locs[SHADER_LOC_MATRIX_BONETRANSFORMS], model.boneMatrices, model.skeleton.boneCount);
@@ -4034,7 +4034,7 @@ void DrawModelWiresEx(Model model, Vector3 position, Vector3 rotationAxis, float
 // Draw a billboard
 void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float scale, Color tint)
 {
-    Rectangle rec = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+    Rectangle rec = { 0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height) };
 
     DrawBillboardRec(camera, texture, rec, position, Vector2{ scale*fabsf(rec.width/rec.height), scale }, tint);
 }
@@ -4270,8 +4270,8 @@ RayCollision GetRayCollisionBox(Ray ray, BoundingBox box)
     t[3] = (box.max.y - ray.position.y)*t[9];
     t[4] = (box.min.z - ray.position.z)*t[10];
     t[5] = (box.max.z - ray.position.z)*t[10];
-    t[6] = (float)fmax(fmax(fmin(t[0], t[1]), fmin(t[2], t[3])), fmin(t[4], t[5]));
-    t[7] = (float)fmin(fmin(fmax(t[0], t[1]), fmax(t[2], t[3])), fmax(t[4], t[5]));
+    t[6] = fmax(fmax(fmin(t[0], t[1]), fmin(t[2], t[3])), fmin(t[4], t[5]));
+    t[7] = fmin(fmin(fmax(t[0], t[1]), fmax(t[2], t[3])), fmax(t[4], t[5]));
 
     collision.hit = !((t[7] < 0) || (t[6] > t[7]));
     collision.distance = t[6];
@@ -4287,9 +4287,9 @@ RayCollision GetRayCollisionBox(Ray ray, BoundingBox box)
     collision.normal = ((collision.normal) / (((box.max) - (box.min))));
     // The relevant elements of the vector are now slightly larger than 1.0f (or smaller than -1.0f)
     // and the others are somewhere between -1.0 and 1.0 casting to int is exactly our wanted normal!
-    collision.normal.x = (float)((int)collision.normal.x);
-    collision.normal.y = (float)((int)collision.normal.y);
-    collision.normal.z = (float)((int)collision.normal.z);
+    collision.normal.x = static_cast<float>(static_cast<int>(collision.normal.x));
+    collision.normal.y = static_cast<float>(static_cast<int>(collision.normal.y));
+    collision.normal.z = static_cast<float>(static_cast<int>(collision.normal.z));
 
     collision.normal = glm::normalize(collision.normal);
 
@@ -4311,7 +4311,7 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
     RayCollision collision = { 0 };
 
     // Check if mesh vertex data on CPU for testing
-    if (mesh.vertices != NULL)
+    if (mesh.vertices != nullptr)
     {
         // Transform the ray into model space by the inverse of the transform, 
         // so it can be tested against the untransformed vertex data
@@ -4330,7 +4330,7 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
             Vector3 a{};
             Vector3 b{};
             Vector3 c{};
-            Vector3 *vertdata = (Vector3 *)mesh.vertices;
+            Vector3 *vertdata = reinterpret_cast<Vector3 *>(mesh.vertices);
 
             if (mesh.indices)
             {
@@ -4476,10 +4476,10 @@ static void BuildPoseFromParentJoints(BoneInfo *bones, int boneCount, Transform 
 static Model LoadOBJ(const char *fileName)
 {
     tinyobj_attrib_t objAttributes = { 0 };
-    tinyobj_shape_t *objShapes = NULL;
+    tinyobj_shape_t *objShapes = nullptr;
     unsigned int objShapeCount = 0;
 
-    tinyobj_material_t *objMaterials = NULL;
+    tinyobj_material_t *objMaterials = nullptr;
     unsigned int objMaterialCount = 0;
 
     Model model = { 0 };
@@ -4499,7 +4499,7 @@ static Model LoadOBJ(const char *fileName)
     std::string workingDir = GetDirectoryPath(fileName); // Switch to OBJ directory for material path correctness
     if (CHDIR(workingDir.c_str()) != 0) TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to change working directory", workingDir.c_str());
 
-    unsigned int dataSize = (unsigned int)fileText.size();
+    unsigned int dataSize = static_cast<unsigned int>(fileText.size());
 
     unsigned int flags = TINYOBJ_FLAG_TRIANGULATE;
     int ret = tinyobj_parse_obj(&objAttributes, &objShapes, &objShapeCount, &objMaterials, &objMaterialCount, fileText.c_str(), dataSize, flags);
@@ -4544,23 +4544,23 @@ static Model LoadOBJ(const char *fileName)
 
     // Allocate the base meshes and materials
     model.meshCount = meshIndex + 1;
-    model.meshes = (Mesh *)MemAlloc(sizeof(Mesh)*model.meshCount);
+    model.meshes = static_cast<Mesh *>(MemAlloc(sizeof(Mesh)*model.meshCount));
 
     if (objMaterialCount > 0)
     {
         model.materialCount = objMaterialCount;
-        model.materials = (Material *)MemAlloc(sizeof(Material)*objMaterialCount);
+        model.materials = static_cast<Material *>(MemAlloc(sizeof(Material)*objMaterialCount));
     }
     else // Allocate at least one material
     {
         model.materialCount = 1;
-        model.materials = (Material *)MemAlloc(sizeof(Material)*1);
+        model.materials = static_cast<Material *>(MemAlloc(sizeof(Material)*1));
     }
 
-    model.meshMaterial = (int *)MemAlloc(sizeof(int)*model.meshCount);
+    model.meshMaterial = static_cast<int *>(MemAlloc(sizeof(int)*model.meshCount));
 
     // See how many verts are in each mesh
-    unsigned int *localMeshVertexCounts = (unsigned int *)MemAlloc(sizeof(unsigned int)*model.meshCount);
+    unsigned int *localMeshVertexCounts = static_cast<unsigned int *>(MemAlloc(sizeof(unsigned int)*model.meshCount));
 
     faceVertIndex = 0;
     nextShapeEnd = objAttributes.num_face_num_verts;
@@ -4613,21 +4613,21 @@ static Model LoadOBJ(const char *fileName)
         model.meshes[i].vertexCount = vertexCount;
         model.meshes[i].triangleCount = vertexCount/3;
 
-        model.meshes[i].vertices = (float *)MemAlloc(sizeof(float)*vertexCount*3);
-        model.meshes[i].normals = (float *)MemAlloc(sizeof(float)*vertexCount*3);
+        model.meshes[i].vertices = static_cast<float *>(MemAlloc(sizeof(float)*vertexCount*3));
+        model.meshes[i].normals = static_cast<float *>(MemAlloc(sizeof(float)*vertexCount*3));
     #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
-        model.meshes[i].texcoords = (float *)MemAlloc(sizeof(float)*vertexCount*2);
-        model.meshes[i].colors = (unsigned char *)MemAlloc(sizeof(unsigned char)*vertexCount*4);
+        model.meshes[i].texcoords = static_cast<float *>(MemAlloc(sizeof(float)*vertexCount*2));
+        model.meshes[i].colors = static_cast<unsigned char *>(MemAlloc(sizeof(unsigned char)*vertexCount*4));
     #else
-        if (objAttributes.texcoords != NULL && objAttributes.num_texcoords > 0)
+        if (objAttributes.texcoords != nullptr && objAttributes.num_texcoords > 0)
             model.meshes[i].texcoords = (float *)MemAlloc(sizeof(float)*vertexCount*2);
-        else model.meshes[i].texcoords = NULL;
-        model.meshes[i].colors = NULL;
+        else model.meshes[i].texcoords = nullptr;
+        model.meshes[i].colors = nullptr;
     #endif
     }
 
     MemFree(localMeshVertexCounts);
-    localMeshVertexCounts = NULL;
+    localMeshVertexCounts = nullptr;
 
     // Fill meshes
     faceVertIndex = 0;
@@ -4665,7 +4665,7 @@ static Model LoadOBJ(const char *fileName)
         }
 
         int matId = 0;
-        if ((lastMaterial >= 0) && (lastMaterial < (int)objMaterialCount)) matId = lastMaterial;
+        if ((lastMaterial >= 0) && (lastMaterial < static_cast<int>(objMaterialCount))) matId = lastMaterial;
 
         model.meshMaterial[meshIndex] = matId;
 
@@ -4676,18 +4676,18 @@ static Model LoadOBJ(const char *fileName)
             int texcordIndex = objAttributes.faces[faceVertIndex].vt_idx;
 
             // NOTE: Out-of-range indices from malformed files are skipped, keeping zeroed values
-            if ((vertIndex >= 0) && (vertIndex < (int)objAttributes.num_vertices))
+            if ((vertIndex >= 0) && (vertIndex < static_cast<int>(objAttributes.num_vertices)))
             {
                 for (int i = 0; i < 3; i++) model.meshes[meshIndex].vertices[localMeshVertexCount*3 + i] = objAttributes.vertices[vertIndex*3 + i];
             }
 
-            if ((objAttributes.texcoords != NULL) && (texcordIndex != TINYOBJ_INVALID_INDEX) && (texcordIndex >= 0) && (texcordIndex < (int)objAttributes.num_texcoords) && (model.meshes[meshIndex].texcoords))
+            if ((objAttributes.texcoords != nullptr) && (texcordIndex != TINYOBJ_INVALID_INDEX) && (texcordIndex >= 0) && (texcordIndex < static_cast<int>(objAttributes.num_texcoords)) && (model.meshes[meshIndex].texcoords))
             {
                 for (int i = 0; i < 2; i++) model.meshes[meshIndex].texcoords[localMeshVertexCount*2 + i] = objAttributes.texcoords[texcordIndex*2 + i];
                 model.meshes[meshIndex].texcoords[localMeshVertexCount*2 + 1] = 1.0f - model.meshes[meshIndex].texcoords[localMeshVertexCount*2 + 1];
             }
 
-            if ((objAttributes.normals != NULL) && (normalIndex != TINYOBJ_INVALID_INDEX) && (normalIndex >= 0) && (normalIndex < (int)objAttributes.num_normals))
+            if ((objAttributes.normals != nullptr) && (normalIndex != TINYOBJ_INVALID_INDEX) && (normalIndex >= 0) && (normalIndex < static_cast<int>(objAttributes.num_normals)))
             {
                 for (int i = 0; i < 3; i++) model.meshes[meshIndex].normals[localMeshVertexCount*3 + i] = objAttributes.normals[normalIndex*3 + i];
             }
@@ -4822,25 +4822,25 @@ static Model LoadIQM(const char *fileName)
 
     Model model = { 0 };
 
-    IQMMesh *imesh = NULL;
-    IQMTriangle *tri = NULL;
-    IQMVertexArray *va = NULL;
-    IQMJoint *ijoint = NULL;
+    IQMMesh *imesh = nullptr;
+    IQMTriangle *tri = nullptr;
+    IQMVertexArray *va = nullptr;
+    IQMJoint *ijoint = nullptr;
 
-    float *vertex = NULL;
-    float *normal = NULL;
-    float *text = NULL;
-    char *blendi = NULL;
-    unsigned char *blendw = NULL;
-    unsigned char *color = NULL;
+    float *vertex = nullptr;
+    float *normal = nullptr;
+    float *text = nullptr;
+    char *blendi = nullptr;
+    unsigned char *blendw = nullptr;
+    unsigned char *color = nullptr;
 
     // In case file can not be read, return an empty model
-    if (fileDataPtr == NULL) return model;
+    if (fileDataPtr == nullptr) return model;
 
     std::string basePath = GetDirectoryPath(fileName);
 
     // Read IQM header
-    IQMHeader *iqmHeader = (IQMHeader *)fileDataPtr;
+    IQMHeader *iqmHeader = reinterpret_cast<IQMHeader *>(fileDataPtr);
 
     if (memcmp(iqmHeader->magic, IQM_MAGIC, sizeof(IQM_MAGIC)) != 0)
     {
@@ -4859,17 +4859,17 @@ static Model LoadIQM(const char *fileName)
     //fileDataPtr += sizeof(IQMHeader);       // Move file data pointer
 
     // Meshes data processing
-    imesh = (IQMMesh *)RL_CALLOC(iqmHeader->num_meshes, sizeof(IQMMesh));
+    imesh = static_cast<IQMMesh *>(RL_CALLOC(iqmHeader->num_meshes, sizeof(IQMMesh)));
     //fseek(iqmFile, iqmHeader->ofs_meshes, SEEK_SET);
     //fread(imesh, sizeof(IQMMesh)*iqmHeader->num_meshes, 1, iqmFile);
     memcpy(imesh, fileDataPtr + iqmHeader->ofs_meshes, iqmHeader->num_meshes*sizeof(IQMMesh));
 
     model.meshCount = iqmHeader->num_meshes;
-    model.meshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
+    model.meshes = static_cast<Mesh *>(RL_CALLOC(model.meshCount, sizeof(Mesh)));
 
     model.materialCount = model.meshCount;
-    model.materials = (Material *)RL_CALLOC(model.materialCount, sizeof(Material));
-    model.meshMaterial = (int *)RL_CALLOC(model.meshCount, sizeof(int));
+    model.materials = static_cast<Material *>(RL_CALLOC(model.materialCount, sizeof(Material)));
+    model.meshMaterial = static_cast<int *>(RL_CALLOC(model.meshCount, sizeof(int)));
 
     char name[MESH_NAME_LENGTH] = { 0 };
     char material[MATERIAL_NAME_LENGTH] = { 0 };
@@ -4893,19 +4893,19 @@ static Model LoadIQM(const char *fileName)
 
         model.meshes[i].vertexCount = imesh[i].num_vertexes;
 
-        model.meshes[i].vertices = (float *)RL_CALLOC(model.meshes[i].vertexCount*3, sizeof(float));       // Default vertex positions
-        model.meshes[i].normals = (float *)RL_CALLOC(model.meshes[i].vertexCount*3, sizeof(float));        // Default vertex normals
-        model.meshes[i].texcoords = (float *)RL_CALLOC(model.meshes[i].vertexCount*2, sizeof(float));      // Default vertex texcoords
+        model.meshes[i].vertices = static_cast<float *>(RL_CALLOC(model.meshes[i].vertexCount*3, sizeof(float)));       // Default vertex positions
+        model.meshes[i].normals = static_cast<float *>(RL_CALLOC(model.meshes[i].vertexCount*3, sizeof(float)));        // Default vertex normals
+        model.meshes[i].texcoords = static_cast<float *>(RL_CALLOC(model.meshes[i].vertexCount*2, sizeof(float)));      // Default vertex texcoords
 
-        model.meshes[i].boneIndices = (unsigned char *)RL_CALLOC(model.meshes[i].vertexCount*4, sizeof(unsigned char));  // Up-to 4 bones supported!
-        model.meshes[i].boneWeights = (float *)RL_CALLOC(model.meshes[i].vertexCount*4, sizeof(float));      // Up-to 4 bones supported!
+        model.meshes[i].boneIndices = static_cast<unsigned char *>(RL_CALLOC(model.meshes[i].vertexCount*4, sizeof(unsigned char)));  // Up-to 4 bones supported!
+        model.meshes[i].boneWeights = static_cast<float *>(RL_CALLOC(model.meshes[i].vertexCount*4, sizeof(float)));      // Up-to 4 bones supported!
 
         model.meshes[i].triangleCount = imesh[i].num_triangles;
-        model.meshes[i].indices = (unsigned short *)RL_CALLOC(model.meshes[i].triangleCount*3, sizeof(unsigned short));
+        model.meshes[i].indices = static_cast<unsigned short *>(RL_CALLOC(model.meshes[i].triangleCount*3, sizeof(unsigned short)));
     }
 
     // Triangles data processing
-    tri = (IQMTriangle *)RL_CALLOC(iqmHeader->num_triangles, sizeof(IQMTriangle));
+    tri = static_cast<IQMTriangle *>(RL_CALLOC(iqmHeader->num_triangles, sizeof(IQMTriangle)));
     //fseek(iqmFile, iqmHeader->ofs_triangles, SEEK_SET);
     //fread(tri, sizeof(IQMTriangle), iqmHeader->num_triangles, iqmFile);
     memcpy(tri, fileDataPtr + iqmHeader->ofs_triangles, iqmHeader->num_triangles*sizeof(IQMTriangle));
@@ -4927,7 +4927,7 @@ static Model LoadIQM(const char *fileName)
     }
 
     // Vertex arrays data processing
-    va = (IQMVertexArray *)RL_CALLOC(iqmHeader->num_vertexarrays, sizeof(IQMVertexArray));
+    va = static_cast<IQMVertexArray *>(RL_CALLOC(iqmHeader->num_vertexarrays, sizeof(IQMVertexArray)));
     //fseek(iqmFile, iqmHeader->ofs_vertexarrays, SEEK_SET);
     //fread(va, sizeof(IQMVertexArray), iqmHeader->num_vertexarrays, iqmFile);
     memcpy(va, fileDataPtr + iqmHeader->ofs_vertexarrays, iqmHeader->num_vertexarrays*sizeof(IQMVertexArray));
@@ -4938,7 +4938,7 @@ static Model LoadIQM(const char *fileName)
         {
             case IQM_POSITION:
             {
-                vertex = (float *)RL_CALLOC(iqmHeader->num_vertexes*3, sizeof(float));
+                vertex = static_cast<float *>(RL_CALLOC(iqmHeader->num_vertexes*3, sizeof(float)));
                 //fseek(iqmFile, va[a].offset, SEEK_SET);
                 //fread(vertex, iqmHeader->num_vertexes*3*sizeof(float), 1, iqmFile);
                 memcpy(vertex, fileDataPtr + va[i].offset, iqmHeader->num_vertexes*3*sizeof(float));
@@ -4949,14 +4949,14 @@ static Model LoadIQM(const char *fileName)
                     for (unsigned int i = imesh[m].first_vertex*3; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*3; i++)
                     {
                         model.meshes[m].vertices[vCounter] = vertex[i];
-                        if (model.meshes[m].animVertices != NULL) model.meshes[m].animVertices[vCounter] = vertex[i];
+                        if (model.meshes[m].animVertices != nullptr) model.meshes[m].animVertices[vCounter] = vertex[i];
                         vCounter++;
                     }
                 }
             } break;
             case IQM_NORMAL:
             {
-                normal = (float *)RL_CALLOC(iqmHeader->num_vertexes*3, sizeof(float));
+                normal = static_cast<float *>(RL_CALLOC(iqmHeader->num_vertexes*3, sizeof(float)));
                 //fseek(iqmFile, va[a].offset, SEEK_SET);
                 //fread(normal, iqmHeader->num_vertexes*3*sizeof(float), 1, iqmFile);
                 memcpy(normal, fileDataPtr + va[i].offset, iqmHeader->num_vertexes*3*sizeof(float));
@@ -4967,14 +4967,14 @@ static Model LoadIQM(const char *fileName)
                     for (unsigned int i = imesh[m].first_vertex*3; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*3; i++)
                     {
                         model.meshes[m].normals[vCounter] = normal[i];
-                        if (model.meshes[m].animNormals != NULL) model.meshes[m].animNormals[vCounter] = normal[i];
+                        if (model.meshes[m].animNormals != nullptr) model.meshes[m].animNormals[vCounter] = normal[i];
                         vCounter++;
                     }
                 }
             } break;
             case IQM_TEXCOORD:
             {
-                text = (float *)RL_CALLOC(iqmHeader->num_vertexes*2, sizeof(float));
+                text = static_cast<float *>(RL_CALLOC(iqmHeader->num_vertexes*2, sizeof(float)));
                 //fseek(iqmFile, va[a].offset, SEEK_SET);
                 //fread(text, iqmHeader->num_vertexes*2*sizeof(float), 1, iqmFile);
                 memcpy(text, fileDataPtr + va[i].offset, iqmHeader->num_vertexes*2*sizeof(float));
@@ -4991,7 +4991,7 @@ static Model LoadIQM(const char *fileName)
             } break;
             case IQM_BLENDINDEXES:
             {
-                blendi = (char *)RL_CALLOC(iqmHeader->num_vertexes*4, sizeof(char));
+                blendi = static_cast<char *>(RL_CALLOC(iqmHeader->num_vertexes*4, sizeof(char)));
                 //fseek(iqmFile, va[a].offset, SEEK_SET);
                 //fread(blendi, iqmHeader->num_vertexes*4*sizeof(char), 1, iqmFile);
                 memcpy(blendi, fileDataPtr + va[i].offset, iqmHeader->num_vertexes*4*sizeof(char));
@@ -5008,7 +5008,7 @@ static Model LoadIQM(const char *fileName)
             } break;
             case IQM_BLENDWEIGHTS:
             {
-                blendw = (unsigned char *)RL_CALLOC(iqmHeader->num_vertexes*4, sizeof(unsigned char));
+                blendw = static_cast<unsigned char *>(RL_CALLOC(iqmHeader->num_vertexes*4, sizeof(unsigned char)));
                 //fseek(iqmFile, va[a].offset, SEEK_SET);
                 //fread(blendw, iqmHeader->num_vertexes*4*sizeof(unsigned char), 1, iqmFile);
                 memcpy(blendw, fileDataPtr + va[i].offset, iqmHeader->num_vertexes*4*sizeof(unsigned char));
@@ -5025,14 +5025,14 @@ static Model LoadIQM(const char *fileName)
             } break;
             case IQM_COLOR:
             {
-                color = (unsigned char *)RL_CALLOC(iqmHeader->num_vertexes*4, sizeof(unsigned char));
+                color = static_cast<unsigned char *>(RL_CALLOC(iqmHeader->num_vertexes*4, sizeof(unsigned char)));
                 //fseek(iqmFile, va[a].offset, SEEK_SET);
                 //fread(blendw, iqmHeader->num_vertexes*4*sizeof(unsigned char), 1, iqmFile);
                 memcpy(color, fileDataPtr + va[i].offset, iqmHeader->num_vertexes*4*sizeof(unsigned char));
 
                 for (unsigned int m = 0; m < iqmHeader->num_meshes; m++)
                 {
-                    model.meshes[m].colors = (unsigned char *)RL_CALLOC(model.meshes[m].vertexCount*4, sizeof(unsigned char));
+                    model.meshes[m].colors = static_cast<unsigned char *>(RL_CALLOC(model.meshes[m].vertexCount*4, sizeof(unsigned char)));
 
                     int vCounter = 0;
                     for (unsigned int i = imesh[m].first_vertex*4; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*4; i++)
@@ -5046,14 +5046,14 @@ static Model LoadIQM(const char *fileName)
     }
 
     // Bones (joints) data processing
-    ijoint = (IQMJoint *)RL_CALLOC(iqmHeader->num_joints, sizeof(IQMJoint));
+    ijoint = static_cast<IQMJoint *>(RL_CALLOC(iqmHeader->num_joints, sizeof(IQMJoint)));
     //fseek(iqmFile, iqmHeader->ofs_joints, SEEK_SET);
     //fread(ijoint, sizeof(IQMJoint), iqmHeader->num_joints, iqmFile);
     memcpy(ijoint, fileDataPtr + iqmHeader->ofs_joints, iqmHeader->num_joints*sizeof(IQMJoint));
 
     model.skeleton.boneCount = iqmHeader->num_joints;
-    model.skeleton.bones = (BoneInfo *)RL_CALLOC(iqmHeader->num_joints, sizeof(BoneInfo));
-    model.skeleton.bindPose = (Transform *)RL_CALLOC(iqmHeader->num_joints, sizeof(Transform));
+    model.skeleton.bones = static_cast<BoneInfo *>(RL_CALLOC(iqmHeader->num_joints, sizeof(BoneInfo)));
+    model.skeleton.bindPose = static_cast<Transform *>(RL_CALLOC(iqmHeader->num_joints, sizeof(Transform)));
 
     for (unsigned int i = 0; i < iqmHeader->num_joints; i++)
     {
@@ -5081,8 +5081,8 @@ static Model LoadIQM(const char *fileName)
     BuildPoseFromParentJoints(model.skeleton.bones, model.skeleton.boneCount, model.skeleton.bindPose);
 
     // Initialize runtime animation data: current pose and bone matrices
-    model.currentPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
-    model.boneMatrices = (Matrix *)RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix));
+    model.currentPose = static_cast<Transform *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Transform)));
+    model.boneMatrices = static_cast<Matrix *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix)));
     for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = Matrix(1.0f);
 
     UnloadFileData(fileData);
@@ -5149,57 +5149,57 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, int *animCou
     } IQMAnim;
 
     // In case file can not be read, return an empty model
-    if (fileDataPtr == NULL) return NULL;
+    if (fileDataPtr == nullptr) return nullptr;
 
     // Read IQM header
-    IQMHeader *iqmHeader = (IQMHeader *)fileDataPtr;
+    IQMHeader *iqmHeader = reinterpret_cast<IQMHeader *>(fileDataPtr);
 
     if (memcmp(iqmHeader->magic, IQM_MAGIC, sizeof(IQM_MAGIC)) != 0)
     {
         TRACELOG(LOG_WARNING, "MODEL: [%s] IQM file is not a valid model", fileName);
         UnloadFileData(fileData);
-        return NULL;
+        return nullptr;
     }
 
     if (iqmHeader->version != IQM_VERSION)
     {
         TRACELOG(LOG_WARNING, "MODEL: [%s] IQM file version not supported (%i)", fileName, iqmHeader->version);
         UnloadFileData(fileData);
-        return NULL;
+        return nullptr;
     }
 
     // Get bones data
-    IQMPose *poses = (IQMPose *)RL_CALLOC(iqmHeader->num_poses, sizeof(IQMPose));
+    IQMPose *poses = static_cast<IQMPose *>(RL_CALLOC(iqmHeader->num_poses, sizeof(IQMPose)));
     //fseek(iqmFile, iqmHeader->ofs_poses, SEEK_SET);
     //fread(poses, sizeof(IQMPose), iqmHeader->num_poses, iqmFile);
     memcpy(poses, fileDataPtr + iqmHeader->ofs_poses, iqmHeader->num_poses*sizeof(IQMPose));
 
     // Get animations data
     *animCount = iqmHeader->num_anims;
-    IQMAnim *anim = (IQMAnim *)RL_CALLOC(iqmHeader->num_anims, sizeof(IQMAnim));
+    IQMAnim *anim = static_cast<IQMAnim *>(RL_CALLOC(iqmHeader->num_anims, sizeof(IQMAnim)));
     //fseek(iqmFile, iqmHeader->ofs_anims, SEEK_SET);
     //fread(anim, sizeof(IQMAnim), iqmHeader->num_anims, iqmFile);
     memcpy(anim, fileDataPtr + iqmHeader->ofs_anims, iqmHeader->num_anims*sizeof(IQMAnim));
 
-    ModelAnimation *animations = (ModelAnimation *)RL_CALLOC(iqmHeader->num_anims, sizeof(ModelAnimation));
+    ModelAnimation *animations = static_cast<ModelAnimation *>(RL_CALLOC(iqmHeader->num_anims, sizeof(ModelAnimation)));
 
     // frameposes
-    unsigned short *framedata = (unsigned short *)RL_CALLOC(iqmHeader->num_frames*iqmHeader->num_framechannels, sizeof(unsigned short));
+    unsigned short *framedata = static_cast<unsigned short *>(RL_CALLOC(iqmHeader->num_frames*iqmHeader->num_framechannels, sizeof(unsigned short)));
     //fseek(iqmFile, iqmHeader->ofs_frames, SEEK_SET);
     //fread(framedata, sizeof(unsigned short), iqmHeader->num_frames*iqmHeader->num_framechannels, iqmFile);
     memcpy(framedata, fileDataPtr + iqmHeader->ofs_frames, iqmHeader->num_frames*iqmHeader->num_framechannels*sizeof(unsigned short));
 
     // joints
-    IQMJoint *joints = (IQMJoint *)RL_CALLOC(iqmHeader->num_joints, sizeof(IQMJoint));
+    IQMJoint *joints = static_cast<IQMJoint *>(RL_CALLOC(iqmHeader->num_joints, sizeof(IQMJoint)));
     memcpy(joints, fileDataPtr + iqmHeader->ofs_joints, iqmHeader->num_joints*sizeof(IQMJoint));
 
     for (unsigned int a = 0; a < iqmHeader->num_anims; a++)
     {
         animations[a].boneCount = iqmHeader->num_poses;
-        BoneInfo *bones = (BoneInfo *)RL_CALLOC(iqmHeader->num_poses, sizeof(BoneInfo));
+        BoneInfo *bones = static_cast<BoneInfo *>(RL_CALLOC(iqmHeader->num_poses, sizeof(BoneInfo)));
 
         animations[a].keyframeCount = anim[a].num_frames;
-        animations[a].keyframePoses = (Transform **)RL_CALLOC(anim[a].num_frames, sizeof(Transform *));
+        animations[a].keyframePoses = static_cast<Transform **>(RL_CALLOC(anim[a].num_frames, sizeof(Transform *)));
         memcpy(animations[a].name, fileDataPtr + iqmHeader->ofs_text + anim[a].name, 32);
         // TODO: Store animation framerate data?
         //animations[a].framerate = anim.framerate;
@@ -5216,7 +5216,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, int *animCou
         }
 
         for (unsigned int j = 0; j < anim[a].num_frames; j++)
-            animations[a].keyframePoses[j] = (Transform *)RL_CALLOC(iqmHeader->num_poses, sizeof(Transform));
+            animations[a].keyframePoses[j] = static_cast<Transform *>(RL_CALLOC(iqmHeader->num_poses, sizeof(Transform)));
 
         int dcounter = anim[a].first_frame*iqmHeader->num_framechannels;
 
@@ -5345,7 +5345,7 @@ static cgltf_result LoadFileGLTFCallback(const struct cgltf_memory_options *memo
     int filesize;
     unsigned char *filedata = LoadFileData(path, &filesize);
 
-    if (filedata == NULL) return cgltf_result_io_error;
+    if (filedata == nullptr) return cgltf_result_io_error;
 
     *size = filesize;
     *data = filedata;
@@ -5356,17 +5356,17 @@ static cgltf_result LoadFileGLTFCallback(const struct cgltf_memory_options *memo
 // Release file data callback for cgltf
 static void ReleaseFileGLTFCallback(const struct cgltf_memory_options *memoryOptions, const struct cgltf_file_options *fileOptions, void *data, cgltf_size size)
 {
-    UnloadFileData((unsigned char *)data);
+    UnloadFileData(static_cast<unsigned char *>(data));
 }
 
 // Load image from different glTF provided methods (uri, path, buffer_view)
 static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPath)
 {
-    Image image = { 0 };
+    Image image = { nullptr };
 
-    if (cgltfImage == NULL) return image;
+    if (cgltfImage == nullptr) return image;
 
-    if (cgltfImage->uri != NULL)     // Check if image data is provided as an uri (base64 or path)
+    if (cgltfImage->uri != nullptr)     // Check if image data is provided as an uri (base64 or path)
     {
         if ((strlen(cgltfImage->uri) > 5) &&
             (cgltfImage->uri[0] == 'd') &&
@@ -5384,11 +5384,11 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
             if (cgltfImage->uri[i] == 0) TRACELOG(LOG_WARNING, "IMAGE: glTF data URI is not a valid image");
             else
             {
-                int base64Size = (int)strlen(cgltfImage->uri + i + 1);
+                int base64Size = static_cast<int>(strlen(cgltfImage->uri + i + 1));
                 while (cgltfImage->uri[i + base64Size] == '=') base64Size--;    // Ignore optional paddings
                 int numberOfEncodedBits = base64Size*6 - (base64Size*6)%8;      // Encoded bits minus extra bits, so it becomes a multiple of 8 bits
                 int outSize = numberOfEncodedBits >> 3;                         // Actual encoded bytes
-                void *data = NULL;
+                void *data = nullptr;
 
                 cgltf_options options = {};
                 options.file.read = LoadFileGLTFCallback;
@@ -5397,7 +5397,7 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
 
                 if (result == cgltf_result_success)
                 {
-                    image = LoadImageFromMemory(".png", (unsigned char *)data, outSize);
+                    image = LoadImageFromMemory(".png", static_cast<unsigned char *>(data), outSize);
                     RL_FREE(data);
                 }
             }
@@ -5407,16 +5407,16 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
             image = LoadImage(TextFormat("%s/%s", texPath, cgltfImage->uri));
         }
     }
-    else if ((cgltfImage->buffer_view != NULL) && (cgltfImage->buffer_view->buffer->data != NULL)) // Check if image is provided as data buffer
+    else if ((cgltfImage->buffer_view != nullptr) && (cgltfImage->buffer_view->buffer->data != nullptr)) // Check if image is provided as data buffer
     {
-        unsigned char *data = (unsigned char *)RL_CALLOC(cgltfImage->buffer_view->size, sizeof(unsigned char));
-        int offset = (int)cgltfImage->buffer_view->offset;
-        int stride = (int)cgltfImage->buffer_view->stride? (int)cgltfImage->buffer_view->stride : 1;
+        unsigned char *data = static_cast<unsigned char *>(RL_CALLOC(cgltfImage->buffer_view->size, sizeof(unsigned char)));
+        int offset = static_cast<int>(cgltfImage->buffer_view->offset);
+        int stride = static_cast<int>(cgltfImage->buffer_view->stride)? static_cast<int>(cgltfImage->buffer_view->stride) : 1;
 
         // Copy buffer data to memory for loading
         for (unsigned int i = 0; i < cgltfImage->buffer_view->size; i++)
         {
-            data[i] = ((unsigned char *)cgltfImage->buffer_view->buffer->data)[offset];
+            data[i] = (static_cast<unsigned char *>(cgltfImage->buffer_view->buffer->data))[offset];
             offset += stride;
         }
 
@@ -5424,11 +5424,11 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
         // NOTE: Detected that some models define mime_type as "image\\/png"
         if ((strcmp(cgltfImage->mime_type, "image\\/png") == 0) || (strcmp(cgltfImage->mime_type, "image/png") == 0))
         {
-            image = LoadImageFromMemory(".png", data, (int)cgltfImage->buffer_view->size);
+            image = LoadImageFromMemory(".png", data, static_cast<int>(cgltfImage->buffer_view->size));
         }
         else if ((strcmp(cgltfImage->mime_type, "image\\/jpeg") == 0) || (strcmp(cgltfImage->mime_type, "image/jpeg") == 0))
         {
-            image = LoadImageFromMemory(".jpg", data, (int)cgltfImage->buffer_view->size);
+            image = LoadImageFromMemory(".jpg", data, static_cast<int>(cgltfImage->buffer_view->size));
         }
         else TRACELOG(LOG_WARNING, "MODEL: glTF image data MIME type not recognized (%s)", TextFormat("%s/%s", texPath, cgltfImage->uri).c_str());
 
@@ -5441,24 +5441,24 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
 // Load bone info from GLTF skin data
 static BoneInfo *LoadBoneInfoGLTF(cgltf_skin skin, unsigned int *boneCount)
 {
-    *boneCount = (unsigned int)skin.joints_count;
-    BoneInfo *bones = (BoneInfo *)RL_CALLOC(skin.joints_count, sizeof(BoneInfo));
+    *boneCount = static_cast<unsigned int>(skin.joints_count);
+    BoneInfo *bones = static_cast<BoneInfo *>(RL_CALLOC(skin.joints_count, sizeof(BoneInfo)));
 
     for (unsigned int i = 0; i < skin.joints_count; i++)
     {
         cgltf_node node = *skin.joints[i];
-        if (node.name != NULL) snprintf(bones[i].name, sizeof(bones[i].name), "%s", node.name);
+        if (node.name != nullptr) snprintf(bones[i].name, sizeof(bones[i].name), "%s", node.name);
 
         // Find parent bone index by walking up the node tree past any
         // non-joint ancestors (intermediate transform nodes used by some
         // DCC exporters), until we hit a node that is also in skin.joints.
         int parentIndex = -1;
         cgltf_node *ancestor = node.parent;
-        while (ancestor != NULL && parentIndex == -1)
+        while (ancestor != nullptr && parentIndex == -1)
         {
             for (unsigned int j = 0; j < skin.joints_count; j++)
             {
-                if (skin.joints[j] == ancestor) { parentIndex = (int)j; break; }
+                if (skin.joints[j] == ancestor) { parentIndex = static_cast<int>(j); break; }
             }
             if (parentIndex == -1) ancestor = ancestor->parent;
         }
@@ -5525,13 +5525,13 @@ static Model LoadGLTF(const char *fileName)
     int dataSize = 0;
     unsigned char *fileData = LoadFileData(fileName, &dataSize);
 
-    if (fileData == NULL) return model;
+    if (fileData == nullptr) return model;
 
     // glTF data loading
     cgltf_options options = {};
     options.file.read = LoadFileGLTFCallback;
     options.file.release = ReleaseFileGLTFCallback;
-    cgltf_data *data = NULL;
+    cgltf_data *data = nullptr;
     cgltf_result result = cgltf_parse(&options, fileData, dataSize, &data);
 
     if (result == cgltf_result_success)
@@ -5586,15 +5586,15 @@ static Model LoadGLTF(const char *fileName)
 
         // Load our model data: meshes and materials
         model.meshCount = primitivesCount;
-        model.meshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
+        model.meshes = static_cast<Mesh *>(RL_CALLOC(model.meshCount, sizeof(Mesh)));
 
         // NOTE: Keep an extra slot for default material, in case some mesh requires it
-        model.materialCount = (int)data->materials_count + 1;
-        model.materials = (Material *)RL_CALLOC(model.materialCount, sizeof(Material));
+        model.materialCount = static_cast<int>(data->materials_count) + 1;
+        model.materials = static_cast<Material *>(RL_CALLOC(model.materialCount, sizeof(Material)));
         model.materials[0] = LoadMaterialDefault();     // Load default material (index: 0)
 
         // Load mesh-material indices, by default all meshes are mapped to material index: 0
-        model.meshMaterial = (int *)RL_CALLOC(model.meshCount, sizeof(int));
+        model.meshMaterial = static_cast<int *>(RL_CALLOC(model.meshCount, sizeof(int)));
 
         // Load materials data
         //----------------------------------------------------------------------------------------------------
@@ -5611,26 +5611,26 @@ static Model LoadGLTF(const char *fileName)
                 if (data->materials[i].pbr_metallic_roughness.base_color_texture.texture)
                 {
                     Image imAlbedo = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.base_color_texture.texture->image, texPath.c_str());
-                    if (imAlbedo.data != NULL)
+                    if (imAlbedo.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_ALBEDO].texture = LoadTextureFromImage(imAlbedo);
                         UnloadImage(imAlbedo);
                     }
                 }
                 // Load base color factor (tint)
-                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.r = (unsigned char)(data->materials[i].pbr_metallic_roughness.base_color_factor[0]*255);
-                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.g = (unsigned char)(data->materials[i].pbr_metallic_roughness.base_color_factor[1]*255);
-                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.b = (unsigned char)(data->materials[i].pbr_metallic_roughness.base_color_factor[2]*255);
-                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.a = (unsigned char)(data->materials[i].pbr_metallic_roughness.base_color_factor[3]*255);
+                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.r = static_cast<unsigned char>(data->materials[i].pbr_metallic_roughness.base_color_factor[0]*255);
+                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.g = static_cast<unsigned char>(data->materials[i].pbr_metallic_roughness.base_color_factor[1]*255);
+                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.b = static_cast<unsigned char>(data->materials[i].pbr_metallic_roughness.base_color_factor[2]*255);
+                model.materials[j].maps[MATERIAL_MAP_ALBEDO].color.a = static_cast<unsigned char>(data->materials[i].pbr_metallic_roughness.base_color_factor[3]*255);
 
                 // Load metallic/roughness texture
                 if (data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture)
                 {
                     Image imMetallicRoughness = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture->image, texPath.c_str());
-                    if (imMetallicRoughness.data != NULL)
+                    if (imMetallicRoughness.data != nullptr)
                     {
-                        Image imMetallic = { 0 };
-                        Image imRoughness = { 0 };
+                        Image imMetallic = { nullptr };
+                        Image imRoughness = { nullptr };
 
                         imMetallic.data = RL_CALLOC(imMetallicRoughness.width*imMetallicRoughness.height, 1);
                         imRoughness.data = RL_CALLOC(imMetallicRoughness.width*imMetallicRoughness.height, 1);
@@ -5647,8 +5647,8 @@ static Model LoadGLTF(const char *fileName)
                             {
                                 Color color = GetImageColor(imMetallicRoughness, x, y);
 
-                                ((unsigned char *)imRoughness.data)[y*imRoughness.width + x] = color.g; // Roughness color channel
-                                ((unsigned char *)imMetallic.data)[y*imMetallic.width + x] = color.b; // Metallic color channel
+                                (static_cast<unsigned char *>(imRoughness.data))[y*imRoughness.width + x] = color.g; // Roughness color channel
+                                (static_cast<unsigned char *>(imMetallic.data))[y*imMetallic.width + x] = color.b; // Metallic color channel
                             }
                         }
 
@@ -5672,7 +5672,7 @@ static Model LoadGLTF(const char *fileName)
                 if (data->materials[i].normal_texture.texture)
                 {
                     Image imNormal = LoadImageFromCgltfImage(data->materials[i].normal_texture.texture->image, texPath.c_str());
-                    if (imNormal.data != NULL)
+                    if (imNormal.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_NORMAL].texture = LoadTextureFromImage(imNormal);
                         UnloadImage(imNormal);
@@ -5683,7 +5683,7 @@ static Model LoadGLTF(const char *fileName)
                 if (data->materials[i].occlusion_texture.texture)
                 {
                     Image imOcclusion = LoadImageFromCgltfImage(data->materials[i].occlusion_texture.texture->image, texPath.c_str());
-                    if (imOcclusion.data != NULL)
+                    if (imOcclusion.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_OCCLUSION].texture = LoadTextureFromImage(imOcclusion);
                         UnloadImage(imOcclusion);
@@ -5694,16 +5694,16 @@ static Model LoadGLTF(const char *fileName)
                 if (data->materials[i].emissive_texture.texture)
                 {
                     Image imEmissive = LoadImageFromCgltfImage(data->materials[i].emissive_texture.texture->image, texPath.c_str());
-                    if (imEmissive.data != NULL)
+                    if (imEmissive.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_EMISSION].texture = LoadTextureFromImage(imEmissive);
                         UnloadImage(imEmissive);
                     }
 
                     // Load emissive color factor
-                    model.materials[j].maps[MATERIAL_MAP_EMISSION].color.r = (unsigned char)(data->materials[i].emissive_factor[0]*255);
-                    model.materials[j].maps[MATERIAL_MAP_EMISSION].color.g = (unsigned char)(data->materials[i].emissive_factor[1]*255);
-                    model.materials[j].maps[MATERIAL_MAP_EMISSION].color.b = (unsigned char)(data->materials[i].emissive_factor[2]*255);
+                    model.materials[j].maps[MATERIAL_MAP_EMISSION].color.r = static_cast<unsigned char>(data->materials[i].emissive_factor[0]*255);
+                    model.materials[j].maps[MATERIAL_MAP_EMISSION].color.g = static_cast<unsigned char>(data->materials[i].emissive_factor[1]*255);
+                    model.materials[j].maps[MATERIAL_MAP_EMISSION].color.b = static_cast<unsigned char>(data->materials[i].emissive_factor[2]*255);
                     model.materials[j].maps[MATERIAL_MAP_EMISSION].color.a = 255;
                 }
             }
@@ -5760,14 +5760,14 @@ static Model LoadGLTF(const char *fileName)
 
                         // WARNING: SPECS: POSITION accessor MUST have its min and max properties defined
 
-                        if (model.meshes[meshIndex].vertices != NULL) TRACELOG(LOG_WARNING, "MODEL: [%s] Vertices attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].vertices != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Vertices attribute data already loaded", fileName);
                         else
                         {
                             if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_32f))
                             {
                                 // Init raylib mesh vertices to copy glTF attribute data
-                                model.meshes[meshIndex].vertexCount = (int)attribute->count;
-                                model.meshes[meshIndex].vertices = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                model.meshes[meshIndex].vertexCount = static_cast<int>(attribute->count);
+                                model.meshes[meshIndex].vertices = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
 
                                 // Load 3 components of float data type into mesh.vertices
                                 LOAD_ATTRIBUTE(attribute, 3, float, model.meshes[meshIndex].vertices)
@@ -5785,15 +5785,15 @@ static Model LoadGLTF(const char *fileName)
                             else if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_16u))
                             {
                                 // Init raylib mesh vertices to copy glTF attribute data
-                                model.meshes[meshIndex].vertexCount = (int)attribute->count;
-                                model.meshes[meshIndex].vertices = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                model.meshes[meshIndex].vertexCount = static_cast<int>(attribute->count);
+                                model.meshes[meshIndex].vertices = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                unsigned short *temp = (unsigned short *)RL_CALLOC(attribute->count*3, sizeof(unsigned short));
+                                unsigned short *temp = static_cast<unsigned short *>(RL_CALLOC(attribute->count*3, sizeof(unsigned short)));
                                 LOAD_ATTRIBUTE(attribute, 3, unsigned short, temp);
 
                                 // Convert data to raylib vertex data type (float) the matrix will scale it to the correct size as a float
-                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].vertices[t] = (float)temp[t];
+                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].vertices[t] = static_cast<float>(temp[t]);
 
                                 RL_FREE(temp);
 
@@ -5810,15 +5810,15 @@ static Model LoadGLTF(const char *fileName)
                             else if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_16))
                             {
                                 // Init raylib mesh vertices to copy glTF attribute data
-                                model.meshes[meshIndex].vertexCount = (int)attribute->count;
-                                model.meshes[meshIndex].vertices = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                model.meshes[meshIndex].vertexCount = static_cast<int>(attribute->count);
+                                model.meshes[meshIndex].vertices = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                short *temp = (short *)RL_CALLOC(attribute->count*3, sizeof(short));
+                                short *temp = static_cast<short *>(RL_CALLOC(attribute->count*3, sizeof(short)));
                                 LOAD_ATTRIBUTE(attribute, 3, short, temp);
 
                                 // Convert data to raylib vertex data type (float) the matrix will scale it to the correct size as a float
-                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].vertices[t] = (float)temp[t];
+                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].vertices[t] = static_cast<float>(temp[t]);
 
                                 RL_FREE(temp);
 
@@ -5839,13 +5839,13 @@ static Model LoadGLTF(const char *fileName)
                     {
                         cgltf_accessor *attribute = mesh->primitives[p].attributes[j].data;
 
-                        if (model.meshes[meshIndex].normals != NULL) TRACELOG(LOG_WARNING, "MODEL: [%s] Normals attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].normals != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Normals attribute data already loaded", fileName);
                         else
                         {
                             if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_32f))
                             {
                                 // Init raylib mesh normals to copy glTF attribute data
-                                model.meshes[meshIndex].normals = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                model.meshes[meshIndex].normals = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
 
                                 // Load 3 components of float data type into mesh.normals
                                 LOAD_ATTRIBUTE(attribute, 3, float, model.meshes[meshIndex].normals)
@@ -5863,14 +5863,14 @@ static Model LoadGLTF(const char *fileName)
                             else if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_16))
                             {
                                 // Init raylib mesh normals to copy glTF attribute data
-                                model.meshes[meshIndex].normals = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                model.meshes[meshIndex].normals = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                short *temp = (short *)RL_CALLOC(attribute->count*3, sizeof(short));
+                                short *temp = static_cast<short *>(RL_CALLOC(attribute->count*3, sizeof(short)));
                                 LOAD_ATTRIBUTE(attribute, 3, short, temp);
 
                                 // Convert data to raylib normal data type (float)
-                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].normals[t] = (float)temp[t];
+                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].normals[t] = static_cast<float>(temp[t]);
 
                                 RL_FREE(temp);
 
@@ -5887,14 +5887,14 @@ static Model LoadGLTF(const char *fileName)
                             else if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_8u))
                             {
                                 // Init raylib mesh normals to copy glTF attribute data
-                                model.meshes[meshIndex].normals = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                model.meshes[meshIndex].normals = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                unsigned char *temp = (unsigned char *)RL_CALLOC(attribute->count*3, sizeof(unsigned char));
+                                unsigned char *temp = static_cast<unsigned char *>(RL_CALLOC(attribute->count*3, sizeof(unsigned char)));
                                 LOAD_ATTRIBUTE(attribute, 3, unsigned char, temp);
 
                                 // Convert data to raylib normal data type (float)
-                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].normals[t] = (float)temp[t];
+                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].normals[t] = static_cast<float>(temp[t]);
 
                                 RL_FREE(temp);
 
@@ -5911,14 +5911,14 @@ static Model LoadGLTF(const char *fileName)
                             else if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_8))
                             {
                                 // Init raylib mesh normals to copy glTF attribute data
-                                model.meshes[meshIndex].normals = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                model.meshes[meshIndex].normals = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                char *temp = (char *)RL_CALLOC(attribute->count*3, sizeof(char));
+                                char *temp = static_cast<char *>(RL_CALLOC(attribute->count*3, sizeof(char)));
                                 LOAD_ATTRIBUTE(attribute, 3, char, temp);
 
                                 // Convert data to raylib normal data type (float)
-                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].normals[t] = (float)temp[t];
+                                for (unsigned int t = 0; t < attribute->count*3; t++) model.meshes[meshIndex].normals[t] = static_cast<float>(temp[t]);
 
                                 RL_FREE(temp);
 
@@ -5939,13 +5939,13 @@ static Model LoadGLTF(const char *fileName)
                     {
                         cgltf_accessor *attribute = mesh->primitives[p].attributes[j].data;
 
-                        if (model.meshes[meshIndex].tangents != NULL) TRACELOG(LOG_WARNING, "MODEL: [%s] Tangents attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].tangents != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Tangents attribute data already loaded", fileName);
                         else
                         {
                             if ((attribute->type == cgltf_type_vec4) && (attribute->component_type == cgltf_component_type_r_32f))
                             {
                                 // Init raylib mesh tangent to copy glTF attribute data
-                                model.meshes[meshIndex].tangents = (float *)RL_CALLOC(attribute->count*4, sizeof(float));
+                                model.meshes[meshIndex].tangents = static_cast<float *>(RL_CALLOC(attribute->count*4, sizeof(float)));
 
                                 // Load 4 components of float data type into mesh.tangents
                                 LOAD_ATTRIBUTE(attribute, 4, float, model.meshes[meshIndex].tangents)
@@ -5966,7 +5966,7 @@ static Model LoadGLTF(const char *fileName)
                     else if (mesh->primitives[p].attributes[j].type == cgltf_attribute_type_texcoord) // TEXCOORD_n, vec2, float/u8n/u16n
                     {
                         // Support up to 2 texture coordinates attributes
-                        float *texcoordPtr = NULL;
+                        float *texcoordPtr = nullptr;
 
                         cgltf_accessor *attribute = mesh->primitives[p].attributes[j].data;
 
@@ -5975,7 +5975,7 @@ static Model LoadGLTF(const char *fileName)
                             if (attribute->component_type == cgltf_component_type_r_32f) // vec2, float
                             {
                                 // Init raylib mesh texcoords to copy glTF attribute data
-                                texcoordPtr = (float *)RL_CALLOC(attribute->count*2, sizeof(float));
+                                texcoordPtr = static_cast<float *>(RL_CALLOC(attribute->count*2, sizeof(float)));
 
                                 // Load 3 components of float data type into mesh.texcoords
                                 LOAD_ATTRIBUTE(attribute, 2, float, texcoordPtr)
@@ -5983,28 +5983,28 @@ static Model LoadGLTF(const char *fileName)
                             else if (attribute->component_type == cgltf_component_type_r_8u) // vec2, u8n
                             {
                                 // Init raylib mesh texcoords to copy glTF attribute data
-                                texcoordPtr = (float *)RL_CALLOC(attribute->count*2, sizeof(float));
+                                texcoordPtr = static_cast<float *>(RL_CALLOC(attribute->count*2, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                unsigned char *temp = (unsigned char *)RL_CALLOC(attribute->count*2, sizeof(unsigned char));
+                                unsigned char *temp = static_cast<unsigned char *>(RL_CALLOC(attribute->count*2, sizeof(unsigned char)));
                                 LOAD_ATTRIBUTE(attribute, 2, unsigned char, temp);
 
                                 // Convert data to raylib texcoord data type (float)
-                                for (unsigned int t = 0; t < attribute->count*2; t++) texcoordPtr[t] = (float)temp[t]/255.0f;
+                                for (unsigned int t = 0; t < attribute->count*2; t++) texcoordPtr[t] = static_cast<float>(temp[t])/255.0f;
 
                                 RL_FREE(temp);
                             }
                             else if (attribute->component_type == cgltf_component_type_r_16u) // vec2, u16n
                             {
                                 // Init raylib mesh texcoords to copy glTF attribute data
-                                texcoordPtr = (float *)RL_CALLOC(attribute->count*2, sizeof(float));
+                                texcoordPtr = static_cast<float *>(RL_CALLOC(attribute->count*2, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                unsigned short *temp = (unsigned short *)RL_CALLOC(attribute->count*2, sizeof(unsigned short));
+                                unsigned short *temp = static_cast<unsigned short *>(RL_CALLOC(attribute->count*2, sizeof(unsigned short)));
                                 LOAD_ATTRIBUTE(attribute, 2, unsigned short, temp);
 
                                 // Convert data to raylib texcoord data type (float)
-                                for (unsigned int t = 0; t < attribute->count*2; t++) texcoordPtr[t] = (float)temp[t]/65535.0f;
+                                for (unsigned int t = 0; t < attribute->count*2; t++) texcoordPtr[t] = static_cast<float>(temp[t])/65535.0f;
 
                                 RL_FREE(temp);
                             }
@@ -6018,7 +6018,7 @@ static Model LoadGLTF(const char *fileName)
                         else
                         {
                             TRACELOG(LOG_WARNING, "MODEL: [%s] No more than 2 texture coordinates attributes supported", fileName);
-                            if (texcoordPtr != NULL) RL_FREE(texcoordPtr);
+                            if (texcoordPtr != nullptr) RL_FREE(texcoordPtr);
                         }
                     }
                     else if (mesh->primitives[p].attributes[j].type == cgltf_attribute_type_color) // COLOR_n, vec3/vec4, float/u8n/u16n
@@ -6027,7 +6027,7 @@ static Model LoadGLTF(const char *fileName)
 
                         // WARNING: SPECS: All components of each COLOR_n accessor element MUST be clamped to [0.0, 1.0] range
 
-                        if (model.meshes[meshIndex].colors != NULL) TRACELOG(LOG_WARNING, "MODEL: [%s] Colors attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].colors != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Colors attribute data already loaded", fileName);
                         else
                         {
                             if (attribute->type == cgltf_type_vec3) // RGB
@@ -6035,10 +6035,10 @@ static Model LoadGLTF(const char *fileName)
                                 if (attribute->component_type == cgltf_component_type_r_8u)
                                 {
                                     // Init raylib mesh color to copy glTF attribute data
-                                    model.meshes[meshIndex].colors = (unsigned char *)RL_CALLOC(attribute->count*4, sizeof(unsigned char));
+                                    model.meshes[meshIndex].colors = static_cast<unsigned char *>(RL_CALLOC(attribute->count*4, sizeof(unsigned char)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    unsigned char *temp = (unsigned char *)RL_CALLOC(attribute->count*3, sizeof(unsigned char));
+                                    unsigned char *temp = static_cast<unsigned char *>(RL_CALLOC(attribute->count*3, sizeof(unsigned char)));
                                     LOAD_ATTRIBUTE(attribute, 3, unsigned char, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
@@ -6055,18 +6055,18 @@ static Model LoadGLTF(const char *fileName)
                                 else if (attribute->component_type == cgltf_component_type_r_16u)
                                 {
                                     // Init raylib mesh color to copy glTF attribute data
-                                    model.meshes[meshIndex].colors = (unsigned char *)RL_CALLOC(attribute->count*4, sizeof(unsigned char));
+                                    model.meshes[meshIndex].colors = static_cast<unsigned char *>(RL_CALLOC(attribute->count*4, sizeof(unsigned char)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    unsigned short *temp = (unsigned short *)RL_CALLOC(attribute->count*3, sizeof(unsigned short));
+                                    unsigned short *temp = static_cast<unsigned short *>(RL_CALLOC(attribute->count*3, sizeof(unsigned short)));
                                     LOAD_ATTRIBUTE(attribute, 3, unsigned short, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
                                     for (unsigned int c = 0, k = 0; c < (attribute->count*4 - 3); c += 4, k += 3)
                                     {
-                                        model.meshes[meshIndex].colors[c] = (unsigned char)(((float)temp[k]/65535.0f)*255.0f);
-                                        model.meshes[meshIndex].colors[c + 1] = (unsigned char)(((float)temp[k + 1]/65535.0f)*255.0f);
-                                        model.meshes[meshIndex].colors[c + 2] = (unsigned char)(((float)temp[k + 2]/65535.0f)*255.0f);
+                                        model.meshes[meshIndex].colors[c] = static_cast<unsigned char>((static_cast<float>(temp[k])/65535.0f)*255.0f);
+                                        model.meshes[meshIndex].colors[c + 1] = static_cast<unsigned char>((static_cast<float>(temp[k + 1])/65535.0f)*255.0f);
+                                        model.meshes[meshIndex].colors[c + 2] = static_cast<unsigned char>((static_cast<float>(temp[k + 2])/65535.0f)*255.0f);
                                         model.meshes[meshIndex].colors[c + 3] = 255;
                                     }
 
@@ -6075,18 +6075,18 @@ static Model LoadGLTF(const char *fileName)
                                 else if (attribute->component_type == cgltf_component_type_r_32f)
                                 {
                                     // Init raylib mesh color to copy glTF attribute data
-                                    model.meshes[meshIndex].colors = (unsigned char *)RL_CALLOC(attribute->count*4, sizeof(unsigned char));
+                                    model.meshes[meshIndex].colors = static_cast<unsigned char *>(RL_CALLOC(attribute->count*4, sizeof(unsigned char)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    float *temp = (float *)RL_CALLOC(attribute->count*3, sizeof(float));
+                                    float *temp = static_cast<float *>(RL_CALLOC(attribute->count*3, sizeof(float)));
                                     LOAD_ATTRIBUTE(attribute, 3, float, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
                                     for (unsigned int c = 0, k = 0; c < (attribute->count*4 - 3); c += 4, k += 3)
                                     {
-                                        model.meshes[meshIndex].colors[c] = (unsigned char)(temp[k]*255.0f);
-                                        model.meshes[meshIndex].colors[c + 1] = (unsigned char)(temp[k + 1]*255.0f);
-                                        model.meshes[meshIndex].colors[c + 2] = (unsigned char)(temp[k + 2]*255.0f);
+                                        model.meshes[meshIndex].colors[c] = static_cast<unsigned char>(temp[k]*255.0f);
+                                        model.meshes[meshIndex].colors[c + 1] = static_cast<unsigned char>(temp[k + 1]*255.0f);
+                                        model.meshes[meshIndex].colors[c + 2] = static_cast<unsigned char>(temp[k + 2]*255.0f);
                                         model.meshes[meshIndex].colors[c + 3] = 255;
                                     }
 
@@ -6099,7 +6099,7 @@ static Model LoadGLTF(const char *fileName)
                                 if (attribute->component_type == cgltf_component_type_r_8u)
                                 {
                                     // Init raylib mesh color to copy glTF attribute data
-                                    model.meshes[meshIndex].colors = (unsigned char *)RL_CALLOC(attribute->count*4, sizeof(unsigned char));
+                                    model.meshes[meshIndex].colors = static_cast<unsigned char *>(RL_CALLOC(attribute->count*4, sizeof(unsigned char)));
 
                                     // Load 4 components of unsigned char data type into mesh.colors
                                     LOAD_ATTRIBUTE(attribute, 4, unsigned char, model.meshes[meshIndex].colors)
@@ -6107,28 +6107,28 @@ static Model LoadGLTF(const char *fileName)
                                 else if (attribute->component_type == cgltf_component_type_r_16u)
                                 {
                                     // Init raylib mesh color to copy glTF attribute data
-                                    model.meshes[meshIndex].colors = (unsigned char *)RL_CALLOC(attribute->count*4, sizeof(unsigned char));
+                                    model.meshes[meshIndex].colors = static_cast<unsigned char *>(RL_CALLOC(attribute->count*4, sizeof(unsigned char)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    unsigned short *temp = (unsigned short *)RL_CALLOC(attribute->count*4, sizeof(unsigned short));
+                                    unsigned short *temp = static_cast<unsigned short *>(RL_CALLOC(attribute->count*4, sizeof(unsigned short)));
                                     LOAD_ATTRIBUTE(attribute, 4, unsigned short, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
-                                    for (unsigned int c = 0; c < attribute->count*4; c++) model.meshes[meshIndex].colors[c] = (unsigned char)(((float)temp[c]/65535.0f)*255.0f);
+                                    for (unsigned int c = 0; c < attribute->count*4; c++) model.meshes[meshIndex].colors[c] = static_cast<unsigned char>((static_cast<float>(temp[c])/65535.0f)*255.0f);
 
                                     RL_FREE(temp);
                                 }
                                 else if (attribute->component_type == cgltf_component_type_r_32f)
                                 {
                                     // Init raylib mesh color to copy glTF attribute data
-                                    model.meshes[meshIndex].colors = (unsigned char *)RL_CALLOC(attribute->count*4, sizeof(unsigned char));
+                                    model.meshes[meshIndex].colors = static_cast<unsigned char *>(RL_CALLOC(attribute->count*4, sizeof(unsigned char)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    float *temp = (float *)RL_CALLOC(attribute->count*4, sizeof(float));
+                                    float *temp = static_cast<float *>(RL_CALLOC(attribute->count*4, sizeof(float)));
                                     LOAD_ATTRIBUTE(attribute, 4, float, temp);
 
                                     // Convert data to raylib color data type (4 bytes), color data must be normalized
-                                    for (unsigned int c = 0; c < attribute->count*4; c++) model.meshes[meshIndex].colors[c] = (unsigned char)(temp[c]*255.0f);
+                                    for (unsigned int c = 0; c < attribute->count*4; c++) model.meshes[meshIndex].colors[c] = static_cast<unsigned char>(temp[c]*255.0f);
 
                                     RL_FREE(temp);
                                 }
@@ -6142,19 +6142,19 @@ static Model LoadGLTF(const char *fileName)
                 }
 
                 // Load primitive indices data (if provided)
-                if ((mesh->primitives[p].indices != NULL) && (mesh->primitives[p].indices->buffer_view != NULL))
+                if ((mesh->primitives[p].indices != nullptr) && (mesh->primitives[p].indices->buffer_view != nullptr))
                 {
                     cgltf_accessor *attribute = mesh->primitives[p].indices;
 
-                    model.meshes[meshIndex].triangleCount = (int)attribute->count/3;
+                    model.meshes[meshIndex].triangleCount = static_cast<int>(attribute->count)/3;
 
-                    if (model.meshes[meshIndex].indices != NULL) TRACELOG(LOG_WARNING, "MODEL: [%s] Indices attribute data already loaded", fileName);
+                    if (model.meshes[meshIndex].indices != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Indices attribute data already loaded", fileName);
                     else
                     {
                         if (attribute->component_type == cgltf_component_type_r_16u)
                         {
                             // Init raylib mesh indices to copy glTF attribute data
-                            model.meshes[meshIndex].indices = (unsigned short *)RL_CALLOC(attribute->count, sizeof(unsigned short));
+                            model.meshes[meshIndex].indices = static_cast<unsigned short *>(RL_CALLOC(attribute->count, sizeof(unsigned short)));
 
                             // Load unsigned short data type into mesh.indices
                             LOAD_ATTRIBUTE(attribute, 1, unsigned short, model.meshes[meshIndex].indices)
@@ -6162,14 +6162,14 @@ static Model LoadGLTF(const char *fileName)
                         else if (attribute->component_type == cgltf_component_type_r_8u)
                         {
                             // Init raylib mesh indices to copy glTF attribute data
-                            model.meshes[meshIndex].indices = (unsigned short *)RL_CALLOC(attribute->count, sizeof(unsigned short));
+                            model.meshes[meshIndex].indices = static_cast<unsigned short *>(RL_CALLOC(attribute->count, sizeof(unsigned short)));
                             LOAD_ATTRIBUTE_CAST(attribute, 1, unsigned char, model.meshes[meshIndex].indices, unsigned short)
 
                         }
                         else if (attribute->component_type == cgltf_component_type_r_32u)
                         {
                             // Init raylib mesh indices to copy glTF attribute data
-                            model.meshes[meshIndex].indices = (unsigned short *)RL_CALLOC(attribute->count, sizeof(unsigned short));
+                            model.meshes[meshIndex].indices = static_cast<unsigned short *>(RL_CALLOC(attribute->count, sizeof(unsigned short)));
                             LOAD_ATTRIBUTE_CAST(attribute, 1, unsigned int, model.meshes[meshIndex].indices, unsigned short);
 
                             TRACELOG(LOG_WARNING, "MODEL: [%s] Indices data converted from u32 to u16, possible loss of data", fileName);
@@ -6212,14 +6212,14 @@ static Model LoadGLTF(const char *fileName)
         {
             cgltf_skin skin = data->skins[0];
             model.skeleton.bones = LoadBoneInfoGLTF(skin, &model.skeleton.boneCount);
-            model.skeleton.bindPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
+            model.skeleton.bindPose = static_cast<Transform *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Transform)));
 
             for (unsigned int i = 0; i < model.skeleton.boneCount; i++)
             {
                 Matrix bindMatrix{};
                 cgltf_float inverseBindTransform[16] = { 0 };
 
-                if ((skin.inverse_bind_matrices != NULL) &&
+                if ((skin.inverse_bind_matrices != nullptr) &&
                     (skin.inverse_bind_matrices->count >= skin.joints_count) &&
                     cgltf_accessor_read_float(skin.inverse_bind_matrices, i, inverseBindTransform, 16))
                 {
@@ -6289,7 +6289,7 @@ static Model LoadGLTF(const char *fileName)
                             if (attribute->component_type == cgltf_component_type_r_8u)
                             {
                                 // Init raylib mesh boneIndices to copy glTF attribute data
-                                model.meshes[meshIndex].boneIndices = (unsigned char *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned char));
+                                model.meshes[meshIndex].boneIndices = static_cast<unsigned char *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned char)));
 
                                 // Load attribute: vec4, u8 (unsigned char)
                                 LOAD_ATTRIBUTE(attribute, 4, unsigned char, model.meshes[meshIndex].boneIndices)
@@ -6297,10 +6297,10 @@ static Model LoadGLTF(const char *fileName)
                             else if (attribute->component_type == cgltf_component_type_r_16u)
                             {
                                 // Init raylib mesh boneIndices to copy glTF attribute data
-                                model.meshes[meshIndex].boneIndices = (unsigned char *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned char));
+                                model.meshes[meshIndex].boneIndices = static_cast<unsigned char *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned char)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                unsigned short *temp = (unsigned short *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned short));
+                                unsigned short *temp = static_cast<unsigned short *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned short)));
                                 LOAD_ATTRIBUTE(attribute, 4, unsigned short, temp);
 
                                 // Convert data to raylib color data type (4 bytes)
@@ -6314,7 +6314,7 @@ static Model LoadGLTF(const char *fileName)
                                     }
 
                                     // Despite the possible overflow, convert data to unsigned char
-                                    model.meshes[meshIndex].boneIndices[b] = (unsigned char)temp[b];
+                                    model.meshes[meshIndex].boneIndices[b] = static_cast<unsigned char>(temp[b]);
                                 }
 
                                 RL_FREE(temp);
@@ -6332,35 +6332,35 @@ static Model LoadGLTF(const char *fileName)
                             if (attribute->component_type == cgltf_component_type_r_8u)
                             {
                                 // Init raylib mesh bone weight to copy glTF attribute data
-                                model.meshes[meshIndex].boneWeights = (float *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float));
+                                model.meshes[meshIndex].boneWeights = static_cast<float *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                unsigned char *temp = (unsigned char *)RL_CALLOC(attribute->count*4, sizeof(unsigned char));
+                                unsigned char *temp = static_cast<unsigned char *>(RL_CALLOC(attribute->count*4, sizeof(unsigned char)));
                                 LOAD_ATTRIBUTE(attribute, 4, unsigned char, temp);
 
                                 // Convert data to raylib bone weight data type (4 bytes)
-                                for (unsigned int b = 0; b < attribute->count*4; b++) model.meshes[meshIndex].boneWeights[b] = (float)temp[b]/255.0f;
+                                for (unsigned int b = 0; b < attribute->count*4; b++) model.meshes[meshIndex].boneWeights[b] = static_cast<float>(temp[b])/255.0f;
 
                                 RL_FREE(temp);
                             }
                             else if (attribute->component_type == cgltf_component_type_r_16u)
                             {
                                 // Init raylib mesh bone weight to copy glTF attribute data
-                                model.meshes[meshIndex].boneWeights = (float *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float));
+                                model.meshes[meshIndex].boneWeights = static_cast<float *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                unsigned short *temp = (unsigned short *)RL_CALLOC(attribute->count*4, sizeof(unsigned short));
+                                unsigned short *temp = static_cast<unsigned short *>(RL_CALLOC(attribute->count*4, sizeof(unsigned short)));
                                 LOAD_ATTRIBUTE(attribute, 4, unsigned short, temp);
 
                                 // Convert data to raylib bone weight data type
-                                for (unsigned int b = 0; b < attribute->count*4; b++) model.meshes[meshIndex].boneWeights[b] = (float)temp[b]/65535.0f;
+                                for (unsigned int b = 0; b < attribute->count*4; b++) model.meshes[meshIndex].boneWeights[b] = static_cast<float>(temp[b])/65535.0f;
 
                                 RL_FREE(temp);
                             }
                             else if (attribute->component_type == cgltf_component_type_r_32f)
                             {
                                 // Init raylib mesh bone weight to copy glTF attribute data
-                                model.meshes[meshIndex].boneWeights = (float *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float));
+                                model.meshes[meshIndex].boneWeights = static_cast<float *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float)));
 
                                 // Load 4 components of float data type into mesh.boneWeights
                                 // for cgltf_attribute_type_weights:
@@ -6376,7 +6376,7 @@ static Model LoadGLTF(const char *fileName)
 
                 // Check if animated, and the mesh was not given any bone assignments, but is the child of a bone node
                 // in this case, all the verts need to be attached to the parent bone so it will animate with the bone
-                if ((data->skins_count > 0) && !hasJoints && (node->parent != NULL) && (node->parent->mesh == NULL))
+                if ((data->skins_count > 0) && !hasJoints && (node->parent != nullptr) && (node->parent->mesh == nullptr))
                 {
                     int parentBoneId = -1;
                     for (unsigned int joint = 0; joint < model.skeleton.boneCount; joint++)
@@ -6390,12 +6390,12 @@ static Model LoadGLTF(const char *fileName)
 
                     if (parentBoneId >= 0)
                     {
-                        model.meshes[meshIndex].boneIndices = (unsigned char *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned char));
-                        model.meshes[meshIndex].boneWeights = (float *)RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float));
+                        model.meshes[meshIndex].boneIndices = static_cast<unsigned char *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(unsigned char)));
+                        model.meshes[meshIndex].boneWeights = static_cast<float *>(RL_CALLOC(model.meshes[meshIndex].vertexCount*4, sizeof(float)));
 
                         for (int vertexIndex = 0; vertexIndex < model.meshes[meshIndex].vertexCount*4; vertexIndex += 4)
                         {
-                            model.meshes[meshIndex].boneIndices[vertexIndex] = (unsigned char)parentBoneId;
+                            model.meshes[meshIndex].boneIndices[vertexIndex] = static_cast<unsigned char>(parentBoneId);
                             model.meshes[meshIndex].boneWeights[vertexIndex] = 1.0f;
                         }
                     }
@@ -6408,8 +6408,8 @@ static Model LoadGLTF(const char *fileName)
         }
 
         // Initialize runtime animation data: current pose and bone matrices
-        model.currentPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
-        model.boneMatrices = (Matrix *)RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix));
+        model.currentPose = static_cast<Transform *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Transform)));
+        model.boneMatrices = static_cast<Matrix *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix)));
         for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = Matrix(1.0f);
         //----------------------------------------------------------------------------------------------------
 
@@ -6418,8 +6418,8 @@ static Model LoadGLTF(const char *fileName)
         {
             RL_FREE(model.currentPose);
             RL_FREE(model.boneMatrices);
-            model.currentPose = NULL;
-            model.boneMatrices = NULL;
+            model.currentPose = nullptr;
+            model.boneMatrices = nullptr;
         }
 
         // Free all cgltf loaded data
@@ -6444,7 +6444,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
     int keyframe = 0;       // Defaults to first pose
     bool found = false;
 
-    for (int i = 0; i < (int)input->count - 1; i++)
+    for (int i = 0; i < static_cast<int>(input->count) - 1; i++)
     {
         cgltf_bool r1 = cgltf_accessor_read_float(input, i, &tstart, 1);
         if (!r1) return false;
@@ -6463,9 +6463,9 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
     // No interval contains a time at (or past) the last keyframe, because the
     // search above requires time < tend: clamp to the edge interval instead of
     // falling back to keyframe 0, which returns a pose from the start
-    if (!found && ((int)input->count >= 2))
+    if (!found && (static_cast<int>(input->count) >= 2))
     {
-        keyframe = (int)input->count - 2;
+        keyframe = static_cast<int>(input->count) - 2;
 
         float tfirst = 0.0f;
         if (!cgltf_accessor_read_float(input, 0, &tfirst, 1)) return false;
@@ -6497,7 +6497,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
                 float tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 3);
                 Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
-                Vector3 *r = (Vector3 *)data;
+                Vector3 *r = static_cast<Vector3 *>(data);
 
                 *r = v1;
             } break;
@@ -6508,7 +6508,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
                 Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 3);
                 Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
-                Vector3 *r = (Vector3 *)data;
+                Vector3 *r = static_cast<Vector3 *>(data);
 
                 *r = glm::mix(v1, v2, t);
             } break;
@@ -6523,7 +6523,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
                 Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1), tmp, 3);
                 Vector3 tangent2 = {tmp[0], tmp[1], tmp[2]};
-                Vector3 *r = (Vector3 *)data;
+                Vector3 *r = static_cast<Vector3 *>(data);
 
                 *r = Vector3CubicHermite(v1, tangent1, v2, tangent2, t);
             } break;
@@ -6539,7 +6539,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 4);
-                Quaternion *r = (Quaternion *)data;
+                Quaternion *r = static_cast<Quaternion *>(data);
 
                 *r = Quaternion{tmp[3], tmp[0], tmp[1], tmp[2]};
             } break;
@@ -6550,7 +6550,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
                 Quaternion q1 = {tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 4);
                 Quaternion q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
-                Quaternion *r = (Quaternion *)data;
+                Quaternion *r = static_cast<Quaternion *>(data);
 
                 *r = glm::slerp(q1, q2, t);
             } break;
@@ -6565,7 +6565,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
                 Quaternion q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1), tmp, 4);
                 Quaternion inTangent2 = {0.0f, tmp[0], tmp[1], tmp[2]};
-                Quaternion *r = (Quaternion *)data;
+                Quaternion *r = static_cast<Quaternion *>(data);
 
                 q1 = glm::normalize(q1);
                 q2 = glm::normalize(q2);
@@ -6592,20 +6592,20 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
     int dataSize = 0;
     unsigned char *fileData = LoadFileData(fileName, &dataSize);
 
-    ModelAnimation *animations = NULL;
+    ModelAnimation *animations = nullptr;
 
     // glTF data loading
     cgltf_options options = {};
     options.file.read = LoadFileGLTFCallback;
     options.file.release = ReleaseFileGLTFCallback;
-    cgltf_data *data = NULL;
+    cgltf_data *data = nullptr;
     cgltf_result result = cgltf_parse(&options, fileData, dataSize, &data);
 
     if (result != cgltf_result_success)
     {
         TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load glTF data", fileName);
         *animCount = 0;
-        return NULL;
+        return nullptr;
     }
 
     result = cgltf_load_buffers(&options, data, fileName);
@@ -6622,10 +6622,10 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
             // joint ancestor. This handles exporters (e.g. wow.export) that
             // store bone offsets on dummy parent nodes rather than on the
             // joints themselves. Depends only on the skin, not the animation.
-            int jointCount = (int)skin.joints_count;
-            Matrix *extOffset = (Matrix *)RL_CALLOC(jointCount, sizeof(Matrix));
+            int jointCount = static_cast<int>(skin.joints_count);
+            Matrix *extOffset = static_cast<Matrix *>(RL_CALLOC(jointCount, sizeof(Matrix)));
 
-            if (extOffset == NULL)
+            if (extOffset == nullptr)
             {
                 // Allocation failed: abort animation loading at the source rather than
                 // propagating a NULL pointer into the per-frame transform loop below
@@ -6633,18 +6633,18 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                 cgltf_free(data);
                 UnloadFileData(fileData);
                 *animCount = 0;
-                return NULL;
+                return nullptr;
             }
 
-            *animCount = (int)data->animations_count;
-            animations = (ModelAnimation *)RL_CALLOC(data->animations_count, sizeof(ModelAnimation));
+            *animCount = static_cast<int>(data->animations_count);
+            animations = static_cast<ModelAnimation *>(RL_CALLOC(data->animations_count, sizeof(ModelAnimation)));
 
             for (int k = 0; k < jointCount; k++)
             {
                 extOffset[k] = Matrix(1.0f);
                 cgltf_node *n = skin.joints[k]->parent;
 
-                while (n != NULL)
+                while (n != nullptr)
                 {
                     bool isJoint = false;
                     for (int jj = 0; jj < jointCount; jj++)
@@ -6681,7 +6681,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     cgltf_animation_channel *scale;
                 };
 
-                struct Channels *boneChannels = (struct Channels *)RL_CALLOC(animations[a].boneCount, sizeof(struct Channels));
+                struct Channels *boneChannels = static_cast<struct Channels *>(RL_CALLOC(animations[a].boneCount, sizeof(struct Channels)));
                 float animDuration = 0.0f;
 
                 for (unsigned int j = 0; j < animData.channels_count; j++)
@@ -6710,7 +6710,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     else TRACELOG(LOG_WARNING, "MODEL: [%s] Invalid interpolation curve encountered for GLTF animation.", fileName);
 
                     float time = 0.0f;
-                    result = (cgltf_result)cgltf_accessor_read_float(channel.sampler->input, channel.sampler->input->count - 1, &time, 1);
+                    result = static_cast<cgltf_result>(cgltf_accessor_read_float(channel.sampler->input, channel.sampler->input->count - 1, &time, 1));
                     if (!result)
                     {
                         TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load input time", fileName);
@@ -6720,15 +6720,15 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     animDuration = (time > animDuration)? time : animDuration;
                 }
 
-                if (animData.name != NULL) snprintf(animations[a].name, sizeof(animations[a].name), "%s", animData.name);
+                if (animData.name != nullptr) snprintf(animations[a].name, sizeof(animations[a].name), "%s", animData.name);
 
-                animations[a].keyframeCount = (int)(animDuration*GLTF_FRAMERATE) + 1;
-                animations[a].keyframePoses = (Transform **)RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *));
+                animations[a].keyframeCount = static_cast<int>(animDuration*GLTF_FRAMERATE) + 1;
+                animations[a].keyframePoses = static_cast<Transform **>(RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *)));
 
                 for (int j = 0; j < animations[a].keyframeCount; j++)
                 {
-                    animations[a].keyframePoses[j] = (Transform *)RL_CALLOC(animations[a].boneCount, sizeof(Transform));
-                    float time = (float)j / GLTF_FRAMERATE;
+                    animations[a].keyframePoses[j] = static_cast<Transform *>(RL_CALLOC(animations[a].boneCount, sizeof(Transform)));
+                    float time = static_cast<float>(j) / GLTF_FRAMERATE;
 
                     for (unsigned int k = 0; k < animations[a].boneCount; k++)
                     {
@@ -6777,7 +6777,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     BuildPoseFromParentJoints(bones, animations[a].boneCount, animations[a].keyframePoses[j]);
                 }
 
-                TRACELOG(LOG_INFO, "MODEL: [%s] Loaded animation: %s | Frames: %d | Duration: %fs", fileName, (animData.name != NULL)? animData.name : "NULL", animations[a].keyframeCount, animDuration);
+                TRACELOG(LOG_INFO, "MODEL: [%s] Loaded animation: %s | Frames: %d | Duration: %fs", fileName, (animData.name != nullptr)? animData.name : "NULL", animations[a].keyframeCount, animDuration);
                 RL_FREE(boneChannels);
                 RL_FREE(bones);
             }
@@ -6812,7 +6812,7 @@ static Model LoadVOX(const char *fileName)
     int dataSize = 0;
     unsigned char *fileData = LoadFileData(fileName, &dataSize);
 
-    if (fileData == 0)
+    if (fileData == nullptr)
     {
         TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load VOX file", fileName);
         return model;
@@ -6843,12 +6843,12 @@ static Model LoadVOX(const char *fileName)
     model.transform = Matrix(1.0f);
 
     model.meshCount = meshescount;
-    model.meshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
+    model.meshes = static_cast<Mesh *>(RL_CALLOC(model.meshCount, sizeof(Mesh)));
 
-    model.meshMaterial = (int *)RL_CALLOC(model.meshCount, sizeof(int));
+    model.meshMaterial = static_cast<int *>(RL_CALLOC(model.meshCount, sizeof(int)));
 
     model.materialCount = 1;
-    model.materials = (Material *)RL_CALLOC(model.materialCount, sizeof(Material));
+    model.materials = static_cast<Material *>(RL_CALLOC(model.materialCount, sizeof(Material)));
     model.materials[0] = LoadMaterialDefault();
 
     // Init model meshes
@@ -6856,9 +6856,9 @@ static Model LoadVOX(const char *fileName)
     int verticesMax = 65532; // 5461 voxels x 12 vertices per voxel -> 65532 (must be inf 65536)
 
     // 6*4 = 12 vertices per voxel
-    Vector3 *pvertices = (Vector3 *)voxarray.vertices.array;
-    Vector3 *pnormals = (Vector3 *)voxarray.normals.array;
-    Color *pcolors = (Color *)voxarray.colors.array;
+    Vector3 *pvertices = reinterpret_cast<Vector3 *>(voxarray.vertices.array);
+    Vector3 *pnormals = reinterpret_cast<Vector3 *>(voxarray.normals.array);
+    Color *pcolors = reinterpret_cast<Color *>(voxarray.colors.array);
 
     unsigned short *pindices = voxarray.indices.array;    // 5461*6*6 = 196596 indices max per mesh
 
@@ -6868,23 +6868,23 @@ static Model LoadVOX(const char *fileName)
         memset(pmesh, 0, sizeof(Mesh));
 
         // Copy vertices
-        pmesh->vertexCount = (int)fmin(verticesMax, verticesRemain);
+        pmesh->vertexCount = static_cast<int>(fmin(verticesMax, verticesRemain));
 
-        pmesh->vertices = (float *)RL_CALLOC(pmesh->vertexCount*3, sizeof(float));
+        pmesh->vertices = static_cast<float *>(RL_CALLOC(pmesh->vertexCount*3, sizeof(float)));
         memcpy(pmesh->vertices, pvertices, pmesh->vertexCount*3*sizeof(float));
 
         // Copy normals
-        pmesh->normals = (float *)RL_CALLOC(pmesh->vertexCount*3, sizeof(float));
+        pmesh->normals = static_cast<float *>(RL_CALLOC(pmesh->vertexCount*3, sizeof(float)));
         memcpy(pmesh->normals, pnormals, pmesh->vertexCount*3*sizeof(float));
 
         // Copy indices
-        pmesh->indices = (unsigned short *)RL_CALLOC(voxarray.indices.used, sizeof(unsigned short));
+        pmesh->indices = static_cast<unsigned short *>(RL_CALLOC(voxarray.indices.used, sizeof(unsigned short)));
         memcpy(pmesh->indices, pindices, voxarray.indices.used*sizeof(unsigned short));
 
         pmesh->triangleCount = (pmesh->vertexCount/4)*2;
 
         // Copy colors
-        pmesh->colors = (unsigned char *)RL_CALLOC(pmesh->vertexCount*4, sizeof(unsigned char));
+        pmesh->colors = static_cast<unsigned char *>(RL_CALLOC(pmesh->vertexCount*4, sizeof(unsigned char)));
         memcpy(pmesh->colors, pcolors, pmesh->vertexCount*4*sizeof(unsigned char));
 
         // First material index
@@ -6906,24 +6906,24 @@ static Model LoadVOX(const char *fileName)
 
 #if SUPPORT_FILEFORMAT_M3D
 // Hook LoadFileData()/UnloadFileData() calls to M3D loaders
-unsigned char *m3d_loaderhook(char *fn, unsigned int *len) { return LoadFileData((const char *)fn, (int *)len); }
-void m3d_freehook(void *data) { UnloadFileData((unsigned char *)data); }
+unsigned char *m3d_loaderhook(char *fn, unsigned int *len) { return LoadFileData((const char *)fn, reinterpret_cast<int *>(len)); }
+void m3d_freehook(void *data) { UnloadFileData(static_cast<unsigned char *>(data)); }
 
 // Load M3D mesh data
 static Model LoadM3D(const char *fileName)
 {
     Model model = { 0 };
 
-    m3d_t *m3d = NULL;
-    m3dp_t *prop = NULL;
+    m3d_t *m3d = nullptr;
+    m3dp_t *prop = nullptr;
     int i, j, k, l, n, mi = -2, vcolor = 0;
 
     int dataSize = 0;
     unsigned char *fileData = LoadFileData(fileName, &dataSize);
 
-    if (fileData != NULL)
+    if (fileData != nullptr)
     {
-        m3d = m3d_load(fileData, m3d_loaderhook, m3d_freehook, NULL);
+        m3d = m3d_load(fileData, m3d_loaderhook, m3d_freehook, nullptr);
 
         if (!m3d || M3D_ERR_ISFATAL(m3d->errcode))
         {
@@ -6979,14 +6979,14 @@ static Model LoadM3D(const char *fileName)
         }
         */
 
-        model.meshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
-        model.meshMaterial = (int *)RL_CALLOC(model.meshCount, sizeof(int));
-        model.materials = (Material *)RL_CALLOC(model.materialCount + 1, sizeof(Material));
+        model.meshes = static_cast<Mesh *>(RL_CALLOC(model.meshCount, sizeof(Mesh)));
+        model.meshMaterial = static_cast<int *>(RL_CALLOC(model.meshCount, sizeof(int)));
+        model.materials = static_cast<Material *>(RL_CALLOC(model.materialCount + 1, sizeof(Material)));
 
         // Map no material to index 0 with default shader, everything else materialid + 1
         model.materials[0] = LoadMaterialDefault();
 
-        for (i = l = 0, k = -1; i < (int)m3d->numface; i++, l++)
+        for (i = l = 0, k = -1; i < static_cast<int>(m3d->numface); i++, l++)
         {
             // Materials are grouped together
             if (mi != m3d->face[i].materialid)
@@ -6998,13 +6998,13 @@ static Model LoadM3D(const char *fileName)
                     model.meshCount++;
 
                     // Create a second buffer for mesh re-allocation
-                    Mesh *tempMeshes = (Mesh *)RL_CALLOC(model.meshCount, sizeof(Mesh));
+                    Mesh *tempMeshes = static_cast<Mesh *>(RL_CALLOC(model.meshCount, sizeof(Mesh)));
                     memcpy(tempMeshes, model.meshes, (model.meshCount - 1)*sizeof(Mesh));
                     RL_FREE(model.meshes);
                     model.meshes = tempMeshes;
 
                     // Create a second buffer for material re-allocation
-                    int *tempMeshMaterial = (int *)RL_CALLOC(model.meshCount, sizeof(int));
+                    int *tempMeshMaterial = static_cast<int *>(RL_CALLOC(model.meshCount, sizeof(int)));
                     memcpy(tempMeshMaterial, model.meshMaterial, (model.meshCount - 1)*sizeof(int));
                     RL_FREE(model.meshMaterial);
                     model.meshMaterial = tempMeshMaterial;
@@ -7015,7 +7015,7 @@ static Model LoadM3D(const char *fileName)
 
                 // Only allocate colors VertexBuffer if there's a color vertex in the model for this material batch
                 // if all colors are fully transparent black for all vertices of this material, then assuming no vertex colors
-                for (j = i, l = vcolor = 0; (j < (int)m3d->numface) && (mi == m3d->face[j].materialid); j++, l++)
+                for (j = i, l = vcolor = 0; (j < static_cast<int>(m3d->numface)) && (mi == m3d->face[j].materialid); j++, l++)
                 {
                     if (!m3d->vertex[m3d->face[j].vertex[0]].color ||
                         !m3d->vertex[m3d->face[j].vertex[1]].color ||
@@ -7024,24 +7024,24 @@ static Model LoadM3D(const char *fileName)
 
                 model.meshes[k].vertexCount = l*3;
                 model.meshes[k].triangleCount = l;
-                model.meshes[k].vertices = (float *)RL_CALLOC(model.meshes[k].vertexCount*3, sizeof(float));
-                model.meshes[k].texcoords = (float *)RL_CALLOC(model.meshes[k].vertexCount*2, sizeof(float));
-                model.meshes[k].normals = (float *)RL_CALLOC(model.meshes[k].vertexCount*3, sizeof(float));
+                model.meshes[k].vertices = static_cast<float *>(RL_CALLOC(model.meshes[k].vertexCount*3, sizeof(float)));
+                model.meshes[k].texcoords = static_cast<float *>(RL_CALLOC(model.meshes[k].vertexCount*2, sizeof(float)));
+                model.meshes[k].normals = static_cast<float *>(RL_CALLOC(model.meshes[k].vertexCount*3, sizeof(float)));
 
                 // If no map is provided, or colors are defined, allocate storage for vertex colors
                 // M3D specs only consider vertex colors if no material is provided, however raylib uses both and mixes the colors
-                if ((mi == M3D_UNDEF) || vcolor) model.meshes[k].colors = (unsigned char *)RL_CALLOC(model.meshes[k].vertexCount*4, sizeof(unsigned char));
+                if ((mi == M3D_UNDEF) || vcolor) model.meshes[k].colors = static_cast<unsigned char *>(RL_CALLOC(model.meshes[k].vertexCount*4, sizeof(unsigned char)));
 
                 // If no map is provided and vertex colors are allocated, set them to white
-                if ((mi == M3D_UNDEF) && (model.meshes[k].colors != NULL))
+                if ((mi == M3D_UNDEF) && (model.meshes[k].colors != nullptr))
                 {
                     for (int c = 0; c < model.meshes[k].vertexCount*4; c++) model.meshes[k].colors[c] = 255;
                 }
 
                 if (m3d->numbone && m3d->numskin)
                 {
-                    model.meshes[k].boneIndices = (unsigned char *)RL_CALLOC(model.meshes[k].vertexCount*4, sizeof(unsigned char));
-                    model.meshes[k].boneWeights = (float *)RL_CALLOC(model.meshes[k].vertexCount*4, sizeof(float));
+                    model.meshes[k].boneIndices = static_cast<unsigned char *>(RL_CALLOC(model.meshes[k].vertexCount*4, sizeof(unsigned char)));
+                    model.meshes[k].boneWeights = static_cast<float *>(RL_CALLOC(model.meshes[k].vertexCount*4, sizeof(float)));
                 }
 
                 model.meshMaterial[k] = mi + 1;
@@ -7060,7 +7060,7 @@ static Model LoadM3D(const char *fileName)
             model.meshes[k].vertices[l*9 + 8] = m3d->vertex[m3d->face[i].vertex[2]].z*m3d->scale;
 
             // Without vertex color (full transparency), using the default color
-            if (model.meshes[k].colors != NULL)
+            if (model.meshes[k].colors != nullptr)
             {
                 if (m3d->vertex[m3d->face[i].vertex[0]].color & 0xff000000)
                     memcpy(&model.meshes[k].colors[l*12 + 0], &m3d->vertex[m3d->face[i].vertex[0]].color, 4);
@@ -7101,7 +7101,7 @@ static Model LoadM3D(const char *fileName)
                     int skinid = m3d->vertex[m3d->face[i].vertex[n]].skinid;
 
                     // Check if there is a skin for this mesh
-                    if ((skinid != M3D_UNDEF) && (skinid < (int)m3d->numskin))
+                    if ((skinid != M3D_UNDEF) && (skinid < static_cast<int>(m3d->numskin)))
                     {
                         for (j = 0; j < 4; j++)
                         {
@@ -7121,7 +7121,7 @@ static Model LoadM3D(const char *fileName)
         }
 
         // Load materials
-        for (i = 0; i < (int)m3d->nummaterial; i++)
+        for (i = 0; i < static_cast<int>(m3d->nummaterial); i++)
         {
             model.materials[i + 1] = LoadMaterialDefault();
 
@@ -7166,7 +7166,7 @@ static Model LoadM3D(const char *fileName)
                     {
                         if (prop->type >= 128)
                         {
-                            Image image = { 0 };
+                            Image image = { nullptr };
                             image.data = m3d->texture[prop->value.textureid].d;
                             image.width = m3d->texture[prop->value.textureid].w;
                             image.height = m3d->texture[prop->value.textureid].h;
@@ -7195,10 +7195,10 @@ static Model LoadM3D(const char *fileName)
         if (m3d->numbone)
         {
             model.skeleton.boneCount = m3d->numbone + 1;
-            model.skeleton.bones = (BoneInfo *)RL_CALLOC(model.skeleton.boneCount, sizeof(BoneInfo));
-            model.skeleton.bindPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
+            model.skeleton.bones = static_cast<BoneInfo *>(RL_CALLOC(model.skeleton.boneCount, sizeof(BoneInfo)));
+            model.skeleton.bindPose = static_cast<Transform *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Transform)));
 
-            for (i = 0; i < (int)m3d->numbone; i++)
+            for (i = 0; i < static_cast<int>(m3d->numbone); i++)
             {
                 model.skeleton.bones[i].parent = m3d->bone[i].parent;
                 snprintf(model.skeleton.bones[i].name, sizeof(model.skeleton.bones[i].name), "%s", m3d->bone[i].name);
@@ -7247,8 +7247,8 @@ static Model LoadM3D(const char *fileName)
             }
 
             // Initialize runtime animation data: current pose and bone matrices
-            model.currentPose = (Transform *)RL_CALLOC(model.skeleton.boneCount, sizeof(Transform));
-            model.boneMatrices = (Matrix *)RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix));
+            model.currentPose = static_cast<Transform *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Transform)));
+            model.boneMatrices = static_cast<Matrix *>(RL_CALLOC(model.skeleton.boneCount, sizeof(Matrix)));
             for (unsigned int j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = Matrix(1.0f);
         }
 
@@ -7264,24 +7264,24 @@ static Model LoadM3D(const char *fileName)
 // Load M3D animation data
 static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, int *animCount)
 {
-    ModelAnimation *animations = NULL;
+    ModelAnimation *animations = nullptr;
 
-    m3d_t *m3d = NULL;
+    m3d_t *m3d = nullptr;
     int i = 0, j = 0;
     *animCount = 0;
 
     int dataSize = 0;
     unsigned char *fileData = LoadFileData(fileName, &dataSize);
 
-    if (fileData != NULL)
+    if (fileData != nullptr)
     {
-        m3d = m3d_load(fileData, m3d_loaderhook, m3d_freehook, NULL);
+        m3d = m3d_load(fileData, m3d_loaderhook, m3d_freehook, nullptr);
 
         if (!m3d || M3D_ERR_ISFATAL(m3d->errcode))
         {
             TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load M3D data, error code %d", fileName, m3d? m3d->errcode : -2);
             UnloadFileData(fileData);
-            return NULL;
+            return nullptr;
         }
         else TRACELOG(LOG_INFO, "MODEL: [%s] M3D data loaded successfully: %i animations, %i bones, %i skins", fileName, m3d->numaction, m3d->numbone, m3d->numskin);
 
@@ -7290,24 +7290,24 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, int *animCou
         {
             m3d_free(m3d);
             UnloadFileData(fileData);
-            return NULL;
+            return nullptr;
         }
 
-        animations = (ModelAnimation *)RL_CALLOC(m3d->numaction, sizeof(ModelAnimation));
+        animations = static_cast<ModelAnimation *>(RL_CALLOC(m3d->numaction, sizeof(ModelAnimation)));
         *animCount = m3d->numaction;
 
         for (unsigned int a = 0; a < m3d->numaction; a++)
         {
             animations[a].boneCount = m3d->numbone + 1;
-            BoneInfo *bones = (BoneInfo *)RL_CALLOC((m3d->numbone + 1), sizeof(BoneInfo));
+            BoneInfo *bones = static_cast<BoneInfo *>(RL_CALLOC((m3d->numbone + 1), sizeof(BoneInfo)));
 
             animations[a].keyframeCount = m3d->action[a].durationmsec/M3D_ANIMDELAY;
-            animations[a].keyframePoses = (Transform **)RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *));
+            animations[a].keyframePoses = static_cast<Transform **>(RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *)));
             snprintf(animations[a].name, sizeof(animations[a].name), "%s", m3d->action[a].name);
 
             TRACELOG(LOG_INFO, "MODEL: [%s] Loaded animation: %s | Frames: %d | Duration: %fs", fileName, animations[a].name, animations[a].keyframeCount, m3d->action[a].durationmsec);
 
-            for (i = 0; i < (int)m3d->numbone; i++)
+            for (i = 0; i < static_cast<int>(m3d->numbone); i++)
             {
                 bones[i].parent = m3d->bone[i].parent;
                 snprintf(bones[i].name, sizeof(bones[i].name), "%s", m3d->bone[i].name);
@@ -7321,13 +7321,13 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, int *animCou
             // regular intervals, so let the M3D SDK do the heavy lifting and calculate interpolated bones
             for (i = 0; i < animations[a].keyframeCount; i++)
             {
-                animations[a].keyframePoses[i] = (Transform *)RL_CALLOC((m3d->numbone + 1), sizeof(Transform));
+                animations[a].keyframePoses[i] = static_cast<Transform *>(RL_CALLOC((m3d->numbone + 1), sizeof(Transform)));
 
                 m3db_t *pose = m3d_pose(m3d, a, i*M3D_ANIMDELAY);
 
-                if (pose != NULL)
+                if (pose != nullptr)
                 {
-                    for (j = 0; j < (int)m3d->numbone; j++)
+                    for (j = 0; j < static_cast<int>(m3d->numbone); j++)
                     {
                         animations[a].keyframePoses[i][j].translation.x = m3d->vertex[pose[j].pos].x*m3d->scale;
                         animations[a].keyframePoses[i][j].translation.y = m3d->vertex[pose[j].pos].y*m3d->scale;

@@ -61,7 +61,7 @@ int main()
     UnloadImage(imageBlue);
     UnloadImage(backgroundImage);
 
-    Rectangle fudesumiRec = {0, 0, (float)fudesumiImage.width, (float)fudesumiImage.height};
+    Rectangle fudesumiRec = {0, 0, static_cast<float>(fudesumiImage.width), static_cast<float>(fudesumiImage.height)};
 
     Rectangle fudesumiPos = {50, 10, fudesumiImage.width*0.8f, fudesumiImage.height*0.8f};
     Rectangle redPos = { 410, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };

@@ -77,7 +77,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
-        float time = (float)GetTime();
+        float time = static_cast<float>(GetTime());
 
         // Eye and window corners, shifted into Dimension B so they match the player's
         // actual position and viewing angle relative to the archway

@@ -51,8 +51,8 @@ int main()
     // NOTE: We can have up to 256 values for tile ids and for tile fog state,
     // probably we don't need that many values for fog state, it can be optimized
     // to use only 2 bits per fog state (reducing size by 4) but logic will be a bit more complex
-    map.tileIds = (unsigned char *)RL_CALLOC(map.tilesX*map.tilesY, sizeof(unsigned char));
-    map.tileFog = (unsigned char *)RL_CALLOC(map.tilesX*map.tilesY, sizeof(unsigned char));
+    map.tileIds = static_cast<unsigned char *>(RL_CALLOC(map.tilesX*map.tilesY, sizeof(unsigned char)));
+    map.tileFog = static_cast<unsigned char *>(RL_CALLOC(map.tilesX*map.tilesY, sizeof(unsigned char)));
 
     // Load map tiles (generating 2 random tile ids for testing)
     // NOTE: Map tile ids should be probably loaded from an external map file
@@ -86,22 +86,22 @@ int main()
 
         // Check player position to avoid moving outside tilemap limits
         if (playerPosition.x < 0) playerPosition.x = 0;
-        else if ((playerPosition.x + PLAYER_SIZE) > (map.tilesX*MAP_TILE_SIZE)) playerPosition.x = (float)map.tilesX*MAP_TILE_SIZE - PLAYER_SIZE;
+        else if ((playerPosition.x + PLAYER_SIZE) > (map.tilesX*MAP_TILE_SIZE)) playerPosition.x = static_cast<float>(map.tilesX)*MAP_TILE_SIZE - PLAYER_SIZE;
         if (playerPosition.y < 0) playerPosition.y = 0;
-        else if ((playerPosition.y + PLAYER_SIZE) > (map.tilesY*MAP_TILE_SIZE)) playerPosition.y = (float)map.tilesY*MAP_TILE_SIZE - PLAYER_SIZE;
+        else if ((playerPosition.y + PLAYER_SIZE) > (map.tilesY*MAP_TILE_SIZE)) playerPosition.y = static_cast<float>(map.tilesY)*MAP_TILE_SIZE - PLAYER_SIZE;
 
         // Previous visited tiles are set to partial fog
         for (unsigned int i = 0; i < map.tilesX*map.tilesY; i++) if (map.tileFog[i] == 1) map.tileFog[i] = 2;
 
         // Get current tile position from player pixel position
-        playerTileX = (int)((playerPosition.x + (float)MAP_TILE_SIZE/2)/MAP_TILE_SIZE);
-        playerTileY = (int)((playerPosition.y + (float)MAP_TILE_SIZE/2)/MAP_TILE_SIZE);
+        playerTileX = static_cast<int>((playerPosition.x + static_cast<float>(MAP_TILE_SIZE)/2)/MAP_TILE_SIZE);
+        playerTileY = static_cast<int>((playerPosition.y + static_cast<float>(MAP_TILE_SIZE)/2)/MAP_TILE_SIZE);
 
         // Check visibility and update fog
         // NOTE: We check tilemap limits to avoid processing tiles out-of-array-bounds (it could crash program)
         for (int y = (playerTileY - PLAYER_TILE_VISIBILITY); y < (playerTileY + PLAYER_TILE_VISIBILITY); y++)
             for (int x = (playerTileX - PLAYER_TILE_VISIBILITY); x < (playerTileX + PLAYER_TILE_VISIBILITY); x++)
-                if ((x >= 0) && (x < (int)map.tilesX) && (y >= 0) && (y < (int)map.tilesY)) map.tileFog[y*map.tilesX + x] = 1;
+                if ((x >= 0) && (x < static_cast<int>(map.tilesX)) && (y >= 0) && (y < static_cast<int>(map.tilesY))) map.tileFog[y*map.tilesX + x] = 1;
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -135,8 +135,8 @@ int main()
 
 
             // Draw fog of war (scaled to full map, bilinear filtering)
-            DrawTexturePro(fogOfWar.texture, Rectangle{ 0, 0, (float)fogOfWar.texture.width, (float)-fogOfWar.texture.height },
-                           Rectangle{ 0, 0, (float)map.tilesX*MAP_TILE_SIZE, (float)map.tilesY*MAP_TILE_SIZE },
+            DrawTexturePro(fogOfWar.texture, Rectangle{ 0, 0, static_cast<float>(fogOfWar.texture.width), static_cast<float>(-fogOfWar.texture.height) },
+                           Rectangle{ 0, 0, static_cast<float>(map.tilesX)*MAP_TILE_SIZE, static_cast<float>(map.tilesY)*MAP_TILE_SIZE },
                            Vector2{ 0, 0 }, 0.0f, WHITE);
 
             // Draw player current tile

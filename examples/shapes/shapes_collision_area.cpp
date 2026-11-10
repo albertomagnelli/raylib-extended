@@ -64,7 +64,7 @@ int main()
         else if (boxB.x <= 0) boxB.x = 0;
 
         if ((boxB.y + boxB.height) >= GetScreenHeight()) boxB.y = GetScreenHeight() - boxB.height;
-        else if (boxB.y <= screenUpperLimit) boxB.y = (float)screenUpperLimit;
+        else if (boxB.y <= screenUpperLimit) boxB.y = static_cast<float>(screenUpperLimit);
 
         // Check boxes collision
         collision = CheckCollisionRecs(boxA, boxB);
@@ -96,7 +96,7 @@ int main()
                 DrawText("COLLISION!", GetScreenWidth()/2 - MeasureText("COLLISION!", 20)/2, screenUpperLimit/2 - 10, 20, BLACK);
 
                 // Draw collision area
-                DrawText(TextFormat("Collision Area: %i", (int)boxCollision.width*(int)boxCollision.height), GetScreenWidth()/2 - 100, screenUpperLimit + 10, 20, BLACK);
+                DrawText(TextFormat("Collision Area: %i", static_cast<int>(boxCollision.width)*static_cast<int>(boxCollision.height)), GetScreenWidth()/2 - 100, screenUpperLimit + 10, 20, BLACK);
             }
 
             // Draw help instructions

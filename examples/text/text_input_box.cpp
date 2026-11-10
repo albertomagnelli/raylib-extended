@@ -62,7 +62,7 @@ int main()
                 // NOTE: Only allow keys in range [32..125]
                 if ((key >= 32) && (key <= 125) && (letterCount < MAX_INPUT_CHARS))
                 {
-                    name[letterCount] = (char)key;
+                    name[letterCount] = static_cast<char>(key);
                     name[letterCount+1] = '\0'; // Add null terminator at the end of the string
                     letterCount++;
                 }
@@ -92,10 +92,10 @@ int main()
             DrawText("PLACE MOUSE OVER INPUT BOX!", 240, 140, 20, GRAY);
 
             DrawRectangleRec(textBox, LIGHTGRAY);
-            if (mouseOnText) DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, RED);
-            else DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, DARKGRAY);
+            if (mouseOnText) DrawRectangleLines(static_cast<int>(textBox.x), static_cast<int>(textBox.y), static_cast<int>(textBox.width), static_cast<int>(textBox.height), RED);
+            else DrawRectangleLines(static_cast<int>(textBox.x), static_cast<int>(textBox.y), static_cast<int>(textBox.width), static_cast<int>(textBox.height), DARKGRAY);
 
-            DrawText(name, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
+            DrawText(name, static_cast<int>(textBox.x) + 5, static_cast<int>(textBox.y) + 8, 40, MAROON);
 
             DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, MAX_INPUT_CHARS), 315, 250, 20, DARKGRAY);
 
@@ -104,7 +104,7 @@ int main()
                 if (letterCount < MAX_INPUT_CHARS)
                 {
                     // Draw blinking underscore char
-                    if (((framesCounter/20)%2) == 0) DrawText("_", (int)textBox.x + 8 + MeasureText(name, 40), (int)textBox.y + 12, 40, MAROON);
+                    if (((framesCounter/20)%2) == 0) DrawText("_", static_cast<int>(textBox.x) + 8 + MeasureText(name, 40), static_cast<int>(textBox.y) + 12, 40, MAROON);
                 }
                 else DrawText("Press BACKSPACE to delete chars...", 230, 300, 20, GRAY);
             }

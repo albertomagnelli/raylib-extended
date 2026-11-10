@@ -60,7 +60,7 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
 
-        float th = (float)GetTime();
+        float th = static_cast<float>(GetTime());
 
         Vector3 spherePos = { 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
 

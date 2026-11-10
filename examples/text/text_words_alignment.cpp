@@ -41,7 +41,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [text] example - words alignment");
 
     // Define the rectangle we will draw the text in
-    Rectangle textContainerRect = Rectangle{ (float)screenWidth/2-(float)screenWidth/4, (float)screenHeight/2-(float)screenHeight/3, (float)screenWidth/2, (float)screenHeight*2/3 };
+    Rectangle textContainerRect = Rectangle{ static_cast<float>(screenWidth)/2-static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2-static_cast<float>(screenHeight)/3, static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)*2/3 };
 
     // Some text to display the current alignment
     const char *textAlignNameH[] = { "Left", "Centre", "Right" };
@@ -50,7 +50,7 @@ int main()
     // Define the text we're going to draw in the rectangle
     int wordIndex = 0;
     std::vector<std::string> words = TextSplit("raylib is a simple and easy-to-use library to enjoy videogames programming", ' ');
-    int wordCount = (int)words.size();
+    int wordCount = static_cast<int>(words.size());
 
     // Initialize the font size we're going to use
     int fontSize = 40;
@@ -93,7 +93,7 @@ int main()
         }
 
         // One word per second
-        if (wordCount > 0)  wordIndex = (int)GetTime()%wordCount;
+        if (wordCount > 0)  wordIndex = static_cast<int>(GetTime())%wordCount;
         else  wordIndex = 0;
         //----------------------------------------------------------------------------------
 
@@ -109,16 +109,16 @@ int main()
             DrawRectangleRec(textContainerRect, BLUE);
 
             // Get the size of the text to draw
-            Vector2 textSize = MeasureTextEx(font, words[wordIndex], (float)fontSize, fontSize*.1f);
+            Vector2 textSize = MeasureTextEx(font, words[wordIndex], static_cast<float>(fontSize), fontSize*.1f);
 
             // Calculate the top-left text position based on the rectangle and alignment
             Vector2 textPos = Vector2{
-                textContainerRect.x + Lerp(0.0f, textContainerRect.width  - textSize.x, ((float)hAlign)*0.5f),
-                textContainerRect.y + Lerp(0.0f, textContainerRect.height - textSize.y, ((float)vAlign)*0.5f)
+                textContainerRect.x + Lerp(0.0f, textContainerRect.width  - textSize.x, (static_cast<float>(hAlign))*0.5f),
+                textContainerRect.y + Lerp(0.0f, textContainerRect.height - textSize.y, (static_cast<float>(vAlign))*0.5f)
             };
 
             // Draw the text
-            DrawTextEx(font, words[wordIndex], textPos, (float)fontSize, fontSize*.1f, RAYWHITE);
+            DrawTextEx(font, words[wordIndex], textPos, static_cast<float>(fontSize), fontSize*.1f, RAYWHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

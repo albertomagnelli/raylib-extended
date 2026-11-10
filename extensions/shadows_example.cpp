@@ -230,26 +230,26 @@ static SceneMesh UploadSceneMesh(Mesh mesh)
     }
 
     result.vertexCount = mesh.vertexCount;
-    result.indexed = (mesh.indices != NULL);
+    result.indexed = (mesh.indices != nullptr);
     result.indexCount = mesh.triangleCount*3;
 
     result.vaoId = rlLoadVertexArray();
     rlEnableVertexArray(result.vaoId);
 
-    result.vboId = rlLoadVertexBuffer(vertices.data(), (int)vertices.size()*(int)sizeof(SceneVertex), false);
+    result.vboId = rlLoadVertexBuffer(vertices.data(), static_cast<int>(vertices.size())*static_cast<int>(sizeof(SceneVertex)), false);
     rlEnableVertexBuffer(result.vboId);
 
     // The attribute locations the shaders declare: position at 0, normal at 2
-    rlSetVertexAttribute(0, 3, RL_FLOAT, 0, (int)sizeof(SceneVertex), 0);
+    rlSetVertexAttribute(0, 3, RL_FLOAT, 0, static_cast<int>(sizeof(SceneVertex)), 0);
     rlEnableVertexAttribute(0);
-    rlSetVertexAttribute(2, 3, RL_FLOAT, 0, (int)sizeof(SceneVertex), (int)sizeof(glm::vec3));
+    rlSetVertexAttribute(2, 3, RL_FLOAT, 0, static_cast<int>(sizeof(SceneVertex)), static_cast<int>(sizeof(glm::vec3)));
     rlEnableVertexAttribute(2);
 
     // NOTE: The element buffer is loaded while the VAO is active, so it stays bound to it.
     // GenMeshSphere/Cylinder/Cone/Torus come out unindexed, only plane and cube have indices
     if (result.indexed)
     {
-        result.eboId = rlLoadVertexBufferElement(mesh.indices, result.indexCount*(int)sizeof(unsigned short), false);
+        result.eboId = rlLoadVertexBufferElement(mesh.indices, result.indexCount*static_cast<int>(sizeof(unsigned short)), false);
         rlEnableVertexBufferElement(result.eboId);
     }
 
@@ -273,7 +273,7 @@ static void UnloadSceneMesh(SceneMesh &mesh)
 static void DrawSceneMesh(const SceneMesh &mesh)
 {
     rlEnableVertexArray(mesh.vaoId);
-    if (mesh.indexed) rlDrawVertexArrayElements(0, mesh.indexCount, NULL);
+    if (mesh.indexed) rlDrawVertexArrayElements(0, mesh.indexCount, nullptr);
     else rlDrawVertexArray(0, mesh.vertexCount);
     rlDisableVertexArray();
 }
@@ -380,7 +380,7 @@ int main()
     float shadowBias = 0.0015f;
     SetShaderValue(litShader, litShadowBias, &shadowBias, SHADER_UNIFORM_FLOAT);
 
-    glm::vec2 shadowTexelSize(1.0F/(float)shadowSize, 1.0F/(float)shadowSize);
+    glm::vec2 shadowTexelSize(1.0F/static_cast<float>(shadowSize), 1.0F/static_cast<float>(shadowSize));
     SetShaderValue(litShader, litShadowTexelSize, glm::value_ptr(shadowTexelSize), SHADER_UNIFORM_VEC2);
 
     float ambient = 0.18f;
@@ -443,7 +443,7 @@ int main()
             objects[1].mesh = &cubeMesh;
             objects[1].model = glm::rotate(
                 glm::translate(glm::mat4(1.0F), glm::vec3(-3.2F, 0.7F, 0.0F)),
-                (float)time*0.4F, glm::vec3(0.25F, 1.0F, 0.2F));
+                static_cast<float>(time)*0.4F, glm::vec3(0.25F, 1.0F, 0.2F));
             objects[1].color = { 0.95F, 0.45F, 0.15F, 1.0F };
 
             objects[2].mesh = &sphereMesh;
@@ -457,13 +457,13 @@ int main()
             objects[4].mesh = &coneMesh;
             objects[4].model = glm::rotate(
                 glm::translate(glm::mat4(1.0F), glm::vec3(1.8F, 0.9F, 0.0F)),
-                (float)time*0.5F, glm::vec3(0.0F, 1.0F, 0.0F));
+                static_cast<float>(time)*0.5F, glm::vec3(0.0F, 1.0F, 0.0F));
             objects[4].color = { 0.95F, 0.80F, 0.20F, 1.0F };
 
             objects[5].mesh = &torusMesh;
             objects[5].model = glm::rotate(
                 glm::translate(glm::mat4(1.0F), glm::vec3(3.4F, 0.55F, 0.0F)),
-                (float)time*0.3F, glm::vec3(0.0F, 1.0F, 0.0F));
+                static_cast<float>(time)*0.3F, glm::vec3(0.0F, 1.0F, 0.0F));
             objects[5].color = { 0.75F, 0.35F, 0.90F, 1.0F };
 
             // --- Shadow pass --------------------------------------------------
@@ -495,7 +495,7 @@ int main()
             rlViewport(0, 0, GetRenderWidth(), GetRenderHeight());
 
             float aspect = (GetRenderWidth() > 0 && GetRenderHeight() > 0)?
-                (float)GetRenderWidth()/(float)GetRenderHeight() : 1.0f;
+                static_cast<float>(GetRenderWidth())/static_cast<float>(GetRenderHeight()) : 1.0f;
             glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
             glm::mat4 view = glm::lookAt(cameraPosition, camera.target, worldUp);
 

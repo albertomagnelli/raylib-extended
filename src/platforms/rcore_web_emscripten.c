@@ -738,7 +738,7 @@ void SetWindowMinSize(int width, int height)
     CORE.Window.screenMin.height = height;
 
     // Trigger the resize event once to update the window minimum width and height
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, NULL, NULL);
+    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, nullptr, nullptr);
 }
 
 // Set window maximum dimensions (FLAG_WINDOW_RESIZABLE)
@@ -748,7 +748,7 @@ void SetWindowMaxSize(int width, int height)
     CORE.Window.screenMax.height = height;
 
     // Trigger the resize event once to update the window maximum width and height
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, NULL, NULL);
+    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, nullptr, nullptr);
 }
 
 // Set window dimensions
@@ -799,7 +799,7 @@ void SetWindowFocused(void)
 void *GetWindowHandle(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowHandle() not implemented on target platform");
-    return NULL;
+    return nullptr;
 }
 
 // Get number of monitors
@@ -902,7 +902,7 @@ void SetClipboardText(std::string_view textView)
     const char *text = textStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if (strchr(text, '\'') != NULL) TRACELOG(LOG_WARNING, "SYSTEM: Provided Clipboard could be potentially malicious, avoid [\'] character");
+    if (strchr(text, '\'') != nullptr) TRACELOG(LOG_WARNING, "SYSTEM: Provided Clipboard could be potentially malicious, avoid [\'] character");
     else EM_ASM({ navigator.clipboard.writeText(UTF8ToString($0)); }, text);
 }
 
@@ -996,7 +996,7 @@ Image GetClipboardImage(void)
     int w = 0, h = 0;
     RequestClipboardData();
     unsigned char* data = GetLastPastedImage(&w, &h);
-    if (data != NULL) {
+    if (data != nullptr) {
         image.data = data;
         image.width = w;
         image.height = h;
@@ -1104,7 +1104,7 @@ void OpenURL(std::string_view urlView)
     const char *url = urlStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
+    if ((strchr(url, '\'') != nullptr) || (strchr(url, '\"') != nullptr))
     {
         // Filter characters: ' and "
         TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'\"] characters");
@@ -1375,7 +1375,7 @@ int InitPlatform(void)
     emscripten_set_window_title(CORE.Window.title.empty()? " " : CORE.Window.title.c_str());
 
     // Check context activation
-    if ((platform.glContext != 0) || (platform.pixels != NULL))
+    if ((platform.glContext != 0) || (platform.pixels != nullptr))
     {
         CORE.Window.ready = true;
 
@@ -1408,36 +1408,36 @@ int InitPlatform(void)
     // Initialize events callbacks
     //----------------------------------------------------------------------------
     // Setup window/canvas events callbacks
-    emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 1, EmscriptenFullscreenChangeCallback);
-    emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 1, EmscriptenResizeCallback);
-    emscripten_set_blur_callback(platform.canvasId, NULL, 1, EmscriptenFocusCallback);
-    emscripten_set_focus_callback(platform.canvasId, NULL, 1, EmscriptenFocusCallback);
-    emscripten_set_visibilitychange_callback(NULL, 1, EmscriptenVisibilityChangeCallback);
+    emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, 1, EmscriptenFullscreenChangeCallback);
+    emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, 1, EmscriptenResizeCallback);
+    emscripten_set_blur_callback(platform.canvasId, nullptr, 1, EmscriptenFocusCallback);
+    emscripten_set_focus_callback(platform.canvasId, nullptr, 1, EmscriptenFocusCallback);
+    emscripten_set_visibilitychange_callback(nullptr, 1, EmscriptenVisibilityChangeCallback);
 
     // Setup input events
-    emscripten_set_keypress_callback(platform.canvasId, NULL, 1, EmscriptenKeyboardCallback);
-    emscripten_set_keydown_callback(platform.canvasId, NULL, 1, EmscriptenKeyboardCallback);
-    emscripten_set_keyup_callback(platform.canvasId, NULL, 1, EmscriptenKeyboardCallback);
+    emscripten_set_keypress_callback(platform.canvasId, nullptr, 1, EmscriptenKeyboardCallback);
+    emscripten_set_keydown_callback(platform.canvasId, nullptr, 1, EmscriptenKeyboardCallback);
+    emscripten_set_keyup_callback(platform.canvasId, nullptr, 1, EmscriptenKeyboardCallback);
 
-    emscripten_set_click_callback(platform.canvasId, NULL, 1, EmscriptenMouseCallback);
+    emscripten_set_click_callback(platform.canvasId, nullptr, 1, EmscriptenMouseCallback);
     //emscripten_set_dblclick_callback(platform.canvasId, NULL, 1, EmscriptenMouseCallback);
-    emscripten_set_mousedown_callback(platform.canvasId, NULL, 1, EmscriptenMouseCallback);
-    emscripten_set_mouseup_callback(platform.canvasId, NULL, 1, EmscriptenMouseCallback);
-    emscripten_set_mousemove_callback(platform.canvasId, NULL, 1, EmscriptenMouseCallback);
-    emscripten_set_mousemove_callback(platform.canvasId, NULL, 1, EmscriptenMouseMoveCallback);
-    emscripten_set_wheel_callback(platform.canvasId, NULL, 1, EmscriptenMouseWheelCallback);
-    emscripten_set_pointerlockchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 1, EmscriptenPointerlockCallback);
+    emscripten_set_mousedown_callback(platform.canvasId, nullptr, 1, EmscriptenMouseCallback);
+    emscripten_set_mouseup_callback(platform.canvasId, nullptr, 1, EmscriptenMouseCallback);
+    emscripten_set_mousemove_callback(platform.canvasId, nullptr, 1, EmscriptenMouseCallback);
+    emscripten_set_mousemove_callback(platform.canvasId, nullptr, 1, EmscriptenMouseMoveCallback);
+    emscripten_set_wheel_callback(platform.canvasId, nullptr, 1, EmscriptenMouseWheelCallback);
+    emscripten_set_pointerlockchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, 1, EmscriptenPointerlockCallback);
 
-    emscripten_set_touchstart_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
-    emscripten_set_touchend_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
-    emscripten_set_touchmove_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
-    emscripten_set_touchcancel_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
+    emscripten_set_touchstart_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
+    emscripten_set_touchend_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
+    emscripten_set_touchmove_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
+    emscripten_set_touchcancel_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
 
-    emscripten_set_gamepadconnected_callback(NULL, 1, EmscriptenGamepadCallback);
-    emscripten_set_gamepaddisconnected_callback(NULL, 1, EmscriptenGamepadCallback);
+    emscripten_set_gamepadconnected_callback(nullptr, 1, EmscriptenGamepadCallback);
+    emscripten_set_gamepaddisconnected_callback(nullptr, 1, EmscriptenGamepadCallback);
 
     // Trigger resize callback to force initial size
-    EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, NULL, NULL);
+    EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, nullptr, nullptr);
     //----------------------------------------------------------------------------
 
     // Initialize timing system
@@ -1461,7 +1461,7 @@ int InitPlatform(void)
 // implementing some logic behaviour
 void ClosePlatform(void)
 {
-    if (platform.pixels != NULL) RL_FREE(platform.pixels);
+    if (platform.pixels != nullptr) RL_FREE(platform.pixels);
 
     if (platform.glContext != 0) emscripten_webgl_destroy_context(platform.glContext);
 }
@@ -1470,7 +1470,7 @@ void ClosePlatform(void)
 // WARNING: rlGetProcAddress() uses this loader, so it only returns the functions listed below
 static void *WebGLGetProcAddress(const char *procName)
 {
-    void *proc = NULL;
+    void *proc = nullptr;
 
 #if defined(GRAPHICS_API_OPENGL_ES2)
     if (strcmp(procName, "glGenVertexArraysOES") == 0) proc = (void *)glGenVertexArraysOES;

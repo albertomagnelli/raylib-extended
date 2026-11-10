@@ -68,8 +68,8 @@ int main()
     int pointCount = 5;
     int selectedPoint = -1;
     int focusedPoint = -1;
-    Vector2 *selectedControlPoint = NULL;
-    Vector2 *focusedControlPoint = NULL;
+    Vector2 *selectedControlPoint = nullptr;
+    Vector2 *focusedControlPoint = nullptr;
 
     // Cubic Bezier control points initialization
     ControlPoint control[MAX_SPLINE_POINTS-1] = {};
@@ -104,7 +104,7 @@ int main()
         }
 
         // Spline point focus and selection logic
-        if ((selectedPoint == -1) && ((splineTypeActive != SPLINE_BEZIER) || (selectedControlPoint == NULL)))
+        if ((selectedPoint == -1) && ((splineTypeActive != SPLINE_BEZIER) || (selectedControlPoint == nullptr)))
         {
             focusedPoint = -1;
             for (int i = 0; i < pointCount; i++)
@@ -129,9 +129,9 @@ int main()
         if ((splineTypeActive == SPLINE_BEZIER) && (focusedPoint == -1))
         {
             // Spline control point focus and selection logic
-            if (selectedControlPoint == NULL)
+            if (selectedControlPoint == nullptr)
             {
-                focusedControlPoint = NULL;
+                focusedControlPoint = nullptr;
                 for (int i = 0; i < pointCount - 1; i++)
                 {
                     if (CheckCollisionPointCircle(GetMousePosition(), control[i].start, 6.0f))
@@ -149,10 +149,10 @@ int main()
             }
 
             // Spline control point movement logic
-            if (selectedControlPoint != NULL)
+            if (selectedControlPoint != nullptr)
             {
                 *selectedControlPoint = GetMousePosition();
-                if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) selectedControlPoint = NULL;
+                if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) selectedControlPoint = nullptr;
             }
         }
 
@@ -163,7 +163,7 @@ int main()
         else if (IsKeyPressed(KEY_FOUR)) splineTypeActive = 3;
 
         // Clear selection when changing to a spline without control points
-        if (IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_THREE)) selectedControlPoint = NULL;
+        if (IsKeyPressed(KEY_ONE) || IsKeyPressed(KEY_TWO) || IsKeyPressed(KEY_THREE)) selectedControlPoint = nullptr;
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -255,16 +255,16 @@ int main()
                         (splineTypeActive != SPLINE_BEZIER) &&
                         (i < pointCount - 1)) DrawLineV(points[i], points[i + 1], GRAY);
 
-                    DrawText(TextFormat("[%.0f, %.0f]", points[i].x, points[i].y), (int)points[i].x, (int)points[i].y + 10, 10, BLACK);
+                    DrawText(TextFormat("[%.0f, %.0f]", points[i].x, points[i].y), static_cast<int>(points[i].x), static_cast<int>(points[i].y) + 10, 10, BLACK);
                 }
             }
 
             // Check all possible UI states that require controls lock
-            if (splineTypeEditMode || (selectedPoint != -1) || (selectedControlPoint != NULL)) GuiLock();
+            if (splineTypeEditMode || (selectedPoint != -1) || (selectedControlPoint != nullptr)) GuiLock();
 
             // Draw spline config
-            GuiLabel(Rectangle{ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", (int)splineThickness).c_str());
-            GuiSliderBar(Rectangle{ 12, 60 + 24, 140, 16 }, NULL, NULL, &splineThickness, 1.0f, 40.0f);
+            GuiLabel(Rectangle{ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", static_cast<int>(splineThickness)).c_str());
+            GuiSliderBar(Rectangle{ 12, 60 + 24, 140, 16 }, nullptr, nullptr, &splineThickness, 1.0f, 40.0f);
 
             GuiCheckBox(Rectangle{ 12, 110, 20, 20 }, "Show point helpers", &splineHelpersActive);
 

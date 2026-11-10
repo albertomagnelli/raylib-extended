@@ -410,7 +410,7 @@ void SetWindowFocused(void)
 void *GetWindowHandle(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowHandle() not implemented on target platform");
-    return NULL;
+    return nullptr;
 }
 
 // Get number of monitors
@@ -943,7 +943,7 @@ void SwapScreenBuffer(void)
         }
 
         // Check which CRTCs are compatible with this connector
-        drmModeEncoder *encoder = NULL;
+        drmModeEncoder *encoder = nullptr;
         if (platform.connector->encoder_id) encoder = drmModeGetEncoder(platform.fd, platform.connector->encoder_id);
 
         if (encoder && encoder->crtc_id)
@@ -1161,15 +1161,15 @@ void PollInputEvents(void)
 int InitPlatform(void)
 {
     platform.fd = -1;
-    platform.connector = NULL;
+    platform.connector = nullptr;
     platform.modeIndex = -1;
-    platform.crtc = NULL;
+    platform.crtc = nullptr;
     platform.prevFB = 0;
 
 #if !defined(GRAPHICS_API_OPENGL_SOFTWARE)
-    platform.gbmDevice = NULL;
-    platform.gbmSurface = NULL;
-    platform.prevBO = NULL;
+    platform.gbmDevice = nullptr;
+    platform.gbmSurface = nullptr;
+    platform.prevBO = nullptr;
 #else
     platform.prevDumbHandle = 0;
 #endif
@@ -1186,8 +1186,8 @@ int InitPlatform(void)
     platform.fd = open("/dev/dri/by-path/platform-gpu-card", O_RDWR); // VideoCore VI (Raspberry Pi 4)
     if (platform.fd != -1) TRACELOG(LOG_INFO, "DISPLAY: platform-gpu-card opened successfully");
 
-    drmModeRes *res = NULL;
-    if ((platform.fd == -1) || ((res = drmModeGetResources(platform.fd)) == NULL))
+    drmModeRes *res = nullptr;
+    if ((platform.fd == -1) || ((res = drmModeGetResources(platform.fd)) == nullptr))
     {
         if (platform.fd != -1) close(platform.fd);
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to open platform-gpu-card, trying card1");
@@ -1195,7 +1195,7 @@ int InitPlatform(void)
         if (platform.fd != -1) TRACELOG(LOG_INFO, "DISPLAY: card1 opened successfully");
     }
 
-    if ((platform.fd == -1) || ((res = drmModeGetResources(platform.fd)) == NULL))
+    if ((platform.fd == -1) || ((res = drmModeGetResources(platform.fd)) == nullptr))
     {
         if (platform.fd != -1) close(platform.fd);
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to open graphic card1, trying card0");
@@ -1203,7 +1203,7 @@ int InitPlatform(void)
         if (platform.fd != -1) TRACELOG(LOG_INFO, "DISPLAY: card0 opened successfully");
     }
 
-    if ((platform.fd == -1) || ((res = drmModeGetResources(platform.fd)) == NULL))
+    if ((platform.fd == -1) || ((res = drmModeGetResources(platform.fd)) == nullptr))
     {
         if (platform.fd != -1) close(platform.fd);
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to open graphic card0, trying card2");
@@ -1360,7 +1360,7 @@ int InitPlatform(void)
         platform.connector->modes[platform.modeIndex].vrefresh);
 
     drmModeFreeEncoder(enc);
-    enc = NULL;
+    enc = nullptr;
 #else
     // For software rendering, the first available mode can be used
     if (platform.connector->count_modes > 0)
@@ -1391,7 +1391,7 @@ int InitPlatform(void)
     CORE.Window.render.height = CORE.Window.screen.height;
 
     drmModeFreeResources(res);
-    res = NULL;
+    res = nullptr;
 
 #if !defined(GRAPHICS_API_OPENGL_SOFTWARE)
     // Hardware rendering initialization with EGL
@@ -1435,7 +1435,7 @@ int InitPlatform(void)
     };
 
     EGLint numConfigs = 0;
-    const char *eglClientExtensions = NULL;
+    const char *eglClientExtensions = nullptr;
 
     // Get an EGL device connection
     platform.device = EGL_NO_DISPLAY;
@@ -1444,15 +1444,15 @@ int InitPlatform(void)
     // WARNING: eglGetPlatformDisplay() is preferred over eglGetDisplay() legacy call but
     // on some devices (Mali GPUs: Mali-G31) symbol could not be available despite defining EGL_VERSION_1_5
     #if defined(EGL_VERSION_1_5)
-    platform.device = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, platform.gbmDevice, NULL);
+    platform.device = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, platform.gbmDevice, nullptr);
     #else
     // Check if extension is available for eglGetPlatformDisplayEXT()
     // NOTE: Better compatibility with some drivers (e.g. Mali Midgard)
     eglClientExtensions = eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
-    if ((eglClientExtensions != NULL) && (strstr(eglClientExtensions, "EGL_EXT_platform_base") != NULL))
+    if ((eglClientExtensions != nullptr) && (strstr(eglClientExtensions, "EGL_EXT_platform_base") != nullptr))
     {
         PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
-        if (eglGetPlatformDisplayEXT != NULL) platform.device = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, platform.gbmDevice, NULL);
+        if (eglGetPlatformDisplayEXT != nullptr) platform.device = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, platform.gbmDevice, nullptr);
     }
     #endif
 #endif
@@ -1467,7 +1467,7 @@ int InitPlatform(void)
     }
 
     // Initialize the EGL device connection
-    if (eglInitialize(platform.device, NULL, NULL) == EGL_FALSE)
+    if (eglInitialize(platform.device, nullptr, nullptr) == EGL_FALSE)
     {
         // If all of the calls to eglInitialize returned EGL_FALSE then an error has occurred
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to initialize EGL device");
@@ -1476,7 +1476,7 @@ int InitPlatform(void)
 
     // WARNING: Providing framebufferAttribs is not logically necessary,
     // but it may prevent segfaults on some nvidia drivers
-    if (!eglChooseConfig(platform.device, framebufferAttribs, NULL, 0, &numConfigs))
+    if (!eglChooseConfig(platform.device, framebufferAttribs, nullptr, 0, &numConfigs))
     {
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to get EGL config count: 0x%x", eglGetError());
         return -1;
@@ -1543,16 +1543,16 @@ int InitPlatform(void)
     // Create an EGL window surface
     platform.surface = EGL_NO_SURFACE;
 
-    if ((eglClientExtensions != NULL) && (strstr(eglClientExtensions, "EGL_EXT_platform_base") != NULL))
+    if ((eglClientExtensions != nullptr) && (strstr(eglClientExtensions, "EGL_EXT_platform_base") != nullptr))
     {
         PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC eglCreatePlatformWindowSurfaceEXT = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT");
 
-        if (eglCreatePlatformWindowSurfaceEXT != NULL) platform.surface = eglCreatePlatformWindowSurfaceEXT(platform.device, platform.config, platform.gbmSurface, NULL);
+        if (eglCreatePlatformWindowSurfaceEXT != nullptr) platform.surface = eglCreatePlatformWindowSurfaceEXT(platform.device, platform.config, platform.gbmSurface, nullptr);
     }
 
     if (platform.surface == EGL_NO_SURFACE)
     {
-        platform.surface = eglCreateWindowSurface(platform.device, platform.config, (EGLNativeWindowType)platform.gbmSurface, NULL);
+        platform.surface = eglCreateWindowSurface(platform.device, platform.config, (EGLNativeWindowType)platform.gbmSurface, nullptr);
     }
 
     if (platform.surface == EGL_NO_SURFACE)
@@ -1683,19 +1683,19 @@ void ClosePlatform(void)
     if (platform.prevBO)
     {
         gbm_surface_release_buffer(platform.gbmSurface, platform.prevBO);
-        platform.prevBO = NULL;
+        platform.prevBO = nullptr;
     }
 
     if (platform.gbmSurface)
     {
         gbm_surface_destroy(platform.gbmSurface);
-        platform.gbmSurface = NULL;
+        platform.gbmSurface = nullptr;
     }
 
     if (platform.gbmDevice)
     {
         gbm_device_destroy(platform.gbmDevice);
-        platform.gbmDevice = NULL;
+        platform.gbmDevice = nullptr;
     }
 #endif
 
@@ -1706,11 +1706,11 @@ void ClosePlatform(void)
             drmModeSetCrtc(platform.fd, platform.crtc->crtc_id, platform.crtc->buffer_id,
                 platform.crtc->x, platform.crtc->y, &platform.connector->connector_id, 1, &platform.crtc->mode);
             drmModeFreeConnector(platform.connector);
-            platform.connector = NULL;
+            platform.connector = nullptr;
         }
 
         drmModeFreeCrtc(platform.crtc);
-        platform.crtc = NULL;
+        platform.crtc = nullptr;
     }
 
     if (platform.fd != -1)
@@ -1934,8 +1934,8 @@ static void ProcessKeyboard(void)
 static void InitEvdevInput(void)
 {
     char path[MAX_FILEPATH_LENGTH] = {};
-    DIR *directory = NULL;
-    struct dirent *entity = NULL;
+    DIR *directory = nullptr;
+    struct dirent *entity = nullptr;
 
     // Initialize keyboard file descriptor
     platform.keyboardFd = -1;
@@ -1967,7 +1967,7 @@ static void InitEvdevInput(void)
 
     if (directory)
     {
-        while ((entity = readdir(directory)) != NULL)
+        while ((entity = readdir(directory)) != nullptr)
         {
             if ((strncmp("event", entity->d_name, strlen("event")) == 0) ||     // Search for devices named "event*"
                 (strncmp("mouse", entity->d_name, strlen("mouse")) == 0))       // Search for devices named "mouse*"
@@ -2603,8 +2603,8 @@ static void PollMouseEvents(void)
 // Search matching DRM mode in connector's mode list
 static int FindMatchingConnectorMode(const drmModeConnector *connector, const drmModeModeInfo *mode)
 {
-    if (NULL == connector) return -1;
-    if (NULL == mode) return -1;
+    if (nullptr == connector) return -1;
+    if (nullptr == mode) return -1;
 
     // safe bitwise comparison of two modes
     #define BINCMP(a, b) memcmp((a), (b), (sizeof(a) < sizeof(b))? sizeof(a) : sizeof(b))
@@ -2627,7 +2627,7 @@ static int FindExactConnectorMode(const drmModeConnector *connector, uint width,
 {
     TRACELOG(LOG_TRACE, "DISPLAY: Searching exact connector mode for %ux%u@%u, selecting an interlaced mode is allowed: %s", width, height, fps, allowInterlaced? "yes" : "no");
 
-    if (NULL == connector) return -1;
+    if (nullptr == connector) return -1;
 
     for (int i = 0; i < platform.connector->count_modes; i++)
     {
@@ -2649,7 +2649,7 @@ static int FindNearestConnectorMode(const drmModeConnector *connector, uint widt
 {
     TRACELOG(LOG_TRACE, "DISPLAY: Searching nearest connector mode for %ux%u@%u, selecting an interlaced mode is allowed: %s", width, height, fps, allowInterlaced? "yes" : "no");
 
-    if (NULL == connector) return -1;
+    if (nullptr == connector) return -1;
 
     int nearestIndex = -1;
     int minUnusedPixels = INT_MAX;

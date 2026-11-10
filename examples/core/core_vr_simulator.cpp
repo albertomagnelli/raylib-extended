@@ -81,8 +81,8 @@ int main()
     RenderTexture2D target = LoadRenderTexture(device.hResolution, device.vResolution);
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    Rectangle sourceRec = { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
-    Rectangle destRec = { 0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight() };
+    Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
+    Rectangle destRec = { 0.0f, 0.0f, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
 
     // Define the camera to look into our 3d world
     Camera camera = {};

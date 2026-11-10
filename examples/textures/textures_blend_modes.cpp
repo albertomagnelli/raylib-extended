@@ -56,7 +56,7 @@ int main()
         if (IsKeyPressed(KEY_SPACE))
         {
             if (blendMode >= (blendCountMax - 1)) blendMode = BLEND_ALPHA;
-            else blendMode = (BlendMode)(blendMode + 1);
+            else blendMode = static_cast<BlendMode>(blendMode + 1);
         }
         //----------------------------------------------------------------------------------
 

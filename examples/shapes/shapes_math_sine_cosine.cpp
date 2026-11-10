@@ -48,7 +48,7 @@ int main()
 
     for (int i = 0; i < WAVE_POINTS; i++)
     {
-        float t = i/(float)(WAVE_POINTS - 1);
+        float t = i/static_cast<float>(WAVE_POINTS - 1);
         float currentAngle = t*360.0f*DEG2RAD;
         sinePoints[i] = Vector2{ start.x + t*start.width, start.y + start.height/2.0f - sinf(currentAngle)*(start.height/2.0f) };
         cosPoints[i] = Vector2{ start.x + t*start.width, start.y + start.height/2.0f - cosf(currentAngle)*(start.height/2.0f) };
@@ -106,11 +106,11 @@ int main()
             DrawLineEx(Vector2{ start.x, start.y + start.height/2 }, Vector2{ start.x + start.width, start.y + start.height/2 }, 2.0f, GRAY);
 
             // Wave graph axis labels
-            DrawText("1", (int)start.x - 8, (int)start.y, 6, GRAY);
-            DrawText("0", (int)start.x - 8, (int)start.y + (int)start.height/2 - 6, 6, GRAY);
-            DrawText("-1", (int)start.x - 12, (int)start.y + (int)start.height - 8, 6, GRAY);
-            DrawText("0", (int)start.x - 2, (int)start.y + (int)start.height + 4, 6, GRAY);
-            DrawText("360", (int)start.x + (int)start.width - 8, (int)start.y + (int)start.height + 4, 6, GRAY);
+            DrawText("1", static_cast<int>(start.x) - 8, static_cast<int>(start.y), 6, GRAY);
+            DrawText("0", static_cast<int>(start.x) - 8, static_cast<int>(start.y) + static_cast<int>(start.height)/2 - 6, 6, GRAY);
+            DrawText("-1", static_cast<int>(start.x) - 12, static_cast<int>(start.y) + static_cast<int>(start.height) - 8, 6, GRAY);
+            DrawText("0", static_cast<int>(start.x) - 2, static_cast<int>(start.y) + static_cast<int>(start.height) + 4, 6, GRAY);
+            DrawText("360", static_cast<int>(start.x) + static_cast<int>(start.width) - 8, static_cast<int>(start.y) + static_cast<int>(start.height) + 4, 6, GRAY);
 
             // Sine (red - vertical)
             DrawLineEx(Vector2{ center.x, center.y }, Vector2{ center.x, point.y }, 2.0f, RED);

@@ -53,9 +53,9 @@ int main()
 
         if ((frameCounter%20) == 0)
         {
-            colRandom.r = (unsigned char)GetRandomValue(0, 255);
-            colRandom.g = (unsigned char)GetRandomValue(0, 255);
-            colRandom.b = (unsigned char)GetRandomValue(0, 255);
+            colRandom.r = static_cast<unsigned char>(GetRandomValue(0, 255));
+            colRandom.g = static_cast<unsigned char>(GetRandomValue(0, 255));
+            colRandom.b = static_cast<unsigned char>(GetRandomValue(0, 255));
             colRandom.a = 255;
         }
         //----------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ int main()
             DrawTextStyled(GetFontDefault(), text, Vector2{ 100, 240 }, 40.0f, 2.0f, BLACK);
 
             textSize = MeasureTextStyled(GetFontDefault(), text, 40.0f, 2.0f);
-            DrawRectangleLines(100, 240, (int)textSize.x, (int)textSize.y, GREEN);
+            DrawRectangleLines(100, 240, static_cast<int>(textSize.x), static_cast<int>(textSize.y), GREEN);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ static void DrawTextStyled(Font font, std::string_view text, Vector2 position, f
                     std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
                     int colHexCount = 0;
-                    while ((colHexCount < (int)textPtr.size()) && (textPtr[colHexCount] != ']'))
+                    while ((colHexCount < static_cast<int>(textPtr.size())) && (textPtr[colHexCount] != ']'))
                     {
                         if (((textPtr[colHexCount] >= '0') && (textPtr[colHexCount] <= '9')) ||
                             ((textPtr[colHexCount] >= 'A') && (textPtr[colHexCount] <= 'F')) ||
@@ -176,7 +176,7 @@ static void DrawTextStyled(Font font, std::string_view text, Vector2 position, f
                     }
 
                     // Convert hex color text into actual Color
-                    unsigned int colHexValue = strtoul(colHexText, NULL, 16);
+                    unsigned int colHexValue = strtoul(colHexText, nullptr, 16);
                     if (text[i - 1] == 'c')
                     {
 						colFront = GetColor(colHexValue);
@@ -196,8 +196,8 @@ static void DrawTextStyled(Font font, std::string_view text, Vector2 position, f
             int index = GetGlyphIndex(font, codepoint);
             float increaseX = 0.0f;
 
-            if (font.glyphs[index].advanceX == 0) increaseX = ((float)font.recs[index].width*scaleFactor + spacing);
-            else increaseX += ((float)font.glyphs[index].advanceX*scaleFactor + spacing);
+            if (font.glyphs[index].advanceX == 0) increaseX = (font.recs[index].width*scaleFactor + spacing);
+            else increaseX += (static_cast<float>(font.glyphs[index].advanceX)*scaleFactor + spacing);
 
             // Draw background rectangle color (if required)
             if (colBack.a > 0) DrawRectangleRec(Rectangle{ position.x + textOffsetX, position.y + textOffsetY - backRecPadding, increaseX, fontSize + 2*backRecPadding }, colBack);
@@ -228,7 +228,7 @@ static Vector2 MeasureTextStyled(Font font, std::string_view text, float fontSiz
 
     float textWidth = 0.0f;
     float textHeight = fontSize;
-    float scaleFactor = fontSize/(float)font.baseSize;
+    float scaleFactor = fontSize/static_cast<float>(font.baseSize);
 
     int codepoint = 0;              // Current character
     int index = 0;                  // Index position in sprite font
@@ -253,7 +253,7 @@ static Vector2 MeasureTextStyled(Font font, std::string_view text, float fontSiz
                 std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
                 int colHexCount = 0;
-                while ((colHexCount < (int)textPtr.size()) && (textPtr[colHexCount] != ']'))
+                while ((colHexCount < static_cast<int>(textPtr.size())) && (textPtr[colHexCount] != ']'))
                 {
                     if (((textPtr[colHexCount] >= '0') && (textPtr[colHexCount] <= '9')) ||
                         ((textPtr[colHexCount] >= 'A') && (textPtr[colHexCount] <= 'F')) ||

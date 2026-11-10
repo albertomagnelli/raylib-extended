@@ -208,7 +208,7 @@ int main()
         float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
 
         // WARNING: On event replay, mouse-wheel internal value is set
-        camera.zoom += ((float)GetMouseWheelMove()*0.05f);
+        camera.zoom += (GetMouseWheelMove()*0.05f);
         if (camera.zoom > 3.0f) camera.zoom = 3.0f;
         else if (camera.zoom < 0.25f) camera.zoom = 0.25f;
 
@@ -224,10 +224,10 @@ int main()
         Vector2 max = GetWorldToScreen2D(Vector2{ maxX, maxY }, camera);
         Vector2 min = GetWorldToScreen2D(Vector2{ minX, minY }, camera);
 
-        if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - (float)screenWidth/2);
-        if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - (float)screenHeight/2);
-        if (min.x > 0) camera.offset.x = (float)screenWidth/2 - min.x;
-        if (min.y > 0) camera.offset.y = (float)screenHeight/2 - min.y;
+        if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - static_cast<float>(screenWidth)/2);
+        if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - static_cast<float>(screenHeight)/2);
+        if (min.x > 0) camera.offset.x = static_cast<float>(screenWidth)/2 - min.x;
+        if (min.y > 0) camera.offset.y = static_cast<float>(screenHeight)/2 - min.y;
         //----------------------------------------------------------------------------------
 
         // Events management

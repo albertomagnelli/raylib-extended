@@ -47,8 +47,8 @@ int main()
     // Setup the stars with a random position
     for (int i = 0; i < STAR_COUNT; i++)
     {
-        stars[i].x = (float)GetRandomValue(-screenWidth / 2, (int)screenWidth / 2);
-        stars[i].y = (float)GetRandomValue(-screenHeight / 2, (int)screenHeight / 2);
+        stars[i].x = static_cast<float>(GetRandomValue(-screenWidth / 2, screenWidth / 2));
+        stars[i].y = static_cast<float>(GetRandomValue(-screenHeight / 2, screenHeight / 2));
         stars[i].z = 1.0f;
     }
 
@@ -62,7 +62,7 @@ int main()
         //----------------------------------------------------------------------------------
         // Change speed based on mouse
         float mouseMove = GetMouseWheelMove();
-        if ((int)mouseMove != 0) speed += 2.0f*mouseMove/9.0f;
+        if (static_cast<int>(mouseMove) != 0) speed += 2.0f*mouseMove/9.0f;
         if (speed < 0.0f) speed = 0.1f;
         else if (speed > 2.0f) speed = 2.0f;
 
@@ -85,8 +85,8 @@ int main()
             if ((stars[i].z < 0.0f) || (starsScreenPos[i].x < 0) || (starsScreenPos[i].y < 0.0f) ||
                 (starsScreenPos[i].x > screenWidth) || (starsScreenPos[i].y > screenHeight))
             {
-                stars[i].x = (float)GetRandomValue(-screenWidth / 2, screenWidth / 2);
-                stars[i].y = (float)GetRandomValue(-screenHeight / 2, screenHeight / 2);
+                stars[i].x = static_cast<float>(GetRandomValue(-screenWidth / 2, screenWidth / 2));
+                stars[i].y = static_cast<float>(GetRandomValue(-screenHeight / 2, screenHeight / 2));
                 stars[i].z = 1.0f;
             }
         }

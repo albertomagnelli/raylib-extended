@@ -50,7 +50,7 @@ int main()
     RenderTexture screenPlayer2 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Build a flipped rectangle the size of the split view to use for drawing later
-    Rectangle splitScreenRect = { 0.0f, 0.0f, (float)screenPlayer1.texture.width, (float)-screenPlayer1.texture.height };
+    Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<float>(screenPlayer1.texture.width), static_cast<float>(-screenPlayer1.texture.height) };
 
     // Grid data
     int count = 5;

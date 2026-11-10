@@ -671,7 +671,7 @@ void SetWindowMinSize(int width, int height)
     CORE.Window.screenMin.height = height;
 
     // Trigger the resize event once to update the window minimum width and height
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, NULL, NULL);
+    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, nullptr, nullptr);
 }
 
 // Set window maximum dimensions (FLAG_WINDOW_RESIZABLE)
@@ -681,7 +681,7 @@ void SetWindowMaxSize(int width, int height)
     CORE.Window.screenMax.height = height;
 
     // Trigger the resize event once to update the window maximum width and height
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, NULL, NULL);
+    if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE) != 0) EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, nullptr, nullptr);
 }
 
 // Set window dimensions
@@ -708,7 +708,7 @@ void SetWindowFocused(void)
 void *GetWindowHandle(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowHandle() not implemented on target platform");
-    return NULL;
+    return nullptr;
 }
 
 // Get number of monitors
@@ -805,7 +805,7 @@ void SetClipboardText(std::string_view textView)
     const char *text = textStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if (strchr(text, '\'') != NULL) TRACELOG(LOG_WARNING, "SYSTEM: Provided Clipboard could be potentially malicious, avoid [\'] character");
+    if (strchr(text, '\'') != nullptr) TRACELOG(LOG_WARNING, "SYSTEM: Provided Clipboard could be potentially malicious, avoid [\'] character");
     else EM_ASM({ navigator.clipboard.writeText(UTF8ToString($0)); }, text);
 }
 
@@ -899,7 +899,7 @@ Image GetClipboardImage(void)
     int w = 0, h = 0;
     RequestClipboardData();
     unsigned char* data = GetLastPastedImage(&w, &h);
-    if (data != NULL) {
+    if (data != nullptr) {
         image.data = data;
         image.width = w;
         image.height = h;
@@ -1008,7 +1008,7 @@ void OpenURL(std::string_view urlView)
     const char *url = urlStr.c_str();
 
     // Security check to (partially) avoid malicious code on target platform
-    if (strchr(url, '\'') != NULL) TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'] character");
+    if (strchr(url, '\'') != nullptr) TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'] character");
     else emscripten_run_script(TextFormat("window.open('%s', '_blank')", url));
 }
 
@@ -1383,7 +1383,7 @@ int InitPlatform(void)
 
         TRACELOG(LOG_WARNING, "SYSTEM: Closest fullscreen videomode: %i x %i", CORE.Window.display.width, CORE.Window.display.height);
 
-        platform.handle = glfwCreateWindow(CORE.Window.display.width, CORE.Window.display.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), glfwGetPrimaryMonitor(), NULL);
+        platform.handle = glfwCreateWindow(CORE.Window.display.width, CORE.Window.display.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), glfwGetPrimaryMonitor(), nullptr);
 
         // NOTE: Full-screen change, not working properly...
         // glfwSetWindowMonitor(platform.handle, glfwGetPrimaryMonitor(), 0, 0, CORE.Window.screen.width, CORE.Window.screen.height, GLFW_DONT_CARE);
@@ -1391,7 +1391,7 @@ int InitPlatform(void)
     else
     {
         // No-fullscreen window creation
-        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), NULL, NULL);
+        platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), nullptr, nullptr);
 
         if (platform.handle)
         {
@@ -1475,33 +1475,33 @@ int InitPlatform(void)
     // Initialize events callbacks
     //----------------------------------------------------------------------------
     // Setup window events callbacks
-    emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 1, EmscriptenFullscreenChangeCallback);
+    emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, 1, EmscriptenFullscreenChangeCallback);
     emscripten_set_blur_callback(platform.canvasId, platform.handle, 1, EmscriptenFocusCallback);
     emscripten_set_focus_callback(platform.canvasId, platform.handle, 1, EmscriptenFocusCallback);
-    emscripten_set_visibilitychange_callback(NULL, 1, EmscriptenVisibilityChangeCallback);
+    emscripten_set_visibilitychange_callback(nullptr, 1, EmscriptenVisibilityChangeCallback);
 
     // WARNING: Below resize code was breaking fullscreen mode for sample games and examples, it needs review
     // Check fullscreen change events(note this is done on the window since most browsers don't support this on canvas)
     // emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 1, EmscriptenResizeCallback);
     // Check Resize event (note this is done on the window since most browsers don't support this on canvas)
-    emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 1, EmscriptenResizeCallback);
+    emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, 1, EmscriptenResizeCallback);
 
     // Trigger resize callback to force initial size
-    EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, NULL, NULL);
+    EmscriptenResizeCallback(EMSCRIPTEN_EVENT_RESIZE, nullptr, nullptr);
 
     // Setup input events
     // NOTE: Keyboard callbacks only used to consume some events, libglfw.js takes care of the actual input
     //emscripten_set_keypress_callback(platform.canvasId, NULL, 1, EmscriptenKeyboardCallback); // WRNING: Breaks input
     //emscripten_set_keydown_callback(platform.canvasId, NULL, 1, EmscriptenKeyboardCallback);
-    emscripten_set_click_callback(platform.canvasId, NULL, 1, EmscriptenMouseCallback);
-    emscripten_set_pointerlockchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, NULL, 1, EmscriptenPointerlockCallback);
-    emscripten_set_mousemove_callback(platform.canvasId, NULL, 1, EmscriptenMouseMoveCallback);
-    emscripten_set_touchstart_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
-    emscripten_set_touchend_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
-    emscripten_set_touchmove_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
-    emscripten_set_touchcancel_callback(platform.canvasId, NULL, 1, EmscriptenTouchCallback);
-    emscripten_set_gamepadconnected_callback(NULL, 1, EmscriptenGamepadCallback);
-    emscripten_set_gamepaddisconnected_callback(NULL, 1, EmscriptenGamepadCallback);
+    emscripten_set_click_callback(platform.canvasId, nullptr, 1, EmscriptenMouseCallback);
+    emscripten_set_pointerlockchange_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, nullptr, 1, EmscriptenPointerlockCallback);
+    emscripten_set_mousemove_callback(platform.canvasId, nullptr, 1, EmscriptenMouseMoveCallback);
+    emscripten_set_touchstart_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
+    emscripten_set_touchend_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
+    emscripten_set_touchmove_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
+    emscripten_set_touchcancel_callback(platform.canvasId, nullptr, 1, EmscriptenTouchCallback);
+    emscripten_set_gamepadconnected_callback(nullptr, 1, EmscriptenGamepadCallback);
+    emscripten_set_gamepaddisconnected_callback(nullptr, 1, EmscriptenGamepadCallback);
     //----------------------------------------------------------------------------
 
     // Initialize timing system
@@ -1530,7 +1530,7 @@ void ClosePlatform(void)
 // WARNING: rlGetProcAddress() uses this loader, so it only returns the functions listed below
 static void *WebGLGetProcAddress(const char *procName)
 {
-    void *proc = NULL;
+    void *proc = nullptr;
 
 #if defined(GRAPHICS_API_OPENGL_ES2)
     if (strcmp(procName, "glGenVertexArraysOES") == 0) proc = (void *)glGenVertexArraysOES;
@@ -1614,7 +1614,7 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
             RL_FREE(CORE.Window.dropFilepaths);
 
             CORE.Window.dropFileCount = 0;
-            CORE.Window.dropFilepaths = NULL;
+            CORE.Window.dropFilepaths = nullptr;
         }
 
         // WARNING: Paths are freed by GLFW when the callback returns, an internal copy must freed

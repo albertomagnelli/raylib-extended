@@ -72,7 +72,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - simple particles");
 
     // Definition of particles
-    Particle *particles = (Particle*)RL_CALLOC(MAX_PARTICLES, sizeof(Particle)); // Particle array
+    Particle *particles = static_cast<Particle*>(RL_CALLOC(MAX_PARTICLES, sizeof(Particle))); // Particle array
     CircularBuffer circularBuffer = { 0, 0, particles };
 
     // Particle emitter parameters
@@ -112,12 +112,12 @@ int main()
         if (IsKeyPressed(KEY_RIGHT))
         {
             if (currentType == FIRE) currentType = WATER;
-            else currentType = (ParticleType)(currentType + 1);
+            else currentType = static_cast<ParticleType>(currentType + 1);
         }
         if (IsKeyPressed(KEY_LEFT))
         {
             if (currentType == WATER) currentType = FIRE;
-            else currentType = (ParticleType)(currentType - 1);
+            else currentType = static_cast<ParticleType>(currentType - 1);
         }
 
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) emitterPosition = GetMousePosition();
@@ -167,14 +167,14 @@ static void EmitParticle(CircularBuffer *circularBuffer, Vector2 emitterPosition
     Particle *newParticle = AddToCircularBuffer(circularBuffer);
 
     // If buffer is full, newParticle is NULL
-    if (newParticle != NULL)
+    if (newParticle != nullptr)
     {
         // Fill particle properties
         newParticle->position = emitterPosition;
         newParticle->alive = true;
         newParticle->lifeTime = 0.0f;
         newParticle->type = type;
-        float speed = (float)(rand()%10)/5.0f;
+        float speed = static_cast<float>(rand()%10)/5.0f;
         switch (type)
         {
             case WATER:
@@ -196,14 +196,14 @@ static void EmitParticle(CircularBuffer *circularBuffer, Vector2 emitterPosition
             default: break;
         }
 
-        float direction = (float)(rand()%360);
+        float direction = static_cast<float>(rand()%360);
         newParticle->velocity = Vector2{ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
     }
 }
 
 static Particle *AddToCircularBuffer(CircularBuffer *circularBuffer)
 {
-    Particle *particle = NULL;
+    Particle *particle = nullptr;
 
     // Check if buffer full
     if (((circularBuffer->head + 1)%MAX_PARTICLES) != circularBuffer->tail)

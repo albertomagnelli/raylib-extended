@@ -49,8 +49,8 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [core] example - random sequence");
 
     int rectCount = 20;
-    float rectSize = (float)screenWidth/rectCount;
-    ColorRect *rectangles = GenerateRandomColorRectSequence((float)rectCount, rectSize, (float)screenWidth, 0.75f*screenHeight);
+    float rectSize = static_cast<float>(screenWidth)/rectCount;
+    ColorRect *rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -65,11 +65,11 @@ int main()
         if (IsKeyPressed(KEY_UP))
         {
             rectCount++;
-            rectSize = (float)screenWidth/rectCount;
+            rectSize = static_cast<float>(screenWidth)/rectCount;
             RL_FREE(rectangles);
 
             // Re-generate random sequence with new count
-            rectangles = GenerateRandomColorRectSequence((float)rectCount, rectSize, (float)screenWidth, 0.75f*screenHeight);
+            rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
         }
 
         if (IsKeyPressed(KEY_DOWN))
@@ -77,11 +77,11 @@ int main()
             if (rectCount >= 4)
             {
                 rectCount--;
-                rectSize = (float)screenWidth/rectCount;
+                rectSize = static_cast<float>(screenWidth)/rectCount;
                 RL_FREE(rectangles);
 
                 // Re-generate random sequence with new count
-                rectangles = GenerateRandomColorRectSequence((float)rectCount, rectSize, (float)screenWidth, 0.75f*screenHeight);
+                rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
             }
         }
         //----------------------------------------------------------------------------------
@@ -124,9 +124,9 @@ int main()
 static Color GenerateRandomColor(void)
 {
     Color color = {
-        (unsigned char)GetRandomValue(0, 255),
-        (unsigned char)GetRandomValue(0, 255),
-        (unsigned char)GetRandomValue(0, 255),
+        static_cast<unsigned char>(GetRandomValue(0, 255)),
+        static_cast<unsigned char>(GetRandomValue(0, 255)),
+        static_cast<unsigned char>(GetRandomValue(0, 255)),
         255
     };
 
@@ -135,18 +135,18 @@ static Color GenerateRandomColor(void)
 
 static ColorRect *GenerateRandomColorRectSequence(float rectCount, float rectWidth, float screenWidth, float screenHeight)
 {
-    ColorRect *rectangles = (ColorRect *)RL_CALLOC((int)rectCount, sizeof(ColorRect));
+    ColorRect *rectangles = static_cast<ColorRect *>(RL_CALLOC((int)rectCount, sizeof(ColorRect)));
 
-    int *seq = LoadRandomSequence((unsigned int)rectCount, 0, (unsigned int)rectCount - 1);
+    int *seq = LoadRandomSequence(static_cast<unsigned int>(rectCount), 0, static_cast<unsigned int>(rectCount) - 1);
     float rectSeqWidth = rectCount*rectWidth;
     float startX = (screenWidth - rectSeqWidth)*0.5f;
 
     for (int i = 0; i < rectCount; i++)
     {
-        int rectHeight = (int)Remap((float)seq[i], 0, rectCount - 1, 0, screenHeight);
+        int rectHeight = static_cast<int>(Remap(static_cast<float>(seq[i]), 0, rectCount - 1, 0, screenHeight));
 
         rectangles[i].color = GenerateRandomColor();
-        rectangles[i].rect = CLITERAL(Rectangle){ startX + i*rectWidth, screenHeight - rectHeight, rectWidth, (float)rectHeight };
+        rectangles[i].rect = CLITERAL(Rectangle){ startX + i*rectWidth, screenHeight - rectHeight, rectWidth, static_cast<float>(rectHeight) };
     }
 
     UnloadRandomSequence(seq);

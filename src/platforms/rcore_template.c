@@ -196,7 +196,7 @@ void SetWindowFocused(void)
 void *GetWindowHandle(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowHandle() not implemented on target platform");
-    return NULL;
+    return nullptr;
 }
 
 // Get number of monitors
@@ -367,7 +367,7 @@ void OpenURL(std::string_view urlView)
     const char *url = urlStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
+    if ((strchr(url, '\'') != nullptr) || (strchr(url, '\"') != nullptr))
     {
         // Filter characters: ' and "
         TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'\"] characters");

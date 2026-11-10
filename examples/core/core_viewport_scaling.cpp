@@ -112,28 +112,28 @@ int main()
         if (CheckCollisionPointRec(mousePosition, decreaseResolutionButton) && mousePressed)
         {
             resolutionIndex = (resolutionIndex + RESOLUTION_COUNT - 1)%RESOLUTION_COUNT;
-            gameWidth = (int)resolutionList[resolutionIndex].x;
-            gameHeight = (int)resolutionList[resolutionIndex].y;
+            gameWidth = static_cast<int>(resolutionList[resolutionIndex].x);
+            gameHeight = static_cast<int>(resolutionList[resolutionIndex].y);
             ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
         }
 
         if (CheckCollisionPointRec(mousePosition, increaseResolutionButton) && mousePressed)
         {
             resolutionIndex = (resolutionIndex + 1)%RESOLUTION_COUNT;
-            gameWidth = (int)resolutionList[resolutionIndex].x;
-            gameHeight = (int)resolutionList[resolutionIndex].y;
+            gameWidth = static_cast<int>(resolutionList[resolutionIndex].x);
+            gameHeight = static_cast<int>(resolutionList[resolutionIndex].y);
             ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
         }
 
         if (CheckCollisionPointRec(mousePosition, decreaseTypeButton) && mousePressed)
         {
-            viewportType = (ViewportType)(((int)viewportType + VIEWPORT_TYPE_COUNT - 1)%VIEWPORT_TYPE_COUNT);
+            viewportType = static_cast<ViewportType>((static_cast<int>(viewportType) + VIEWPORT_TYPE_COUNT - 1)%VIEWPORT_TYPE_COUNT);
             ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
         }
 
         if (CheckCollisionPointRec(mousePosition, increaseTypeButton) && mousePressed)
         {
-            viewportType = (ViewportType)(((int)viewportType + 1)%VIEWPORT_TYPE_COUNT);
+            viewportType = static_cast<ViewportType>((static_cast<int>(viewportType) + 1)%VIEWPORT_TYPE_COUNT);
             ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
         }
 
@@ -177,10 +177,10 @@ int main()
             DrawRectangleRec(increaseTypeButton, SKYBLUE);
             DrawRectangleRec(decreaseResolutionButton, SKYBLUE);
             DrawRectangleRec(increaseResolutionButton, SKYBLUE);
-            DrawText("<", (int)decreaseTypeButton.x + 3, (int)decreaseTypeButton.y + 1, 10, BLACK);
-            DrawText(">", (int)increaseTypeButton.x + 3, (int)increaseTypeButton.y + 1, 10, BLACK);
-            DrawText("<", (int)decreaseResolutionButton.x + 3, (int)decreaseResolutionButton.y + 1, 10, BLACK);
-            DrawText(">", (int)increaseResolutionButton.x + 3, (int)increaseResolutionButton.y + 1, 10, BLACK);
+            DrawText("<", static_cast<int>(decreaseTypeButton.x) + 3, static_cast<int>(decreaseTypeButton.y) + 1, 10, BLACK);
+            DrawText(">", static_cast<int>(increaseTypeButton.x) + 3, static_cast<int>(increaseTypeButton.y) + 1, 10, BLACK);
+            DrawText("<", static_cast<int>(decreaseResolutionButton.x) + 3, static_cast<int>(decreaseResolutionButton.y) + 1, 10, BLACK);
+            DrawText(">", static_cast<int>(increaseResolutionButton.x) + 3, static_cast<int>(increaseResolutionButton.y) + 1, 10, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -200,46 +200,46 @@ int main()
 static void KeepAspectCenteredInteger(int screenWidth, int screenHeight, int gameWidth, int gameHeight, Rectangle *sourceRect, Rectangle *destRect)
 {
     sourceRect->x = 0.0f;
-    sourceRect->y = (float)gameHeight;
-    sourceRect->width = (float)gameWidth;
-    sourceRect->height = (float)-gameHeight;
+    sourceRect->y = static_cast<float>(gameHeight);
+    sourceRect->width = static_cast<float>(gameWidth);
+    sourceRect->height = static_cast<float>(-gameHeight);
 
     const int ratio_x = (screenWidth/gameWidth);
     const int ratio_y = (screenHeight/gameHeight);
-    const float resizeRatio = (float)((ratio_x < ratio_y)? ratio_x : ratio_y);
+    const float resizeRatio = static_cast<float>((ratio_x < ratio_y)? ratio_x : ratio_y);
 
-    destRect->x = (float)(int)((screenWidth - (gameWidth*resizeRatio))*0.5f);
-    destRect->y = (float)(int)((screenHeight - (gameHeight*resizeRatio))*0.5f);
-    destRect->width = (float)(int)(gameWidth*resizeRatio);
-    destRect->height = (float)(int)(gameHeight*resizeRatio);
+    destRect->x = static_cast<float>(static_cast<int>((screenWidth - (gameWidth*resizeRatio))*0.5f));
+    destRect->y = static_cast<float>(static_cast<int>((screenHeight - (gameHeight*resizeRatio))*0.5f));
+    destRect->width = static_cast<float>(static_cast<int>(gameWidth*resizeRatio));
+    destRect->height = static_cast<float>(static_cast<int>(gameHeight*resizeRatio));
 }
 
 static void KeepHeightCenteredInteger(int screenWidth, int screenHeight, int gameWidth, int gameHeight, Rectangle *sourceRect, Rectangle *destRect)
 {
-    const float resizeRatio = (float)screenHeight/gameHeight;
+    const float resizeRatio = static_cast<float>(screenHeight)/gameHeight;
     sourceRect->x = 0.0f;
     sourceRect->y = 0.0f;
-    sourceRect->width = (float)(int)(screenWidth/resizeRatio);
-    sourceRect->height = (float)-gameHeight;
+    sourceRect->width = static_cast<float>(static_cast<int>(screenWidth/resizeRatio));
+    sourceRect->height = static_cast<float>(-gameHeight);
 
-    destRect->x = (float)(int)((screenWidth - (sourceRect->width*resizeRatio))*0.5f);
-    destRect->y = (float)(int)((screenHeight - (gameHeight*resizeRatio))*0.5f);
-    destRect->width = (float)(int)(sourceRect->width*resizeRatio);
-    destRect->height = (float)(int)(gameHeight*resizeRatio);
+    destRect->x = static_cast<float>(static_cast<int>((screenWidth - (sourceRect->width*resizeRatio))*0.5f));
+    destRect->y = static_cast<float>(static_cast<int>((screenHeight - (gameHeight*resizeRatio))*0.5f));
+    destRect->width = static_cast<float>(static_cast<int>(sourceRect->width*resizeRatio));
+    destRect->height = static_cast<float>(static_cast<int>(gameHeight*resizeRatio));
 }
 
 static void KeepWidthCenteredInteger(int screenWidth, int screenHeight, int gameWidth, int gameHeight, Rectangle *sourceRect, Rectangle *destRect)
 {
-    const float resizeRatio = (float)screenWidth/gameWidth;
+    const float resizeRatio = static_cast<float>(screenWidth)/gameWidth;
     sourceRect->x = 0.0f;
     sourceRect->y = 0.0f;
-    sourceRect->width = (float)gameWidth;
-    sourceRect->height = (float)(int)(screenHeight/resizeRatio);
+    sourceRect->width = static_cast<float>(gameWidth);
+    sourceRect->height = static_cast<float>(static_cast<int>(screenHeight/resizeRatio));
 
-    destRect->x = (float)(int)((screenWidth - (gameWidth*resizeRatio))*0.5f);
-    destRect->y = (float)(int)((screenHeight - (sourceRect->height*resizeRatio))*0.5f);
-    destRect->width = (float)(int)(gameWidth*resizeRatio);
-    destRect->height = (float)(int)(sourceRect->height*resizeRatio);
+    destRect->x = static_cast<float>(static_cast<int>((screenWidth - (gameWidth*resizeRatio))*0.5f));
+    destRect->y = static_cast<float>(static_cast<int>((screenHeight - (sourceRect->height*resizeRatio))*0.5f));
+    destRect->width = static_cast<float>(static_cast<int>(gameWidth*resizeRatio));
+    destRect->height = static_cast<float>(static_cast<int>(sourceRect->height*resizeRatio));
 
     sourceRect->height *= -1.0f;
 }
@@ -247,46 +247,46 @@ static void KeepWidthCenteredInteger(int screenWidth, int screenHeight, int game
 static void KeepAspectCentered(int screenWidth, int screenHeight, int gameWidth, int gameHeight, Rectangle *sourceRect, Rectangle *destRect)
 {
     sourceRect->x = 0.0f;
-    sourceRect->y = (float)gameHeight;
-    sourceRect->width = (float)gameWidth;
-    sourceRect->height = (float)-gameHeight;
+    sourceRect->y = static_cast<float>(gameHeight);
+    sourceRect->width = static_cast<float>(gameWidth);
+    sourceRect->height = static_cast<float>(-gameHeight);
 
-    const float ratio_x = ((float)screenWidth/(float)gameWidth);
-    const float ratio_y = ((float)screenHeight/(float)gameHeight);
+    const float ratio_x = (static_cast<float>(screenWidth)/static_cast<float>(gameWidth));
+    const float ratio_y = (static_cast<float>(screenHeight)/static_cast<float>(gameHeight));
     const float resizeRatio = (ratio_x < ratio_y ? ratio_x : ratio_y);
 
-    destRect->x = (float)(int)((screenWidth - (gameWidth*resizeRatio))*0.5f);
-    destRect->y = (float)(int)((screenHeight - (gameHeight*resizeRatio))*0.5f);
-    destRect->width = (float)(int)(gameWidth*resizeRatio);
-    destRect->height = (float)(int)(gameHeight*resizeRatio);
+    destRect->x = static_cast<float>(static_cast<int>((screenWidth - (gameWidth*resizeRatio))*0.5f));
+    destRect->y = static_cast<float>(static_cast<int>((screenHeight - (gameHeight*resizeRatio))*0.5f));
+    destRect->width = static_cast<float>(static_cast<int>(gameWidth*resizeRatio));
+    destRect->height = static_cast<float>(static_cast<int>(gameHeight*resizeRatio));
 }
 
 static void KeepHeightCentered(int screenWidth, int screenHeight, int gameWidth, int gameHeight, Rectangle *sourceRect, Rectangle *destRect)
 {
-    const float resizeRatio = ((float)screenHeight/(float)gameHeight);
+    const float resizeRatio = (static_cast<float>(screenHeight)/static_cast<float>(gameHeight));
     sourceRect->x = 0.0f;
     sourceRect->y = 0.0f;
-    sourceRect->width = (float)(int)((float)screenWidth/resizeRatio);
-    sourceRect->height = (float)-gameHeight;
+    sourceRect->width = static_cast<float>(static_cast<int>(static_cast<float>(screenWidth)/resizeRatio));
+    sourceRect->height = static_cast<float>(-gameHeight);
 
-    destRect->x = (float)(int)((screenWidth - (sourceRect->width*resizeRatio))*0.5f);
-    destRect->y = (float)(int)((screenHeight - (gameHeight*resizeRatio))*0.5f);
-    destRect->width = (float)(int)(sourceRect->width*resizeRatio);
-    destRect->height = (float)(int)(gameHeight*resizeRatio);
+    destRect->x = static_cast<float>(static_cast<int>((screenWidth - (sourceRect->width*resizeRatio))*0.5f));
+    destRect->y = static_cast<float>(static_cast<int>((screenHeight - (gameHeight*resizeRatio))*0.5f));
+    destRect->width = static_cast<float>(static_cast<int>(sourceRect->width*resizeRatio));
+    destRect->height = static_cast<float>(static_cast<int>(gameHeight*resizeRatio));
 }
 
 static void KeepWidthCentered(int screenWidth, int screenHeight, int gameWidth, int gameHeight, Rectangle *sourceRect, Rectangle *destRect)
 {
-    const float resizeRatio = ((float)screenWidth/(float)gameWidth);
+    const float resizeRatio = (static_cast<float>(screenWidth)/static_cast<float>(gameWidth));
     sourceRect->x = 0.0f;
     sourceRect->y = 0.0f;
-    sourceRect->width = (float)gameWidth;
-    sourceRect->height = (float)(int)((float)screenHeight/resizeRatio);
+    sourceRect->width = static_cast<float>(gameWidth);
+    sourceRect->height = static_cast<float>(static_cast<int>(static_cast<float>(screenHeight)/resizeRatio));
 
-    destRect->x = (float)(int)((screenWidth - (gameWidth*resizeRatio))*0.5f);
-    destRect->y = (float)(int)((screenHeight - (sourceRect->height*resizeRatio))*0.5f);
-    destRect->width = (float)(int)(gameWidth*resizeRatio);
-    destRect->height = (float)(int)(sourceRect->height*resizeRatio);
+    destRect->x = static_cast<float>(static_cast<int>((screenWidth - (gameWidth*resizeRatio))*0.5f));
+    destRect->y = static_cast<float>(static_cast<int>((screenHeight - (sourceRect->height*resizeRatio))*0.5f));
+    destRect->width = static_cast<float>(static_cast<int>(gameWidth*resizeRatio));
+    destRect->height = static_cast<float>(static_cast<int>(sourceRect->height*resizeRatio));
 
     sourceRect->height *= -1.f;
 }
@@ -308,7 +308,7 @@ static void ResizeRenderSize(ViewportType viewportType, int *screenWidth, int *s
     }
 
     UnloadRenderTexture(*target);
-    *target = LoadRenderTexture((int)sourceRect->width, -(int)sourceRect->height);
+    *target = LoadRenderTexture(static_cast<int>(sourceRect->width), -static_cast<int>(sourceRect->height));
 }
 
 // Example how to calculate position on RenderTexture

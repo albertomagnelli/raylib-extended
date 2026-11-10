@@ -48,7 +48,7 @@ int main()
 
     // Line drawing properties
     int symmetry = 6;
-    float angle = 360.0f/(float)symmetry;
+    float angle = 360.0f/static_cast<float>(symmetry);
     float thickness = 3.0f;
     Rectangle resetButtonRec = { screenWidth - 55.0f, 5.0f, 50, 25 };
     Rectangle backButtonRec = { screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };

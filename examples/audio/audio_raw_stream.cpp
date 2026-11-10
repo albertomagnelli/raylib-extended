@@ -116,7 +116,7 @@ int main()
             DrawText("Up/down to change frequency", 10, 10, 20, DARKGRAY);
             DrawText("Left/right to pan", 10, 30, 20, DARKGRAY);
 
-            int windowStart = (int)((GetTime() - sineStartTime)*SAMPLE_RATE);
+            int windowStart = static_cast<int>((GetTime() - sineStartTime)*SAMPLE_RATE);
             int windowSize = SAMPLE_RATE/10;
             int wavelength = SAMPLE_RATE/sineFrequency;
 
@@ -125,8 +125,8 @@ int main()
             {
                 int t0 = windowStart + i*windowSize/screenWidth;
                 int t1 = windowStart + (i + 1)*windowSize/screenWidth;
-                Vector2 startPos = { (float)i, 250 + 50*sinf(2*PI*t0/wavelength) };
-                Vector2 endPos = { (float)i + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
+                Vector2 startPos = { static_cast<float>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
+                Vector2 endPos = { static_cast<float>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
                 DrawLineV(startPos, endPos, RED);
             }
 

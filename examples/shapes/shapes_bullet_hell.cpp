@@ -45,7 +45,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bullet hell");
 
     // Bullets definition
-    Bullet *bullets = (Bullet *)RL_CALLOC(MAX_BULLETS, sizeof(Bullet)); // Bullets array
+    Bullet *bullets = static_cast<Bullet *>(RL_CALLOC(MAX_BULLETS, sizeof(Bullet))); // Bullets array
     int bulletCount = 0;
     int bulletDisabledCount = 0; // Used to calculate how many bullets are on screen
     int bulletRadius = 10;
@@ -68,8 +68,8 @@ int main()
     // Draw circle to bullet texture, then draw bullet using DrawTexture()
     // NOTE: This is done to improve the performance, since DrawCircle() is very slow
     BeginTextureMode(bulletTexture);
-        DrawCircle(12, 12, (float)bulletRadius, WHITE);
-        DrawCircleLines(12, 12, (float)bulletRadius, BLACK);
+        DrawCircle(12, 12, static_cast<float>(bulletRadius), WHITE);
+        DrawCircleLines(12, 12, static_cast<float>(bulletRadius), BLACK);
     EndTextureMode();
 
     bool drawInPerformanceMode = true; // Switch between DrawCircle() and DrawTexture()
@@ -101,7 +101,7 @@ int main()
             {
                 if (bulletCount < MAX_BULLETS)
                 {
-                    bullets[bulletCount].position = Vector2{(float) screenWidth/2, (float) screenHeight/2};
+                    bullets[bulletCount].position = Vector2{static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2};
                     bullets[bulletCount].disabled = false;
                     bullets[bulletCount].color = bulletColor[row%2];
 
@@ -174,9 +174,9 @@ int main()
 
             // Draw magic circle
             magicCircleRotation++;
-            DrawRectanglePro(Rectangle{ (float)screenWidth/2, (float)screenHeight/2, 120, 120 },
+            DrawRectanglePro(Rectangle{ static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2, 120, 120 },
                 Vector2{ 60.0f, 60.0f }, magicCircleRotation, PURPLE);
-            DrawRectanglePro(Rectangle{ (float)screenWidth/2, (float)screenHeight/2, 120, 120 },
+            DrawRectanglePro(Rectangle{ static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2, 120, 120 },
                 Vector2{ 60.0f, 60.0f }, magicCircleRotation + 45, PURPLE);
             DrawCircleLines(screenWidth/2, screenHeight/2, 70, BLACK);
             DrawCircleLines(screenWidth/2, screenHeight/2, 50, BLACK);
@@ -192,8 +192,8 @@ int main()
                     if (!bullets[i].disabled)
                     {
                         DrawTexture(bulletTexture.texture,
-                            (int)(bullets[i].position.x - bulletTexture.texture.width*0.5f),
-                            (int)(bullets[i].position.y - bulletTexture.texture.height*0.5f),
+                            static_cast<int>(bullets[i].position.x - bulletTexture.texture.width*0.5f),
+                            static_cast<int>(bullets[i].position.y - bulletTexture.texture.height*0.5f),
                             bullets[i].color);
                     }
                 }
@@ -206,8 +206,8 @@ int main()
                     // Do not draw disabled bullets (out of screen)
                     if (!bullets[i].disabled)
                     {
-                        DrawCircleV(bullets[i].position, (float)bulletRadius, bullets[i].color);
-                        DrawCircleLinesV(bullets[i].position, (float)bulletRadius, BLACK);
+                        DrawCircleV(bullets[i].position, static_cast<float>(bulletRadius), bullets[i].color);
+                        DrawCircleLinesV(bullets[i].position, static_cast<float>(bulletRadius), BLACK);
                     }
                 }
             }

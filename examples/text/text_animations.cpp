@@ -66,8 +66,8 @@ int main()
 
         if (IsKeyPressed(KEY_S)) text.delta = Clamp(text.delta - 2.0f, 10.0f, 60.0f);
         else if (IsKeyPressed(KEY_W)) text.delta = Clamp(text.delta + 2.0f, 10.0f, 60.0f);
-        if (IsKeyPressed(KEY_A)) text.duration = (int) Clamp((float) text.duration - 5.0f, 20.0f, 120.0f);
-        else if (IsKeyPressed(KEY_D)) text.duration = (int) Clamp((float) text.duration + 5.0f, 20.0f, 120.0f);
+        if (IsKeyPressed(KEY_A)) text.duration = static_cast<int>(Clamp(text.duration - 5.0f, 20.0f, 120.0f));
+        else if (IsKeyPressed(KEY_D)) text.duration = static_cast<int>(Clamp(text.duration + 5.0f, 20.0f, 120.0f));
         if (IsKeyPressed(KEY_Z)) text.offset = Clamp(text.offset - 1.0f, 0.0f, 15.0f);
         else if (IsKeyPressed(KEY_X)) text.offset = Clamp(text.offset + 1.0f, 0.0f, 15.0f);
         if (IsKeyPressed(KEY_Q)) currentAnimation = currentAnimation? currentAnimation - 1 : animationsSize - 1;
@@ -88,7 +88,7 @@ int main()
             {
                 for (unsigned int i = 0; i < TextLength(text.str); i++)
                 {
-                    float time = (int) (frameCount + i*text.offset)%(int)text.duration;
+                    float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
 
                     if (time < text.duration/2) glyphPosition[i].y = EaseSineIn(time, text.position.y, text.delta, text.duration);
                     else glyphPosition[i].y = EaseSineOut(time, text.position.y + text.delta, -text.delta, text.duration);
@@ -98,17 +98,17 @@ int main()
             {
                 for (unsigned int i = 0; i < TextLength(text.str); i++)
                 {
-                    float time = (int) (frameCount + i*text.offset)%(int)text.duration;
-                    glyphAlpha[i] = (unsigned char) EaseSineInOut(time, 255.0f, -255.0f, text.duration);
+                    float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
+                    glyphAlpha[i] = static_cast<unsigned char>(EaseSineInOut(time, 255.0f, -255.0f, text.duration));
                 }
             } break;
             case 2: // Shaking animation
             {
                 for (unsigned int i = 0; i < TextLength(text.str); i++)
                 {
-                    float time = (int) (frameCount + i*text.offset)%(int)text.duration;
-                    float deltaX = (float) GetRandomValue(-text.delta/10, text.delta/10);
-                    float deltaY = (float) GetRandomValue(-text.delta/10, text.delta/10);
+                    float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
+                    float deltaX = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
+                    float deltaY = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
 
                     if (time < (text.duration/2))
                     {
@@ -133,7 +133,7 @@ int main()
 
         ClearBackground(RAYWHITE);
 
-        DrawText(TextFormat("Duration (A | D): %d", (int)text.duration), 20, 20, 20, GRAY);
+        DrawText(TextFormat("Duration (A | D): %d", static_cast<int>(text.duration)), 20, 20, 20, GRAY);
         DrawText(TextFormat("Delta (W | S): %.1f", text.delta), 20, 50, 20, GRAY);
         DrawText(TextFormat("Offset (Z | X): %.1f", text.offset), 20, 80, 20, GRAY);
         DrawText(TextFormat("Current Animation (Q | E): %s", animations[currentAnimation]), 20, 110, 20, GRAY);

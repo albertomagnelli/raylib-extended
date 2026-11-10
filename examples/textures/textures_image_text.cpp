@@ -39,12 +39,12 @@ int main()
     UnloadCodepoints(codepoints);
 
     // Draw over image using custom font
-    ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", Vector2{ 20.0f, 20.0f }, (float)font.baseSize, 0.0f, RED);
+    ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", Vector2{ 20.0f, 20.0f }, static_cast<float>(font.baseSize), 0.0f, RED);
 
     Texture2D texture = LoadTextureFromImage(parrots);  // Image converted to texture, uploaded to GPU memory (VRAM)
     UnloadImage(parrots);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
-    Vector2 position = { (float)screenWidth/2 - (float)texture.width/2, (float)screenHeight/2 - (float)texture.height/2 - 20 };
+    Vector2 position = { static_cast<float>(screenWidth)/2 - static_cast<float>(texture.width)/2, static_cast<float>(screenHeight)/2 - static_cast<float>(texture.height)/2 - 20 };
 
     bool showFont = false;
 
@@ -73,22 +73,22 @@ int main()
 
                 // Draw text directly using sprite font
                 DrawTextEx(font, "[Parrots font drawing]", Vector2{ position.x + 20,
-                           position.y + 20 + 280 }, (float)font.baseSize, 0.0f, WHITE);
+                           position.y + 20 + 280 }, static_cast<float>(font.baseSize), 0.0f, WHITE);
             }
             else
             {
                 // Make the font atlas texture fit the screen, so we can see the whole thing
                 float scale = 1.0f;
 
-                float atlasRatio = (float)font.texture.width/(float)font.texture.height;
-                float screenRatio = (float)screenWidth/(float)screenHeight;
-                if (atlasRatio >= screenRatio) scale = (float)screenWidth/(float)font.texture.width;
-                else scale = (float)screenHeight/(float)font.texture.height;
+                float atlasRatio = static_cast<float>(font.texture.width)/static_cast<float>(font.texture.height);
+                float screenRatio = static_cast<float>(screenWidth)/static_cast<float>(screenHeight);
+                if (atlasRatio >= screenRatio) scale = static_cast<float>(screenWidth)/static_cast<float>(font.texture.width);
+                else scale = static_cast<float>(screenHeight)/static_cast<float>(font.texture.height);
 
-                float width = (float)font.texture.width * scale;
-                float height = (float)font.texture.height * scale;
+                float width = static_cast<float>(font.texture.width) * scale;
+                float height = static_cast<float>(font.texture.height) * scale;
 
-                DrawTextureEx(font.texture, Vector2{ ((float)screenWidth - width)/2, ((float)screenHeight - height)/2 }, 0, scale, BLACK);
+                DrawTextureEx(font.texture, Vector2{ (static_cast<float>(screenWidth) - width)/2, (static_cast<float>(screenHeight) - height)/2 }, 0, scale, BLACK);
             }
 
             DrawText("PRESS SPACE to SHOW FONT ATLAS USED", 290, 420, 10, DARKGRAY);

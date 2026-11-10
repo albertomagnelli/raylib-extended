@@ -47,7 +47,7 @@ int main()
     // Load bunny texture
     Texture2D texBunny = LoadTexture("resources/raybunny.png");
 
-    Bunny *bunnies = (Bunny *)RL_MALLOC(MAX_BUNNIES*sizeof(Bunny));    // Bunnies array
+    Bunny *bunnies = static_cast<Bunny *>(RL_MALLOC(MAX_BUNNIES*sizeof(Bunny)));    // Bunnies array
 
     int bunniesCount = 0;           // Bunnies counter
 
@@ -69,11 +69,11 @@ int main()
                 if (bunniesCount < MAX_BUNNIES)
                 {
                     bunnies[bunniesCount].position = GetMousePosition();
-                    bunnies[bunniesCount].speed.x = (float)GetRandomValue(-250, 250);
-                    bunnies[bunniesCount].speed.y = (float)GetRandomValue(-250, 250);
-                    bunnies[bunniesCount].color = Color{ (unsigned char)GetRandomValue(50, 240),
-                                                       (unsigned char)GetRandomValue(80, 240),
-                                                       (unsigned char)GetRandomValue(100, 240), 255 };
+                    bunnies[bunniesCount].speed.x = static_cast<float>(GetRandomValue(-250, 250));
+                    bunnies[bunniesCount].speed.y = static_cast<float>(GetRandomValue(-250, 250));
+                    bunnies[bunniesCount].color = Color{ static_cast<unsigned char>(GetRandomValue(50, 240)),
+                                                       static_cast<unsigned char>(GetRandomValue(80, 240)),
+                                                       static_cast<unsigned char>(GetRandomValue(100, 240)), 255 };
                     bunniesCount++;
                 }
             }
@@ -89,10 +89,10 @@ int main()
                 bunnies[i].position.x += bunnies[i].speed.x*GetFrameTime();
                 bunnies[i].position.y += bunnies[i].speed.y*GetFrameTime();
 
-                if (((bunnies[i].position.x + (float)texBunny.width/2) > GetScreenWidth()) ||
-                    ((bunnies[i].position.x + (float)texBunny.width/2) < 0)) bunnies[i].speed.x *= -1;
-                if (((bunnies[i].position.y + (float)texBunny.height/2) > GetScreenHeight()) ||
-                    ((bunnies[i].position.y + (float)texBunny.height/2 - 40) < 0)) bunnies[i].speed.y *= -1;
+                if (((bunnies[i].position.x + static_cast<float>(texBunny.width)/2) > GetScreenWidth()) ||
+                    ((bunnies[i].position.x + static_cast<float>(texBunny.width)/2) < 0)) bunnies[i].speed.x *= -1;
+                if (((bunnies[i].position.y + static_cast<float>(texBunny.height)/2) > GetScreenHeight()) ||
+                    ((bunnies[i].position.y + static_cast<float>(texBunny.height)/2 - 40) < 0)) bunnies[i].speed.y *= -1;
             }
         }
         //----------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ int main()
                 // Process of sending data is costly and it could happen that GPU data has not been completely
                 // processed for drawing while new data is tried to be sent (updating current in-use buffers)
                 // it could generates a stall and consequently a frame drop, limiting the number of drawn bunnies
-                DrawTexture(texBunny, (int)bunnies[i].position.x, (int)bunnies[i].position.y, bunnies[i].color);
+                DrawTexture(texBunny, static_cast<int>(bunnies[i].position.x), static_cast<int>(bunnies[i].position.y), bunnies[i].color);
             }
 
             DrawRectangle(0, 0, screenWidth, 40, BLACK);

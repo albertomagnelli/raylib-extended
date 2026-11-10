@@ -56,7 +56,7 @@ int main()
             camera.target = ((camera.target) + (delta));
         }
 
-        Vector2 renderScale = { (float)GetRenderWidth()/GetScreenWidth(), (float)GetRenderHeight()/GetScreenHeight() };
+        Vector2 renderScale = { static_cast<float>(GetRenderWidth())/GetScreenWidth(), static_cast<float>(GetRenderHeight())/GetScreenHeight() };
 
         if (zoomMode == 0)
         {

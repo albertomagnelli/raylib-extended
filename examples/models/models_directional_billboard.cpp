@@ -74,12 +74,12 @@ int main()
         if (anim >= 4) anim = 0;
 
         // Find the current direction frame based on the camera position to the billboard object
-        float dir = (float)floor(((Vector2Angle(Vector2{ 2.0f, 0.0f }, Vector2{ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f);
+        float dir = static_cast<float>(floor(((Vector2Angle(Vector2{ 2.0f, 0.0f }, Vector2{ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f));
 
         // Correct frame index if angle is negative
         if (dir < 0.0f)
         {
-            dir = 8.0f - (float)abs((int)dir);
+            dir = 8.0f - static_cast<float>(abs(static_cast<int>(dir)));
         }
         //----------------------------------------------------------------------------------
 

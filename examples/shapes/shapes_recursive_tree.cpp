@@ -43,7 +43,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - recursive tree");
 
-    Vector2 start = { (screenWidth/2.0f) - 125.0f, (float)screenHeight };
+    Vector2 start = { (screenWidth/2.0f) - 125.0f, static_cast<float>(screenHeight) };
     float angle = 40.0f;
     float thick = 1.0f;
     float treeDepth = 10.0f;
@@ -60,7 +60,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         float theta = angle*DEG2RAD;
-        int maxBranches = (int)(powf(2, floorf(treeDepth)));
+        int maxBranches = static_cast<int>(powf(2, floorf(treeDepth)));
         Branch branches[1030] = {};
         int count = 0;
 

@@ -45,7 +45,7 @@ int main()
     for (int i = 0; i < MAX_COLORS_COUNT; i++)
     {
         colorsRecs[i].x = 20.0f + 100.0f *(i%7) + 10.0f *(i%7);
-        colorsRecs[i].y = 80.0f + 100.0f *((int)i/7) + 10.0f *((float)i/7);
+        colorsRecs[i].y = 80.0f + 100.0f *(i/7) + 10.0f *(static_cast<float>(i)/7);
         colorsRecs[i].width = 100.0f;
         colorsRecs[i].height = 100.0f;
     }
@@ -86,10 +86,10 @@ int main()
 
                 if (IsKeyDown(KEY_SPACE) || colorState[i])
                 {
-                    DrawRectangle((int)colorsRecs[i].x, (int)(colorsRecs[i].y + colorsRecs[i].height - 26), (int)colorsRecs[i].width, 20, BLACK);
+                    DrawRectangle(static_cast<int>(colorsRecs[i].x), static_cast<int>(colorsRecs[i].y + colorsRecs[i].height - 26), static_cast<int>(colorsRecs[i].width), 20, BLACK);
                     DrawRectangleLinesEx(colorsRecs[i], 6, Fade(BLACK, 0.3f));
-                    DrawText(colorNames[i], (int)(colorsRecs[i].x + colorsRecs[i].width - MeasureText(colorNames[i], 10) - 12),
-                        (int)(colorsRecs[i].y + colorsRecs[i].height - 20), 10, colors[i]);
+                    DrawText(colorNames[i], static_cast<int>(colorsRecs[i].x + colorsRecs[i].width - MeasureText(colorNames[i], 10) - 12),
+                        static_cast<int>(colorsRecs[i].y + colorsRecs[i].height - 20), 10, colors[i]);
                 }
             }
 

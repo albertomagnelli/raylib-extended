@@ -145,7 +145,7 @@ int main()
             // Draw font texture scaled to screen
             float atlasScale = 380.0f/font.texture.width;
             DrawRectangleRec(Rectangle{ 400.0f, 16.0f, font.texture.width* atlasScale, font.texture.height* atlasScale }, BLACK);
-            DrawTexturePro(font.texture, Rectangle{ 0, 0, (float)font.texture.width, (float)font.texture.height },
+            DrawTexturePro(font.texture, Rectangle{ 0, 0, static_cast<float>(font.texture.width), static_cast<float>(font.texture.height) },
                 Rectangle{ 400.0f, 16.0f, font.texture.width*atlasScale, font.texture.height*atlasScale }, Vector2{ 0, 0 }, 0.0f, WHITE);
             DrawRectangleLines(400, 16, 380, 380, RED);
 
@@ -189,7 +189,7 @@ static void AddCodepointRange(Font *font, const char *fontPath, int start, int s
     // add them to existing font, regenerating font image and texture
 
     int updatedCodepointCount = currentRangeSize + rangeSize;
-    int *updatedCodepoints = (int *)RL_CALLOC(updatedCodepointCount, sizeof(int));
+    int *updatedCodepoints = static_cast<int *>(RL_CALLOC(updatedCodepointCount, sizeof(int)));
 
     // Get current codepoint list
     for (int i = 0; i < currentRangeSize; i++) updatedCodepoints[i] = font->glyphs[i].value;

@@ -122,15 +122,15 @@ int main()
     // Tell the shader how wide the screen is so we can have
     // a pitch black half and a dimly lit half
     unsigned int wLoc = GetShaderLocation(shdrSpot, "screenWidth");
-    float sw = (float)GetScreenWidth();
+    float sw = static_cast<float>(GetScreenWidth());
     SetShaderValue(shdrSpot, wLoc, &sw, SHADER_UNIFORM_FLOAT);
 
     // Randomize the locations and velocities of the spotlights
     // and initialize the shader locations
     for (int i = 0; i < MAX_SPOTS; i++)
     {
-        spots[i].position.x = (float)GetRandomValue(64, screenWidth - 64);
-        spots[i].position.y = (float)GetRandomValue(64, screenHeight - 64);
+        spots[i].position.x = static_cast<float>(GetRandomValue(64, screenWidth - 64));
+        spots[i].position.y = static_cast<float>(GetRandomValue(64, screenHeight - 64));
         spots[i].speed = Vector2{ 0, 0 };
 
         while ((fabs(spots[i].speed.x) + fabs(spots[i].speed.y)) < 2)
@@ -193,14 +193,14 @@ int main()
             for (int n = 0; n < MAX_STARS; n++)
             {
                 // Single pixel is just too small these days!
-                DrawRectangle((int)stars[n].position.x, (int)stars[n].position.y, 2, 2, WHITE);
+                DrawRectangle(static_cast<int>(stars[n].position.x), static_cast<int>(stars[n].position.y), 2, 2, WHITE);
             }
 
             for (int i = 0; i < 16; i++)
             {
                 DrawTexture(texRay,
-                    (int)((screenWidth/2.0f) + cos((frameCounter + i*8)/51.45f)*(screenWidth/2.2f) - 32),
-                    (int)((screenHeight/2.0f) + sin((frameCounter + i*8)/17.87f)*(screenHeight/4.2f)), WHITE);
+                    static_cast<int>((screenWidth/2.0f) + cos((frameCounter + i*8)/51.45f)*(screenWidth/2.2f) - 32),
+                    static_cast<int>((screenHeight/2.0f) + sin((frameCounter + i*8)/17.87f)*(screenHeight/4.2f)), WHITE);
             }
 
             // Draw spot lights
@@ -215,8 +215,8 @@ int main()
             DrawFPS(10, 10);
 
             DrawText("Move the mouse!", 10, 30, 20, GREEN);
-            DrawText("Pitch Black", (int)(screenWidth*0.2f), screenHeight/2, 20, GREEN);
-            DrawText("Dark", (int)(screenWidth*.66f), screenHeight/2, 20, GREEN);
+            DrawText("Pitch Black", static_cast<int>(screenWidth*0.2f), screenHeight/2, 20, GREEN);
+            DrawText("Dark", static_cast<int>(screenWidth*.66f), screenHeight/2, 20, GREEN);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -240,13 +240,13 @@ static void ResetStar(Star *star)
 {
     star->position = Vector2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
-    star->speed.x = (float)GetRandomValue(-1000, 1000)/100.0f;
-    star->speed.y = (float)GetRandomValue(-1000, 1000)/100.0f;
+    star->speed.x = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
+    star->speed.y = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
 
     while (!(fabs(star->speed.x) + (fabs(star->speed.y) > 1)))
     {
-        star->speed.x = (float)GetRandomValue(-1000, 1000)/100.0f;
-        star->speed.y = (float)GetRandomValue(-1000, 1000)/100.0f;
+        star->speed.x = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
+        star->speed.y = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
     }
 
     star->position = ((star->position) + (((star->speed) * (Vector2{ 8.0f, 8.0f }))));

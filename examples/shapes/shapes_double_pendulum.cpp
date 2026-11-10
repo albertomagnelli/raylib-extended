@@ -49,8 +49,8 @@ int main()
     float totalM = m1 + m2;
 
     Vector2 previousPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
-    previousPosition.x += ((float)screenWidth/2);
-    previousPosition.y += ((float)screenHeight/2 - 100);
+    previousPosition.x += (static_cast<float>(screenWidth)/2);
+    previousPosition.y += (static_cast<float>(screenHeight)/2 - 100);
 
     // Scale length
     float L1 = l1*lengthScaler;
@@ -105,8 +105,8 @@ int main()
 
         // Calculate position
         Vector2 currentPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
-        currentPosition.x += (float)screenWidth/2;
-        currentPosition.y += (float)screenHeight/2 - 100;
+        currentPosition.x += static_cast<float>(screenWidth)/2;
+        currentPosition.y += static_cast<float>(screenHeight)/2 - 100;
 
         // Draw to render texture
         BeginTextureMode(target);
@@ -129,7 +129,7 @@ int main()
             ClearBackground(BLACK);
 
             // Draw trails texture
-            DrawTextureRec(target.texture, Rectangle{ 0, 0, (float)target.texture.width, (float)-target.texture.height }, Vector2{ 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, Vector2{ 0, 0 }, WHITE);
 
             // Draw double pendulum
             DrawRectanglePro(Rectangle{ screenWidth/2.0f, screenHeight/2.0f - 100, 10*l1, lineThick },

@@ -43,12 +43,12 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - hilbert curve");
 
     int order = 2;
-    float size = (float)GetScreenHeight();
+    float size = static_cast<float>(GetScreenHeight());
     int strokeCount = 0;
     Vector2 *hilbertPath = LoadHilbertPath(order, size, &strokeCount);
 
     int prevOrder = order;
-    int prevSize = (int)size;       // NOTE: Size from slider is float but for comparison we use int
+    int prevSize = static_cast<int>(size);       // NOTE: Size from slider is float but for comparison we use int
     int counter = 0;
     float thick = 2.0f;
     bool animate = true;
@@ -64,7 +64,7 @@ int main()
         //----------------------------------------------------------------------------------
         // Check if order or size have changed to regenerate
         // NOTE: Size from slider is float but for comparison we use int
-        if ((prevOrder != order) || (prevSize != (int)size))
+        if ((prevOrder != order) || (prevSize != static_cast<int>(size)))
         {
             UnloadHilbertPath(hilbertPath);
             hilbertPath = LoadHilbertPath(order, size, &strokeCount);
@@ -73,7 +73,7 @@ int main()
             else counter = strokeCount;
 
             prevOrder = order;
-            prevSize = (int)size;
+            prevSize = static_cast<int>(size);
         }
         //----------------------------------------------------------------------------------
 
@@ -88,7 +88,7 @@ int main()
                 // Draw Hilbert path animation, one stroke every frame
                 for (int i = 1; i <= counter; i++)
                 {
-                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV(((float)i/strokeCount)*360.0f, 1.0f, 1.0f));
+                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV((static_cast<float>(i)/strokeCount)*360.0f, 1.0f, 1.0f));
                 }
 
                 counter += 1;
@@ -98,15 +98,15 @@ int main()
                 // Draw full Hilbert path
                 for (int i = 1; i < strokeCount; i++)
                 {
-                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV(((float)i/strokeCount)*360.0f, 1.0f, 1.0f));
+                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV((static_cast<float>(i)/strokeCount)*360.0f, 1.0f, 1.0f));
                 }
             }
 
             // Draw UI using raygui
             GuiCheckBox(Rectangle{ 450, 50, 20, 20 }, "ANIMATE GENERATION ON CHANGE", &animate);
             GuiSpinner(Rectangle{ 585, 100, 180, 30 }, "HILBERT CURVE ORDER:  ", &order, 2, 8, false);
-            GuiSlider(Rectangle{ 524, 150, 240, 24 }, "THICKNESS:  ", NULL, &thick, 1.0f, 10.0f);
-            GuiSlider(Rectangle{ 524, 190, 240, 24 }, "TOTAL SIZE: ", NULL, &size, 10.0f, GetScreenHeight()*1.5f);
+            GuiSlider(Rectangle{ 524, 150, 240, 24 }, "THICKNESS:  ", nullptr, &thick, 1.0f, 10.0f);
+            GuiSlider(Rectangle{ 524, 190, 240, 24 }, "TOTAL SIZE: ", nullptr, &size, 10.0f, GetScreenHeight()*1.5f);
 
         EndDrawing();
         //--------------------------------------------------------------------------
@@ -132,7 +132,7 @@ static Vector2 *LoadHilbertPath(int order, float size, int *strokeCount)
     float len = size/N;
     *strokeCount = N*N;
 
-    Vector2 *hilbertPath = (Vector2 *)RL_CALLOC(*strokeCount, sizeof(Vector2));
+    Vector2 *hilbertPath = static_cast<Vector2 *>(RL_CALLOC(*strokeCount, sizeof(Vector2)));
 
     for (int i = 0; i < *strokeCount; i++)
     {

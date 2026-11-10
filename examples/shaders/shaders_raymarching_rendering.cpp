@@ -54,7 +54,7 @@ int main()
     int runTimeLoc = GetShaderLocation(shader, "runTime");
     int resolutionLoc = GetShaderLocation(shader, "resolution");
 
-    float resolution[2] = { (float)screenWidth, (float)screenHeight };
+    float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
     float runTime = 0.0f;
@@ -84,8 +84,8 @@ int main()
         // Check if screen is resized
         if (IsWindowResized())
         {
-            resolution[0] = (float)GetScreenWidth();
-            resolution[1] = (float)GetScreenHeight();
+            resolution[0] = static_cast<float>(GetScreenWidth());
+            resolution[1] = static_cast<float>(GetScreenHeight());
             SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
         }
         //----------------------------------------------------------------------------------

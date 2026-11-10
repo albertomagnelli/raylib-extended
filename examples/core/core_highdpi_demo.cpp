@@ -45,7 +45,7 @@ int main()
     int pixelGridLabelY = pixelGridBottom + 30;
     int pixelGridDescY = pixelGridLabelY + 30;
     int cellSize = 50;
-    float cellSizePx = (float)cellSize;
+    float cellSizePx = static_cast<float>(cellSize);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ int main()
 
         int currentMonitor = GetCurrentMonitor();
         Vector2 dpiScale = GetWindowScaleDPI();
-        cellSizePx = ((float)cellSize)/dpiScale.x;
+        cellSizePx = (static_cast<float>(cellSize))/dpiScale.x;
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -92,10 +92,10 @@ int main()
             int lastTextX = -minTextSpace;
             for (int i = cellSize; i < GetRenderWidth(); i += cellSize, odd = !odd)
             {
-                int x = (int)(((float)i)/dpiScale.x);
-                if (odd) DrawRectangle(x, pixelGridTop, (int)cellSizePx, pixelGridBottom - pixelGridTop, CLITERAL(Color){ 0, 121, 241, 100 });
+                int x = static_cast<int>((static_cast<float>(i))/dpiScale.x);
+                if (odd) DrawRectangle(x, pixelGridTop, static_cast<int>(cellSizePx), pixelGridBottom - pixelGridTop, CLITERAL(Color){ 0, 121, 241, 100 });
 
-                DrawLine(x, pixelGridTop, (int)(((float)i)/dpiScale.x), pixelGridLabelY - 10, GRAY);
+                DrawLine(x, pixelGridTop, static_cast<int>((static_cast<float>(i))/dpiScale.x), pixelGridLabelY - 10, GRAY);
 
                 if ((x - lastTextX) >= minTextSpace)
                 {
@@ -128,7 +128,7 @@ int main()
 //------------------------------------------------------------------------------------
 static void DrawTextCenter(std::string_view text, int x, int y, int fontSize, Color color)
 {
-    Vector2 size = MeasureTextEx(GetFontDefault(), text, (float)fontSize, 3);
+    Vector2 size = MeasureTextEx(GetFontDefault(), text, static_cast<float>(fontSize), 3);
     Vector2 pos = Vector2{ x - size.x/2, y - size.y/2 };
-    DrawTextEx(GetFontDefault(), text, pos, (float)fontSize, 3, color);
+    DrawTextEx(GetFontDefault(), text, pos, static_cast<float>(fontSize), 3, color);
 }

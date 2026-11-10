@@ -213,15 +213,15 @@ int main()
             for (int i = 0; i < SIZEOF(emoji); i++)
             {
                 const char *txt = &emojiCodepoints[emoji[i].index];
-                Rectangle emojiRect = { position.x, position.y, (float)fontEmoji.baseSize, (float)fontEmoji.baseSize };
+                Rectangle emojiRect = { position.x, position.y, static_cast<float>(fontEmoji.baseSize), static_cast<float>(fontEmoji.baseSize) };
 
                 if (!CheckCollisionPointRec(mouse, emojiRect))
                 {
-                    DrawTextEx(fontEmoji, txt, position, (float)fontEmoji.baseSize, 1.0f, selected == i ? emoji[i].color : Fade(LIGHTGRAY, 0.4f));
+                    DrawTextEx(fontEmoji, txt, position, static_cast<float>(fontEmoji.baseSize), 1.0f, selected == i ? emoji[i].color : Fade(LIGHTGRAY, 0.4f));
                 }
                 else
                 {
-                    DrawTextEx(fontEmoji, txt, position, (float)fontEmoji.baseSize, 1.0f, emoji[i].color );
+                    DrawTextEx(fontEmoji, txt, position, static_cast<float>(fontEmoji.baseSize), 1.0f, emoji[i].color );
                     hovered = i;
                     hoveredPos = position;
                 }
@@ -245,7 +245,7 @@ int main()
                     TextIsEqual(messages[message].language, "Japanese")) font = &fontAsian;
 
                 // Calculate size for the message box (approximate the height and width)
-                Vector2 sz = MeasureTextEx(*font, messages[message].text, (float)font->baseSize, 1.0f);
+                Vector2 sz = MeasureTextEx(*font, messages[message].text, static_cast<float>(font->baseSize), 1.0f);
                 if (sz.x > 300) { sz.y *= sz.x/300; sz.x = 300; }
                 else if (sz.x < 160) sz.x = 160;
 
@@ -277,16 +277,16 @@ int main()
                 DrawTriangle(a, b, c, emoji[selected].color);
 
                 // Draw the main text message
-                Rectangle textRect = { msgRect.x + (float)horizontalPadding/2, msgRect.y + (float)verticalPadding/2, msgRect.width - horizontalPadding, msgRect.height };
-                DrawTextBoxed(*font, messages[message].text, textRect, (float)font->baseSize, 1.0f, true, WHITE);
+                Rectangle textRect = { msgRect.x + static_cast<float>(horizontalPadding)/2, msgRect.y + static_cast<float>(verticalPadding)/2, msgRect.width - horizontalPadding, msgRect.height };
+                DrawTextBoxed(*font, messages[message].text, textRect, static_cast<float>(font->baseSize), 1.0f, true, WHITE);
 
                 // Draw the info text below the main message
-                int size = (int)strlen(messages[message].text);
+                int size = static_cast<int>(strlen(messages[message].text));
                 int length = GetCodepointCount(messages[message].text);
                 std::string info = TextFormat("%s %u characters %i bytes", messages[message].language, length, size);
                 sz = MeasureTextEx(GetFontDefault(), info, 10, 1.0f);
 
-                DrawText(info, (int)(textRect.x + textRect.width - sz.x), (int)(msgRect.y + msgRect.height - sz.y - 2), 10, RAYWHITE);
+                DrawText(info, static_cast<int>(textRect.x + textRect.width - sz.x), static_cast<int>(msgRect.y + msgRect.height - sz.y - 2), 10, RAYWHITE);
             }
             //------------------------------------------------------------------------------
 
@@ -322,7 +322,7 @@ static void RandomizeEmoji(void)
         emoji[i].index = GetRandomValue(0, 179)*5;
 
         // Generate a random color for this emoji
-        emoji[i].color = Fade(ColorFromHSV((float)((start*(i + 1))%360), 0.6f, 0.85f), 0.8f);
+        emoji[i].color = Fade(ColorFromHSV(static_cast<float>((start*(i + 1))%360), 0.6f, 0.85f), 0.8f);
 
         // Set a random message for this emoji
         emoji[i].message = GetRandomValue(0, SIZEOF(messages) - 1);
@@ -347,7 +347,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
     float textOffsetY = 0.0f;       // Offset between lines (on line break '\n')
     float textOffsetX = 0.0f;       // Offset X to next character to draw
 
-    float scaleFactor = fontSize/(float)font.baseSize;     // Character rectangle scaling factor
+    float scaleFactor = fontSize/static_cast<float>(font.baseSize);     // Character rectangle scaling factor
 
     // Word/character wrapping mechanism variables
     enum { MEASURE_STATE = 0, DRAW_STATE = 1 };
@@ -421,7 +421,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
             {
                 if (!wordWrap)
                 {
-                    textOffsetY += (font.baseSize + (float)font.baseSize/2)*scaleFactor;
+                    textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
                     textOffsetX = 0;
                 }
             }
@@ -429,7 +429,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
             {
                 if (!wordWrap && ((textOffsetX + glyphWidth) > rec.width))
                 {
-                    textOffsetY += (font.baseSize + (float)font.baseSize/2)*scaleFactor;
+                    textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
                     textOffsetX = 0;
                 }
 
@@ -440,7 +440,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 bool isGlyphSelected = false;
                 if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
                 {
-                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, (float)font.baseSize*scaleFactor }, selectBackTint);
+                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, static_cast<float>(font.baseSize)*scaleFactor }, selectBackTint);
                     isGlyphSelected = true;
                 }
 
@@ -453,7 +453,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
 
             if (wordWrap && (i == endLine))
             {
-                textOffsetY += (font.baseSize + (float)font.baseSize/2)*scaleFactor;
+                textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
                 textOffsetX = 0;
                 startLine = endLine;
                 endLine = -1;

@@ -139,7 +139,7 @@ int main()
 static int *CodepointRemoveDuplicates(int *codepoints, int codepointCount, int *codepointsResultCount)
 {
     int codepointsNoDupsCount = codepointCount;
-    int *codepointsNoDups = (int *)RL_CALLOC(codepointCount, sizeof(int));
+    int *codepointsNoDups = static_cast<int *>(RL_CALLOC(codepointCount, sizeof(int)));
     memcpy(codepointsNoDups, codepoints, codepointCount*sizeof(int));
 
     // Remove duplicates

@@ -49,7 +49,7 @@ int main()
     for (int i = 0; i < MAX_SINEWAVE_POINTS; i++)
     {
         sinePoints[i].x = i*GetScreenWidth()/180.0f;
-        sinePoints[i].y = screenHeight/2.0f + 150*sinf((2*PI/1.5f)*(1.0f/60.0f)*(float)i); // Calculate for 60 fps
+        sinePoints[i].y = screenHeight/2.0f + 150*sinf((2*PI/1.5f)*(1.0f/60.0f)*static_cast<float>(i)); // Calculate for 60 fps
     }
 
     SetTargetFPS(60);
@@ -79,7 +79,7 @@ int main()
                 // Stop current recording and save file
                 gifRecording = false;
                 MsfGifResult result = msf_gif_end(&gifState);
-                SaveFileData(TextFormat("%s/screenrecording.gif", GetApplicationDirectory().c_str()), result.data, (unsigned int)result.dataSize);
+                SaveFileData(TextFormat("%s/screenrecording.gif", GetApplicationDirectory().c_str()), result.data, static_cast<unsigned int>(result.dataSize));
                 msf_gif_free(result);
 
                 TraceLog(LOG_INFO, "Finish animated GIF recording");
@@ -107,7 +107,7 @@ int main()
                 Image imScreen = LoadImageFromScreen();
 
                 // Add the frame to the gif recording, providing and "estimated" time for display in centiseconds
-                msf_gif_frame(&gifState, (uint8_t *)imScreen.data, (int)((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);
+                msf_gif_frame(&gifState, static_cast<uint8_t *>(imScreen.data), static_cast<int>((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);
                 gifFrameCounter = 0;
 
                 UnloadImage(imScreen);    // Free image data

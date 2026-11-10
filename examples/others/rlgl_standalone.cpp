@@ -149,9 +149,9 @@ int main()
     glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
 #endif
 
-    GLFWwindow *window = glfwCreateWindow(screenWidth, screenHeight, "raylib [others] example - rlgl standalone", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(screenWidth, screenHeight, "raylib [others] example - rlgl standalone", nullptr, nullptr);
 
-    if (window == NULL)
+    if (window == nullptr)
     {
         glfwTerminate();
         return 2;
@@ -166,7 +166,7 @@ int main()
     glfwSwapInterval(0);
 
     // Load OpenGL 3.3 supported extensions
-    rlLoadExtensions((void *)glfwGetProcAddress);
+    rlLoadExtensions(reinterpret_cast<void *>(glfwGetProcAddress));
     //--------------------------------------------------------
 
     // Initialize OpenGL context (states and resources)
@@ -207,7 +207,7 @@ int main()
             // Draw '3D' elements in the scene
             //-----------------------------------------------
             // Calculate projection matrix (from perspective) and view matrix from camera look at
-            Matrix matProj = glm::perspective(camera.fovy*DEG2RAD, (float)screenWidth/(float)screenHeight, 0.01f, 1000.0f);
+            Matrix matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(screenWidth)/static_cast<float>(screenHeight), 0.01f, 1000.0f);
             Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
@@ -225,7 +225,7 @@ int main()
             //-----------------------------------------------
 #define RLGL_SET_MATRIX_MANUALLY
 #if defined(RLGL_SET_MATRIX_MANUALLY)
-            matProj = glm::ortho(0.0f, (float)screenWidth, (float)screenHeight, 0.0f, 0.0f, 1.0f);
+            matProj = glm::ortho(0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, 0.0f, 1.0f);
             matView = Matrix(1.0f);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
@@ -319,11 +319,11 @@ static void DrawGrid(int slices, float spacing)
                 rlColor3f(0.75f, 0.75f, 0.75f);
             }
 
-            rlVertex3f((float)i*spacing, 0.0f, (float)-halfSlices*spacing);
-            rlVertex3f((float)i*spacing, 0.0f, (float)halfSlices*spacing);
+            rlVertex3f(static_cast<float>(i)*spacing, 0.0f, static_cast<float>(-halfSlices)*spacing);
+            rlVertex3f(static_cast<float>(i)*spacing, 0.0f, static_cast<float>(halfSlices)*spacing);
 
-            rlVertex3f((float)-halfSlices*spacing, 0.0f, (float)i*spacing);
-            rlVertex3f((float)halfSlices*spacing, 0.0f, (float)i*spacing);
+            rlVertex3f(static_cast<float>(-halfSlices)*spacing, 0.0f, static_cast<float>(i)*spacing);
+            rlVertex3f(static_cast<float>(halfSlices)*spacing, 0.0f, static_cast<float>(i)*spacing);
         }
     rlEnd();
 }

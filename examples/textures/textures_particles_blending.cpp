@@ -49,10 +49,10 @@ int main()
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
         mouseTail[i].position = Vector2{ 0, 0 };
-        mouseTail[i].color = Color{ (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), (unsigned char)GetRandomValue(0, 255), 255 };
+        mouseTail[i].color = Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 };
         mouseTail[i].alpha = 1.0f;
-        mouseTail[i].size = (float)GetRandomValue(1, 30)/20.0f;
-        mouseTail[i].rotation = (float)GetRandomValue(0, 360);
+        mouseTail[i].size = static_cast<float>(GetRandomValue(1, 30))/20.0f;
+        mouseTail[i].rotation = static_cast<float>(GetRandomValue(0, 360));
         mouseTail[i].active = false;
     }
 
@@ -117,9 +117,9 @@ int main()
                 // Draw active particles
                 for (int i = 0; i < MAX_PARTICLES; i++)
                 {
-                    if (mouseTail[i].active) DrawTexturePro(smoke, Rectangle{ 0.0f, 0.0f, (float)smoke.width, (float)smoke.height },
+                    if (mouseTail[i].active) DrawTexturePro(smoke, Rectangle{ 0.0f, 0.0f, static_cast<float>(smoke.width), static_cast<float>(smoke.height) },
                                                            Rectangle{ mouseTail[i].position.x, mouseTail[i].position.y, smoke.width*mouseTail[i].size, smoke.height*mouseTail[i].size },
-                                                           Vector2{ (float)(smoke.width*mouseTail[i].size/2.0f), (float)(smoke.height*mouseTail[i].size/2.0f) }, mouseTail[i].rotation,
+                                                           Vector2{ (smoke.width*mouseTail[i].size/2.0f), (smoke.height*mouseTail[i].size/2.0f) }, mouseTail[i].rotation,
                                                            Fade(mouseTail[i].color, mouseTail[i].alpha));
                 }
 

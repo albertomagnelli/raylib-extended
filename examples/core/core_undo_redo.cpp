@@ -81,7 +81,7 @@ int main()
     player.color = RED;
 
     // Init undo buffer to store MAX_UNDO_STATES states
-    PlayerState *states = (PlayerState *)RL_CALLOC(MAX_UNDO_STATES, sizeof(PlayerState));
+    PlayerState *states = static_cast<PlayerState *>(RL_CALLOC(MAX_UNDO_STATES, sizeof(PlayerState)));
     // Init all undo states to current state
     for (int i = 0; i < MAX_UNDO_STATES; i++) memcpy(&states[i], &player, sizeof(PlayerState));
 
@@ -111,9 +111,9 @@ int main()
         // Player color change logic
         if (IsKeyPressed(KEY_SPACE))
         {
-            player.color.r = (unsigned char)GetRandomValue(20, 255);
-            player.color.g = (unsigned char)GetRandomValue(20, 220);
-            player.color.b = (unsigned char)GetRandomValue(20, 240);
+            player.color.r = static_cast<unsigned char>(GetRandomValue(20, 255));
+            player.color.g = static_cast<unsigned char>(GetRandomValue(20, 220));
+            player.color.b = static_cast<unsigned char>(GetRandomValue(20, 240));
         }
 
         // Undo state change logic
@@ -201,28 +201,28 @@ int main()
                 else
                 {
                     for (int i = firstUndoIndex; i < MAX_UNDO_STATES; i++)
-                        DrawRectangle((int)gridPosition.x + states[i].cell.x*GRID_CELL_SIZE, (int)gridPosition.y + states[i].cell.y*GRID_CELL_SIZE,
+                        DrawRectangle(static_cast<int>(gridPosition.x) + states[i].cell.x*GRID_CELL_SIZE, static_cast<int>(gridPosition.y) + states[i].cell.y*GRID_CELL_SIZE,
                             GRID_CELL_SIZE, GRID_CELL_SIZE, LIGHTGRAY);
                     for (int i = 0; i < currentUndoIndex; i++)
-                        DrawRectangle((int)gridPosition.x + states[i].cell.x*GRID_CELL_SIZE, (int)gridPosition.y + states[i].cell.y*GRID_CELL_SIZE,
+                        DrawRectangle(static_cast<int>(gridPosition.x) + states[i].cell.x*GRID_CELL_SIZE, static_cast<int>(gridPosition.y) + states[i].cell.y*GRID_CELL_SIZE,
                             GRID_CELL_SIZE, GRID_CELL_SIZE, LIGHTGRAY);
                 }
             }
 
             // Draw game grid
             for (int y = 0; y <= MAX_GRID_CELLS_Y; y++)
-                DrawLine((int)gridPosition.x, (int)gridPosition.y + y*GRID_CELL_SIZE,
-                    (int)gridPosition.x + MAX_GRID_CELLS_X*GRID_CELL_SIZE, (int)gridPosition.y + y*GRID_CELL_SIZE, GRAY);
+                DrawLine(static_cast<int>(gridPosition.x), static_cast<int>(gridPosition.y) + y*GRID_CELL_SIZE,
+                    static_cast<int>(gridPosition.x) + MAX_GRID_CELLS_X*GRID_CELL_SIZE, static_cast<int>(gridPosition.y) + y*GRID_CELL_SIZE, GRAY);
             for (int x = 0; x <= MAX_GRID_CELLS_X; x++)
-                DrawLine((int)gridPosition.x + x*GRID_CELL_SIZE, (int)gridPosition.y,
-                    (int)gridPosition.x + x*GRID_CELL_SIZE, (int)gridPosition.y + MAX_GRID_CELLS_Y*GRID_CELL_SIZE, GRAY);
+                DrawLine(static_cast<int>(gridPosition.x) + x*GRID_CELL_SIZE, static_cast<int>(gridPosition.y),
+                    static_cast<int>(gridPosition.x) + x*GRID_CELL_SIZE, static_cast<int>(gridPosition.y) + MAX_GRID_CELLS_Y*GRID_CELL_SIZE, GRAY);
 
             // Draw player
-            DrawRectangle((int)gridPosition.x + player.cell.x*GRID_CELL_SIZE, (int)gridPosition.y + player.cell.y*GRID_CELL_SIZE,
+            DrawRectangle(static_cast<int>(gridPosition.x) + player.cell.x*GRID_CELL_SIZE, static_cast<int>(gridPosition.y) + player.cell.y*GRID_CELL_SIZE,
                 GRID_CELL_SIZE + 1, GRID_CELL_SIZE + 1, player.color);
 
             // Draw undo system buffer info
-            DrawText("UNDO STATES:", (int)undoInfoPos.x - 85, (int)undoInfoPos.y + 9, 10, DARKGRAY);
+            DrawText("UNDO STATES:", static_cast<int>(undoInfoPos.x) - 85, static_cast<int>(undoInfoPos.y) + 9, 10, DARKGRAY);
             DrawUndoBuffer(undoInfoPos, firstUndoIndex, lastUndoIndex, currentUndoIndex, 24);
 
         EndDrawing();
@@ -247,15 +247,15 @@ int main()
 static void DrawUndoBuffer(Vector2 position, int firstUndoIndex, int lastUndoIndex, int currentUndoIndex, int slotSize)
 {
     // Draw index marks
-    DrawRectangle((int)position.x + 8 + slotSize*currentUndoIndex, (int)position.y - 10, 8, 8, RED);
-    DrawRectangleLines((int)position.x + 2 + slotSize*firstUndoIndex, (int)position.y + 27, 8, 8, BLACK);
-    DrawRectangle((int)position.x + 14 + slotSize*lastUndoIndex, (int)position.y + 27, 8, 8, BLACK);
+    DrawRectangle(static_cast<int>(position.x) + 8 + slotSize*currentUndoIndex, static_cast<int>(position.y) - 10, 8, 8, RED);
+    DrawRectangleLines(static_cast<int>(position.x) + 2 + slotSize*firstUndoIndex, static_cast<int>(position.y) + 27, 8, 8, BLACK);
+    DrawRectangle(static_cast<int>(position.x) + 14 + slotSize*lastUndoIndex, static_cast<int>(position.y) + 27, 8, 8, BLACK);
 
     // Draw background gray slots
     for (int i = 0; i < MAX_UNDO_STATES; i++)
     {
-        DrawRectangle((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, LIGHTGRAY);
-        DrawRectangleLines((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, GRAY);
+        DrawRectangle(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, LIGHTGRAY);
+        DrawRectangleLines(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, GRAY);
     }
 
     // Draw occupied slots: firstUndoIndex --> lastUndoIndex
@@ -263,22 +263,22 @@ static void DrawUndoBuffer(Vector2 position, int firstUndoIndex, int lastUndoInd
     {
         for (int i = firstUndoIndex; i < lastUndoIndex + 1; i++)
         {
-            DrawRectangle((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, SKYBLUE);
-            DrawRectangleLines((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, BLUE);
+            DrawRectangle(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, SKYBLUE);
+            DrawRectangleLines(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, BLUE);
         }
     }
     else if (lastUndoIndex < firstUndoIndex)
     {
         for (int i = firstUndoIndex; i < MAX_UNDO_STATES; i++)
         {
-            DrawRectangle((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, SKYBLUE);
-            DrawRectangleLines((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, BLUE);
+            DrawRectangle(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, SKYBLUE);
+            DrawRectangleLines(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, BLUE);
         }
 
         for (int i = 0; i < lastUndoIndex + 1; i++)
         {
-            DrawRectangle((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, SKYBLUE);
-            DrawRectangleLines((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, BLUE);
+            DrawRectangle(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, SKYBLUE);
+            DrawRectangleLines(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, BLUE);
         }
     }
 
@@ -287,26 +287,26 @@ static void DrawUndoBuffer(Vector2 position, int firstUndoIndex, int lastUndoInd
     {
         for (int i = firstUndoIndex; i < currentUndoIndex; i++)
         {
-            DrawRectangle((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, GREEN);
-            DrawRectangleLines((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, LIME);
+            DrawRectangle(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, GREEN);
+            DrawRectangleLines(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, LIME);
         }
     }
     else if (currentUndoIndex < firstUndoIndex)
     {
         for (int i = firstUndoIndex; i < MAX_UNDO_STATES; i++)
         {
-            DrawRectangle((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, GREEN);
-            DrawRectangleLines((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, LIME);
+            DrawRectangle(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, GREEN);
+            DrawRectangleLines(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, LIME);
         }
 
         for (int i = 0; i < currentUndoIndex; i++)
         {
-            DrawRectangle((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, GREEN);
-            DrawRectangleLines((int)position.x + slotSize*i, (int)position.y, slotSize, slotSize, LIME);
+            DrawRectangle(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, GREEN);
+            DrawRectangleLines(static_cast<int>(position.x) + slotSize*i, static_cast<int>(position.y), slotSize, slotSize, LIME);
         }
     }
 
     // Draw current selected UNDO slot
-    DrawRectangle((int)position.x + slotSize*currentUndoIndex, (int)position.y, slotSize, slotSize, GOLD);
-    DrawRectangleLines((int)position.x + slotSize*currentUndoIndex, (int)position.y, slotSize, slotSize, ORANGE);
+    DrawRectangle(static_cast<int>(position.x) + slotSize*currentUndoIndex, static_cast<int>(position.y), slotSize, slotSize, GOLD);
+    DrawRectangleLines(static_cast<int>(position.x) + slotSize*currentUndoIndex, static_cast<int>(position.y), slotSize, slotSize, ORANGE);
 }

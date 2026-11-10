@@ -167,7 +167,7 @@ int main()
             Matrix splat = glm::lookAt(collision.point, origin, Vector3{ 0.0f, 1.0f, 0.0f });
 
             // Spin the placement around a bit
-            splat = ((glm::rotate(Matrix(1.0f), DEG2RAD*((float)GetRandomValue(-180, 180)), Vector3{0.0f, 0.0f, 1.0f})) * (splat));
+            splat = ((glm::rotate(Matrix(1.0f), DEG2RAD*(static_cast<float>(GetRandomValue(-180, 180))), Vector3{0.0f, 0.0f, 1.0f})) * (splat));
 
             Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset);
 
@@ -209,8 +209,8 @@ int main()
             float x1 = x0 + 100;
             float x2 = x1 + 100;
 
-            DrawText("Vertices", (int)x1, (int)yPos, 10, LIME);
-            DrawText("Triangles", (int)x2, (int)yPos, 10, LIME);
+            DrawText("Vertices", static_cast<int>(x1), static_cast<int>(yPos), 10, LIME);
+            DrawText("Triangles", static_cast<int>(x2), static_cast<int>(yPos), 10, LIME);
             yPos += 15;
 
             int vertexCount = 0;
@@ -222,24 +222,24 @@ int main()
                 triangleCount += model.meshes[i].triangleCount;
             }
 
-            DrawText("Main model", (int)x0, (int)yPos, 10, LIME);
-            DrawText(TextFormat("%d", vertexCount), (int)x1, (int)yPos, 10, LIME);
-            DrawText(TextFormat("%d", triangleCount), (int)x2, (int)yPos, 10, LIME);
+            DrawText("Main model", static_cast<int>(x0), static_cast<int>(yPos), 10, LIME);
+            DrawText(TextFormat("%d", vertexCount), static_cast<int>(x1), static_cast<int>(yPos), 10, LIME);
+            DrawText(TextFormat("%d", triangleCount), static_cast<int>(x2), static_cast<int>(yPos), 10, LIME);
             yPos += 15;
 
             for (int i = 0; i < decalCount; i++)
             {
                 if (i == 20)
                 {
-                    DrawText("...", (int)x0, (int)yPos, 10, LIME);
+                    DrawText("...", static_cast<int>(x0), static_cast<int>(yPos), 10, LIME);
                     yPos += 15;
                 }
 
                 if (i < 20)
                 {
-                    DrawText(TextFormat("Decal #%d", i+1), (int)x0, (int)yPos, 10, LIME);
-                    DrawText(TextFormat("%d", decalModels[i].meshes[0].vertexCount), (int)x1, (int)yPos, 10, LIME);
-                    DrawText(TextFormat("%d", decalModels[i].meshes[0].triangleCount), (int)x2, (int)yPos, 10, LIME);
+                    DrawText(TextFormat("Decal #%d", i+1), static_cast<int>(x0), static_cast<int>(yPos), 10, LIME);
+                    DrawText(TextFormat("%d", decalModels[i].meshes[0].vertexCount), static_cast<int>(x1), static_cast<int>(yPos), 10, LIME);
+                    DrawText(TextFormat("%d", decalModels[i].meshes[0].triangleCount), static_cast<int>(x2), static_cast<int>(yPos), 10, LIME);
                     yPos += 15;
                 }
 
@@ -247,9 +247,9 @@ int main()
                 triangleCount += decalModels[i].meshes[0].triangleCount;
             }
 
-            DrawText("TOTAL", (int)x0, (int)yPos, 10, LIME);
-            DrawText(TextFormat("%d", vertexCount), (int)x1, (int)yPos, 10, LIME);
-            DrawText(TextFormat("%d", triangleCount), (int)x2, (int)yPos, 10, LIME);
+            DrawText("TOTAL", static_cast<int>(x0), static_cast<int>(yPos), 10, LIME);
+            DrawText(TextFormat("%d", vertexCount), static_cast<int>(x1), static_cast<int>(yPos), 10, LIME);
+            DrawText(TextFormat("%d", triangleCount), static_cast<int>(x2), static_cast<int>(yPos), 10, LIME);
             yPos += 15;
 
             DrawText("Hold RMB to move camera", 10, 430, 10, GRAY);
@@ -300,7 +300,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 vertices[3])
     if (mb->vertexCapacity <= (mb->vertexCount + 3))
     {
         int newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
-        Vector3 *newVertices = (Vector3 *)MemAlloc(newVertexCapacity*sizeof(Vector3));
+        Vector3 *newVertices = static_cast<Vector3 *>(MemAlloc(newVertexCapacity*sizeof(Vector3)));
 
         if (mb->vertexCapacity > 0)
         {
@@ -323,7 +323,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, Vector3 vertices[3])
 static void FreeMeshBuilder(MeshBuilder *mb)
 {
     MemFree(mb->vertices);
-    if (mb->uvs != NULL) MemFree(mb->uvs);
+    if (mb->uvs != nullptr) MemFree(mb->uvs);
     *mb = {};
 }
 
@@ -334,8 +334,8 @@ static Mesh BuildMesh(MeshBuilder *mb)
 
     outMesh.vertexCount = mb->vertexCount;
     outMesh.triangleCount = mb->vertexCount/3;
-    outMesh.vertices = (float *)MemAlloc(outMesh.vertexCount*3*sizeof(float));
-    if (mb->uvs != NULL) outMesh.texcoords = (float *)MemAlloc(outMesh.vertexCount*2*sizeof(float));
+    outMesh.vertices = static_cast<float *>(MemAlloc(outMesh.vertexCount*3*sizeof(float)));
+    if (mb->uvs != nullptr) outMesh.texcoords = static_cast<float *>(MemAlloc(outMesh.vertexCount*2*sizeof(float)));
 
     for (int i = 0; i < mb->vertexCount; i++)
     {
@@ -343,7 +343,7 @@ static Mesh BuildMesh(MeshBuilder *mb)
         outMesh.vertices[3*i+1] = mb->vertices[i].y;
         outMesh.vertices[3*i+2] = mb->vertices[i].z;
 
-        if (mb->uvs != NULL)
+        if (mb->uvs != nullptr)
         {
             outMesh.texcoords[2*i+0] = mb->uvs[i].x;
             outMesh.texcoords[2*i+1] = mb->uvs[i].y;
@@ -403,7 +403,7 @@ static Mesh GenMeshDecal(Model target, Matrix projection, float decalSize, float
 
             // The way we calculate the vertices of the mesh triangle
             // depend on whether the mesh vertices are indexed or not
-            if (mesh.indices == 0)
+            if (mesh.indices == nullptr)
             {
                 for (int v = 0; v < 3; v++)
                 {
@@ -563,7 +563,7 @@ static Mesh GenMeshDecal(Model target, Matrix projection, float decalSize, float
     // Allocate room for UVs
     if (theMesh->vertexCount > 0)
     {
-        theMesh->uvs = (Vector2 *)MemAlloc(sizeof(Vector2)*theMesh->vertexCount);
+        theMesh->uvs = static_cast<Vector2 *>(MemAlloc(sizeof(Vector2)*theMesh->vertexCount));
 
         for (int i = 0; i < theMesh->vertexCount; i++)
         {
@@ -607,7 +607,7 @@ static bool GuiButton(Rectangle rec, const char *label)
     int fontSize = 10;
     int textWidth = MeasureText(label, fontSize);
 
-    DrawText(label, (int)(rec.x + rec.width*0.5f - textWidth*0.5f), (int)(rec.y + rec.height*0.5f - fontSize*0.5f), fontSize, DARKGRAY);
+    DrawText(label, static_cast<int>(rec.x + rec.width*0.5f - textWidth*0.5f), static_cast<int>(rec.y + rec.height*0.5f - fontSize*0.5f), fontSize, DARKGRAY);
 
     return pressed;
 }

@@ -57,19 +57,19 @@ int main()
 
     // UI Panel top-left anchor
     const Vector2 panelPos = {
-        (float)screenWidth - panelMargin - panelWidth,
-        (float)panelMargin
+        static_cast<float>(screenWidth) - panelMargin - panelWidth,
+        static_cast<float>(panelMargin)
     };
 
     // UI Panel rectangle
     const Rectangle panelRect = {
         panelPos.x, panelPos.y,
-        (float)panelWidth,
-        (float)screenHeight - 2.0f*panelMargin
+        static_cast<float>(panelWidth),
+        static_cast<float>(screenHeight) - 2.0f*panelMargin
     };
 
     // Pie chart geometry
-    const Rectangle canvas = { 0, 0, panelPos.x, (float)screenHeight };
+    const Rectangle canvas = { 0, 0, panelPos.x, static_cast<float>(screenHeight) };
     const Vector2 center = { canvas.width/2.0f, canvas.height/2.0f };
     const float radius = 205.0f;
 
@@ -135,7 +135,7 @@ int main()
                 float sweepAngle = (totalValue > 0)? (values[i]/totalValue)*360.0f : 0.0f;
                 float midAngle = startAngle + sweepAngle/2.0f; // Middle angle for label positioning
 
-                Color color = ColorFromHSV((float)i/sliceCount*360.0f, 0.75f, 0.9f);
+                Color color = ColorFromHSV(static_cast<float>(i)/sliceCount*360.0f, 0.75f, 0.9f);
                 float currentRadius = radius;
 
                 // Make the hovered slice pop out by adding 20 pixels to its radius
@@ -158,7 +158,7 @@ int main()
                     float labelRadius = showDonut? (donutInnerRadius + radius)/2.0f : radius*0.7f;
                     Vector2 labelPos = { center.x + cosf(midAngle*DEG2RAD)*labelRadius - textSize.x/2.0f,
                         center.y + sinf(midAngle*DEG2RAD)*labelRadius - textSize.y/2.0f };
-                    DrawText(labelText, (int)labelPos.x, (int)labelPos.y, 20, WHITE);
+                    DrawText(labelText, static_cast<int>(labelPos.x), static_cast<int>(labelPos.y), 20, WHITE);
                 }
 
                 startAngle += sweepAngle;
@@ -168,48 +168,48 @@ int main()
             DrawRectangleRec(panelRect, Fade(LIGHTGRAY, 0.5f));
             DrawRectangleLinesEx(panelRect, 1.0f, GRAY);
 
-            GuiSpinner(Rectangle{ panelPos.x + 95, (float)panelPos.y + 12, 125, 25 }, "Slices ", &sliceCount, 1, MAX_PIE_SLICES, false);
-            GuiCheckBox(Rectangle{ panelPos.x + 20, (float)panelPos.y + 12 + 40, 20, 20 }, "Show Values", &showValues);
-            GuiCheckBox(Rectangle{ panelPos.x + 20, (float)panelPos.y + 12 + 70, 20, 20 }, "Show Percentages", &showPercentages);
-            GuiCheckBox(Rectangle{ panelPos.x + 20, (float)panelPos.y + 12 + 100, 20, 20 }, "Make Donut", &showDonut);
+            GuiSpinner(Rectangle{ panelPos.x + 95, static_cast<float>(panelPos.y) + 12, 125, 25 }, "Slices ", &sliceCount, 1, MAX_PIE_SLICES, false);
+            GuiCheckBox(Rectangle{ panelPos.x + 20, static_cast<float>(panelPos.y) + 12 + 40, 20, 20 }, "Show Values", &showValues);
+            GuiCheckBox(Rectangle{ panelPos.x + 20, static_cast<float>(panelPos.y) + 12 + 70, 20, 20 }, "Show Percentages", &showPercentages);
+            GuiCheckBox(Rectangle{ panelPos.x + 20, static_cast<float>(panelPos.y) + 12 + 100, 20, 20 }, "Make Donut", &showDonut);
 
             if (!showDonut) GuiDisable();
-            GuiSliderBar(Rectangle{ panelPos.x + 80, (float)panelPos.y + 12 + 130, panelRect.width - 100, 30 },
-                "Inner Radius", NULL, & donutInnerRadius, 5.0f, radius - 10.0f);
+            GuiSliderBar(Rectangle{ panelPos.x + 80, static_cast<float>(panelPos.y) + 12 + 130, panelRect.width - 100, 30 },
+                "Inner Radius", nullptr, & donutInnerRadius, 5.0f, radius - 10.0f);
             GuiEnable();
 
-            GuiLine(Rectangle{ panelPos.x + 10, (float)panelPos.y + 12 + 170, panelRect.width - 20, 1 }, NULL);
+            GuiLine(Rectangle{ panelPos.x + 10, static_cast<float>(panelPos.y) + 12 + 170, panelRect.width - 20, 1 }, nullptr);
 
             // Scrollable area for slice editors
             scrollPanelBounds = Rectangle{
                 panelPos.x + panelMargin,
-                (float)panelPos.y + 12 + 190,
+                static_cast<float>(panelPos.y) + 12 + 190,
                 panelRect.width - panelMargin*2,
                 panelRect.y + panelRect.height - (panelPos.y + 12 + 190) - panelMargin
             };
             int contentHeight = sliceCount*35;
 
-            GuiScrollPanel(scrollPanelBounds, NULL, Rectangle{ 0, 0, panelRect.width - 25, (float)contentHeight },
+            GuiScrollPanel(scrollPanelBounds, nullptr, Rectangle{ 0, 0, panelRect.width - 25, static_cast<float>(contentHeight) },
                 &scrollContentOffset, &view);
 
             const float contentX = view.x + scrollContentOffset.x; // Left of content
             const float contentY = view.y + scrollContentOffset.y; // Top of content
 
-            BeginScissorMode((int)view.x, (int)view.y, (int)view.width, (int)view.height);
+            BeginScissorMode(static_cast<int>(view.x), static_cast<int>(view.y), static_cast<int>(view.width), static_cast<int>(view.height));
 
                 for (int i = 0; i < sliceCount; i++)
                 {
-                    const int rowY = (int)(contentY + 5 + i*35);
+                    const int rowY = static_cast<int>(contentY + 5 + i*35);
 
                     // Color indicator
-                    Color color = ColorFromHSV((float)i/sliceCount*360.0f, 0.75f, 0.9f);
-                    DrawRectangle((int)(contentX + 15), rowY + 5, 20, 20, color);
+                    Color color = ColorFromHSV(static_cast<float>(i)/sliceCount*360.0f, 0.75f, 0.9f);
+                    DrawRectangle(static_cast<int>(contentX + 15), rowY + 5, 20, 20, color);
 
                     // Label textbox
-                    if (GuiTextBox(Rectangle{ contentX + 45, (float)rowY, 75, 30 }, labels[i], 32, editingLabel[i]))
+                    if (GuiTextBox(Rectangle{ contentX + 45, static_cast<float>(rowY), 75, 30 }, labels[i], 32, editingLabel[i]))
                         editingLabel[i] = !editingLabel[i];
 
-                    GuiSliderBar(Rectangle{ contentX + 130, (float)rowY, 110, 30 }, NULL, NULL, &values[i], 0.0f, 1000.0f);
+                    GuiSliderBar(Rectangle{ contentX + 130, static_cast<float>(rowY), 110, 30 }, nullptr, nullptr, &values[i], 0.0f, 1000.0f);
                 }
 
             EndScissorMode();

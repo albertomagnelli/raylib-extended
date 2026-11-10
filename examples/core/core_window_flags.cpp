@@ -153,7 +153,7 @@ int main()
         else ClearBackground(RAYWHITE);
 
         DrawCircleV(ballPosition, ballRadius, MAROON);
-        DrawRectangleLinesEx(Rectangle{ 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, 4, RAYWHITE);
+        DrawRectangleLinesEx(Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) }, 4, RAYWHITE);
 
         DrawCircleV(GetMousePosition(), 10, DARKBLUE);
 

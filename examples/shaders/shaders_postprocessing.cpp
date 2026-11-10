@@ -151,7 +151,7 @@ int main()
             // Render generated texture using selected postprocessing shader
             BeginShaderMode(shaders[currentShader]);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, (float)target.texture.width, (float)-target.texture.height }, Vector2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, Vector2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw 2d shapes and text over drawn texture

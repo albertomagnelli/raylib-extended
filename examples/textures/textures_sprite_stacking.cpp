@@ -67,8 +67,8 @@ int main()
             ClearBackground(RAYWHITE);
 
             // Get the size of a single slice
-            float frameWidth = (float)booth.width;
-            float frameHeight = (float)booth.height/(float)stackCount;
+            float frameWidth = static_cast<float>(booth.width);
+            float frameHeight = static_cast<float>(booth.height)/static_cast<float>(stackCount);
 
             // Get the scaled resolution to draw at
             float scaledWidth = frameWidth*stackScale;
@@ -78,7 +78,7 @@ int main()
             for (int i = stackCount - 1; i >= 0; i--)
             {
                 // Center vertically
-                Rectangle source = { 0.0f, (float)i*frameHeight, frameWidth, frameHeight };
+                Rectangle source = { 0.0f, static_cast<float>(i)*frameHeight, frameWidth, frameHeight };
                 Rectangle dest = { screenWidth/2.0f, (screenHeight/2.0f) + (i*stackSpacing) - (stackSpacing*stackCount/2.0f), scaledWidth, scaledHeight };
                 Vector2 origin = { scaledWidth/2.0f, scaledHeight/2.0f };
 

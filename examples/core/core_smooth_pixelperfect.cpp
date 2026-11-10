@@ -33,7 +33,7 @@ int main()
     const int virtualScreenWidth = 160;
     const int virtualScreenHeight = 90;
 
-    const float virtualRatio = (float)screenWidth/(float)virtualScreenWidth;
+    const float virtualRatio = static_cast<float>(screenWidth)/static_cast<float>(virtualScreenWidth);
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - smooth pixelperfect");
 
@@ -51,7 +51,7 @@ int main()
     Rectangle rec03 = { 80.0f, 65.0f, 15.0f, 25.0f };
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    Rectangle sourceRec = { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
+    Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
     Rectangle destRec = { (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
 
     Vector2 origin = { 0.0f, 0.0f };
@@ -75,8 +75,8 @@ int main()
         rotation += 60.0f*GetFrameTime();   // Rotate the rectangles, 60 degrees per second
 
         // Make the camera move to demonstrate the effect
-        cameraX = (sinf((float)GetTime())*50.0f) - 10.0f;
-        cameraY = cosf((float)GetTime())*30.0f;
+        cameraX = (sinf(static_cast<float>(GetTime()))*50.0f) - 10.0f;
+        cameraY = cosf(static_cast<float>(GetTime()))*30.0f;
 
         // Set the camera's target to the values computed above
         screenSpaceCamera.target = Vector2{ cameraX, cameraY };

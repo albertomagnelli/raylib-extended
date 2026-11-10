@@ -108,8 +108,8 @@ int main()
 
             // Draw rectangle box with rounded corners using shader
             Rectangle rec = { 50, 70, 110, 60 };
-            DrawRectangleLines((int)rec.x - 20, (int)rec.y - 20, (int)rec.width + 40, (int)rec.height + 40, DARKGRAY);
-            DrawText("Rounded rectangle", (int)rec.x - 20, (int)rec.y - 35, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 20, static_cast<int>(rec.width) + 40, static_cast<int>(rec.height) + 40, DARKGRAY);
+            DrawText("Rounded rectangle", static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 35, 10, DARKGRAY);
 
             // Flip Y axis to match shader coordinate system
             rec.y = screenHeight - rec.y - rec.height;
@@ -126,8 +126,8 @@ int main()
 
             // Draw rectangle shadow using shader
             rec = Rectangle{ 50, 200, 110, 60 };
-            DrawRectangleLines((int)rec.x - 20, (int)rec.y - 20, (int)rec.width + 40, (int)rec.height + 40, DARKGRAY);
-            DrawText("Rounded rectangle shadow", (int)rec.x - 20, (int)rec.y - 35, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 20, static_cast<int>(rec.width) + 40, static_cast<int>(rec.height) + 40, DARKGRAY);
+            DrawText("Rounded rectangle shadow", static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 35, 10, DARKGRAY);
 
             rec.y = screenHeight - rec.y - rec.height;
             SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<float>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
@@ -143,8 +143,8 @@ int main()
 
             // Draw rectangle's border using shader
             rec = Rectangle{ 50, 330, 110, 60 };
-            DrawRectangleLines((int)rec.x - 20, (int)rec.y - 20, (int)rec.width + 40, (int)rec.height + 40, DARKGRAY);
-            DrawText("Rounded rectangle border", (int)rec.x - 20, (int)rec.y - 35, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 20, static_cast<int>(rec.width) + 40, static_cast<int>(rec.height) + 40, DARKGRAY);
+            DrawText("Rounded rectangle border", static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 35, 10, DARKGRAY);
 
             rec.y = screenHeight - rec.y - rec.height;
             SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<float>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
@@ -160,8 +160,8 @@ int main()
 
             // Draw one more rectangle with all three colors
             rec = Rectangle{ 240, 80, 500, 300 };
-            DrawRectangleLines((int)rec.x - 30, (int)rec.y - 30, (int)rec.width + 60, (int)rec.height + 60, DARKGRAY);
-            DrawText("Rectangle with all three combined", (int)rec.x - 30, (int)rec.y - 45, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<int>(rec.x) - 30, static_cast<int>(rec.y) - 30, static_cast<int>(rec.width) + 60, static_cast<int>(rec.height) + 60, DARKGRAY);
+            DrawText("Rectangle with all three combined", static_cast<int>(rec.x) - 30, static_cast<int>(rec.y) - 45, 10, DARKGRAY);
 
             rec.y = screenHeight - rec.y - rec.height;
             SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<float>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);

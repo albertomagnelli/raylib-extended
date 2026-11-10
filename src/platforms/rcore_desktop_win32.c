@@ -148,23 +148,23 @@ extern CoreData CORE;                   // Global CORE state context
 static PlatformData platform = {};   // Platform specific data
 
 // Required WGL functions
-static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = NULL;
-static PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = NULL;
-static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = NULL;
-static PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = NULL;
+static PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = nullptr;
+static PFNWGLCHOOSEPIXELFORMATARBPROC wglChoosePixelFormatARB = nullptr;
+static PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = nullptr;
+static PFNWGLGETEXTENSIONSSTRINGARBPROC wglGetExtensionsStringARB = nullptr;
 
 // Win32 functions that need to be dynamically loaded to support older versions of Windows
 // Before calling any of these functions, they should be null-checked
-static GetDpiForWindowProc pGetDpiForWindow = NULL;
-static AdjustWindowRectExForDpiProc pAdjustWindowRectExForDpi = NULL;
-static SetProcessDpiAwarenessContextProc pSetProcessDpiAwarenessContext = NULL;
-static SetProcessDpiAwarenessProc pSetProcessDpiAwareness = NULL;
-static SetProcessDPIAwareProc pSetProcessDPIAware = NULL;
-static GetDpiForMonitorProc pGetDpiForMonitor = NULL;
-static GetThreadDpiAwarenessContextProc pGetThreadDpiAwarenessContext = NULL;
-static AreDpiAwarenessContextsEqualProc pAreDpiAwarenessContextsEqual = NULL;
+static GetDpiForWindowProc pGetDpiForWindow = nullptr;
+static AdjustWindowRectExForDpiProc pAdjustWindowRectExForDpi = nullptr;
+static SetProcessDpiAwarenessContextProc pSetProcessDpiAwarenessContext = nullptr;
+static SetProcessDpiAwarenessProc pSetProcessDpiAwareness = nullptr;
+static SetProcessDPIAwareProc pSetProcessDPIAware = nullptr;
+static GetDpiForMonitorProc pGetDpiForMonitor = nullptr;
+static GetThreadDpiAwarenessContextProc pGetThreadDpiAwarenessContext = nullptr;
+static AreDpiAwarenessContextsEqualProc pAreDpiAwarenessContextsEqual = nullptr;
 
-static HMODULE shcore = NULL; // shcore.dll (Windows 8.1 and early versions of Windows 10): loaded once, NULL on other versions
+static HMODULE shcore = nullptr; // shcore.dll (Windows 8.1 and early versions of Windows 10): loaded once, NULL on other versions
 
 // --------------------------------------------------------------------------------
 // This part of the file contains pure functions that never access global state
@@ -420,7 +420,7 @@ static const unsigned short keyboardKeyFromExtendedScancode[] = {
 // Get ASCII to WCHAR length
 static size_t AToWLen(const char *ascii)
 {
-    int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, ascii, -1, NULL, 0);
+    int sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, ascii, -1, nullptr, 0);
 
     if (sizeNeeded < 0) TRACELOG(LOG_ERROR, "WIN32: Failed to calculate wide length [ERROR: %u]", GetLastError());
 
@@ -449,10 +449,10 @@ static void LoadWin32FunctionPointers(void)
 
     // SetProcessDpiAwarenessContext (Windows 10 v1703) supersedes SetProcessDpiAwareness (Windows 8.1)
     // We can avoid loading the shcore.dll if the newer DPI functions are available
-    if (pSetProcessDpiAwarenessContext == NULL)
+    if (pSetProcessDpiAwarenessContext == nullptr)
     {
         shcore = LoadLibraryW(L"shcore.dll");
-        if (shcore != NULL)
+        if (shcore != nullptr)
         {
             pSetProcessDpiAwareness = (SetProcessDpiAwarenessProc)GetProcAddress(shcore, "SetProcessDpiAwareness");
             pGetDpiForMonitor = (GetDpiForMonitorProc)GetProcAddress(shcore, "GetDpiForMonitor");
@@ -465,13 +465,13 @@ static UINT GetDpiForWindowCompat(HWND hwnd)
 {
     UINT result = 0;
 
-    if (pGetDpiForWindow != NULL)
+    if (pGetDpiForWindow != nullptr)
     {
         // This API requires Windows 10 v1607 or newer
         // Returns 0 on failure
         result = pGetDpiForWindow(hwnd);
     }
-    else if (pGetDpiForMonitor != NULL)
+    else if (pGetDpiForMonitor != nullptr)
     {
         // Windows 8.1 and early versions of Windows 10
         // Get the DPI based on which monitor the window is on
@@ -496,7 +496,7 @@ static UINT GetDpiForWindowCompat(HWND hwnd)
 static BOOL AdjustWindowRectExForDpiCompat(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi)
 {
     BOOL result = FALSE;
-    if ((pAdjustWindowRectExForDpi != NULL) && platform.perMonitorDPIAwareV2)
+    if ((pAdjustWindowRectExForDpi != nullptr) && platform.perMonitorDPIAwareV2)
     {
         result = pAdjustWindowRectExForDpi(lpRect, dwStyle, bMenu, dwExStyle, dpi);
     }
@@ -515,7 +515,7 @@ static BOOL AdjustWindowRectExForDpiCompat(LPRECT lpRect, DWORD dwStyle, BOOL bM
 // Windows XP         - No DPI awareness
 static void SetProcessDpiAwareCompat(void)
 {
-    if (pSetProcessDpiAwarenessContext != NULL)
+    if (pSetProcessDpiAwarenessContext != nullptr)
     {
         // Windows 10 v1703+
         BOOL succeeded = pSetProcessDpiAwarenessContext((HANDLE)DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
@@ -526,19 +526,19 @@ static void SetProcessDpiAwareCompat(void)
             pSetProcessDpiAwarenessContext((HANDLE)DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
         }
     }
-    else if (pSetProcessDpiAwareness != NULL)
+    else if (pSetProcessDpiAwareness != nullptr)
     {
         // Windows 8.1+
         pSetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
     }
-    else if (pSetProcessDPIAware != NULL)
+    else if (pSetProcessDPIAware != nullptr)
     {
         // Windows Vista+
         pSetProcessDPIAware();
     }
 
     platform.perMonitorDPIAwareV2 = false;
-    if ((pGetThreadDpiAwarenessContext != NULL) && (pAreDpiAwarenessContextsEqual != NULL))
+    if ((pGetThreadDpiAwarenessContext != nullptr) && (pAreDpiAwarenessContextsEqual != nullptr))
     {
         // There are subtle differences between per-monitor v1 and v2
         platform.perMonitorDPIAwareV2 = pAreDpiAwarenessContextsEqual(pGetThreadDpiAwarenessContext(), (HANDLE)DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
@@ -732,7 +732,7 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
     else swpFlags |= SWP_NOMOVE;
 
     // WARNING: This code must be called after swInit() has been called, after InitPlatform() in [rcore]
-    SetWindowPos(hwnd, NULL, windowPos.x, windowPos.y, windowSize.cx, windowSize.cy, SWP_NOMOVE | SWP_NOZORDER);
+    SetWindowPos(hwnd, nullptr, windowPos.x, windowPos.y, windowSize.cx, windowSize.cy, SWP_NOMOVE | SWP_NOZORDER);
 
     return true;
 }
@@ -742,7 +742,7 @@ static void *WglGetProcAddress(const char *procname)
 {
     void *proc = (void *)wglGetProcAddress(procname);
 
-    if ((proc == NULL) ||
+    if ((proc == nullptr) ||
         // NOTE: Some GPU drivers could return following
         // invalid sentinel values instead of NULL
         (proc == (void *)0x1) ||
@@ -791,13 +791,13 @@ static void DeletePlatformIconHandles(void)
     HICON smallIcon = platform.smallIcon;
     HICON largeIcon = platform.largeIcon;
 
-    if (smallIcon != NULL) DestroyIcon(smallIcon);
+    if (smallIcon != nullptr) DestroyIcon(smallIcon);
 
     // Only delete largeIcon if it's not pointing to the same underlying resource as smallIcon
-    if ((largeIcon != NULL) && (largeIcon != smallIcon)) DestroyIcon(largeIcon);
+    if ((largeIcon != nullptr) && (largeIcon != smallIcon)) DestroyIcon(largeIcon);
 
-    platform.smallIcon = NULL;
-    platform.largeIcon = NULL;
+    platform.smallIcon = nullptr;
+    platform.largeIcon = nullptr;
 }
 
 // Delete existing icons and replace them with the standard window/taskbar icons
@@ -820,7 +820,7 @@ static HICON ConvertImageToWindowsIcon(Image image)
     if (image.format != PIXELFORMAT_UNCOMPRESSED_R8G8B8A8)
     {
         TRACELOG(LOG_WARNING, "WIN32: Window icon image must be in R8G8B8A8 pixel format");
-        return NULL;
+        return nullptr;
     }
 
     HDC hdc = GetDC(platform.hwnd);
@@ -839,12 +839,12 @@ static HICON ConvertImageToWindowsIcon(Image image)
     bi.bV5BlueMask = 0x000000FF;
     bi.bV5AlphaMask = 0xFF000000;
 
-    unsigned char *targetBits = NULL;
-    HBITMAP hColorBitmap = CreateDIBSection(hdc, (BITMAPINFO *)&bi, DIB_RGB_COLORS, (void **)&targetBits, NULL, 0);
+    unsigned char *targetBits = nullptr;
+    HBITMAP hColorBitmap = CreateDIBSection(hdc, (BITMAPINFO *)&bi, DIB_RGB_COLORS, (void **)&targetBits, nullptr, 0);
     if (!hColorBitmap)
     {
         ReleaseDC(platform.hwnd, hdc);
-        return NULL;
+        return nullptr;
     }
 
     // Copy RGBA > BGRA (Win32 expects BGRA)
@@ -861,7 +861,7 @@ static HICON ConvertImageToWindowsIcon(Image image)
     }
 
     // Create mask bitmap (1-bit, all opaque)
-    HBITMAP hMaskBitmap = CreateBitmap(image.width, image.height, 1, 1, NULL);
+    HBITMAP hMaskBitmap = CreateBitmap(image.width, image.height, 1, 1, nullptr);
 
     // Build icon info
     ICONINFO ii = {};
@@ -1065,7 +1065,7 @@ void SetWindowIcon(Image image)
 {
     if (!platform.hwnd) return;
 
-    if ((image.data == NULL) || (image.width <= 0) || (image.height <= 0))
+    if ((image.data == nullptr) || (image.width <= 0) || (image.height <= 0))
     {
         ResetToDefaultWindowsIcons();
         return;
@@ -1085,7 +1085,7 @@ void SetWindowIcon(Image image)
 // Set icon for window (multiple sizes)
 void SetWindowIcons(Image *images, int count)
 {
-    if ((images == NULL) || (count <= 0))
+    if ((images == nullptr) || (count <= 0))
     {
         ResetToDefaultWindowsIcons();
         return;
@@ -1101,7 +1101,7 @@ void SetWindowIcons(Image *images, int count)
     {
         Image img = images[i];
         int difference = abs(img.width - largeIconRenderSize);
-        if ((img.data != NULL) && (img.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) && (difference < bestLargeIconSizeDifference))
+        if ((img.data != nullptr) && (img.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) && (difference < bestLargeIconSizeDifference))
         {
             bestLargeIconIndex = i;
             bestLargeIconSizeDifference = difference;
@@ -1118,7 +1118,7 @@ void SetWindowIcons(Image *images, int count)
     {
         Image img = images[i];
         int difference = abs(img.width - smallIconRenderSize);
-        if ((img.data != NULL) && (img.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) && (difference < bestSmallIconSizeDifference))
+        if ((img.data != nullptr) && (img.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) && (difference < bestSmallIconSizeDifference))
         {
             bestSmallIconIndex = i;
             bestSmallIconSizeDifference = difference;
@@ -1148,7 +1148,7 @@ void SetWindowTitle(std::string_view titleView)
 
     CORE.Window.title = title;
 
-    WCHAR *titleWide = NULL;
+    WCHAR *titleWide = nullptr;
     A_TO_W_ALLOCA(titleWide, CORE.Window.title.c_str());
 
     int result = SetWindowTextW(platform.hwnd, titleWide);
@@ -1158,7 +1158,7 @@ void SetWindowTitle(std::string_view titleView)
 // Set window position on screen (windowed mode)
 void SetWindowPosition(int x, int y)
 {
-    if (platform.hwnd != NULL)
+    if (platform.hwnd != nullptr)
     {
         RECT rect = {};
         if (GetWindowRect(platform.hwnd, &rect))
@@ -1167,7 +1167,7 @@ void SetWindowPosition(int x, int y)
             int height = rect.bottom - rect.top;
 
             // Move the window to the new position (keeping size and z-order)
-            SetWindowPos(platform.hwnd, NULL, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+            SetWindowPos(platform.hwnd, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
         }
     }
 }
@@ -1243,7 +1243,7 @@ int GetMonitorCount(void)
 {
     int count = 0;
 
-    int result = EnumDisplayMonitors(NULL, NULL, CountMonitorsProc, (LPARAM)&count);
+    int result = EnumDisplayMonitors(nullptr, nullptr, CountMonitorsProc, (LPARAM)&count);
     if (result == 0) TRACELOG(LOG_ERROR, "%s failed, error=%lu", "EnumDisplayMonitors", GetLastError());
 
     return count;
@@ -1260,7 +1260,7 @@ int GetCurrentMonitor(void)
     info.index = 0;
     info.matchIndex = -1;
 
-    int result = EnumDisplayMonitors(NULL, NULL, FindMonitorProc, (LPARAM)&info);
+    int result = EnumDisplayMonitors(nullptr, nullptr, FindMonitorProc, (LPARAM)&info);
     if (result == 0) TRACELOG(LOG_ERROR, "%s failed, error=%lu", "EnumDisplayMonitors", GetLastError());
 
     return info.matchIndex;
@@ -1337,12 +1337,12 @@ void SetClipboardText(std::string_view textView)
 
     if (OpenClipboard(platform.hwnd))
     {
-        if (text == NULL) EmptyClipboard();
+        if (text == nullptr) EmptyClipboard();
         else
         {
             size_t length = strlen(text);
 
-            int clipboardTextLength = MultiByteToWideChar(CP_UTF8, 0, text, (int)(length + 1), NULL, 0);
+            int clipboardTextLength = MultiByteToWideChar(CP_UTF8, 0, text, (int)(length + 1), nullptr, 0);
             if (clipboardTextLength != 0)
             {
                 HGLOBAL globalHandle = GlobalAlloc(GMEM_MOVEABLE, clipboardTextLength*sizeof(wchar_t));
@@ -1351,7 +1351,7 @@ void SetClipboardText(std::string_view textView)
                 {
                     LPVOID clipboardText = GlobalLock(globalHandle);
                     int charactersCopied = 0;
-                    if (clipboardText != NULL)
+                    if (clipboardText != nullptr)
                     {
                         // Directly copies text to clipboardText and converts from UTF-8 to UTF-16
                         charactersCopied = MultiByteToWideChar(CP_UTF8, 0, text, (int)(length + 1), clipboardText, clipboardTextLength);
@@ -1383,10 +1383,10 @@ void SetClipboardText(std::string_view textView)
 // Get clipboard text content
 std::string GetClipboardText(void)
 {
-    if (platform.clipboardText != NULL)
+    if (platform.clipboardText != nullptr)
     {
         RL_FREE(platform.clipboardText);
-        platform.clipboardText = NULL;
+        platform.clipboardText = nullptr;
     }
 
     if (OpenClipboard(platform.hwnd))
@@ -1395,16 +1395,16 @@ std::string GetClipboardText(void)
         if (clipboardDataHandle)
         {
             wchar_t *clipboardText = GlobalLock(clipboardDataHandle);
-            if (clipboardText != NULL)
+            if (clipboardText != nullptr)
             {
                 // The clipboard data can't be trusted. It may or may not be null-terminated!
                 size_t maxLength = GlobalSize(clipboardDataHandle)/sizeof(wchar_t);
                 int length = (int)wcsnlen(clipboardText, maxLength);
 
-                int size = WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, NULL, 0, NULL, NULL);
+                int size = WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, nullptr, 0, nullptr, nullptr);
                 char *utf8Text = (char *)RL_CALLOC(size + 1, 1);
 
-                if ((size > 0) && (WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, utf8Text, size, NULL, NULL) == 0)) size = 0;
+                if ((size > 0) && (WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, utf8Text, size, nullptr, nullptr) == 0)) size = 0;
                 utf8Text[size] = '\0';
 
                 platform.clipboardText = utf8Text;
@@ -1438,13 +1438,13 @@ Image GetClipboardImage(void)
 
 #if SUPPORT_CLIPBOARD_IMAGE && SUPPORT_MODULE_RTEXTURES
     unsigned int dataSize = 0;
-    void *fileData = NULL;
+    void *fileData = nullptr;
     int width = 0;
     int height = 0;
 
     fileData = (void *)Win32GetClipboardImageData(&width, &height, &dataSize);
 
-    if (fileData == NULL) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data.");
+    if (fileData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data.");
     else
     {
         image = LoadImageFromMemory(".bmp", (const unsigned char*)fileData, (int)dataSize);
@@ -1460,7 +1460,7 @@ Image GetClipboardImage(void)
 // Show mouse cursor
 void ShowCursor(void)
 {
-    SetCursor(LoadCursorW(NULL, (LPCWSTR)IDC_ARROW));
+    SetCursor(LoadCursorW(nullptr, (LPCWSTR)IDC_ARROW));
     CORE.Input.Mouse.cursorHidden = false;
 }
 
@@ -1469,7 +1469,7 @@ void HideCursor(void)
 {
     // NOTE: Using SetCursor() instead of ShowCursor() because
     // it makes it easy to only hide the cursor while it's inside the client area
-    SetCursor(NULL);
+    SetCursor(nullptr);
     CORE.Input.Mouse.cursorHidden = true;
 }
 
@@ -1478,13 +1478,13 @@ void EnableCursor(void)
 {
     if (CORE.Input.Mouse.cursorLocked)
     {
-        if (!ClipCursor(NULL)) TRACELOG(LOG_WARNING, "WIN32: Failed to clip cursor [ERROR: %lu]", GetLastError());
+        if (!ClipCursor(nullptr)) TRACELOG(LOG_WARNING, "WIN32: Failed to clip cursor [ERROR: %lu]", GetLastError());
 
         RAWINPUTDEVICE rid = {};
         rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
         rid.usUsage = 0x02; // HID_USAGE_GENERIC_MOUSE
         rid.dwFlags = RIDEV_REMOVE; // Add to this window even in background
-        rid.hwndTarget = NULL;
+        rid.hwndTarget = nullptr;
         int result = RegisterRawInputDevices(&rid, 1, sizeof(rid));
         if (result == 0) TRACELOG(LOG_WARNING, "WIN32: Failed to register raw input devices [ERROR: %lu]", GetLastError());
 
@@ -1541,11 +1541,11 @@ void SwapScreenBuffer(void)
     rlCopyFramebuffer(0, 0, CORE.Window.render.width, CORE.Window.render.height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, platform.pixels);
 
     // Force redraw
-    InvalidateRect(platform.hwnd, NULL, FALSE);
+    InvalidateRect(platform.hwnd, nullptr, FALSE);
     UpdateWindow(platform.hwnd);
 #else
     if (!SwapBuffers(platform.hdc)) TRACELOG(LOG_ERROR, "WIN32: Failed to swap buffers [ERROR: %lu]", GetLastError());
-    if (!ValidateRect(platform.hwnd, NULL)) TRACELOG(LOG_ERROR, "WIN32: Failed to validate screen rect [ERROR: %lu]", GetLastError());
+    if (!ValidateRect(platform.hwnd, nullptr)) TRACELOG(LOG_ERROR, "WIN32: Failed to validate screen rect [ERROR: %lu]", GetLastError());
 #endif
 }
 
@@ -1574,7 +1574,7 @@ void OpenURL(std::string_view urlView)
     const char *url = urlStr.c_str();
 
     // Security check to (partially) avoid malicious code
-    if ((strchr(url, '\'') != NULL) || (strchr(url, '\"') != NULL))
+    if ((strchr(url, '\'') != nullptr) || (strchr(url, '\"') != nullptr))
     {
         // Filter characters: ' and "
         TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'\"] characters");
@@ -1644,7 +1644,7 @@ void SetMousePosition(int x, int y)
 void SetMouseCursor(int cursor)
 {
     LPCWSTR cursorName = GetCursorName(cursor);
-    HCURSOR hcursor = LoadCursorW(NULL, cursorName);
+    HCURSOR hcursor = LoadCursorW(nullptr, cursorName);
     if (!hcursor) TRACELOG(LOG_ERROR, "WIN32: Failed to load requested cursor [ERROR: %lu]", GetLastError());
 
     SetCursor(hcursor);
@@ -1697,7 +1697,7 @@ void PollInputEvents(void)
 
     // Process windows messages
     MSG msg = {};
-    while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
+    while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
     {
         TranslateMessage(&msg);
         DispatchMessageW(&msg);
@@ -1720,7 +1720,7 @@ void PollInputEvents(void)
 
             platform.hbitmap = CreateDIBSection(
                 platform.hdcmem, &bmi, DIB_RGB_COLORS,
-                (void **)&platform.pixels, NULL, 0);
+                (void **)&platform.pixels, nullptr, 0);
 
             HGDIOBJ oldBitmap = SelectObject(platform.hdcmem, platform.hbitmap);
             DeleteObject(oldBitmap);
@@ -1756,14 +1756,14 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
         .cbSize = sizeof(WNDCLASSEXW),
         .style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC,
         .lpfnWndProc = DefWindowProcW,
-        .hInstance = GetModuleHandleW(NULL),
+        .hInstance = GetModuleHandleW(nullptr),
         .lpszClassName = L"wglDummy"
     };
     RegisterClassExW(&dummyWindowClass);
 
     HWND dummyWindow = CreateWindowExW(
         0, dummyWindowClass.lpszClassName, L"dummyWindow",
-        0, 0, 0, 1, 1, NULL, NULL, NULL, NULL);
+        0, 0, 0, 1, 1, nullptr, nullptr, nullptr, nullptr);
 
     HDC dummyHDC = GetDC(dummyWindow);
 
@@ -1827,7 +1827,7 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
 
             int format = 0;
             UINT numFormats = 0;
-            if (wglChoosePixelFormatARB(hdc, pixelFormatAttribs, NULL, 1, &format, &numFormats) && (numFormats > 0))
+            if (wglChoosePixelFormatARB(hdc, pixelFormatAttribs, nullptr, 1, &format, &numFormats) && (numFormats > 0))
             {
                 PIXELFORMATDESCRIPTOR newPixelFormatDescriptor = {};
                 DescribePixelFormat(hdc, format, sizeof(newPixelFormatDescriptor), &newPixelFormatDescriptor);
@@ -1858,7 +1858,7 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
     }
 
     // Create real modern OpenGL context (3.3 core)
-    HGLRC realContext = NULL;
+    HGLRC realContext = nullptr;
     if (wglCreateContextAttribsARB)
     {
         int glContextVersionMajor = 1;
@@ -1917,12 +1917,12 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
         };
 
         // NOTE: Not sharing context resources so, second parameters is NULL
-        realContext = wglCreateContextAttribsARB(hdc, NULL, contextAttribs);
+        realContext = wglCreateContextAttribsARB(hdc, nullptr, contextAttribs);
 
         // Check for error context creation errors
         // ERROR_INVALID_VERSION_ARB (0x2095)
         // ERROR_INVALID_PROFILE_ARB (0x2096)
-        if (realContext == NULL) TRACELOG(LOG_ERROR, "GL: Error creating requested context: %lu", GetLastError());
+        if (realContext == nullptr) TRACELOG(LOG_ERROR, "GL: Error creating requested context: %lu", GetLastError());
     }
     else
     {
@@ -1931,7 +1931,7 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
     }
 
     // Cleanup dummy temp context and window
-    wglMakeCurrent(NULL, NULL);
+    wglMakeCurrent(nullptr, nullptr);
     wglDeleteContext(tempContext);
     ReleaseDC(dummyWindow, dummyHDC);
     DestroyWindow(dummyWindow);
@@ -1974,14 +1974,14 @@ int InitPlatform(void)
         .lpfnWndProc = WndProc,                         // Custom procedure assigned
         .cbWndExtra = sizeof(LONG_PTR),                 // extra space for the Tuple object ptr
         .hInstance = hInstance,
-        .hCursor = LoadCursorW(NULL, (LPCWSTR)IDC_ARROW), // TODO: Check if this is really required, since WM_SETCURSOR event is processed
+        .hCursor = LoadCursorW(nullptr, (LPCWSTR)IDC_ARROW), // TODO: Check if this is really required, since WM_SETCURSOR event is processed
         .lpszClassName = CLASS_NAME                     // Class name: L"raylibWindow"
     };
 
     // Load user-provided icon if available
     // NOTE: raylib resource file defaults to GLFW_ICON id, so looking for same identifier
     windowClass.hIcon = LoadImageW(hInstance, L"GLFW_ICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
-    if (!windowClass.hIcon) windowClass.hIcon = LoadImageW(NULL, (LPCWSTR)IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
+    if (!windowClass.hIcon) windowClass.hIcon = LoadImageW(nullptr, (LPCWSTR)IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
 
     // Register window class
     result = (int)RegisterClassExW(&windowClass);
@@ -1990,7 +1990,7 @@ int InitPlatform(void)
     // Get primary monitor info
     POINT primaryTopLeft = {};
     HMONITOR monitor = MonitorFromPoint(primaryTopLeft, MONITOR_DEFAULTTOPRIMARY);
-    if (monitor != NULL)
+    if (monitor != nullptr)
     {
         MONITORINFO info = {};
         info.cbSize = sizeof(info);
@@ -2007,7 +2007,7 @@ int InitPlatform(void)
 
     // Create window
     // NOTE: Title string needs to be converted to WCHAR
-    WCHAR *titleWide = NULL;
+    WCHAR *titleWide = nullptr;
     A_TO_W_ALLOCA(titleWide, CORE.Window.title.c_str());
 
     // Create window and get handle
@@ -2018,8 +2018,8 @@ int InitPlatform(void)
         MakeWindowStyle(CORE.Window.flags | FLAG_WINDOW_HIDDEN),
         CW_USEDEFAULT, CW_USEDEFAULT,
         CW_USEDEFAULT, CW_USEDEFAULT, // Window size/position will be overridden after creation
-        NULL, NULL,
-        GetModuleHandleW(NULL), NULL);
+        nullptr, nullptr,
+        GetModuleHandleW(nullptr), nullptr);
 
     if (!platform.hwnd)
     {
@@ -2074,7 +2074,7 @@ int InitPlatform(void)
         if (y < rcWork.top) y = rcWork.top;
 
         // Center the window and set it to the correct DPI-adjusted size
-        SetWindowPos(platform.hwnd, NULL, x, y, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOACTIVATE);
+        SetWindowPos(platform.hwnd, nullptr, x, y, windowWidth, windowHeight, SWP_NOZORDER | SWP_NOACTIVATE);
     }
     else TRACELOG(LOG_WARNING, "DISPLAY: Unable to retrieve information about monitor");
 
@@ -2120,7 +2120,7 @@ int InitPlatform(void)
 
         platform.hbitmap = CreateDIBSection(
             platform.hdcmem, &bmi, DIB_RGB_COLORS,
-            (void **)&platform.pixels, NULL, 0);
+            (void **)&platform.pixels, nullptr, 0);
 
         SelectObject(platform.hdcmem, platform.hbitmap);
         //ReleaseDC(platform.hwnd, platform.hdc); // Not required because the window class uses CS_OWNDC
@@ -2164,21 +2164,21 @@ void ClosePlatform(void)
 
         DeletePlatformIconHandles();
 
-        platform.hwnd = NULL;
+        platform.hwnd = nullptr;
     }
 
     // Clear clipboard
-    if (platform.clipboardText != NULL)
+    if (platform.clipboardText != nullptr)
     {
         RL_FREE(platform.clipboardText);
-        platform.clipboardText = NULL;
+        platform.clipboardText = nullptr;
     }
 
     // Unload shcore.dll
-    if (shcore != NULL)
+    if (shcore != nullptr)
     {
         FreeLibrary(shcore);
-        shcore = NULL;
+        shcore = nullptr;
     }
 
 #if SUPPORT_WINMM_HIGHRES_TIMER && !SUPPORT_BUSY_WAIT_LOOP
@@ -2221,30 +2221,30 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
                 if (platform.hdcmem)
                 {
                     DeleteDC(platform.hdcmem);
-                    platform.hdcmem = NULL;
+                    platform.hdcmem = nullptr;
                 }
 
                 if (platform.hbitmap)
                 {
                     DeleteObject(platform.hbitmap); // Clears platform.pixels data
-                    platform.hbitmap = NULL;
-                    platform.pixels = NULL; // NOTE: Pointer invalid after DeleteObject()
+                    platform.hbitmap = nullptr;
+                    platform.pixels = nullptr; // NOTE: Pointer invalid after DeleteObject()
                 }
             }
             else // OpenGL hardware renderer
             {
-                wglMakeCurrent(platform.hdc, NULL);
+                wglMakeCurrent(platform.hdc, nullptr);
                 if (platform.glContext)
                 {
                     if (!wglDeleteContext(platform.glContext)) abort();
-                    platform.glContext = NULL;
+                    platform.glContext = nullptr;
                 }
             }
 
             if (platform.hdc)
             {
                 if (!ReleaseDC(hwnd, platform.hdc)) abort();
-                platform.hdc = NULL;
+                platform.hdc = nullptr;
             }
 
             PostQuitMessage(0);
@@ -2420,7 +2420,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
             // Doing so can cause a window to stutter between monitors when transitioning between them
             if (platform.perMonitorDPIAwareV2)
             {
-                BOOL succeeded = SetWindowPos(hwnd, NULL,
+                BOOL succeeded = SetWindowPos(hwnd, nullptr,
                     suggestedRect->left, suggestedRect->top,
                     suggestedRect->right - suggestedRect->left,
                     suggestedRect->bottom - suggestedRect->top,
@@ -2444,7 +2444,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
                 int x = suggestedRect->left + ((suggestedRect->right - suggestedRect->left) - width)/2;
                 int y = suggestedRect->top + ((suggestedRect->bottom - suggestedRect->top) - height)/2;
 
-                BOOL succeeded = SetWindowPos(hwnd, NULL, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
+                BOOL succeeded = SetWindowPos(hwnd, nullptr, x, y, width, height, SWP_NOZORDER | SWP_NOACTIVATE);
 
                 if (succeeded == FALSE) TRACELOG(LOG_ERROR, "Failed to set window position [ERROR: %lu]", GetLastError());
             }
@@ -2457,7 +2457,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
             // Called when mouse moves, enters/leaves window...
             if (LOWORD(lparam) == HTCLIENT)
             {
-                SetCursor(CORE.Input.Mouse.cursorHidden? NULL : LoadCursorW(NULL, (LPCWSTR)IDC_ARROW));
+                SetCursor(CORE.Input.Mouse.cursorHidden? nullptr : LoadCursorW(nullptr, (LPCWSTR)IDC_ARROW));
                 return 0;
             }
 
@@ -2594,7 +2594,7 @@ static void HandleKey(WPARAM wparam, LPARAM lparam, char state)
         MSG next = {};
         LONG time = GetMessageTime();
 
-        if (PeekMessageW(&next, NULL, 0, 0, PM_NOREMOVE))
+        if (PeekMessageW(&next, nullptr, 0, 0, PM_NOREMOVE))
         {
             // If the current message is Left Ctrl (VK_CONTROL) and the next message is AltGr (VK_MENU) with the exact same timestamp,
             // silently drop the fake control key event
@@ -2669,7 +2669,7 @@ static void HandleRawInput(LPARAM lparam)
     RAWINPUT input = {};
     UINT inputSize = 0;
 
-    if (GetRawInputData((HRAWINPUT)lparam, RID_INPUT, NULL, &inputSize, sizeof(RAWINPUTHEADER)) != 0) return;
+    if (GetRawInputData((HRAWINPUT)lparam, RID_INPUT, nullptr, &inputSize, sizeof(RAWINPUTHEADER)) != 0) return;
     if (inputSize > sizeof(input)) return;
 
     UINT size = GetRawInputData((HRAWINPUT)lparam, RID_INPUT, &input, &inputSize, sizeof(RAWINPUTHEADER));
@@ -2874,13 +2874,13 @@ static bool IsWglExtensionAvailable(HDC hdc, const char *extension)
 {
     bool result = false;
 
-    if (wglGetExtensionsStringARB != NULL)
+    if (wglGetExtensionsStringARB != nullptr)
     {
         const char *extList = wglGetExtensionsStringARB(hdc);
-        if (extList != NULL)
+        if (extList != nullptr)
         {
             // Simple substring search (could use strtok or strstr)
-            if (strstr(extList, extension) != NULL) result = true;
+            if (strstr(extList, extension) != nullptr) result = true;
         }
     }
 

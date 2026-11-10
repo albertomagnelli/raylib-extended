@@ -60,8 +60,8 @@ int main()
             DrawLine(500, 0, 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.6f));
             DrawRectangle(500, 0, GetScreenWidth() - 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.3f));
 
-            DrawCircleSector(center, outerRadius, startAngle, endAngle, (int)segments, Fade(MAROON, 0.3f));
-            DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, (int)segments, Fade(MAROON, 0.6f));
+            DrawCircleSector(center, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(MAROON, 0.3f));
+            DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(MAROON, 0.6f));
 
             // Draw GUI controls
             //------------------------------------------------------------------------------

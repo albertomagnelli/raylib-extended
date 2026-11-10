@@ -80,7 +80,7 @@ int main()
                 // Draw angle label slightly offset along the line
                 Vector2 textPos = { center.x + cosf(rad)*(lineLength + 20),
                                     center.y + sinf(rad)*(lineLength + 20) };
-                DrawText(TextFormat("%d°", angles[i]), (int)textPos.x, (int)textPos.y, 20, col);
+                DrawText(TextFormat("%d°", angles[i]), static_cast<int>(textPos.x), static_cast<int>(textPos.y), 20, col);
             }
 
             // Draw animated rotating line with changing color
