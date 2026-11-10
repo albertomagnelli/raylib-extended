@@ -22,6 +22,8 @@ Fork:        glm math migration (C++20)
  - REMOVED: Ownership-based text helpers (`UnloadFileText`, `UnloadUTF8`, `UnloadTextLines`,
             `TextCopy`, `TextAppend`, `UnloadDirectoryFiles`, `UnloadDroppedFiles`) and the
             redundant `TextReplaceAlloc`/`TextInsertAlloc` variants
+ - CHANGED: `NULL` replaced with `nullptr` and C-style casts replaced with
+            `static_cast`/`reinterpret_cast`/`const_cast`
 
 -------------------------------------------------------------------------
 Release:     raylib 6.2 (15 October 2026)

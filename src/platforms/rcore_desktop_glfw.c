@@ -198,7 +198,7 @@ void ToggleFullscreen(void)
             CORE.Window.display.width = mode->width;
             CORE.Window.display.height = mode->height;
 
-            CORE.Window.position = (Point){ 0, 0 };
+            CORE.Window.position = Point{ 0, 0 };
             CORE.Window.screen = CORE.Window.display;
 
             // Set fullscreen flag to be processed on FramebufferSizeCallback() accordingly
@@ -231,8 +231,8 @@ void ToggleFullscreen(void)
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
             Vector2 scaleDpi = GetWindowScaleDPI();
-            CORE.Window.screen.width = (unsigned int)roundf(CORE.Window.screen.width*scaleDpi.x);
-            CORE.Window.screen.height = (unsigned int)roundf(CORE.Window.screen.height*scaleDpi.y);
+            CORE.Window.screen.width = static_cast<unsigned int>(roundf(CORE.Window.screen.width*scaleDpi.x));
+            CORE.Window.screen.height = static_cast<unsigned int>(roundf(CORE.Window.screen.height*scaleDpi.y));
         }
 #endif
 
@@ -319,8 +319,8 @@ void ToggleBorderlessWindowed(void)
                 if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
                 {
                     Vector2 scaleDpi = GetWindowScaleDPI();
-                    CORE.Window.screen.width = (unsigned int)roundf(CORE.Window.screen.width*scaleDpi.x);
-                    CORE.Window.screen.height = (unsigned int)roundf(CORE.Window.screen.height*scaleDpi.y);
+                    CORE.Window.screen.width = static_cast<unsigned int>(roundf(CORE.Window.screen.width*scaleDpi.x));
+                    CORE.Window.screen.height = static_cast<unsigned int>(roundf(CORE.Window.screen.height*scaleDpi.y));
                 }
             #endif
 
@@ -617,7 +617,7 @@ void SetWindowIcon(Image image)
 
             icon[0].width = image.width;
             icon[0].height = image.height;
-            icon[0].pixels = (unsigned char *)image.data;
+            icon[0].pixels = static_cast<unsigned char *>(image.data);
 
             // NOTE 1: Only one image icon supported
             // NOTE 2: The specified image data is copied before this function returns
@@ -641,7 +641,7 @@ void SetWindowIcons(Image *images, int count)
     else
     {
         int valid = 0;
-        GLFWimage *icons = (GLFWimage *)RL_CALLOC(count, sizeof(GLFWimage));
+        GLFWimage *icons = static_cast<GLFWimage *>(RL_CALLOC(count, sizeof(GLFWimage)));
 
         for (int i = 0; i < count; i++)
         {
@@ -649,7 +649,7 @@ void SetWindowIcons(Image *images, int count)
             {
                 icons[valid].width = images[i].width;
                 icons[valid].height = images[i].height;
-                icons[valid].pixels = (unsigned char *)images[i].data;
+                icons[valid].pixels = static_cast<unsigned char *>(images[i].data);
 
                 valid++;
             }
@@ -733,10 +733,10 @@ void SetWindowMinSize(int width, int height)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)) scaleDpi = GetWindowScaleDPI();
 #endif
 
-    int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMin.width*scaleDpi.x);
-    int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMin.height*scaleDpi.y);
-    int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMax.width*scaleDpi.x);
-    int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMax.height*scaleDpi.y);
+    int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.width*scaleDpi.x));
+    int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.height*scaleDpi.y));
+    int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.width*scaleDpi.x));
+    int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.height*scaleDpi.y));
 
     glfwSetWindowSizeLimits(platform.handle, minWidth, minHeight, maxWidth, maxHeight);
 }
@@ -752,10 +752,10 @@ void SetWindowMaxSize(int width, int height)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)) scaleDpi = GetWindowScaleDPI();
 #endif
 
-    int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMin.width*scaleDpi.x);
-    int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMin.height*scaleDpi.y);
-    int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMax.width*scaleDpi.x);
-    int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : (int)roundf(CORE.Window.screenMax.height*scaleDpi.y);
+    int minWidth  = (CORE.Window.screenMin.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.width*scaleDpi.x));
+    int minHeight = (CORE.Window.screenMin.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMin.height*scaleDpi.y));
+    int maxWidth  = (CORE.Window.screenMax.width  == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.width*scaleDpi.x));
+    int maxHeight = (CORE.Window.screenMax.height == 0)? GLFW_DONT_CARE : static_cast<int>(roundf(CORE.Window.screenMax.height*scaleDpi.y));
 
     glfwSetWindowSizeLimits(platform.handle, minWidth, minHeight, maxWidth, maxHeight);
 }
@@ -770,8 +770,8 @@ void SetWindowSize(int width, int height)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND))
     {
         Vector2 scaleDpi = GetWindowScaleDPI();
-        width = (int)roundf((float)width*scaleDpi.x);
-        height = (int)roundf((float)height*scaleDpi.y);
+        width = static_cast<int>(roundf(static_cast<float>(width)*scaleDpi.x));
+        height = static_cast<int>(roundf(static_cast<float>(height)*scaleDpi.y));
     }
 #endif
 
@@ -806,7 +806,7 @@ void *GetWindowHandle(void)
             int platformID = glfwGetPlatform();
             if (platformID == GLFW_PLATFORM_WAYLAND)
             {
-                handle = (void *)glfwGetWaylandWindow(platform.handle); // Type: struct wl_surface*
+                handle = static_cast<void *>(glfwGetWaylandWindow(platform.handle); // Type: struct wl_surface*
             }
             else
             {
@@ -814,7 +814,7 @@ void *GetWindowHandle(void)
                 handle = &platform.windowHandleX11;
             }
         #else
-            handle = (void *)glfwGetWaylandWindow(platform.handle);
+            handle = static_cast<void *>(glfwGetWaylandWindow(platform.handle);
         #endif
     #elif defined(_GLFW_X11)
         // Store the window handle locally and return a pointer to the variable instead
@@ -877,8 +877,8 @@ int GetCurrentMonitor(void)
             int wcy = 0;
 
             glfwGetWindowPos(platform.handle, &wcx, &wcy);
-            wcx += (int)CORE.Window.screen.width/2;
-            wcy += (int)CORE.Window.screen.height/2;
+            wcx += static_cast<int>(CORE.Window.screen.width)/2;
+            wcy += static_cast<int>(CORE.Window.screen.height)/2;
 
             for (int i = 0; i < monitorCount; i++)
             {
@@ -918,8 +918,8 @@ int GetCurrentMonitor(void)
                     // Unsigned to dodge signed overflow UB; (-x)^2 == x^2 mod 2^32 so sign drops out.
                     // If |dx| or |dy| >= 65536, dist wraps and the wrong monitor may win.
                     // Not a concern for realistic monitor layouts.
-                    unsigned int ux = (unsigned int)dx;
-                    unsigned int uy = (unsigned int)dy;
+                    unsigned int ux = static_cast<unsigned int>(dx);
+                    unsigned int uy = static_cast<unsigned int>(dy);
                     unsigned int dist = ux*ux + uy*uy;
 
                     if (dist < closestDist)
@@ -950,7 +950,7 @@ Vector2 GetMonitorPosition(int monitor)
         int y = 0;
         glfwGetMonitorPos(monitors[monitor], &x, &y);
 
-        position = Vector2{ (float)x, (float)y };
+        position = Vector2{ static_cast<float>(x), static_cast<float>(y) };
     }
     else TRACELOG(LOG_WARNING, "GLFW: Failed to find selected monitor");
 
@@ -1064,7 +1064,7 @@ Vector2 GetWindowPosition(void)
     Vector2 position{};
     
     glfwGetWindowPos(platform.handle, &CORE.Window.position.x, &CORE.Window.position.y);
-    position = Vector2{ (float)CORE.Window.position.x, (float)CORE.Window.position.y };
+    position = Vector2{ static_cast<float>(CORE.Window.position.x), static_cast<float>(CORE.Window.position.y) };
 
     return position;
 }
@@ -1109,12 +1109,12 @@ Image GetClipboardImage(void)
     int width = 0;
     int height = 0;
 
-    bmpData = (void *)Win32GetClipboardImageData(&width, &height, &dataSize);
+    bmpData = static_cast<void *>(Win32GetClipboardImageData(&width, &height, &dataSize);
 
     if (bmpData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data.");
     else
     {
-        image = LoadImageFromMemory(".bmp", (const unsigned char *)bmpData, (int)dataSize);
+        image = LoadImageFromMemory(".bmp", static_cast<const unsigned char *>(bmpData), static_cast<int>(dataSize));
 
         RL_FREE(bmpData);
     }
@@ -1156,7 +1156,7 @@ Image GetClipboardImage(void)
 
     if (data != nullptr)
     {
-        image = LoadImageFromMemory(".png", data, (int)nitems);
+        image = LoadImageFromMemory(".png", data, static_cast<int>(nitems));
         XFree(data);
     }
 
@@ -1254,7 +1254,7 @@ void OpenURL(std::string_view urlView)
     }
     else
     {
-        char *cmd = (char *)RL_CALLOC(strlen(url) + 16, sizeof(char));
+        char *cmd = static_cast<char *>(RL_CALLOC(strlen(url) + 16, sizeof(char)));
 #if defined(_WIN32)
         sprintf(cmd, "explorer \"%s\"", url);
 #endif
@@ -1294,8 +1294,8 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 void SetMousePosition(int x, int y)
 {
     Vector2 scale = CORE.Input.Mouse.scale;
-    CORE.Input.Mouse.currentPosition.x = roundf((float)x/scale.x);
-    CORE.Input.Mouse.currentPosition.y = roundf((float)y/scale.y);
+    CORE.Input.Mouse.currentPosition.x = roundf(static_cast<float>(x)/scale.x);
+    CORE.Input.Mouse.currentPosition.y = roundf(static_cast<float>(y)/scale.y);
 
     // NOTE: emscripten not implemented
     glfwSetCursorPos(platform.handle, CORE.Input.Mouse.currentPosition.x, CORE.Input.Mouse.currentPosition.y);
@@ -1736,8 +1736,8 @@ int InitPlatform(void)
         // the taskbar / dockable areas) it won't show up if the window isn't fullscreen
         // NOTE: Some window managers report a workarea that does not overlap the primary monitor
         // (i.e. multi-monitor setups on X11), resulting in a zero/negative size, skip clamping then
-        if ((workWidth > 0) && (CORE.Window.screen.width > (unsigned int)workWidth)) CORE.Window.screen.width = workWidth;
-        if ((workHeight > 0) && (CORE.Window.screen.height > (unsigned int)workHeight)) CORE.Window.screen.height = workHeight;
+        if ((workWidth > 0) && (CORE.Window.screen.width > static_cast<unsigned int>(workWidth))) CORE.Window.screen.width = workWidth;
+        if ((workHeight > 0) && (CORE.Window.screen.height > static_cast<unsigned int>(workHeight))) CORE.Window.screen.height = workHeight;
 
         platform.handle = glfwCreateWindow(CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.title.empty()? " " : CORE.Window.title.c_str(), nullptr, nullptr);
         if (!platform.handle)
@@ -1782,7 +1782,7 @@ int InitPlatform(void)
         int windowWidth = 0;
         int windowHeight = 0;
         glfwGetWindowSize(platform.handle, &windowWidth, &windowHeight);
-        if ((windowWidth > 0) && (windowHeight > 0)) CORE.Window.screen = (Size){ windowWidth, windowHeight };
+        if ((windowWidth > 0) && (windowHeight > 0)) CORE.Window.screen = Size{ windowWidth, windowHeight };
 #endif
 
         // NOTE: Not considering scale factor now, considered below
@@ -1814,8 +1814,8 @@ int InitPlatform(void)
         {
             // Set screen size to logical pixel size, considering content scaling
             Vector2 scaleDpi = GetWindowScaleDPI();
-            CORE.Window.render.width = (int)roundf(CORE.Window.screen.width*scaleDpi.x);
-            CORE.Window.render.height = (int)roundf(CORE.Window.screen.height*scaleDpi.y);
+            CORE.Window.render.width = static_cast<int>(roundf(CORE.Window.screen.width*scaleDpi.x));
+            CORE.Window.render.height = static_cast<int>(roundf(CORE.Window.screen.height*scaleDpi.y));
             //TRACELOG(LOG_INFO, "DPI SCALING: %.2f, %.2f", scaleDpi.x, scaleDpi.y);
 
             // Screen scaling matrix is required in case desired screen area is different from display area
@@ -1876,11 +1876,11 @@ int InitPlatform(void)
 
         // Center window into current monitor
     #if defined(__APPLE__)
-        CORE.Window.position.x = monitorX + (monitorWidth - (int)CORE.Window.screen.width)/2;
-        CORE.Window.position.y = monitorY + (monitorHeight - (int)CORE.Window.screen.height)/2;
+        CORE.Window.position.x = monitorX + (monitorWidth - static_cast<int>(CORE.Window.screen.width))/2;
+        CORE.Window.position.y = monitorY + (monitorHeight - static_cast<int>(CORE.Window.screen.height))/2;
     #else
-        CORE.Window.position.x = monitorX + (monitorWidth - (int)CORE.Window.render.width)/2;
-        CORE.Window.position.y = monitorY + (monitorHeight - (int)CORE.Window.render.height)/2;
+        CORE.Window.position.x = monitorX + (monitorWidth - static_cast<int>(CORE.Window.render.width))/2;
+        CORE.Window.position.y = monitorY + (monitorHeight - static_cast<int>(CORE.Window.render.height))/2;
     #endif
         SetWindowPosition(CORE.Window.position.x, CORE.Window.position.y);
 
@@ -1897,7 +1897,7 @@ int InitPlatform(void)
 
     // Load OpenGL extensions
     // NOTE: GL procedures address loader is required to load extensions
-    rlLoadExtensions((void *)glfwGetProcAddress);
+    rlLoadExtensions(reinterpret_cast<void *>(glfwGetProcAddress));
     //----------------------------------------------------------------------------
 
     // Initialize input events callbacks
@@ -2040,8 +2040,8 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
             {
                 CORE.Window.screen.width = winWidth;
                 CORE.Window.screen.height = winHeight;
-                float scaleX = (float)width/winWidth;
-                float scaleY = (float)height/winHeight;
+                float scaleX = static_cast<float>(width)/winWidth;
+                float scaleY = static_cast<float>(height)/winHeight;
 
                 CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleX, scaleY, 1.0f});
             }
@@ -2055,8 +2055,8 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
         {
             // Set screen size to logical pixel size, considering content scaling
             Vector2 scaleDpi = GetWindowScaleDPI();
-            CORE.Window.screen.width = (int)roundf((float)width/scaleDpi.x);
-            CORE.Window.screen.height = (int)roundf((float)height/scaleDpi.y);
+            CORE.Window.screen.width = static_cast<int>(roundf(static_cast<float>(width)/scaleDpi.x));
+            CORE.Window.screen.height = static_cast<int>(roundf(static_cast<float>(height)/scaleDpi.y));
             CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
 #if !defined(__APPLE__) && !defined(_GLFW_WAYLAND)
             // On macOS and Linux-Wayland, mouse coords are already in logical space
@@ -2080,8 +2080,8 @@ static void WindowContentScaleCallback(GLFWwindow *window, float scalex, float s
 {
     //TRACELOG(LOG_INFO, "GLFW3: Window content scale changed, scale: [%.2f,%.2f]", scalex, scaley);
 
-    CORE.Window.render.width = (int)roundf((float)CORE.Window.screen.width*scalex);
-    CORE.Window.render.height = (int)roundf((float)CORE.Window.screen.height*scaley);
+    CORE.Window.render.width = static_cast<int>(roundf(static_cast<float>(CORE.Window.screen.width)*scalex));
+    CORE.Window.render.height = static_cast<int>(roundf(static_cast<float>(CORE.Window.screen.height)*scaley));
     CORE.Window.currentFbo = CORE.Window.render;
 
     // NOTE: On APPLE platforms system should manage window/input scaling and also framebuffer scaling
@@ -2141,11 +2141,11 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
 
         // WARNING: Paths are freed by GLFW when the callback returns, keeping an internal copy
         CORE.Window.dropFileCount = count;
-        CORE.Window.dropFilepaths = (char **)RL_CALLOC(CORE.Window.dropFileCount, sizeof(char *));
+        CORE.Window.dropFilepaths = static_cast<char **>(RL_CALLOC(CORE.Window.dropFileCount, sizeof(char *)));
 
         for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++)
         {
-            CORE.Window.dropFilepaths[i] = (char *)RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
+            CORE.Window.dropFilepaths[i] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
             snprintf(CORE.Window.dropFilepaths[i], MAX_FILEPATH_LENGTH, "%s", paths[i]);
         }
     }
@@ -2223,8 +2223,8 @@ static void MouseButtonCallback(GLFWwindow *window, int button, int action, int 
     gestureEvent.position[0] = GetMousePosition();
 
     // Normalize gestureEvent.position[0] for CORE.Window.screen.width and CORE.Window.screen.height
-    gestureEvent.position[0].x /= (float)GetScreenWidth();
-    gestureEvent.position[0].y /= (float)GetScreenHeight();
+    gestureEvent.position[0].x /= static_cast<float>(GetScreenWidth());
+    gestureEvent.position[0].y /= static_cast<float>(GetScreenHeight());
 
     // Gesture data is sent to gestures-system for processing
     ProcessGestureEvent(gestureEvent);
@@ -2234,8 +2234,8 @@ static void MouseButtonCallback(GLFWwindow *window, int button, int action, int 
 // GLFW3: Cursor position callback, runs on mouse movement
 static void MouseCursorPosCallback(GLFWwindow *window, double x, double y)
 {
-    CORE.Input.Mouse.currentPosition.x = (float)x;
-    CORE.Input.Mouse.currentPosition.y = (float)y;
+    CORE.Input.Mouse.currentPosition.x = static_cast<float>(x);
+    CORE.Input.Mouse.currentPosition.y = static_cast<float>(y);
     CORE.Input.Touch.position[0] = CORE.Input.Mouse.currentPosition;
 
 #if SUPPORT_GESTURES_SYSTEM && SUPPORT_MOUSE_GESTURES
@@ -2254,8 +2254,8 @@ static void MouseCursorPosCallback(GLFWwindow *window, double x, double y)
     gestureEvent.position[0] = CORE.Input.Touch.position[0];
 
     // Normalize gestureEvent.position[0] for CORE.Window.screen.width and CORE.Window.screen.height
-    gestureEvent.position[0].x /= (float)GetScreenWidth();
-    gestureEvent.position[0].y /= (float)GetScreenHeight();
+    gestureEvent.position[0].x /= static_cast<float>(GetScreenWidth());
+    gestureEvent.position[0].y /= static_cast<float>(GetScreenHeight());
 
     // Gesture data is sent to gestures-system for processing
     ProcessGestureEvent(gestureEvent);
@@ -2265,8 +2265,8 @@ static void MouseCursorPosCallback(GLFWwindow *window, double x, double y)
 // GLFW3: Mouse wheel scroll callback, runs on mouse wheel changes
 static void MouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    CORE.Input.Mouse.currentWheelMove.x += (float)xoffset;
-    CORE.Input.Mouse.currentWheelMove.y += (float)yoffset;
+    CORE.Input.Mouse.currentWheelMove.x += static_cast<float>(xoffset);
+    CORE.Input.Mouse.currentWheelMove.y += static_cast<float>(yoffset);
 }
 
 // GLFW3: Cursor ennter callback, when cursor enters the window

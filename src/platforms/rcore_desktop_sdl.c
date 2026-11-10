@@ -944,7 +944,7 @@ void *GetWindowHandle(void)
     #if defined(_WIN32)
     handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr); // Type: HWND
     #elif defined(__linux__)
-    unsigned long windowId = (unsigned long)SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0); // Type: unsigned long (XID, Window)
+    unsigned long windowId = static_cast<unsigned long>(SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0)); // Type: unsigned long (XID, Window)
     if (windowId != 0)
     {
         // X11 window ID
@@ -971,7 +971,7 @@ void *GetWindowHandle(void)
         if (wmInfo.subsystem == SDL_SYSWM_X11)
         {
             // X11, get window ID (unsigned long)
-            platform.windowHandleX11 = (unsigned long)wmInfo.info.x11.window;
+            platform.windowHandleX11 = static_cast<unsigned long>(wmInfo.info.x11.window);
             handle = &platform.windowHandleX11;
         }
         else if (wmInfo.subsystem == SDL_SYSWM_WAYLAND)
@@ -1019,7 +1019,7 @@ Vector2 GetMonitorPosition(int monitor)
         if (SDL_GetDisplayUsableBounds(monitor, &displayBounds) == 0)
     #endif
         {
-            return Vector2{ (float)displayBounds.x, (float)displayBounds.y };
+            return Vector2{ static_cast<float>(displayBounds.x), static_cast<float>(displayBounds.y) };
         }
         else TRACELOG(LOG_WARNING, "SDL: Failed to get selected display usable bounds");
     }
@@ -1083,7 +1083,7 @@ int GetMonitorPhysicalWidth(int monitor)
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
         // Calculate size on inches, then convert to millimeter
-        if (ddpi > 0.0f) width = (int)((mode.w/ddpi)*25.4f);
+        if (ddpi > 0.0f) width = static_cast<int>(((mode.w/ddpi)*25.4f));
     }
     else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
 
@@ -1106,7 +1106,7 @@ int GetMonitorPhysicalHeight(int monitor)
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
         // Calculate size on inches, then convert to millimeter
-        if (ddpi > 0.0f) height = (int)((mode.h/ddpi)*25.4f);
+        if (ddpi > 0.0f) height = static_cast<int>(((mode.h/ddpi)*25.4f));
     }
     else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
 
@@ -1157,7 +1157,7 @@ Vector2 GetWindowPosition(void)
 
     SDL_GetWindowPosition(platform.window, &x, &y);
 
-    return Vector2{ (float)x, (float)y };
+    return Vector2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Get window scale DPI factor for current monitor
@@ -1251,7 +1251,7 @@ Image GetClipboardImage(void)
 
         if (fileData)
         {
-            image = LoadImageFromMemory(imageExtensions[i], fileData, (int)dataSize);
+            image = LoadImageFromMemory(imageExtensions[i], fileData, static_cast<int>(dataSize));
 
             SDL_free(fileData);
 
@@ -1329,7 +1329,7 @@ void SwapScreenBuffer(void)
 // Get elapsed time measure in seconds
 double GetTime(void)
 {
-    double time = ((double)SDL_GetPerformanceCounter()/(double)SDL_GetPerformanceFrequency()) - CORE.Time.base;
+    double time = (static_cast<double>(SDL_GetPerformanceCounter())/static_cast<double>(SDL_GetPerformanceFrequency())) - CORE.Time.base;
 
     return time;
 }
@@ -1368,7 +1368,7 @@ int SetGamepadMappings(std::string_view mappingsView)
     const char *mappings = mappingsStr.c_str();
 
     const int mappingsLength = strlen(mappings);
-    char *buffer = (char *)RL_CALLOC(mappingsLength + 1, sizeof(char));
+    char *buffer = static_cast<char *>(RL_CALLOC(mappingsLength + 1, sizeof(char)));
     memcpy(buffer, mappings, mappingsLength);
     char *p = strtok(buffer, "\n");
     bool succeed = true;
@@ -1408,7 +1408,7 @@ void SetMousePosition(int x, int y)
 {
     SDL_WarpMouseInWindow(platform.window, x, y);
 
-    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -1514,14 +1514,14 @@ void PollInputEvents(void)
                 int newCount = CORE.Window.dropFileCount + 1;
 
                 // Reallocate array to fit the new file path pointer
-                char **tempPaths = (char **)RL_REALLOC(CORE.Window.dropFilepaths, newCount*sizeof(char *));
+                char **tempPaths = static_cast<char **>(RL_REALLOC(CORE.Window.dropFilepaths, newCount*sizeof(char *)));
 
                 if (tempPaths != nullptr)
                 {
                     CORE.Window.dropFilepaths = tempPaths;
 
                     // Allocate memory for the file path string itself
-                    CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = (char *)RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
+                    CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
 
                     if (CORE.Window.dropFilepaths[CORE.Window.dropFileCount] != nullptr)
                     {
@@ -1562,8 +1562,8 @@ void PollInputEvents(void)
                         // Consider content scaling if required
                         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
                         {
-                            CORE.Window.screen.width = (int)(width/GetWindowScaleDPI().x);
-                            CORE.Window.screen.height = (int)(height/GetWindowScaleDPI().y);
+                            CORE.Window.screen.width = static_cast<int>((width/GetWindowScaleDPI().x));
+                            CORE.Window.screen.height = static_cast<int>((height/GetWindowScaleDPI().y));
                         }
                         else
                         {
@@ -1693,7 +1693,7 @@ void PollInputEvents(void)
                     // Add character (codepoint) to the queue
                 #if defined(USING_VERSION_SDL3)
                     size_t textLen = strlen(event.text.text);
-                    unsigned int codepoint = (unsigned int)SDL_StepUTF8(&event.text.text, &textLen);
+                    unsigned int codepoint = static_cast<unsigned int>(SDL_StepUTF8(&event.text.text, &textLen));
                 #else
                     int codepointSize = 0;
                     int codepoint = GetCodepointNextSDL(event.text.text, &codepointSize);
@@ -1745,13 +1745,13 @@ void PollInputEvents(void)
             {
                 if (CORE.Input.Mouse.cursorLocked)
                 {
-                    CORE.Input.Mouse.currentPosition.x += (float)event.motion.xrel;
-                    CORE.Input.Mouse.currentPosition.y += (float)event.motion.yrel;
+                    CORE.Input.Mouse.currentPosition.x += static_cast<float>(event.motion.xrel);
+                    CORE.Input.Mouse.currentPosition.y += static_cast<float>(event.motion.yrel);
                 }
                 else
                 {
-                    CORE.Input.Mouse.currentPosition.x = (float)event.motion.x;
-                    CORE.Input.Mouse.currentPosition.y = (float)event.motion.y;
+                    CORE.Input.Mouse.currentPosition.x = static_cast<float>(event.motion.x);
+                    CORE.Input.Mouse.currentPosition.y = static_cast<float>(event.motion.y);
                 }
 
                 CORE.Input.Touch.position[0] = CORE.Input.Mouse.currentPosition;
@@ -1950,7 +1950,7 @@ void PollInputEvents(void)
                         if (platform.gamepadId[i] == event.jaxis.which)
                         {
                             // SDL axis value range is -32768 to 32767, normalizing it to raylib's -1.0 to 1.0f range
-                            float value = event.jaxis.value/(float)32767;
+                            float value = event.jaxis.value/static_cast<float>(32767);
                             CORE.Input.Gamepad.axisState[i][axis] = value;
 
                             // Register button state for triggers in addition to their axes
@@ -1990,8 +1990,8 @@ void PollInputEvents(void)
             else gestureEvent.position[0] = GetMousePosition();
 
             // Normalize gestureEvent.position[0] for CORE.Window.screen.width and CORE.Window.screen.height
-            gestureEvent.position[0].x /= (float)GetScreenWidth();
-            gestureEvent.position[0].y /= (float)GetScreenHeight();
+            gestureEvent.position[0].x /= static_cast<float>(GetScreenWidth());
+            gestureEvent.position[0].y /= static_cast<float>(GetScreenHeight());
 
             // Gesture data is sent to gestures-system for processing
             ProcessGestureEvent(gestureEvent);
@@ -2214,7 +2214,7 @@ int InitPlatform(void)
     // Initialize timing system
     //----------------------------------------------------------------------------
     // Get base time from window initialization
-    CORE.Time.base = (double)SDL_GetPerformanceCounter()/(double)SDL_GetPerformanceFrequency();
+    CORE.Time.base = static_cast<double>(SDL_GetPerformanceCounter())/static_cast<double>(SDL_GetPerformanceFrequency());
 
     #if defined(_WIN32) && SUPPORT_WINMM_HIGHRES_TIMER && !SUPPORT_BUSY_WAIT_LOOP
     SDL_SetHint(SDL_HINT_TIMER_RESOLUTION, "1"); // SDL equivalent of timeBeginPeriod() and timeEndPeriod()
@@ -2326,7 +2326,7 @@ static void UpdateTouchPointsSDL(SDL_TouchFingerEvent event)
     for (int i = 0; i < CORE.Input.Touch.pointCount; i++)
     {
         SDL_Finger *finger = SDL_GetTouchFinger(event.touchId, i);
-        CORE.Input.Touch.pointId[i] = (int)finger->id;
+        CORE.Input.Touch.pointId[i] = static_cast<int>(finger->id);
         CORE.Input.Touch.position[i].x = finger->x*CORE.Window.screen.width;
         CORE.Input.Touch.position[i].y = finger->y*CORE.Window.screen.height;
         CORE.Input.Touch.currentTouchState[i] = 1;

@@ -508,7 +508,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const unsigned char *fi
             {
                 TRACELOG(LOG_WARNING, "IMAGE: HDR file format not supported");
                 UnloadImage(image);
-                image = (Image){ 0 };
+                image = Image{};
             }
         }
 #endif
@@ -691,7 +691,7 @@ bool ExportImage(Image image, std::string_view fileNameView)
     else if (IsFileExtension(fileName, ".png"))
     {
         int dataSize = 0;
-        unsigned char *fileData = stbi_write_png_to_mem((const unsigned char *)imgData, image.width*channels, image.width, image.height, channels, &dataSize);
+        unsigned char *fileData = stbi_write_png_to_mem(static_cast<const unsigned char *>(imgData), image.width*channels, image.width, image.height, channels, &dataSize);
         result = SaveFileData(fileName, fileData, dataSize);
         RL_FREE(fileData);
     }
@@ -1260,7 +1260,7 @@ Image ImageFromImage(Image image, Rectangle rec)
 
             result.width = static_cast<int>(rec.width);
             result.height = static_cast<int>(rec.height);
-            result.data = RL_CALLOC((int)rec.width*(int)rec.height*bytesPerPixel, 1);
+            result.data = RL_CALLOC(static_cast<int>(rec.width)*static_cast<int>(rec.height)*bytesPerPixel, 1);
             result.format = image.format;
             result.mipmaps = 1;
 
@@ -2579,30 +2579,30 @@ void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp)
                 // NOTE: Some cases are out of the array and should be ignored
                 if (x < (image->width - 1))
                 {
-                    pixels[y*image->width + x+1].r = MIN((int)pixels[y*image->width + x+1].r + (int)((float)rError*7.0f/16), 0xff);
-                    pixels[y*image->width + x+1].g = MIN((int)pixels[y*image->width + x+1].g + (int)((float)gError*7.0f/16), 0xff);
-                    pixels[y*image->width + x+1].b = MIN((int)pixels[y*image->width + x+1].b + (int)((float)bError*7.0f/16), 0xff);
+                    pixels[y*image->width + x+1].r = MIN(static_cast<int>(pixels[y*image->width + x+1].r) + static_cast<int>((static_cast<float>(rError)*7.0f/16)), 0xff);
+                    pixels[y*image->width + x+1].g = MIN(static_cast<int>(pixels[y*image->width + x+1].g) + static_cast<int>((static_cast<float>(gError)*7.0f/16)), 0xff);
+                    pixels[y*image->width + x+1].b = MIN(static_cast<int>(pixels[y*image->width + x+1].b) + static_cast<int>((static_cast<float>(bError)*7.0f/16)), 0xff);
                 }
 
                 if ((x > 0) && (y < (image->height - 1)))
                 {
-                    pixels[(y+1)*image->width + x-1].r = MIN((int)pixels[(y+1)*image->width + x-1].r + (int)((float)rError*3.0f/16), 0xff);
-                    pixels[(y+1)*image->width + x-1].g = MIN((int)pixels[(y+1)*image->width + x-1].g + (int)((float)gError*3.0f/16), 0xff);
-                    pixels[(y+1)*image->width + x-1].b = MIN((int)pixels[(y+1)*image->width + x-1].b + (int)((float)bError*3.0f/16), 0xff);
+                    pixels[(y+1)*image->width + x-1].r = MIN(static_cast<int>(pixels[(y+1)*image->width + x-1].r) + static_cast<int>((static_cast<float>(rError)*3.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x-1].g = MIN(static_cast<int>(pixels[(y+1)*image->width + x-1].g) + static_cast<int>((static_cast<float>(gError)*3.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x-1].b = MIN(static_cast<int>(pixels[(y+1)*image->width + x-1].b) + static_cast<int>((static_cast<float>(bError)*3.0f/16)), 0xff);
                 }
 
                 if (y < (image->height - 1))
                 {
-                    pixels[(y+1)*image->width + x].r = MIN((int)pixels[(y+1)*image->width + x].r + (int)((float)rError*5.0f/16), 0xff);
-                    pixels[(y+1)*image->width + x].g = MIN((int)pixels[(y+1)*image->width + x].g + (int)((float)gError*5.0f/16), 0xff);
-                    pixels[(y+1)*image->width + x].b = MIN((int)pixels[(y+1)*image->width + x].b + (int)((float)bError*5.0f/16), 0xff);
+                    pixels[(y+1)*image->width + x].r = MIN(static_cast<int>(pixels[(y+1)*image->width + x].r) + static_cast<int>((static_cast<float>(rError)*5.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x].g = MIN(static_cast<int>(pixels[(y+1)*image->width + x].g) + static_cast<int>((static_cast<float>(gError)*5.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x].b = MIN(static_cast<int>(pixels[(y+1)*image->width + x].b) + static_cast<int>((static_cast<float>(bError)*5.0f/16)), 0xff);
                 }
 
                 if ((x < (image->width - 1)) && (y < (image->height - 1)))
                 {
-                    pixels[(y+1)*image->width + x+1].r = MIN((int)pixels[(y+1)*image->width + x+1].r + (int)((float)rError*1.0f/16), 0xff);
-                    pixels[(y+1)*image->width + x+1].g = MIN((int)pixels[(y+1)*image->width + x+1].g + (int)((float)gError*1.0f/16), 0xff);
-                    pixels[(y+1)*image->width + x+1].b = MIN((int)pixels[(y+1)*image->width + x+1].b + (int)((float)bError*1.0f/16), 0xff);
+                    pixels[(y+1)*image->width + x+1].r = MIN(static_cast<int>(pixels[(y+1)*image->width + x+1].r) + static_cast<int>((static_cast<float>(rError)*1.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x+1].g = MIN(static_cast<int>(pixels[(y+1)*image->width + x+1].g) + static_cast<int>((static_cast<float>(gError)*1.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x+1].b = MIN(static_cast<int>(pixels[(y+1)*image->width + x+1].b) + static_cast<int>((static_cast<float>(bError)*1.0f/16)), 0xff);
                 }
 
                 rPixel = static_cast<unsigned short>(newPixel.r);
@@ -3537,7 +3537,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
             // NOTE: Calculate grayscale equivalent color (normalized to 32bit)
             Vector3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
 
-            (static_cast<unsigned short*>(dst->data))[y*dst->width + x] = FloatToHalf(coln.x*0.299f + coln.y*0.587f + coln.z*0.114f);
+            (static_cast<unsigned short *>(dst->data))[y*dst->width + x] = FloatToHalf(coln.x*0.299f + coln.y*0.587f + coln.z*0.114f);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
@@ -3932,7 +3932,7 @@ void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color)
     // Repeat the first pixel data throughout the row
     for (int x = 1; x < static_cast<int>(rec.width); x *= 2)
     {
-        int pixelsToCopy = MIN(x, (int)rec.width - x);
+        int pixelsToCopy = MIN(x, static_cast<int>(rec.width) - x);
         memcpy(pSrcPixel + x*bytesPerPixel, pSrcPixel, pixelsToCopy*bytesPerPixel);
     }
 
@@ -5549,7 +5549,7 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
             fout.z = (fsrc.z*fsrc.w + fdst.z*fdst.w*(1 - fsrc.w))/fout.w;
         }
 
-        result = Color{ (unsigned char)(fout.x*255.0f), (unsigned char)(fout.y*255.0f), (unsigned char)(fout.z*255.0f), (unsigned char)(fout.w*255.0f) };
+        result = Color{ static_cast<unsigned char>((fout.x*255.0f)), static_cast<unsigned char>((fout.y*255.0f)), static_cast<unsigned char>((fout.z*255.0f)), static_cast<unsigned char>((fout.w*255.0f)) };
     }
 #endif
 
@@ -5592,86 +5592,86 @@ Color GetPixelColor(const void *srcPtr, int format)
 
     switch (format)
     {
-        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], 255 }; break;
-        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1] }; break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], 255 }; break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[1] }; break;
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
-            color.r = static_cast<unsigned char>((((unsigned short *)srcPtr)[0] >> 11)*255/31);
-            color.g = static_cast<unsigned char>(((((unsigned short *)srcPtr)[0] >> 5) & 0b0000000000111111)*255/63);
-            color.b = static_cast<unsigned char>((((unsigned short *)srcPtr)[0] & 0b0000000000011111)*255/31);
+            color.r = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] >> 11)*255/31);
+            color.g = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 5) & 0b0000000000111111)*255/63);
+            color.b = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] & 0b0000000000011111)*255/31);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
-            color.r = static_cast<unsigned char>((((unsigned short *)srcPtr)[0] >> 11)*255/31);
-            color.g = static_cast<unsigned char>(((((unsigned short *)srcPtr)[0] >> 6) & 0b0000000000011111)*255/31);
-            color.b = static_cast<unsigned char>(((((unsigned short *)srcPtr)[0] >> 1) & 0b0000000000011111)*255/31);
-            color.a = (((unsigned short *)srcPtr)[0] & 0b0000000000000001)? 255 : 0;
+            color.r = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] >> 11)*255/31);
+            color.g = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 6) & 0b0000000000011111)*255/31);
+            color.b = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 1) & 0b0000000000011111)*255/31);
+            color.a = ((static_cast<const unsigned short *>(srcPtr))[0] & 0b0000000000000001)? 255 : 0;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
-            color.r = static_cast<unsigned char>((((unsigned short *)srcPtr)[0] >> 12)*255/15);
-            color.g = static_cast<unsigned char>(((((unsigned short *)srcPtr)[0] >> 8) & 0b0000000000001111)*255/15);
-            color.b = static_cast<unsigned char>(((((unsigned short *)srcPtr)[0] >> 4) & 0b0000000000001111)*255/15);
-            color.a = static_cast<unsigned char>((((unsigned short *)srcPtr)[0] & 0b0000000000001111)*255/15);
+            color.r = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] >> 12)*255/15);
+            color.g = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 8) & 0b0000000000001111)*255/15);
+            color.b = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 4) & 0b0000000000001111)*255/15);
+            color.a = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] & 0b0000000000001111)*255/15);
 
         } break;
-        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1], ((unsigned char *)srcPtr)[2], ((unsigned char *)srcPtr)[3] }; break;
-        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: color = Color{ ((unsigned char *)srcPtr)[0], ((unsigned char *)srcPtr)[1], ((unsigned char *)srcPtr)[2], 255 }; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[1], (static_cast<const unsigned char *>(srcPtr))[2], (static_cast<const unsigned char *>(srcPtr))[3] }; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[1], (static_cast<const unsigned char *>(srcPtr))[2], 255 }; break;
         case PIXELFORMAT_UNCOMPRESSED_R32:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(((float *)srcPtr)[0]*255.0f);
-            color.g = static_cast<unsigned char>(((float *)srcPtr)[0]*255.0f);
-            color.b = static_cast<unsigned char>(((float *)srcPtr)[0]*255.0f);
+            color.r = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
+            color.g = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
+            color.b = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(((float *)srcPtr)[0]*255.0f);
-            color.g = static_cast<unsigned char>(((float *)srcPtr)[1]*255.0f);
-            color.b = static_cast<unsigned char>(((float *)srcPtr)[2]*255.0f);
+            color.r = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
+            color.g = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[1]*255.0f);
+            color.b = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[2]*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(((float *)srcPtr)[0]*255.0f);
-            color.g = static_cast<unsigned char>(((float *)srcPtr)[1]*255.0f);
-            color.b = static_cast<unsigned char>(((float *)srcPtr)[2]*255.0f);
-            color.a = static_cast<unsigned char>(((float *)srcPtr)[3]*255.0f);
+            color.r = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
+            color.g = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[1]*255.0f);
+            color.b = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[2]*255.0f);
+            color.a = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[3]*255.0f);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[0])*255.0f);
-            color.g = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[0])*255.0f);
-            color.b = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[0])*255.0f);
+            color.r = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
+            color.g = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
+            color.b = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[0])*255.0f);
-            color.g = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[1])*255.0f);
-            color.b = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[2])*255.0f);
+            color.r = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
+            color.g = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[1])*255.0f);
+            color.b = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[2])*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[0])*255.0f);
-            color.g = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[1])*255.0f);
-            color.b = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[2])*255.0f);
-            color.a = static_cast<unsigned char>(HalfToFloat(((unsigned short *)srcPtr)[3])*255.0f);
+            color.r = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
+            color.g = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[1])*255.0f);
+            color.b = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[2])*255.0f);
+            color.a = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[3])*255.0f);
 
         } break;
         default: break;

@@ -335,7 +335,7 @@ void android_main(struct android_app *app)
     while (!app->destroyRequested)
     {
         // Poll all events until return value TIMEOUT is reached, meaning no events left to process
-        while ((pollResult = ALooper_pollOnce(0, nullptr, &pollEvents, (void **)&platform.source)) > ALOOPER_POLL_TIMEOUT)
+        while ((pollResult = ALooper_pollOnce(0, nullptr, &pollEvents, static_cast<void **>(&platform.source))) > ALOOPER_POLL_TIMEOUT)
         {
             if (platform.source != nullptr) platform.source->process(app, platform.source);
         }
@@ -506,7 +506,7 @@ int GetCurrentMonitor(void)
     {
         jclass displayClass = (*env)->FindClass(env, "android/view/Display");
         jmethodID getDisplayIdMethod = (*env)->GetMethodID(env, displayClass, "getDisplayId", "()I");
-        displayId = (int)(*env)->CallIntMethod(env, display, getDisplayIdMethod);
+        displayId = static_cast<int>((*env)->CallIntMethod(env, display, getDisplayIdMethod));
         (*env)->DeleteLocalRef(env, displayClass);
     }
 
@@ -581,7 +581,7 @@ Vector2 GetWindowPosition(void)
 Vector2 GetWindowScaleDPI(void)
 {
     int density = AConfiguration_getDensity(platform.app->config);
-    float scale = (float)density/160;
+    float scale = static_cast<float>(density)/160;
     return Vector2{ scale, scale };
 }
 
@@ -658,9 +658,9 @@ double GetTime(void)
     double time = 0.0;
     struct timespec ts = {};
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    unsigned long long nanoSeconds = (unsigned long long)ts.tv_sec*1000000000LLU + (unsigned long long)ts.tv_nsec;
+    unsigned long long nanoSeconds = static_cast<unsigned long long>(ts.tv_sec)*1000000000LLU + static_cast<unsigned long long>(ts.tv_nsec);
 
-    time = (double)(nanoSeconds - CORE.Time.base)*1e-9; // Elapsed time since InitTimer()
+    time = static_cast<double>((nanoSeconds - CORE.Time.base))*1e-9; // Elapsed time since InitTimer()
 
     return time;
 }
@@ -734,7 +734,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -799,7 +799,7 @@ void PollInputEvents(void)
 
     // Poll Events (registered events) until TIMEOUT is reached which indicates there are no events left to poll
     // NOTE: Activity is paused if not enabled (platform.appEnabled) and always run flag is not set (FLAG_WINDOW_ALWAYS_RUN)
-    while ((pollResult = ALooper_pollOnce((platform.appEnabled || FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_ALWAYS_RUN))? 0 : -1, nullptr, &pollEvents, ((void **)&platform.source)) > ALOOPER_POLL_TIMEOUT))
+    while ((pollResult = ALooper_pollOnce((platform.appEnabled || FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_ALWAYS_RUN))? 0 : -1, nullptr, &pollEvents, (static_cast<void **>(&platform.source))) > ALOOPER_POLL_TIMEOUT))
     {
         // Process this event
         if (platform.source != nullptr) platform.source->process(platform.app, platform.source);
@@ -885,7 +885,7 @@ int InitPlatform(void)
     while (!CORE.Window.ready)
     {
         // Process events until TIMEOUT is reached, which indicates no more events queued
-        while ((pollResult = ALooper_pollOnce(0, nullptr, &pollEvents, ((void **)&platform.source)) > ALOOPER_POLL_TIMEOUT))
+        while ((pollResult = ALooper_pollOnce(0, nullptr, &pollEvents, (static_cast<void **>(&platform.source))) > ALOOPER_POLL_TIMEOUT))
         {
             // Process this event
             if (platform.source != nullptr) platform.source->process(platform.app, platform.source);
@@ -927,8 +927,8 @@ void ClosePlatform(void)
     // NOTE: Reset global state in case the activity is being relaunched
     if (platform.app->destroyRequested != 0)
     {
-        CORE = (CoreData){ 0 };
-        platform = (PlatformData){ 0 };
+        CORE = CoreData{};
+        platform = PlatformData{};
     }
 }
 
@@ -1130,7 +1130,7 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                 #endif
 
                     // Initialize random seed
-                    SetRandomSeed((unsigned int)time(nullptr));
+                    SetRandomSeed(static_cast<unsigned int>(time(nullptr)));
                 }
             }
         } break;
@@ -1360,10 +1360,10 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
         touchRaw.position[i] = Vector2{ AMotionEvent_getX(event, i), AMotionEvent_getY(event, i) };
 
         // Normalize CORE.Input.Touch.position[i] for CORE.Window.screen.width and CORE.Window.screen.height
-        float widthRatio = (float)(CORE.Window.screen.width + CORE.Window.renderOffset.x)/(float)CORE.Window.display.width;
-        float heightRatio = (float)(CORE.Window.screen.height + CORE.Window.renderOffset.y)/(float)CORE.Window.display.height;
-        touchRaw.position[i].x = touchRaw.position[i].x*widthRatio - (float)CORE.Window.renderOffset.x/2;
-        touchRaw.position[i].y = touchRaw.position[i].y*heightRatio - (float)CORE.Window.renderOffset.y/2;
+        float widthRatio = static_cast<float>((CORE.Window.screen.width + CORE.Window.renderOffset.x))/static_cast<float>(CORE.Window.display.width);
+        float heightRatio = static_cast<float>((CORE.Window.screen.height + CORE.Window.renderOffset.y))/static_cast<float>(CORE.Window.display.height);
+        touchRaw.position[i].x = touchRaw.position[i].x*widthRatio - static_cast<float>(CORE.Window.renderOffset.x)/2;
+        touchRaw.position[i].y = touchRaw.position[i].y*heightRatio - static_cast<float>(CORE.Window.renderOffset.y)/2;
     }
 
     int32_t action = AMotionEvent_getAction(event);
@@ -1412,8 +1412,8 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
 
         gestureEvent.pointId[gestureEvent.pointCount] = touchRaw.pointId[i];
         gestureEvent.position[gestureEvent.pointCount] = touchRaw.position[i];
-        gestureEvent.position[gestureEvent.pointCount].x /= (float)GetScreenWidth();
-        gestureEvent.position[gestureEvent.pointCount].y /= (float)GetScreenHeight();
+        gestureEvent.position[gestureEvent.pointCount].x /= static_cast<float>(GetScreenWidth());
+        gestureEvent.position[gestureEvent.pointCount].y /= static_cast<float>(GetScreenHeight());
         gestureEvent.pointCount++;
     }
 
@@ -1493,26 +1493,26 @@ static void SetupFramebuffer(int width, int height)
         TRACELOG(LOG_WARNING, "DISPLAY: Downscaling required: Screen size (%ix%i) is bigger than display size (%ix%i)", CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.display.width, CORE.Window.display.height);
 
         // Downscaling to fit display with border-bars
-        float widthRatio = (float)CORE.Window.display.width/(float)CORE.Window.screen.width;
-        float heightRatio = (float)CORE.Window.display.height/(float)CORE.Window.screen.height;
+        float widthRatio = static_cast<float>(CORE.Window.display.width)/static_cast<float>(CORE.Window.screen.width);
+        float heightRatio = static_cast<float>(CORE.Window.display.height)/static_cast<float>(CORE.Window.screen.height);
 
         if (widthRatio <= heightRatio)
         {
             CORE.Window.render.width = CORE.Window.display.width;
-            CORE.Window.render.height = (int)round((float)CORE.Window.screen.height*widthRatio);
+            CORE.Window.render.height = static_cast<int>(round(static_cast<float>(CORE.Window.screen.height)*widthRatio));
             CORE.Window.renderOffset.x = 0;
             CORE.Window.renderOffset.y = (CORE.Window.display.height - CORE.Window.render.height);
         }
         else
         {
-            CORE.Window.render.width = (int)round((float)CORE.Window.screen.width*heightRatio);
+            CORE.Window.render.width = static_cast<int>(round(static_cast<float>(CORE.Window.screen.width)*heightRatio));
             CORE.Window.render.height = CORE.Window.display.height;
             CORE.Window.renderOffset.x = (CORE.Window.display.width - CORE.Window.render.width);
             CORE.Window.renderOffset.y = 0;
         }
 
         // Screen scaling required
-        float scaleRatio = (float)CORE.Window.render.width/(float)CORE.Window.screen.width;
+        float scaleRatio = static_cast<float>(CORE.Window.render.width)/static_cast<float>(CORE.Window.screen.width);
         CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleRatio, scaleRatio, 1.0f});
 
         // NOTE: Rendering to full display resolution
@@ -1534,19 +1534,19 @@ static void SetupFramebuffer(int width, int height)
         }
 
         // Upscaling to fit display with border-bars
-        float displayRatio = (float)CORE.Window.display.width/(float)CORE.Window.display.height;
-        float screenRatio = (float)CORE.Window.screen.width/(float)CORE.Window.screen.height;
+        float displayRatio = static_cast<float>(CORE.Window.display.width)/static_cast<float>(CORE.Window.display.height);
+        float screenRatio = static_cast<float>(CORE.Window.screen.width)/static_cast<float>(CORE.Window.screen.height);
 
         if (displayRatio <= screenRatio)
         {
             CORE.Window.render.width = CORE.Window.screen.width;
-            CORE.Window.render.height = (int)round((float)CORE.Window.screen.width/displayRatio);
+            CORE.Window.render.height = static_cast<int>(round(static_cast<float>(CORE.Window.screen.width)/displayRatio));
             CORE.Window.renderOffset.x = 0;
             CORE.Window.renderOffset.y = (CORE.Window.render.height - CORE.Window.screen.height);
         }
         else
         {
-            CORE.Window.render.width = (int)round((float)CORE.Window.screen.height*displayRatio);
+            CORE.Window.render.width = static_cast<int>(round(static_cast<float>(CORE.Window.screen.height)*displayRatio));
             CORE.Window.render.height = CORE.Window.screen.height;
             CORE.Window.renderOffset.x = (CORE.Window.render.width - CORE.Window.screen.width);
             CORE.Window.renderOffset.y = 0;
@@ -1595,7 +1595,7 @@ __attribute__((visibility("default"))) FILE *__wrap_fopen(const char *fileName, 
 
 static int android_read(void *cookie, char *data, int dataSize)
 {
-    return AAsset_read((AAsset *)cookie, data, dataSize);
+    return AAsset_read(static_cast<AAsset *>(cookie), data, dataSize);
 }
 
 static int android_write(void *cookie, const char *data, int dataSize)
@@ -1607,12 +1607,12 @@ static int android_write(void *cookie, const char *data, int dataSize)
 
 static fpos_t android_seek(void *cookie, fpos_t offset, int whence)
 {
-    return AAsset_seek((AAsset *)cookie, offset, whence);
+    return AAsset_seek(static_cast<AAsset *>(cookie), offset, whence);
 }
 
 static int android_close(void *cookie)
 {
-    AAsset_close((AAsset *)cookie);
+    AAsset_close(static_cast<AAsset *>(cookie));
     return 0;
 }
 

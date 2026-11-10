@@ -180,7 +180,7 @@ static HMODULE shcore = nullptr; // shcore.dll (Windows 8.1 and early versions o
 //----------------------------------------------------------------------------------
 #define A_TO_W_ALLOCA(outWstr, inAnsi)   do {                   \
     size_t outLen = AToWLen(inAnsi);                            \
-    outWstr = (WCHAR *)alloca(sizeof(WCHAR)*(outLen + 1));      \
+    outWstr = static_cast<WCHAR *>(alloca(sizeof(WCHAR)*(outLen + 1)));      \
     AToWCopy(inAnsi, outWstr, outLen);                          \
     outWstr[outLen] = 0;                                        \
 } while (0)
@@ -260,10 +260,10 @@ static HMODULE shcore = nullptr; // shcore.dll (Windows 8.1 and early versions o
 #endif
 
 #ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE
-    #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE ((HANDLE)-3)
+    #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE (static_cast<HANDLE>(3))
 #endif
 #ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
-    #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 ((HANDLE)-4)
+    #define DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 (static_cast<HANDLE>(4))
 #endif
 
 //----------------------------------------------------------------------------------
@@ -430,7 +430,7 @@ static size_t AToWLen(const char *ascii)
 // Copy ASCII to WCHAR string
 static void AToWCopy(const char *ascii, wchar_t *outPtr, size_t outLen)
 {
-    int size = MultiByteToWideChar(CP_UTF8, 0, ascii, -1, outPtr, (int)outLen);
+    int size = MultiByteToWideChar(CP_UTF8, 0, ascii, -1, outPtr, static_cast<int>(outLen));
     if (size != outLen) TRACELOG(LOG_WARNING, "WIN32: Failed to convert %i UTF-8 chars to WCHAR, converted %i chars", outLen, size);
 }
 
@@ -518,12 +518,12 @@ static void SetProcessDpiAwareCompat(void)
     if (pSetProcessDpiAwarenessContext != nullptr)
     {
         // Windows 10 v1703+
-        BOOL succeeded = pSetProcessDpiAwarenessContext((HANDLE)DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+        BOOL succeeded = pSetProcessDpiAwarenessContext(static_cast<HANDLE>(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2));
 
         if (!succeeded)
         {
             // If monitor aware v2 is not available, try v1
-            pSetProcessDpiAwarenessContext((HANDLE)DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE);
+            pSetProcessDpiAwarenessContext(static_cast<HANDLE>(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE));
         }
     }
     else if (pSetProcessDpiAwareness != nullptr)
@@ -541,7 +541,7 @@ static void SetProcessDpiAwareCompat(void)
     if ((pGetThreadDpiAwarenessContext != nullptr) && (pAreDpiAwarenessContextsEqual != nullptr))
     {
         // There are subtle differences between per-monitor v1 and v2
-        platform.perMonitorDPIAwareV2 = pAreDpiAwarenessContextsEqual(pGetThreadDpiAwarenessContext(), (HANDLE)DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+        platform.perMonitorDPIAwareV2 = pAreDpiAwarenessContextsEqual(pGetThreadDpiAwarenessContext(), static_cast<HANDLE>(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2));
     }
 }
 
@@ -602,7 +602,7 @@ static void CheckFlags(const char *context, HWND hwnd, DWORD flags, DWORD expect
     }
 
     SetLastError(0);
-    LONG actualStyle = (LONG)GetWindowLongPtrW(hwnd, GWL_STYLE);
+    LONG actualStyle = static_cast<LONG>(GetWindowLongPtrW(hwnd, GWL_STYLE));
     if ((actualStyle & styleCheckMask) != (expectedStyle & styleCheckMask))
     {
         TRACELOG(LOG_ERROR, "WIN32: FLAGS: %s: expected style 0x%x but got 0x%x (diff=0x%x, mask=0x%x, lasterror=%lu)",
@@ -644,7 +644,7 @@ static SIZE CalcWindowSize(UINT dpi, SIZE clientSize, DWORD style)
     int result = AdjustWindowRectExForDpiCompat(&rect, style, 0, WINDOW_STYLE_EX, dpi);
     if (result == 0) TRACELOG(LOG_ERROR, "WIN32: Failed to adjust window rect [ERROR: %lu]", GetLastError());
 
-    return (SIZE){ rect.right - rect.left, rect.bottom - rect.top };
+    return SIZE{ rect.right - rect.left, rect.bottom - rect.top };
 }
 
 // Update window size if required
@@ -688,11 +688,11 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
 
     // Get size in pixels from points, considering high-dpi
     UINT dpi = GetDpiForWindowCompat(hwnd);
-    float dpiScale = ((float)dpi)/96.0f;
+    float dpiScale = (static_cast<float>(dpi))/96.0f;
     bool dpiScaling = flags & FLAG_WINDOW_HIGHDPI;
     SIZE desiredSize = {
-        .cx = dpiScaling? (int)roundf((float)width*dpiScale) : width,
-        .cy = dpiScaling? (int)roundf((float)height*dpiScale) : height
+        .cx = dpiScaling? static_cast<int>(roundf(static_cast<float>(width)*dpiScale)) : width,
+        .cy = dpiScaling? static_cast<int>(roundf(static_cast<float>(height)*dpiScale)) : height
     };
 
     // Get client size (framebuffer inside the window)
@@ -724,7 +724,7 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
 
         LONG monitorWidth = info.rcMonitor.right - info.rcMonitor.left;
         LONG monitorHeight = info.rcMonitor.bottom - info.rcMonitor.top;
-        windowPos = (POINT){
+        windowPos = POINT{
             MAX(0, (monitorWidth - windowSize.cx)/2),
             MAX(0, (monitorHeight - windowSize.cy)/2),
         };
@@ -740,19 +740,19 @@ static bool UpdateWindowSize(int mode, HWND hwnd, int width, int height, unsigne
 // Get OpenGL function pointers
 static void *WglGetProcAddress(const char *procname)
 {
-    void *proc = (void *)wglGetProcAddress(procname);
+    void *proc = reinterpret_cast<void *>(wglGetProcAddress(procname));
 
     if ((proc == nullptr) ||
         // NOTE: Some GPU drivers could return following
         // invalid sentinel values instead of NULL
-        (proc == (void *)0x1) ||
-        (proc == (void *)0x2) ||
-        (proc == (void *)0x3) ||
-        (proc == (void *)-1))
+        (proc == reinterpret_cast<void *>(0x1)) ||
+        (proc == reinterpret_cast<void *>(0x2)) ||
+        (proc == reinterpret_cast<void *>(0x3)) ||
+        (proc == reinterpret_cast<void *>(-1)))
     {
         // TODO: Keep gl module pointer as global platform data?
         HMODULE glModule = LoadLibraryW(L"opengl32.dll");
-        proc = (void *)GetProcAddress(glModule, procname);
+        proc = reinterpret_cast<void *>(GetProcAddress(glModule, procname));
 
         //if (proc == NULL) TRACELOG(LOG_ERROR, "GL: GetProcAddress() failed to get %s [%p], error=%u", procname, proc, GetLastError());
         //else TRACELOG(LOG_INFO, "GL: Found entry point for %s [%p]", procname, proc);
@@ -764,21 +764,21 @@ static void *WglGetProcAddress(const char *procname)
 // Get cursor name
 static LPCWSTR GetCursorName(int cursor)
 {
-    LPCWSTR name = (LPCWSTR)IDC_ARROW;
+    LPCWSTR name = static_cast<LPCWSTR>(IDC_ARROW);
 
     switch (cursor)
     {
-        case MOUSE_CURSOR_DEFAULT: name = (LPCWSTR)IDC_ARROW; break;
-        case MOUSE_CURSOR_ARROW: name = (LPCWSTR)IDC_ARROW; break;
-        case MOUSE_CURSOR_IBEAM: name = (LPCWSTR)IDC_IBEAM; break;
-        case MOUSE_CURSOR_CROSSHAIR: name = (LPCWSTR)IDC_CROSS; break;
-        case MOUSE_CURSOR_POINTING_HAND: name = (LPCWSTR)IDC_HAND; break;
-        case MOUSE_CURSOR_RESIZE_EW: name = (LPCWSTR)IDC_SIZEWE; break;
-        case MOUSE_CURSOR_RESIZE_NS: name = (LPCWSTR)IDC_SIZENS; break;
-        case MOUSE_CURSOR_RESIZE_NWSE: name = (LPCWSTR)IDC_SIZENWSE; break;
-        case MOUSE_CURSOR_RESIZE_NESW: name = (LPCWSTR)IDC_SIZENESW; break;
-        case MOUSE_CURSOR_RESIZE_ALL: name = (LPCWSTR)IDC_SIZEALL; break;
-        case MOUSE_CURSOR_NOT_ALLOWED: name = (LPCWSTR)IDC_NO; break;
+        case MOUSE_CURSOR_DEFAULT: name = static_cast<LPCWSTR>(IDC_ARROW); break;
+        case MOUSE_CURSOR_ARROW: name = static_cast<LPCWSTR>(IDC_ARROW); break;
+        case MOUSE_CURSOR_IBEAM: name = static_cast<LPCWSTR>(IDC_IBEAM); break;
+        case MOUSE_CURSOR_CROSSHAIR: name = static_cast<LPCWSTR>(IDC_CROSS); break;
+        case MOUSE_CURSOR_POINTING_HAND: name = static_cast<LPCWSTR>(IDC_HAND); break;
+        case MOUSE_CURSOR_RESIZE_EW: name = static_cast<LPCWSTR>(IDC_SIZEWE); break;
+        case MOUSE_CURSOR_RESIZE_NS: name = static_cast<LPCWSTR>(IDC_SIZENS); break;
+        case MOUSE_CURSOR_RESIZE_NWSE: name = static_cast<LPCWSTR>(IDC_SIZENWSE); break;
+        case MOUSE_CURSOR_RESIZE_NESW: name = static_cast<LPCWSTR>(IDC_SIZENESW); break;
+        case MOUSE_CURSOR_RESIZE_ALL: name = static_cast<LPCWSTR>(IDC_SIZEALL); break;
+        case MOUSE_CURSOR_NOT_ALLOWED: name = static_cast<LPCWSTR>(IDC_NO); break;
         default: break;
     }
 
@@ -803,11 +803,11 @@ static void DeletePlatformIconHandles(void)
 // Delete existing icons and replace them with the standard window/taskbar icons
 static void ResetToDefaultWindowsIcons(void)
 {
-    HICON smallIcon = (HICON)GetClassLongPtrW(platform.hwnd, GCLP_HICONSM);
-    HICON largeIcon = (HICON)GetClassLongPtrW(platform.hwnd, GCLP_HICON);
+    HICON smallIcon = reinterpret_cast<HICON>(GetClassLongPtrW(platform.hwnd, GCLP_HICONSM));
+    HICON largeIcon = reinterpret_cast<HICON>(GetClassLongPtrW(platform.hwnd, GCLP_HICON));
 
-    SendMessage(platform.hwnd, WM_SETICON, ICON_SMALL, (LPARAM)smallIcon);
-    SendMessage(platform.hwnd, WM_SETICON, ICON_BIG, (LPARAM)largeIcon);
+    SendMessage(platform.hwnd, WM_SETICON, ICON_SMALL, static_cast<LPARAM>(smallIcon));
+    SendMessage(platform.hwnd, WM_SETICON, ICON_BIG, static_cast<LPARAM>(largeIcon));
 
     // The built-in Windows icons shouldn't be deleted, so there's no need to store a reference to them
     // Just delete the previous icons and exit
@@ -840,7 +840,7 @@ static HICON ConvertImageToWindowsIcon(Image image)
     bi.bV5AlphaMask = 0xFF000000;
 
     unsigned char *targetBits = nullptr;
-    HBITMAP hColorBitmap = CreateDIBSection(hdc, (BITMAPINFO *)&bi, DIB_RGB_COLORS, (void **)&targetBits, nullptr, 0);
+    HBITMAP hColorBitmap = CreateDIBSection(hdc, static_cast<const BITMAPINFO *>(&bi), DIB_RGB_COLORS, reinterpret_cast<void * *>(&targetBits), nullptr, 0);
     if (!hColorBitmap)
     {
         ReleaseDC(platform.hwnd, hdc);
@@ -853,10 +853,10 @@ static HICON ConvertImageToWindowsIcon(Image image)
         for (int x = 0; x < image.width; x++)
         {
             int i = (y*image.width + x)*4;
-            targetBits[i + 0] = ((unsigned char *)image.data)[i + 2]; // B
-            targetBits[i + 1] = ((unsigned char *)image.data)[i + 1]; // G
-            targetBits[i + 2] = ((unsigned char *)image.data)[i + 0]; // R
-            targetBits[i + 3] = ((unsigned char *)image.data)[i + 3]; // A
+            targetBits[i + 0] = (static_cast<unsigned char *>(image.data))[i + 2]; // B
+            targetBits[i + 1] = (static_cast<unsigned char *>(image.data))[i + 1]; // G
+            targetBits[i + 2] = (static_cast<unsigned char *>(image.data))[i + 0]; // R
+            targetBits[i + 3] = (static_cast<unsigned char *>(image.data))[i + 3]; // A
         }
     }
 
@@ -884,7 +884,7 @@ static HICON ConvertImageToWindowsIcon(Image image)
 // NOTE: Required by GetMonitorCount()
 static BOOL CALLBACK CountMonitorsProc(HMONITOR handle, HDC hdc, LPRECT rect, LPARAM lparam)
 {
-    int *count = (int *)lparam;
+    int *count = static_cast<int *>(lparam);
     *count += 1;
 
     // Always return TRUE to continue the loop, otherwise, the caller
@@ -896,7 +896,7 @@ static BOOL CALLBACK CountMonitorsProc(HMONITOR handle, HDC hdc, LPRECT rect, LP
 // NOTE: Required by GetCurrentMonitor()
 static BOOL CALLBACK FindMonitorProc(HMONITOR handle, HDC hdc, LPRECT rect, LPARAM lparam)
 {
-    MonitorInfo *monitor = (MonitorInfo *)lparam;
+    MonitorInfo *monitor = reinterpret_cast<MonitorInfo *>(lparam);
 
     if (handle == monitor->needle)
     {
@@ -1074,8 +1074,8 @@ void SetWindowIcon(Image image)
     HICON hIcon = ConvertImageToWindowsIcon(image);
     if (hIcon)
     {
-        SendMessage(platform.hwnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
-        SendMessage(platform.hwnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+        SendMessage(platform.hwnd, WM_SETICON, ICON_SMALL, static_cast<LPARAM>(hIcon));
+        SendMessage(platform.hwnd, WM_SETICON, ICON_BIG, static_cast<LPARAM>(hIcon));
         DeletePlatformIconHandles();
         platform.smallIcon = hIcon;
         platform.largeIcon = hIcon;
@@ -1130,8 +1130,8 @@ void SetWindowIcons(Image *images, int count)
         HICON smallIcon = ConvertImageToWindowsIcon(images[bestSmallIconIndex]);
         HICON largeIcon = ConvertImageToWindowsIcon(images[bestLargeIconIndex]);
 
-        SendMessage(platform.hwnd, WM_SETICON, ICON_SMALL, (LPARAM)smallIcon);
-        SendMessage(platform.hwnd, WM_SETICON, ICON_BIG, (LPARAM)largeIcon);
+        SendMessage(platform.hwnd, WM_SETICON, ICON_SMALL, static_cast<LPARAM>(smallIcon));
+        SendMessage(platform.hwnd, WM_SETICON, ICON_BIG, static_cast<LPARAM>(largeIcon));
 
         DeletePlatformIconHandles();
 
@@ -1236,14 +1236,14 @@ void SetWindowFocused(void)
 // Get native window handle
 void *GetWindowHandle(void)
 {
-    return (void *)platform.hwnd;
+    return static_cast<void *>(platform.hwnd);
 }
 
 int GetMonitorCount(void)
 {
     int count = 0;
 
-    int result = EnumDisplayMonitors(nullptr, nullptr, CountMonitorsProc, (LPARAM)&count);
+    int result = EnumDisplayMonitors(nullptr, nullptr, CountMonitorsProc, static_cast<LPARAM>(count));
     if (result == 0) TRACELOG(LOG_ERROR, "%s failed, error=%lu", "EnumDisplayMonitors", GetLastError());
 
     return count;
@@ -1260,7 +1260,7 @@ int GetCurrentMonitor(void)
     info.index = 0;
     info.matchIndex = -1;
 
-    int result = EnumDisplayMonitors(nullptr, nullptr, FindMonitorProc, (LPARAM)&info);
+    int result = EnumDisplayMonitors(nullptr, nullptr, FindMonitorProc, static_cast<LPARAM>(info));
     if (result == 0) TRACELOG(LOG_ERROR, "%s failed, error=%lu", "EnumDisplayMonitors", GetLastError());
 
     return info.matchIndex;
@@ -1325,7 +1325,7 @@ Vector2 GetWindowPosition(void)
 // Get window scale DPI factor for current monitor
 Vector2 GetWindowScaleDPI(void)
 {
-    float scale = ((float)GetDpiForWindowCompat(platform.hwnd))/96.0f;
+    float scale = (static_cast<float>(GetDpiForWindowCompat(platform.hwnd)))/96.0f;
     return Vector2{ scale, scale };
 }
 
@@ -1342,7 +1342,7 @@ void SetClipboardText(std::string_view textView)
         {
             size_t length = strlen(text);
 
-            int clipboardTextLength = MultiByteToWideChar(CP_UTF8, 0, text, (int)(length + 1), nullptr, 0);
+            int clipboardTextLength = MultiByteToWideChar(CP_UTF8, 0, text, static_cast<int>((length + 1)), nullptr, 0);
             if (clipboardTextLength != 0)
             {
                 HGLOBAL globalHandle = GlobalAlloc(GMEM_MOVEABLE, clipboardTextLength*sizeof(wchar_t));
@@ -1354,7 +1354,7 @@ void SetClipboardText(std::string_view textView)
                     if (clipboardText != nullptr)
                     {
                         // Directly copies text to clipboardText and converts from UTF-8 to UTF-16
-                        charactersCopied = MultiByteToWideChar(CP_UTF8, 0, text, (int)(length + 1), clipboardText, clipboardTextLength);
+                        charactersCopied = MultiByteToWideChar(CP_UTF8, 0, text, static_cast<int>((length + 1)), clipboardText, clipboardTextLength);
                         GlobalUnlock(globalHandle);
                     }
 
@@ -1399,10 +1399,10 @@ std::string GetClipboardText(void)
             {
                 // The clipboard data can't be trusted. It may or may not be null-terminated!
                 size_t maxLength = GlobalSize(clipboardDataHandle)/sizeof(wchar_t);
-                int length = (int)wcsnlen(clipboardText, maxLength);
+                int length = static_cast<int>(wcsnlen(clipboardText, maxLength));
 
                 int size = WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, nullptr, 0, nullptr, nullptr);
-                char *utf8Text = (char *)RL_CALLOC(size + 1, 1);
+                char *utf8Text = static_cast<char *>(RL_CALLOC(size + 1, 1));
 
                 if ((size > 0) && (WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, utf8Text, size, nullptr, nullptr) == 0)) size = 0;
                 utf8Text[size] = '\0';
@@ -1442,12 +1442,12 @@ Image GetClipboardImage(void)
     int width = 0;
     int height = 0;
 
-    fileData = (void *)Win32GetClipboardImageData(&width, &height, &dataSize);
+    fileData = static_cast<void *>(Win32GetClipboardImageData(&width, &height, &dataSize);
 
     if (fileData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data.");
     else
     {
-        image = LoadImageFromMemory(".bmp", (const unsigned char*)fileData, (int)dataSize);
+        image = LoadImageFromMemory(".bmp", static_cast<const unsigned char *>(fileData), static_cast<int>(dataSize));
         RL_FREE(fileData);
     }
 #else
@@ -1460,7 +1460,7 @@ Image GetClipboardImage(void)
 // Show mouse cursor
 void ShowCursor(void)
 {
-    SetCursor(LoadCursorW(nullptr, (LPCWSTR)IDC_ARROW));
+    SetCursor(LoadCursorW(nullptr, static_cast<LPCWSTR>(IDC_ARROW)));
     CORE.Input.Mouse.cursorHidden = false;
 }
 
@@ -1559,7 +1559,7 @@ double GetTime(void)
     double time = 0.0;
     LARGE_INTEGER now = {};
     QueryPerformanceCounter(&now);
-    time = (double)(now.QuadPart - CORE.Time.base)/(double)platform.timerFrequency.QuadPart;
+    time = static_cast<double>((now.QuadPart - CORE.Time.base))/static_cast<double>(platform.timerFrequency.QuadPart);
 
     return time;
 }
@@ -1587,7 +1587,7 @@ void OpenURL(std::string_view urlView)
     else
     {
         int len = strlen(url) + 16;
-        char *cmd = (char *)RL_CALLOC(len, sizeof(char));
+        char *cmd = static_cast<char *>(RL_CALLOC(len, sizeof(char)));
         snprintf(cmd, len, "explorer \"%s\"", url);
 
         int result = system(cmd);
@@ -1629,11 +1629,11 @@ void SetMousePosition(int x, int y)
         if (!IsIconic(platform.hwnd) && ClientToScreen(platform.hwnd, &topLeft))
         {
             Vector2 scale = CORE.Input.Mouse.scale;
-            int xScaled = (int)roundf(x/scale.x);
-            int yScaled = (int)roundf(y/scale.y);
+            int xScaled = static_cast<int>(roundf(x/scale.x));
+            int yScaled = static_cast<int>(roundf(y/scale.y));
             if (SetCursorPos(topLeft.x + xScaled, topLeft.y + yScaled))
             {
-                CORE.Input.Mouse.currentPosition = Vector2{ (float)xScaled, (float)yScaled };
+                CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(xScaled), static_cast<float>(yScaled) };
             }
         }
     }
@@ -1712,15 +1712,15 @@ void PollInputEvents(void)
             BITMAPINFO bmi = {};
             ZeroMemory(&bmi, sizeof(bmi));
             bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-            bmi.bmiHeader.biWidth = (LONG)CORE.Window.render.width;
-            bmi.bmiHeader.biHeight = -(LONG)(CORE.Window.render.height); // Top-down bitmap
+            bmi.bmiHeader.biWidth = static_cast<LONG>(CORE.Window.render.width);
+            bmi.bmiHeader.biHeight = -static_cast<LONG>((CORE.Window.render.height)); // Top-down bitmap
             bmi.bmiHeader.biPlanes = 1;
             bmi.bmiHeader.biBitCount  = 32;         // 32-bit BGRA
             bmi.bmiHeader.biCompression = BI_RGB;
 
             platform.hbitmap = CreateDIBSection(
                 platform.hdcmem, &bmi, DIB_RGB_COLORS,
-                (void **)&platform.pixels, nullptr, 0);
+                reinterpret_cast<void **>(&platform.pixels), nullptr, 0);
 
             HGDIOBJ oldBitmap = SelectObject(platform.hdcmem, platform.hbitmap);
             DeleteObject(oldBitmap);
@@ -1792,10 +1792,10 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
     //if (!result) { TRACELOG(LOG_ERROR, "%s failed, error=%lu", "wglMakeCurrent", GetLastError()); return -1; }
 
     // Load WGL extension entry points
-    wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
-    wglChoosePixelFormatARB = (PFNWGLCHOOSEPIXELFORMATARBPROC)wglGetProcAddress("wglChoosePixelFormatARB");
-    wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
-    wglGetExtensionsStringARB = (PFNWGLGETEXTENSIONSSTRINGARBPROC)wglGetProcAddress("wglGetExtensionsStringARB");
+    wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(wglGetProcAddress("wglCreateContextAttribsARB"));
+    wglChoosePixelFormatARB = reinterpret_cast<PFNWGLCHOOSEPIXELFORMATARBPROC>(wglGetProcAddress("wglChoosePixelFormatARB"));
+    wglSwapIntervalEXT = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC>(wglGetProcAddress("wglSwapIntervalEXT"));
+    wglGetExtensionsStringARB = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(wglGetProcAddress("wglGetExtensionsStringARB"));
 
     // Setup modern pixel format if extension is available
     BOOL setPixelFormatSucceeded = FALSE;
@@ -1974,17 +1974,17 @@ int InitPlatform(void)
         .lpfnWndProc = WndProc,                         // Custom procedure assigned
         .cbWndExtra = sizeof(LONG_PTR),                 // extra space for the Tuple object ptr
         .hInstance = hInstance,
-        .hCursor = LoadCursorW(nullptr, (LPCWSTR)IDC_ARROW), // TODO: Check if this is really required, since WM_SETCURSOR event is processed
+        .hCursor = LoadCursorW(nullptr, static_cast<LPCWSTR>(IDC_ARROW)), // TODO: Check if this is really required, since WM_SETCURSOR event is processed
         .lpszClassName = CLASS_NAME                     // Class name: L"raylibWindow"
     };
 
     // Load user-provided icon if available
     // NOTE: raylib resource file defaults to GLFW_ICON id, so looking for same identifier
     windowClass.hIcon = LoadImageW(hInstance, L"GLFW_ICON", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
-    if (!windowClass.hIcon) windowClass.hIcon = LoadImageW(nullptr, (LPCWSTR)IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
+    if (!windowClass.hIcon) windowClass.hIcon = LoadImageW(nullptr, static_cast<LPCWSTR>(IDI_APPLICATION), IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
 
     // Register window class
-    result = (int)RegisterClassExW(&windowClass);
+    result = static_cast<int>(RegisterClassExW(&windowClass));
     if (result == 0) TRACELOG(LOG_ERROR, "WIN32: Failed to register window class [ERROR: %lu]", GetLastError());
 
     // Get primary monitor info
@@ -1994,7 +1994,7 @@ int InitPlatform(void)
     {
         MONITORINFO info = {};
         info.cbSize = sizeof(info);
-        result = (int)GetMonitorInfoW(monitor, &info);
+        result = static_cast<int>(GetMonitorInfoW(monitor, &info));
 
         if (result == 0) TRACELOG(LOG_WARNING, "WIN32: DISPLAY: Failed to get monitor info [ERROR: %u]", GetLastError());
         else
@@ -2046,8 +2046,8 @@ int InitPlatform(void)
     RECT rect = { 0, 0, platform.appScreenWidth, platform.appScreenHeight };
     if (highDPIWindowFlag)
     {
-        rect.right = (LONG)roundf(platform.appScreenWidth*dpiScale);
-        rect.bottom = (LONG)roundf(platform.appScreenHeight*dpiScale);
+        rect.right = static_cast<LONG>(roundf(platform.appScreenWidth*dpiScale));
+        rect.bottom = static_cast<LONG>(roundf(platform.appScreenHeight*dpiScale));
     }
     AdjustWindowRectExForDpiCompat(
         &rect, MakeWindowStyle(platform.desiredFlags),
@@ -2110,8 +2110,8 @@ int InitPlatform(void)
         BITMAPINFO bmi = {};
         ZeroMemory(&bmi, sizeof(bmi));
         bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        bmi.bmiHeader.biWidth = (LONG)CORE.Window.render.width;
-        bmi.bmiHeader.biHeight = -(LONG)(CORE.Window.render.height); // Top-down bitmap
+        bmi.bmiHeader.biWidth = static_cast<LONG>(CORE.Window.render.width);
+        bmi.bmiHeader.biHeight = -static_cast<LONG>((CORE.Window.render.height)); // Top-down bitmap
         bmi.bmiHeader.biPlanes = 1;
         bmi.bmiHeader.biBitCount  = 32;         // 32-bit BGRA
         bmi.bmiHeader.biCompression = BI_RGB;
@@ -2120,7 +2120,7 @@ int InitPlatform(void)
 
         platform.hbitmap = CreateDIBSection(
             platform.hdcmem, &bmi, DIB_RGB_COLORS,
-            (void **)&platform.pixels, nullptr, 0);
+            reinterpret_cast<void **>(&platform.pixels), nullptr, 0);
 
         SelectObject(platform.hdcmem, platform.hbitmap);
         //ReleaseDC(platform.hwnd, platform.hdc); // Not required because the window class uses CS_OWNDC
@@ -2281,13 +2281,13 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
         {
             UINT dpi = GetDpiForWindowCompat(hwnd);
             DWORD style = MakeWindowStyle(platform.desiredFlags);
-            float clientScale = (CORE.Window.flags & FLAG_WINDOW_HIGHDPI)? ((float)dpi)/96.0f : 1.0f;
-            SIZE maxClientSize = { (LONG)roundf(CORE.Window.screenMax.width*clientScale), (LONG)roundf(CORE.Window.screenMax.height*clientScale) };
+            float clientScale = (CORE.Window.flags & FLAG_WINDOW_HIGHDPI)? (static_cast<float>(dpi))/96.0f : 1.0f;
+            SIZE maxClientSize = { static_cast<LONG>(roundf(CORE.Window.screenMax.width*clientScale)), static_cast<LONG>(roundf(CORE.Window.screenMax.height*clientScale)) };
             SIZE maxWindowSize = CalcWindowSize(dpi, maxClientSize, style);
-            SIZE minClientSize = { (LONG)roundf(CORE.Window.screenMin.width*clientScale), (LONG)roundf(CORE.Window.screenMin.height*clientScale) };
+            SIZE minClientSize = { static_cast<LONG>(roundf(CORE.Window.screenMin.width*clientScale)), static_cast<LONG>(roundf(CORE.Window.screenMin.height*clientScale)) };
             SIZE minWindowSize = CalcWindowSize(dpi, minClientSize, style);
 
-            LPMINMAXINFO lpmmi = (LPMINMAXINFO) lparam;
+            LPMINMAXINFO lpmmi = reinterpret_cast<LPMINMAXINFO>(lparam);
             lpmmi->ptMaxSize.x = maxWindowSize.cx;
             lpmmi->ptMaxSize.y = maxWindowSize.cy;
             lpmmi->ptMaxTrackSize.x = maxWindowSize.cx;
@@ -2299,7 +2299,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
         {
             if (wparam == GWL_STYLE)
             {
-                STYLESTRUCT *ss = (STYLESTRUCT *)lparam;
+                STYLESTRUCT *ss = reinterpret_cast<STYLESTRUCT *>(lparam);
                 GetStyleChangeFlagOps(CORE.Window.flags, ss, deferredFlags);
 
                 UINT dpi = GetDpiForWindowCompat(hwnd);
@@ -2326,7 +2326,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
         } break;
         case WM_WINDOWPOSCHANGING:
         {
-            WINDOWPOS *pos = (WINDOWPOS *)lparam;
+            WINDOWPOS *pos = reinterpret_cast<WINDOWPOS *>(lparam);
             if (pos->flags & SWP_SHOWWINDOW) deferredFlags->clear |= FLAG_WINDOW_HIDDEN;
             else if (pos->flags & SWP_HIDEWINDOW) deferredFlags->set |= FLAG_WINDOW_HIDDEN;
 
@@ -2380,15 +2380,15 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
         //case WM_MOVE: break;
         case WM_WINDOWPOSCHANGED:
         {
-            WINDOWPOS *pos = (WINDOWPOS*)lparam;
+            WINDOWPOS *pos = reinterpret_cast<WINDOWPOS *>(lparam);
             if (!(pos->flags & SWP_NOSIZE)) HandleWindowResize(hwnd, &platform.appScreenWidth, &platform.appScreenHeight);
 
             DefWindowProc(hwnd, msg, wparam, lparam);
         } break;
         case WM_GETDPISCALEDSIZE:
         {
-            SIZE *inoutSize = (SIZE *)lparam;
-            UINT newDpi = (UINT)wparam; // TODO: WARNING: Converting from WPARAM = UINT_PTR
+            SIZE *inoutSize = reinterpret_cast<SIZE *>(lparam);
+            UINT newDpi = static_cast<UINT>(wparam); // TODO: WARNING: Converting from WPARAM = UINT_PTR
 
             // For the following flag changes, a window resize event should be posted,
             // Keep the pending size when minimized, maximized, or borderless
@@ -2396,12 +2396,12 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
             if (CORE.Window.flags & FLAG_WINDOW_MAXIMIZED) return TRUE;
             if (CORE.Window.flags & FLAG_BORDERLESS_WINDOWED_MODE) return TRUE;
 
-            float dpiScale = ((float)newDpi)/96.0f;
+            float dpiScale = (static_cast<float>(newDpi))/96.0f;
             bool dpiScaling = CORE.Window.flags & FLAG_WINDOW_HIGHDPI;
             // Calculate client area in pixels from points
             SIZE desired = {
-                .cx = dpiScaling? (int)roundf((float)platform.appScreenWidth*dpiScale) : platform.appScreenWidth,
-                .cy = dpiScaling? (int)roundf((float)platform.appScreenHeight*dpiScale) : platform.appScreenHeight
+                .cx = dpiScaling? static_cast<int>(roundf(static_cast<float>(platform.appScreenWidth)*dpiScale)) : platform.appScreenWidth,
+                .cy = dpiScaling? static_cast<int>(roundf(static_cast<float>(platform.appScreenHeight)*dpiScale)) : platform.appScreenHeight
             };
             // Calculate and set window size, including title and window border
             *inoutSize = CalcWindowSize(newDpi, desired, MakeWindowStyle(CORE.Window.flags));
@@ -2414,7 +2414,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
             //float scalex = LOWORD(wparam)/96.0f;
             //float scaley = HIWORD(wparam)/96.0f;
 
-            RECT *suggestedRect = (RECT *)lparam;
+            RECT *suggestedRect = reinterpret_cast<RECT *>(lparam);
 
             // Never set the window size to anything other than the suggested rect here
             // Doing so can cause a window to stutter between monitors when transitioning between them
@@ -2438,9 +2438,9 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
                 GetWindowRect(hwnd, &windowRect);
                 GetClientRect(hwnd, &clientRect);
 
-                float dpiScale = ((float)LOWORD(wparam))/96.0f;
-                int width = (int)roundf(platform.appScreenWidth*dpiScale) + (windowRect.right - windowRect.left) - clientRect.right;
-                int height = (int)roundf(platform.appScreenHeight*dpiScale) + (windowRect.bottom - windowRect.top) - clientRect.bottom;
+                float dpiScale = (static_cast<float>(LOWORD(wparam)))/96.0f;
+                int width = static_cast<int>(roundf(platform.appScreenWidth*dpiScale)) + (windowRect.right - windowRect.left) - clientRect.right;
+                int height = static_cast<int>(roundf(platform.appScreenHeight*dpiScale)) + (windowRect.bottom - windowRect.top) - clientRect.bottom;
                 int x = suggestedRect->left + ((suggestedRect->right - suggestedRect->left) - width)/2;
                 int y = suggestedRect->top + ((suggestedRect->bottom - suggestedRect->top) - height)/2;
 
@@ -2457,7 +2457,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
             // Called when mouse moves, enters/leaves window...
             if (LOWORD(lparam) == HTCLIENT)
             {
-                SetCursor(CORE.Input.Mouse.cursorHidden? nullptr : LoadCursorW(nullptr, (LPCWSTR)IDC_ARROW));
+                SetCursor(CORE.Input.Mouse.cursorHidden? nullptr : LoadCursorW(nullptr, static_cast<LPCWSTR>(IDC_ARROW)));
                 return 0;
             }
 
@@ -2485,8 +2485,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
         {
             if (!CORE.Input.Mouse.cursorLocked)
             {
-                CORE.Input.Mouse.currentPosition.x = (float)GET_X_LPARAM(lparam);
-                CORE.Input.Mouse.currentPosition.y = (float)GET_Y_LPARAM(lparam);
+                CORE.Input.Mouse.currentPosition.x = static_cast<float>(GET_X_LPARAM(lparam));
+                CORE.Input.Mouse.currentPosition.y = static_cast<float>(GET_Y_LPARAM(lparam));
                 CORE.Input.Touch.position[0] = CORE.Input.Mouse.currentPosition;
             }
         } break;
@@ -2539,9 +2539,9 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
                 default: TRACELOG(LOG_WARNING, "TODO: Handle ex mouse button UP [wparam=%u]", HIWORD(wparam)); break;
             }
         } break;
-        case WM_MOUSEWHEEL: CORE.Input.Mouse.currentWheelMove.y += ((float)GET_WHEEL_DELTA_WPARAM(wparam))/WHEEL_DELTA; break;
+        case WM_MOUSEWHEEL: CORE.Input.Mouse.currentWheelMove.y += (static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam)))/WHEEL_DELTA; break;
         // Horizontal wheel movement is inverted to match GLFW
-        case WM_MOUSEHWHEEL: CORE.Input.Mouse.currentWheelMove.x -= ((float)GET_WHEEL_DELTA_WPARAM(wparam))/WHEEL_DELTA; break;
+        case WM_MOUSEHWHEEL: CORE.Input.Mouse.currentWheelMove.x -= (static_cast<float>(GET_WHEEL_DELTA_WPARAM(wparam)))/WHEEL_DELTA; break;
 
         default: result = DefWindowProcW(hwnd, msg, wparam, lparam); // Message passed directly for execution (default behaviour)
     }
@@ -2570,7 +2570,7 @@ static void HandleKey(WPARAM wparam, LPARAM lparam, char state)
     if (scancode == 0)
     {
         // Certain keys don't arrive with a scancode; fall back to virtual key mapping
-        scancode = MapVirtualKeyW((UINT)wparam, MAPVK_VK_TO_VSC);
+        scancode = MapVirtualKeyW(static_cast<UINT>(wparam), MAPVK_VK_TO_VSC);
     }
 
     KeyboardKey key = KEY_NULL;
@@ -2599,7 +2599,7 @@ static void HandleKey(WPARAM wparam, LPARAM lparam, char state)
             // If the current message is Left Ctrl (VK_CONTROL) and the next message is AltGr (VK_MENU) with the exact same timestamp,
             // silently drop the fake control key event
             bool isNextExtendedKey = ((HIWORD(next.lParam) & KF_EXTENDED) != 0);
-            if ((next.wParam == VK_MENU) && ((LONG)next.time == time) && isNextExtendedKey)
+            if ((next.wParam == VK_MENU) && (static_cast<LONG>(next.time) == time) && isNextExtendedKey)
             {
                 if ((next.message == WM_KEYDOWN) || (next.message == WM_SYSKEYDOWN) ||
                     (next.message == WM_KEYUP) || (next.message == WM_SYSKEYUP)) ignoreKey = true;
@@ -2669,12 +2669,12 @@ static void HandleRawInput(LPARAM lparam)
     RAWINPUT input = {};
     UINT inputSize = 0;
 
-    if (GetRawInputData((HRAWINPUT)lparam, RID_INPUT, nullptr, &inputSize, sizeof(RAWINPUTHEADER)) != 0) return;
+    if (GetRawInputData(reinterpret_cast<HRAWINPUT>(lparam), RID_INPUT, nullptr, &inputSize, sizeof(RAWINPUTHEADER)) != 0) return;
     if (inputSize > sizeof(input)) return;
 
-    UINT size = GetRawInputData((HRAWINPUT)lparam, RID_INPUT, &input, &inputSize, sizeof(RAWINPUTHEADER));
+    UINT size = GetRawInputData(reinterpret_cast<HRAWINPUT>(lparam), RID_INPUT, &input, &inputSize, sizeof(RAWINPUTHEADER));
 
-    if (size == (UINT)-1) TRACELOG(LOG_ERROR, "WIN32: Failed to get raw input data [ERROR: %lu]", GetLastError());
+    if (size == static_cast<UINT>(1)) TRACELOG(LOG_ERROR, "WIN32: Failed to get raw input data [ERROR: %lu]", GetLastError());
 
     if (input.header.dwType != RIM_TYPEMOUSE) TRACELOG(LOG_ERROR, "WIN32: Unexpected WM_INPUT type %lu", input.header.dwType);
 
@@ -2701,15 +2701,15 @@ static void HandleWindowResize(HWND hwnd, int *width, int *height)
     SIZE clientSize = { rect.right, rect.bottom };
 
     if ((CORE.Window.render.width != clientSize.cx) || (CORE.Window.render.height != clientSize.cy)) CORE.Window.resizedLastFrame = true;
-    CORE.Window.render.width = (int)clientSize.cx;
-    CORE.Window.render.height = (int)clientSize.cy;
-    CORE.Window.currentFbo.width = (int)clientSize.cx;
-    CORE.Window.currentFbo.height = (int)clientSize.cy;
+    CORE.Window.render.width = static_cast<int>(clientSize.cx);
+    CORE.Window.render.height = static_cast<int>(clientSize.cy);
+    CORE.Window.currentFbo.width = static_cast<int>(clientSize.cx);
+    CORE.Window.currentFbo.height = static_cast<int>(clientSize.cy);
 
-    float dpiScale = ((float)GetDpiForWindowCompat(hwnd))/96.0f;
+    float dpiScale = (static_cast<float>(GetDpiForWindowCompat(hwnd)))/96.0f;
     bool highdpi = !!(CORE.Window.flags & FLAG_WINDOW_HIGHDPI);
-    unsigned int screenWidth = highdpi? (unsigned int)roundf(((float)clientSize.cx)/dpiScale) : clientSize.cx;
-    unsigned int screenHeight = highdpi? (unsigned int)roundf(((float)clientSize.cy)/dpiScale) : clientSize.cy;
+    unsigned int screenWidth = highdpi? static_cast<unsigned int>(roundf((static_cast<float>(clientSize.cx))/dpiScale)) : clientSize.cx;
+    unsigned int screenHeight = highdpi? static_cast<unsigned int>(roundf((static_cast<float>(clientSize.cy))/dpiScale)) : clientSize.cy;
     CORE.Window.screen.width = screenWidth;
     CORE.Window.screen.height = screenHeight;
 
@@ -2720,8 +2720,8 @@ static void HandleWindowResize(HWND hwnd, int *width, int *height)
         *height = screenHeight;
     }
 
-    CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{(float)CORE.Window.render.width/CORE.Window.screen.width,
-        (float)CORE.Window.render.height/CORE.Window.screen.height, 1.0f});
+    CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{static_cast<float>(CORE.Window.render.width)/CORE.Window.screen.width,
+        static_cast<float>(CORE.Window.render.height)/CORE.Window.screen.height, 1.0f});
 
     if (CORE.Window.flags & FLAG_WINDOW_HIGHDPI)
     {

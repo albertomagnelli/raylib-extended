@@ -97,7 +97,7 @@ void SetShapesTexture(Texture2D texture, Rectangle rec)
     // it can break the rendering of all shapes if misused
     if ((texture.id == 0) || (rec.width == 0) || (rec.height == 0))
     {
-        texShapes = (Texture2D){ 1, 1, 1, 1, 7 };
+        texShapes = Texture2D{ 1, 1, 1, 1, 7 };
         texShapesRec = Rectangle{ 0.0f, 0.0f, 1.0f, 1.0f };
     }
     else
@@ -2506,13 +2506,13 @@ void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, flo
                     {
                         // Triangle touching C0
                         rlVertex2f(center.x, center.y);
-                        rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + stepLength*(float)(stepsBeforeC0 + 1)))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + stepLength*(float)(stepsBeforeC0 + 1)))*innerRadius);
+                        rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + stepLength*static_cast<float>((stepsBeforeC0 + 1))))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + stepLength*static_cast<float>((stepsBeforeC0 + 1))))*innerRadius);
                         rlVertex2f(c0.x, c0.y);
 
                         // Triangle touching C3
                         rlVertex2f(center.x, center.y);
                         rlVertex2f(c3.x, c3.y);
-                        rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - stepLength*(float)(stepsBeforeC0 + 1)))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - stepLength*(float)(stepsBeforeC0 + 1)))*innerRadius);
+                        rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - stepLength*static_cast<float>((stepsBeforeC0 + 1))))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - stepLength*static_cast<float>((stepsBeforeC0 + 1))))*innerRadius);
 
                         // Triangles between the previous two
                         verticesBetweenC0andC3 -= 1;
@@ -3551,16 +3551,16 @@ void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float
                 // Cap 1
                 Vector2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
                 Vector2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
-                Vector2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + (float)innerStepsLeft*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + (float)innerStepsLeft*stepLength))*outerInnerRadius };
-                Vector2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + (float)(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + (float)(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                Vector2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                Vector2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
                 Vector2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
                 Vector2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
 
                 // Cap 2
                 Vector2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
                 Vector2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
-                Vector2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - (float)innerStepsLeft*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - (float)innerStepsLeft*stepLength))*outerInnerRadius };
-                Vector2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - (float)(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - (float)(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                Vector2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                Vector2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
                 Vector2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
                 Vector2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
 

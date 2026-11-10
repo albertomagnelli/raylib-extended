@@ -14,6 +14,12 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
 - Global PascalCase API stays: `DrawTexture()`, `Vector3`, `rlEnableDepthTest()` … no namespaces, no classes-as-API.
 - Plain `enum`s stay (not `enum class`).
 
+## C++ vocabulary
+- Use `nullptr`, never `NULL`.
+- Never use C-style casts. Use `static_cast` for value conversions, `reinterpret_cast` for
+  unrelated pointer/function-pointer conversions, and `const_cast` only when an API requires it.
+- Prefer `std::string_view` / `std::string` over `const char *` (see the Text APIs entry below).
+
 ## Types & math
 - The math types are glm: `Vector2 = glm::vec2`, `Vector3 = glm::vec3`, `Vector4 = glm::vec4`,
   `Quaternion = glm::quat`, `Matrix = glm::mat4`. `Color` and `Rectangle` are plain structs with

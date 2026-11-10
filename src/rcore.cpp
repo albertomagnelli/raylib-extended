@@ -1177,7 +1177,7 @@ void BeginScissorMode(int x, int y, int width, int height)
     if (!CORE.Window.usingFbo)
     {
         Vector2 scale = GetWindowScaleDPI();
-        rlScissor((int)(x*scale.x), (int)(GetScreenHeight()*scale.y - (((y + height)*scale.y))), (int)(width*scale.x), (int)(height*scale.y));
+        rlScissor(static_cast<int>((x*scale.x)), static_cast<int>((GetScreenHeight()*scale.y - (((y + height)*scale.y)))), static_cast<int>((width*scale.x)), static_cast<int>((height*scale.y)));
     }
 #else
     if (!CORE.Window.usingFbo && FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
@@ -1682,7 +1682,7 @@ void SetTargetFPS(int fps)
     if (fps < 1) CORE.Time.target = 0.0;
     else CORE.Time.target = 1.0/static_cast<double>(fps);
 
-    TRACELOG(LOG_INFO, "TIMER: Target time per frame: %02.03f milliseconds", (float)CORE.Time.target*1000.0f);
+    TRACELOG(LOG_INFO, "TIMER: Target time per frame: %02.03f milliseconds", static_cast<float>(CORE.Time.target)*1000.0f);
 }
 
 // Get current FPS
@@ -1772,7 +1772,7 @@ void WaitTime(double seconds)
 
     // System halt functions
     #if defined(_WIN32)
-        Sleep((unsigned long)(sleepSeconds*1000.0));
+        Sleep(static_cast<unsigned long>((sleepSeconds*1000.0)));
     #endif
     #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
         struct timespec req = { 0 };
@@ -1830,7 +1830,7 @@ int GetRandomValue(int min, int max)
     // More specifically, if (max - min) > INT_MAX there will be an overflow,
     // and otherwise if (max - min) > RAND_MAX the random value will incorrectly never exceed a certain threshold
     // NOTE: Depending on the library it can be as low as 32767
-    if ((unsigned int)(max - min) > (unsigned int)RAND_MAX)
+    if (static_cast<unsigned int>((max - min)) > static_cast<unsigned int>(RAND_MAX))
     {
         TRACELOG(LOG_WARNING, "Invalid GetRandomValue() arguments, range should not be higher than %i", RAND_MAX);
     }
@@ -1848,18 +1848,18 @@ int GetRandomValue(int min, int max)
     else
     {
         // Rejection sampling to get a uniform integer in [min, max]
-        unsigned long c = (unsigned long)RAND_MAX + 1UL; // Number of possible results
-        unsigned long m = (unsigned long)range;          // Size of the target interval
+        unsigned long c = static_cast<unsigned long>(RAND_MAX) + 1UL; // Number of possible results
+        unsigned long m = static_cast<unsigned long>(range);          // Size of the target interval
         unsigned long t = c - (c%m);                     // Largest multiple of m <= c
         unsigned long r = 0;
 
         for (;;)
         {
-            r = (unsigned long)rand();
+            r = static_cast<unsigned long>(rand());
             if (r < t) break;   // Only accept values within the fair region
         }
 
-        value = min + (int)(r%m);
+        value = min + static_cast<int>((r%m));
     }
 #endif
 
@@ -1874,14 +1874,14 @@ int *LoadRandomSequence(unsigned int count, int min, int max)
 #if SUPPORT_RPRAND_GENERATOR
     values = rprand_load_sequence(count, min, max);
 #else
-    if (count > ((unsigned int)abs(max - min) + 1)) return values;  // Security check
+    if (count > (static_cast<unsigned int>(abs(max - min)) + 1)) return values;  // Security check
 
-    values = (int *)RL_CALLOC(count, sizeof(int));
+    values = static_cast<int *>(RL_CALLOC(count, sizeof(int)));
 
     int value = 0;
     bool dupValue = false;
 
-    for (int i = 0; i < (int)count;)
+    for (int i = 0; i < static_cast<int>(count);)
     {
         value = GetRandomValue(min, max);
         dupValue = false;
@@ -2860,8 +2860,8 @@ std::string GetApplicationDirectory(void)
 
     #if defined(UNICODE)
     unsigned short widePath[MAX_PATH];
-    len = GetModuleFileNameW(nullptr, (wchar_t *)widePath, MAX_PATH);
-    len = WideCharToMultiByte(0, 0, (wchar_t *)widePath, len, appDir, MAX_PATH, nullptr, nullptr);
+    len = GetModuleFileNameW(nullptr, static_cast<wchar_t *>(widePath), MAX_PATH);
+    len = WideCharToMultiByte(0, 0, static_cast<wchar_t *>(widePath), len, appDir, MAX_PATH, nullptr, nullptr);
     #else
     len = GetModuleFileNameA(nullptr, appDir, MAX_PATH);
     #endif
@@ -2911,7 +2911,7 @@ std::string GetApplicationDirectory(void)
 
     if (_NSGetExecutablePath(appDir, &size) == 0)
     {
-        int appDirLength = (int)strlen(appDir);
+        int appDirLength = static_cast<int>(strlen(appDir));
         for (int i = appDirLength; i >= 0; i--)
         {
             if (appDir[i] == '/')
@@ -2934,7 +2934,7 @@ std::string GetApplicationDirectory(void)
 
     if (sysctl(mib, 4, appDir, &size, nullptr, 0) == 0)
     {
-        int appDirLength = (int)strlen(appDir);
+        int appDirLength = static_cast<int>(strlen(appDir));
         for (int i = appDirLength; i >= 0; i--)
         {
             if (appDir[i] == '/')

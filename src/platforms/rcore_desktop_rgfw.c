@@ -483,16 +483,16 @@ static void RGFW_cb_dropfunc(const RGFW_event *e)
 
     if (CORE.Window.dropFileCount == 0)
     {
-        CORE.Window.dropFilepaths = (char **)RL_CALLOC(1024, sizeof(char *));
+        CORE.Window.dropFilepaths = static_cast<char **>(RL_CALLOC(1024, sizeof(char *)));
 
-        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = (char *)RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
+        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
         snprintf(CORE.Window.dropFilepaths[CORE.Window.dropFileCount], MAX_FILEPATH_LENGTH, "%s", e->drop.value->data);
 
         CORE.Window.dropFileCount++;
     }
     else if (CORE.Window.dropFileCount < 1024)
     {
-        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = (char *)RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
+        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
         snprintf(CORE.Window.dropFilepaths[CORE.Window.dropFileCount], MAX_FILEPATH_LENGTH, "%s", e->drop.value->data);
 
         CORE.Window.dropFileCount++;
@@ -537,8 +537,8 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
             Vector2 scaleDpi = GetWindowScaleDPI();
-            CORE.Window.screen.width = (int)(platform.window->w/scaleDpi.x);
-            CORE.Window.screen.height = (int)(platform.window->h/scaleDpi.y);
+            CORE.Window.screen.width = static_cast<int>((platform.window->w/scaleDpi.x));
+            CORE.Window.screen.height = static_cast<int>((platform.window->h/scaleDpi.y));
             CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
         }
         else
@@ -677,8 +677,8 @@ static void RGFW_cb_mouserawmotionfunc(const RGFW_event *e)
         double canvasWidth = 0.0;
         double canvasHeight = 0.0;
         emscripten_get_element_css_size("#canvas", &canvasWidth, &canvasHeight);
-        mouseX *= ((float)GetScreenWidth()/(float)canvasWidth);
-        mouseY *= ((float)GetScreenHeight()/(float)canvasHeight);
+        mouseX *= (static_cast<float>(GetScreenWidth())/static_cast<float>(canvasWidth));
+        mouseY *= (static_cast<float>(GetScreenHeight())/static_cast<float>(canvasHeight));
     #endif
 
     CORE.Input.Mouse.currentPosition.x += mouseX;
@@ -705,8 +705,8 @@ static void RGFW_cb_mousemotionfunc(const RGFW_event *e)
         double canvasWidth = 0.0;
         double canvasHeight = 0.0;
         emscripten_get_element_css_size("#canvas", &canvasWidth, &canvasHeight);
-        mouseX *= ((float)GetScreenWidth()/(float)canvasWidth);
-        mouseY *= ((float)GetScreenHeight()/(float)canvasHeight);
+        mouseX *= (static_cast<float>(GetScreenWidth())/static_cast<float>(canvasWidth));
+        mouseY *= (static_cast<float>(GetScreenHeight())/static_cast<float>(canvasHeight));
     #endif
 
     CORE.Input.Mouse.currentPosition.x = mouseX;
@@ -814,8 +814,8 @@ void ToggleBorderlessWindowed(void)
         FLAG_SET(CORE.Window.flags, FLAG_BORDERLESS_WINDOWED_MODE);
 
         Vector2 currentPosition = GetWindowPosition();
-        CORE.Window.previousPosition.x = (int)currentPosition.x;
-        CORE.Window.previousPosition.y = (int)currentPosition.y;
+        CORE.Window.previousPosition.x = static_cast<int>(currentPosition.x);
+        CORE.Window.previousPosition.y = static_cast<int>(currentPosition.y);
         CORE.Window.previousScreen = CORE.Window.screen;
 
         RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
@@ -1017,7 +1017,7 @@ void SetWindowIcon(Image image)
         TRACELOG(LOG_WARNING, "RGFW: Window icon image must be in R8G8B8A8 pixel format");
         return;
     }
-    RGFW_window_setIcon(platform.window, (u8 *)image.data, image.width, image.height, RGFW_formatRGBA8);
+    RGFW_window_setIcon(platform.window, static_cast<u8 *>(image.data), image.width, image.height, RGFW_formatRGBA8);
 }
 
 // Set icon for window
@@ -1043,8 +1043,8 @@ void SetWindowIcons(Image *images, int count)
             if ((smallIcon == nullptr) || ((images[i].width < smallIcon->width) && (images[i].height > smallIcon->height))) smallIcon = &images[i];
         }
 
-        if (smallIcon != nullptr) RGFW_window_setIconEx(platform.window, (u8 *)smallIcon->data, smallIcon->width, smallIcon->height, RGFW_formatRGBA8, RGFW_iconWindow);
-        if (bigIcon != nullptr) RGFW_window_setIconEx(platform.window, (u8 *)bigIcon->data, bigIcon->width, bigIcon->height, RGFW_formatRGBA8, RGFW_iconTaskbar);
+        if (smallIcon != nullptr) RGFW_window_setIconEx(platform.window, static_cast<u8 *>(smallIcon->data), smallIcon->width, smallIcon->height, RGFW_formatRGBA8, RGFW_iconWindow);
+        if (bigIcon != nullptr) RGFW_window_setIconEx(platform.window, static_cast<u8 *>(bigIcon->data), bigIcon->width, bigIcon->height, RGFW_formatRGBA8, RGFW_iconTaskbar);
     }
 }
 
@@ -1054,7 +1054,7 @@ void SetWindowTitle(std::string_view titleView)
     const std::string titleStr(titleView);
     const char *title = titleStr.c_str();
 
-    RGFW_window_setName(platform.window, (char *)title);
+    RGFW_window_setName(platform.window, static_cast<char *>(title));
     CORE.Window.title = title;
 }
 
@@ -1193,7 +1193,7 @@ Vector2 GetMonitorPosition(int monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
-    return Vector2{ (float)mons[monitor]->x, (float)mons[monitor]->y };
+    return Vector2{ static_cast<float>(mons[monitor]->x), static_cast<float>(mons[monitor]->y) };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -1225,7 +1225,7 @@ int GetMonitorPhysicalHeight(int monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
-    return (int)mons[monitor]->physH;
+    return static_cast<int>(mons[monitor]->physH);
 }
 
 // Get selected monitor refresh rate
@@ -1233,7 +1233,7 @@ int GetMonitorRefreshRate(int monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
-    return (int)mons[monitor]->mode.refreshRate;
+    return static_cast<int>(mons[monitor]->mode.refreshRate);
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
@@ -1253,7 +1253,7 @@ Vector2 GetWindowPosition(void)
     }
 
     if (RGFW_window_getPosition(platform.window, &platform.window->x, &platform.window->y)) {
-        return Vector2{ (float)platform.window->x, (float)platform.window->y };
+        return Vector2{ static_cast<float>(platform.window->x), static_cast<float>(platform.window->y) };
     }
 
     return Vector2{ 0.0f, 0.0f };
@@ -1332,12 +1332,12 @@ Image GetClipboardImage(void)
 
     int width = 0;
     int height = 0;
-    fileData = (void *)Win32GetClipboardImageData(&width, &height, &dataSize);
+    fileData = static_cast<void *>(Win32GetClipboardImageData(&width, &height, &dataSize);
 
     if (fileData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data");
     else
     {
-        image = LoadImageFromMemory(".bmp", (const unsigned char *)fileData, (int)dataSize);
+        image = LoadImageFromMemory(".bmp", static_cast<const unsigned char *>(fileData), static_cast<int>(dataSize));
 
         RL_FREE(fileData);
     }
@@ -1382,7 +1382,7 @@ Image GetClipboardImage(void)
 
     if (data != nullptr)
     {
-        image = LoadImageFromMemory(".png", data, (int)nitems);
+        image = LoadImageFromMemory(".png", data, static_cast<int>(nitems));
         XFree(data);
     }
 
@@ -1475,7 +1475,7 @@ void SwapScreenBuffer(void)
 double GetTime(void)
 {
     // CORE.Time.base is nanoseconds as integer
-    double baseTime = (double)CORE.Time.base*1e-9;
+    double baseTime = static_cast<double>(CORE.Time.base)*1e-9;
     double time = GetTimeSeconds() - baseTime;
 
     return time;
@@ -1503,7 +1503,7 @@ void OpenURL(std::string_view urlView)
     }
     else
     {
-        char *cmd = (char *)RL_CALLOC(strlen(url) + 16, sizeof(char));
+        char *cmd = static_cast<char *>(RL_CALLOC(strlen(url) + 16, sizeof(char)));
 #if defined(_WIN32)
         sprintf(cmd, "explorer \"%s\"", url);
 #endif
@@ -1542,7 +1542,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 void SetMousePosition(int x, int y)
 {
     RGFW_window_moveMouse(platform.window, x, y);
-    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -1933,8 +1933,8 @@ int InitPlatform(void)
     RGFW_setEventCallback(RGFW_mouseButtonReleased, RGFW_cb_mousebuttonfunc);
     RGFW_setEventCallback(RGFW_mouseRawMotion, RGFW_cb_mouserawmotionfunc);
     RGFW_setEventCallback(RGFW_mouseMotion, RGFW_cb_mousemotionfunc);
-    RGFW_setEventCallback(RGFW_keyPressed, (RGFW_genericFunc)RGFW_cb_keyfunc);
-    RGFW_setEventCallback(RGFW_keyReleased, (RGFW_genericFunc)RGFW_cb_keyfunc);
+    RGFW_setEventCallback(RGFW_keyPressed, static_cast<RGFW_genericFunc>(RGFW_cb_keyfunc));
+    RGFW_setEventCallback(RGFW_keyReleased, static_cast<RGFW_genericFunc>(RGFW_cb_keyfunc));
 
     TRACELOG(LOG_INFO, "DISPLAY: Device initialized successfully %s",
         FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)? "(HighDPI)" : "");
@@ -1946,7 +1946,7 @@ int InitPlatform(void)
     // Load OpenGL extensions
     // NOTE: GL procedures address loader is required to load extensions
     //----------------------------------------------------------------------------
-    rlLoadExtensions((void *)RGFW_getProcAddress_OpenGL);
+    rlLoadExtensions(reinterpret_cast<void *>(RGFW_getProcAddress_OpenGL));
     //----------------------------------------------------------------------------
 
     // Initialize timing system
@@ -2073,8 +2073,8 @@ void RemapMouseToTouch(int touchAction)
         else gestureEvent.position[0] = GetMousePosition();
 
         // Normalize gestureEvent.position[0] for CORE.Window.screen.width and CORE.Window.screen.height
-        gestureEvent.position[0].x /= (float)GetScreenWidth();
-        gestureEvent.position[0].y /= (float)GetScreenHeight();
+        gestureEvent.position[0].x /= static_cast<float>(GetScreenWidth());
+        gestureEvent.position[0].y /= static_cast<float>(GetScreenHeight());
 
         // Gesture data is sent to gestures-system for processing
         ProcessGestureEvent(gestureEvent);
@@ -2097,7 +2097,7 @@ double GetTimeSeconds(void)
             freqInitialized = true;
         }
         QueryPerformanceCounter(&counter);
-        currentTime = (double)counter.QuadPart/(double)freq.QuadPart;
+        currentTime = static_cast<double>(counter.QuadPart)/static_cast<double>(freq.QuadPart);
     #elif defined(__EMSCRIPTEN__)
         currentTime = emscripten_get_now()/1000.0;
     #elif defined(__APPLE__)
@@ -2110,14 +2110,14 @@ double GetTimeSeconds(void)
         }
         uint64_t ticks = mach_absolute_time();
 
-        currentTime = (double)ticks*(double)tb.numer/(double)tb.denom/1e9;
+        currentTime = static_cast<double>(ticks)*static_cast<double>(tb.numer)/static_cast<double>(tb.denom)/1e9;
     #elif defined(__linux__)
         struct timespec ts = {};
         clock_gettime(CLOCK_MONOTONIC, &ts);
-        currentTime = (double)ts.tv_sec + (double)ts.tv_nsec/1e9;
+        currentTime = static_cast<double>(ts.tv_sec) + static_cast<double>(ts.tv_nsec)/1e9;
     #else
         // Fallback to cstd
-        currentTime = (double)clock()/(double)CLOCKS_PER_SEC;
+        currentTime = static_cast<double>(clock())/static_cast<double>(CLOCKS_PER_SEC);
     #endif
 
     return currentTime;

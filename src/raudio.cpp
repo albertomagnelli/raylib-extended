@@ -599,7 +599,7 @@ AudioBuffer *LoadAudioBuffer(ma_format format, ma_uint32 channels, ma_uint32 sam
     // shifting, which is done through resampling, a cache will always be
     // required. This will be kept relatively small to avoid too much wastage
     audioBuffer->converterResidualCount = 0;
-    audioBuffer->converterResidual = static_cast<unsigned char*>(RL_CALLOC(AUDIO_BUFFER_RESIDUAL_CAPACITY*ma_get_bytes_per_frame(format, channels), 1));
+    audioBuffer->converterResidual = static_cast<unsigned char *>(RL_CALLOC(AUDIO_BUFFER_RESIDUAL_CAPACITY*ma_get_bytes_per_frame(format, channels), 1));
 
     // Init audio buffer values
     audioBuffer->volume = 1.0f;
@@ -827,7 +827,7 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const unsigned char *file
             wave.sampleRate = wav.sampleRate;
             wave.sampleSize = 16;
             wave.channels = wav.channels;
-            wave.data = static_cast<short *>(RL_CALLOC((size_t)wave.frameCount*wave.channels, sizeof(short)));
+            wave.data = static_cast<short *>(RL_CALLOC(static_cast<size_t>(wave.frameCount)*wave.channels, sizeof(short)));
 
             // NOTE: Forcing conversion to 16bit sample size on reading
             drwav_read_pcm_frames_s16(&wav, wave.frameCount, static_cast<drwav_int16 *>(wave.data));
@@ -907,7 +907,7 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const unsigned char *file
         wave.data = drflac_open_memory_and_read_pcm_frames_s16(fileData, dataSize, &wave.channels, &wave.sampleRate, &totalFrameCount, nullptr);
         wave.sampleSize = 16;
 
-        if (wave.data != nullptr) wave.frameCount = (unsigned int)totalFrameCount; // WARNING: Potential loss of data
+        if (wave.data != nullptr) wave.frameCount = static_cast<unsigned int>(totalFrameCount); // WARNING: Potential loss of data
         else TRACELOG(LOG_WARNING, "WAVE: Failed to load FLAC data");
     }
 #endif
@@ -1467,7 +1467,7 @@ Music LoadMusicStream(std::string_view fileNameView)
             int sampleSize = ctxFlac->bitsPerSample;
             if (ctxFlac->bitsPerSample == 24) sampleSize = 16;   // Forcing conversion to s16 on UpdateMusicStream()
             music.stream = LoadAudioStream(ctxFlac->sampleRate, sampleSize, ctxFlac->channels);
-            music.frameCount = (unsigned int)ctxFlac->totalPCMFrameCount;
+            music.frameCount = static_cast<unsigned int>(ctxFlac->totalPCMFrameCount);
             music.looping = true;   // Looping enabled by default
             musicLoaded = true;
         }
@@ -1568,7 +1568,7 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const unsigned ch
     else if ((strcmp(fileType, ".wav") == 0) || (strcmp(fileType, ".WAV") == 0))
     {
         drwav *ctxWav = static_cast<drwav *>(RL_CALLOC(1, sizeof(drwav)));
-        bool success = drwav_init_memory(ctxWav, (const void *)data, dataSize, nullptr);
+        bool success = drwav_init_memory(ctxWav, static_cast<const void *>(data), dataSize, nullptr);
 
         if (success)
         {
@@ -1619,7 +1619,7 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const unsigned ch
     else if ((strcmp(fileType, ".mp3") == 0) || (strcmp(fileType, ".MP3") == 0))
     {
         drmp3 *ctxMp3 = static_cast<drmp3 *>(RL_CALLOC(1, sizeof(drmp3)));
-        int success = drmp3_init_memory(ctxMp3, (const void *)data, dataSize, nullptr);
+        int success = drmp3_init_memory(ctxMp3, static_cast<const void *>(data), dataSize, nullptr);
 
         if (success)
         {
@@ -1664,7 +1664,7 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const unsigned ch
 #if SUPPORT_FILEFORMAT_FLAC
     else if ((strcmp(fileType, ".flac") == 0) || (strcmp(fileType, ".FLAC") == 0))
     {
-        drflac *ctxFlac = drflac_open_memory((const void *)data, dataSize, nullptr);
+        drflac *ctxFlac = drflac_open_memory(static_cast<const void *>(data), dataSize, nullptr);
 
         if (ctxFlac != nullptr)
         {
@@ -1673,7 +1673,7 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const unsigned ch
             int sampleSize = ctxFlac->bitsPerSample;
             if (ctxFlac->bitsPerSample == 24) sampleSize = 16;   // Forcing conversion to s16 on UpdateMusicStream()
             music.stream = LoadAudioStream(ctxFlac->sampleRate, sampleSize, ctxFlac->channels);
-            music.frameCount = (unsigned int)ctxFlac->totalPCMFrameCount;
+            music.frameCount = static_cast<unsigned int>(ctxFlac->totalPCMFrameCount);
             music.looping = true;   // Looping enabled by default
             musicLoaded = true;
         }
@@ -1729,7 +1729,7 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const unsigned ch
         {
             ctxMod->modfilesize = dataSize;
             ctxMod->modfile = newData;
-            if (jar_mod_load(ctxMod, (void *)ctxMod->modfile, dataSize)) result = dataSize;
+            if (jar_mod_load(ctxMod, static_cast<void *>(ctxMod->modfile), dataSize)) result = dataSize;
         }
 
         if (result > 0)
@@ -1802,7 +1802,7 @@ void UnloadMusicStream(Music music)
         else if (music.ctxType == MUSIC_AUDIO_QOA) qoaplay_close(static_cast<qoaplay_desc *>(music.ctxData));
 #endif
 #if SUPPORT_FILEFORMAT_FLAC
-        else if (music.ctxType == MUSIC_AUDIO_FLAC) drflac_close((drflac *)music.ctxData);
+        else if (music.ctxType == MUSIC_AUDIO_FLAC) drflac_close(static_cast<drflac *>(music.ctxData));
 #endif
 #if SUPPORT_FILEFORMAT_XM
         else if (music.ctxType == MUSIC_MODULE_XM) jar_xm_free_context(static_cast<jar_xm_context_t *>(music.ctxData));
@@ -1851,7 +1851,7 @@ void StopMusicStream(Music music)
         case MUSIC_AUDIO_QOA: qoaplay_rewind(static_cast<qoaplay_desc *>(music.ctxData)); break;
 #endif
 #if SUPPORT_FILEFORMAT_FLAC
-        case MUSIC_AUDIO_FLAC: drflac__seek_to_first_frame((drflac *)music.ctxData); break;
+        case MUSIC_AUDIO_FLAC: drflac__seek_to_first_frame(static_cast<drflac *>(music.ctxData)); break;
 #endif
 #if SUPPORT_FILEFORMAT_XM
         case MUSIC_MODULE_XM: jar_xm_reset(static_cast<jar_xm_context_t *>(music.ctxData)); break;
@@ -1893,7 +1893,7 @@ void SeekMusicStream(Music music, float position)
         } break;
 #endif
 #if SUPPORT_FILEFORMAT_FLAC
-        case MUSIC_AUDIO_FLAC: drflac_seek_to_pcm_frame((drflac *)music.ctxData, positionInFrames); break;
+        case MUSIC_AUDIO_FLAC: drflac_seek_to_pcm_frame(static_cast<drflac *>(music.ctxData), positionInFrames); break;
 #endif
         default: break;
     }
@@ -2031,11 +2031,11 @@ void UpdateMusicStream(Music music)
             {
                 while (true)
                 {
-                    int frameCountRead = (int)drflac_read_pcm_frames_s16((drflac *)music.ctxData, frameCountStillNeeded, (short *)((char *)AUDIO.System.pcmBuffer + frameCountReadTotal*frameSize));
+                    int frameCountRead = static_cast<int>(drflac_read_pcm_frames_s16(static_cast<drflac *>(music.ctxData), frameCountStillNeeded, static_cast<short *>((static_cast<char *>(AUDIO.System.pcmBuffer) + frameCountReadTotal*frameSize))));
                     frameCountReadTotal += frameCountRead;
                     frameCountStillNeeded -= frameCountRead;
                     if (frameCountStillNeeded == 0) break;
-                    else drflac__seek_to_first_frame((drflac *)music.ctxData);
+                    else drflac__seek_to_first_frame(static_cast<drflac *>(music.ctxData));
                 }
             } break;
         #endif
@@ -2843,7 +2843,7 @@ std::string GetFileNameWithoutExt(std::string_view filePathView)
 
     snprintf(fileName, MAX_FILENAMEWITHOUTEXT_LENGTH, "%s", GetFileName(filePath).c_str());
 
-    int fileNameLength = (int)strlen(fileName); // Get size in bytes
+    int fileNameLength = static_cast<int>(strlen(fileName)); // Get size in bytes
 
     for (int i = 0; (i < fileNameLength) && (i < MAX_FILENAMEWITHOUTEXT_LENGTH); i++)
     {
@@ -2881,10 +2881,10 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
 
             if (size > 0)
             {
-                data = (unsigned char *)RL_CALLOC(size, 1);
+                data = static_cast<unsigned char *>(RL_CALLOC(size, 1));
 
                 // NOTE: fread() returns number of read elements instead of bytes, so reading [1 byte, size elements]
-                unsigned int count = (unsigned int)fread(data, sizeof(unsigned char), size, file);
+                unsigned int count = static_cast<unsigned int>(fread(data, sizeof(unsigned char), size, file));
                 *dataSize = count;
 
                 if (count != size) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially loaded", fileName);
@@ -2918,7 +2918,7 @@ static bool SaveFileData(const char *fileName, void *data, int dataSize)
 
         if (file != nullptr)
         {
-            unsigned int count = (unsigned int)fwrite(data, sizeof(unsigned char), dataSize, file);
+            unsigned int count = static_cast<unsigned int>(fwrite(data, sizeof(unsigned char), dataSize, file));
 
             if (count == 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write file", fileName);
             else if (count != dataSize) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially written", fileName);

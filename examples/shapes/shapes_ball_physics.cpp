@@ -51,7 +51,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ball physics");
 
-    Ball *balls = static_cast<Ball*>(RL_MALLOC(sizeof(Ball)*MAX_BALLS));
+    Ball *balls = static_cast<Ball *>(RL_MALLOC(sizeof(Ball)*MAX_BALLS));
 
     // Init first ball in the array
     balls[0] = Ball{

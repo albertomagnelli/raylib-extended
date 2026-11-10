@@ -40,7 +40,7 @@
 #define PER_SAMPLE_BIT_DEPTH           16
 #define AUDIO_STREAM_RING_BUFFER_SIZE  (FFT_WINDOW_SIZE*2)
 #define EFFECTIVE_SAMPLE_RATE          (SAMPLE_RATE_F*0.5f)
-#define WINDOW_TIME                    ((double)FFT_WINDOW_SIZE/(double)EFFECTIVE_SAMPLE_RATE)
+#define WINDOW_TIME                    (static_cast<double>(FFT_WINDOW_SIZE)/static_cast<double>(EFFECTIVE_SAMPLE_RATE))
 #define FFT_HISTORICAL_SMOOTHING_DUR   2.0f
 #define MIN_DECIBELS                   (-100.0f) // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/minDecibels
 #define MAX_DECIBELS                   (-30.0f)  // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/maxDecibels

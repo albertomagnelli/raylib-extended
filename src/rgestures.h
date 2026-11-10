@@ -526,15 +526,15 @@ static double rgGetCurrentTime(void)
     QueryPerformanceFrequency(&clockFrequency); // BE CAREFUL: Costly operation!
     QueryPerformanceCounter(&currentClockTicks);
 
-    time = (double)currentClockTicks/clockFrequency; // Time in seconds
+    time = static_cast<double>(currentClockTicks)/clockFrequency; // Time in seconds
 #endif
 #if defined(__linux__)
     // NOTE: Only for Linux-based systems
     struct timespec now = {};
     clock_gettime(CLOCK_MONOTONIC, &now);
-    unsigned long long nanoSeconds = (unsigned long long)now.tv_sec*1000000000LLU + (unsigned long long)now.tv_nsec;
+    unsigned long long nanoSeconds = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
 
-    time = ((double)nanoSeconds*1e-9); // Time in seconds
+    time = (static_cast<double>(nanoSeconds)*1e-9); // Time in seconds
 #endif
 #if defined(__APPLE__)
     //#define CLOCK_REALTIME  CALENDAR_CLOCK    // returns UTC time since 1970-01-01
@@ -547,9 +547,9 @@ static double rgGetCurrentTime(void)
     // NOTE: OS X does not have clock_gettime(), using clock_get_time()
     clock_get_time(cclock, &now);
     mach_port_deallocate(mach_task_self(), cclock);
-    unsigned long long nanoSeconds = (unsigned long long)now.tv_sec*1000000000LLU + (unsigned long long)now.tv_nsec;
+    unsigned long long nanoSeconds = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
 
-    time = ((double)nanoSeconds*1e-9); // Time in seconds
+    time = (static_cast<double>(nanoSeconds)*1e-9); // Time in seconds
 #endif
 #endif
 

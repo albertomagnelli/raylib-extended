@@ -135,7 +135,7 @@ static Color GenerateRandomColor(void)
 
 static ColorRect *GenerateRandomColorRectSequence(float rectCount, float rectWidth, float screenWidth, float screenHeight)
 {
-    ColorRect *rectangles = static_cast<ColorRect *>(RL_CALLOC((int)rectCount, sizeof(ColorRect)));
+    ColorRect *rectangles = static_cast<ColorRect *>(RL_CALLOC(static_cast<int>(rectCount), sizeof(ColorRect)));
 
     int *seq = LoadRandomSequence(static_cast<unsigned int>(rectCount), 0, static_cast<unsigned int>(rectCount) - 1);
     float rectSeqWidth = rectCount*rectWidth;

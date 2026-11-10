@@ -58,7 +58,7 @@ enum {
     ORDER_LINES_EX_SCREEN,
 };
 
-#define BOX_WIDTH (SHAPE_SIZE*(float)COUNT_SHAPES + SHAPE_SPACING*((float)COUNT_SHAPES - 1.0f) + BOX_SPACING*2.0f)
+#define BOX_WIDTH (SHAPE_SIZE*static_cast<float>(COUNT_SHAPES) + SHAPE_SPACING*(static_cast<float>(COUNT_SHAPES) - 1.0f) + BOX_SPACING*2.0f)
 #define BOX_HEIGHT (SHAPE_SIZE + BOX_SPACING*2.0f)
 
 //------------------------------------------------------------------------------------

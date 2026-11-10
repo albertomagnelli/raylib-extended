@@ -2179,7 +2179,7 @@ static void ProcessMaterialsOBJ(Material *materials, tinyobj_material_t *mats, i
 
         // Get default texture, in case no texture is defined
         // NOTE: rlgl default texture is a 1x1 pixel UNCOMPRESSED_R8G8B8A8
-        materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = (Texture2D){ rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+        materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = Texture2D{ rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
         if (mats[m].diffuse_texname != nullptr) materials[m].maps[MATERIAL_MAP_DIFFUSE].texture = LoadTexture(mats[m].diffuse_texname);  //char *diffuse_texname; // map_Kd
         else materials[m].maps[MATERIAL_MAP_DIFFUSE].color = Color{ static_cast<unsigned char>(mats[m].diffuse[0]*255.0f), static_cast<unsigned char>(mats[m].diffuse[1]*255.0f), static_cast<unsigned char>(mats[m].diffuse[2]*255.0f), 255 }; //float diffuse[3];
@@ -2241,7 +2241,7 @@ Material LoadMaterialDefault(void)
     material.shader.locs = rlGetShaderLocsDefault();
 
     // Using rlgl default texture (1x1 pixel, UNCOMPRESSED_R8G8B8A8, 1 mipmap)
-    material.maps[MATERIAL_MAP_DIFFUSE].texture = (Texture2D){ rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    material.maps[MATERIAL_MAP_DIFFUSE].texture = Texture2D{ rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
     //material.maps[MATERIAL_MAP_NORMAL].texture;         // NOTE: By default, not set
     //material.maps[MATERIAL_MAP_SPECULAR].texture;       // NOTE: By default, not set
 
@@ -2787,9 +2787,9 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
     par_shapes_rotate(plane, -PI/2.0f, (float[]){ 1, 0, 0 });
     par_shapes_translate(plane, -width/2, 0.0f, length/2);
 
-    mesh.vertices = (float *)RL_CALLOC(plane->ntriangles*3*3, sizeof(float));
-    mesh.texcoords = (float *)RL_CALLOC(plane->ntriangles*3*2, sizeof(float));
-    mesh.normals = (float *)RL_CALLOC(plane->ntriangles*3*3, sizeof(float));
+    mesh.vertices = static_cast<float *>(RL_CALLOC(plane->ntriangles*3*3, sizeof(float)));
+    mesh.texcoords = static_cast<float *>(RL_CALLOC(plane->ntriangles*3*2, sizeof(float)));
+    mesh.normals = static_cast<float *>(RL_CALLOC(plane->ntriangles*3*3, sizeof(float)));
 
     mesh.vertexCount = plane->ntriangles*3;
     mesh.triangleCount = plane->ntriangles;
@@ -2952,9 +2952,9 @@ par_shapes_mesh *par_shapes_create_icosahedron();       // 20 sides polyhedron
     par_shapes_translate(cube, -width/2, 0.0f, -length/2);
     par_shapes_compute_normals(cube);
 
-    mesh.vertices = (float *)RL_CALLOC(cube->ntriangles*3*3, sizeof(float));
-    mesh.texcoords = (float *)RL_CALLOC(cube->ntriangles*3*2, sizeof(float));
-    mesh.normals = (float *)RL_CALLOC(cube->ntriangles*3*3, sizeof(float));
+    mesh.vertices = static_cast<float *>(RL_CALLOC(cube->ntriangles*3*3, sizeof(float)));
+    mesh.texcoords = static_cast<float *>(RL_CALLOC(cube->ntriangles*3*2, sizeof(float)));
+    mesh.normals = static_cast<float *>(RL_CALLOC(cube->ntriangles*3*3, sizeof(float)));
 
     mesh.vertexCount = cube->ntriangles*3;
     mesh.triangleCount = cube->ntriangles;
@@ -3284,7 +3284,7 @@ Mesh GenMeshKnot(float radius, float size, int radSeg, int sides)
 // NOTE: Vertex data is uploaded to GPU
 Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
 {
-    #define GRAY_VALUE(c) ((float)(c.r + c.g + c.b)/3.0f)
+    #define GRAY_VALUE(c) (static_cast<float>((c.r + c.g + c.b))/3.0f)
 
     Mesh mesh = { 0 };
 
@@ -4620,7 +4620,7 @@ static Model LoadOBJ(const char *fileName)
         model.meshes[i].colors = static_cast<unsigned char *>(MemAlloc(sizeof(unsigned char)*vertexCount*4));
     #else
         if (objAttributes.texcoords != nullptr && objAttributes.num_texcoords > 0)
-            model.meshes[i].texcoords = (float *)MemAlloc(sizeof(float)*vertexCount*2);
+            model.meshes[i].texcoords = static_cast<float *>(MemAlloc(sizeof(float)*vertexCount*2));
         else model.meshes[i].texcoords = nullptr;
         model.meshes[i].colors = nullptr;
     #endif
@@ -5199,7 +5199,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, int *animCou
         BoneInfo *bones = static_cast<BoneInfo *>(RL_CALLOC(iqmHeader->num_poses, sizeof(BoneInfo)));
 
         animations[a].keyframeCount = anim[a].num_frames;
-        animations[a].keyframePoses = static_cast<Transform **>(RL_CALLOC(anim[a].num_frames, sizeof(Transform *)));
+        animations[a].keyframePoses = static_cast<Transform * *>(RL_CALLOC(anim[a].num_frames, sizeof(Transform *)));
         memcpy(animations[a].name, fileDataPtr + iqmHeader->ofs_text + anim[a].name, 32);
         // TODO: Store animation framerate data?
         //animations[a].framerate = anim.framerate;
@@ -5515,7 +5515,7 @@ static Model LoadGLTF(const char *fileName)
             {\
                 dstPtr[numComp*k + l] = (dstType)buffer[n + l];\
             }\
-            n += (int)(accesor->stride/sizeof(srcType));\
+            n += static_cast<int>((accesor->stride/sizeof(srcType)));\
         }\
     }
 
@@ -6723,7 +6723,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                 if (animData.name != nullptr) snprintf(animations[a].name, sizeof(animations[a].name), "%s", animData.name);
 
                 animations[a].keyframeCount = static_cast<int>(animDuration*GLTF_FRAMERATE) + 1;
-                animations[a].keyframePoses = static_cast<Transform **>(RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *)));
+                animations[a].keyframePoses = static_cast<Transform * *>(RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *)));
 
                 for (int j = 0; j < animations[a].keyframeCount; j++)
                 {
@@ -6906,7 +6906,7 @@ static Model LoadVOX(const char *fileName)
 
 #if SUPPORT_FILEFORMAT_M3D
 // Hook LoadFileData()/UnloadFileData() calls to M3D loaders
-unsigned char *m3d_loaderhook(char *fn, unsigned int *len) { return LoadFileData((const char *)fn, reinterpret_cast<int *>(len)); }
+unsigned char *m3d_loaderhook(char *fn, unsigned int *len) { return LoadFileData(static_cast<const char *>(fn), reinterpret_cast<int *>(len)); }
 void m3d_freehook(void *data) { UnloadFileData(static_cast<unsigned char *>(data)); }
 
 // Load M3D mesh data
@@ -7302,7 +7302,7 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, int *animCou
             BoneInfo *bones = static_cast<BoneInfo *>(RL_CALLOC((m3d->numbone + 1), sizeof(BoneInfo)));
 
             animations[a].keyframeCount = m3d->action[a].durationmsec/M3D_ANIMDELAY;
-            animations[a].keyframePoses = static_cast<Transform **>(RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *)));
+            animations[a].keyframePoses = static_cast<Transform * *>(RL_CALLOC(animations[a].keyframeCount, sizeof(Transform *)));
             snprintf(animations[a].name, sizeof(animations[a].name), "%s", m3d->action[a].name);
 
             TRACELOG(LOG_INFO, "MODEL: [%s] Loaded animation: %s | Frames: %d | Duration: %fs", fileName, animations[a].name, animations[a].keyframeCount, m3d->action[a].durationmsec);

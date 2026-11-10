@@ -242,5 +242,5 @@ static void SawtoothCallback(void *framesOut, unsigned int frameCount)
 
     // Save the synthesized samples for later drawing
     for (unsigned int i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
-    for (unsigned int i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<float*>(framesOut))[i];
+    for (unsigned int i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<float *>(framesOut))[i];
 }

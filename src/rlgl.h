@@ -1760,7 +1760,7 @@ void rlTextureParameters(unsigned int id, int param, int value)
             if (value <= RLGL.ExtSupported.maxAnisotropyLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<float>(value));
             else if (RLGL.ExtSupported.maxAnisotropyLevel > 0.0f)
             {
-                TRACELOG(RL_LOG_WARNING, "GL: Maximum anisotropic filter level supported is %iX", id, (int)RLGL.ExtSupported.maxAnisotropyLevel);
+                TRACELOG(RL_LOG_WARNING, "GL: Maximum anisotropic filter level supported is %iX", id, static_cast<int>(RLGL.ExtSupported.maxAnisotropyLevel));
                 glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<float>(value));
             }
             else TRACELOG(RL_LOG_WARNING, "GL: Anisotropic filtering not supported");
@@ -1803,7 +1803,7 @@ void rlCubemapParameters(unsigned int id, int param, int value)
             if (value <= RLGL.ExtSupported.maxAnisotropyLevel) glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<float>(value));
             else if (RLGL.ExtSupported.maxAnisotropyLevel > 0.0f)
             {
-                TRACELOG(RL_LOG_WARNING, "GL: Maximum anisotropic filter level supported is %iX", id, (int)RLGL.ExtSupported.maxAnisotropyLevel);
+                TRACELOG(RL_LOG_WARNING, "GL: Maximum anisotropic filter level supported is %iX", id, static_cast<int>(RLGL.ExtSupported.maxAnisotropyLevel));
                 glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<float>(value));
             }
             else TRACELOG(RL_LOG_WARNING, "GL: Anisotropic filtering not supported");
@@ -2463,12 +2463,12 @@ void rlLoadExtensions(void *loader)
 
     // Get supported extensions list
     GLint numExt = 0;
-    const char **extList = (const char **)RL_CALLOC(512, sizeof(const char *)); // Allocate 512 strings pointers (2 KB)
-    const char *extensions = (const char *)glGetString(GL_EXTENSIONS);  // One big const string
+    const char **extList = static_cast<const char **>(RL_CALLOC(512, sizeof(const char *))); // Allocate 512 strings pointers (2 KB)
+    const char *extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));  // One big const string
 
     // NOTE: String duplication rquired because glGetString() returns a const string
-    int extensionsLength = (int)strlen(extensions); // Get extensions string size in bytes
-    char *extensionsDup = (char *)RL_CALLOC(extensionsLength + 1, sizeof(char)); // Allocate space for copy with additional EOL byte
+    int extensionsLength = static_cast<int>(strlen(extensions)); // Get extensions string size in bytes
+    char *extensionsDup = static_cast<char *>(RL_CALLOC(extensionsLength + 1, sizeof(char))); // Allocate space for copy with additional EOL byte
     snprintf(extensionsDup, extensionsLength, "%s", extensions);
     extList[numExt] = extensionsDup;
 
@@ -2494,56 +2494,56 @@ void rlLoadExtensions(void *loader)
     {
         // Check VAO support
         // NOTE: Only check on OpenGL ES, OpenGL 3.3 has VAO support as core feature
-        if (strcmp(extList[i], (const char *)"GL_OES_vertex_array_object") == 0)
+        if (strcmp(extList[i], "GL_OES_vertex_array_object") == 0)
         {
             // The extension is supported by our hardware and driver, try to get related functions pointers
             // NOTE: emscripten does not support VAOs natively, it uses emulation and it reduces overall performance...
-            glGenVertexArrays = (PFNGLGENVERTEXARRAYSOESPROC)((rlglLoadProc)loader)("glGenVertexArraysOES");
-            glBindVertexArray = (PFNGLBINDVERTEXARRAYOESPROC)((rlglLoadProc)loader)("glBindVertexArrayOES");
-            glDeleteVertexArrays = (PFNGLDELETEVERTEXARRAYSOESPROC)((rlglLoadProc)loader)("glDeleteVertexArraysOES");
+            glGenVertexArrays = reinterpret_cast<PFNGLGENVERTEXARRAYSOESPROC>(((rlglLoadProc)loader)("glGenVertexArraysOES"));
+            glBindVertexArray = reinterpret_cast<PFNGLBINDVERTEXARRAYOESPROC>(((rlglLoadProc)loader)("glBindVertexArrayOES"));
+            glDeleteVertexArrays = reinterpret_cast<PFNGLDELETEVERTEXARRAYSOESPROC>(((rlglLoadProc)loader)("glDeleteVertexArraysOES"));
             //glIsVertexArray = (PFNGLISVERTEXARRAYOESPROC)loader("glIsVertexArrayOES");     // NOTE: Fails in WebGL, omitted
 
             if ((glGenVertexArrays != nullptr) && (glBindVertexArray != nullptr) && (glDeleteVertexArrays != nullptr)) RLGL.ExtSupported.vao = true;
         }
 
         // Check instanced rendering support
-        if (strstr(extList[i], (const char *)"instanced_arrays") != nullptr) // Broad check for instanced_arrays
+        if (strstr(extList[i], "instanced_arrays") != nullptr) // Broad check for instanced_arrays
         {
             // Specific check
-            if (strcmp(extList[i], (const char *)"GL_ANGLE_instanced_arrays") == 0)      // ANGLE
+            if (strcmp(extList[i], "GL_ANGLE_instanced_arrays") == 0)      // ANGLE
             {
-                glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawArraysInstancedANGLE");
-                glDrawElementsInstanced = (PFNGLDRAWELEMENTSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawElementsInstancedANGLE");
-                glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISOREXTPROC)((rlglLoadProc)loader)("glVertexAttribDivisorANGLE");
+                glDrawArraysInstanced = reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawArraysInstancedANGLE"));
+                glDrawElementsInstanced = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawElementsInstancedANGLE"));
+                glVertexAttribDivisor = reinterpret_cast<PFNGLVERTEXATTRIBDIVISOREXTPROC>(((rlglLoadProc)loader)("glVertexAttribDivisorANGLE"));
             }
-            else if (strcmp(extList[i], (const char *)"GL_EXT_instanced_arrays") == 0)   // EXT
+            else if (strcmp(extList[i], "GL_EXT_instanced_arrays") == 0)   // EXT
             {
-                glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawArraysInstancedEXT");
-                glDrawElementsInstanced = (PFNGLDRAWELEMENTSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawElementsInstancedEXT");
-                glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISOREXTPROC)((rlglLoadProc)loader)("glVertexAttribDivisorEXT");
+                glDrawArraysInstanced = reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawArraysInstancedEXT"));
+                glDrawElementsInstanced = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawElementsInstancedEXT"));
+                glVertexAttribDivisor = reinterpret_cast<PFNGLVERTEXATTRIBDIVISOREXTPROC>(((rlglLoadProc)loader)("glVertexAttribDivisorEXT"));
             }
-            else if (strcmp(extList[i], (const char *)"GL_NV_instanced_arrays") == 0)    // NVIDIA GLES
+            else if (strcmp(extList[i], "GL_NV_instanced_arrays") == 0)    // NVIDIA GLES
             {
-                glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawArraysInstancedNV");
-                glDrawElementsInstanced = (PFNGLDRAWELEMENTSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawElementsInstancedNV");
-                glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISOREXTPROC)((rlglLoadProc)loader)("glVertexAttribDivisorNV");
+                glDrawArraysInstanced = reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawArraysInstancedNV"));
+                glDrawElementsInstanced = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawElementsInstancedNV"));
+                glVertexAttribDivisor = reinterpret_cast<PFNGLVERTEXATTRIBDIVISOREXTPROC>(((rlglLoadProc)loader)("glVertexAttribDivisorNV"));
             }
 
             // The feature will only be marked as supported if the elements from GL_XXX_instanced_arrays are present
             if ((glDrawArraysInstanced != nullptr) && (glDrawElementsInstanced != nullptr) && (glVertexAttribDivisor != nullptr)) RLGL.ExtSupported.instancing = true;
         }
-        else if (strstr(extList[i], (const char *)"draw_instanced") != nullptr)
+        else if (strstr(extList[i], "draw_instanced") != nullptr)
         {
             // GL_ANGLE_draw_instanced doesn't exist
-            if (strcmp(extList[i], (const char *)"GL_EXT_draw_instanced") == 0)
+            if (strcmp(extList[i], "GL_EXT_draw_instanced") == 0)
             {
-                glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawArraysInstancedEXT");
-                glDrawElementsInstanced = (PFNGLDRAWELEMENTSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawElementsInstancedEXT");
+                glDrawArraysInstanced = reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawArraysInstancedEXT"));
+                glDrawElementsInstanced = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawElementsInstancedEXT"));
             }
-            else if (strcmp(extList[i], (const char *)"GL_NV_draw_instanced") == 0)
+            else if (strcmp(extList[i], "GL_NV_draw_instanced") == 0)
             {
-                glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawArraysInstancedNV");
-                glDrawElementsInstanced = (PFNGLDRAWELEMENTSINSTANCEDEXTPROC)((rlglLoadProc)loader)("glDrawElementsInstancedNV");
+                glDrawArraysInstanced = reinterpret_cast<PFNGLDRAWARRAYSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawArraysInstancedNV"));
+                glDrawElementsInstanced = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDEXTPROC>(((rlglLoadProc)loader)("glDrawElementsInstancedNV"));
             }
 
             // But the functions will at least be loaded if only GL_XX_EXT_draw_instanced exist
@@ -2552,43 +2552,43 @@ void rlLoadExtensions(void *loader)
 
         // Check NPOT textures support
         // NOTE: Only check on OpenGL ES, OpenGL 3.3 has NPOT textures full support as core feature
-        if (strcmp(extList[i], (const char *)"GL_OES_texture_npot") == 0) RLGL.ExtSupported.texNPOT = true;
+        if (strcmp(extList[i], "GL_OES_texture_npot") == 0) RLGL.ExtSupported.texNPOT = true;
 
         // Check texture float support
-        if (strcmp(extList[i], (const char *)"GL_OES_texture_float") == 0) RLGL.ExtSupported.texFloat32 = true;
-        if (strcmp(extList[i], (const char *)"GL_OES_texture_half_float") == 0) RLGL.ExtSupported.texFloat16 = true;
+        if (strcmp(extList[i], "GL_OES_texture_float") == 0) RLGL.ExtSupported.texFloat32 = true;
+        if (strcmp(extList[i], "GL_OES_texture_half_float") == 0) RLGL.ExtSupported.texFloat16 = true;
 
         // Check depth texture support
-        if (strcmp(extList[i], (const char *)"GL_OES_depth_texture") == 0) RLGL.ExtSupported.texDepth = true;
-        if (strcmp(extList[i], (const char *)"GL_WEBGL_depth_texture") == 0) RLGL.ExtSupported.texDepthWebGL = true; // WebGL requires unsized internal format
+        if (strcmp(extList[i], "GL_OES_depth_texture") == 0) RLGL.ExtSupported.texDepth = true;
+        if (strcmp(extList[i], "GL_WEBGL_depth_texture") == 0) RLGL.ExtSupported.texDepthWebGL = true; // WebGL requires unsized internal format
         if (RLGL.ExtSupported.texDepthWebGL) RLGL.ExtSupported.texDepth = true;
 
-        if (strcmp(extList[i], (const char *)"GL_OES_depth24") == 0) RLGL.ExtSupported.maxDepthBits = 24; // Not available on WebGL
-        if (strcmp(extList[i], (const char *)"GL_OES_depth32") == 0) RLGL.ExtSupported.maxDepthBits = 32; // Not available on WebGL
+        if (strcmp(extList[i], "GL_OES_depth24") == 0) RLGL.ExtSupported.maxDepthBits = 24; // Not available on WebGL
+        if (strcmp(extList[i], "GL_OES_depth32") == 0) RLGL.ExtSupported.maxDepthBits = 32; // Not available on WebGL
 
         // Check texture compression support: DXT
-        if ((strcmp(extList[i], (const char *)"GL_EXT_texture_compression_s3tc") == 0) ||
-            (strcmp(extList[i], (const char *)"GL_WEBGL_compressed_texture_s3tc") == 0) ||
-            (strcmp(extList[i], (const char *)"GL_WEBKIT_WEBGL_compressed_texture_s3tc") == 0)) RLGL.ExtSupported.texCompDXT = true;
+        if ((strcmp(extList[i], "GL_EXT_texture_compression_s3tc") == 0) ||
+            (strcmp(extList[i], "GL_WEBGL_compressed_texture_s3tc") == 0) ||
+            (strcmp(extList[i], "GL_WEBKIT_WEBGL_compressed_texture_s3tc") == 0)) RLGL.ExtSupported.texCompDXT = true;
 
         // Check texture compression support: ETC1
-        if ((strcmp(extList[i], (const char *)"GL_OES_compressed_ETC1_RGB8_texture") == 0) ||
-            (strcmp(extList[i], (const char *)"GL_WEBGL_compressed_texture_etc1") == 0)) RLGL.ExtSupported.texCompETC1 = true;
+        if ((strcmp(extList[i], "GL_OES_compressed_ETC1_RGB8_texture") == 0) ||
+            (strcmp(extList[i], "GL_WEBGL_compressed_texture_etc1") == 0)) RLGL.ExtSupported.texCompETC1 = true;
 
         // Check texture compression support: ETC2/EAC
-        if (strcmp(extList[i], (const char *)"GL_ARB_ES3_compatibility") == 0) RLGL.ExtSupported.texCompETC2 = true;
+        if (strcmp(extList[i], "GL_ARB_ES3_compatibility") == 0) RLGL.ExtSupported.texCompETC2 = true;
 
         // Check texture compression support: PVR
-        if (strcmp(extList[i], (const char *)"GL_IMG_texture_compression_pvrtc") == 0) RLGL.ExtSupported.texCompPVRT = true;
+        if (strcmp(extList[i], "GL_IMG_texture_compression_pvrtc") == 0) RLGL.ExtSupported.texCompPVRT = true;
 
         // Check texture compression support: ASTC
-        if (strcmp(extList[i], (const char *)"GL_KHR_texture_compression_astc_hdr") == 0) RLGL.ExtSupported.texCompASTC = true;
+        if (strcmp(extList[i], "GL_KHR_texture_compression_astc_hdr") == 0) RLGL.ExtSupported.texCompASTC = true;
 
         // Check anisotropic texture filter support
-        if (strcmp(extList[i], (const char *)"GL_EXT_texture_filter_anisotropic") == 0) RLGL.ExtSupported.texAnisoFilter = true;
+        if (strcmp(extList[i], "GL_EXT_texture_filter_anisotropic") == 0) RLGL.ExtSupported.texAnisoFilter = true;
 
         // Check clamp mirror wrap mode support
-        if (strcmp(extList[i], (const char *)"GL_EXT_texture_mirror_clamp") == 0) RLGL.ExtSupported.texMirrorClamp = true;
+        if (strcmp(extList[i], "GL_EXT_texture_mirror_clamp") == 0) RLGL.ExtSupported.texMirrorClamp = true;
     }
 
     // Free extensions pointers
@@ -2635,7 +2635,7 @@ void rlLoadExtensions(void *loader)
     #endif
     glGetIntegerv(GL_NUM_COMPRESSED_TEXTURE_FORMATS, &capability);
     TRACELOG(RL_LOG_INFO, "    GL_NUM_COMPRESSED_TEXTURE_FORMATS: %i", capability);
-    GLint *compFormats = (GLint *)RL_CALLOC(capability, sizeof(GLint));
+    GLint *compFormats = static_cast<GLint *>(RL_CALLOC(capability, sizeof(GLint)));
     glGetIntegerv(GL_COMPRESSED_TEXTURE_FORMATS, compFormats);
     for (int i = 0; i < capability; i++) TRACELOG(RL_LOG_INFO, "        %s", rlGetCompressedFormatName(compFormats[i]));
     RL_FREE(compFormats);
@@ -2799,7 +2799,7 @@ rlRenderBatch rlLoadRenderBatch(int numBuffers, int bufferElements)
         batch.vertexBuffer[i].indices = static_cast<unsigned int *>(RL_CALLOC(bufferElements*6, sizeof(unsigned int)));      // 6 int by quad (indices)
 #endif
 #if defined(GRAPHICS_API_OPENGL_ES2)
-        batch.vertexBuffer[i].indices = (unsigned short *)RL_CALLOC(bufferElements*6, sizeof(unsigned short));  // 6 int by quad (indices)
+        batch.vertexBuffer[i].indices = static_cast<unsigned short *>(RL_CALLOC(bufferElements*6, sizeof(unsigned short)));  // 6 int by quad (indices)
 #endif
 
         for (int j = 0; j < (3*4*bufferElements); j++) batch.vertexBuffer[i].vertices[j] = 0.0f;
@@ -3123,10 +3123,10 @@ void rlDrawRenderBatch(rlRenderBatch *batch)
                     // The number of indices to be processed needs to be defined: elementCount*6
                     // NOTE: The final parameter tells the GPU the offset in bytes from the
                     // start of the index buffer to the location of the first index to process
-                    glDrawElements(GL_TRIANGLES, batch->draws[i].vertexCount/4*6, GL_UNSIGNED_INT, (GLvoid *)(vertexOffset/4*6*sizeof(GLuint)));
+                    glDrawElements(GL_TRIANGLES, batch->draws[i].vertexCount/4*6, GL_UNSIGNED_INT, reinterpret_cast<GLvoid *>(static_cast<uintptr_t>(vertexOffset/4*6*sizeof(GLuint))));
     #endif
     #if defined(GRAPHICS_API_OPENGL_ES2)
-                    glDrawElements(GL_TRIANGLES, batch->draws[i].vertexCount/4*6, GL_UNSIGNED_SHORT, (GLvoid *)(vertexOffset/4*6*sizeof(GLushort)));
+                    glDrawElements(GL_TRIANGLES, batch->draws[i].vertexCount/4*6, GL_UNSIGNED_SHORT, reinterpret_cast<GLvoid *>(static_cast<uintptr_t>(vertexOffset/4*6*sizeof(GLushort))));
     #endif
                 }
 
@@ -3293,8 +3293,8 @@ unsigned int rlLoadTexture(const void *data, int width, int height, int format, 
     (void)mipOffset;            // Used to avoid gcc warnings about unused variable
 
     // NOTE: Added pointer math separately from function to avoid UBSAN complaining
-    unsigned char *dataPtr = nullptr;
-    if (data != nullptr) dataPtr = (unsigned char *)data;
+    const unsigned char *dataPtr = nullptr;
+    if (data != nullptr) dataPtr = static_cast<const unsigned char *>(data);
 
     // Load the different mipmap levels
     for (int i = 0; i < mipmapCount; i++)
@@ -3487,8 +3487,8 @@ unsigned int rlLoadTextureCubemap(const void *data, int size, int format, int mi
     int mipSize = size;
 
     // NOTE: Added pointer math separately from function to avoid UBSAN complaining
-    unsigned char *dataPtr = nullptr;
-    if (data != nullptr) dataPtr = (unsigned char *)data;
+    const unsigned char *dataPtr = nullptr;
+    if (data != nullptr) dataPtr = static_cast<const unsigned char *>(data);
 
     unsigned int dataSize = rlGetPixelDataSize(size, size, format);
 
@@ -3759,7 +3759,7 @@ void *rlReadTexturePixels(unsigned int id, int width, int height, int format)
     glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 #else
     // Reading data as original texture format, in some platforms (RPI, Wasm) it works
-    pixels = (unsigned char *)RL_CALLOC(rlGetPixelDataSize(width, height, format), 1);
+    pixels = static_cast<unsigned char *>(RL_CALLOC(rlGetPixelDataSize(width, height, format), 1));
     unsigned int glInternalFormat = 0, glFormat = 0, glType = 0;
     rlGetGlTextureFormats(format, &glInternalFormat, &glFormat, &glType);
     glReadPixels(0, 0, width, height, glFormat, glType, pixels);
@@ -4082,10 +4082,10 @@ void rlDrawVertexArray(int offset, int count)
 void rlDrawVertexArrayElements(int offset, int count, const void *buffer)
 {
     // NOTE: Added pointer math separately from function to avoid UBSAN complaining
-    unsigned short *bufferPtr = (unsigned short *)buffer;
+    const unsigned short *bufferPtr = static_cast<const unsigned short *>(buffer);
     if (offset > 0) bufferPtr += offset;
 
-    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (const unsigned short *)bufferPtr);
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, static_cast<const unsigned short *>(bufferPtr));
 }
 
 // Draw vertex array instanced
@@ -4101,10 +4101,10 @@ void rlDrawVertexArrayElementsInstanced(int offset, int count, const void *buffe
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     // NOTE: Added pointer math separately from function to avoid UBSAN complaining
-    unsigned short *bufferPtr = (unsigned short *)buffer;
+    const unsigned short *bufferPtr = static_cast<const unsigned short *>(buffer);
     if (offset > 0) bufferPtr += offset;
 
-    glDrawElementsInstanced(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, (const unsigned short *)bufferPtr, instances);
+    glDrawElementsInstanced(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, static_cast<const unsigned short *>(bufferPtr), instances);
 #endif
 }
 
@@ -4156,7 +4156,7 @@ void rlSetVertexAttribute(unsigned int index, int compSize, int type, bool norma
     //  - GL_INT_2_10_10_10_REV, GL_UNSIGNED_INT_2_10_10_10_REV, GL_UNSIGNED_INT_10F_11F_11F_REV
 
     size_t offsetNative = offset;
-    glVertexAttribPointer(index, compSize, type, normalized, stride, (void *)offsetNative);
+    glVertexAttribPointer(index, compSize, type, normalized, stride, reinterpret_cast<void *>(offsetNative));
 #endif
 }
 
@@ -4522,21 +4522,21 @@ void rlSetUniform(int locIndex, const void *value, int uniformType, int count)
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     switch (uniformType)
     {
-        case RL_SHADER_UNIFORM_FLOAT: glUniform1fv(locIndex, count, (float *)value); break;
-        case RL_SHADER_UNIFORM_VEC2: glUniform2fv(locIndex, count, (float *)value); break;
-        case RL_SHADER_UNIFORM_VEC3: glUniform3fv(locIndex, count, (float *)value); break;
-        case RL_SHADER_UNIFORM_VEC4: glUniform4fv(locIndex, count, (float *)value); break;
-        case RL_SHADER_UNIFORM_INT: glUniform1iv(locIndex, count, (int *)value); break;
-        case RL_SHADER_UNIFORM_IVEC2: glUniform2iv(locIndex, count, (int *)value); break;
-        case RL_SHADER_UNIFORM_IVEC3: glUniform3iv(locIndex, count, (int *)value); break;
-        case RL_SHADER_UNIFORM_IVEC4: glUniform4iv(locIndex, count, (int *)value); break;
+        case RL_SHADER_UNIFORM_FLOAT: glUniform1fv(locIndex, count, static_cast<const float *>(value)); break;
+        case RL_SHADER_UNIFORM_VEC2: glUniform2fv(locIndex, count, static_cast<const float *>(value)); break;
+        case RL_SHADER_UNIFORM_VEC3: glUniform3fv(locIndex, count, static_cast<const float *>(value)); break;
+        case RL_SHADER_UNIFORM_VEC4: glUniform4fv(locIndex, count, static_cast<const float *>(value)); break;
+        case RL_SHADER_UNIFORM_INT: glUniform1iv(locIndex, count, static_cast<const int *>(value)); break;
+        case RL_SHADER_UNIFORM_IVEC2: glUniform2iv(locIndex, count, static_cast<const int *>(value)); break;
+        case RL_SHADER_UNIFORM_IVEC3: glUniform3iv(locIndex, count, static_cast<const int *>(value)); break;
+        case RL_SHADER_UNIFORM_IVEC4: glUniform4iv(locIndex, count, static_cast<const int *>(value)); break;
     #if !defined(GRAPHICS_API_OPENGL_ES2)
-        case RL_SHADER_UNIFORM_UINT: glUniform1uiv(locIndex, count, (unsigned int *)value); break;
-        case RL_SHADER_UNIFORM_UIVEC2: glUniform2uiv(locIndex, count, (unsigned int *)value); break;
-        case RL_SHADER_UNIFORM_UIVEC3: glUniform3uiv(locIndex, count, (unsigned int *)value); break;
-        case RL_SHADER_UNIFORM_UIVEC4: glUniform4uiv(locIndex, count, (unsigned int *)value); break;
+        case RL_SHADER_UNIFORM_UINT: glUniform1uiv(locIndex, count, static_cast<const unsigned int *>(value)); break;
+        case RL_SHADER_UNIFORM_UIVEC2: glUniform2uiv(locIndex, count, static_cast<const unsigned int *>(value)); break;
+        case RL_SHADER_UNIFORM_UIVEC3: glUniform3uiv(locIndex, count, static_cast<const unsigned int *>(value)); break;
+        case RL_SHADER_UNIFORM_UIVEC4: glUniform4uiv(locIndex, count, static_cast<const unsigned int *>(value)); break;
     #endif
-        case RL_SHADER_UNIFORM_SAMPLER2D: glUniform1iv(locIndex, count, (int *)value); break;
+        case RL_SHADER_UNIFORM_SAMPLER2D: glUniform1iv(locIndex, count, static_cast<const int *>(value)); break;
         default: TRACELOG(RL_LOG_WARNING, "SHADER: Failed to set uniform value, data type not recognized");
     }
 #endif
@@ -4548,10 +4548,10 @@ void rlSetVertexAttributeDefault(int locIndex, const void *value, int attribType
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     switch (attribType)
     {
-        case RL_SHADER_ATTRIB_FLOAT: if (count == 1) glVertexAttrib1fv(locIndex, (float *)value); break;
-        case RL_SHADER_ATTRIB_VEC2: if (count == 2) glVertexAttrib2fv(locIndex, (float *)value); break;
-        case RL_SHADER_ATTRIB_VEC3: if (count == 3) glVertexAttrib3fv(locIndex, (float *)value); break;
-        case RL_SHADER_ATTRIB_VEC4: if (count == 4) glVertexAttrib4fv(locIndex, (float *)value); break;
+        case RL_SHADER_ATTRIB_FLOAT: if (count == 1) glVertexAttrib1fv(locIndex, static_cast<const float *>(value)); break;
+        case RL_SHADER_ATTRIB_VEC2: if (count == 2) glVertexAttrib2fv(locIndex, static_cast<const float *>(value)); break;
+        case RL_SHADER_ATTRIB_VEC3: if (count == 3) glVertexAttrib3fv(locIndex, static_cast<const float *>(value)); break;
+        case RL_SHADER_ATTRIB_VEC4: if (count == 4) glVertexAttrib4fv(locIndex, static_cast<const float *>(value)); break;
         default: TRACELOG(RL_LOG_WARNING, "SHADER: Failed to set attrib default value, data type not recognized");
     }
 #endif
@@ -4573,7 +4573,7 @@ void rlSetUniformMatrices(int locIndex, const Matrix *matrices, int count)
 #elif defined(GRAPHICS_API_OPENGL_ES2)
     // WARNING: WebGL does not support Matrix transpose ("true" parameter)
     // REF: https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/uniformMatrix
-    glUniformMatrix4fv(locIndex, count, false, (const float *)matrices);
+    glUniformMatrix4fv(locIndex, count, false, reinterpret_cast<const float *>(matrices));
 #endif
 }
 
@@ -4870,9 +4870,9 @@ void rlLoadDrawQuad(void)
 
     // Bind vertex attributes (position, texcoords)
     glEnableVertexAttribArray(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION);
-    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void *)nullptr); // Positions
+    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), static_cast<void *>(nullptr)); // Positions
     glEnableVertexAttribArray(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD);
-    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void *)(3*sizeof(float))); // Texcoords
+    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), reinterpret_cast<void *>(static_cast<uintptr_t>(3*sizeof(float)))); // Texcoords
 
     // Draw quad
     glBindVertexArray(quadVAO);
@@ -4944,11 +4944,11 @@ void rlLoadDrawCube(void)
     // Bind vertex attributes (position, normals, texcoords)
     glBindVertexArray(cubeVAO);
     glEnableVertexAttribArray(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION);
-    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void *)nullptr); // Positions
+    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), static_cast<void *>(nullptr)); // Positions
     glEnableVertexAttribArray(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL);
-    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void *)(3*sizeof(float))); // Normals
+    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), reinterpret_cast<void *>(static_cast<uintptr_t>(3*sizeof(float)))); // Normals
     glEnableVertexAttribArray(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD);
-    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void *)(6*sizeof(float))); // Texcoords
+    glVertexAttribPointer(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), reinterpret_cast<void *>(static_cast<uintptr_t>(6*sizeof(float)))); // Texcoords
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 

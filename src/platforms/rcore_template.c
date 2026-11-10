@@ -350,9 +350,9 @@ double GetTime(void)
 
     struct timespec ts = {};
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    unsigned long long nanoSeconds = (unsigned long long)ts.tv_sec*1000000000LLU + (unsigned long long)ts.tv_nsec;
+    unsigned long long nanoSeconds = static_cast<unsigned long long>(ts.tv_sec)*1000000000LLU + static_cast<unsigned long long>(ts.tv_nsec);
 
-    time = (double)(nanoSeconds - CORE.Time.base)*1e-9; // Elapsed time since InitTimer()
+    time = static_cast<double>((nanoSeconds - CORE.Time.base))*1e-9; // Elapsed time since InitTimer()
 
     return time;
 }
@@ -406,7 +406,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor

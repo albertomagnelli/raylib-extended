@@ -663,7 +663,7 @@ static uint32_t GetOrCreateFbForBo(struct gbm_bo *bo)
     fbCacheCount++;
 
     // Set destroy callback to auto-cleanup
-    gbm_bo_set_user_data(bo, (void *)(uintptr_t)fbId, DestroyFrameBufferCallback);
+    gbm_bo_set_user_data(bo, reinterpret_cast<void *>(static_cast<uintptr_t>(fbId)), DestroyFrameBufferCallback);
 
     TRACELOG(LOG_INFO, "DISPLAY: DRM: Added new buffer object [%u]" , (uintptr_t)fbId);
 
@@ -734,7 +734,7 @@ static void PageFlipHandler(int fd, unsigned int frame, unsigned int sec, unsign
     (void)usec;
 
     pendingFlip = false;
-    struct gbm_bo *boToRelease = (struct gbm_bo *)data;
+    struct gbm_bo *boToRelease = static_cast<struct gbm_bo *>(data);
 
     // Buffers are released after the flip completes (via page_flip_handler), ensuring they're no longer in use
     // Prevents the GPU from writing to a buffer being scanned out
@@ -1030,9 +1030,9 @@ double GetTime(void)
     double time = 0.0;
     struct timespec ts = {};
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    unsigned long long nanoSeconds = (unsigned long long)ts.tv_sec*1000000000LLU + (unsigned long long)ts.tv_nsec;
+    unsigned long long nanoSeconds = static_cast<unsigned long long>(ts.tv_sec)*1000000000LLU + static_cast<unsigned long long>(ts.tv_nsec);
 
-    time = (double)(nanoSeconds - CORE.Time.base)*1e-9; // Elapsed time since InitTimer()
+    time = static_cast<double>((nanoSeconds - CORE.Time.base))*1e-9; // Elapsed time since InitTimer()
 
     return time;
 }
@@ -1071,7 +1071,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -1451,7 +1451,7 @@ int InitPlatform(void)
     eglClientExtensions = eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
     if ((eglClientExtensions != nullptr) && (strstr(eglClientExtensions, "EGL_EXT_platform_base") != nullptr))
     {
-        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress("eglGetPlatformDisplayEXT");
+        PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT"));
         if (eglGetPlatformDisplayEXT != nullptr) platform.device = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, platform.gbmDevice, nullptr);
     }
     #endif
@@ -1484,7 +1484,7 @@ int InitPlatform(void)
 
     TRACELOG(LOG_TRACE, "DISPLAY: EGL configs available: %d", numConfigs);
 
-    EGLConfig *configs = (EGLConfig *)RL_CALLOC(numConfigs, sizeof(*configs));
+    EGLConfig *configs = static_cast<EGLConfig *>(RL_CALLOC(numConfigs, sizeof(*configs)));
     if (!configs)
     {
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to get memory for EGL configs");
@@ -1545,7 +1545,7 @@ int InitPlatform(void)
 
     if ((eglClientExtensions != nullptr) && (strstr(eglClientExtensions, "EGL_EXT_platform_base") != nullptr))
     {
-        PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC eglCreatePlatformWindowSurfaceEXT = (PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC)eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT");
+        PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC eglCreatePlatformWindowSurfaceEXT = reinterpret_cast<PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC>(eglGetProcAddress("eglCreatePlatformWindowSurfaceEXT"));
 
         if (eglCreatePlatformWindowSurfaceEXT != nullptr) platform.surface = eglCreatePlatformWindowSurfaceEXT(platform.device, platform.config, platform.gbmSurface, nullptr);
     }
@@ -1918,9 +1918,9 @@ static void ProcessKeyboard(void)
             // Translate lowercase a-z letters to A-Z
             if ((keysBuffer[i] >= 97) && (keysBuffer[i] <= 122))
             {
-                CORE.Input.Keyboard.currentKeyState[(int)keysBuffer[i] - 32] = 1;
+                CORE.Input.Keyboard.currentKeyState[static_cast<int>(keysBuffer[i]) - 32] = 1;
             }
-            else CORE.Input.Keyboard.currentKeyState[(int)keysBuffer[i]] = 1;
+            else CORE.Input.Keyboard.currentKeyState[static_cast<int>(keysBuffer[i])] = 1;
 
             CORE.Input.Keyboard.keyPressedQueue[CORE.Input.Keyboard.keyPressedQueueCount] = keysBuffer[i];     // Add keys pressed into queue
             CORE.Input.Keyboard.keyPressedQueueCount++;
@@ -2218,7 +2218,7 @@ static void PollKeyboardEvents(void)
     int keycode = -1;
 
     // Try to read data from the keyboard and only continue if successful
-    while (read(fd, &event, sizeof(event)) == (int)sizeof(event))
+    while (read(fd, &event, sizeof(event)) == static_cast<int>(sizeof(event)))
     {
         // Check if the event is a key event
         if (event.type != EV_KEY) continue;
@@ -2278,7 +2278,7 @@ static void PollGamepadEvents(void)
         // Register previous gamepad states
         for (int k = 0; k < MAX_GAMEPAD_BUTTONS; k++) CORE.Input.Gamepad.previousButtonState[i][k] = CORE.Input.Gamepad.currentButtonState[i][k];
 
-        while (read(platform.gamepadStreamFd[i], &event, sizeof(event)) == (int)sizeof(event))
+        while (read(platform.gamepadStreamFd[i], &event, sizeof(event)) == static_cast<int>(sizeof(event)))
         {
             if (event.type == EV_KEY)
             {
@@ -2310,7 +2310,7 @@ static void PollGamepadEvents(void)
                         int range = platform.gamepadAbsAxisRange[i][event.code][1];
 
                         // NOTE: Scaling of event.value to get values between -1..1
-                        CORE.Input.Gamepad.axisState[i][axisRaylib] = (2*(float)(event.value - min)/range) - 1;
+                        CORE.Input.Gamepad.axisState[i][axisRaylib] = (2*static_cast<float>((event.value - min))/range) - 1;
                     }
                 }
             }
@@ -2329,7 +2329,7 @@ static void PollMouseEvents(void)
     static bool isMultitouch = false; // Detect if device supports MT events
 
     // Try to read data from the mouse/touch/gesture and only continue if successful
-    while (read(fd, &event, sizeof(event)) == (int)sizeof(event))
+    while (read(fd, &event, sizeof(event)) == static_cast<int>(sizeof(event)))
     {
         // Relative movement parsing
         if (event.type == EV_REL)
@@ -2700,26 +2700,26 @@ static void SetupFramebuffer(int width, int height)
         TRACELOG(LOG_WARNING, "DISPLAY: Downscaling required: Screen size (%ix%i) is bigger than display size (%ix%i)", CORE.Window.screen.width, CORE.Window.screen.height, CORE.Window.display.width, CORE.Window.display.height);
 
         // Downscaling to fit display with border-bars
-        float widthRatio = (float)CORE.Window.display.width/(float)CORE.Window.screen.width;
-        float heightRatio = (float)CORE.Window.display.height/(float)CORE.Window.screen.height;
+        float widthRatio = static_cast<float>(CORE.Window.display.width)/static_cast<float>(CORE.Window.screen.width);
+        float heightRatio = static_cast<float>(CORE.Window.display.height)/static_cast<float>(CORE.Window.screen.height);
 
         if (widthRatio <= heightRatio)
         {
             CORE.Window.render.width = CORE.Window.display.width;
-            CORE.Window.render.height = (int)round((float)CORE.Window.screen.height*widthRatio);
+            CORE.Window.render.height = static_cast<int>(round(static_cast<float>(CORE.Window.screen.height)*widthRatio));
             CORE.Window.renderOffset.x = 0;
             CORE.Window.renderOffset.y = (CORE.Window.display.height - CORE.Window.render.height);
         }
         else
         {
-            CORE.Window.render.width = (int)round((float)CORE.Window.screen.width*heightRatio);
+            CORE.Window.render.width = static_cast<int>(round(static_cast<float>(CORE.Window.screen.width)*heightRatio));
             CORE.Window.render.height = CORE.Window.display.height;
             CORE.Window.renderOffset.x = (CORE.Window.display.width - CORE.Window.render.width);
             CORE.Window.renderOffset.y = 0;
         }
 
         // Screen scaling required
-        float scaleRatio = (float)CORE.Window.render.width/(float)CORE.Window.screen.width;
+        float scaleRatio = static_cast<float>(CORE.Window.render.width)/static_cast<float>(CORE.Window.screen.width);
         CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleRatio, scaleRatio, 1.0f});
 
         // NOTE: Rendering to full display resolution,
@@ -2741,19 +2741,19 @@ static void SetupFramebuffer(int width, int height)
         }
 
         // Upscaling to fit display with border-bars
-        float displayRatio = (float)CORE.Window.display.width/(float)CORE.Window.display.height;
-        float screenRatio = (float)CORE.Window.screen.width/(float)CORE.Window.screen.height;
+        float displayRatio = static_cast<float>(CORE.Window.display.width)/static_cast<float>(CORE.Window.display.height);
+        float screenRatio = static_cast<float>(CORE.Window.screen.width)/static_cast<float>(CORE.Window.screen.height);
 
         if (displayRatio <= screenRatio)
         {
             CORE.Window.render.width = CORE.Window.screen.width;
-            CORE.Window.render.height = (int)round((float)CORE.Window.screen.width/displayRatio);
+            CORE.Window.render.height = static_cast<int>(round(static_cast<float>(CORE.Window.screen.width)/displayRatio));
             CORE.Window.renderOffset.x = 0;
             CORE.Window.renderOffset.y = (CORE.Window.render.height - CORE.Window.screen.height);
         }
         else
         {
-            CORE.Window.render.width = (int)round((float)CORE.Window.screen.height*displayRatio);
+            CORE.Window.render.width = static_cast<int>(round(static_cast<float>(CORE.Window.screen.height)*displayRatio));
             CORE.Window.render.height = CORE.Window.screen.height;
             CORE.Window.renderOffset.x = (CORE.Window.render.width - CORE.Window.screen.width);
             CORE.Window.renderOffset.y = 0;

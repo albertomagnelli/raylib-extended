@@ -879,8 +879,8 @@ Vector2 GetWindowPosition(void)
     // Browser window position, top-left corner relative to the physical screen origin, expressed in CSS logical pixels
     // NOTE: Returned position is relative to the current monitor where the browser window is located
     Vector2 position = { 0, 0 };
-    position.x = (float)EM_ASM_INT( { return window.screenX; }, 0);
-    position.y = (float)EM_ASM_INT( { return window.screenY; }, 0);
+    position.x = static_cast<float>(EM_ASM_INT( { return window.screenX; }, 0));
+    position.y = static_cast<float>(EM_ASM_INT( { return window.screenY; }, 0));
     return position;
 }
 
@@ -890,7 +890,7 @@ Vector2 GetWindowScaleDPI(void)
     // Get device pixel ratio
     // NOTE: Returned scale is relative to the current monitor where the browser window is located
     Vector2 scale = { 1.0f, 1.0f };
-    scale.x = (float)EM_ASM_DOUBLE( { return window.devicePixelRatio; } );
+    scale.x = static_cast<float>(EM_ASM_DOUBLE( { return window.devicePixelRatio; } ));
     scale.y = scale.x;
     return scale;
 }
@@ -1340,7 +1340,7 @@ int InitPlatform(void)
         });
 
         // Load memory framebuffer with desired screen size
-        platform.pixels = (unsigned int *)RL_CALLOC(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(unsigned int));
+        platform.pixels = static_cast<unsigned int *>(RL_CALLOC(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(unsigned int)));
     }
     else if (rlGetVersion() == RL_OPENGL_ES_20) // Request OpenGL ES 2.0 context --> WebGL 1.0
     {
@@ -1473,12 +1473,12 @@ static void *WebGLGetProcAddress(const char *procName)
     void *proc = nullptr;
 
 #if defined(GRAPHICS_API_OPENGL_ES2)
-    if (strcmp(procName, "glGenVertexArraysOES") == 0) proc = (void *)glGenVertexArraysOES;
-    else if (strcmp(procName, "glBindVertexArrayOES") == 0) proc = (void *)glBindVertexArrayOES;
-    else if (strcmp(procName, "glDeleteVertexArraysOES") == 0) proc = (void *)glDeleteVertexArraysOES;
-    else if (strcmp(procName, "glDrawArraysInstancedANGLE") == 0) proc = (void *)glDrawArraysInstancedANGLE;
-    else if (strcmp(procName, "glDrawElementsInstancedANGLE") == 0) proc = (void *)glDrawElementsInstancedANGLE;
-    else if (strcmp(procName, "glVertexAttribDivisorANGLE") == 0) proc = (void *)glVertexAttribDivisorANGLE;
+    if (strcmp(procName, "glGenVertexArraysOES") == 0) proc = reinterpret_cast<void *>(glGenVertexArraysOES);
+    else if (strcmp(procName, "glBindVertexArrayOES") == 0) proc = reinterpret_cast<void *>(glBindVertexArrayOES);
+    else if (strcmp(procName, "glDeleteVertexArraysOES") == 0) proc = reinterpret_cast<void *>(glDeleteVertexArraysOES);
+    else if (strcmp(procName, "glDrawArraysInstancedANGLE") == 0) proc = reinterpret_cast<void *>(glDrawArraysInstancedANGLE);
+    else if (strcmp(procName, "glDrawElementsInstancedANGLE") == 0) proc = reinterpret_cast<void *>(glDrawElementsInstancedANGLE);
+    else if (strcmp(procName, "glVertexAttribDivisorANGLE") == 0) proc = reinterpret_cast<void *>(glVertexAttribDivisorANGLE);
 #endif
 
     return proc;
@@ -1511,11 +1511,11 @@ static EM_BOOL EmscriptenResizeCallback(int eventType, const EmscriptenUiEvent *
     int width = EM_ASM_INT( return window.innerWidth; );
     int height = EM_ASM_INT( return window.innerHeight; );
 
-    if (width < (int)CORE.Window.screenMin.width) width = CORE.Window.screenMin.width;
-    else if ((width > (int)CORE.Window.screenMax.width) && (CORE.Window.screenMax.width > 0)) width = CORE.Window.screenMax.width;
+    if (width < static_cast<int>(CORE.Window.screenMin.width)) width = CORE.Window.screenMin.width;
+    else if ((width > static_cast<int>(CORE.Window.screenMax.width)) && (CORE.Window.screenMax.width > 0)) width = CORE.Window.screenMax.width;
 
-    if (height < (int)CORE.Window.screenMin.height) height = CORE.Window.screenMin.height;
-    else if ((height > (int)CORE.Window.screenMax.height) && (CORE.Window.screenMax.height > 0)) height = CORE.Window.screenMax.height;
+    if (height < static_cast<int>(CORE.Window.screenMin.height)) height = CORE.Window.screenMin.height;
+    else if ((height > static_cast<int>(CORE.Window.screenMax.height)) && (CORE.Window.screenMax.height > 0)) height = CORE.Window.screenMax.height;
 
     emscripten_set_canvas_element_size(platform.canvasId, width, height);
 
@@ -1599,11 +1599,11 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
 
         // WARNING: Paths are freed by GLFW when the callback returns, an internal copy should be kept
         CORE.Window.dropFileCount = count;
-        CORE.Window.dropFilepaths = (char **)RL_CALLOC(CORE.Window.dropFileCount, sizeof(char *));
+        CORE.Window.dropFilepaths = static_cast<char **>(RL_CALLOC(CORE.Window.dropFileCount, sizeof(char *));
 
         for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++)
         {
-            CORE.Window.dropFilepaths[i] = (char *)RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
+            CORE.Window.dropFilepaths[i] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
             snprintf(CORE.Window.dropFilepaths[i], MAX_FILEPATH_LENGTH, "%s", paths[i]);
         }
     }
@@ -1734,8 +1734,8 @@ static EM_BOOL EmscriptenMouseCallback(int eventType, const EmscriptenMouseEvent
     gestureEvent.position[0] = GetMousePosition();
 
     // Normalize gestureEvent.position[0] for CORE.Window.screen.width and CORE.Window.screen.height
-    gestureEvent.position[0].x /= (float)GetScreenWidth();
-    gestureEvent.position[0].y /= (float)GetScreenHeight();
+    gestureEvent.position[0].x /= static_cast<float>(GetScreenWidth());
+    gestureEvent.position[0].y /= static_cast<float>(GetScreenHeight());
 
     // Gesture data is sent to gestures-system for processing
     // Prevent calling ProcessGestureEvent() when Emscripten is present and there's a touch gesture, so EmscriptenTouchCallback() can handle it itself
@@ -1757,18 +1757,18 @@ static EM_BOOL EmscriptenMouseMoveCallback(int eventType, const EmscriptenMouseE
     else
     {
         // Get mouse position in canvas CSS pixels
-        float mouseCssX = (float)mouseEvent->targetX;
-        float mouseCssY = (float)mouseEvent->targetY;
+        float mouseCssX = static_cast<float>(mouseEvent->targetX);
+        float mouseCssY = static_cast<float>(mouseEvent->targetY);
 
         // Get canvas sizes
         double cssWidth = 0.0;
         double cssHeight = 0.0;
         emscripten_get_element_css_size(platform.canvasId, &cssWidth, &cssHeight);
 
-        float normalizedX = mouseCssX/(float)cssWidth;
-        float normalizedY = mouseCssY/(float)cssHeight;
-        CORE.Input.Mouse.currentPosition.x = normalizedX*(float)CORE.Window.screen.width;
-        CORE.Input.Mouse.currentPosition.y = normalizedY*(float)CORE.Window.screen.height;
+        float normalizedX = mouseCssX/static_cast<float>(cssWidth);
+        float normalizedY = mouseCssY/static_cast<float>(cssHeight);
+        CORE.Input.Mouse.currentPosition.x = normalizedX*static_cast<float>(CORE.Window.screen.width);
+        CORE.Input.Mouse.currentPosition.y = normalizedY*static_cast<float>(CORE.Window.screen.height);
 
         CORE.Input.Touch.position[0] = CORE.Input.Mouse.currentPosition;
     }
@@ -1789,8 +1789,8 @@ static EM_BOOL EmscriptenMouseMoveCallback(int eventType, const EmscriptenMouseE
     gestureEvent.position[0] = CORE.Input.Touch.position[0];
 
     // Normalize gestureEvent.position[0] for CORE.Window.screen.width and CORE.Window.screen.height
-    gestureEvent.position[0].x /= (float)GetScreenWidth();
-    gestureEvent.position[0].y /= (float)GetScreenHeight();
+    gestureEvent.position[0].x /= static_cast<float>(GetScreenWidth());
+    gestureEvent.position[0].y /= static_cast<float>(GetScreenHeight());
 
     // Gesture data is sent to gestures-system for processing
     ProcessGestureEvent(gestureEvent);
@@ -1804,8 +1804,8 @@ static EM_BOOL EmscriptenMouseWheelCallback(int eventType, const EmscriptenWheel
 {
     if (eventType == EMSCRIPTEN_EVENT_WHEEL)
     {
-        CORE.Input.Mouse.currentWheelMove.x = (float)wheelEvent->deltaX;
-        CORE.Input.Mouse.currentWheelMove.y = -(float)wheelEvent->deltaY;
+        CORE.Input.Mouse.currentWheelMove.x = static_cast<float>(wheelEvent->deltaX);
+        CORE.Input.Mouse.currentWheelMove.y = -static_cast<float>(wheelEvent->deltaY);
     }
 
     return 1; // The event was consumed by the callback handler
@@ -1869,8 +1869,8 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
         CORE.Input.Touch.position[i] = Vector2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
 
         // Normalize gestureEvent.position[x] for CORE.Window.screen.width and CORE.Window.screen.height
-        CORE.Input.Touch.position[i].x *= ((float)GetScreenWidth()/(float)canvasWidth);
-        CORE.Input.Touch.position[i].y *= ((float)GetScreenHeight()/(float)canvasHeight);
+        CORE.Input.Touch.position[i].x *= (static_cast<float>(GetScreenWidth())/static_cast<float>(canvasWidth));
+        CORE.Input.Touch.position[i].y *= (static_cast<float>(GetScreenHeight())/static_cast<float>(canvasHeight));
 
         if (eventType == EMSCRIPTEN_EVENT_TOUCHSTART) CORE.Input.Touch.currentTouchState[i] = 1;
         else if (eventType == EMSCRIPTEN_EVENT_TOUCHEND) CORE.Input.Touch.currentTouchState[i] = 0;
@@ -1899,8 +1899,8 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
         gestureEvent.position[i] = CORE.Input.Touch.position[i];
 
         // Normalize gestureEvent.position[i]
-        gestureEvent.position[i].x /= (float)GetScreenWidth();
-        gestureEvent.position[i].y /= (float)GetScreenHeight();
+        gestureEvent.position[i].x /= static_cast<float>(GetScreenWidth());
+        gestureEvent.position[i].y /= static_cast<float>(GetScreenHeight());
     }
 
     // Gesture data is sent to gestures system for processing

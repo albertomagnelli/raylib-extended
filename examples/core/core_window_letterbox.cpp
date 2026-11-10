@@ -54,7 +54,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Compute required framebuffer scaling
-        float scale = MIN((float)GetScreenWidth()/gameScreenWidth, (float)GetScreenHeight()/gameScreenHeight);
+        float scale = MIN(static_cast<float>(GetScreenWidth())/gameScreenWidth, static_cast<float>(GetScreenHeight())/gameScreenHeight);
 
         if (IsKeyPressed(KEY_SPACE))
         {

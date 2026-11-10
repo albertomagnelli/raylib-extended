@@ -72,7 +72,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - simple particles");
 
     // Definition of particles
-    Particle *particles = static_cast<Particle*>(RL_CALLOC(MAX_PARTICLES, sizeof(Particle))); // Particle array
+    Particle *particles = static_cast<Particle *>(RL_CALLOC(MAX_PARTICLES, sizeof(Particle))); // Particle array
     CircularBuffer circularBuffer = { 0, 0, particles };
 
     // Particle emitter parameters

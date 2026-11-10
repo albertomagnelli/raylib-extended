@@ -731,7 +731,7 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
                         glyphs[k].advanceX = static_cast<int>(static_cast<float>(glyphs[k].advanceX)*scaleFactor);
 
                         // WARNING: If requested SDF font, sdf-glyph height is definitely bigger than fontSize due to FONT_SDF_CHAR_PADDING
-                        if ((type != FONT_SDF) && (cpHeight > fontSize)) TRACELOG(LOG_WARNING, "FONT: [0x%04x] Glyph height is bigger than requested font size: %i > %i", cp, cpHeight, (int)fontSize);
+                        if ((type != FONT_SDF) && (cpHeight > fontSize)) TRACELOG(LOG_WARNING, "FONT: [0x%04x] Glyph height is bigger than requested font size: %i > %i", cp, cpHeight, static_cast<int>(fontSize));
 
                         // Load glyph image
                         glyphs[k].image.width = cpWidth;
@@ -1122,8 +1122,8 @@ bool ExportFontAsCode(Font font, std::string_view fileNameView)
     byteCount += sprintf(txtData + byteCount, "// Font image pixels data\n");
     byteCount += sprintf(txtData + byteCount, "// NOTE: 2 bytes per pixel, GRAY + ALPHA channels\n");
     byteCount += sprintf(txtData + byteCount, "static unsigned char fontImageData_%s[%i] = { ", fileNamePascal, imageDataSize);
-    for (int i = 0; i < imageDataSize - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%02x,\n    " : "0x%02x, "), ((unsigned char *)imFont.data)[i]);
-    byteCount += sprintf(txtData + byteCount, "0x%02x };\n\n", ((unsigned char *)imFont.data)[imageDataSize - 1]);
+    for (int i = 0; i < imageDataSize - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%02x,\n    " : "0x%02x, "), (static_cast<unsigned char *>(imFont.data))[i]);
+    byteCount += sprintf(txtData + byteCount, "0x%02x };\n\n", (static_cast<unsigned char *>(imFont.data))[imageDataSize - 1]);
 #endif
 
     // Save font recs data
@@ -2709,7 +2709,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
     int readBytes = 0;              // Data bytes read (line)
     int readVars = 0;               // Variables filled by sscanf()
 
-    const char *fileText = (const char *)fileData;
+    const char *fileText = static_cast<const char *>(fileData);
     const char *fileTextPtr = fileText;
 
     bool fontMalformed = false;     // Is the font malformed
@@ -2735,7 +2735,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
 
     // In case no chars count provided, default to 95
     codepointCount = (codepointCount > 0)? codepointCount : 95;
-    int *requiredCodepoints = (int *)RL_CALLOC(codepointCount, sizeof(int));
+    int *requiredCodepoints = static_cast<int *>(RL_CALLOC(codepointCount, sizeof(int)));
 
     if (codepoints == nullptr)
     {
@@ -2749,7 +2749,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
         for (int i = 0; i < codepointCount; i++) requiredCodepoints[i] = codepoints[i];
     }
 
-    glyphs = (GlyphInfo *)RL_CALLOC(codepointCount, sizeof(GlyphInfo));
+    glyphs = static_cast<GlyphInfo *>(RL_CALLOC(codepointCount, sizeof(GlyphInfo)));
 
     while (totalReadBytes <= dataSize)
     {
@@ -2787,7 +2787,7 @@ static GlyphInfo *LoadFontDataBDF(const unsigned char *fileData, int dataSize, c
 
                             if (pixelX >= outGlyphPtr->image.width) break;
 
-                            if ((byte & (8 >> bitX)) > 0) ((unsigned char *)outGlyphPtr->image.data)[(pixelY*outGlyphPtr->image.width) + pixelX] = 255;
+                            if ((byte & (8 >> bitX)) > 0) (static_cast<unsigned char *>(outGlyphPtr->image.data))[(pixelY*outGlyphPtr->image.width) + pixelX] = 255;
                         }
                     }
                 }

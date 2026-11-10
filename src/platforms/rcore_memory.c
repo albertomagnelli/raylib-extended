@@ -373,15 +373,15 @@ double GetTime(void)
     LARGE_INTEGER currentTicks = {};
     QueryPerformanceCounter(&currentTicks);
 
-    time = (double)(currentTicks.QuadPart - CORE.Time.base)/(double)platform.timerFrequency.QuadPart;
+    time = static_cast<double>((currentTicks.QuadPart - CORE.Time.base))/static_cast<double>(platform.timerFrequency.QuadPart);
 #elif defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
     struct timespec ts = {};
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    unsigned long long nanoSeconds = (unsigned long long)ts.tv_sec*1000000000LLU + (unsigned long long)ts.tv_nsec;
+    unsigned long long nanoSeconds = static_cast<unsigned long long>(ts.tv_sec)*1000000000LLU + static_cast<unsigned long long>(ts.tv_nsec);
 
-    time = (double)(nanoSeconds - CORE.Time.base)*1e-9; // Elapsed time since InitTimer()
+    time = static_cast<double>((nanoSeconds - CORE.Time.base))*1e-9; // Elapsed time since InitTimer()
 #elif defined(PICO_RP2350)
-    time = (double)to_ms_since_boot(get_absolute_time())/1000.0;
+    time = static_cast<double>(to_ms_since_boot(get_absolute_time()))/1000.0;
 #endif
     return time;
 }
@@ -400,7 +400,7 @@ void OpenURL(std::string_view urlView)
     if (strchr(url, '\'') != nullptr) TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'] character");
     else
     {
-        char *cmd = (char *)RL_CALLOC(strlen(url) + 32, sizeof(char));
+        char *cmd = static_cast<char *>(RL_CALLOC(strlen(url) + 32, sizeof(char)));
         sprintf(cmd, "explorer \"%s\"", url);
         int result = system(cmd);
         if (result == -1) TRACELOG(LOG_WARNING, "OpenURL() child process could not be created");
@@ -431,7 +431,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ (float)x, (float)y };
+    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -510,7 +510,7 @@ int InitPlatform(void)
     else
     {
         // Load memory framebuffer with desired screen size
-        platform.pixels = (unsigned int *)RL_CALLOC(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(int));
+        platform.pixels = static_cast<unsigned int *>(RL_CALLOC(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(int)));
     }
     //----------------------------------------------------------------------------
 
