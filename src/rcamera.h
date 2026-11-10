@@ -510,7 +510,7 @@ void UpdateCamera(Camera *camera, const int mode)
 #endif // !RCAMERA_STANDALONE
 
 // Update camera movement, movement/rotation values should be provided by user
-void UpdateCameraPro(Camera *camera, const Vector3 movement, const Vector3 rotation, float zoom)
+void UpdateCameraPro(Camera *camera, const Vector3 movement, const Vector3 rotation, const float zoom)
 {
     // Required values
     // movement.x - Move forward/backward
