@@ -921,10 +921,10 @@ void SetWindowState(unsigned int flags)
     {
         ToggleBorderlessWindowed();
     }
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    if ((flags & MSAA_FLAGS) != 0)
     {
         RGFW_glHints *hints = RGFW_getGlobalHints_OpenGL();
-        hints->samples = 4;
+        hints->samples = GetWindowRequestedSamples();
         RGFW_setGlobalHints_OpenGL(hints);
     }
     if (FLAG_IS_SET(flags, FLAG_INTERLACED_HINT))
@@ -997,7 +997,7 @@ void ClearWindowState(unsigned int flags)
     {
         ToggleBorderlessWindowed();
     }
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    if ((flags & MSAA_FLAGS) != 0)
     {
         RGFW_glHints *hints = RGFW_getGlobalHints_OpenGL();
         hints->samples = 0;
@@ -1810,7 +1810,7 @@ int InitPlatform(void)
         hints->minor = 1;
         hints->renderer = RGFW_glSoftware;
     }
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT)) hints->samples = 4;
+    hints->samples = GetWindowRequestedSamples();   // Zero disables multisampling (MSAA)
     RGFW_setGlobalHints_OpenGL(hints);
 
     platform.window = RGFW_createWindow((CORE.Window.title != 0)? CORE.Window.title : " ", 0, 0, CORE.Window.screen.width, CORE.Window.screen.height, flags | RGFW_windowOpenGL);

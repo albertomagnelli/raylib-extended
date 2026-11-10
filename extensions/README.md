@@ -183,6 +183,33 @@ cmake --build build
 In CLion, either open the project root and configure with `-DBUILD_EXTENSIONS=ON`, or open
 `extensions/` as the project folder.
 
+## MSAA 8x / 16x in the example
+
+This fork also extends the raylib core with a samples-count API, the example uses it:
+
+```cpp
+SetWindowSamples(16);         // request 16x MSAA, before InitWindow()
+InitWindow(1280, 720, "...");
+GetWindowSamples();           // the samples really in use, zero means MSAA off
+```
+
+| Call | Description |
+| :--- | :--- |
+| `SetWindowSamples(samples)` | Request MSAA for the window, `0` disables it, must be called **before** `InitWindow()` |
+| `GetWindowSamples()` | Samples in use, before the window exists it is the requested count, after it is what the graphics device provided |
+| `FLAG_MSAA_8X_HINT` / `FLAG_MSAA_16X_HINT` | The flag form of the request, alongside the existing `FLAG_MSAA_4X_HINT`, the highest one set wins |
+
+Press `M` in the example to cycle `4x -> 8x -> 16x -> off`, the HUD prints
+`msaa: 16x requested, 8x provided`. The window is closed and recreated on every change because
+the sample count is fixed when the OpenGL context is created, and the requested count is rounded
+to the nearest supported one (`5` asks for `4x`, `12` asks for `8x`); if the graphics device
+provides less, raylib logs `DISPLAY: Graphics device only provided MSAA x%i`.
+
+Supported on the GLFW, SDL, RGFW and native Win32 desktop backends (native Win32 degrades
+16x -> 8x -> 4x -> 2x until the driver accepts a pixel format), on DRM and Android through the
+EGL config, on the web backends antialiasing is enabled but WebGL decides the sample count.
+MSAA only applies to the default framebuffer, `RenderTexture` targets are not multisampled.
+
 ## Notes
 
 - The controller assumes a **Y-up** world: yaw rotates around `(0, 1, 0)`, pitch is clamped to `maxPitch` to avoid camera somersaults.

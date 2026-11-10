@@ -928,14 +928,9 @@ static int InitGraphicsDevice(void)
 {
     FLAG_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE);
 
-    EGLint samples = 0;
-    EGLint sampleBuffer = 0;
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT))
-    {
-        samples = 4;
-        sampleBuffer = 1;
-        TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x4");
-    }
+    EGLint samples = GetWindowRequestedSamples();
+    EGLint sampleBuffer = (samples > 0)? 1 : 0;
+    if (samples > 0) TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x%i", samples);
 
     const EGLint framebufferAttribs[] = {
         EGL_RENDERABLE_TYPE, (rlGetVersion() == RL_OPENGL_ES_30)? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT, // Type of context support
@@ -1102,7 +1097,7 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                     // Set font white rectangle for shapes drawing, so shapes and text can be batched together
                     // WARNING: rshapes module is required, if not available, default internal white rectangle is used
                     Rectangle rec = GetFontDefault().recs[95];
-                    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT))
+                    if (GetWindowRequestedSamples() > 0)
                     {
                         // NOTE: Trying to maxime rec padding to avoid pixel bleeding on MSAA filtering
                         SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 2, rec.y + 2, 1, 1 });

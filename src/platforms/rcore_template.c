@@ -464,11 +464,12 @@ int InitPlatform(void)
     //----------------------------------------------------------------------------
     FLAG_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE);
 
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT))
+    int samples = GetWindowRequestedSamples();
+    if (samples > 0)
     {
         // TODO: Enable MSAA
 
-        TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x4");
+        TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x%i", samples);
     }
 
     // TODO: Init display and graphic device

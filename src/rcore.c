@@ -291,6 +291,9 @@
 #define FLAG_TOGGLE(n, f) ((n) ^= (f))
 #define FLAG_IS_SET(n, f) (((n) & (f)) == (f))
 
+// All the window flags requesting MSAA, the highest one set wins
+#define MSAA_FLAGS        (FLAG_MSAA_4X_HINT | FLAG_MSAA_8X_HINT | FLAG_MSAA_16X_HINT)
+
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
@@ -302,6 +305,7 @@ typedef struct CoreData {
     struct {
         const char *title;                  // Window text title const pointer
         unsigned int flags;                 // Configuration flags (bit based), keeps window state
+        int samples;                        // MSAA samples in use, zero means MSAA disabled
         bool ready;                         // Check if window has been initialized successfully
         bool shouldClose;                   // Check if window set for closing
         bool resizedLastFrame;              // Check if window has been resized last frame
@@ -498,6 +502,8 @@ extern void ClosePlatform(void);        // Close platform
 
 static void InitTimer(void);                                // Initialize timer, hi-resolution if available (required by InitPlatform())
 static void SetupViewport(int width, int height);           // Set viewport for a provided width and height
+static int GetWindowRequestedSamples(void);                 // Get the MSAA samples requested by the window flags (required by InitPlatform())
+static void UpdateWindowProvidedSamples(void);              // Get the MSAA samples really provided by the graphics device (required by InitWindow())
 
 static void ScanDirectoryFiles(const char *basePath, FilePathList *list, const char *filter, unsigned int expectedFileCount, bool scanSubdirs); // Scan all files and directories in a base path
 
@@ -587,6 +593,70 @@ const char *TextFormat(const char *text, ...); // Formatting of text with variab
 //void EnableCursor(void)
 //void DisableCursor(void)
 
+// Get the MSAA samples requested for the window, zero means MSAA disabled
+// NOTE: FLAG_MSAA_4X_HINT, FLAG_MSAA_8X_HINT and FLAG_MSAA_16X_HINT configure it, the highest one set wins
+static int GetWindowRequestedSamples(void)
+{
+    int samples = 0;
+
+    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_16X_HINT)) samples = 16;
+    else if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_8X_HINT)) samples = 8;
+    else if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT)) samples = 4;
+
+    return samples;
+}
+
+// Set the MSAA samples to request for the window, only powers of two are actually requested,
+// the graphics device may provide less samples than the requested ones
+// NOTE: It must be called before InitWindow(), samples can not be changed once the window context exists
+void SetWindowSamples(int samples)
+{
+    if (CORE.Window.ready)
+    {
+        TRACELOG(LOG_WARNING, "WINDOW: MSAA samples can only be configured before window initialization");
+        return;
+    }
+
+    // Clear the previous MSAA request, only one MSAA level can be requested at a time
+    FLAG_CLEAR(CORE.Window.flags, MSAA_FLAGS);
+
+    // Select the closest supported samples count, any request of 2 or 3 asks for a 4x MSAA context
+    if (samples >= 16) FLAG_SET(CORE.Window.flags, FLAG_MSAA_16X_HINT);
+    else if (samples >= 8) FLAG_SET(CORE.Window.flags, FLAG_MSAA_8X_HINT);
+    else if (samples >= 2) FLAG_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT);
+
+    CORE.Window.samples = GetWindowRequestedSamples();
+}
+
+// Get the MSAA samples in use, zero means MSAA disabled
+// NOTE: Before InitWindow() it returns the requested samples,
+// once the window is created it returns the samples really provided by the graphics device
+int GetWindowSamples(void)
+{
+    return CORE.Window.samples;
+}
+
+// Update the MSAA samples really provided by the graphics device, zero means MSAA disabled
+// NOTE: It queries the current OpenGL default framebuffer, it must be called once the context is active,
+// some platform backends also set CORE.Window.samples while creating the window context
+static void UpdateWindowProvidedSamples(void)
+{
+#if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
+    int requestedSamples = GetWindowRequestedSamples();
+    if (requestedSamples == 0)
+    {
+        CORE.Window.samples = 0;
+        return;
+    }
+
+    int providedSamples = 0;
+    glGetIntegerv(GL_SAMPLES, &providedSamples);
+    CORE.Window.samples = providedSamples;
+
+    if (providedSamples < requestedSamples) TRACELOG(LOG_WARNING, "DISPLAY: Graphics device only provided MSAA x%i", providedSamples);
+#endif
+}
+
 // Initialize window and OpenGL context
 void InitWindow(int width, int height, const char *title)
 {
@@ -657,6 +727,10 @@ void InitWindow(int width, int height, const char *title)
     CORE.Input.Mouse.cursor = MOUSE_CURSOR_ARROW;
     CORE.Input.Gamepad.lastButtonPressed = GAMEPAD_BUTTON_UNKNOWN;
 
+    // Store the MSAA samples requested by the window flags,
+    // NOTE: Some platform backends replace it with the samples really provided by the graphics device
+    CORE.Window.samples = GetWindowRequestedSamples();
+
     // Initialize platform
     //--------------------------------------------------------------
     int result = InitPlatform();
@@ -682,6 +756,9 @@ void InitWindow(int width, int height, const char *title)
     // NOTE: Current fbo size stored as globals in rlgl for convenience
     rlglInit(CORE.Window.render.width, CORE.Window.render.height);
 
+    // Query the graphics device for the MSAA samples really provided, it can be less than the requested ones
+    UpdateWindowProvidedSamples();
+
     // Setup default viewport
     SetupViewport(CORE.Window.render.width, CORE.Window.render.height);
 
@@ -693,7 +770,7 @@ void InitWindow(int width, int height, const char *title)
     // Set font white rectangle for shapes drawing, so shapes and text can be batched together
     // WARNING: rshapes module is required, if not available, default internal white rectangle is used
     Rectangle rec = GetFontDefault().recs[95];
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT))
+    if (CORE.Window.samples > 0)
     {
         // NOTE: Try to maximize rec padding to avoid pixel bleeding on MSAA filtering
         SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 2, rec.y + 2, 1, 1 });

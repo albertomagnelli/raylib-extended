@@ -202,7 +202,7 @@ static HMODULE shcore = NULL; // shcore.dll (Windows 8.1 and early versions of W
 #define FLAG_MASK_REQUIRED      ~(FLAG_MASK_OPTIONAL)
 
 // Flags that have no operations to perform during an update
-#define FLAG_MASK_NO_UPDATE     (FLAG_WINDOW_HIGHDPI | FLAG_MSAA_4X_HINT)
+#define FLAG_MASK_NO_UPDATE     (FLAG_WINDOW_HIGHDPI | MSAA_FLAGS)
 
 // Lowest extended-key scancode, start of keyboardKeyFromExtendedScancode[]
 #define EXTENDED_KEY_OFFSET     0x1C
@@ -1043,7 +1043,7 @@ void RestoreWindow(void)
 // Set window configuration state using flags
 void SetWindowState(unsigned int flags)
 {
-    if (flags & FLAG_MSAA_4X_HINT) TRACELOG(LOG_WARNING, "WINDOW: MSAA can only be configured before window initialization");
+    if (flags & MSAA_FLAGS) TRACELOG(LOG_WARNING, "WINDOW: MSAA can only be configured before window initialization");
     if (flags & FLAG_WINDOW_HIGHDPI) TRACELOG(LOG_WARNING, "WINDOW: High DPI can only be configured before window initialization");
 
     platform.desiredFlags = SanitizeFlags(CORE.Window.flags | flags);
@@ -1053,7 +1053,7 @@ void SetWindowState(unsigned int flags)
 // Clear window configuration state flags
 void ClearWindowState(unsigned int flags)
 {
-    if (flags & FLAG_MSAA_4X_HINT) TRACELOG(LOG_WARNING, "WINDOW: MSAA can only be configured before window initialization");
+    if (flags & MSAA_FLAGS) TRACELOG(LOG_WARNING, "WINDOW: MSAA can only be configured before window initialization");
     if (flags & FLAG_WINDOW_HIGHDPI) TRACELOG(LOG_WARNING, "WINDOW: High DPI can only be configured before window initialization");
 
     platform.desiredFlags = SanitizeFlags(CORE.Window.flags & ~flags);
@@ -1789,33 +1789,49 @@ HGLRC InitOpenGL(HWND hwnd, HDC hdc)
     BOOL setPixelFormatSucceeded = FALSE;
     if (wglChoosePixelFormatARB)
     {
-        bool useMSAA = FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT);
+        // Try the requested MSAA samples first, degrading to the closest samples count the graphics device provides
+        int requestedSamples = GetWindowRequestedSamples();
+        int samples = requestedSamples;
 
-        int pixelFormatAttribs[] = {
-            WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
-            WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
-            WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
-            WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
-            WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
-            WGL_COLOR_BITS_ARB, 32,
-            WGL_RED_BITS_ARB, 8,
-            WGL_GREEN_BITS_ARB, 8,
-            WGL_BLUE_BITS_ARB, 8,
-            WGL_ALPHA_BITS_ARB, 8,
-            WGL_DEPTH_BITS_ARB, 24,
-            WGL_STENCIL_BITS_ARB, 8,
-            WGL_SAMPLES_ARB, (useMSAA)? 4 : 0,
-            WGL_SAMPLE_BUFFERS_ARB, (int)useMSAA,
-            0 // Terminator
-        };
-
-        int format = 0;
-        UINT numFormats = 0;
-        if (wglChoosePixelFormatARB(hdc, pixelFormatAttribs, NULL, 1, &format, &numFormats) && (numFormats > 0))
+        while (setPixelFormatSucceeded == FALSE)
         {
-            PIXELFORMATDESCRIPTOR newPixelFormatDescriptor = { 0 };
-            DescribePixelFormat(hdc, format, sizeof(newPixelFormatDescriptor), &newPixelFormatDescriptor);
-            setPixelFormatSucceeded = SetPixelFormat(hdc, format, &newPixelFormatDescriptor);
+            int pixelFormatAttribs[] = {
+                WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+                WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+                WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+                WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+                WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+                WGL_COLOR_BITS_ARB, 32,
+                WGL_RED_BITS_ARB, 8,
+                WGL_GREEN_BITS_ARB, 8,
+                WGL_BLUE_BITS_ARB, 8,
+                WGL_ALPHA_BITS_ARB, 8,
+                WGL_DEPTH_BITS_ARB, 24,
+                WGL_STENCIL_BITS_ARB, 8,
+                WGL_SAMPLES_ARB, samples,
+                WGL_SAMPLE_BUFFERS_ARB, (samples > 0)? 1 : 0,
+                0 // Terminator
+            };
+
+            int format = 0;
+            UINT numFormats = 0;
+            if (wglChoosePixelFormatARB(hdc, pixelFormatAttribs, NULL, 1, &format, &numFormats) && (numFormats > 0))
+            {
+                PIXELFORMATDESCRIPTOR newPixelFormatDescriptor = { 0 };
+                DescribePixelFormat(hdc, format, sizeof(newPixelFormatDescriptor), &newPixelFormatDescriptor);
+
+                if (SetPixelFormat(hdc, format, &newPixelFormatDescriptor))
+                {
+                    setPixelFormatSucceeded = TRUE;
+                    CORE.Window.samples = samples;
+                    break;
+                }
+            }
+
+            // Nothing left to try, request the pixel format without multisampling
+            if (samples == 0) break;
+            if (samples <= 2) samples = 0;
+            else samples /= 2;
         }
     }
 

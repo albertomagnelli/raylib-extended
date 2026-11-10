@@ -19,6 +19,4 @@ target_include_directories(camera_controller_example PRIVATE "${CMAKE_CURRENT_LI
 target_link_libraries(camera_controller_example PRIVATE raylib)
 
 set_target_properties(camera_controller_example PROPERTIES
-    CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

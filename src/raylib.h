@@ -568,6 +568,8 @@ typedef enum {
     FLAG_WINDOW_MOUSE_PASSTHROUGH = 0x00004000, // Set to support mouse passthrough, only supported when FLAG_WINDOW_UNDECORATED
     FLAG_BORDERLESS_WINDOWED_MODE = 0x00008000, // Set to run program in borderless windowed mode
     FLAG_MSAA_4X_HINT       = 0x00000020,   // Set to try enabling MSAA 4X
+    FLAG_MSAA_8X_HINT       = 0x00020000,   // Set to try enabling MSAA 8X
+    FLAG_MSAA_16X_HINT      = 0x00040000,   // Set to try enabling MSAA 16X
     FLAG_INTERLACED_HINT    = 0x00010000    // Set to try enabling interlaced video format (for V3D)
 } ConfigFlags;
 
@@ -998,6 +1000,8 @@ RLAPI bool IsWindowResized(void);                                 // Check if wi
 RLAPI bool IsWindowState(unsigned int flag);                      // Check if one specific window flag is enabled
 RLAPI void SetWindowState(unsigned int flags);                    // Set window configuration state using flags
 RLAPI void ClearWindowState(unsigned int flags);                  // Clear window configuration state flags
+RLAPI void SetWindowSamples(int samples);                         // Set the MSAA samples to request for the window, must be called before InitWindow()
+RLAPI int GetWindowSamples(void);                                 // Get the MSAA samples in use, zero means MSAA disabled
 RLAPI void ToggleFullscreen(void);                                // Toggle window state: fullscreen/windowed, resizes monitor to match window resolution
 RLAPI void ToggleBorderlessWindowed(void);                        // Toggle window state: borderless windowed, resizes window to match monitor resolution
 RLAPI void MaximizeWindow(void);                                  // Set window state: maximized, if resizable

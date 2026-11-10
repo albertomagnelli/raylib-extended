@@ -489,10 +489,10 @@ void SetWindowState(unsigned int flags)
         TRACELOG(LOG_WARNING, "SetWindowState(FLAG_WINDOW_MOUSE_PASSTHROUGH) not available on target platform");
     }
 
-    // State change: FLAG_MSAA_4X_HINT
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    // State change: FLAG_MSAA_4X_HINT | FLAG_MSAA_8X_HINT | FLAG_MSAA_16X_HINT
+    if ((flags & MSAA_FLAGS) != 0)
     {
-        TRACELOG(LOG_WARNING, "SetWindowState(FLAG_MSAA_4X_HINT) not available on target platform");
+        TRACELOG(LOG_WARNING, "SetWindowState(MSAA_FLAGS) not available on target platform");
     }
 
     // State change: FLAG_INTERLACED_HINT
@@ -617,10 +617,10 @@ void ClearWindowState(unsigned int flags)
         TRACELOG(LOG_WARNING, "ClearWindowState(FLAG_WINDOW_MOUSE_PASSTHROUGH) not available on target platform");
     }
 
-    // State change: FLAG_MSAA_4X_HINT
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    // State change: FLAG_MSAA_4X_HINT | FLAG_MSAA_8X_HINT | FLAG_MSAA_16X_HINT
+    if ((flags & MSAA_FLAGS) != 0)
     {
-        TRACELOG(LOG_WARNING, "ClearWindowState(FLAG_MSAA_4X_HINT) not available on target platform");
+        TRACELOG(LOG_WARNING, "ClearWindowState(MSAA_FLAGS) not available on target platform");
     }
 
     // State change: FLAG_INTERLACED_HINT
@@ -1247,11 +1247,13 @@ int InitPlatform(void)
     //if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)) glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_TRUE);
     //else glfwWindowHint(GLFW_SCALE_TO_MONITOR, GLFW_FALSE);
 
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT))
+    // Multisampling (MSAA), samples are requested by SetWindowSamples() or the MSAA window flags
+    int requestedSamples = GetWindowRequestedSamples();
+    if (requestedSamples > 0)
     {
         // NOTE: MSAA is only enabled for main framebuffer, not user-created FBOs
-        TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x4");
-        glfwWindowHint(GLFW_SAMPLES, 4); // Tries to enable multisampling x4 (MSAA), default is 0
+        TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x%i", requestedSamples);
+        glfwWindowHint(GLFW_SAMPLES, requestedSamples); // Tries to enable multisampling (MSAA), default is 0
     }
 
     // NOTE: When asking for an OpenGL context version, most drivers provide the highest supported version

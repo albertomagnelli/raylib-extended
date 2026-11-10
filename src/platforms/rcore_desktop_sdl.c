@@ -623,10 +623,11 @@ void SetWindowState(unsigned int flags)
         }
         else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
     }
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    if ((flags & MSAA_FLAGS) != 0)
     {
+        int requestedSamples = GetWindowRequestedSamples();
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1); // Enable multisampling buffers
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4); // Enable multisampling
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples); // Enable multisampling
     }
     if (FLAG_IS_SET(flags, FLAG_INTERLACED_HINT))
     {
@@ -694,7 +695,7 @@ void ClearWindowState(unsigned int flags)
     {
         SDL_SetWindowFullscreen(platform.window, 0);
     }
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    if ((flags & MSAA_FLAGS) != 0)
     {
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0); // Disable multisampling buffers
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0); // Disable multisampling
@@ -2080,10 +2081,11 @@ int InitPlatform(void)
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
         }
 
-        if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT))
+        if ((CORE.Window.flags & MSAA_FLAGS) != 0)
         {
+            int requestedSamples = GetWindowRequestedSamples();
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples);
         }
     }
 

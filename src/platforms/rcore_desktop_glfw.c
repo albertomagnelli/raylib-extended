@@ -473,8 +473,8 @@ void SetWindowState(unsigned int flags)
         FLAG_SET(CORE.Window.flags, FLAG_WINDOW_MOUSE_PASSTHROUGH);
     }
 
-    // State change: FLAG_MSAA_4X_HINT
-    if ((FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT) != FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT)) && FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    // State change: FLAG_MSAA_4X_HINT | FLAG_MSAA_8X_HINT | FLAG_MSAA_16X_HINT
+    if (((CORE.Window.flags & MSAA_FLAGS) != (flags & MSAA_FLAGS)) && ((flags & MSAA_FLAGS) != 0))
     {
         TRACELOG(LOG_WARNING, "WINDOW: MSAA can only be configured before window initialization");
     }
@@ -586,8 +586,8 @@ void ClearWindowState(unsigned int flags)
         FLAG_CLEAR(CORE.Window.flags, FLAG_WINDOW_MOUSE_PASSTHROUGH);
     }
 
-    // State change: FLAG_MSAA_4X_HINT
-    if ((FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT)) && (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT)))
+    // State change: FLAG_MSAA_4X_HINT | FLAG_MSAA_8X_HINT | FLAG_MSAA_16X_HINT
+    if (((CORE.Window.flags & MSAA_FLAGS) != 0) && ((flags & MSAA_FLAGS) != 0))
     {
         TRACELOG(LOG_WARNING, "WINDOW: MSAA can only be configured before window initialization");
     }
@@ -1586,11 +1586,13 @@ int InitPlatform(void)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_MOUSE_PASSTHROUGH)) glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, GLFW_TRUE);
     else glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, GLFW_FALSE);
 
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT))
+    // Multisampling (MSAA), samples are requested by SetWindowSamples() or the MSAA window flags
+    int requestedSamples = GetWindowRequestedSamples();
+    if (requestedSamples > 0)
     {
         // NOTE: MSAA is only enabled for main framebuffer, not user-created FBOs
-        TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x4");
-        glfwWindowHint(GLFW_SAMPLES, 4);   // Tries to enable multisampling x4 (MSAA), default is 0
+        TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x%i", requestedSamples);
+        glfwWindowHint(GLFW_SAMPLES, requestedSamples);   // Tries to enable multisampling (MSAA), default is 0
     }
 
     // NOTE: When asking for an OpenGL context version, most drivers provide the highest supported version

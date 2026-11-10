@@ -559,10 +559,10 @@ void SetWindowState(unsigned int flags)
         TRACELOG(LOG_WARNING, "SetWindowState(FLAG_WINDOW_MOUSE_PASSTHROUGH) not available on target platform");
     }
 
-    // State change: FLAG_MSAA_4X_HINT
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    // State change: FLAG_MSAA_4X_HINT | FLAG_MSAA_8X_HINT | FLAG_MSAA_16X_HINT
+    if ((flags & MSAA_FLAGS) != 0)
     {
-        TRACELOG(LOG_WARNING, "SetWindowState(FLAG_MSAA_4X_HINT) not available on target platform");
+        TRACELOG(LOG_WARNING, "SetWindowState(MSAA_FLAGS) not available on target platform");
     }
 
     // State change: FLAG_INTERLACED_HINT
@@ -684,10 +684,10 @@ void ClearWindowState(unsigned int flags)
         TRACELOG(LOG_WARNING, "ClearWindowState(FLAG_WINDOW_MOUSE_PASSTHROUGH) not available on target platform");
     }
 
-    // State change: FLAG_MSAA_4X_HINT
-    if (FLAG_IS_SET(flags, FLAG_MSAA_4X_HINT))
+    // State change: FLAG_MSAA_4X_HINT | FLAG_MSAA_8X_HINT | FLAG_MSAA_16X_HINT
+    if ((flags & MSAA_FLAGS) != 0)
     {
-        TRACELOG(LOG_WARNING, "ClearWindowState(FLAG_MSAA_4X_HINT) not available on target platform");
+        TRACELOG(LOG_WARNING, "ClearWindowState(MSAA_FLAGS) not available on target platform");
     }
 
     // State change: FLAG_INTERLACED_HINT
@@ -1314,8 +1314,8 @@ int InitPlatform(void)
 
     // TODO: Scale content area based on the monitor content scale where window is placed on
 
-    // Request MSAA (usually x4 on WebGL 1.0)
-    if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_4X_HINT)) attribs.antialias = EM_TRUE;
+    // Request MSAA (usually x4 on WebGL 1.0), the samples count can not be selected on WebGL
+    if (GetWindowRequestedSamples() > 0) attribs.antialias = EM_TRUE;
 
     // Check selection OpenGL version
     if (rlGetVersion() == RL_OPENGL_SOFTWARE)

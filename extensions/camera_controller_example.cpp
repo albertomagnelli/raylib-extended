@@ -14,6 +14,10 @@
 *       TAB             : Change camera mode
 *       R               : Reset the camera to the one it was created with
 *       K               : Add a velocity kick to the camera (knockback), it is damped out smoothly
+*       M               : Cycle the window MSAA samples: 4x -> 8x -> 16x -> off
+*
+*   MSAA samples are requested with SetWindowSamples() before InitWindow(),
+*   the window is recreated on every change because the samples are fixed once the GL context exists
 *
 *   This example requires the CameraController class: extensions/camera_controller.hpp
 *
@@ -26,14 +30,21 @@
 #include "camera_controller.hpp"
 
 static void DrawScene(const CameraController &camera);
-static void DrawHud(const CameraController &camera, const char **modeNames, int modeCount);
+static void DrawHud(const CameraController &camera, const char **modeNames, int modeCount, int requestedSamples);
 
 int main(void)
 {
     const int screenWidth = 1280;
     const int screenHeight = 720;
 
-    InitWindow(screenWidth, screenHeight, "raylib-extended [camera_controller] - smooth camera3d movement and rotation");
+    const char *windowTitle = "raylib-extended [camera_controller] - smooth camera3d movement and rotation";
+
+    // MSAA samples requested for the window, cycled with the M key
+    // NOTE: SetWindowSamples() must be called before InitWindow(), samples can not be changed once the GL context exists
+    int msaaSamples = 8;
+
+    SetWindowSamples(msaaSamples);
+    InitWindow(screenWidth, screenHeight, windowTitle);
 
     SetTargetFPS(60);
 
@@ -65,6 +76,23 @@ int main(void)
         // Camera knockback, the controller damps it out on its own
         if (IsKeyPressed(KEY_K)) camera.AddVelocity(Vector3Scale(camera.GetForward(), -14.0f));
 
+        // Cycle the MSAA samples: 4x -> 8x -> 16x -> off
+        // NOTE: The window is recreated, the samples are fixed when the GL context is created
+        if (IsKeyPressed(KEY_M))
+        {
+            if (msaaSamples == 0) msaaSamples = 4;
+            else if (msaaSamples == 4) msaaSamples = 8;
+            else if (msaaSamples == 8) msaaSamples = 16;
+            else msaaSamples = 0;
+
+            CloseWindow();
+
+            SetWindowSamples(msaaSamples);
+            InitWindow(screenWidth, screenHeight, windowTitle);
+
+            SetTargetFPS(60);
+        }
+
         // Advance the camera, it must be called once per frame, before BeginMode3D()
         camera.Update();
 
@@ -75,7 +103,7 @@ int main(void)
                 DrawScene(camera);
             EndMode3D();
 
-            DrawHud(camera, modeNames, modeCount);
+            DrawHud(camera, modeNames, modeCount, msaaSamples);
         EndDrawing();
     }
 
@@ -122,15 +150,17 @@ static void DrawScene(const CameraController &camera)
 }
 
 // Draws the controller state, useful to see what the smoothing is doing
-static void DrawHud(const CameraController &camera, const char **modeNames, int modeCount)
+static void DrawHud(const CameraController &camera, const char **modeNames, int modeCount, int requestedSamples)
 {
     const char *mode = modeNames[(int)camera.GetMode()%modeCount];
 
     Vector3 position = camera.GetPosition();
     Vector3 velocity = camera.GetVelocity();
 
+    int providedSamples = GetWindowSamples();
+
     DrawText(TextFormat("mode: %s", mode), 16, 12, 20, RAYWHITE);
-    DrawText("TAB change mode | R reset | K camera kick", 16, 40, 16, GRAY);
+    DrawText("TAB change mode | R reset | K camera kick | M cycle msaa", 16, 40, 16, GRAY);
     DrawText("WASD move | SHIFT sprint | ALT slow | SPACE/CTRL up/down | MOUSE look | WHEEL zoom", 16, 62, 16, GRAY);
 
     DrawText(TextFormat("position: %.2f, %.2f, %.2f", position.x, position.y, position.z), 16, 96, 16, RAYWHITE);
@@ -138,5 +168,6 @@ static void DrawHud(const CameraController &camera, const char **modeNames, int 
     DrawText(TextFormat("velocity: %.2f, %.2f, %.2f", velocity.x, velocity.y, velocity.z), 16, 140, 16, LIGHTGRAY);
     DrawText(TextFormat("yaw: %.1f  pitch: %.1f  roll: %.1f", camera.GetYaw(), camera.GetPitch(), camera.GetRoll()), 16, 162, 16, RAYWHITE);
     DrawText(TextFormat("distance: %.2f  fovy: %.1f", camera.GetDistance(), camera.GetFovy()), 16, 184, 16, LIGHTGRAY);
-    DrawText(TextFormat("fps: %i", GetFPS()), 16, 206, 16, LIGHTGRAY);
+    DrawText(TextFormat("msaa: %ix requested, %ix provided", requestedSamples, providedSamples), 16, 206, 16, (providedSamples > 0)? GREEN : LIGHTGRAY);
+    DrawText(TextFormat("fps: %i", GetFPS()), 16, 228, 16, LIGHTGRAY);
 }
