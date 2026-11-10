@@ -77,7 +77,7 @@ int main()
 
     // Init current player state and undo/redo recorded states array
     PlayerState player = {};
-    player.cell = (Point){ 10, 10 };
+    player.cell = Point{ 10, 10 };
     player.color = RED;
 
     // Init undo buffer to store MAX_UNDO_STATES states

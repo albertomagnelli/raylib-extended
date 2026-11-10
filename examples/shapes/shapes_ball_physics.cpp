@@ -54,7 +54,7 @@ int main()
     Ball *balls = (Ball*)RL_MALLOC(sizeof(Ball)*MAX_BALLS);
 
     // Init first ball in the array
-    balls[0] = (Ball){
+    balls[0] = Ball{
         .position = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f },
         .speed = { 200, 200 },
         .prevPosition = {},
@@ -119,7 +119,7 @@ int main()
         {
             if (ballCount < MAX_BALLS)
             {
-                balls[ballCount++] = (Ball){
+                balls[ballCount++] = Ball{
                     .position = mousePos,
                     .speed = { (float)GetRandomValue(-300, 300), (float)GetRandomValue(-300, 300) },
                     .prevPosition = {},

@@ -65,7 +65,7 @@ int main()
         monitorCount = GetMonitorCount();
         for (int i = 0; i < monitorCount; i++)
         {
-            monitors[i] = (MonitorInfo){
+            monitors[i] = MonitorInfo{
                 GetMonitorPosition(i),
                 GetMonitorName(i),
                 GetMonitorWidth(i),

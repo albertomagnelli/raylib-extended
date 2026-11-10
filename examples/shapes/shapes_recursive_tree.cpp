@@ -65,7 +65,7 @@ int main()
         int count = 0;
 
         Vector2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
-        branches[count++] = (Branch){start, initialEnd, 0.0f, length};
+        branches[count++] = Branch{start, initialEnd, 0.0f, length};
 
         for (int i = 0; i < count; i++)
         {
@@ -80,11 +80,11 @@ int main()
 
                 float angle1 = branch.angle + theta;
                 Vector2 branchEnd1 = { branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
-                branches[count++] = (Branch){branchStart, branchEnd1, angle1, nextLength};
+                branches[count++] = Branch{branchStart, branchEnd1, angle1, nextLength};
 
                 float angle2 = branch.angle - theta;
                 Vector2 branchEnd2 = { branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
-                branches[count++] = (Branch){branchStart, branchEnd2, angle2, nextLength};
+                branches[count++] = Branch{branchStart, branchEnd2, angle2, nextLength};
             }
         }
         //----------------------------------------------------------------------------------
