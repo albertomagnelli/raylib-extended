@@ -37,6 +37,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 // NOTE: raymath can be used standalone, without including raylib.h:
@@ -493,9 +494,9 @@ inline void QuaternionToAxisAngle(Quaternion q, Vector3 *outAxis, float *outAngl
 // Module Functions Definition - Matrix helpers
 //----------------------------------------------------------------------------------
 // Create a rotation matrix from Euler angles (x, y, z), in radians
-inline Matrix MatrixRotateXYZ(const Vector3 angle)
+inline Matrix MatrixRotateXYZ(Vector3 angle)
 {
-    auto result = Matrix(1.0f);
+    Matrix result = Matrix(1.0f);
 
     const float cosz = std::cos(-angle.z);
     const float sinz = std::sin(-angle.z);
@@ -520,9 +521,9 @@ inline Matrix MatrixRotateXYZ(const Vector3 angle)
 }
 
 // Create a rotation matrix from Euler angles (x, y, z), applied in ZYX order, in radians
-inline Matrix MatrixRotateZYX(const Vector3 angle)
+inline Matrix MatrixRotateZYX(Vector3 angle)
 {
-    auto result = Matrix(1.0f);
+    Matrix result = Matrix(1.0f);
 
     const float cz = std::cos(angle.z);
     const float sz = std::sin(angle.z);
@@ -562,7 +563,7 @@ inline Matrix MatrixCompose(Vector3 translation, Quaternion rotation, Vector3 sc
 // Decompose a transformation matrix into its rotational, translational and scaling components and remove shear
 inline void MatrixDecompose(Matrix mat, Vector3 *translation, Quaternion *rotation, Vector3 *scale)
 {
-    constexpr auto eps = static_cast<float>(1e-9);
+    const float eps = static_cast<float>(1e-9);
 
     // Extract Translation
     *translation = Vector3{mat[3][0], mat[3][1], mat[3][2]};
@@ -577,18 +578,18 @@ inline void MatrixDecompose(Matrix mat, Vector3 *translation, Quaternion *rotati
 
     // Max-Normalizing helps numerical stability
     float stabilizer = eps;
-    for (const auto & matColumn : matColumns)
+    for (int i = 0; i < 3; i++)
     {
-        stabilizer = std::fmax(stabilizer, std::fabs(matColumn.x));
-        stabilizer = std::fmax(stabilizer, std::fabs(matColumn.y));
-        stabilizer = std::fmax(stabilizer, std::fabs(matColumn.z));
+        stabilizer = std::fmax(stabilizer, std::fabs(matColumns[i].x));
+        stabilizer = std::fmax(stabilizer, std::fabs(matColumns[i].y));
+        stabilizer = std::fmax(stabilizer, std::fabs(matColumns[i].z));
     }
     matColumns[0] *= 1.0f/stabilizer;
     matColumns[1] *= 1.0f/stabilizer;
     matColumns[2] *= 1.0f/stabilizer;
 
     // X Scale
-    Vector3 scl;
+    Vector3 scl{};
     scl.x = glm::length(matColumns[0]);
     if (scl.x > eps) matColumns[0] *= 1.0f/scl.x;
 
