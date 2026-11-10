@@ -8,7 +8,8 @@ camera at a fixed speed with no acceleration and no rotation smoothing.
 extensions/
 ├── camera_controller.hpp           # The CameraController class, header-only
 ├── camera_controller_example.cpp   # Runnable example with all four modes
-├── CMakeLists.txt                  # Builds the example, standalone or with raylib
+├── particle_example.cpp            # 2d particle demo, ported from the RayLib-Demo project
+├── CMakeLists.txt                  # Builds the examples, standalone or with raylib
 └── README.md
 ```
 
@@ -161,7 +162,7 @@ camera.SetAutoRotate(20.0f);       // degrees per second
 camera.SetMoveInWorldPlane(false); // WASD pans the pivot in full 3d
 ```
 
-## Building the example
+## Building the examples
 
 With the raylib project (the root `CMakeLists.txt` adds `extensions/` when `BUILD_EXTENSIONS` is on, which is the default for top-level builds):
 
@@ -169,6 +170,7 @@ With the raylib project (the root `CMakeLists.txt` adds `extensions/` when `BUIL
 cmake -B build
 cmake --build build
 ./build/camera_controller_example
+./build/particle_example
 ```
 
 Standalone, from the `extensions/` directory (it configures and builds raylib from the parent folder):
@@ -178,14 +180,50 @@ cd extensions
 cmake -B build
 cmake --build build
 ./build/camera_controller_example
+./build/particle_example
 ```
 
 In CLion, either open the project root and configure with `-DBUILD_EXTENSIONS=ON`, or open
 `extensions/` as the project folder.
 
-## MSAA 8x / 16x in the example
+When `extensions/` is configured standalone it does not inherit `CMAKE_CXX_STANDARD` from the
+parent project, so `CMakeLists.txt` falls back to C++20 (`particle_example.cpp` uses
+`std::numbers` and `std::erase_if`). The MinGW runtime DLLs are linked dynamically, so run the
+examples from a shell where the toolchain `bin` directory is on `PATH`, or copy the example next
+to `libstdc++-6.dll`, `libgcc_s_seh-1.dll` and `libwinpthread-1.dll`.
 
-This fork also extends the raylib core with a samples-count API, the example uses it:
+## particle_example (ported mx Partikel-Demo)
+
+`particle_example.cpp` is the particle demo of the `RayLib-Demo` project
+(`examples/app/main.cpp`, built on the `mx` engine) ported to plain raylib, it does not use
+`CameraController`:
+
+| mx engine | raylib |
+| :--- | :--- |
+| `mx::Window::create({ .multisample = 4, .resizable, .vsync })` | `SetWindowSamples(4)` + `SetConfigFlags(FLAG_WINDOW_RESIZABLE \| FLAG_VSYNC_HINT)` |
+| `window.setMinSize()` / `setFullscreen()` | `SetWindowMinSize()` / `ToggleFullscreen()` |
+| `mx::Input` | `IsMouseButtonDown()` / `IsKeyPressed()` / `GetMousePosition()` |
+| `mx::Renderer2D` `drawLine` / `drawCircle` / `drawRect` | `DrawLineEx()` / `DrawCircleV()` / `DrawRectangleRec()` |
+| `drawCircleLines` / `drawPolyLines` | `DrawCircleLinesEx()` / `DrawPolyLinesEx()` |
+| `mx::Font::loadFromFile()` / `mx::measureText()` | `LoadFontEx()` on a system TTF, `GetFontDefault()` as fallback / `MeasureTextEx()` |
+| `mx::Clock` (`maxDelta`) + `mx::FrameLimiter{120}` | `GetFrameTime()` clamped to `0.05f` + `SetTargetFPS(120)` |
+
+The particle behaviour, the palette, the background gradient, the orbit shapes and the HUD layout
+are unchanged, including the German HUD strings. `mx::Renderer2D` rotates polygons in radians,
+raylib rotates them in degrees, so the orbit rotation is converted with `RAD2DEG`.
+
+| Input | Action |
+| :--- | :--- |
+| `MOUSE` + `LEFT BUTTON` | Attract the particles to the cursor and emit a stream at it |
+| `SPACE` | Particle explosion at the cursor |
+| `R` | Clear all particles |
+| `F11` | Toggle fullscreen |
+| `ESC` | Close the window |
+| `F12` | Save a screenshot (raylib built-in) |
+
+## MSAA 8x / 16x in the examples
+
+This fork also extends the raylib core with a samples-count API, both examples use it:
 
 ```cpp
 SetWindowSamples(16);         // request 16x MSAA, before InitWindow()

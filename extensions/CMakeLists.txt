@@ -12,6 +12,12 @@ if (NOT TARGET raylib)
     add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/.." "${CMAKE_BINARY_DIR}/raylib")
 endif ()
 
+# Standalone configurations do not inherit the C++ standard of the parent project
+if (NOT DEFINED CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
 # CameraController example, it only needs the header-only camera_controller.hpp
 add_executable(camera_controller_example camera_controller_example.cpp)
 
@@ -19,4 +25,12 @@ target_include_directories(camera_controller_example PRIVATE "${CMAKE_CURRENT_LI
 target_link_libraries(camera_controller_example PRIVATE raylib)
 
 set_target_properties(camera_controller_example PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+# Particle example, ported from the RayLib-Demo project (examples/app/main.cpp, mx Partikel-Demo)
+add_executable(particle_example particle_example.cpp)
+
+target_link_libraries(particle_example PRIVATE raylib)
+
+set_target_properties(particle_example PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
