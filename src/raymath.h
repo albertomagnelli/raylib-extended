@@ -29,6 +29,10 @@
 #ifndef RAYMATH_H
 #define RAYMATH_H
 
+#if !defined(__cplusplus)
+    #error "raymath.h requires C++: the math types are glm aliases"
+#endif
+
 #include <cmath>
 
 #include <glm/glm.hpp>

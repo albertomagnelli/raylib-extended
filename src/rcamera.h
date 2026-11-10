@@ -42,6 +42,10 @@
 #ifndef RCAMERA_H
 #define RCAMERA_H
 
+#if !defined(__cplusplus)
+    #error "rcamera.h requires C++: raylib is a C++ library and uses glm math types"
+#endif
+
 //----------------------------------------------------------------------------------
 // Defines and Macros
 //----------------------------------------------------------------------------------

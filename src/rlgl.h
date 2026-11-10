@@ -366,28 +366,13 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 #if !defined(__cplusplus)
-#if (defined(__STDC__) && __STDC_VERSION__ >= 199901L) || (defined(_MSC_VER) && _MSC_VER >= 1800)
-    #include <stdbool.h>
-#elif !defined(bool)
-    typedef enum bool { false = 0, true = !false } bool;
-    #define RL_BOOL_TYPE
-#endif
+    #error "rlgl.h requires C++: raylib is a C++ library and its Matrix is glm::mat4"
 #endif
 
 #if !defined(RL_MATRIX_TYPE)
-    #if defined(__cplusplus)
-        // raylib's Matrix is glm::mat4; rlgl includes this path when used standalone
-        #include <glm/glm.hpp>
-        using Matrix = glm::mat4;
-    #else
-        // Matrix, 4x4 components, column major, OpenGL style, right handed
-        typedef struct Matrix {
-            float m0, m4, m8, m12;      // Matrix first row (4 components)
-            float m1, m5, m9, m13;      // Matrix second row (4 components)
-            float m2, m6, m10, m14;     // Matrix third row (4 components)
-            float m3, m7, m11, m15;     // Matrix fourth row (4 components)
-        } Matrix;
-    #endif
+    // raylib's Matrix is glm::mat4; this path is used when rlgl is included standalone
+    #include <glm/glm.hpp>
+    using Matrix = glm::mat4;
     #define RL_MATRIX_TYPE
 #endif
 
