@@ -78,11 +78,11 @@ Also note that raylib is a low-level library that can be easily ported to any pl
 
 ### What programming languages can I use with raylib?
 
-raylib original version is coded in C language (using some C99 features) but it has bindings to +60 programming languages. Check [BINDINGS.md](https://github.com/raysan5/raylib/blob/master/BINDINGS.md) for details.
+raylib original version is coded in C; this fork is a C++20 port that uses [glm](https://github.com/g-truc/glm) for its math types. Either way it exposes a plain C ABI and has bindings to +60 programming languages. Check [BINDINGS.md](https://github.com/raysan5/raylib/blob/master/BINDINGS.md) for details.
 
-### Why is it coded in C?
+### Why is the upstream library coded in C?
 
-It's a simple language, no high-level code abstractions like [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming), just data types and functions. It's a very enjoyable language to code.
+It's a simple language, no high-level code abstractions like [OOP](https://en.wikipedia.org/wiki/Object-oriented_programming), just data types and functions. It's a very enjoyable language to code. This fork keeps that plain function API but compiles as C++ so the math can use glm.
 
 ### Is raylib a videogames engine?
 
