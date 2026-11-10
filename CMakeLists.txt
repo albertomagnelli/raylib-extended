@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(raylib)
+project(raylib-extended)
 
 # Avoid excessive expansion of variables in conditionals. In particular, if
 # "PLATFORM" is "DRM" then:

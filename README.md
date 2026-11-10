@@ -111,6 +111,41 @@ raylib is also available via multiple package managers on multiple OS distributi
 
 *Note that the Wiki is open to edits, if you find some issues while building raylib for your target platform, feel free to edit the Wiki or open an issue related to it.*
 
+#### Selecting the OpenGL backend
+
+raylib is built for **OpenGL 3.3 Core** by default. The graphics backend is selected at **build time** through the `GRAPHICS_API_OPENGL_*` define used when compiling the library (the implementation lives in `src/rcore.c`, which includes `rlgl.h`), so the library must be rebuilt after changing it.
+
+Supported backends: `GRAPHICS_API_OPENGL_SOFTWARE`, `GRAPHICS_API_OPENGL_11`, `GRAPHICS_API_OPENGL_21`, `GRAPHICS_API_OPENGL_33`, `GRAPHICS_API_OPENGL_43`, `GRAPHICS_API_OPENGL_46`, `GRAPHICS_API_OPENGL_ES2`, `GRAPHICS_API_OPENGL_ES3`.
+
+**CMake** - use the provided `OPENGL_VERSION` option (it becomes a PUBLIC compile definition, so it is inherited by anything linking `raylib`):
+
+```sh
+cmake -B build -S . -DOPENGL_VERSION=4.6
+cmake --build build --config Release
+```
+
+Valid values are `OFF` (default, i.e. `3.3`), `4.6`, `4.3`, `3.3`, `2.1`, `1.1`, `ES 2.0`, `ES 3.0` and `Software`.
+
+**Makefile** - pass `GRAPHICS` (or uncomment the matching line in `src/Makefile`):
+
+```sh
+make GRAPHICS=GRAPHICS_API_OPENGL_46
+```
+
+**Zig** - set `opengl_version` in the raylib dependency options:
+
+```zig
+const raylib = b.dependency("raylib", .{
+    .target = target,
+    .optimize = optimize,
+    .opengl_version = .gl_4_6,
+});
+```
+
+**IDEs (CLion, Visual Studio, ...)** - pass the CMake option `-DOPENGL_VERSION=4.6` in the project's CMake settings, then **reset the CMake cache and reload** and do a full rebuild. Note that adding `-DGRAPHICS_API_OPENGL_46` to the CMake options does *not* work: it only creates an unused CMake cache variable, it is not a compiler definition. If you prefer to set the macro directly, it has to reach the compiler, e.g. `-DCMAKE_C_FLAGS=-DGRAPHICS_API_OPENGL_46`.
+
+To verify the selected backend at runtime, check `rlGetVersion() == RL_OPENGL_46` or the `GL: Version:` line in the startup log. Note that OpenGL 4.3/4.6 require a GPU and driver that actually expose that version; if they are unavailable, `InitWindow()` fails, and a lower backend must be used.
+
 #### Setup raylib with multiple IDEs
 
 raylib has been developed on Windows platform using [Notepad++](https://notepad-plus-plus.org/) and [MinGW GCC](https://www.mingw-w64.org/) compiler but it can be used with other IDEs on multiple platforms.
