@@ -1267,10 +1267,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-glm::vec2 GetMonitorPosition(int monitor)
+vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition not implemented");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -1316,17 +1316,17 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-glm::vec2 GetWindowPosition(void)
+vec2 GetWindowPosition(void)
 {
     //TRACELOG(LOG_WARNING, "GetWindowPosition not implemented");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
-glm::vec2 GetWindowScaleDPI(void)
+vec2 GetWindowScaleDPI(void)
 {
     float scale = (static_cast<float>(GetDpiForWindowCompat(platform.hwnd)))/96.0f;
-    return glm::vec2{ scale, scale };
+    return vec2{ scale, scale };
 }
 
 // Set clipboard text content
@@ -1481,8 +1481,8 @@ void EnableCursor(void)
         if (!ClipCursor(nullptr)) TRACELOG(LOG_WARNING, "WIN32: Failed to clip cursor [ERROR: %lu]", GetLastError());
 
         RAWINPUTDEVICE rid = {};
-        rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
-        rid.usUsage = 0x02; // HID_USAGE_GENERIC_MOUSE
+        rid.usUsagePage = 0x01;     // HID_USAGE_PAGE_GENERIC
+        rid.usUsage = 0x02;         // HID_USAGE_GENERIC_MOUSE
         rid.dwFlags = RIDEV_REMOVE; // Add to this window even in background
         rid.hwndTarget = nullptr;
         int result = RegisterRawInputDevices(&rid, 1, sizeof(rid));
@@ -1499,8 +1499,8 @@ void DisableCursor(void)
     if (!CORE.Input.Mouse.cursorLocked)
     {
         RAWINPUTDEVICE rid = {};
-        rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC
-        rid.usUsage = 0x02; // HID_USAGE_GENERIC_MOUSE
+        rid.usUsagePage = 0x01;        // HID_USAGE_PAGE_GENERIC
+        rid.usUsage = 0x02;            // HID_USAGE_GENERIC_MOUSE
         rid.dwFlags = RIDEV_INPUTSINK; // Add to this window even in background
         rid.hwndTarget = platform.hwnd;
         int result = RegisterRawInputDevices(&rid, 1, sizeof(rid));
@@ -1523,8 +1523,8 @@ void DisableCursor(void)
         RECT clipRect = { centerX, centerY, centerX + 1, centerY + 1 };
         if (!ClipCursor(&clipRect)) TRACELOG(LOG_WARNING, "WIN32: Failed to clip cursor [ERROR: %lu]", GetLastError());
 
-        CORE.Input.Mouse.previousPosition = glm::vec2{ 0, 0 };
-        CORE.Input.Mouse.currentPosition = glm::vec2{ 0, 0 };
+        CORE.Input.Mouse.previousPosition = vec2{ 0, 0 };
+        CORE.Input.Mouse.currentPosition = vec2{ 0, 0 };
         HideCursor();
 
         CORE.Input.Mouse.cursorLocked = true;
@@ -1628,12 +1628,12 @@ void SetMousePosition(int x, int y)
         // Skip if window is minimized or if ClientToScreen calculation fails
         if (!IsIconic(platform.hwnd) && ClientToScreen(platform.hwnd, &topLeft))
         {
-            glm::vec2 scale = CORE.Input.Mouse.scale;
+            vec2 scale = CORE.Input.Mouse.scale;
             int xScaled = static_cast<int>(roundf(x/scale.x));
             int yScaled = static_cast<int>(roundf(y/scale.y));
             if (SetCursorPos(topLeft.x + xScaled, topLeft.y + yScaled))
             {
-                CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(xScaled), static_cast<float>(yScaled) };
+                CORE.Input.Mouse.currentPosition = vec2{ static_cast<float>(xScaled), static_cast<float>(yScaled) };
             }
         }
     }
@@ -1681,13 +1681,13 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = vec2{ 0, 0 };
 
     memcpy(CORE.Input.Keyboard.previousKeyState, CORE.Input.Keyboard.currentKeyState, sizeof(CORE.Input.Keyboard.previousKeyState));
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = glm::vec2{ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = vec2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -2720,13 +2720,13 @@ static void HandleWindowResize(HWND hwnd, int *width, int *height)
         *height = screenHeight;
     }
 
-    CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{static_cast<float>(CORE.Window.render.width)/CORE.Window.screen.width,
+    CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{static_cast<float>(CORE.Window.render.width)/CORE.Window.screen.width,
         static_cast<float>(CORE.Window.render.height)/CORE.Window.screen.height, 1.0f});
 
     if (CORE.Window.flags & FLAG_WINDOW_HIGHDPI)
     {
         float mouseScale = 1.0f/dpiScale;
-        CORE.Input.Mouse.scale = glm::vec2{ mouseScale, mouseScale };
+        CORE.Input.Mouse.scale = vec2{ mouseScale, mouseScale };
     }
 }
 

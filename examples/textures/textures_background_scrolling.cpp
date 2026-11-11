@@ -63,16 +63,16 @@ int main()
 
             // Draw background image twice
             // NOTE: Texture is scaled twice its size
-            DrawTextureEx(background, glm::vec2{ scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
-            DrawTextureEx(background, glm::vec2{ background.width*2 + scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(background, vec2{ scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(background, vec2{ background.width*2 + scrollingBack, 20 }, 0.0f, 2.0f, WHITE);
 
             // Draw midground image twice
-            DrawTextureEx(midground, glm::vec2{ scrollingMid, 20 }, 0.0f, 2.0f, WHITE);
-            DrawTextureEx(midground, glm::vec2{ midground.width*2 + scrollingMid, 20 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(midground, vec2{ scrollingMid, 20 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(midground, vec2{ midground.width*2 + scrollingMid, 20 }, 0.0f, 2.0f, WHITE);
 
             // Draw foreground image twice
-            DrawTextureEx(foreground, glm::vec2{ scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
-            DrawTextureEx(foreground, glm::vec2{ foreground.width*2 + scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(foreground, vec2{ scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(foreground, vec2{ foreground.width*2 + scrollingFore, 70 }, 0.0f, 2.0f, WHITE);
 
             DrawText("BACKGROUND SCROLLING & PARALLAX", 10, 10, 20, RED);
             DrawText("(c) Cyberpunk Street Environment by Luis Zuno (@ansimuz)", screenWidth - 330, screenHeight - 20, 10, RAYWHITE);

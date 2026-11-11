@@ -53,8 +53,8 @@ int main()
     }
 
     Camera2D camera = {};
-    camera.target = glm::vec2{ player.x + 20.0f, player.y + 20.0f };
-    camera.offset = glm::vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    camera.target = vec2{ player.x + 20.0f, player.y + 20.0f };
+    camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -71,7 +71,7 @@ int main()
         else if (IsKeyDown(KEY_LEFT)) player.x -= 2;
 
         // Camera target follows player
-        camera.target = glm::vec2{ player.x + 20, player.y + 20 };
+        camera.target = vec2{ player.x + 20, player.y + 20 };
 
         // Camera rotation controls
         if (IsKeyDown(KEY_A)) camera.rotation--;

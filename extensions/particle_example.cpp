@@ -38,8 +38,8 @@ constexpr int maxParticles = 900;
 
 struct Particle
 {
-    glm::vec2 position = { 0.0f, 0.0f };
-    glm::vec2 velocity = { 0.0f, 0.0f };
+    vec2 position = { 0.0f, 0.0f };
+    vec2 velocity = { 0.0f, 0.0f };
     float radius = 1.0f;
     float life = 1.0f;
     float maxLife = 1.0f;
@@ -120,7 +120,7 @@ static const char *FindSystemFont(void)
     return nullptr;
 }
 
-static void SpawnParticle(std::vector<Particle> &particles, glm::vec2 origin, glm::vec2 direction, float speed)
+static void SpawnParticle(std::vector<Particle> &particles, vec2 origin, vec2 direction, float speed)
 {
     if (static_cast<int>(particles.size()) >= maxParticles) return;
 
@@ -135,7 +135,7 @@ static void SpawnParticle(std::vector<Particle> &particles, glm::vec2 origin, gl
     particles.push_back(particle);
 }
 
-static void SpawnBurst(std::vector<Particle> &particles, glm::vec2 origin, int count)
+static void SpawnBurst(std::vector<Particle> &particles, vec2 origin, int count)
 {
     for (int i = 0; i < count; i++)
     {
@@ -144,7 +144,7 @@ static void SpawnBurst(std::vector<Particle> &particles, glm::vec2 origin, int c
     }
 }
 
-static void UpdateParticles(std::vector<Particle> &particles, glm::vec2 mouse, bool attracting, glm::vec2 bounds, float delta)
+static void UpdateParticles(std::vector<Particle> &particles, vec2 mouse, bool attracting, vec2 bounds, float delta)
 {
     const float damping = expf(-1.6f*delta);
 
@@ -154,7 +154,7 @@ static void UpdateParticles(std::vector<Particle> &particles, glm::vec2 mouse, b
 
         if (attracting)
         {
-            const glm::vec2 toMouse = { mouse.x - particle.position.x, mouse.y - particle.position.y };
+            const vec2 toMouse = { mouse.x - particle.position.x, mouse.y - particle.position.y };
             const float distance = std::max(glm::length(toMouse), 1.0f);
             const float strength = 3200.0f/(distance + 80.0f);
 
@@ -196,7 +196,7 @@ static void UpdateParticles(std::vector<Particle> &particles, glm::vec2 mouse, b
     std::erase_if(particles, [](const Particle &particle) { return particle.life <= 0.0f; });
 }
 
-static void DrawBackground(glm::vec2 size, float time)
+static void DrawBackground(vec2 size, float time)
 {
     const int width = static_cast<int>(size.x);
     const int height = static_cast<int>(size.y);
@@ -209,7 +209,7 @@ static void DrawBackground(glm::vec2 size, float time)
     }
 
     // Soft pulsing glow behind everything
-    const glm::vec2 center = { size.x*0.5f, size.y*0.5f };
+    const vec2 center = { size.x*0.5f, size.y*0.5f };
     const float pulse = 1.0f + 0.03f*sinf(time*1.7f);
     const float maxRadius = std::max(size.x, size.y)*0.55f*pulse;
 
@@ -227,7 +227,7 @@ static void DrawBackground(glm::vec2 size, float time)
         DrawLineEx({ 0.0f, static_cast<float>(y) }, { size.x, static_cast<float>(y) }, 1.0f, WithAlpha(RAYWHITE, 0.025f));
 }
 
-static void DrawOrbit(glm::vec2 center, glm::vec2 size, float time)
+static void DrawOrbit(vec2 center, vec2 size, float time)
 {
     // The original demo rotates in radians, raylib polygons are rotated in degrees
     const float rotation = time*18.0f;
@@ -266,7 +266,7 @@ static void DrawPanel(Rectangle bounds, float alpha)
     DrawRectangleLinesEx(bounds, 1.0f, WithAlpha(accent, 0.18f*alpha));
 }
 
-static void DrawHud(Font font, glm::vec2 size, int particleCount, float time, float delta)
+static void DrawHud(Font font, vec2 size, int particleCount, float time, float delta)
 {
     const float alpha = std::clamp(time*0.8f, 0.0f, 1.0f);
 
@@ -278,15 +278,15 @@ static void DrawHud(Font font, glm::vec2 size, int particleCount, float time, fl
     DrawTextEx(font, "F11: Vollbild | ESC: Beenden", { 48.0f, 136.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
 
     const std::string counter = TextFormat("%i Partikel", particleCount);
-    const glm::vec2 counterSize = MeasureTextEx(font, counter, 20.0f, 1.0f);
+    const vec2 counterSize = MeasureTextEx(font, counter, 20.0f, 1.0f);
     DrawTextEx(font, counter, { size.x - counterSize.x - 40.0f, 40.0f }, 20.0f, 1.0f, WithAlpha(textSecondary, alpha));
 
     constexpr const char *hint = "Bewege die Maus und halte die linke Taste gedrueckt";
-    const glm::vec2 hintSize = MeasureTextEx(font, hint, 18.0f, 1.0f);
+    const vec2 hintSize = MeasureTextEx(font, hint, 18.0f, 1.0f);
     DrawTextEx(font, hint, { size.x*0.5f - hintSize.x*0.5f, size.y - 44.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, 0.75f*alpha));
 
     const std::string fpsText = TextFormat("%.0f FPS", (delta > 0.0f)? 1.0f/delta : 0.0f);
-    const glm::vec2 fpsSize = MeasureTextEx(font, fpsText, 18.0f, 1.0f);
+    const vec2 fpsSize = MeasureTextEx(font, fpsText, 18.0f, 1.0f);
     DrawTextEx(font, fpsText, { size.x - fpsSize.x - 40.0f, size.y - 40.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
 }
 
@@ -334,8 +334,8 @@ int main()
         time += delta;
         frames++;
 
-        const glm::vec2 size = { static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
-        const glm::vec2 mouse = GetMousePosition();
+        const vec2 size = { static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
+        const vec2 mouse = GetMousePosition();
 
         const bool attracting = IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
                           (mouse.x >= 0.0f) && (mouse.y >= 0.0f) &&

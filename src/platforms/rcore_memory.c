@@ -57,7 +57,7 @@
 //----------------------------------------------------------------------------------
 // Platform-specific required data for timing (Win32)
 #if defined(_WIN32)
-typedef struct _LARGE_INTEGER { int64_t QuadPart; } LARGE_INTEGER;
+typedef struct _LARGE_INTEGER { i64 QuadPart; } LARGE_INTEGER;
 __declspec(dllimport) int __stdcall QueryPerformanceCounter(LARGE_INTEGER *lpPerformanceCount);
 __declspec(dllimport) int __stdcall QueryPerformanceFrequency(LARGE_INTEGER *lpFrequency);
 #endif
@@ -235,10 +235,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-glm::vec2 GetMonitorPosition(int monitor)
+vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -284,17 +284,17 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-glm::vec2 GetWindowPosition(void)
+vec2 GetWindowPosition(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowPosition() not implemented on target platform");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
-glm::vec2 GetWindowScaleDPI(void)
+vec2 GetWindowScaleDPI(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowScaleDPI() not implemented on target platform");
-    return glm::vec2{ 1.0f, 1.0f };
+    return vec2{ 1.0f, 1.0f };
 }
 
 // Set clipboard text content
@@ -431,7 +431,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -473,7 +473,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = vec2{ 0, 0 };
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys

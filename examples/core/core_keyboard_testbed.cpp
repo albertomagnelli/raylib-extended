@@ -104,7 +104,7 @@ int main()
         KEY_RIGHT_CONTROL, KEY_LEFT, KEY_DOWN, KEY_RIGHT
     };
 
-    const glm::vec2 keyboardOffset = { 26, 80 };
+    const vec2 keyboardOffset = { 26, 80 };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

@@ -125,8 +125,8 @@ int main()
             {
                 const int t0 = windowStart + i*windowSize/screenWidth;
                 const int t1 = windowStart + (i + 1)*windowSize/screenWidth;
-                const glm::vec2 startPos = { static_cast<float>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
-                const glm::vec2 endPos = { static_cast<float>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
+                const vec2 startPos = { static_cast<float>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
+                const vec2 endPos = { static_cast<float>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
                 DrawLineV(startPos, endPos, RED);
             }
 
@@ -137,7 +137,7 @@ int main()
     // De-Initialization
     //--------------------------------------------------------------------------------------
     UnloadAudioStream(stream);   // Close raw audio stream and delete buffers from RAM
-    CloseAudioDevice();         // Close audio device (music streaming is automatically stopped)
+    CloseAudioDevice();          // Close audio device (music streaming is automatically stopped)
 
     CloseWindow();              // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

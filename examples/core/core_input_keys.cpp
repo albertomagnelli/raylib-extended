@@ -27,7 +27,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys");
 
-    glm::vec2 ballPosition = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
+    vec2 ballPosition = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

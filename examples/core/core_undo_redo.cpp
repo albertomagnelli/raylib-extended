@@ -29,7 +29,7 @@
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
-// Point struct, like glm::vec2 but using int
+// Point struct, like vec2 but using int
 typedef struct {
     int x;
     int y;
@@ -46,7 +46,7 @@ typedef struct {
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Draw undo system visualization logic
-static void DrawUndoBuffer(glm::vec2 position, int firstUndoIndex, int lastUndoIndex, int currentUndoIndex, int slotSize);
+static void DrawUndoBuffer(vec2 position, int firstUndoIndex, int lastUndoIndex, int currentUndoIndex, int slotSize);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -73,7 +73,7 @@ int main()
     int firstUndoIndex = 0;
     int lastUndoIndex = 0;
     int undoFrameCounter = 0;
-    const glm::vec2 undoInfoPos = { 110, 400 };
+    const vec2 undoInfoPos = { 110, 400 };
 
     // Init current player state and undo/redo recorded states array
     PlayerState player = {};
@@ -86,7 +86,7 @@ int main()
     for (int i = 0; i < MAX_UNDO_STATES; i++) memcpy(&states[i], &player, sizeof(PlayerState));
 
     // Grid variables
-    const glm::vec2 gridPosition = { 40, 60 };
+    const vec2 gridPosition = { 40, 60 };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ int main()
 //------------------------------------------------------------------------------------
 // Draw undo system visualization logic
 // NOTE: Visualizing the ring buffer array, every square can store a player state
-static void DrawUndoBuffer(glm::vec2 position, int firstUndoIndex, int lastUndoIndex, int currentUndoIndex, int slotSize)
+static void DrawUndoBuffer(vec2 position, int firstUndoIndex, int lastUndoIndex, int currentUndoIndex, int slotSize)
 {
     // Draw index marks
     DrawRectangle(static_cast<int>(position.x) + 8 + slotSize*currentUndoIndex, static_cast<int>(position.y) - 10, 8, 8, RED);

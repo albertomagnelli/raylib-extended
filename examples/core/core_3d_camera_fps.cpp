@@ -45,23 +45,23 @@
 //----------------------------------------------------------------------------------
 // Body structure
 typedef struct {
-    glm::vec3 position;
-    glm::vec3 velocity;
-    glm::vec3 dir;
+    vec3 position;
+    vec3 velocity;
+    vec3 dir;
     bool isGrounded;
 } Body;
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static glm::vec2 sensitivity = { 0.001f, 0.001f };
+static vec2 sensitivity = { 0.001f, 0.001f };
 
 static Body player = {};
-static glm::vec2 lookRotation = {};
+static vec2 lookRotation = {};
 static float headTimer = 0.0f;
 static float walkLerp = 0.0f;
 static float headLerp = STAND_HEIGHT;
-static glm::vec2 lean = {};
+static vec2 lean = {};
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -87,7 +87,7 @@ int main()
     Camera camera = {};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
-    camera.position = glm::vec3{
+    camera.position = vec3{
         player.position.x,
         player.position.y + (BOTTOM_HEIGHT + headLerp),
         player.position.z,
@@ -105,7 +105,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const glm::vec2 mouseDelta = GetMouseDelta();
+        const vec2 mouseDelta = GetMouseDelta();
         lookRotation.x -= mouseDelta.x*sensitivity.x;
         lookRotation.y += mouseDelta.y*sensitivity.y;
 
@@ -116,7 +116,7 @@ int main()
 
         const float delta = GetFrameTime();
         headLerp = Lerp(headLerp, (crouching ? CROUCH_HEIGHT : STAND_HEIGHT), 20.0f*delta);
-        camera.position = glm::vec3{
+        camera.position = vec3{
             player.position.x,
             player.position.y + (BOTTOM_HEIGHT + headLerp),
             player.position.z,
@@ -157,7 +157,7 @@ int main()
             DrawText("Camera controls:", 15, 15, 10, BLACK);
             DrawText("- Move keys: W, A, S, D, Space, Left-Ctrl", 15, 30, 10, BLACK);
             DrawText("- Look around: arrow keys or mouse", 15, 45, 10, BLACK);
-            DrawText(TextFormat("- Velocity Len: (%06.3f)", glm::length(glm::vec2{ player.velocity.x, player.velocity.z })), 15, 60, 10, BLACK);
+            DrawText(TextFormat("- Velocity Len: (%06.3f)", glm::length(vec2{ player.velocity.x, player.velocity.z })), 15, 60, 10, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ int main()
 // Update body considering current world state
 void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed, bool crouchHold)
 {
-    glm::vec2 input = glm::vec2{ static_cast<float>(side), static_cast<float>(-forward) };
+    vec2 input = vec2{ static_cast<float>(side), static_cast<float>(-forward) };
 
 #if defined(NORMALIZE_INPUT)
     // Slow down diagonal movement
@@ -198,17 +198,17 @@ void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed
         //PlaySound(fxJump);
     }
 
-    const glm::vec3 front = glm::vec3{ sinf(rot), 0.f, cosf(rot) };
-    const glm::vec3 right = glm::vec3{ cosf(-rot), 0.f, sinf(-rot) };
+    const vec3 front = vec3{ sinf(rot), 0.f, cosf(rot) };
+    const vec3 right = vec3{ cosf(-rot), 0.f, sinf(-rot) };
 
-    const glm::vec3 desiredDir = glm::vec3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
+    const vec3 desiredDir = vec3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
     body->dir = glm::mix(body->dir, desiredDir, CONTROL*delta);
 
     const float decel = (body->isGrounded ? FRICTION : AIR_DRAG);
-    glm::vec3 hvel = glm::vec3{ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
+    vec3 hvel = vec3{ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
 
     const float hvelLength = glm::length(hvel); // Magnitude
-    if (hvelLength < (MAX_SPEED*0.01f)) hvel = glm::vec3{};
+    if (hvelLength < (MAX_SPEED*0.01f)) hvel = vec3{};
 
     // This is what creates strafing
     const float speed = glm::dot(hvel, body->dir);
@@ -240,11 +240,11 @@ void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed
 // Update camera for FPS behaviour
 static void UpdateCameraFPS(Camera *camera)
 {
-    const glm::vec3 up = glm::vec3{ 0.0f, 1.0f, 0.0f };
-    const glm::vec3 targetOffset = glm::vec3{ 0.0f, 0.0f, -1.0f };
+    const vec3 up = vec3{ 0.0f, 1.0f, 0.0f };
+    const vec3 targetOffset = vec3{ 0.0f, 0.0f, -1.0f };
 
     // Left and right
-    const glm::vec3 yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
+    const vec3 yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
 
     // Clamp view up
     float maxAngleUp = Vector3Angle(up, yaw);
@@ -253,17 +253,17 @@ static void UpdateCameraFPS(Camera *camera)
 
     // Clamp view down
     float maxAngleDown = Vector3Angle((-(up)), yaw);
-    maxAngleDown *= -1.0f; // Downwards angle is negative
+    maxAngleDown *= -1.0f;  // Downwards angle is negative
     maxAngleDown += 0.001f; // Avoid numerical errors
     if ( -(lookRotation.y) < maxAngleDown) { lookRotation.y = -maxAngleDown; }
 
     // Up and down
-    const glm::vec3 right = glm::normalize(glm::cross(yaw, up));
+    const vec3 right = glm::normalize(glm::cross(yaw, up));
 
     // Rotate view vector around right axis
     float pitchAngle = -lookRotation.y - lean.y;
     pitchAngle = Clamp(pitchAngle, -PI/2 + 0.0001f, PI/2 - 0.0001f); // Clamp angle so it doesn't go past straight up or straight down
-    const glm::vec3 pitch = Vector3RotateByAxisAngle(yaw, right, pitchAngle);
+    const vec3 pitch = Vector3RotateByAxisAngle(yaw, right, pitchAngle);
 
     // Head animation
     // Rotate up direction around forward axis
@@ -275,7 +275,7 @@ static void UpdateCameraFPS(Camera *camera)
     // Camera BOB
     constexpr float bobSide = 0.1f;
     constexpr float bobUp = 0.15f;
-    glm::vec3 bobbing = ((right) * (headSin*bobSide));
+    vec3 bobbing = ((right) * (headSin*bobSide));
     bobbing.y = fabsf(headCos*bobUp);
 
     camera->position = ((camera->position) + (((bobbing) * (walkLerp))));
@@ -296,19 +296,19 @@ static void DrawLevel(void)
         {
             if ((y & 1) && (x & 1))
             {
-                DrawPlane(glm::vec3{ x*tileSize, 0.0f, y*tileSize}, glm::vec2{ tileSize, tileSize }, tileColor1);
+                DrawPlane(vec3{ x*tileSize, 0.0f, y*tileSize}, vec2{ tileSize, tileSize }, tileColor1);
             }
             else if (!(y & 1) && !(x & 1))
             {
-                DrawPlane(glm::vec3{ x*tileSize, 0.0f, y*tileSize}, glm::vec2{ tileSize, tileSize }, LIGHTGRAY);
+                DrawPlane(vec3{ x*tileSize, 0.0f, y*tileSize}, vec2{ tileSize, tileSize }, LIGHTGRAY);
             }
         }
     }
 
-    const glm::vec3 towerSize = glm::vec3{ 16.0f, 32.0f, 16.0f };
+    const vec3 towerSize = vec3{ 16.0f, 32.0f, 16.0f };
     const Color towerColor = Color{ 150, 200, 200, 255 };
 
-    glm::vec3 towerPos = glm::vec3{ 16.0f, 16.0f, 16.0f };
+    vec3 towerPos = vec3{ 16.0f, 16.0f, 16.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
@@ -325,5 +325,5 @@ static void DrawLevel(void)
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 
     // Red sun
-    DrawSphere(glm::vec3{ 300.0f, 300.0f, 0.0f }, 100.0f, Color{ 255, 0, 0, 255 });
+    DrawSphere(vec3{ 300.0f, 300.0f, 0.0f }, 100.0f, Color{ 255, 0, 0, 255 });
 }

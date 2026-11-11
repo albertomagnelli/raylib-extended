@@ -35,7 +35,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - mouse trail");
 
     // Array to store the history of mouse positions (our fixed-size queue)
-    glm::vec2 trailPositions[MAX_TRAIL_LENGTH] = {};
+    vec2 trailPositions[MAX_TRAIL_LENGTH] = {};
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const glm::vec2 mousePosition = GetMousePosition();
+        const vec2 mousePosition = GetMousePosition();
 
         // Shift all existing positions backward by one slot in the array
         // The last element (the oldest position) is dropped

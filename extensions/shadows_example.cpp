@@ -174,8 +174,8 @@ void main() {
 // Interleaved vertex, the same layout the original mx vertex layout provided
 struct SceneVertex
 {
-    glm::vec3 position;
-    glm::vec3 normal;
+    vec3 position;
+    vec3 normal;
 };
 
 // A mesh uploaded for the custom shaders: own VAO, interleaved VBO and optional index buffer
@@ -192,8 +192,8 @@ struct SceneMesh
 struct SceneObject
 {
     const SceneMesh *mesh = nullptr;
-    glm::mat4 model = glm::mat4(1.0F);
-    glm::vec4 color = glm::vec4(1.0F);
+    mat4 model = mat4(1.0F);
+    vec4 color = vec4(1.0F);
     bool castsShadow = true;
 };
 
@@ -202,14 +202,14 @@ struct OrbitCamera
     float yaw = 0.65f;
     float pitch = 0.32f;
     float distance = 14.0f;
-    glm::vec3 target = { 0.0f, 0.8f, 0.0f };
+    vec3 target = { 0.0f, 0.8f, 0.0f };
 };
 
-static glm::vec3 OrbitPosition(const OrbitCamera &camera)
+static vec3 OrbitPosition(const OrbitCamera &camera)
 {
     const float cosPitch = cosf(camera.pitch);
 
-    return camera.target + glm::vec3(camera.distance*cosPitch*sinf(camera.yaw),
+    return camera.target + vec3(camera.distance*cosPitch*sinf(camera.yaw),
                                      camera.distance*sinf(camera.pitch),
                                      camera.distance*cosPitch*cosf(camera.yaw));
 }
@@ -242,7 +242,7 @@ static SceneMesh UploadSceneMesh(Mesh mesh)
     // The attribute locations the shaders declare: position at 0, normal at 2
     rlSetVertexAttribute(0, 3, RL_FLOAT, 0, static_cast<int>(sizeof(SceneVertex)), 0);
     rlEnableVertexAttribute(0);
-    rlSetVertexAttribute(2, 3, RL_FLOAT, 0, static_cast<int>(sizeof(SceneVertex)), static_cast<int>(sizeof(glm::vec3)));
+    rlSetVertexAttribute(2, 3, RL_FLOAT, 0, static_cast<int>(sizeof(SceneVertex)), static_cast<int>(sizeof(vec3)));
     rlEnableVertexAttribute(2);
 
     // NOTE: The element buffer is loaded while the VAO is active, so it stays bound to it.
@@ -380,13 +380,13 @@ int main()
     float shadowBias = 0.0015f;
     SetShaderValue(litShader, litShadowBias, &shadowBias, SHADER_UNIFORM_FLOAT);
 
-    glm::vec2 shadowTexelSize(1.0F/static_cast<float>(shadowSize), 1.0F/static_cast<float>(shadowSize));
+    vec2 shadowTexelSize(1.0F/static_cast<float>(shadowSize), 1.0F/static_cast<float>(shadowSize));
     SetShaderValue(litShader, litShadowTexelSize, glm::value_ptr(shadowTexelSize), SHADER_UNIFORM_VEC2);
 
     float ambient = 0.18f;
     SetShaderValue(litShader, litAmbient, &ambient, SHADER_UNIFORM_FLOAT);
 
-    glm::vec3 lightColor = glm::vec3(1.0F, 0.94F, 0.82F)*3.0F;
+    vec3 lightColor = vec3(1.0F, 0.94F, 0.82F)*3.0F;
     SetShaderValue(litShader, litLightColor, glm::value_ptr(lightColor), SHADER_UNIFORM_VEC3);
 
     // --- Scene and camera ---------------------------------------------------
@@ -395,9 +395,9 @@ int main()
     bool lightAnimated = true;
     float lightTime = 0.0f;
 
-    const glm::vec3 lightBaseDirection = glm::normalize(glm::vec3(-0.65F, -0.60F, -0.45F));
-    const glm::vec3 lightTarget = { 0.0F, 0.6F, 0.0F };
-    const glm::vec3 worldUp = { 0.0F, 1.0F, 0.0F };
+    const vec3 lightBaseDirection = glm::normalize(vec3(-0.65F, -0.60F, -0.45F));
+    const vec3 lightTarget = { 0.0F, 0.6F, 0.0F };
+    const vec3 worldUp = { 0.0F, 1.0F, 0.0F };
 
     while (!WindowShouldClose())
     {
@@ -407,7 +407,7 @@ int main()
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
-            const glm::vec2 mouseDelta = GetMouseDelta();
+            const vec2 mouseDelta = GetMouseDelta();
             camera.yaw -= mouseDelta.x*0.005f;
             camera.pitch = std::clamp(camera.pitch + mouseDelta.y*0.005f, 0.08f, 1.45f);
         }
@@ -422,15 +422,15 @@ int main()
             const double time = GetTime();
             if (lightAnimated) lightTime += delta;
 
-            const glm::mat4 lightRotation = glm::rotate(glm::mat4(1.0F), lightTime*0.25f, worldUp);
-            glm::vec3 lightDirection = glm::normalize(glm::vec3(lightRotation*glm::vec4(lightBaseDirection, 0.0F)));
+            const mat4 lightRotation = glm::rotate(mat4(1.0F), lightTime*0.25f, worldUp);
+            vec3 lightDirection = glm::normalize(vec3(lightRotation*vec4(lightBaseDirection, 0.0F)));
 
-            const glm::vec3 lightPosition = lightTarget - lightDirection*22.0F;
-            const glm::mat4 lightView = glm::lookAt(lightPosition, lightTarget, worldUp);
-            const glm::mat4 lightProjection = glm::ortho(-shadowExtent, shadowExtent, -shadowExtent, shadowExtent, 1.0f, 45.0f);
-            const glm::mat4 lightViewProjection = lightProjection*lightView;
+            const vec3 lightPosition = lightTarget - lightDirection*22.0F;
+            const mat4 lightView = glm::lookAt(lightPosition, lightTarget, worldUp);
+            const mat4 lightProjection = glm::ortho(-shadowExtent, shadowExtent, -shadowExtent, shadowExtent, 1.0f, 45.0f);
+            const mat4 lightViewProjection = lightProjection*lightView;
 
-            glm::vec3 cameraPosition = OrbitPosition(camera);
+            vec3 cameraPosition = OrbitPosition(camera);
 
             // --- Build the scene ----------------------------------------------
 
@@ -442,28 +442,28 @@ int main()
 
             objects[1].mesh = &cubeMesh;
             objects[1].model = glm::rotate(
-                glm::translate(glm::mat4(1.0F), glm::vec3(-3.2F, 0.7F, 0.0F)),
-                static_cast<float>(time)*0.4F, glm::vec3(0.25F, 1.0F, 0.2F));
+                glm::translate(mat4(1.0F), vec3(-3.2F, 0.7F, 0.0F)),
+                static_cast<float>(time)*0.4F, vec3(0.25F, 1.0F, 0.2F));
             objects[1].color = { 0.95F, 0.45F, 0.15F, 1.0F };
 
             objects[2].mesh = &sphereMesh;
-            objects[2].model = glm::translate(glm::mat4(1.0F), glm::vec3(-1.6F, 0.8F, 0.0F));
+            objects[2].model = glm::translate(mat4(1.0F), vec3(-1.6F, 0.8F, 0.0F));
             objects[2].color = { 0.22F, 0.55F, 0.95F, 1.0F };
 
             objects[3].mesh = &cylinderMesh;
-            objects[3].model = glm::translate(glm::mat4(1.0F), glm::vec3(0.0F, 1.3F, 0.0F));
+            objects[3].model = glm::translate(mat4(1.0F), vec3(0.0F, 1.3F, 0.0F));
             objects[3].color = { 0.30F, 0.80F, 0.40F, 1.0F };
 
             objects[4].mesh = &coneMesh;
             objects[4].model = glm::rotate(
-                glm::translate(glm::mat4(1.0F), glm::vec3(1.8F, 0.9F, 0.0F)),
-                static_cast<float>(time)*0.5F, glm::vec3(0.0F, 1.0F, 0.0F));
+                glm::translate(mat4(1.0F), vec3(1.8F, 0.9F, 0.0F)),
+                static_cast<float>(time)*0.5F, vec3(0.0F, 1.0F, 0.0F));
             objects[4].color = { 0.95F, 0.80F, 0.20F, 1.0F };
 
             objects[5].mesh = &torusMesh;
             objects[5].model = glm::rotate(
-                glm::translate(glm::mat4(1.0F), glm::vec3(3.4F, 0.55F, 0.0F)),
-                static_cast<float>(time)*0.3F, glm::vec3(0.0F, 1.0F, 0.0F));
+                glm::translate(mat4(1.0F), vec3(3.4F, 0.55F, 0.0F)),
+                static_cast<float>(time)*0.3F, vec3(0.0F, 1.0F, 0.0F));
             objects[5].color = { 0.75F, 0.35F, 0.90F, 1.0F };
 
             // --- Shadow pass --------------------------------------------------
@@ -496,8 +496,8 @@ int main()
 
             const float aspect = (GetRenderWidth() > 0 && GetRenderHeight() > 0)?
                 static_cast<float>(GetRenderWidth())/static_cast<float>(GetRenderHeight()) : 1.0f;
-            const glm::mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
-            const glm::mat4 view = glm::lookAt(cameraPosition, camera.target, worldUp);
+            const mat4 projection = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+            const mat4 view = glm::lookAt(cameraPosition, camera.target, worldUp);
 
             rlEnableShader(litShader.id);
             rlEnableBackfaceCulling();

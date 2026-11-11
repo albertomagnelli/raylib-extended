@@ -30,28 +30,28 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 5.0f, 4.0f, 5.0f };  // Camera position
-    camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 5.0f, 4.0f, 5.0f };         // Camera position
+    camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     const Texture2D bill = LoadTexture("resources/billboard.png");    // Our billboard texture
-    const glm::vec3 billPositionStatic = { 0.0f, 2.0f, 0.0f };        // Position of static billboard
-    const glm::vec3 billPositionRotating = { 1.0f, 2.0f, 1.0f };      // Position of rotating billboard
+    const vec3 billPositionStatic = { 0.0f, 2.0f, 0.0f };             // Position of static billboard
+    const vec3 billPositionRotating = { 1.0f, 2.0f, 1.0f };           // Position of rotating billboard
 
     // Entire billboard texture, source is used to take a segment from a larger texture
     const Rectangle source = { 0.0f, 0.0f, static_cast<float>(bill.width), static_cast<float>(bill.height) };
 
     // NOTE: Billboard locked on axis-Y
-    const glm::vec3 billUp = { 0.0f, 1.0f, 0.0f };
+    const vec3 billUp = { 0.0f, 1.0f, 0.0f };
 
     // Set the height of the rotating billboard to 1.0 with the aspect ratio fixed
-    const glm::vec2 size = { source.width/source.height, 1.0f };
+    const vec2 size = { source.width/source.height, 1.0f };
 
     // Rotate around origin
     // Here we choose to rotate around the image center
-    const glm::vec2 origin = ((size) * (0.5f));
+    const vec2 origin = ((size) * (0.5f));
 
     // Distance is needed for the correct billboard draw order
     // Larger distance (further away from the camera) should be drawn prior to smaller distance

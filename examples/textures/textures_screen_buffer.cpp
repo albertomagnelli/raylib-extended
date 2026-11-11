@@ -133,7 +133,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawTextureEx(screenTexture, glm::vec2{ 0, 0 }, 0.0f, 2.0f, WHITE);
+            DrawTextureEx(screenTexture, vec2{ 0, 0 }, 0.0f, 2.0f, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

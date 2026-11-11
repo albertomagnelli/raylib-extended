@@ -59,7 +59,7 @@
 //#define RL_DEFAULT_BATCH_BUFFERS              1    // Default number of batch buffers (multi-buffering)
 //#define RL_DEFAULT_BATCH_DRAWCALLS          256    // Default number of batch draw calls (by state changes: mode, texture)
 //#define RL_DEFAULT_BATCH_MAX_TEXTURE_UNITS    4    // Maximum number of textures units that can be activated on batch drawing (SetShaderValueTexture())
-//#define RL_MAX_MATRIX_STACK_SIZE             32    // Maximum size of internal Matrix stack
+//#define RL_MAX_MATRIX_STACK_SIZE             32    // Maximum size of internal matrix stack
 //#define RL_MAX_SHADER_LOCATIONS              32    // Maximum number of shader locations supported
 //#define RL_CULL_DISTANCE_NEAR              0.01    // Default projection matrix near cull distance
 //#define RL_CULL_DISTANCE_FAR             1000.0    // Default projection matrix far cull distance
@@ -68,7 +68,7 @@
 #include "rlgl.h"               // OpenGL abstraction layer to OpenGL 1.1, 3.3+ or ES2
 
 #define RAYMATH_STATIC_INLINE
-#include "raymath.h"            // glm::vec2, glm::vec3, Quaternion and Matrix types/helpers (glm based)
+#include "raymath.h"            // vec2, vec3, quat and mat4 types/helpers (glm based)
 
 #include "GLFW/glfw3.h"         // Windows/Context and inputs management
 
@@ -91,9 +91,9 @@ typedef struct Color {
 
 // Camera type, defines a camera position/orientation in 3d space
 typedef struct Camera {
-    glm::vec3 position;     // Camera position
-    glm::vec3 target;       // Camera target it looks-at
-    glm::vec3 up;           // Camera up vector (rotation over its axis)
+    vec3 position;          // Camera position
+    vec3 target;            // Camera target it looks-at
+    vec3 up;                // Camera up vector (rotation over its axis)
     float fovy;             // Camera field-of-view apperture in Y (degrees) in perspective, used as near plane width in orthographic
     int projection;         // Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
 } Camera;
@@ -106,15 +106,15 @@ static void KeyCallback(GLFWwindow *window, int key, int scancode, int action, i
 
 // Drawing functions (uses rlgl functionality)
 static void DrawGrid(int slices, float spacing);
-static void DrawCube(glm::vec3 position, float width, float height, float length, Color color);
-static void DrawCubeWires(glm::vec3 position, float width, float height, float length, Color color);
-static void DrawRectangleV(glm::vec2 position, glm::vec2 size, Color color);
+static void DrawCube(vec3 position, float width, float height, float length, Color color);
+static void DrawCubeWires(vec3 position, float width, float height, float length, Color color);
+static void DrawRectangleV(vec2 position, vec2 size, Color color);
 
 // NOTE: We use raymath to get this functionality but it could be implemented in this module
-//static Matrix MatrixIdentity(void);
-//static Matrix MatrixOrtho(double left, double right, double bottom, double top, double near, double far);
-//static Matrix MatrixPerspective(double fovy, double aspect, double near, double far);
-//static Matrix MatrixLookAt(glm::vec3 eye, glm::vec3 target, glm::vec3 up);
+//static mat4 MatrixIdentity(void);
+//static mat4 MatrixOrtho(double left, double right, double bottom, double top, double near, double far);
+//static mat4 MatrixPerspective(double fovy, double aspect, double near, double far);
+//static mat4 MatrixLookAt(vec3 eye, vec3 target, vec3 up);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -174,22 +174,22 @@ int main()
 
     // Initialize viewport and internal projection/modelview matrices
     rlViewport(0, 0, screenWidth, screenHeight);
-    rlMatrixMode(RL_PROJECTION);                        // Switch to PROJECTION matrix
-    rlLoadIdentity();                                   // Reset current matrix (PROJECTION)
+    rlMatrixMode(RL_PROJECTION);                          // Switch to PROJECTION matrix
+    rlLoadIdentity();                                     // Reset current matrix (PROJECTION)
     rlOrtho(0, screenWidth, screenHeight, 0, 0.0f, 1.0f); // Orthographic projection with top-left corner at (0,0)
-    rlMatrixMode(RL_MODELVIEW);                         // Switch back to MODELVIEW matrix
-    rlLoadIdentity();                                   // Reset current matrix (MODELVIEW)
+    rlMatrixMode(RL_MODELVIEW);                           // Switch back to MODELVIEW matrix
+    rlLoadIdentity();                                     // Reset current matrix (MODELVIEW)
 
     rlClearColor(245, 245, 245, 255);                   // Define clear color
     rlEnableDepthTest();                                // Enable DEPTH_TEST for 3D
 
     Camera camera = {};
-    camera.position = glm::vec3{ 5.0f, 5.0f, 5.0f };  // Camera position
-    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 5.0f, 5.0f, 5.0f };         // Camera position
+    camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
 
-    const glm::vec3 cubePosition = { 0.0f, 0.0f, 0.0f };      // Cube default position (center)
+    const vec3 cubePosition = { 0.0f, 0.0f, 0.0f };      // Cube default position (center)
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -207,8 +207,8 @@ int main()
             // Draw '3D' elements in the scene
             //-----------------------------------------------
             // Calculate projection matrix (from perspective) and view matrix from camera look at
-            Matrix matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(screenWidth)/static_cast<float>(screenHeight), 0.01f, 1000.0f);
-            Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+            mat4 matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(screenWidth)/static_cast<float>(screenHeight), 0.01f, 1000.0f);
+            mat4 matView = glm::lookAt(camera.position, camera.target, camera.up);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
             rlSetMatrixProjection(matProj);   // Set internal projection matrix (default shader)
@@ -226,7 +226,7 @@ int main()
 #define RLGL_SET_MATRIX_MANUALLY
 #if defined(RLGL_SET_MATRIX_MANUALLY)
             matProj = glm::ortho(0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, 0.0f, 1.0f);
-            matView = Matrix(1.0f);
+            matView = mat4(1.0f);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
             rlSetMatrixProjection(matProj);   // Set internal projection matrix (default shader)
@@ -239,7 +239,7 @@ int main()
             rlMatrixMode(RL_MODELVIEW);                             // Enable internal modelview matrix
             rlLoadIdentity();                                       // Reset internal modelview matrix
 #endif
-            DrawRectangleV(glm::vec2{ 10.0f, 10.0f }, glm::vec2{ 780.0f, 20.0f }, DARKGRAY);
+            DrawRectangleV(vec2{ 10.0f, 10.0f }, vec2{ 780.0f, 20.0f }, DARKGRAY);
 
             // Draw internal render batch buffers (2D data)
             rlDrawRenderBatchActive();
@@ -281,7 +281,7 @@ static void KeyCallback(GLFWwindow *window, int key, int scancode, int action, i
 }
 
 // Draw rectangle using rlgl OpenGL 1.1 style coding (translated to OpenGL 3.3 internally)
-static void DrawRectangleV(glm::vec2 position, glm::vec2 size, Color color)
+static void DrawRectangleV(vec2 position, vec2 size, Color color)
 {
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -330,7 +330,7 @@ static void DrawGrid(int slices, float spacing)
 
 // Draw cube
 // NOTE: Cube position is the center position
-static void DrawCube(glm::vec3 position, float width, float height, float length, Color color)
+static void DrawCube(vec3 position, float width, float height, float length, Color color)
 {
     constexpr float x = 0.0f;
     constexpr float y = 0.0f;
@@ -404,7 +404,7 @@ static void DrawCube(glm::vec3 position, float width, float height, float length
 }
 
 // Draw cube wires
-static void DrawCubeWires(glm::vec3 position, float width, float height, float length, Color color)
+static void DrawCubeWires(vec3 position, float width, float height, float length, Color color)
 {
     constexpr float x = 0.0f;
     constexpr float y = 0.0f;

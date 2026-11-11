@@ -109,10 +109,10 @@ int main()
             DrawRectangleRec(textContainerRect, BLUE);
 
             // Get the size of the text to draw
-            const glm::vec2 textSize = MeasureTextEx(font, words[wordIndex], static_cast<float>(fontSize), fontSize*.1f);
+            const vec2 textSize = MeasureTextEx(font, words[wordIndex], static_cast<float>(fontSize), fontSize*.1f);
 
             // Calculate the top-left text position based on the rectangle and alignment
-            const glm::vec2 textPos = glm::vec2{
+            const vec2 textPos = vec2{
                 textContainerRect.x + Lerp(0.0f, textContainerRect.width  - textSize.x, (static_cast<float>(hAlign))*0.5f),
                 textContainerRect.y + Lerp(0.0f, textContainerRect.height - textSize.y, (static_cast<float>(vAlign))*0.5f)
             };

@@ -127,11 +127,11 @@ static void WindowContentScaleCallback(GLFWwindow *window, float scalex, float s
 
 // Input callbacks events
 static void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods); // GLFW3 Keyboard Callback, runs on key pressed
-static void CharCallback(GLFWwindow *window, unsigned int key);                         // GLFW3 Char Key Callback, runs on key pressed (get char value)
-static void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);  // GLFW3 Mouse Button Callback, runs on mouse button pressed
-static void MouseMoveCallback(GLFWwindow *window, double x, double y);                  // GLFW3 Mouse Move Callback, runs on mouse move
-static void MouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset);    // GLFW3 Mouse Scrolling Callback, runs on mouse wheel
-static void MouseEnterCallback(GLFWwindow *window, int enter);                          // GLFW3 Mouse Enter Callback, cursor enters client area
+static void CharCallback(GLFWwindow *window, unsigned int key);                           // GLFW3 Char Key Callback, runs on key pressed (get char value)
+static void MouseButtonCallback(GLFWwindow *window, int button, int action, int mods);    // GLFW3 Mouse Button Callback, runs on mouse button pressed
+static void MouseMoveCallback(GLFWwindow *window, double x, double y);                    // GLFW3 Mouse Move Callback, runs on mouse move
+static void MouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset);      // GLFW3 Mouse Scrolling Callback, runs on mouse wheel
+static void MouseEnterCallback(GLFWwindow *window, int enter);                            // GLFW3 Mouse Enter Callback, cursor enters client area
 
 // Emscripten window callback events
 static EM_BOOL EmscriptenFullscreenChangeCallback(int eventType, const EmscriptenFullscreenChangeEvent *event, void *userData);
@@ -726,10 +726,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-glm::vec2 GetMonitorPosition(int monitor)
+vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -779,20 +779,20 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-glm::vec2 GetWindowPosition(void)
+vec2 GetWindowPosition(void)
 {
     // NOTE: Returned position is relative to the current monitor where the browser window is located
-    glm::vec2 position = { 0, 0 };
+    vec2 position = { 0, 0 };
     position.x = static_cast<float>(EM_ASM_INT( { return window.screenX; }, 0));
     position.y = static_cast<float>(EM_ASM_INT( { return window.screenY; }, 0));
     return position;
 }
 
 // Get window scale DPI factor for current monitor
-glm::vec2 GetWindowScaleDPI(void)
+vec2 GetWindowScaleDPI(void)
 {
     // NOTE: Returned scale is relative to the current monitor where the browser window is located
-    glm::vec2 scale = { 1.0f, 1.0f };
+    vec2 scale = { 1.0f, 1.0f };
     scale.x = static_cast<float>(EM_ASM_DOUBLE( { return window.devicePixelRatio; } ));
     scale.y = scale.x;
     return scale;
@@ -1061,7 +1061,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = vec2{ static_cast<float>(x), static_cast<float>(y) };
 
     if (CORE.Input.Mouse.cursorLocked) CORE.Input.Mouse.lockedPosition = CORE.Input.Mouse.currentPosition;
 
@@ -1118,7 +1118,7 @@ void PollInputEvents(void)
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = glm::vec2{ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = vec2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1129,7 +1129,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = vec2{ 0, 0 };
 
     // Gamepad support using emscripten API
     // NOTE: GLFW3 joystick functionality not available in web
@@ -1231,13 +1231,13 @@ int InitPlatform(void)
 
     // Check window creation flags
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIDDEN)) glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // Visible window
-    else glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE); // Window initially hidden
+    else glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);                                                     // Window initially hidden
 
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_UNDECORATED)) glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Border and buttons on Window
-    else glfwWindowHint(GLFW_DECORATED, GLFW_TRUE); // Decorated window
+    else glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);                                                          // Decorated window
 
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_RESIZABLE)) glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // Resizable window
-    else glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE); // Avoid window being resizable
+    else glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);                                                      // Avoid window being resizable
 
     // Disable FLAG_WINDOW_MINIMIZED, not supported on initialization
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_MINIMIZED)) FLAG_CLEAR(CORE.Window.flags, FLAG_WINDOW_MINIMIZED);
@@ -1567,7 +1567,7 @@ static void WindowSizeCallback(GLFWwindow *window, int width, int height)
     // Set current screen size
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
-        glm::vec2 windowScaleDPI = GetWindowScaleDPI();
+        vec2 windowScaleDPI = GetWindowScaleDPI();
 
         CORE.Window.screen.width = static_cast<unsigned int>((width/windowScaleDPI.x));
         CORE.Window.screen.height = static_cast<unsigned int>((height/windowScaleDPI.y));
@@ -1584,7 +1584,7 @@ static void WindowSizeCallback(GLFWwindow *window, int width, int height)
 // GLFW3: Called on window content (framebuffer) scaled
 static void WindowContentScaleCallback(GLFWwindow *window, float scalex, float scaley)
 {
-    CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scalex, scaley, 1.0f});
+    CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{scalex, scaley, 1.0f});
 }
 
 // GLFW3: Called on windows minimized/restored
@@ -1747,7 +1747,7 @@ static void MouseMoveCallback(GLFWwindow *window, double x, double y)
 // GLFW3: Called on mouse wheel scrolling
 static void MouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    CORE.Input.Mouse.currentWheelMove = glm::vec2{ static_cast<float>(xoffset), static_cast<float>(yoffset) };
+    CORE.Input.Mouse.currentWheelMove = vec2{ static_cast<float>(xoffset), static_cast<float>(yoffset) };
 }
 
 // GLFW3: Called on mouse entering the window
@@ -1846,7 +1846,7 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
         CORE.Input.Touch.pointId[i] = touchEvent->touches[i].identifier;
 
         // Register touch points position
-        CORE.Input.Touch.position[i] = glm::vec2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
+        CORE.Input.Touch.position[i] = vec2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
 
         // Normalize gestureEvent.position[x] for CORE.Window.screen.width and CORE.Window.screen.height
         CORE.Input.Touch.position[i].x *= (static_cast<float>(GetScreenWidth())/static_cast<float>(canvasWidth));
@@ -1987,7 +1987,7 @@ static EM_BOOL EmscriptenVisibilityChangeCallback(int eventType, const Emscripte
 {
     if (visibilityChangeEvent->hidden) FLAG_SET(CORE.Window.flags, FLAG_WINDOW_HIDDEN); // The window was hidden
     else FLAG_CLEAR(CORE.Window.flags, FLAG_WINDOW_HIDDEN);                             // The window was restored
-    return 1; // The event was consumed by the callback handler
+    return 1;                                                                           // The event was consumed by the callback handler
 }
 //-------------------------------------------------------------------------------------------------------
 

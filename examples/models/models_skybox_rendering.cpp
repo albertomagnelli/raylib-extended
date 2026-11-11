@@ -46,9 +46,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 1.0f, 1.0f, 1.0f };  // Camera position
-    camera.target = glm::vec3{ 4.0f, 1.0f, 4.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 1.0f, 1.0f, 1.0f };         // Camera position
+    camera.target = vec3{ 4.0f, 1.0f, 4.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -160,7 +160,7 @@ int main()
                 // We are inside the cube, we need to disable backface culling!
                 rlDisableBackfaceCulling();
                 rlDisableDepthMask();
-                    DrawModel(skybox, glm::vec3{0, 0, 0}, 1.0f, WHITE);
+                    DrawModel(skybox, vec3{0, 0, 0}, 1.0f, WHITE);
                 rlEnableBackfaceCulling();
                 rlEnableDepthMask();
 
@@ -219,17 +219,17 @@ static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int s
     rlEnableShader(shader.id);
 
     // Define projection matrix and send it to shader
-    const Matrix matFboProjection = glm::perspective(90.0f*DEG2RAD, 1.0f, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+    const mat4 matFboProjection = glm::perspective(90.0f*DEG2RAD, 1.0f, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     rlSetUniformMatrix(shader.locs[SHADER_LOC_MATRIX_PROJECTION], matFboProjection);
 
     // Define view matrix for every side of the cubemap
-    const Matrix fboViews[6] = {
-        glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{  1.0f,  0.0f,  0.0f }, glm::vec3{ 0.0f, -1.0f,  0.0f }),
-        glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ -1.0f,  0.0f,  0.0f }, glm::vec3{ 0.0f, -1.0f,  0.0f }),
-        glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{  0.0f,  1.0f,  0.0f }, glm::vec3{ 0.0f,  0.0f,  1.0f }),
-        glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{  0.0f, -1.0f,  0.0f }, glm::vec3{ 0.0f,  0.0f, -1.0f }),
-        glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{  0.0f,  0.0f,  1.0f }, glm::vec3{ 0.0f, -1.0f,  0.0f }),
-        glm::lookAt(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{  0.0f,  0.0f, -1.0f }, glm::vec3{ 0.0f, -1.0f,  0.0f })
+    const mat4 fboViews[6] = {
+        glm::lookAt(vec3{ 0.0f, 0.0f, 0.0f }, vec3{  1.0f,  0.0f,  0.0f }, vec3{ 0.0f, -1.0f,  0.0f }),
+        glm::lookAt(vec3{ 0.0f, 0.0f, 0.0f }, vec3{ -1.0f,  0.0f,  0.0f }, vec3{ 0.0f, -1.0f,  0.0f }),
+        glm::lookAt(vec3{ 0.0f, 0.0f, 0.0f }, vec3{  0.0f,  1.0f,  0.0f }, vec3{ 0.0f,  0.0f,  1.0f }),
+        glm::lookAt(vec3{ 0.0f, 0.0f, 0.0f }, vec3{  0.0f, -1.0f,  0.0f }, vec3{ 0.0f,  0.0f, -1.0f }),
+        glm::lookAt(vec3{ 0.0f, 0.0f, 0.0f }, vec3{  0.0f,  0.0f,  1.0f }, vec3{ 0.0f, -1.0f,  0.0f }),
+        glm::lookAt(vec3{ 0.0f, 0.0f, 0.0f }, vec3{  0.0f,  0.0f, -1.0f }, vec3{ 0.0f, -1.0f,  0.0f })
     };
 
     rlViewport(0, 0, size, size);   // Set viewport to current fbo dimensions

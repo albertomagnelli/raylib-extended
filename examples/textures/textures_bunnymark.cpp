@@ -27,8 +27,8 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct Bunny {
-    glm::vec2 position;
-    glm::vec2 speed;
+    vec2 position;
+    vec2 speed;
     Color color;
 } Bunny;
 

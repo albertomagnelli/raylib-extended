@@ -41,7 +41,7 @@ int main()
     const Rectangle destRec = { screenWidth/2.0f, screenHeight/2.0f, frameWidth*2.0f, frameHeight*2.0f };
 
     // Origin of the texture (rotation/scale point), it's relative to destination rectangle size
-    const glm::vec2 origin = { static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    const vec2 origin = { static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
 
     int rotation = 0;
 

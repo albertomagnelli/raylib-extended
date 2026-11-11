@@ -102,14 +102,14 @@ int main()
             BeginMode3D(cameraPlayer1);
 
                 // Draw scene: grid of cube trees on a plane to make a "world"
-                DrawPlane(glm::vec3{ 0, 0, 0 }, glm::vec2{ 50, 50 }, BEIGE); // Simple world plane
+                DrawPlane(vec3{ 0, 0, 0 }, vec2{ 50, 50 }, BEIGE); // Simple world plane
 
                 for (float x = -count*spacing; x <= count*spacing; x += spacing)
                 {
                     for (float z = -count*spacing; z <= count*spacing; z += spacing)
                     {
-                        DrawCube(glm::vec3{ x, 1.5f, z }, 1, 1, 1, LIME);
-                        DrawCube(glm::vec3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
+                        DrawCube(vec3{ x, 1.5f, z }, 1, 1, 1, LIME);
+                        DrawCube(vec3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
                     }
                 }
 
@@ -131,14 +131,14 @@ int main()
             BeginMode3D(cameraPlayer2);
 
                 // Draw scene: grid of cube trees on a plane to make a "world"
-                DrawPlane(glm::vec3{ 0, 0, 0 }, glm::vec2{ 50, 50 }, BEIGE); // Simple world plane
+                DrawPlane(vec3{ 0, 0, 0 }, vec2{ 50, 50 }, BEIGE); // Simple world plane
 
                 for (float x = -count*spacing; x <= count*spacing; x += spacing)
                 {
                     for (float z = -count*spacing; z <= count*spacing; z += spacing)
                     {
-                        DrawCube(glm::vec3{ x, 1.5f, z }, 1, 1, 1, LIME);
-                        DrawCube(glm::vec3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
+                        DrawCube(vec3{ x, 1.5f, z }, 1, 1, 1, LIME);
+                        DrawCube(vec3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
                     }
                 }
 
@@ -157,8 +157,8 @@ int main()
         BeginDrawing();
             ClearBackground(BLACK);
 
-            DrawTextureRec(screenPlayer1.texture, splitScreenRect, glm::vec2{ 0, 0 }, WHITE);
-            DrawTextureRec(screenPlayer2.texture, splitScreenRect, glm::vec2{ screenWidth/2.0f, 0 }, WHITE);
+            DrawTextureRec(screenPlayer1.texture, splitScreenRect, vec2{ 0, 0 }, WHITE);
+            DrawTextureRec(screenPlayer2.texture, splitScreenRect, vec2{ screenWidth/2.0f, 0 }, WHITE);
 
             DrawRectangle(GetScreenWidth()/2 - 2, 0, 4, GetScreenHeight(), LIGHTGRAY);
         EndDrawing();

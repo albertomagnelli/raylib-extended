@@ -26,9 +26,9 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static glm::vec2 *LoadHilbertPath(int order, float size, int *strokeCount);
-static void UnloadHilbertPath(glm::vec2 *hilbertPath);
-static glm::vec2 ComputeHilbertStep(int order, int index);
+static vec2 *LoadHilbertPath(int order, float size, int *strokeCount);
+static void UnloadHilbertPath(vec2 *hilbertPath);
+static vec2 ComputeHilbertStep(int order, int index);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -45,7 +45,7 @@ int main()
     int order = 2;
     float size = static_cast<float>(GetScreenHeight());
     int strokeCount = 0;
-    glm::vec2 *hilbertPath = LoadHilbertPath(order, size, &strokeCount);
+    vec2 *hilbertPath = LoadHilbertPath(order, size, &strokeCount);
 
     int prevOrder = order;
     int prevSize = static_cast<int>(size);       // NOTE: Size from slider is float but for comparison we use int
@@ -126,13 +126,13 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Load the whole Hilbert Path (including each U and their link)
-static glm::vec2 *LoadHilbertPath(int order, float size, int *strokeCount)
+static vec2 *LoadHilbertPath(int order, float size, int *strokeCount)
 {
     const int N = 1 << order;
     const float len = size/N;
     *strokeCount = N*N;
 
-    glm::vec2 *hilbertPath = static_cast<glm::vec2 *>(RL_CALLOC(*strokeCount, sizeof(glm::vec2)));
+    vec2 *hilbertPath = static_cast<vec2 *>(RL_CALLOC(*strokeCount, sizeof(vec2)));
 
     for (int i = 0; i < *strokeCount; i++)
     {
@@ -145,16 +145,16 @@ static glm::vec2 *LoadHilbertPath(int order, float size, int *strokeCount)
 }
 
 // Unload Hilbert path data
-static void UnloadHilbertPath(glm::vec2 *hilbertPath)
+static void UnloadHilbertPath(vec2 *hilbertPath)
 {
     RL_FREE(hilbertPath);
 }
 
 // Compute Hilbert path U positions
-static glm::vec2 ComputeHilbertStep(int order, int index)
+static vec2 ComputeHilbertStep(int order, int index)
 {
     // Hilbert points base pattern
-    static const glm::vec2 hilbertPoints[4] = {
+    static const vec2 hilbertPoints[4] = {
         { 0, 0 },
         { 0, 1 },
         { 1, 1 },
@@ -162,7 +162,7 @@ static glm::vec2 ComputeHilbertStep(int order, int index)
     };
 
     int hilbertIndex = index&3;
-    glm::vec2 vect = hilbertPoints[hilbertIndex];
+    vec2 vect = hilbertPoints[hilbertIndex];
     float temp = 0.0f;
     int len = 0;
 

@@ -133,7 +133,7 @@ int main()
 
             DrawADSRGraph(&env, Rectangle{ 100, 250, 400, 100 });
 
-            DrawCircleV(glm::vec2{ 520, 350 - (env.currentValue * 100) }, 5, MAROON);
+            DrawCircleV(vec2{ 520, 350 - (env.currentValue * 100) }, 5, MAROON);
             DrawText(TextFormat("Current Gain: %2.2f", env.currentValue), 535, 345 - (env.currentValue * 100), 10, MAROON);
 
             DrawText("Press SPACE to PLAY the sound!", 200, 400, 20, LIGHTGRAY);
@@ -223,11 +223,11 @@ static void DrawADSRGraph(Envelope *env, Rectangle bounds)
     const float scaleX = bounds.width/totalTime;
     const float scaleY = bounds.height;
 
-    const glm::vec2 start = { bounds.x, bounds.y + bounds.height };
-    const glm::vec2 peak = { start.x + (env->attackTime*scaleX), bounds.y };
-    const glm::vec2 sustain = { peak.x + (env->decayTime*scaleX), bounds.y + (1.0f - env->sustainLevel)*scaleY };
-    const glm::vec2 rel = { sustain.x + (sustainWidth*scaleX), sustain.y };
-    const glm::vec2 end = { rel.x + (env->releaseTime*scaleX), bounds.y + bounds.height };
+    const vec2 start = { bounds.x, bounds.y + bounds.height };
+    const vec2 peak = { start.x + (env->attackTime*scaleX), bounds.y };
+    const vec2 sustain = { peak.x + (env->decayTime*scaleX), bounds.y + (1.0f - env->sustainLevel)*scaleY };
+    const vec2 rel = { sustain.x + (sustainWidth*scaleX), sustain.y };
+    const vec2 end = { rel.x + (env->releaseTime*scaleX), bounds.y + bounds.height };
 
     DrawLineV(start, peak, SKYBLUE);
     DrawLineV(peak, sustain, BLUE);

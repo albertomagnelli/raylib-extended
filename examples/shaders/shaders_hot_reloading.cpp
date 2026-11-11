@@ -66,7 +66,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         totalTime += GetFrameTime();
-        const glm::vec2 mouse = GetMousePosition();
+        const vec2 mouse = GetMousePosition();
         float mousePos[2] = { mouse.x, mouse.y };
 
         // Set shader required uniform values

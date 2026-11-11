@@ -39,13 +39,13 @@ int main()
 
     bool gifRecording = false;           // GIF recording state
     unsigned int gifFrameCounter = 0;    // GIF frames counter
-    MsfGifState gifState = {};        // MSGIF context state
+    MsfGifState gifState = {};           // MSGIF context state
 
-    glm::vec2 circlePosition = { 0.0f, screenHeight/2.0f };
+    vec2 circlePosition = { 0.0f, screenHeight/2.0f };
     float timeCounter = 0.0f;
 
     // Get sine wave points for line drawing
-    glm::vec2 sinePoints[MAX_SINEWAVE_POINTS] = {};
+    vec2 sinePoints[MAX_SINEWAVE_POINTS] = {};
     for (int i = 0; i < MAX_SINEWAVE_POINTS; i++)
     {
         sinePoints[i].x = i*GetScreenWidth()/180.0f;
@@ -107,7 +107,7 @@ int main()
                 const Image imScreen = LoadImageFromScreen();
 
                 // Add the frame to the gif recording, providing and "estimated" time for display in centiseconds
-                msf_gif_frame(&gifState, static_cast<uint8_t *>(imScreen.data), static_cast<int>((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);
+                msf_gif_frame(&gifState, static_cast<u8 *>(imScreen.data), static_cast<int>((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);
                 gifFrameCounter = 0;
 
                 UnloadImage(imScreen);    // Free image data

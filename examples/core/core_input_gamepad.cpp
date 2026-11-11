@@ -66,7 +66,7 @@ int main()
         //----------------------------------------------------------------------------------
         if (IsKeyPressed(KEY_LEFT) && gamepad > 0) gamepad--;
         if (IsKeyPressed(KEY_RIGHT)) gamepad++;
-        const glm::vec2 mousePosition = GetMousePosition();
+        const vec2 mousePosition = GetMousePosition();
 
         vibrateButton = Rectangle{ 10, 70.0f + 20*GetGamepadAxisCount(gamepad) + 20, 75, 24 };
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, vibrateButton)) SetGamepadVibration(gamepad, 1.0, 1.0, 1.0);
@@ -159,7 +159,7 @@ int main()
 
                     // Draw buttons: basic
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_MIDDLE_LEFT)) DrawRectangle(328, 170, 32, 13, RED);
-                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_MIDDLE_RIGHT)) DrawTriangle(glm::vec2{ 436, 168 }, glm::vec2{ 436, 185 }, glm::vec2{ 464, 177 }, RED);
+                    if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_MIDDLE_RIGHT)) DrawTriangle(vec2{ 436, 168 }, vec2{ 436, 185 }, vec2{ 464, 177 }, RED);
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_UP)) DrawCircle(557, 144, 13, LIME);
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT)) DrawCircle(586, 173, 13, RED);
                     if (IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) DrawCircle(557, 203, 13, VIOLET);

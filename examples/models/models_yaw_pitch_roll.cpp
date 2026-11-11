@@ -33,13 +33,13 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [models] example - yaw pitch roll");
 
     Camera camera = {};
-    camera.position = glm::vec3{ 0.0f, 50.0f, -120.0f };// Camera position perspective
-    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 0.0f, 50.0f, -120.0f };     // Camera position perspective
+    camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 30.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera type
 
-    Model model = LoadModel("resources/models/obj/plane.obj");                  // Load model
+    Model model = LoadModel("resources/models/obj/plane.obj");                        // Load model
     const Texture2D texture = LoadTexture("resources/models/obj/plane_diffuse.png");  // Load model texture
 
     SetTextureWrap(texture, TEXTURE_WRAP_REPEAT);       // Force Repeat to avoid issue on Web version
@@ -86,7 +86,7 @@ int main()
         }
 
         // Tranformation matrix for rotations
-        model.transform = MatrixRotateXYZ(glm::vec3{ DEG2RAD*pitch, DEG2RAD*yaw, DEG2RAD*roll });
+        model.transform = MatrixRotateXYZ(vec3{ DEG2RAD*pitch, DEG2RAD*yaw, DEG2RAD*roll });
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -98,7 +98,7 @@ int main()
             // Draw 3D model (recomended to draw 3D always before 2D)
             BeginMode3D(camera);
 
-                DrawModel(model, glm::vec3{ 0.0f, -8.0f, 0.0f }, 1.0f, WHITE); // Draw 3d model with texture
+                DrawModel(model, vec3{ 0.0f, -8.0f, 0.0f }, 1.0f, WHITE); // Draw 3d model with texture
                 DrawGrid(10, 10.0f);
 
             EndMode3D();

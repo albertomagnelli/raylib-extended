@@ -33,7 +33,7 @@ int main()
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     const Texture2D scarfy = LoadTexture("resources/scarfy.png");        // Texture loading
 
-    const glm::vec2 position = { 350.0f, 280.0f };
+    const vec2 position = { 350.0f, 280.0f };
     Rectangle frameRec = { 0.0f, 0.0f, static_cast<float>(scarfy.width)/6, static_cast<float>(scarfy.height) };
     int currentFrame = 0;
 

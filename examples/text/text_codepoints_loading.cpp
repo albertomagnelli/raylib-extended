@@ -112,7 +112,7 @@ int main()
             else
             {
                 // Draw provided text with loaded font, containing all required codepoint glyphs
-                DrawTextEx(font, text, glm::vec2{ 160, 110 }, 48, 5, BLACK);
+                DrawTextEx(font, text, vec2{ 160, 110 }, 48, 5, BLACK);
             }
 
             DrawText("Press SPACE to toggle font atlas view!", 10, GetScreenHeight() - 30, 20, GRAY);

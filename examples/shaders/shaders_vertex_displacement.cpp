@@ -42,9 +42,9 @@ int main()
 
     // set up camera
     Camera camera = {};
-    camera.position = glm::vec3{20.0f, 5.0f, -20.0f};
-    camera.target = glm::vec3{0.0f, 0.0f, 0.0f};
-    camera.up = glm::vec3{0.0f, 1.0f, 0.0f};
+    camera.position = vec3{20.0f, 5.0f, -20.0f};
+    camera.target = vec3{0.0f, 0.0f, 0.0f};
+    camera.up = vec3{0.0f, 1.0f, 0.0f};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -83,7 +83,7 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE); // Update camera
 
-        time += GetFrameTime(); // Update time variable
+        time += GetFrameTime();                                                                 // Update time variable
         SetShaderValue(shader, GetShaderLocation(shader, "time"), &time, SHADER_UNIFORM_FLOAT); // Send time value to shader
 
         // Draw
@@ -96,7 +96,7 @@ int main()
 
                 BeginShaderMode(shader);
                     // Draw plane model
-                    DrawModel(planeModel, glm::vec3{ 0.0f, 0.0f, 0.0f }, 1.0f, Color{255, 255, 255, 255});
+                    DrawModel(planeModel, vec3{ 0.0f, 0.0f, 0.0f }, 1.0f, Color{255, 255, 255, 255});
                 EndShaderMode();
 
             EndMode3D();

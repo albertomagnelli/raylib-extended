@@ -60,7 +60,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - rlgl compute");
 
-    const glm::vec2 resolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
+    const vec2 resolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     unsigned int brushSize = 8;
 
     // Game of Life logic compute shader

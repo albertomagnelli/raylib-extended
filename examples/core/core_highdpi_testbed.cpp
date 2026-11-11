@@ -30,10 +30,10 @@ int main()
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - highdpi testbed");
 
-    glm::vec2 scaleDpi = GetWindowScaleDPI();
-    glm::vec2 mousePos = GetMousePosition();
+    vec2 scaleDpi = GetWindowScaleDPI();
+    vec2 mousePos = GetMousePosition();
     int currentMonitor = GetCurrentMonitor();
-    glm::vec2 windowPos = GetWindowPosition();
+    vec2 windowPos = GetWindowPosition();
 
     constexpr int gridSpacing = 40;   // Grid spacing in pixels
 

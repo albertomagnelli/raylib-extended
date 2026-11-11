@@ -35,8 +35,8 @@ static const char particleTypeNames[3][10] = { "WATER", "SMOKE", "FIRE" };
 
 typedef struct Particle {
     ParticleType type;      // Particle type (WATER, SMOKE, FIRE)
-    glm::vec2 position;     // Particle position on screen
-    glm::vec2 velocity;     // Particle current speed and direction
+    vec2 position;          // Particle position on screen
+    vec2 velocity;          // Particle current speed and direction
     float radius;           // Particle radius
     Color color;            // Particle color
 
@@ -53,7 +53,7 @@ typedef struct CircularBuffer {
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static void EmitParticle(CircularBuffer *circularBuffer, glm::vec2 emitterPosition, ParticleType type);
+static void EmitParticle(CircularBuffer *circularBuffer, vec2 emitterPosition, ParticleType type);
 static Particle *AddToCircularBuffer(CircularBuffer *circularBuffer);
 static void UpdateParticles(CircularBuffer *circularBuffer, int screenWidth, int screenHeight);
 static void UpdateCircularBuffer(CircularBuffer *circularBuffer);
@@ -78,7 +78,7 @@ int main()
     // Particle emitter parameters
     int emissionRate = -2;          // Negative: on average every -X frames. Positive: particles per frame
     ParticleType currentType = WATER;
-    glm::vec2 emitterPosition = { screenWidth/2.0f, screenHeight/2.0f };
+    vec2 emitterPosition = { screenWidth/2.0f, screenHeight/2.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ int main()
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
-static void EmitParticle(CircularBuffer *circularBuffer, glm::vec2 emitterPosition, ParticleType type)
+static void EmitParticle(CircularBuffer *circularBuffer, vec2 emitterPosition, ParticleType type)
 {
     Particle *newParticle = AddToCircularBuffer(circularBuffer);
 
@@ -197,7 +197,7 @@ static void EmitParticle(CircularBuffer *circularBuffer, glm::vec2 emitterPositi
         }
 
         const float direction = static_cast<float>(rand()%360);
-        newParticle->velocity = glm::vec2{ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
+        newParticle->velocity = vec2{ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
     }
 }
 
@@ -258,7 +258,7 @@ static void UpdateParticles(CircularBuffer *circularBuffer, int screenWidth, int
         }
 
         // Disable particle when out of screen
-        const glm::vec2 center = circularBuffer->buffer[i].position;
+        const vec2 center = circularBuffer->buffer[i].position;
         const float radius = circularBuffer->buffer[i].radius;
 
         if ((center.x < -radius) || (center.x > (screenWidth + radius)) ||

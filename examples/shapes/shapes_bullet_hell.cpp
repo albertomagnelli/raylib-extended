@@ -26,8 +26,8 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct Bullet {
-    glm::vec2 position;     // Bullet position on screen
-    glm::vec2 acceleration; // Amount of pixels to be incremented to position every frame
+    vec2 position;          // Bullet position on screen
+    vec2 acceleration;      // Amount of pixels to be incremented to position every frame
     bool disabled;          // Skip processing and draw case out of screen
     Color color;            // Bullet color
 } Bullet;
@@ -101,7 +101,7 @@ int main()
             {
                 if (bulletCount < MAX_BULLETS)
                 {
-                    bullets[bulletCount].position = glm::vec2{static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2};
+                    bullets[bulletCount].position = vec2{static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2};
                     bullets[bulletCount].disabled = false;
                     bullets[bulletCount].color = bulletColor[row%2];
 
@@ -112,7 +112,7 @@ int main()
                     // only need to calculate it at the spawning time
                     // 0 degrees = right, 90 degrees = down, 180 degrees = left and 270 degrees = up, basically clockwise
                     // Case you want it to be anti-clockwise, add "* -1" at the y acceleration
-                    bullets[bulletCount].acceleration = glm::vec2{
+                    bullets[bulletCount].acceleration = vec2{
                         bulletSpeed*cosf(bulletDirection*DEG2RAD),
                         bulletSpeed*sinf(bulletDirection*DEG2RAD)
                     };
@@ -175,9 +175,9 @@ int main()
             // Draw magic circle
             magicCircleRotation++;
             DrawRectanglePro(Rectangle{ static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2, 120, 120 },
-                glm::vec2{ 60.0f, 60.0f }, magicCircleRotation, PURPLE);
+                vec2{ 60.0f, 60.0f }, magicCircleRotation, PURPLE);
             DrawRectanglePro(Rectangle{ static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2, 120, 120 },
-                glm::vec2{ 60.0f, 60.0f }, magicCircleRotation + 45, PURPLE);
+                vec2{ 60.0f, 60.0f }, magicCircleRotation + 45, PURPLE);
             DrawCircleLines(screenWidth/2, screenHeight/2, 70, BLACK);
             DrawCircleLines(screenWidth/2, screenHeight/2, 50, BLACK);
             DrawCircleLines(screenWidth/2, screenHeight/2, 30, BLACK);

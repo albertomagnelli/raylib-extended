@@ -29,14 +29,14 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 10.0f, 10.0f, 10.0f }; // Camera position
-    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 10.0f, 10.0f, 10.0f };      // Camera position
+    camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    const glm::vec3 cubePosition = { 0.0f, 0.0f, 0.0f };
-    glm::vec2 cubeScreenPosition = { 0.0f, 0.0f };
+    const vec3 cubePosition = { 0.0f, 0.0f, 0.0f };
+    vec2 cubeScreenPosition = { 0.0f, 0.0f };
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
 
@@ -51,7 +51,7 @@ int main()
         UpdateCamera(&camera, CAMERA_THIRD_PERSON);
 
         // Calculate cube screen space position (with a little offset to be in top)
-        cubeScreenPosition = GetWorldToScreen(glm::vec3{cubePosition.x, cubePosition.y + 2.5f, cubePosition.z}, camera);
+        cubeScreenPosition = GetWorldToScreen(vec3{cubePosition.x, cubePosition.y + 2.5f, cubePosition.z}, camera);
         //----------------------------------------------------------------------------------
 
         // Draw

@@ -32,8 +32,8 @@ int main()
     constexpr int renderTextureHeight = 300;
     const RenderTexture2D target = LoadRenderTexture(renderTextureWidth, renderTextureHeight);
 
-    glm::vec2 ballPosition = { renderTextureWidth/2.0f, renderTextureHeight/2.0f };
-    glm::vec2 ballSpeed = { 5.0f, 4.0f };
+    vec2 ballPosition = { renderTextureWidth/2.0f, renderTextureHeight/2.0f };
+    vec2 ballSpeed = { 5.0f, 4.0f };
     constexpr int ballRadius = 20;
 
     float rotation = 0.0f;
@@ -81,7 +81,7 @@ int main()
             DrawTexturePro(target.texture,
                 Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
                 Rectangle{ screenWidth/2.0f, screenHeight/2.0f, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height) },
-                glm::vec2{ target.texture.width/2.0f, target.texture.height/2.0f }, rotation, WHITE);
+                vec2{ target.texture.width/2.0f, target.texture.height/2.0f }, rotation, WHITE);
 
             DrawText("DRAWING BOUNCING BALL INSIDE RENDER TEXTURE!", 10, screenHeight - 40, 20, BLACK);
 

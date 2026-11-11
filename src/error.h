@@ -6,6 +6,8 @@
 /// Alle falliblen Operationen geben `Result<T>` (`std::expected`) zurueck.
 /// Exceptions sind im Engine-Code nicht Teil der Fehlerbehandlung.
 
+#include "types.h"
+
 #include <cstdint>
 #include <expected>
 #include <string>
@@ -14,7 +16,7 @@
 
 
     /// Grobe Fehlerklassifizierung. Feine Details stehen in `Error::message`.
-    enum class ErrorCode : std::uint8_t {
+    enum class ErrorCode : u8 {
         none = 0,       ///< Kein Fehler.
         cancelled,      ///< Vorgang vom Aufrufer abgebrochen.
         notFound,       ///< Ressource existiert nicht.

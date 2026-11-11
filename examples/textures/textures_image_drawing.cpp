@@ -32,7 +32,7 @@ int main()
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 
     Image cat = LoadImage("resources/cat.png");             // Load image in CPU memory (RAM)
-    ImageCrop(&cat, Rectangle{ 100, 10, 280, 380 });      // Crop an image piece
+    ImageCrop(&cat, Rectangle{ 100, 10, 280, 380 });        // Crop an image piece
     ImageFlipHorizontal(&cat);                              // Flip cropped image horizontally
     ImageResize(&cat, 150, 200);                            // Resize flipped-cropped image
 
@@ -40,7 +40,7 @@ int main()
 
     // Draw one image over the other with a scaling of 1.5f
     ImageDrawImagePro(&parrots, cat, Rectangle{ 0, 0, static_cast<float>(cat.width), static_cast<float>(cat.height) },
-        Rectangle{ 30, 40, cat.width*1.5f, cat.height*1.5f }, glm::vec2{}, 0.0f, WHITE);
+        Rectangle{ 30, 40, cat.width*1.5f, cat.height*1.5f }, vec2{}, 0.0f, WHITE);
     ImageCrop(&parrots, Rectangle{ 0, 50, static_cast<float>(parrots.width), static_cast<float>(parrots.height) - 100 }); // Crop resulting image
 
     // Draw on the image with a few image draw methods
@@ -54,12 +54,12 @@ int main()
     const Font font = LoadFont("resources/custom_jupiter_crash.png");
 
     // Draw over image using custom font
-    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", glm::vec2{ 300, 230 }, static_cast<float>(font.baseSize), -2, WHITE);
+    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", vec2{ 300, 230 }, static_cast<float>(font.baseSize), -2, WHITE);
 
     UnloadFont(font);       // Unload custom font (already drawn used on image)
 
     const Texture2D texture = LoadTextureFromImage(parrots);      // Image converted to texture, uploaded to GPU memory (VRAM)
-    UnloadImage(parrots);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
+    UnloadImage(parrots);                                         // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------

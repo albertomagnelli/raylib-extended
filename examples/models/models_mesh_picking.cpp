@@ -35,9 +35,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 20.0f, 20.0f, 20.0f }; // Camera position
-    camera.target = glm::vec3{ 0.0f, 8.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.6f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 20.0f, 20.0f, 20.0f };      // Camera position
+    camera.target = vec3{ 0.0f, 8.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.6f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -45,26 +45,26 @@ int main()
 
     const Model tower = LoadModel("resources/models/obj/turret.obj");                 // Load OBJ model
     const Texture2D texture = LoadTexture("resources/models/obj/turret_diffuse.png"); // Load model texture
-    tower.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set model diffuse texture
+    tower.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;                  // Set model diffuse texture
 
-    const glm::vec3 towerPos = { 0.0f, 0.0f, 0.0f };                      // Set model position
+    const vec3 towerPos = { 0.0f, 0.0f, 0.0f };                           // Set model position
     const BoundingBox towerBBox = GetMeshBoundingBox(tower.meshes[0]);    // Get mesh bounding box
 
     // Ground quad
-    const glm::vec3 g0 = glm::vec3{ -50.0f, 0.0f, -50.0f };
-    const glm::vec3 g1 = glm::vec3{ -50.0f, 0.0f,  50.0f };
-    const glm::vec3 g2 = glm::vec3{  50.0f, 0.0f,  50.0f };
-    const glm::vec3 g3 = glm::vec3{  50.0f, 0.0f, -50.0f };
+    const vec3 g0 = vec3{ -50.0f, 0.0f, -50.0f };
+    const vec3 g1 = vec3{ -50.0f, 0.0f,  50.0f };
+    const vec3 g2 = vec3{  50.0f, 0.0f,  50.0f };
+    const vec3 g3 = vec3{  50.0f, 0.0f, -50.0f };
 
     // Test triangle
-    const glm::vec3 ta = glm::vec3{ -25.0f, 0.5f, 0.0f };
-    const glm::vec3 tb = glm::vec3{ -4.0f, 2.5f, 1.0f };
-    const glm::vec3 tc = glm::vec3{ -8.0f, 6.5f, 0.0f };
+    const vec3 ta = vec3{ -25.0f, 0.5f, 0.0f };
+    const vec3 tb = vec3{ -4.0f, 2.5f, 1.0f };
+    const vec3 tc = vec3{ -8.0f, 6.5f, 0.0f };
 
-    glm::vec3 bary = { 0.0f, 0.0f, 0.0f };
+    vec3 bary = { 0.0f, 0.0f, 0.0f };
 
     // Test sphere
-    const glm::vec3 sp = glm::vec3{ -30.0f, 5.0f, 5.0f };
+    const vec3 sp = vec3{ -30.0f, 5.0f, 5.0f };
     constexpr float sr = 4.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
@@ -139,7 +139,7 @@ int main()
             for (int m = 0; m < tower.meshCount; m++)
             {
                 // NOTE: We consider the model.transform for the collision check but
-                // it can be checked against any transform Matrix, used when checking against same
+                // it can be checked against any transform mat4, used when checking against same
                 // model drawn multiple times with multiple transforms
                 meshHitInfo = GetRayCollisionMesh(ray, tower.meshes[m], tower.transform);
                 if (meshHitInfo.hit)
@@ -190,7 +190,7 @@ int main()
                     DrawCube(collision.point, 0.3f, 0.3f, 0.3f, cursorColor);
                     DrawCubeWires(collision.point, 0.3f, 0.3f, 0.3f, RED);
 
-                    glm::vec3 normalEnd;
+                    vec3 normalEnd;
                     normalEnd.x = collision.point.x + collision.normal.x;
                     normalEnd.y = collision.point.y + collision.normal.y;
                     normalEnd.z = collision.point.z + collision.normal.z;

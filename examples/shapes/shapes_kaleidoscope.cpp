@@ -26,8 +26,8 @@
 
 // Line data type
 typedef struct {
-    glm::vec2 start;
-    glm::vec2 end;
+    vec2 start;
+    vec2 end;
 } Line;
 
 // Lines array as a global static variable to be stored
@@ -53,13 +53,13 @@ int main()
     const Rectangle resetButtonRec = { screenWidth - 55.0f, 5.0f, 50, 25 };
     const Rectangle backButtonRec = { screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };
     const Rectangle nextButtonRec = { screenWidth - 30.0f, screenHeight - 30.0f, 25, 25 };
-    glm::vec2 mousePos = {};
-    glm::vec2 prevMousePos = {};
-    const glm::vec2 scaleVector = { 1.0f, -1.0f };
-    const glm::vec2 offset = { GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    vec2 mousePos = {};
+    vec2 prevMousePos = {};
+    const vec2 scaleVector = { 1.0f, -1.0f };
+    const vec2 offset = { GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
 
     Camera2D camera = {};
-    camera.target = glm::vec2{};
+    camera.target = vec2{};
     camera.offset = offset;
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
@@ -81,8 +81,8 @@ int main()
         prevMousePos = mousePos;
         mousePos = GetMousePosition();
 
-        glm::vec2 lineStart = ((mousePos) - (offset));
-        glm::vec2 lineEnd = ((prevMousePos) - (offset));
+        vec2 lineStart = ((mousePos) - (offset));
+        vec2 lineEnd = ((prevMousePos) - (offset));
 
         if (
             IsMouseButtonDown(MOUSE_LEFT_BUTTON)

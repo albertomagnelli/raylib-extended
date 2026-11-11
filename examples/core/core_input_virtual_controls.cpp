@@ -41,17 +41,17 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input virtual controls");
 
-    glm::vec2 padPosition = { 100, 350 };
+    vec2 padPosition = { 100, 350 };
     constexpr float buttonRadius = 30;
 
-    glm::vec2 buttonPositions[BUTTON_MAX] = {
+    vec2 buttonPositions[BUTTON_MAX] = {
         { padPosition.x,padPosition.y - buttonRadius*1.5f },  // Up
         { padPosition.x - buttonRadius*1.5f, padPosition.y }, // Left
         { padPosition.x + buttonRadius*1.5f, padPosition.y }, // Right
         { padPosition.x, padPosition.y + buttonRadius*1.5f }  // Down
     };
 
-    const glm::vec2 arrowTris[4][3] = {
+    const vec2 arrowTris[4][3] = {
         // Up
         {
             { buttonPositions[0].x,     buttonPositions[0].y - 12 },
@@ -86,9 +86,9 @@ int main()
     };
 
     int pressedButton = BUTTON_NONE;
-    glm::vec2 inputPosition = { 0, 0 };
+    vec2 inputPosition = { 0, 0 };
 
-    glm::vec2 playerPosition = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
+    vec2 playerPosition = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
     constexpr float playerSpeed = 75;
 
     SetTargetFPS(60);
@@ -100,7 +100,7 @@ int main()
         // Update
         //--------------------------------------------------------------------------
         if ((GetTouchPointCount() > 0)) inputPosition = GetTouchPosition(0); // Use touch position
-        else inputPosition = GetMousePosition(); // Use mouse position
+        else inputPosition = GetMousePosition();                             // Use mouse position
 
         // Reset pressed button to none
         pressedButton = BUTTON_NONE;

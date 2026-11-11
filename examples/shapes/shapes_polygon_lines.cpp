@@ -67,43 +67,43 @@ int main()
             DrawRectangleLinesEx(Rectangle{ 10, 40, 50, 50 }, static_cast<float>(thick), RED);
 
             DrawCircle(95, 65, 25, LIGHTGRAY);
-            DrawCircleLinesEx(glm::vec2{ 95, 65 }, 25, static_cast<float>(thick), RED);
+            DrawCircleLinesEx(vec2{ 95, 65 }, 25, static_cast<float>(thick), RED);
 
             DrawText("DrawRectangleLinesEx() and DrawCircleLinesEx()", 130, 60, 10, BLACK);
 
             // Outline pair 2
-            DrawPoly(glm::vec2{ 35, 125 }, 4, 35.355f, 45, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 35, 125 }, 4, 35.355f, 45, static_cast<float>(thick), RED);
+            DrawPoly(vec2{ 35, 125 }, 4, 35.355f, 45, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 35, 125 }, 4, 35.355f, 45, static_cast<float>(thick), RED);
 
-            DrawPoly(glm::vec2{ 95, 125 }, 36, 25, 0, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 95, 125 }, 36, 25, 0, static_cast<float>(thick), RED);
+            DrawPoly(vec2{ 95, 125 }, 36, 25, 0, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 95, 125 }, 36, 25, 0, static_cast<float>(thick), RED);
 
             DrawText("DrawPolyLinesEx()", 130, 120, 10, BLACK);
 
             // Some other shapes, all of these outlines should have the same looking thickness
-            DrawPoly(glm::vec2{ 290, 220 }, 3, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 290, 220 }, 3, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 290, 220 }, 3, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 290, 220 }, 3, 60, rotation, static_cast<float>(thick), BLUE);
 
-            DrawPoly(glm::vec2{ 430, 220 }, 4, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 430, 220 }, 4, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 430, 220 }, 4, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 430, 220 }, 4, 60, rotation, static_cast<float>(thick), BLUE);
 
-            DrawPoly(glm::vec2{ 570, 220 }, 5, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 570, 220 }, 5, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 570, 220 }, 5, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 570, 220 }, 5, 60, rotation, static_cast<float>(thick), BLUE);
 
-            DrawPoly(glm::vec2{ 710, 220 }, 6, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 710, 220 }, 6, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 710, 220 }, 6, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 710, 220 }, 6, 60, rotation, static_cast<float>(thick), BLUE);
 
-            DrawPoly(glm::vec2{ 290, 360 }, 7, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 290, 360 }, 7, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 290, 360 }, 7, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 290, 360 }, 7, 60, rotation, static_cast<float>(thick), BLUE);
 
-            DrawPoly(glm::vec2{ 430, 360 }, 8, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 430, 360 }, 8, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 430, 360 }, 8, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 430, 360 }, 8, 60, rotation, static_cast<float>(thick), BLUE);
 
-            DrawPoly(glm::vec2{ 570, 360 }, 9, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 570, 360 }, 9, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 570, 360 }, 9, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 570, 360 }, 9, 60, rotation, static_cast<float>(thick), BLUE);
 
-            DrawPoly(glm::vec2{ 710, 360 }, 10, 60, rotation, LIGHTGRAY);
-            DrawPolyLinesEx(glm::vec2{ 710, 360 }, 10, 60, rotation, static_cast<float>(thick), BLUE);
+            DrawPoly(vec2{ 710, 360 }, 10, 60, rotation, LIGHTGRAY);
+            DrawPolyLinesEx(vec2{ 710, 360 }, 10, 60, rotation, static_cast<float>(thick), BLUE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

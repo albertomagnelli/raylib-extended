@@ -34,12 +34,12 @@ int main()
 
     const Texture2D booth = LoadTexture("resources/booth.png");
 
-    constexpr float stackScale = 3.0f; // Overall scale of the stacked sprite
-    float stackSpacing = 2.0f; // Vertical spacing between each layer
+    constexpr float stackScale = 3.0f;       // Overall scale of the stacked sprite
+    float stackSpacing = 2.0f;               // Vertical spacing between each layer
     constexpr unsigned int stackCount = 122; // Number of layers, used for calculating the size of a single slice
-    float rotationSpeed = 30.0f; // Stacked sprites rotation speed
-    float rotation = 0.0f; // Current rotation of the stacked sprite
-    constexpr float speedChange = 0.25f; // Amount speed will change by when the user presses A/D
+    float rotationSpeed = 30.0f;             // Stacked sprites rotation speed
+    float rotation = 0.0f;                   // Current rotation of the stacked sprite
+    constexpr float speedChange = 0.25f;     // Amount speed will change by when the user presses A/D
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ int main()
                 // Center vertically
                 const Rectangle source = { 0.0f, static_cast<float>(i)*frameHeight, frameWidth, frameHeight };
                 const Rectangle dest = { screenWidth/2.0f, (screenHeight/2.0f) + (i*stackSpacing) - (stackSpacing*stackCount/2.0f), scaledWidth, scaledHeight };
-                const glm::vec2 origin = { scaledWidth/2.0f, scaledHeight/2.0f };
+                const vec2 origin = { scaledWidth/2.0f, scaledHeight/2.0f };
 
                 DrawTexturePro(booth, source, dest, origin, rotation, WHITE);
             }

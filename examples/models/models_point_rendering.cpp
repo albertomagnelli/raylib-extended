@@ -27,9 +27,9 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static Mesh GenMeshPoints(int numPoints); // Generate mesh using points
-void DrawModelPoints(Model model, glm::vec3 position, float scale, Color tint); // Draw a model as points
-void DrawModelPointsEx(Model model, glm::vec3 position, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 scale, Color tint); // Draw a model as points with extended parameters
+static Mesh GenMeshPoints(int numPoints);                                                                           // Generate mesh using points
+void DrawModelPoints(Model model, vec3 position, float scale, Color tint);                                          // Draw a model as points
+void DrawModelPointsEx(Model model, vec3 position, vec3 rotationAxis, float rotationAngle, vec3 scale, Color tint); // Draw a model as points with extended parameters
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -51,7 +51,7 @@ int main()
         .projection = CAMERA_PERSPECTIVE
     };
 
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+    const vec3 position = { 0.0f, 0.0f, 0.0f };
     bool useDrawModelPoints = true;
     bool numPointsChanged = false;
     int numPoints = 1000;
@@ -105,7 +105,7 @@ int main()
                     // The old method must continually draw the "points" (lines)
                     for (int i = 0; i < numPoints; i++)
                     {
-                        const glm::vec3 pos = {
+                        const vec3 pos = {
                             mesh.vertices[i*3 + 0],
                             mesh.vertices[i*3 + 1],
                             mesh.vertices[i*3 + 2],
@@ -189,7 +189,7 @@ static Mesh GenMeshPoints(int numPoints)
 
 // Draw a model points
 // WARNING: OpenGL ES 2.0 does not support point mode drawing
-void DrawModelPoints(Model model, glm::vec3 position, float scale, Color tint)
+void DrawModelPoints(Model model, vec3 position, float scale, Color tint)
 {
     rlEnablePointMode();
     rlDisableBackfaceCulling();
@@ -202,7 +202,7 @@ void DrawModelPoints(Model model, glm::vec3 position, float scale, Color tint)
 
 // Draw a model points
 // WARNING: OpenGL ES 2.0 does not support point mode drawing
-void DrawModelPointsEx(Model model, glm::vec3 position, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 scale, Color tint)
+void DrawModelPointsEx(Model model, vec3 position, vec3 rotationAxis, float rotationAngle, vec3 scale, Color tint)
 {
     rlEnablePointMode();
     rlDisableBackfaceCulling();

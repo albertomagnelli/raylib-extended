@@ -264,7 +264,7 @@ extern void LoadFontDefault(void);          // [Module: text] Loads default font
 //----------------------------------------------------------------------------------
 static float HalfToFloat(unsigned short x);
 static unsigned short FloatToHalf(float x);
-static glm::vec4 *LoadImageDataNormalized(Image image);     // Load pixel data from image as glm::vec4 array (float normalized)
+static vec4 *LoadImageDataNormalized(Image image);     // Load pixel data from image as vec4 array (float normalized)
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
@@ -902,7 +902,7 @@ Image GenImageGradientLinear(int width, int height, int direction, Color start, 
             const float pos = (startingPos + (i*cosDir + j*sinDir))/maxPosValue;
 
             float factor = pos;
-            factor = (factor > 1.0f)? 1.0f : factor;  // Clamp to [-1,1]
+            factor = (factor > 1.0f)? 1.0f : factor;    // Clamp to [-1,1]
             factor = (factor < -1.0f)? -1.0f : factor;  // Clamp to [-1,1]
             factor = factor/2.0f + 0.5f;
 
@@ -1119,13 +1119,13 @@ Image GenImageCellular(int width, int height, int tileSize)
     const int seedsPerCol = height/tileSize;
     const int seedCount = seedsPerRow*seedsPerCol;
 
-    glm::vec2 *seeds = static_cast<glm::vec2 *>(RL_CALLOC(seedCount, sizeof(glm::vec2)));
+    vec2 *seeds = static_cast<vec2 *>(RL_CALLOC(seedCount, sizeof(vec2)));
 
     for (int i = 0; i < seedCount; i++)
     {
         const int y = (i/seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
         const int x = (i%seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
-        seeds[i] = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
+        seeds[i] = vec2{ static_cast<float>(x), static_cast<float>(y) };
     }
 
     for (int y = 0; y < height; y++)
@@ -1147,7 +1147,7 @@ Image GenImageCellular(int width, int height, int tileSize)
                 {
                     if ((tileY + j < 0) || (tileY + j >= seedsPerCol)) continue;
 
-                    const glm::vec2 neighborSeed = seeds[(tileY + j)*seedsPerRow + tileX + i];
+                    const vec2 neighborSeed = seeds[(tileY + j)*seedsPerRow + tileX + i];
 
                     const float dist = static_cast<float>(hypot(x - static_cast<int>(neighborSeed.x), y - static_cast<int>(neighborSeed.y)));
                     minDistance = fmin(minDistance, dist);
@@ -1350,7 +1350,7 @@ void ImageFormat(Image *image, int newFormat)
     {
         if ((image->format < PIXELFORMAT_COMPRESSED_DXT1_RGB) && (newFormat < PIXELFORMAT_COMPRESSED_DXT1_RGB))
         {
-            glm::vec4 *pixels = LoadImageDataNormalized(*image);   // Supports 8 to 32 bit per channel
+            vec4 *pixels = LoadImageDataNormalized(*image);   // Supports 8 to 32 bit per channel
 
             RL_FREE(image->data);      // WARNING! Loosing mipmaps data --> Regenerated at the end
             image->data = nullptr;
@@ -1577,13 +1577,13 @@ Image ImageTextEx(Font font, std::string_view textView, float fontSize, float sp
     if (text == nullptr) return imText;
 
     const int textLength = static_cast<int>(strlen(text)); // Get length of text in bytes
-    int textOffsetX = 0;            // Image drawing position X
-    int textOffsetY = 0;            // Offset between lines (on linebreak '\n')
-    int lineIndex = 0;              // Current line index (on linebreak '\n')
+    int textOffsetX = 0;                                   // Image drawing position X
+    int textOffsetY = 0;                                   // Offset between lines (on linebreak '\n')
+    int lineIndex = 0;                                     // Current line index (on linebreak '\n')
 
     // NOTE: Text image is generated at font base size, later scaled to desired font size
-    const glm::vec2 imSize = MeasureTextEx(font, text, static_cast<float>(font.baseSize), spacing);// WARNING: Module required: rtext
-    const glm::vec2 textSize = MeasureTextEx(font, text, fontSize, spacing);
+    const vec2 imSize = MeasureTextEx(font, text, static_cast<float>(font.baseSize), spacing);// WARNING: Module required: rtext
+    const vec2 textSize = MeasureTextEx(font, text, fontSize, spacing);
 
     int lineBreakCount = 0;         // Number of line breaks ('\n') in text
     for (int i = 0; i < textLength; i++)
@@ -1618,7 +1618,7 @@ Image ImageTextEx(Font font, std::string_view textView, float fontSize, float sp
             {
                 const Rectangle rec = { static_cast<float>(textOffsetX + font.glyphs[index].offsetX), static_cast<float>(textOffsetY + font.glyphs[index].offsetY), font.recs[index].width, font.recs[index].height };
                 ImageDrawImagePro(&imText, font.glyphs[index].image, Rectangle{ 0, 0, static_cast<float>(font.glyphs[index].image.width), static_cast<float>(font.glyphs[index].image.height) },
-                    rec, glm::vec2{ 0 }, 0.0f, tint);
+                    rec, vec2{ 0 }, 0.0f, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += static_cast<int>(font.recs[index].width + spacing);
@@ -1921,7 +1921,7 @@ void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, i
     else if ((newWidth != image->width) || (newHeight != image->height))
     {
         Rectangle srcRec = { 0, 0, static_cast<float>(image->width), static_cast<float>(image->height) };
-        glm::vec2 dstPos = { static_cast<float>(offsetX), static_cast<float>(offsetY) };
+        vec2 dstPos = { static_cast<float>(offsetX), static_cast<float>(offsetY) };
 
         if (offsetX < 0)
         {
@@ -2206,8 +2206,8 @@ void ImageBlurGaussian(Image *image, int blurSize)
     Color *pixels = LoadImageColors(*image);
 
     // Loop switches between pixelsCopy1 and pixelsCopy2
-    glm::vec4 *pixelsCopy1 = static_cast<glm::vec4 *>(RL_CALLOC(image->height*image->width, sizeof(glm::vec4)));
-    glm::vec4 *pixelsCopy2 = static_cast<glm::vec4 *>(RL_CALLOC(image->height*image->width, sizeof(glm::vec4)));
+    vec4 *pixelsCopy1 = static_cast<vec4 *>(RL_CALLOC(image->height*image->width, sizeof(vec4)));
+    vec4 *pixelsCopy2 = static_cast<vec4 *>(RL_CALLOC(image->height*image->width, sizeof(vec4)));
 
     for (int i = 0; i < (image->height*image->width); i++)
     {
@@ -2437,9 +2437,9 @@ void ImageMipmaps(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    int mipCount = 1;                   // Required mipmap levels count (including base level)
-    int mipWidth = image->width;        // Base image width
-    int mipHeight = image->height;      // Base image height
+    int mipCount = 1;                                                    // Required mipmap levels count (including base level)
+    int mipWidth = image->width;                                         // Base image width
+    int mipHeight = image->height;                                       // Base image height
     int mipSize = GetPixelDataSize(mipWidth, mipHeight, image->format);  // Image data size (in bytes)
 
     // Count mipmap levels required
@@ -2673,12 +2673,12 @@ void ImageFlipHorizontal(Image *image)
         /*
         // OPTION 3: Faster implementation (specific for 32bit pixels)
         // NOTE: It does not require additional allocations
-        uint32_t *ptr = (uint32_t *)image->data;
+        u32 *ptr = (u32 *)image->data;
         for (int y = 0; y < image->height; y++)
         {
             for (int x = 0; x < image->width/2; x++)
             {
-                uint32_t backup = ptr[y*image->width + x];
+                u32 backup = ptr[y*image->width + x];
                 ptr[y*image->width + x] = ptr[y*image->width + (image->width - 1 - x)];
                 ptr[y*image->width + (image->width - 1 - x)] = backup;
             }
@@ -3435,7 +3435,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
         {
             // NOTE: Calculate grayscale equivalent color
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
             const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<unsigned char *>(dst->data))[y*dst->width + x] = gray;
@@ -3444,7 +3444,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
         {
             // NOTE: Calculate grayscale equivalent color
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
             const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*2] = gray;
@@ -3454,7 +3454,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
             // NOTE: Calculate R5G6B5 equivalent color
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
 
             const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
             const unsigned char g = static_cast<unsigned char>(round(coln.y*63.0f));
@@ -3466,7 +3466,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const glm::vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
 
             const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
             const unsigned char g = static_cast<unsigned char>(round(coln.y*31.0f));
@@ -3479,7 +3479,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const glm::vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
 
             const unsigned char r = static_cast<unsigned char>(round(coln.x*15.0f));
             const unsigned char g = static_cast<unsigned char>(round(coln.y*15.0f));
@@ -3507,7 +3507,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R32:
         {
             // NOTE: Calculate grayscale equivalent color (normalized to 32bit)
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
 
             (static_cast<float *>(dst->data))[y*dst->width + x] = coln.x*0.299f + coln.y*0.587f + coln.z*0.114f;
 
@@ -3515,7 +3515,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
         {
             // NOTE: Calculate R32G32B32 equivalent color (normalized to 32bit)
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
 
             (static_cast<float *>(dst->data))[(y*dst->width + x)*3] = coln.x;
             (static_cast<float *>(dst->data))[(y*dst->width + x)*3 + 1] = coln.y;
@@ -3524,7 +3524,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
         {
             // NOTE: Calculate R32G32B32A32 equivalent color (normalized to 32bit)
-            const glm::vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
 
             (static_cast<float *>(dst->data))[(y*dst->width + x)*4] = coln.x;
             (static_cast<float *>(dst->data))[(y*dst->width + x)*4 + 1] = coln.y;
@@ -3535,7 +3535,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R16:
         {
             // NOTE: Calculate grayscale equivalent color (normalized to 32bit)
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
 
             (static_cast<unsigned short *>(dst->data))[y*dst->width + x] = FloatToHalf(coln.x*0.299f + coln.y*0.587f + coln.z*0.114f);
 
@@ -3543,7 +3543,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
         {
             // NOTE: Calculate R32G32B32 equivalent color (normalized to 32bit)
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
 
             (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*3] = FloatToHalf(coln.x);
             (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*3 + 1] = FloatToHalf(coln.y);
@@ -3552,7 +3552,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
         {
             // NOTE: Calculate R32G32B32A32 equivalent color (normalized to 32bit)
-            const glm::vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
 
             (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*4] = FloatToHalf(coln.x);
             (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*4 + 1] = FloatToHalf(coln.y);
@@ -3565,7 +3565,7 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
 }
 
 // Draw pixel within an image (Vector version)
-void ImageDrawPixelV(Image *dst, glm::vec2 position, Color color)
+void ImageDrawPixelV(Image *dst, vec2 position, Color color)
 {
     ImageDrawPixel(dst, static_cast<int>(position.x), static_cast<int>(position.y), color);
 }
@@ -3626,7 +3626,7 @@ void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int en
 }
 
 // Draw line within an image (Vector version)
-void ImageDrawLineV(Image *dst, glm::vec2 start, glm::vec2 end, Color color)
+void ImageDrawLineV(Image *dst, vec2 start, vec2 end, Color color)
 {
     // Round start and end positions to nearest integer coordinates
     const int x1 = static_cast<int>(start.x + 0.5f);
@@ -3639,7 +3639,7 @@ void ImageDrawLineV(Image *dst, glm::vec2 start, glm::vec2 end, Color color)
 }
 
 // Draw a line defining thickness within an image
-void ImageDrawLineEx(Image *dst, glm::vec2 start, glm::vec2 end, int thick, Color color)
+void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, int thick, Color color)
 {
     // Round start and end positions to nearest integer coordinates
     const int x1 = static_cast<int>(start.x + 0.5f);
@@ -3693,7 +3693,7 @@ void ImageDrawLineEx(Image *dst, glm::vec2 start, glm::vec2 end, int thick, Colo
 }
 
 // Draw a lines sequence within an image
-void ImageDrawLineStrip(Image *dst, const glm::vec2 *points, int pointCount, Color color)
+void ImageDrawLineStrip(Image *dst, const vec2 *points, int pointCount, Color color)
 {
     for (int i = 0; i < pointCount - 1; i++)
     {
@@ -3702,7 +3702,7 @@ void ImageDrawLineStrip(Image *dst, const glm::vec2 *points, int pointCount, Col
 }
 
 // Draw triangle within an image
-void ImageDrawTriangle(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color)
+void ImageDrawTriangle(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
 {
     // Calculate the 2D bounding box of the triangle
     // Determine the minimum and maximum x and y coordinates of the triangle vertices
@@ -3769,7 +3769,7 @@ void ImageDrawTriangle(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Col
 }
 
 // Draw triangle with interpolated colors within an image
-void ImageDrawTriangleGradient(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color c1, Color c2, Color c3)
+void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, Color c2, Color c3)
 {
     // Calculate the 2D bounding box of the triangle
     // Determine the minimum and maximum x and y coordinates of the triangle vertices
@@ -3854,7 +3854,7 @@ void ImageDrawTriangleGradient(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2
 }
 
 // Draw triangle outline within an image
-void ImageDrawTriangleLines(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color)
+void ImageDrawTriangleLines(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
 {
     ImageDrawLine(dst, static_cast<int>(v1.x), static_cast<int>(v1.y), static_cast<int>(v2.x), static_cast<int>(v2.y), color);
     ImageDrawLine(dst, static_cast<int>(v2.x), static_cast<int>(v2.y), static_cast<int>(v3.x), static_cast<int>(v3.y), color);
@@ -3862,7 +3862,7 @@ void ImageDrawTriangleLines(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3
 }
 
 // Draw a triangle fan defined by points within an image (first vertex is the center)
-void ImageDrawTriangleFan(Image *dst, const glm::vec2 *points, int pointCount, Color color)
+void ImageDrawTriangleFan(Image *dst, const vec2 *points, int pointCount, Color color)
 {
     if (pointCount >= 3)
     {
@@ -3874,7 +3874,7 @@ void ImageDrawTriangleFan(Image *dst, const glm::vec2 *points, int pointCount, C
 }
 
 // Draw a triangle strip defined by points within an image
-void ImageDrawTriangleStrip(Image *dst, const glm::vec2 *points, int pointCount, Color color)
+void ImageDrawTriangleStrip(Image *dst, const vec2 *points, int pointCount, Color color)
 {
     if (pointCount >= 3)
     {
@@ -3893,7 +3893,7 @@ void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, C
 }
 
 // Draw rectangle within an image (Vector version)
-void ImageDrawRectangleV(Image *dst, glm::vec2 position, glm::vec2 size, Color color)
+void ImageDrawRectangleV(Image *dst, vec2 position, vec2 size, Color color)
 {
     ImageDrawRectangle(dst, static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(size.x), static_cast<int>(size.y), color);
 }
@@ -3945,7 +3945,7 @@ void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color)
 }
 
 // Draw a color-filled rectangle with pro parameters within and image
-void ImageDrawRectanglePro(Image *dst, Rectangle rec, glm::vec2 origin, float rotation, Color color)
+void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, float rotation, Color color)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (rec.width <= 0) || (rec.height <= 0)) return;
@@ -4117,7 +4117,7 @@ void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color col
 }
 
 // Draw circle within an image (Vector version)
-void ImageDrawCircleV(Image *dst, glm::vec2 center, int radius, Color color)
+void ImageDrawCircleV(Image *dst, vec2 center, int radius, Color color)
 {
     ImageDrawCircle(dst, static_cast<int>(center.x), static_cast<int>(center.y), radius, color);
 }
@@ -4151,13 +4151,13 @@ void ImageDrawCircleLines(Image *dst, int centerX, int centerY, int radius, Colo
 }
 
 // Draw circle outline within an image (Vector version)
-void ImageDrawCircleLinesV(Image *dst, glm::vec2 center, int radius, Color color)
+void ImageDrawCircleLinesV(Image *dst, vec2 center, int radius, Color color)
 {
     ImageDrawCircleLines(dst, static_cast<int>(center.x), static_cast<int>(center.y), radius, color);
 }
 
 // Draw a gradient-filled circle within an image
-void ImageDrawCircleGradient(Image *dst, glm::vec2 center, float radius, Color inner, Color outer)
+void ImageDrawCircleGradient(Image *dst, vec2 center, float radius, Color inner, Color outer)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (radius <= 0.0f)) return;
@@ -4211,12 +4211,12 @@ void ImageDrawImage(Image *dst, Image src, int posX, int posY, Color tint)
 {
     const Rectangle srcRec = { 0.0f, 0.0f, static_cast<float>(src.width), static_cast<float>(src.height) };
     const Rectangle dstRec = { static_cast<float>(posX), static_cast<float>(posY), srcRec.width, srcRec.height };
-    ImageDrawImagePro(dst, src, srcRec, dstRec, glm::vec2{ 0 }, 0.0f, tint);
+    ImageDrawImagePro(dst, src, srcRec, dstRec, vec2{ 0 }, 0.0f, tint);
 }
 
 // Draw an image with scaling and rotation within an image
 // NOTE: Rotation applied from top-left corner origin
-void ImageDrawImageEx(Image *dst, Image src, glm::vec2 position, float rotation, float scale, Color tint)
+void ImageDrawImageEx(Image *dst, Image src, vec2 position, float rotation, float scale, Color tint)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (dst->width <= 0) || (dst->height <= 0) || (src.width <= 0) || (src.height <= 0)) return;
@@ -4301,15 +4301,15 @@ void ImageDrawImageEx(Image *dst, Image src, glm::vec2 position, float rotation,
 }
 
 // Draw a part of an image defined by a rectangle within an image
-void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, glm::vec2 position, Color tint)
+void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, vec2 position, Color tint)
 {
     const Rectangle dstRec = { position.x, position.y, srcRec.width, srcRec.height };
-    ImageDrawImagePro(dst, src, srcRec, dstRec, glm::vec2{ 0 }, 0.0f, tint);
+    ImageDrawImagePro(dst, src, srcRec, dstRec, vec2{ 0 }, 0.0f, tint);
 }
 
 // Draw a part of an image defined by a rectangle into destination rectangle, with scaling and rotation, within an image
 // TODO: REVIEW: ImageDrawImagePro(), implement origin and rotation for image drawing
-void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, glm::vec2 origin, float rotation, Color tint)
+void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, vec2 origin, float rotation, Color tint)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (dst->width == 0) || (dst->height == 0) ||
@@ -4319,8 +4319,8 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
     else
     {
         Image srcMod = { nullptr };       // Source copy (in case it was required)
-        Image *srcPtr = &src;       // Pointer to source image
-        bool useSrcMod = false;     // Track source copy required
+        Image *srcPtr = &src;             // Pointer to source image
+        bool useSrcMod = false;           // Track source copy required
 
         // Source rectangle out-of-bounds security checks
         if (srcRec.x < 0) { srcRec.width += srcRec.x; srcRec.x = 0; }
@@ -4332,7 +4332,7 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
         // In that case, make a copy of source, and apply all required transform
         if ((static_cast<int>(srcRec.width) != static_cast<int>(dstRec.width)) || (static_cast<int>(srcRec.height) != static_cast<int>(dstRec.height)))
         {
-            srcMod = ImageFromImage(src, srcRec); // Create image from another image
+            srcMod = ImageFromImage(src, srcRec);                                                  // Create image from another image
             ImageResize(&srcMod, static_cast<int>(dstRec.width), static_cast<int>(dstRec.height)); // Resize to destination rectangle
             srcRec = Rectangle{ 0, 0, static_cast<float>(srcMod.width), static_cast<float>(srcMod.height) };
 
@@ -4369,7 +4369,7 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
         //    [x] Optimize ColorAlphaBlend() for faster operations (maybe avoiding divs?)
         //    [x] Consider fast path: no alpha blending required cases (src has no alpha)
         //    [x] Consider fast path: same src/dst format with no alpha -> direct line copy
-        //    [-] GetPixelColor(): Get glm::vec4 instead of Color, easier for ColorAlphaBlend()
+        //    [-] GetPixelColor(): Get vec4 instead of Color, easier for ColorAlphaBlend()
         //    [-] Support 16bit and 32bit (float) channels drawing
 
         Color colSrc = { 0 };
@@ -4454,7 +4454,7 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
             mipmapDstRec.x /= 2;
             mipmapDstRec.y /= 2;
 
-            ImageDrawImagePro(&mipmapDst, mipmapSrc, mipmapSrcRec, mipmapDstRec, glm::vec2{ 0 }, 0.0f, tint);
+            ImageDrawImagePro(&mipmapDst, mipmapSrc, mipmapSrcRec, mipmapDstRec, vec2{ 0 }, 0.0f, tint);
         }
     }
 }
@@ -4469,7 +4469,7 @@ void ImageDrawText(Image *dst, std::string_view textView, int posX, int posY, in
     // Make sure default font is loaded to be used on image text drawing
     if (GetFontDefault().texture.id == 0) LoadFontDefault();
 
-    const glm::vec2 position = { static_cast<float>(posX), static_cast<float>(posY) };
+    const vec2 position = { static_cast<float>(posX), static_cast<float>(posY) };
     ImageDrawTextEx(dst, GetFontDefault(), text, position, static_cast<float>(fontSize), 1.0f, color);   // WARNING: Module required: rtext
 #else
     TRACELOG(LOG_WARNING, "IMAGE: ImageDrawText() requires module: rtext");
@@ -4477,7 +4477,7 @@ void ImageDrawText(Image *dst, std::string_view textView, int posX, int posY, in
 }
 
 // Draw text (custom sprite font) within an image (destination)
-void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, glm::vec2 position, float fontSize, float spacing, Color tint)
+void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, vec2 position, float fontSize, float spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -4487,13 +4487,13 @@ void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, glm::vec2
     const Rectangle srcRec = { 0.0f, 0.0f, static_cast<float>(imText.width), static_cast<float>(imText.height) };
     const Rectangle dstRec = { position.x, position.y, static_cast<float>(imText.width), static_cast<float>(imText.height) };
 
-    ImageDrawImagePro(dst, imText, srcRec, dstRec, glm::vec2{ 0 }, 0.0f, WHITE);
+    ImageDrawImagePro(dst, imText, srcRec, dstRec, vec2{ 0 }, 0.0f, WHITE);
 
     UnloadImage(imText);
 }
 
 // Draw text using Font and pro parameters (rotation)
-void ImageDrawTextPro(Image *dst, Font font, std::string_view textView, glm::vec2 position, glm::vec2 origin, float rotation, float fontSize, float spacing, Color tint)
+void ImageDrawTextPro(Image *dst, Font font, std::string_view textView, vec2 position, vec2 origin, float rotation, float fontSize, float spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -4578,7 +4578,7 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
         const int size = cubemap.width;
 
         Image faces = { nullptr };                // Vertical column image
-        Rectangle faceRecs[6] = { 0 };      // Face source rectangles
+        Rectangle faceRecs[6] = { 0 };            // Face source rectangles
 
         for (int i = 0; i < 6; i++) faceRecs[i] = Rectangle{ 0, 0, static_cast<float>(size), static_cast<float>(size) };
 
@@ -4625,7 +4625,7 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
                 ImageMipmaps(&faces);
             }
 
-            for (int i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], Rectangle{ 0, static_cast<float>(size)*i, static_cast<float>(size), static_cast<float>(size) }, glm::vec2{ 0 }, 0.0f, WHITE);
+            for (int i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], Rectangle{ 0, static_cast<float>(size)*i, static_cast<float>(size), static_cast<float>(size) }, vec2{ 0 }, 0.0f, WHITE);
 
             UnloadImage(mipmapped);
         }
@@ -4884,38 +4884,38 @@ void SetTextureWrap(Texture2D texture, int wrap)
 // Draw a texture
 void DrawTexture(Texture2D texture, int posX, int posY, Color tint)
 {
-    DrawTextureEx(texture, glm::vec2{ static_cast<float>(posX), static_cast<float>(posY) }, 0.0f, 1.0f, tint);
+    DrawTextureEx(texture, vec2{ static_cast<float>(posX), static_cast<float>(posY) }, 0.0f, 1.0f, tint);
 }
 
-// Draw a texture with position defined as glm::vec2
-void DrawTextureV(Texture2D texture, glm::vec2 position, Color tint)
+// Draw a texture with position defined as vec2
+void DrawTextureV(Texture2D texture, vec2 position, Color tint)
 {
     DrawTextureEx(texture, position, 0.0f, 1.0f, tint);
 }
 
 // Draw a texture with rotation and scale
 // NOTE: Rotation applied from top-left corner origin
-void DrawTextureEx(Texture2D texture, glm::vec2 position, float rotation, float scale, Color tint)
+void DrawTextureEx(Texture2D texture, vec2 position, float rotation, float scale, Color tint)
 {
     const Rectangle srcrec = { 0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height) };
     const Rectangle dstrec = { position.x, position.y, static_cast<float>(texture.width)*scale, static_cast<float>(texture.height)*scale };
-    const glm::vec2 origin = { 0.0f, 0.0f };
+    const vec2 origin = { 0.0f, 0.0f };
 
     DrawTexturePro(texture, srcrec, dstrec, origin, rotation, tint);
 }
 
 // Draw a part of a texture (defined by a rectangle)
-void DrawTextureRec(Texture2D texture, Rectangle rec, glm::vec2 position, Color tint)
+void DrawTextureRec(Texture2D texture, Rectangle rec, vec2 position, Color tint)
 {
     const Rectangle dstrec = { position.x, position.y, fabsf(rec.width), fabsf(rec.height) };
-    const glm::vec2 origin = { 0.0f, 0.0f };
+    const vec2 origin = { 0.0f, 0.0f };
 
     DrawTexturePro(texture, rec, dstrec, origin, 0.0f, tint);
 }
 
 // Draw a part of a texture (defined by a rectangle) with 'pro' parameters
 // NOTE: origin is relative to destination rectangle size
-void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, glm::vec2 origin, float rotation, Color tint)
+void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 origin, float rotation, Color tint)
 {
     // Check if texture is valid
     if (texture.id > 0)
@@ -4931,20 +4931,20 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, glm::
         if (dstrec.width < 0) dstrec.width *= -1;
         if (dstrec.height < 0) dstrec.height *= -1;
 
-        glm::vec2 topLeft{};
-        glm::vec2 topRight{};
-        glm::vec2 bottomLeft{};
-        glm::vec2 bottomRight{};
+        vec2 topLeft{};
+        vec2 topRight{};
+        vec2 bottomLeft{};
+        vec2 bottomRight{};
 
         // Only calculate rotation if needed
         if (rotation == 0.0f)
         {
             const float x = dstrec.x - origin.x;
             const float y = dstrec.y - origin.y;
-            topLeft = glm::vec2{ x, y };
-            topRight = glm::vec2{ x + dstrec.width, y };
-            bottomLeft = glm::vec2{ x, y + dstrec.height };
-            bottomRight = glm::vec2{ x + dstrec.width, y + dstrec.height };
+            topLeft = vec2{ x, y };
+            topRight = vec2{ x + dstrec.width, y };
+            bottomLeft = vec2{ x, y + dstrec.height };
+            bottomRight = vec2{ x + dstrec.width, y + dstrec.height };
         }
         else
         {
@@ -5040,7 +5040,7 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, glm::
 }
 
 // Draw a texture (or part of it) that stretches or shrinks nicely using n-patch info
-void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstrec, glm::vec2 origin, float rotation, Color tint)
+void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstrec, vec2 origin, float rotation, Color tint)
 {
     if (texture.id > 0)
     {
@@ -5078,10 +5078,10 @@ void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstre
             bottomBorder = patchHeight - topBorder;
         }
 
-        glm::vec2 vertA{};
-        glm::vec2 vertB{};
-        glm::vec2 vertC{};
-        glm::vec2 vertD{};
+        vec2 vertA{};
+        vec2 vertB{};
+        vec2 vertC{};
+        vec2 vertD{};
         vertA.x = 0.0f;                             // Outer left
         vertA.y = 0.0f;                             // Outer top
         vertB.x = leftBorder;                       // Inner left
@@ -5091,10 +5091,10 @@ void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstre
         vertD.x = patchWidth;                       // Outer right
         vertD.y = patchHeight;                      // Outer bottom
 
-        glm::vec2 coordA{};
-        glm::vec2 coordB{};
-        glm::vec2 coordC{};
-        glm::vec2 coordD{};
+        vec2 coordA{};
+        vec2 coordB{};
+        vec2 coordC{};
+        vec2 coordD{};
         coordA.x = nPatchInfo.source.x/width;
         coordA.y = nPatchInfo.source.y/height;
         coordB.x = (nPatchInfo.source.x + leftBorder)/width;
@@ -5279,9 +5279,9 @@ int ColorToInt(Color color)
 }
 
 // Get color normalized as float [0..1]
-glm::vec4 ColorNormalize(Color color)
+vec4 ColorNormalize(Color color)
 {
-    glm::vec4 result;
+    vec4 result;
 
     result.x = static_cast<float>(color.r)/255.0f;
     result.y = static_cast<float>(color.g)/255.0f;
@@ -5292,7 +5292,7 @@ glm::vec4 ColorNormalize(Color color)
 }
 
 // Get color from normalized values [0..1]
-Color ColorFromNormalized(glm::vec4 normalized)
+Color ColorFromNormalized(vec4 normalized)
 {
     Color result;
 
@@ -5306,10 +5306,10 @@ Color ColorFromNormalized(glm::vec4 normalized)
 
 // Get HSV values for a Color
 // NOTE: Hue is returned as degrees [0..360]
-glm::vec3 ColorToHSV(Color color)
+vec3 ColorToHSV(Color color)
 {
-    glm::vec3 hsv{};
-    const glm::vec3 rgb = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+    vec3 hsv{};
+    const vec3 rgb = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
     float min = 0.0f;
     float max = 0.0f;
     float delta = 0.0f;
@@ -5348,7 +5348,7 @@ glm::vec3 ColorToHSV(Color color)
     else
     {
         if (rgb.y >= max) hsv.x = 2.0f + (rgb.z - rgb.x)/delta; // Between cyan & yellow
-        else hsv.x = 4.0f + (rgb.x - rgb.y)/delta; // Between magenta & cyan
+        else hsv.x = 4.0f + (rgb.x - rgb.y)/delta;              // Between magenta & cyan
     }
 
     hsv.x *= 60.0f; // Convert to degrees
@@ -5535,10 +5535,10 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
     else if (src.a == 255) result = src;
     else
     {
-        glm::vec4 fdst = ColorNormalize(dst);
-        glm::vec4 fsrc = ColorNormalize(src);
-        glm::vec4 ftint = ColorNormalize(tint);
-        glm::vec4 fout{};
+        vec4 fdst = ColorNormalize(dst);
+        vec4 fsrc = ColorNormalize(src);
+        vec4 ftint = ColorNormalize(tint);
+        vec4 fout{};
 
         fout.w = fsrc.w + fdst.w*(1.0f - fsrc.w);
 
@@ -5688,7 +5688,7 @@ void SetPixelColor(void *dstPtr, Color color, int format)
         case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
         {
             // NOTE: Calculate grayscale equivalent color
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
             const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<unsigned char *>(dstPtr))[0] = gray;
@@ -5697,7 +5697,7 @@ void SetPixelColor(void *dstPtr, Color color, int format)
         case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
         {
             // NOTE: Calculate grayscale equivalent color
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
             const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<unsigned char *>(dstPtr))[0] = gray;
@@ -5707,7 +5707,7 @@ void SetPixelColor(void *dstPtr, Color color, int format)
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
             // NOTE: Calculate R5G6B5 equivalent color
-            const glm::vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
 
             const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
             const unsigned char g = static_cast<unsigned char>(round(coln.y*63.0f));
@@ -5719,7 +5719,7 @@ void SetPixelColor(void *dstPtr, Color color, int format)
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const glm::vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
 
             const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
             const unsigned char g = static_cast<unsigned char>(round(coln.y*31.0f));
@@ -5732,7 +5732,7 @@ void SetPixelColor(void *dstPtr, Color color, int format)
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const glm::vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
 
             const unsigned char r = static_cast<unsigned char>(round(coln.x*15.0f));
             const unsigned char g = static_cast<unsigned char>(round(coln.y*15.0f));
@@ -5843,7 +5843,7 @@ static float HalfToFloat(unsigned short x)
     const unsigned int e = (x & 0x7c00) >> 10; // Exponent
     const unsigned int m = (x & 0x03ff) << 13; // Mantissa
     uni.fm = static_cast<float>(m);
-    const unsigned int v = uni.ui >> 23; // Evil log2 bit hack to count leading zeros in denormalized format
+    const unsigned int v = uni.ui >> 23;                                                                                                   // Evil log2 bit hack to count leading zeros in denormalized format
     uni.ui = (x & 0x8000) << 16 | (e != 0)*((e + 112) << 23 | m) | ((e == 0)&(m != 0))*((v - 37) << 23 | ((m << (150 - v)) & 0x007fe000)); // sign : normalized : denormalized
 
     result = uni.fm;
@@ -5862,19 +5862,19 @@ static unsigned short FloatToHalf(float x)
     } uni;
     uni.fm = x;
 
-    const unsigned int b = uni.ui + 0x00001000; // Round-to-nearest-even: add last bit after truncated mantissa
+    const unsigned int b = uni.ui + 0x00001000;    // Round-to-nearest-even: add last bit after truncated mantissa
     const unsigned int e = (b & 0x7f800000) >> 23; // Exponent
-    const unsigned int m = b & 0x007fffff; // Mantissa; in line below: 0x007ff000 = 0x00800000-0x00001000 = decimal indicator flag - initial rounding
+    const unsigned int m = b & 0x007fffff;         // Mantissa; in line below: 0x007ff000 = 0x00800000-0x00001000 = decimal indicator flag - initial rounding
 
     result = (b & 0x80000000) >> 16 | (e > 112)*((((e - 112) << 10) & 0x7c00) | m >> 13) | ((e < 113) & (e > 101))*((((0x007ff000 + m) >> (125 - e)) + 1) >> 1) | (e > 143)*0x7fff; // sign : normalized : denormalized : saturate
 
     return result;
 }
 
-// Get pixel data from image as glm::vec4 array (float normalized)
-static glm::vec4 *LoadImageDataNormalized(Image image)
+// Get pixel data from image as vec4 array (float normalized)
+static vec4 *LoadImageDataNormalized(Image image)
 {
-    glm::vec4 *pixels = static_cast<glm::vec4 *>(RL_CALLOC(image.width*image.height, sizeof(glm::vec4)));
+    vec4 *pixels = static_cast<vec4 *>(RL_CALLOC(image.width*image.height, sizeof(vec4)));
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else

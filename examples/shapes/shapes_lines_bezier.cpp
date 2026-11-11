@@ -28,8 +28,8 @@ int main()
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - lines bezier");
 
-    glm::vec2 startPoint = { 30, 30 };
-    glm::vec2 endPoint = { static_cast<float>(screenWidth) - 30, static_cast<float>(screenHeight) - 30 };
+    vec2 startPoint = { 30, 30 };
+    vec2 endPoint = { static_cast<float>(screenWidth) - 30, static_cast<float>(screenHeight) - 30 };
     bool moveStartPoint = false;
     bool moveEndPoint = false;
 
@@ -41,7 +41,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const glm::vec2 mouse = GetMousePosition();
+        const vec2 mouse = GetMousePosition();
 
         if (CheckCollisionPointCircle(mouse, startPoint, 10.0f) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) moveStartPoint = true;
         else if (CheckCollisionPointCircle(mouse, endPoint, 10.0f) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) moveEndPoint = true;

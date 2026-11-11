@@ -687,7 +687,7 @@ GlyphInfo *LoadFontData(const unsigned char *fileData, int dataSize, int fontSiz
             int k = 0;
             for (int i = 0; i < codepointCount; i++)
             {
-                int cpWidth = 0, cpHeight = 0;   // Codepoint width and height (on generation)
+                int cpWidth = 0, cpHeight = 0;         // Codepoint width and height (on generation)
                 const int cp = requiredCodepoints[i];  // Codepoint value to get info for
 
                 //  Render a unicode codepoint to a bitmap
@@ -864,7 +864,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, int glyp
         atlas.height = imageSize;  // Atlas bitmap height
     }
 
-    int atlasDataSize = atlas.width*atlas.height; // Save total size for bounds checking
+    int atlasDataSize = atlas.width*atlas.height;                           // Save total size for bounds checking
     atlas.data = static_cast<unsigned char *>(RL_CALLOC(atlasDataSize, 1)); // Create a bitmap to store characters (8 bpp)
     atlas.format = PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
     atlas.mipmaps = 1;
@@ -1212,7 +1212,7 @@ void DrawFPS(int posX, int posY)
     const int fps = GetFPS();
 
     if ((fps < 30) && (fps >= 15)) color = ORANGE;  // Warning FPS
-    else if (fps < 15) color = RED;             // Low FPS
+    else if (fps < 15) color = RED;                 // Low FPS
 
     DrawText(TextFormat("%2i FPS", fps), posX, posY, 20, color);
 }
@@ -1228,7 +1228,7 @@ void DrawText(std::string_view textView, int posX, int posY, int fontSize, Color
     // Check if default font has been loaded
     if (GetFontDefault().texture.id != 0)
     {
-        const glm::vec2 position = { static_cast<float>(posX), static_cast<float>(posY) };
+        const vec2 position = { static_cast<float>(posX), static_cast<float>(posY) };
 
         constexpr int defaultFontSize = 10;   // Default Font chars height in pixel
         if (fontSize < defaultFontSize) fontSize = defaultFontSize;
@@ -1240,7 +1240,7 @@ void DrawText(std::string_view textView, int posX, int posY, int fontSize, Color
 
 // Draw text using Font
 // NOTE: chars spacing is NOT proportional to fontSize
-void DrawTextEx(Font font, std::string_view textView, glm::vec2 position, float fontSize, float spacing, Color tint)
+void DrawTextEx(Font font, std::string_view textView, vec2 position, float fontSize, float spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -1271,7 +1271,7 @@ void DrawTextEx(Font font, std::string_view textView, glm::vec2 position, float 
         {
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                DrawTextCodepoint(font, codepoint, glm::vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
+                DrawTextCodepoint(font, codepoint, vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += (font.recs[index].width*scaleFactor + spacing);
@@ -1283,7 +1283,7 @@ void DrawTextEx(Font font, std::string_view textView, glm::vec2 position, float 
 }
 
 // Draw text using Font and pro parameters (rotation)
-void DrawTextPro(Font font, std::string_view textView, glm::vec2 position, glm::vec2 origin, float rotation, float fontSize, float spacing, Color tint)
+void DrawTextPro(Font font, std::string_view textView, vec2 position, vec2 origin, float rotation, float fontSize, float spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -1294,13 +1294,13 @@ void DrawTextPro(Font font, std::string_view textView, glm::vec2 position, glm::
         rlRotatef(rotation, 0.0f, 0.0f, 1.0f);
         rlTranslatef(-origin.x, -origin.y, 0.0f);
 
-        DrawTextEx(font, text, glm::vec2{ 0.0f, 0.0f }, fontSize, spacing, tint);
+        DrawTextEx(font, text, vec2{ 0.0f, 0.0f }, fontSize, spacing, tint);
 
     rlPopMatrix();
 }
 
 // Draw one character (codepoint)
-void DrawTextCodepoint(Font font, int codepoint, glm::vec2 position, float fontSize, Color tint)
+void DrawTextCodepoint(Font font, int codepoint, vec2 position, float fontSize, Color tint)
 {
     // Character index position in sprite font
     // NOTE: In case a codepoint is not available in the font, index returned points to '?'
@@ -1320,11 +1320,11 @@ void DrawTextCodepoint(Font font, int codepoint, glm::vec2 position, float fontS
                          font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding };
 
     // Draw the character texture on the screen
-    DrawTexturePro(font.texture, srcRec, dstRec, glm::vec2{ 0, 0 }, 0.0f, tint);
+    DrawTexturePro(font.texture, srcRec, dstRec, vec2{ 0, 0 }, 0.0f, tint);
 }
 
 // Draw multiple characters (codepoints)
-void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, glm::vec2 position, float fontSize, float spacing, Color tint)
+void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, vec2 position, float fontSize, float spacing, Color tint)
 {
     float textOffsetY = 0;          // Offset between lines (on linebreak '\n')
     float textOffsetX = 0.0f;       // Offset X to next character to draw
@@ -1345,7 +1345,7 @@ void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, gl
         {
             if ((codepoints[i] != ' ') && (codepoints[i] != '\t'))
             {
-                DrawTextCodepoint(font, codepoints[i], glm::vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
+                DrawTextCodepoint(font, codepoints[i], vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += (font.recs[index].width*scaleFactor + spacing);
@@ -1366,7 +1366,7 @@ int MeasureText(std::string_view textView, int fontSize)
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    glm::vec2 textSize = { 0.0f, 0.0f };
+    vec2 textSize = { 0.0f, 0.0f };
 
     // Check if default font has been loaded
     if (GetFontDefault().texture.id != 0)
@@ -1382,17 +1382,17 @@ int MeasureText(std::string_view textView, int fontSize)
 }
 
 // Measure string size for Font
-glm::vec2 MeasureTextEx(Font font, std::string_view textView, float fontSize, float spacing)
+vec2 MeasureTextEx(Font font, std::string_view textView, float fontSize, float spacing)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    glm::vec2 textSize{};
+    vec2 textSize{};
 
     if ((font.texture.id == 0) || (text == nullptr) || (text[0] == '\0')) return textSize; // Security check
 
     const int size = TextLength(text);    // Get size in bytes of text
-    int tempByteCounter = 0;        // Used to count longer text line num chars
+    int tempByteCounter = 0;              // Used to count longer text line num chars
     int byteCounter = 0;
 
     float textWidth = 0.0f;
@@ -1441,9 +1441,9 @@ glm::vec2 MeasureTextEx(Font font, std::string_view textView, float fontSize, fl
 }
 
 // Measure string size for an existing array of codepoints for Font
-glm::vec2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing)
+vec2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing)
 {
-    glm::vec2 textSize{};
+    vec2 textSize{};
 
     if ((font.texture.id == 0) || (codepoints == nullptr) || (length == 0)) return textSize; // Security check
 
@@ -1818,11 +1818,11 @@ std::string TextReplace(std::string_view textView, std::string_view searchView, 
 
         const char *insertPoint = nullptr;    // Next insert point
         char *tempPtr = nullptr;              // Temp pointer
-        int textLen = 0;            // Text string length
-        int searchLen = 0;          // Search string length of (the string to remove)
-        int replaceLen = 0;         // Replacement length (the string to replace by)
-        int lastReplacePos = 0;     // Distance between next search and end of last replace
-        int count = 0;              // Number of replacements
+        int textLen = 0;                      // Text string length
+        int searchLen = 0;                    // Search string length of (the string to remove)
+        int replaceLen = 0;                   // Replacement length (the string to replace by)
+        int lastReplacePos = 0;               // Distance between next search and end of last replace
+        int count = 0;                        // Number of replacements
 
         textLen = TextLength(text);
         searchLen = TextLength(search);
@@ -1909,8 +1909,8 @@ std::string TextReplaceBetween(std::string_view textView, std::string_view begin
 
                 if ((beginIndex + beginLen + replaceLen + (textLen - endIndex)) < (MAX_TEXT_BUFFER_LENGTH - 1))
                 {
-                    strncpy(buffer, text, beginIndex + beginLen); // Copy first text part
-                    strncpy(buffer + beginIndex + beginLen, replacement, replaceLen); // Copy replacement (if provided)
+                    strncpy(buffer, text, beginIndex + beginLen);                                              // Copy first text part
+                    strncpy(buffer + beginIndex + beginLen, replacement, replaceLen);                          // Copy replacement (if provided)
                     strncpy(buffer + beginIndex + beginLen + replaceLen, text + endIndex, textLen - endIndex); // Copy end text part
                 }
                 else TRACELOG(LOG_WARNING, "TEXT: Text with replaced string is longer than internal buffer (MAX_TEXT_BUFFER_LENGTH)");
@@ -2616,7 +2616,7 @@ static Font LoadBMFont(const char *fileName)
         {
             const Rectangle srcRec = { 0.0f, 0.0f, static_cast<float>(imWidth), static_cast<float>(imHeight) };
             const Rectangle dstRec = { 0.0f, static_cast<float>(imHeight)*static_cast<float>(i), static_cast<float>(imWidth), static_cast<float>(imHeight) };
-            ImageDrawImagePro(&fullFont, imFonts[i], srcRec, dstRec, glm::vec2{ 0 }, 0.0f, WHITE);
+            ImageDrawImagePro(&fullFont, imFonts[i], srcRec, dstRec, vec2{ 0 }, 0.0f, WHITE);
         }
     }
 

@@ -43,8 +43,8 @@ int main()
     GenTextureMipmaps(&font.texture);
 
     float fontSize = static_cast<float>(font.baseSize);
-    glm::vec2 fontPosition = { 40.0f, screenHeight/2.0f - 80.0f };
-    glm::vec2 textSize = { 0.0f, 0.0f };
+    vec2 fontPosition = { 40.0f, screenHeight/2.0f - 80.0f };
+    vec2 textSize = { 0.0f, 0.0f };
 
     // Setup texture scaling filter
     SetTextureFilter(font.texture, TEXTURE_FILTER_POINT);

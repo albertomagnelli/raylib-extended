@@ -30,14 +30,14 @@ int main()
     // Define the camera to look into our 3d world
     const Camera camera = { { 0.0f, 10.0f, 10.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
 
-    glm::vec3 playerPosition = { 0.0f, 1.0f, 2.0f };
-    const glm::vec3 playerSize = { 1.0f, 2.0f, 1.0f };
+    vec3 playerPosition = { 0.0f, 1.0f, 2.0f };
+    const vec3 playerSize = { 1.0f, 2.0f, 1.0f };
     Color playerColor = GREEN;
 
-    const glm::vec3 enemyBoxPos = { -4.0f, 1.0f, 0.0f };
-    const glm::vec3 enemyBoxSize = { 2.0f, 2.0f, 2.0f };
+    const vec3 enemyBoxPos = { -4.0f, 1.0f, 0.0f };
+    const vec3 enemyBoxSize = { 2.0f, 2.0f, 2.0f };
 
-    const glm::vec3 enemySpherePos = { 4.0f, 0.0f, 0.0f };
+    const vec3 enemySpherePos = { 4.0f, 0.0f, 0.0f };
     constexpr float enemySphereSize = 1.5f;
 
     bool collision = false;
@@ -61,25 +61,25 @@ int main()
 
         // Check collisions player vs enemy-box
         if (CheckCollisionBoxes(
-            BoundingBox{glm::vec3{ playerPosition.x - playerSize.x/2,
+            BoundingBox{vec3{ playerPosition.x - playerSize.x/2,
                                      playerPosition.y - playerSize.y/2,
                                      playerPosition.z - playerSize.z/2 },
-                          glm::vec3{ playerPosition.x + playerSize.x/2,
+                          vec3{ playerPosition.x + playerSize.x/2,
                                      playerPosition.y + playerSize.y/2,
                                      playerPosition.z + playerSize.z/2 }},
-            BoundingBox{glm::vec3{ enemyBoxPos.x - enemyBoxSize.x/2,
+            BoundingBox{vec3{ enemyBoxPos.x - enemyBoxSize.x/2,
                                      enemyBoxPos.y - enemyBoxSize.y/2,
                                      enemyBoxPos.z - enemyBoxSize.z/2 },
-                          glm::vec3{ enemyBoxPos.x + enemyBoxSize.x/2,
+                          vec3{ enemyBoxPos.x + enemyBoxSize.x/2,
                                      enemyBoxPos.y + enemyBoxSize.y/2,
                                      enemyBoxPos.z + enemyBoxSize.z/2 }})) collision = true;
 
         // Check collisions player vs enemy-sphere
         if (CheckCollisionBoxSphere(
-            BoundingBox{glm::vec3{ playerPosition.x - playerSize.x/2,
+            BoundingBox{vec3{ playerPosition.x - playerSize.x/2,
                                      playerPosition.y - playerSize.y/2,
                                      playerPosition.z - playerSize.z/2 },
-                          glm::vec3{ playerPosition.x + playerSize.x/2,
+                          vec3{ playerPosition.x + playerSize.x/2,
                                      playerPosition.y + playerSize.y/2,
                                      playerPosition.z + playerSize.z/2 }},
             enemySpherePos, enemySphereSize)) collision = true;

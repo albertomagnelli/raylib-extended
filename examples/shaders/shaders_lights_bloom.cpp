@@ -54,9 +54,9 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lights bloom");
 
     Camera3D camera = {};
-    camera.position = glm::vec3{ 0.0f, 5.0f, 9.0f };
-    camera.target = glm::vec3{ 0.0f, 0.5f, 0.0f };
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+    camera.position = vec3{ 0.0f, 5.0f, 9.0f };
+    camera.target = vec3{ 0.0f, 0.5f, 0.0f };
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -83,8 +83,8 @@ int main()
     const int lightColLoc = GetShaderLocation(lightShader, "lightColors");
     const int viewPosLoc = GetShaderLocation(lightShader, "viewPos");
 
-    glm::vec3 lightPositions[MAX_LIGHTS] = {};
-    glm::vec3 lightColors[MAX_LIGHTS] = {
+    vec3 lightPositions[MAX_LIGHTS] = {};
+    vec3 lightColors[MAX_LIGHTS] = {
         { 1.0f, 0.2f, 0.2f },   // Red
         { 0.2f, 1.0f, 0.3f },   // Green
         { 0.2f, 0.5f, 1.0f },   // Blue
@@ -116,7 +116,7 @@ int main()
             const float radius = 4.2f + sinf(time*1.2f + i)*0.4f;
             const float height = 1.0f + sinf(time*1.8f + i)*0.6f;
 
-            lightPositions[i] = glm::vec3{ sinf(angle)*radius, height, cosf(angle)*radius };
+            lightPositions[i] = vec3{ sinf(angle)*radius, height, cosf(angle)*radius };
         }
 
         SetShaderValueV(lightShader, lightPosLoc, lightPositions, SHADER_UNIFORM_VEC3, MAX_LIGHTS);
@@ -132,8 +132,8 @@ int main()
 
             BeginMode3D(camera);
 
-                DrawModel(cube, glm::vec3{ 0.0f, 1.0f, 0.0f }, 1.0f, GRAY);
-                DrawModel(floor, glm::vec3{ 0.0f, 0.0f, 0.0f }, 1.0f, DARKGRAY);
+                DrawModel(cube, vec3{ 0.0f, 1.0f, 0.0f }, 1.0f, GRAY);
+                DrawModel(floor, vec3{ 0.0f, 0.0f, 0.0f }, 1.0f, DARKGRAY);
                 DrawGrid(10, 1.0f);
 
                 // Glowing bulbs mark each light's position
@@ -161,7 +161,7 @@ int main()
 
             BeginShaderMode(bloomShader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, srcRec, glm::vec2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, srcRec, vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             DrawText("BALANCED MULTI-LIGHT + REINHARD TONE MAPPED BLOOM", 20, 20, 20, GREEN);

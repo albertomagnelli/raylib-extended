@@ -32,8 +32,8 @@ int main()
     int currentFps = 60;
 
     // Store the position for the both of the circles
-    glm::vec2 deltaCircle = { 0, static_cast<float>(screenHeight)/3.0f };
-    glm::vec2 frameCircle = { 0, static_cast<float>(screenHeight)*(2.0f/3.0f) };
+    vec2 deltaCircle = { 0, static_cast<float>(screenHeight)/3.0f };
+    vec2 frameCircle = { 0, static_cast<float>(screenHeight)*(2.0f/3.0f) };
 
     // The speed applied to both circles
     constexpr float speed = 10.0f;

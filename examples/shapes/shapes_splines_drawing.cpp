@@ -28,8 +28,8 @@
 // Cubic Bezier spline control points
 // NOTE: Every segment has two control points
 typedef struct {
-    glm::vec2 start;
-    glm::vec2 end;
+    vec2 start;
+    vec2 end;
 } ControlPoint;
 
 // Spline types
@@ -53,7 +53,7 @@ int main()
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - splines drawing");
 
-    glm::vec2 points[MAX_SPLINE_POINTS] = {
+    vec2 points[MAX_SPLINE_POINTS] = {
         {  50.0f, 400.0f },
         { 160.0f, 220.0f },
         { 340.0f, 380.0f },
@@ -63,20 +63,20 @@ int main()
 
     // Array required for spline bezier-cubic,
     // including control points interleaved with start-end segment points
-    glm::vec2 pointsInterleaved[3*(MAX_SPLINE_POINTS - 1) + 1] = {};
+    vec2 pointsInterleaved[3*(MAX_SPLINE_POINTS - 1) + 1] = {};
 
     int pointCount = 5;
     int selectedPoint = -1;
     int focusedPoint = -1;
-    glm::vec2 *selectedControlPoint = nullptr;
-    glm::vec2 *focusedControlPoint = nullptr;
+    vec2 *selectedControlPoint = nullptr;
+    vec2 *focusedControlPoint = nullptr;
 
     // Cubic Bezier control points initialization
     ControlPoint control[MAX_SPLINE_POINTS-1] = {};
     for (int i = 0; i < pointCount - 1; i++)
     {
-        control[i].start = glm::vec2{ points[i].x + 50, points[i].y };
-        control[i].end = glm::vec2{ points[i + 1].x - 50, points[i + 1].y };
+        control[i].start = vec2{ points[i].x + 50, points[i].y };
+        control[i].end = vec2{ points[i + 1].x - 50, points[i + 1].y };
     }
 
     // Spline config variables
@@ -98,8 +98,8 @@ int main()
         {
             points[pointCount] = GetMousePosition();
             const int i = pointCount - 1;
-            control[i].start = glm::vec2{ points[i].x + 50, points[i].y };
-            control[i].end = glm::vec2{ points[i + 1].x - 50, points[i + 1].y };
+            control[i].start = vec2{ points[i].x + 50, points[i].y };
+            control[i].end = vec2{ points[i + 1].x - 50, points[i + 1].y };
             pointCount++;
         }
 

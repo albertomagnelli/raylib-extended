@@ -33,8 +33,8 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - triangle strip");
 
-    glm::vec2 points[122] = {};
-    const glm::vec2 center = { (screenWidth/2.0f) - 125.0f, screenHeight/2.0f };
+    vec2 points[122] = {};
+    const vec2 center = { (screenWidth/2.0f) - 125.0f, screenHeight/2.0f };
     float segments = 6.0f;
     constexpr float insideRadius = 100.0f;
     constexpr float outsideRadius = 150.0f;
@@ -54,9 +54,9 @@ int main()
         for (int i = 0, i2 = 0; i < pointCount; i++, i2 += 2)
         {
             const float angle1 = i*angleStep;
-            points[i2] = glm::vec2{ center.x + cosf(angle1)*insideRadius, center.y + sinf(angle1)*insideRadius };
+            points[i2] = vec2{ center.x + cosf(angle1)*insideRadius, center.y + sinf(angle1)*insideRadius };
             const float angle2 = angle1 + angleStep/2.0f;
-            points[i2 + 1] = glm::vec2{ center.x + cosf(angle2)*outsideRadius, center.y + sinf(angle2)*outsideRadius };
+            points[i2 + 1] = vec2{ center.x + cosf(angle2)*outsideRadius, center.y + sinf(angle2)*outsideRadius };
         }
 
         points[pointCount*2] = points[0];
@@ -71,10 +71,10 @@ int main()
 
             for (int i = 0; i < pointCount; i++)
             {
-                const glm::vec2 a = points[i*2];
-                const glm::vec2 b = points[i*2 + 1];
-                const glm::vec2 c = points[i*2 + 2];
-                const glm::vec2 d = points[i*2 + 3];
+                const vec2 a = points[i*2];
+                const vec2 b = points[i*2 + 1];
+                const vec2 c = points[i*2 + 2];
+                const vec2 d = points[i*2 + 3];
 
                 const float angle1 = i*angleStep;
                 DrawTriangle(c, b, a, ColorFromHSV(angle1*RAD2DEG, 1.0f, 1.0f));

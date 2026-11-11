@@ -13,9 +13,10 @@
 #include <string_view>
 #include <utility>
 
+#include "types.h"
 #include "error.h"
 
-enum class LogLevel : std::uint8_t {
+enum class LogLevel : u8 {
     trace = 0,
     debug,
     info,

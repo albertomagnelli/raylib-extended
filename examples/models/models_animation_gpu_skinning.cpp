@@ -42,15 +42,15 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 5.0f, 5.0f, 5.0f }; // Camera position
-    camera.target = glm::vec3{ 0.0f, 1.0f, 0.0f };// Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };    // Camera up vector (rotation towards target)
+    camera.position = vec3{ 5.0f, 5.0f, 5.0f };     // Camera position
+    camera.target = vec3{ 0.0f, 1.0f, 0.0f };       // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };           // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                            // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
     // Load gltf model
     const Model model = LoadModel("resources/models/gltf/greenman.glb"); // Load character model
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const vec3 position = { 0.0f, 0.0f, 0.0f };                          // Set model position
 
 #if SUPPORT_GPU_SKINNING
     // WARNING: SUPPORT_GPU_SKINNING is required to be enabled at raylib compile time (disabled by default)
@@ -117,7 +117,7 @@ int main()
     // De-Initialization
     //--------------------------------------------------------------------------------------
     UnloadModelAnimations(anims, animCount); // Unload model animation
-    UnloadModel(model);             // Unload model and meshes/material
+    UnloadModel(model);                      // Unload model and meshes/material
 #if SUPPORT_GPU_SKINNING
     UnloadShader(skinningShader);   // Unload GPU skinning shader
 #endif

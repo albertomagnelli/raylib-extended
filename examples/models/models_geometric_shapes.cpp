@@ -29,9 +29,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 0.0f, 10.0f, 10.0f };
-    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+    camera.position = vec3{ 0.0f, 10.0f, 10.0f };
+    camera.target = vec3{ 0.0f, 0.0f, 0.0f };
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -54,22 +54,22 @@ int main()
 
             BeginMode3D(camera);
 
-                DrawCube(glm::vec3{-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, RED);
-                DrawCubeWires(glm::vec3{-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, GOLD);
-                DrawCubeWires(glm::vec3{-4.0f, 0.0f, -2.0f}, 3.0f, 6.0f, 2.0f, MAROON);
+                DrawCube(vec3{-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, RED);
+                DrawCubeWires(vec3{-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, GOLD);
+                DrawCubeWires(vec3{-4.0f, 0.0f, -2.0f}, 3.0f, 6.0f, 2.0f, MAROON);
 
-                DrawSphere(glm::vec3{-1.0f, 0.0f, -2.0f}, 1.0f, GREEN);
-                DrawSphereWires(glm::vec3{1.0f, 0.0f, 2.0f}, 2.0f, 16, 16, LIME);
+                DrawSphere(vec3{-1.0f, 0.0f, -2.0f}, 1.0f, GREEN);
+                DrawSphereWires(vec3{1.0f, 0.0f, 2.0f}, 2.0f, 16, 16, LIME);
 
-                DrawCylinder(glm::vec3{4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, SKYBLUE);
-                DrawCylinderWires(glm::vec3{4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, DARKBLUE);
-                DrawCylinderWires(glm::vec3{4.5f, -1.0f, 2.0f}, 1.0f, 1.0f, 2.0f, 6, BROWN);
+                DrawCylinder(vec3{4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, SKYBLUE);
+                DrawCylinderWires(vec3{4.0f, 0.0f, -2.0f}, 1.0f, 2.0f, 3.0f, 4, DARKBLUE);
+                DrawCylinderWires(vec3{4.5f, -1.0f, 2.0f}, 1.0f, 1.0f, 2.0f, 6, BROWN);
 
-                DrawCylinder(glm::vec3{1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, GOLD);
-                DrawCylinderWires(glm::vec3{1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, PINK);
+                DrawCylinder(vec3{1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, GOLD);
+                DrawCylinderWires(vec3{1.0f, 0.0f, -4.0f}, 0.0f, 1.5f, 3.0f, 8, PINK);
 
-                DrawCapsule     (glm::vec3{-3.0f, 1.5f, -4.0f}, glm::vec3{-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, VIOLET);
-                DrawCapsuleWires(glm::vec3{-3.0f, 1.5f, -4.0f}, glm::vec3{-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, PURPLE);
+                DrawCapsule     (vec3{-3.0f, 1.5f, -4.0f}, vec3{-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, VIOLET);
+                DrawCapsuleWires(vec3{-3.0f, 1.5f, -4.0f}, vec3{-4.0f, -1.0f, -4.0f}, 1.2f, 8, 8, PURPLE);
 
                 DrawGrid(10, 1.0f);        // Draw a grid
 

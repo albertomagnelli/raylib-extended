@@ -55,7 +55,7 @@ int main()
     float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    glm::vec2 circlePos = glm::vec2{40.0f, static_cast<float>(screenHeight)*0.5f};
+    vec2 circlePos = vec2{40.0f, static_cast<float>(screenHeight)*0.5f};
     float circleSpeed = 1.0f;
 
     // RenderTexture to apply the postprocessing later
@@ -72,7 +72,7 @@ int main()
         circlePos.x += circleSpeed;
         if ((circlePos.x > 200.0f) || (circlePos.x < 40.0f)) circleSpeed *= -1; // Revert speed
 
-        if (IsKeyPressed(KEY_LEFT) && (fontSize > 9.0)) fontSize -= 1;  // Reduce fontSize
+        if (IsKeyPressed(KEY_LEFT) && (fontSize > 9.0)) fontSize -= 1;    // Reduce fontSize
         if (IsKeyPressed(KEY_RIGHT) && (fontSize < 15.0)) fontSize += 1;  // Increase fontSize
 
         // Set fontsize for the shader
@@ -96,7 +96,7 @@ int main()
                 // The shader will process every pixel of this texture
                 DrawTextureRec(target.texture,
                     Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
-                    glm::vec2{ 0, 0 }, WHITE);
+                    vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             DrawRectangle(0, 0, screenWidth, 40, BLACK);

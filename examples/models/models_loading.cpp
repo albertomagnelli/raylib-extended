@@ -42,9 +42,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 50.0f, 50.0f, 50.0f }; // Camera position
-    camera.target = glm::vec3{ 0.0f, 12.0f, 0.0f };   // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 50.0f, 50.0f, 50.0f };      // Camera position
+    camera.target = vec3{ 0.0f, 12.0f, 0.0f };          // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 
@@ -52,7 +52,7 @@ int main()
     Texture2D texture = LoadTexture("resources/models/obj/castle_diffuse.png"); // Load model texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set map diffuse texture
 
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f };                  // Set model position
+    const vec3 position = { 0.0f, 0.0f, 0.0f };                  // Set model position
 
     BoundingBox bounds = GetMeshBoundingBox(model.meshes[0]);   // Set model bounds
 
@@ -85,8 +85,8 @@ int main()
                     IsFileExtension(droppedFiles.paths[0], ".iqm") ||
                     IsFileExtension(droppedFiles.paths[0], ".m3d"))       // Model file formats supported
                 {
-                    UnloadModel(model);                         // Unload previous model
-                    model = LoadModel(droppedFiles.paths[0]);   // Load new model
+                    UnloadModel(model);                                              // Unload previous model
+                    model = LoadModel(droppedFiles.paths[0]);                        // Load new model
                     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Set current map diffuse texture
 
                     bounds = GetMeshBoundingBox(model.meshes[0]);

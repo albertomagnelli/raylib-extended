@@ -113,7 +113,7 @@ typedef struct {
     drmModeConnector *connector;        // Direct Rendering Manager (DRM) mode connector
     drmModeCrtc *crtc;                  // CRT Controller
     int modeIndex;                      // Index of the used mode of connector->modes
-    uint32_t prevFB;                    // Previous DRM framebufer (during frame swapping)
+    u32 prevFB;                         // Previous DRM framebufer (during frame swapping)
 #if defined(SUPPORT_DRM_CACHE)
     bool fbCacheFullReported;           // Framebuffer cache exhaustion already reported
 #endif
@@ -127,7 +127,7 @@ typedef struct {
     EGLContext context;                 // Graphic context, mode in which drawing can be done
     EGLConfig config;                   // Graphic config
 #else
-    uint32_t prevDumbHandle;            // Handle to the previous dumb buffer (during frame swapping)
+    u32 prevDumbHandle;            // Handle to the previous dumb buffer (during frame swapping)
 #endif
 
     // Keyboard data
@@ -138,29 +138,29 @@ typedef struct {
     int keyboardFd;                     // File descriptor for the evdev keyboard
 
     // Mouse data
-    glm::vec2 eventWheelMove;           // Registers the event mouse wheel variation
+    vec2 eventWheelMove;           // Registers the event mouse wheel variation
     // NOTE: currentButtonState[] can't be written directly due to multithreading, app could miss the update
     char currentButtonStateEvdev[MAX_MOUSE_BUTTONS]; // Holds the new mouse state for the next polling event to grab
-    bool cursorRelative;                // Relative cursor mode
-    int mouseFd;                        // File descriptor for the evdev mouse/touch/gestures
-    bool mouseIsTouch;                  // Check if the current mouse device is actually a touchscreen
-    Rectangle absRange;                 // Range of values for absolute pointing devices (touchscreens)
-    int touchSlot;                      // Hold the touch slot number of the currently being sent multitouch block
-    bool touchActive[MAX_TOUCH_POINTS]; // Track which touch points are currently active
-    glm::vec2 touchPosition[MAX_TOUCH_POINTS]; // Track touch positions for each slot
-    int touchId[MAX_TOUCH_POINTS];      // Track touch IDs for each slot
+    bool cursorRelative;                             // Relative cursor mode
+    int mouseFd;                                     // File descriptor for the evdev mouse/touch/gestures
+    bool mouseIsTouch;                               // Check if the current mouse device is actually a touchscreen
+    Rectangle absRange;                              // Range of values for absolute pointing devices (touchscreens)
+    int touchSlot;                                   // Hold the touch slot number of the currently being sent multitouch block
+    bool touchActive[MAX_TOUCH_POINTS];              // Track which touch points are currently active
+    vec2 touchPosition[MAX_TOUCH_POINTS];            // Track touch positions for each slot
+    int touchId[MAX_TOUCH_POINTS];                   // Track touch IDs for each slot
 
     // Gamepad data
-    int gamepadStreamFd[MAX_GAMEPADS];  // Gamepad device file descriptor
+    int gamepadStreamFd[MAX_GAMEPADS];                          // Gamepad device file descriptor
     int gamepadAbsAxisRange[MAX_GAMEPADS][MAX_GAMEPAD_AXES][2]; // [0] = min, [1] = range value of the axes
-    int gamepadAbsAxisMap[MAX_GAMEPADS][ABS_CNT]; // Maps the axes gamepads from the evdev api to a sequential one
-    int gamepadCount;                   // The number of gamepads registered
+    int gamepadAbsAxisMap[MAX_GAMEPADS][ABS_CNT];               // Maps the axes gamepads from the evdev api to a sequential one
+    int gamepadCount;                                           // The number of gamepads registered
 } PlatformData;
 
 #if defined(SUPPORT_DRM_CACHE)
 typedef struct {
     struct gbm_bo *bo;      // Graphics buffer object
-    uint32_t fbId;          // DRM framebuffer ID
+    u32 fbId;               // DRM framebuffer ID
 } FramebufferCache;
 
 static FramebufferCache fbCache[MAX_DRM_CACHED_BUFFERS] = {};
@@ -428,10 +428,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-glm::vec2 GetMonitorPosition(int monitor)
+vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -533,15 +533,15 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-glm::vec2 GetWindowPosition(void)
+vec2 GetWindowPosition(void)
 {
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
-glm::vec2 GetWindowScaleDPI(void)
+vec2 GetWindowScaleDPI(void)
 {
-    return glm::vec2{ 1.0f, 1.0f };
+    return vec2{ 1.0f, 1.0f };
 }
 
 // Set clipboard text content
@@ -608,7 +608,7 @@ void DisableCursor(void)
 // Destroy cached framebuffer callback, set by gbm_bo_set_user_data()
 static void DestroyFrameBufferCallback(struct gbm_bo *bo, void *data)
 {
-    uint32_t fbId = (uintptr_t)data;
+    u32 fbId = (uintptr_t)data;
 
     // Remove from cache
     for (int i = 0; i < fbCacheCount; i++)
@@ -628,7 +628,7 @@ static void DestroyFrameBufferCallback(struct gbm_bo *bo, void *data)
 }
 
 // Create or retrieve cached DRM FB for BO
-static uint32_t GetOrCreateFbForBo(struct gbm_bo *bo)
+static u32 GetOrCreateFbForBo(struct gbm_bo *bo)
 {
     // Try to find existing cache entry
     for (int i = 0; i < fbCacheCount; i++)
@@ -650,12 +650,12 @@ static uint32_t GetOrCreateFbForBo(struct gbm_bo *bo)
         return {}; // FB cache full
     }
 
-    uint32_t handle = gbm_bo_get_handle(bo).u32;
-    uint32_t stride = gbm_bo_get_stride(bo);
-    uint32_t width = gbm_bo_get_width(bo);
-    uint32_t height = gbm_bo_get_height(bo);
+    u32 handle = gbm_bo_get_handle(bo).u32;
+    u32 stride = gbm_bo_get_stride(bo);
+    u32 width = gbm_bo_get_width(bo);
+    u32 height = gbm_bo_get_height(bo);
 
-    uint32_t fbId = 0;
+    u32 fbId = 0;
     if (drmModeAddFB(platform.fd, width, height, 24, 32, stride, handle, &fbId)) return 0;
 
     // Store in cache
@@ -701,7 +701,7 @@ int InitSwapScreenBuffer()
     }
 
     // Create FB for first buffer
-    uint32_t fbId = GetOrCreateFbForBo(bo);
+    u32 fbId = GetOrCreateFbForBo(bo);
     if (!fbId)
     {
         gbm_surface_release_buffer(platform.gbmSurface, bo);
@@ -780,7 +780,7 @@ void SwapScreenBuffer()
     }
 
     // Get FB ID (creates new one if needed)
-    uint32_t fbId = GetOrCreateFbForBo(nextBO);
+    u32 fbId = GetOrCreateFbForBo(nextBO);
     if (!fbId)
     {
         gbm_surface_release_buffer(platform.gbmSurface, nextBO);
@@ -797,7 +797,7 @@ void SwapScreenBuffer()
     if (drmModePageFlip(platform.fd, platform.crtc->crtc_id, fbId, DRM_MODE_PAGE_FLIP_EVENT, platform.prevBO))
     {
         if (errno == EBUSY) errCnt[3]++; // Display busy - skip flip
-        else errCnt[4]++; // Page flip failed
+        else errCnt[4]++;                // Page flip failed
 
         gbm_surface_release_buffer(platform.gbmSurface, nextBO);
         return;
@@ -832,7 +832,7 @@ void SwapScreenBuffer(void)
     struct gbm_bo *bo = gbm_surface_lock_front_buffer(platform.gbmSurface);
     if (!bo) TRACELOG(LOG_ERROR, "DISPLAY: Failed GBM to lock front buffer");
 
-    uint32_t fb = 0;
+    u32 fb = 0;
     int result = drmModeAddFB(platform.fd, platform.connector->modes[platform.modeIndex].hdisplay, platform.connector->modes[platform.modeIndex].vdisplay, 24, 32, gbm_bo_get_stride(bo), gbm_bo_get_handle(bo).u32, &fb);
     if (result != 0) TRACELOG(LOG_ERROR, "DISPLAY: drmModeAddFB() failed with result: %d", result);
 
@@ -860,12 +860,12 @@ void SwapScreenBuffer(void)
 
     // Retrieving the dimensions of the display mode used
     drmModeModeInfo *mode = &platform.connector->modes[platform.modeIndex];
-    uint32_t width = mode->hdisplay;
-    uint32_t height = mode->vdisplay;
+    u32 width = mode->hdisplay;
+    u32 height = mode->vdisplay;
 
     // Dumb buffers use a fixed format based on bpp
-    const uint32_t bpp = 32;    // 32 bits per pixel (XRGB8888 format)
-    const uint32_t depth = 24;  // Color depth, here only 24 bits, alpha is not used
+    const u32 bpp = 32;    // 32 bits per pixel (XRGB8888 format)
+    const u32 depth = 24;  // Color depth, here only 24 bits, alpha is not used
 
     // Create a dumb buffer for software rendering
     struct drm_mode_create_dumb creq = {};
@@ -881,7 +881,7 @@ void SwapScreenBuffer(void)
     }
 
     // Create framebuffer with the correct format
-    uint32_t fb = 0;
+    u32 fb = 0;
     result = drmModeAddFB(platform.fd, width, height, depth, bpp, creq.pitch, creq.handle, &fb);
     if (result != 0)
     {
@@ -926,7 +926,7 @@ void SwapScreenBuffer(void)
     munmap(dumbBuffer, creq.size);
 
     // Find a CRTC compatible with the connector
-    uint32_t crtcId = 0;
+    u32 crtcId = 0;
     if (platform.crtc) crtcId = platform.crtc->crtc_id;
     else
     {
@@ -1071,7 +1071,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -1124,13 +1124,13 @@ void PollInputEvents(void)
         (CORE.Input.Keyboard.currentKeyState[CORE.Input.Keyboard.exitKey] == 1)) CORE.Window.shouldClose = true;
 
     // Register previous mouse position
-    if (platform.cursorRelative) CORE.Input.Mouse.currentPosition = glm::vec2{ 0.0f, 0.0f };
+    if (platform.cursorRelative) CORE.Input.Mouse.currentPosition = vec2{ 0.0f, 0.0f };
     else CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
 
     // Register previous mouse states
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
     CORE.Input.Mouse.currentWheelMove = platform.eventWheelMove;
-    platform.eventWheelMove = glm::vec2{ 0.0f, 0.0f };
+    platform.eventWheelMove = vec2{ 0.0f, 0.0f };
 
     for (int i = 0; i < MAX_MOUSE_BUTTONS; i++)
     {
@@ -1416,16 +1416,16 @@ int InitPlatform(void)
 
     const EGLint framebufferAttribs[] = {
         EGL_RENDERABLE_TYPE, (rlGetVersion() == RL_OPENGL_ES_30)? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT, // Type of context support
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT, // Don't use it on Android!
-        EGL_RED_SIZE, 8,            // RED color bit depth (alternative: 5)
-        EGL_GREEN_SIZE, 8,          // GREEN color bit depth (alternative: 6)
-        EGL_BLUE_SIZE, 8,           // BLUE color bit depth (alternative: 5)
-        EGL_ALPHA_SIZE, 8,        // ALPHA bit depth (required for transparent framebuffer)
+        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,                                                                  // Don't use it on Android!
+        EGL_RED_SIZE, 8,                                                                                   // RED color bit depth (alternative: 5)
+        EGL_GREEN_SIZE, 8,                                                                                 // GREEN color bit depth (alternative: 6)
+        EGL_BLUE_SIZE, 8,                                                                                  // BLUE color bit depth (alternative: 5)
+        EGL_ALPHA_SIZE, 8,                                                                                 // ALPHA bit depth (required for transparent framebuffer)
         //EGL_TRANSPARENT_TYPE, EGL_NONE, // Request transparent framebuffer (EGL_TRANSPARENT_RGB does not work on RPI)
         EGL_DEPTH_SIZE, 24,         // Depth buffer size (Required to use Depth testing!)
         //EGL_STENCIL_SIZE, 8,      // Stencil buffer size
         EGL_SAMPLE_BUFFERS, sampleBuffer, // Activate MSAA
-        EGL_SAMPLES, samples,       // 4x Antialiasing if activated (Free on MALI GPUs)
+        EGL_SAMPLES, samples,             // 4x Antialiasing if activated (Free on MALI GPUs)
         EGL_NONE
     };
 
@@ -1827,7 +1827,7 @@ static void ProcessKeyboard(void)
 
     // Keyboard input polling (fill keys[256] array with status)
     int bufferByteCount = 0;                        // Bytes available on the buffer
-    char keysBuffer[MAX_KEYBUFFER_SIZE] = {};    // Max keys to be read at a time
+    char keysBuffer[MAX_KEYBUFFER_SIZE] = {};       // Max keys to be read at a time
 
     // Read availables keycodes from stdin
     bufferByteCount = read(STDIN_FILENO, keysBuffer, MAX_KEYBUFFER_SIZE);     // POSIX system call
@@ -2325,7 +2325,7 @@ static void PollMouseEvents(void)
     if (fd == -1) return;
 
     struct input_event event = {};
-    int touchAction = -1;           // 0-TOUCH_ACTION_UP, 1-TOUCH_ACTION_DOWN, 2-TOUCH_ACTION_MOVE
+    int touchAction = -1;             // 0-TOUCH_ACTION_UP, 1-TOUCH_ACTION_DOWN, 2-TOUCH_ACTION_MOVE
     static bool isMultitouch = false; // Detect if device supports MT events
 
     // Try to read data from the mouse/touch/gesture and only continue if successful
@@ -2720,7 +2720,7 @@ static void SetupFramebuffer(int width, int height)
 
         // Screen scaling required
         float scaleRatio = static_cast<float>(CORE.Window.render.width)/static_cast<float>(CORE.Window.screen.width);
-        CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleRatio, scaleRatio, 1.0f});
+        CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{scaleRatio, scaleRatio, 1.0f});
 
         // NOTE: Rendering to full display resolution,
         // calculate above parameters for downscale matrix and offsets

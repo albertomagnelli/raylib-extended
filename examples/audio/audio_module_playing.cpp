@@ -18,7 +18,7 @@
 #define MAX_CIRCLES  64
 
 typedef struct {
-    glm::vec2 position;
+    vec2 position;
     float radius;
     float alpha;
     float speed;

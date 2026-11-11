@@ -22,7 +22,7 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void SetSoundPosition(Camera listener, Sound sound, glm::vec3 position, float maxDist);
+static void SetSoundPosition(Camera listener, Sound sound, vec3 position, float maxDist);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -41,9 +41,9 @@ int main()
     const Sound sound = LoadSound("resources/coin.wav");
 
     Camera camera = {
-        .position = glm::vec3{ 0, 5, 5 },
-        .target = glm::vec3{ 0, 0, 0 },
-        .up = glm::vec3{ 0, 1, 0 },
+        .position = vec3{ 0, 5, 5 },
+        .target = vec3{ 0, 0, 0 },
+        .up = vec3{ 0, 1, 0 },
         .fovy = 60,
         .projection = CAMERA_PERSPECTIVE
     };
@@ -62,7 +62,7 @@ int main()
 
         const float th = static_cast<float>(GetTime());
 
-        const glm::vec3 spherePos = { 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
+        const vec3 spherePos = { 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
 
         SetSoundPosition(camera, sound, spherePos, 1.0f);
 
@@ -99,10 +99,10 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Set sound 3d position
-static void SetSoundPosition(Camera listener, Sound sound, glm::vec3 position, float maxDist)
+static void SetSoundPosition(Camera listener, Sound sound, vec3 position, float maxDist)
 {
     // Calculate direction vector and distance between listener and sound source
-    const glm::vec3 direction = ((position) - (listener.position));
+    const vec3 direction = ((position) - (listener.position));
     const float distance = glm::length(direction);
 
     // Apply logarithmic distance attenuation and clamp between 0-1
@@ -110,9 +110,9 @@ static void SetSoundPosition(Camera listener, Sound sound, glm::vec3 position, f
     attenuation = Clamp(attenuation, 0.0f, 1.0f);
 
     // Calculate normalized vectors for spatial positioning
-    const glm::vec3 normalizedDirection = glm::normalize(direction);
-    const glm::vec3 forward = glm::normalize(((listener.target) - (listener.position)));
-    const glm::vec3 right = glm::normalize(glm::cross(forward, listener.up));
+    const vec3 normalizedDirection = glm::normalize(direction);
+    const vec3 forward = glm::normalize(((listener.target) - (listener.position)));
+    const vec3 right = glm::normalize(glm::cross(forward, listener.up));
 
     // Reduce volume for sounds behind the listener
     const float dotProduct = glm::dot(forward, normalizedDirection);

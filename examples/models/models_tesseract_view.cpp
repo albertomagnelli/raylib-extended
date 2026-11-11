@@ -35,14 +35,14 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 4.0f, 4.0f, 4.0f };  // Camera position
-    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 0.0f, 1.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 4.0f, 4.0f, 4.0f };         // Camera position
+    camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 0.0f, 1.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 50.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 
     // Find the coordinates by setting XYZW to +-1
-    const glm::vec4 tesseract[16] = {
+    const vec4 tesseract[16] = {
         {  1,  1,  1, 1 }, {  1,  1,  1, -1 },
         {  1,  1, -1, 1 }, {  1,  1, -1, -1 },
         {  1, -1,  1, 1 }, {  1, -1,  1, -1 },
@@ -54,7 +54,7 @@ int main()
     };
 
     float rotation = 0.0f;
-    glm::vec3 transformed[16] = {};
+    vec3 transformed[16] = {};
     float wValues[16] = {};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -69,10 +69,10 @@ int main()
 
         for (int i = 0; i < 16; i++)
         {
-            glm::vec4 p = tesseract[i];
+            vec4 p = tesseract[i];
 
             // Rotate the XW part of the vector
-            const glm::vec2 rotXW = Vector2Rotate(glm::vec2{ p.x, p.w }, rotation);
+            const vec2 rotXW = Vector2Rotate(vec2{ p.x, p.w }, rotation);
             p.x = rotXW.x;
             p.w = rotXW.y;
 
@@ -84,7 +84,7 @@ int main()
             p.z = c*p.z;
 
             // Split XYZ coordinate and W values later for drawing
-            transformed[i] = glm::vec3{ p.x, p.y, p.z };
+            transformed[i] = vec3{ p.x, p.y, p.z };
             wValues[i] = p.w;
         }
         //----------------------------------------------------------------------------------
@@ -105,8 +105,8 @@ int main()
                     {
                         // Two lines are connected if they differ by 1 coordinate
                         // This way we dont have to keep an edge list
-                        const glm::vec4 v1 = tesseract[i];
-                        const glm::vec4 v2 = tesseract[j];
+                        const vec4 v1 = tesseract[i];
+                        const vec4 v2 = tesseract[j];
                         const int diff = static_cast<int>(v1.x == v2.x) + static_cast<int>(v1.y == v2.y) + static_cast<int>(v1.z == v2.z) + static_cast<int>(v1.w == v2.w);
 
                         // Draw only differing by 1 coordinate and the lower index only (duplicate lines)

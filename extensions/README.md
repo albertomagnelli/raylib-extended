@@ -133,8 +133,8 @@ or when the input comes from a replay, an AI or the network:
 
 ```cpp
 // Move at 6 units per second along the local forward axis, rotate 1.5 degrees of yaw
-glm::vec3 desiredVelocity{ 0.0f, 0.0f, 6.0f };
-glm::vec2 lookDelta{ 1.5f, 0.0f };
+vec3 desiredVelocity{ 0.0f, 0.0f, 6.0f };
+vec2 lookDelta{ 1.5f, 0.0f };
 
 camera.UpdateManual(GetFrameTime(), desiredVelocity, lookDelta, 0.0f);
 ```
@@ -241,7 +241,7 @@ an animated directional light and a 2048x2048 depth-only shadow map with 3x3 PCF
 | `mx::gpu::Pipeline` | `rlEnableShader()` / `rlEnableBackfaceCulling()` / `rlEnableDepthTest()` |
 | `mx::gpu::Sampler` (nearest, clamp) | the defaults `rlLoadTextureDepth()` already sets |
 | `mx::make*Mesh()` | `GenMeshPlane()` / `GenMeshCube()` / `GenMeshSphere()` / ... |
-| glm math | glm is raylib's public math API (`glm::vec3`, `Matrix`, ...); the standalone build fetches `g-truc/glm` 1.0.1 with `FetchContent` |
+| glm math | glm is raylib's public math API, exposed through the short names in `types.h` (`vec3`, `mat4`, ...); the standalone build fetches `g-truc/glm` 1.0.1 with `FetchContent` |
 
 The lighting, the 3x3 PCF and the Reinhard tonemapping are unchanged, as are the palette and the
 German HUD strings. The original shaders asked for `#version 460` because mx created an OpenGL 4.6
@@ -261,7 +261,7 @@ context, the port uses `#version 330` for the OpenGL 3.3 core context raylib def
 
 These were the three traps while porting, all of them easy to reproduce:
 
-- **`Matrix` is `glm::mat4`**: raylib exposes glm types directly, so a `glm::mat4` can be passed
+- **`mat4` is `glm::mat4`**: raylib exposes glm types directly, so a `mat4` can be passed
   to `rlSetUniformMatrix()` / `SetShaderValueMatrix()` without any conversion. Both glm and
   OpenGL store matrices column-major and `rlMatrixToFloat()` preserves that layout, so the matrix
   reaches the shader unchanged.

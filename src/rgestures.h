@@ -70,7 +70,7 @@
 
 // Vectors are glm types, required for standalone usage
 #if !defined(RL_VECTOR2_TYPE)
-    #include <glm/glm.hpp>
+    #include "types.h"
 #endif
 
 #if defined(RGESTURES_STANDALONE)
@@ -103,7 +103,7 @@ typedef struct {
     int touchAction;
     int pointCount;
     int pointId[MAX_TOUCH_POINTS];
-    glm::vec2 position[MAX_TOUCH_POINTS];
+    vec2 position[MAX_TOUCH_POINTS];
 } GestureEvent;
 
 //----------------------------------------------------------------------------------
@@ -128,9 +128,9 @@ bool IsGestureDetected(int gesture);                    // Check if gesture has 
 int GetGestureDetected(void);                           // Get latest detected gesture
 
 float GetGestureHoldDuration(void);                     // Get gesture hold time in seconds
-glm::vec2 GetGestureDragVector(void);                   // Get gesture drag vector
+vec2 GetGestureDragVector(void);                        // Get gesture drag vector
 float GetGestureDragAngle(void);                        // Get gesture drag angle
-glm::vec2 GetGesturePinchVector(void);                  // Get gesture pinch delta
+vec2 GetGesturePinchVector(void);                       // Get gesture pinch delta
 float GetGesturePinchAngle(void);                       // Get gesture pinch angle
 #endif
 
@@ -198,14 +198,14 @@ typedef struct {
         int firstId;                    // Touch id for first touch point
         int pointCount;                 // Touch points counter
         double eventTime;               // Time stamp when an event happened
-        glm::vec2 upPosition;           // Touch up position
-        glm::vec2 downPositionA;        // First touch down position
-        glm::vec2 downPositionB;        // Second touch down position
-        glm::vec2 downDragPosition;     // Touch drag position
-        glm::vec2 moveDownPositionA;    // First touch down position on move
-        glm::vec2 moveDownPositionB;    // Second touch down position on move
-        glm::vec2 previousPositionA;    // Previous position A to compare for pinch gestures
-        glm::vec2 previousPositionB;    // Previous position B to compare for pinch gestures
+        vec2 upPosition;                // Touch up position
+        vec2 downPositionA;             // First touch down position
+        vec2 downPositionB;             // Second touch down position
+        vec2 downDragPosition;          // Touch drag position
+        vec2 moveDownPositionA;         // First touch down position on move
+        vec2 moveDownPositionB;         // Second touch down position on move
+        vec2 previousPositionA;         // Previous position A to compare for pinch gestures
+        vec2 previousPositionB;         // Previous position B to compare for pinch gestures
         int tapCounter;                 // TAP counter (one tap implies TOUCH_ACTION_DOWN and TOUCH_ACTION_UP actions)
     } Touch;
     struct {
@@ -213,7 +213,7 @@ typedef struct {
         double timeDuration;            // HOLD duration in seconds
     } Hold;
     struct {
-        glm::vec2 vector;               // DRAG vector (between initial and current position)
+        vec2 vector;                    // DRAG vector (between initial and current position)
         float angle;                    // DRAG angle (relative to x-axis)
         float distance;                 // DRAG distance (from initial touch point to final) (normalized [0..1])
         float intensity;                // DRAG intensity, how far why did the DRAG (pixels per frame)
@@ -222,7 +222,7 @@ typedef struct {
         double startTime;               // SWIPE start time to calculate drag intensity
     } Swipe;
     struct {
-        glm::vec2 vector;               // PINCH vector (between first and second touch points)
+        vec2 vector;                    // PINCH vector (between first and second touch points)
         float angle;                    // PINCH angle (relative to x-axis)
         float distance;                 // PINCH displacement distance (normalized [0..1])
     } Pinch;
@@ -242,8 +242,8 @@ static GesturesData GESTURES = {
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static float rgVector2Angle(glm::vec2 initialPosition, glm::vec2 finalPosition);
-static float rgVector2Distance(glm::vec2 v1, glm::vec2 v2);
+static float rgVector2Angle(vec2 initialPosition, vec2 finalPosition);
+static float rgVector2Distance(vec2 v1, vec2 v2);
 static double rgGetCurrentTime(void);
 
 //----------------------------------------------------------------------------------
@@ -295,7 +295,7 @@ void ProcessGestureEvent(GestureEvent event)
 
             GESTURES.Swipe.startTime = rgGetCurrentTime();
 
-            GESTURES.Drag.vector = glm::vec2{ 0.0f, 0.0f };
+            GESTURES.Drag.vector = vec2{ 0.0f, 0.0f };
         }
         else if (event.touchAction == TOUCH_ACTION_UP)
         {
@@ -327,7 +327,7 @@ void ProcessGestureEvent(GestureEvent event)
                 GESTURES.current = GESTURE_NONE;
             }
 
-            GESTURES.Touch.downDragPosition = glm::vec2{ 0.0f, 0.0f };
+            GESTURES.Touch.downDragPosition = vec2{ 0.0f, 0.0f };
             GESTURES.Touch.pointCount = 0;
         }
         else if (event.touchAction == TOUCH_ACTION_MOVE)
@@ -398,7 +398,7 @@ void ProcessGestureEvent(GestureEvent event)
         {
             GESTURES.Pinch.distance = 0.0f;
             GESTURES.Pinch.angle = 0.0f;
-            GESTURES.Pinch.vector = glm::vec2{ 0.0f, 0.0f };
+            GESTURES.Pinch.vector = vec2{ 0.0f, 0.0f };
             GESTURES.Touch.pointCount = 0;
 
             GESTURES.current = GESTURE_NONE;
@@ -449,7 +449,7 @@ float GetGestureHoldDuration(void)
 }
 
 // Get drag vector (between initial touch point to current)
-glm::vec2 GetGestureDragVector(void)
+vec2 GetGestureDragVector(void)
 {
     // NOTE: drag vector is calculated on one touch points TOUCH_ACTION_MOVE
 
@@ -466,7 +466,7 @@ float GetGestureDragAngle(void)
 }
 
 // Get distance between two pinch points
-glm::vec2 GetGesturePinchVector(void)
+vec2 GetGesturePinchVector(void)
 {
     // NOTE: Pinch distance is calculated on two touch points TOUCH_ACTION_MOVE
 
@@ -486,7 +486,7 @@ float GetGesturePinchAngle(void)
 // Module Internal Functions Definition
 //----------------------------------------------------------------------------------
 // Get angle from two-points vector with X-axis
-static float rgVector2Angle(glm::vec2 v1, glm::vec2 v2)
+static float rgVector2Angle(vec2 v1, vec2 v2)
 {
     float angle = atan2f(v2.y - v1.y, v2.x - v1.x)*(180.0f/PI);
 
@@ -495,8 +495,8 @@ static float rgVector2Angle(glm::vec2 v1, glm::vec2 v2)
     return angle;
 }
 
-// Calculate distance between two glm::vec2
-static float rgVector2Distance(glm::vec2 v1, glm::vec2 v2)
+// Calculate distance between two vec2
+static float rgVector2Distance(vec2 v1, vec2 v2)
 {
     float result;
 

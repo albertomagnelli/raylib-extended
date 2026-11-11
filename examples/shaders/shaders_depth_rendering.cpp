@@ -50,9 +50,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 4.0f, 1.0f, 5.0f };
-    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+    camera.position = vec3{ 4.0f, 1.0f, 5.0f };
+    camera.target = vec3{ 0.0f, 0.0f, 0.0f };
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -88,8 +88,8 @@ int main()
             ClearBackground(WHITE);
 
             BeginMode3D(camera);
-                DrawModel(cube, glm::vec3{ 0.0f, 0.0f, 0.0f }, 3.0f, YELLOW);
-                DrawModel(floor, glm::vec3{ 10.0f, 0.0f, 2.0f }, 2.0f, RED);
+                DrawModel(cube, vec3{ 0.0f, 0.0f, 0.0f }, 3.0f, YELLOW);
+                DrawModel(floor, vec3{ 10.0f, 0.0f, 2.0f }, 2.0f, RED);
             EndMode3D();
         EndTextureMode();
 

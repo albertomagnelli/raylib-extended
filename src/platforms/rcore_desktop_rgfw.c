@@ -510,7 +510,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
         {
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
             SetupViewport(platform.window->w*currentMonitor->pixelRatio, platform.window->h*currentMonitor->pixelRatio);
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.screen.width = platform.window->w;
             CORE.Window.screen.height = platform.window->h;
@@ -536,10 +536,10 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
         // Consider content scaling if required
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
-            glm::vec2 scaleDpi = GetWindowScaleDPI();
+            vec2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = static_cast<int>((platform.window->w/scaleDpi.x));
             CORE.Window.screen.height = static_cast<int>((platform.window->h/scaleDpi.y));
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleDpi.x, scaleDpi.y, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{scaleDpi.x, scaleDpi.y, 1.0f});
         }
         else
         {
@@ -554,7 +554,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
     #if defined(GRAPHICS_API_OPENGL_SOFTWARE)
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
             SetupViewport(platform.window->w*currentMonitor->pixelRatio, platform.window->h*currentMonitor->pixelRatio);
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
@@ -568,7 +568,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
         // in software mode we dont have the viewport so we need to reverse the highdpi changes
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
-            glm::vec2 scaleDpi = GetWindowScaleDPI();
+            vec2 scaleDpi = GetWindowScaleDPI();
             platform.surfaceWidth *= scaleDpi.x;
             platform.surfaceHeight *= scaleDpi.y;
         }
@@ -773,7 +773,7 @@ void ToggleFullscreen(void)
     {
         FLAG_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE);
         // Store previous window position (in case of exiting fullscreen)
-        glm::vec2 currentPosition = GetWindowPosition();
+        vec2 currentPosition = GetWindowPosition();
         CORE.Window.previousPosition.x = currentPosition.x;
         CORE.Window.previousPosition.y = currentPosition.y;
         CORE.Window.previousScreen = CORE.Window.screen;
@@ -813,7 +813,7 @@ void ToggleBorderlessWindowed(void)
     {
         FLAG_SET(CORE.Window.flags, FLAG_BORDERLESS_WINDOWED_MODE);
 
-        glm::vec2 currentPosition = GetWindowPosition();
+        vec2 currentPosition = GetWindowPosition();
         CORE.Window.previousPosition.x = static_cast<int>(currentPosition.x);
         CORE.Window.previousPosition.y = static_cast<int>(currentPosition.y);
         CORE.Window.previousScreen = CORE.Window.screen;
@@ -1094,11 +1094,11 @@ void SetWindowSize(int width, int height)
         CORE.Window.screen.width = width;
         CORE.Window.screen.height = height;
 
-        glm::vec2 scaleDpi = GetWindowScaleDPI();
+        vec2 scaleDpi = GetWindowScaleDPI();
 
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
             CORE.Window.render.height = CORE.Window.screen.height*currentMonitor->pixelRatio;
@@ -1106,7 +1106,7 @@ void SetWindowSize(int width, int height)
             CORE.Window.currentFbo.height = CORE.Window.render.height;
         #else
             SetMouseScale(1.0f/scaleDpi.x, 1.0f/scaleDpi.y);
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleDpi.x, scaleDpi.y, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{scaleDpi.x, scaleDpi.y, 1.0f});
         #endif
 
         CORE.Window.currentFbo.width = CORE.Window.render.width;
@@ -1189,11 +1189,11 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-glm::vec2 GetMonitorPosition(int monitor)
+vec2 GetMonitorPosition(int monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
-    return glm::vec2{ static_cast<float>(mons[monitor]->x), static_cast<float>(mons[monitor]->y) };
+    return vec2{ static_cast<float>(mons[monitor]->x), static_cast<float>(mons[monitor]->y) };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -1245,22 +1245,22 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-glm::vec2 GetWindowPosition(void)
+vec2 GetWindowPosition(void)
 {
     if (platform.window == nullptr)
     {
-        return glm::vec2{ 0.0f, 0.0f };
+        return vec2{ 0.0f, 0.0f };
     }
 
     if (RGFW_window_getPosition(platform.window, &platform.window->x, &platform.window->y)) {
-        return glm::vec2{ static_cast<float>(platform.window->x), static_cast<float>(platform.window->y) };
+        return vec2{ static_cast<float>(platform.window->x), static_cast<float>(platform.window->y) };
     }
 
-    return glm::vec2{ 0.0f, 0.0f };
+    return vec2{ 0.0f, 0.0f };
 }
 
 // Get window scale DPI factor for current monitor
-glm::vec2 GetWindowScaleDPI(void)
+vec2 GetWindowScaleDPI(void)
 {
     RGFW_monitor *monitor = nullptr;
 
@@ -1270,10 +1270,10 @@ glm::vec2 GetWindowScaleDPI(void)
     #if defined(__APPLE__)
         // Apple does < 1.0f scaling, example: 0.66f, 0.5f
         // it needs to be convert to be consistent
-        return glm::vec2{ 1.0f/monitor->scaleX, 1.0f/monitor->scaleX };
+        return vec2{ 1.0f/monitor->scaleX, 1.0f/monitor->scaleX };
     #else
         // Linux and Windows do >= 1.0f scaling, example: 1.0f, 1.25f, 2.0f
-        return glm::vec2{ monitor->scaleX, monitor->scaleX };
+        return vec2{ monitor->scaleX, monitor->scaleX };
     #endif
 }
 
@@ -1542,7 +1542,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 void SetMousePosition(int x, int y)
 {
     RGFW_window_moveMouse(platform.window, x, y);
-    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -1618,8 +1618,8 @@ void PollInputEvents(void)
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
     if (RGFW_window_isCaptured(platform.window))
     {
-        CORE.Input.Mouse.previousPosition = glm::vec2{ 0.0f, 0.0f };
-        CORE.Input.Mouse.currentPosition = glm::vec2{ 0.0f, 0.0f };
+        CORE.Input.Mouse.previousPosition = vec2{ 0.0f, 0.0f };
+        CORE.Input.Mouse.currentPosition = vec2{ 0.0f, 0.0f };
     }
     else
     {
@@ -1872,11 +1872,11 @@ int InitPlatform(void)
 
     // adjust scale if using highdpi
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)) {
-        glm::vec2 scaleDpi = GetWindowScaleDPI();
+        vec2 scaleDpi = GetWindowScaleDPI();
 
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
             CORE.Window.render.height = CORE.Window.screen.height*currentMonitor->pixelRatio;
@@ -1884,7 +1884,7 @@ int InitPlatform(void)
             CORE.Window.currentFbo.height = CORE.Window.render.height;
         #else
             SetMouseScale(1.0f/scaleDpi.x, 1.0f/scaleDpi.y);
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleDpi.x, scaleDpi.y, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{scaleDpi.x, scaleDpi.y, 1.0f});
             CORE.Window.screen.width /= scaleDpi.x;
             CORE.Window.screen.height /= scaleDpi.y;
         #endif
@@ -1894,7 +1894,7 @@ int InitPlatform(void)
         // apple always scales for retina
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
+            CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{currentMonitor->pixelRatio, currentMonitor->pixelRatio, 1.0f});
 
             CORE.Window.render.width = CORE.Window.screen.width*currentMonitor->pixelRatio;
             CORE.Window.render.height = CORE.Window.screen.height*currentMonitor->pixelRatio;
@@ -2108,7 +2108,7 @@ double GetTimeSeconds(void)
             mach_timebase_info(&tb);
             tbInitialized = true;
         }
-        uint64_t ticks = mach_absolute_time();
+        u64 ticks = mach_absolute_time();
 
         currentTime = static_cast<double>(ticks)*static_cast<double>(tb.numer)/static_cast<double>(tb.denom)/1e9;
     #elif defined(__linux__)

@@ -31,7 +31,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input multitouch");
 
-    glm::vec2 touchPositions[MAX_TOUCH_POINTS] = {};
+    vec2 touchPositions[MAX_TOUCH_POINTS] = {};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------

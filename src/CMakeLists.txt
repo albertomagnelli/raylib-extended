@@ -6,7 +6,7 @@ set(API_VERSION 620)
 
 # Standalone configurations do not inherit a standard from a parent project
 if (NOT DEFINED CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD 23)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
     set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
@@ -34,6 +34,7 @@ set(raylib_public_headers
     rcamera.h
     rlgl.h
     raymath.h
+    types.h
     )
 
 # Sources to be compiled
@@ -42,11 +43,11 @@ set(raylib_sources
     rshapes.cpp
     rtext.cpp
     rtextures.cpp
-        loggging.h
-        logging.cpp
-        error.h
-        types.h
-)
+    logging.cpp
+    error.cpp
+    loggging.h
+    error.h
+    )
 
 # Only build raudio if it's enabled
 if (NOT DEFINED SUPPORT_MODULE_RAUDIO OR SUPPORT_MODULE_RAUDIO)

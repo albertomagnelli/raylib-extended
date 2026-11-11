@@ -83,7 +83,7 @@ int main()
     Image fftImage = GenImageColor(BUFFER_SIZE, TEXTURE_HEIGHT, WHITE);
     const Texture2D fftTexture = LoadTextureFromImage(fftImage);
     const RenderTexture2D bufferA = LoadRenderTexture(screenWidth, screenHeight);
-    glm::vec2 iResolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
+    vec2 iResolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
 
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
 
@@ -160,7 +160,7 @@ int main()
                 SetShaderValueTexture(shader, iChannel0Location, fftTexture);
                 DrawTextureRec(bufferA.texture,
                     Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) },
-                    glm::vec2{ 0, 0 }, WHITE);
+                    vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
         EndDrawing();
@@ -281,5 +281,5 @@ static void RenderFrame(const FFTData *fftData, Image *fftImage)
     if (historyPosition < 0) historyPosition += fftData->fftHistoryLen;
 
     const float *amplitude = fftData->fftHistory[historyPosition];
-    for (int bin = 0; bin < BUFFER_SIZE; bin++) ImageDrawPixel(fftImage, bin, FFT_ROW, ColorFromNormalized(glm::vec4{ amplitude[bin], UNUSED_CHANNEL, UNUSED_CHANNEL, UNUSED_CHANNEL }));
+    for (int bin = 0; bin < BUFFER_SIZE; bin++) ImageDrawPixel(fftImage, bin, FFT_ROW, ColorFromNormalized(vec4{ amplitude[bin], UNUSED_CHANNEL, UNUSED_CHANNEL, UNUSED_CHANNEL }));
 }

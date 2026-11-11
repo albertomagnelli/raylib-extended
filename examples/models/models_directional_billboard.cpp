@@ -36,11 +36,11 @@ int main()
 
     // Set up the camera
     Camera camera = {};
-    camera.position = glm::vec3{ 2.0f, 1.0f, 2.0f }; // Starting position
-    camera.target = glm::vec3{ 0.0f, 0.5f, 0.0f };// Target position
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f }; // Up vector
-    camera.fovy = 45.0f; // FOV
-    camera.projection = CAMERA_PERSPECTIVE; // Projection type (Standard 3D perspective)
+    camera.position = vec3{ 2.0f, 1.0f, 2.0f }; // Starting position
+    camera.target = vec3{ 0.0f, 0.5f, 0.0f };   // Target position
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };       // Up vector
+    camera.fovy = 45.0f;                        // FOV
+    camera.projection = CAMERA_PERSPECTIVE;     // Projection type (Standard 3D perspective)
 
     // Load billboard texture
     const Texture skillbot = LoadTexture("resources/skillbot.png");
@@ -74,7 +74,7 @@ int main()
         if (anim >= 4) anim = 0;
 
         // Find the current direction frame based on the camera position to the billboard object
-        float dir = static_cast<float>(floor(((Vector2Angle(glm::vec2{ 2.0f, 0.0f }, glm::vec2{ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f));
+        float dir = static_cast<float>(floor(((Vector2Angle(vec2{ 2.0f, 0.0f }, vec2{ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f));
 
         // Correct frame index if angle is negative
         if (dir < 0.0f)
@@ -94,7 +94,7 @@ int main()
             DrawGrid(10, 1.0f);
 
             // Draw billboard pointing straight up to the sky, rotated relative to the camera and offset from the bottom
-            DrawBillboardPro(camera, skillbot, Rectangle{ 0.0f + (anim*24.0f), 0.0f + (dir*24.0f), 24.0f, 24.0f }, glm::vec3{}, glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2(1.0f), glm::vec2{ 0.5f, 0.0f }, 0, WHITE);
+            DrawBillboardPro(camera, skillbot, Rectangle{ 0.0f + (anim*24.0f), 0.0f + (dir*24.0f), 24.0f, 24.0f }, vec3{}, vec3{ 0.0f, 1.0f, 0.0f }, vec2(1.0f), vec2{ 0.5f, 0.0f }, 0, WHITE);
 
         EndMode3D();
 

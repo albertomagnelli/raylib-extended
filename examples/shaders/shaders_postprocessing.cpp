@@ -81,17 +81,17 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 2.0f, 3.0f, 2.0f };  // Camera position
-    camera.target = glm::vec3{ 0.0f, 1.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 2.0f, 3.0f, 2.0f };         // Camera position
+    camera.target = vec3{ 0.0f, 1.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     const Model model = LoadModel("resources/models/church.obj");                 // Load OBJ model
     const Texture2D texture = LoadTexture("resources/models/church_diffuse.png"); // Load model texture (diffuse map)
-    model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;        // Set model diffuse texture
+    model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;              // Set model diffuse texture
 
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f };          // Set model position
+    const vec3 position = { 0.0f, 0.0f, 0.0f };          // Set model position
 
     // Load all postpro shaders
     // NOTE 1: All postpro shader use the base vertex shader (DEFAULT_VERTEX_SHADER)
@@ -139,11 +139,11 @@ int main()
         BeginTextureMode(target);       // Enable drawing to texture
             ClearBackground(RAYWHITE);  // Clear texture background
 
-            BeginMode3D(camera);        // Begin 3d mode drawing
+            BeginMode3D(camera);                           // Begin 3d mode drawing
                 DrawModel(model, position, 0.1f, WHITE);   // Draw 3d model with texture
-                DrawGrid(10, 1.0f);     // Draw a grid
-            EndMode3D();                // End 3d mode drawing, returns to orthographic 2d mode
-        EndTextureMode();               // End drawing to texture (now we have a texture available for next passes)
+                DrawGrid(10, 1.0f);                        // Draw a grid
+            EndMode3D();                                   // End 3d mode drawing, returns to orthographic 2d mode
+        EndTextureMode();                                  // End drawing to texture (now we have a texture available for next passes)
 
         BeginDrawing();
             ClearBackground(RAYWHITE);  // Clear screen background
@@ -151,7 +151,7 @@ int main()
             // Render generated texture using selected postprocessing shader
             BeginShaderMode(shaders[currentShader]);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, glm::vec2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw 2d shapes and text over drawn texture

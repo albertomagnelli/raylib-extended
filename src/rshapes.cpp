@@ -122,11 +122,11 @@ Rectangle GetShapesTextureRectangle(void)
 // Draw a pixel
 void DrawPixel(int posX, int posY, Color color)
 {
-    DrawPixelV(glm::vec2{ static_cast<float>(posX), static_cast<float>(posY) }, color);
+    DrawPixelV(vec2{ static_cast<float>(posX), static_cast<float>(posY) }, color);
 }
 
 // Draw a pixel (Vector version)
-void DrawPixelV(glm::vec2 position, Color color)
+void DrawPixelV(vec2 position, Color color)
 {
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
@@ -180,17 +180,17 @@ void DrawLine(int startPosX, int startPosY, int endPosX, int endPosY, Color colo
 }
 
 // Draw a line defining thickness
-void DrawLineEx(glm::vec2 startPos, glm::vec2 endPos, float thick, Color color)
+void DrawLineEx(vec2 startPos, vec2 endPos, float thick, Color color)
 {
-    const glm::vec2 delta = { endPos.x - startPos.x, endPos.y - startPos.y };
+    const vec2 delta = { endPos.x - startPos.x, endPos.y - startPos.y };
     const float length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
     if ((length > 0) && (thick > 0))
     {
         const float scale = thick/(2*length);
 
-        const glm::vec2 radius = { -scale*delta.y, scale*delta.x };
-        glm::vec2 strip[4] = {
+        const vec2 radius = { -scale*delta.y, scale*delta.x };
+        vec2 strip[4] = {
             { startPos.x - radius.x, startPos.y - radius.y },
             { startPos.x + radius.x, startPos.y + radius.y },
             { endPos.x - radius.x, endPos.y - radius.y },
@@ -202,7 +202,7 @@ void DrawLineEx(glm::vec2 startPos, glm::vec2 endPos, float thick, Color color)
 }
 
 // Draw a line (using gl lines)
-void DrawLineV(glm::vec2 startPos, glm::vec2 endPos, Color color)
+void DrawLineV(vec2 startPos, vec2 endPos, Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -212,7 +212,7 @@ void DrawLineV(glm::vec2 startPos, glm::vec2 endPos, Color color)
 }
 
 // Draw lines sequence (using gl lines)
-void DrawLineStrip(const glm::vec2 *points, int pointCount, Color color)
+void DrawLineStrip(const vec2 *points, int pointCount, Color color)
 {
     if (pointCount < 2) return; // Security check
 
@@ -228,12 +228,12 @@ void DrawLineStrip(const glm::vec2 *points, int pointCount, Color color)
 }
 
 // Draw line using cubic-bezier spline, in-out interpolation, no control points
-void DrawLineBezier(glm::vec2 startPos, glm::vec2 endPos, float thick, Color color)
+void DrawLineBezier(vec2 startPos, vec2 endPos, float thick, Color color)
 {
-    glm::vec2 previous = startPos;
-    glm::vec2 current{};
+    vec2 previous = startPos;
+    vec2 current{};
 
-    glm::vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
+    vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 1; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -266,7 +266,7 @@ void DrawLineBezier(glm::vec2 startPos, glm::vec2 endPos, float thick, Color col
 }
 
 // Draw a dashed line
-void DrawLineDashed(glm::vec2 startPos, glm::vec2 endPos, int dashSize, int spaceSize, Color color)
+void DrawLineDashed(vec2 startPos, vec2 endPos, int dashSize, int spaceSize, Color color)
 {
     // Calculate the vector and length of the line
     const float dx = endPos.x - startPos.x;
@@ -285,7 +285,7 @@ void DrawLineDashed(glm::vec2 startPos, glm::vec2 endPos, int dashSize, int spac
     const float dirX = dx*invLineLength;
     const float dirY = dy*invLineLength;
 
-    glm::vec2 currentPos = startPos;
+    vec2 currentPos = startPos;
     float distanceTraveled = 0;
 
     rlBegin(RL_LINES);
@@ -297,7 +297,7 @@ void DrawLineDashed(glm::vec2 startPos, glm::vec2 endPos, int dashSize, int spac
             float dashEndDist = distanceTraveled + dashSize;
             if (dashEndDist > lineLength) dashEndDist = lineLength;
 
-            const glm::vec2 dashEndPos = { startPos.x + dashEndDist*dirX, startPos.y + dashEndDist*dirY };
+            const vec2 dashEndPos = { startPos.x + dashEndDist*dirX, startPos.y + dashEndDist*dirY };
 
             // Draw the dash segment
             rlVertex2f(currentPos.x, currentPos.y);
@@ -313,13 +313,13 @@ void DrawLineDashed(glm::vec2 startPos, glm::vec2 endPos, int dashSize, int spac
 
 // Draw a triangle
 // NOTE: Vertex must be provided in counter-clockwise order
-void DrawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color)
+void DrawTriangle(vec2 v1, vec2 v2, vec2 v3, Color color)
 {
     DrawTriangleGradient(v1, v2, v3, color, color, color);
 }
 
 // Draw triangle with interpolated colors (vertex in counter-clockwise order!)
-void DrawTriangleGradient(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color c1, Color c2, Color c3)
+void DrawTriangleGradient(vec2 v1, vec2 v2, vec2 v3, Color c1, Color c2, Color c3)
 {
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
@@ -360,7 +360,7 @@ void DrawTriangleGradient(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color c1, Co
 
 // Draw a triangle using lines
 // NOTE: Vertex must be provided in counter-clockwise order
-void DrawTriangleLines(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color)
+void DrawTriangleLines(vec2 v1, vec2 v2, vec2 v3, Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -377,7 +377,7 @@ void DrawTriangleLines(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color)
 
 // Draw a triangle using lines with thickness
 // NOTE: Vertex must be provided in counter-clockwise order
-void DrawTriangleLinesEx(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, float thick, Color color)
+void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, float thick, Color color)
 {
     /*
     A sketch to make things simpler
@@ -397,9 +397,9 @@ void DrawTriangleLinesEx(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, float thick, 
              e1
     */
 
-    const glm::vec2 e1 = { v2.x - v3.x, v2.y - v3.y };
-    const glm::vec2 e2 = { v3.x - v1.x, v3.y - v1.y };
-    const glm::vec2 e3 = { v1.x - v2.x, v1.y - v2.y };
+    const vec2 e1 = { v2.x - v3.x, v2.y - v3.y };
+    const vec2 e2 = { v3.x - v1.x, v3.y - v1.y };
+    const vec2 e3 = { v1.x - v2.x, v1.y - v2.y };
 
     const float e1Length = sqrtf(e1.x*e1.x + e1.y*e1.y);
     const float e2Length = sqrtf(e2.x*e2.x + e2.y*e2.y);
@@ -409,7 +409,7 @@ void DrawTriangleLinesEx(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, float thick, 
     const float semiperimeter = perimeter/2.0f;
 
     // The incenter of a triangle is equidistant from each edge, which is useful for drawing a nice looking outline
-    const glm::vec2 incenter = {
+    const vec2 incenter = {
         (e1Length*v1.x + e2Length*v2.x + e3Length*v3.x)/perimeter,
         (e1Length*v1.y + e2Length*v2.y + e3Length*v3.y)/perimeter
     };
@@ -429,14 +429,14 @@ void DrawTriangleLinesEx(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, float thick, 
     }
 
     // In order for the scaling to be correct, the incenter has to be at the origin (0, 0) when scaling
-    glm::vec2 v4 = { incenter.x + (v1.x - incenter.x)*scale, incenter.y + (v1.y - incenter.y)*scale };
-    glm::vec2 v5 = { incenter.x + (v2.x - incenter.x)*scale, incenter.y + (v2.y - incenter.y)*scale };
-    glm::vec2 v6 = { incenter.x + (v3.x - incenter.x)*scale, incenter.y + (v3.y - incenter.y)*scale };
+    vec2 v4 = { incenter.x + (v1.x - incenter.x)*scale, incenter.y + (v1.y - incenter.y)*scale };
+    vec2 v5 = { incenter.x + (v2.x - incenter.x)*scale, incenter.y + (v2.y - incenter.y)*scale };
+    vec2 v6 = { incenter.x + (v3.x - incenter.x)*scale, incenter.y + (v3.y - incenter.y)*scale };
 
     // Swap the vertices so the winding order is correct
     if (thick < 0.0f)
     {
-        glm::vec2 temp = v1;
+        vec2 temp = v1;
         v1 = v4;
         v4 = temp;
 
@@ -538,7 +538,7 @@ void DrawTriangleLinesEx(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, float thick, 
 // Draw a triangle fan defined by points
 // NOTE: First vertex provided is the center, shared by all triangles
 // By default, following vertex should be provided in counter-clockwise order
-void DrawTriangleFan(const glm::vec2 *points, int pointCount, Color color)
+void DrawTriangleFan(const vec2 *points, int pointCount, Color color)
 {
     if (pointCount >= 3)
     {
@@ -569,7 +569,7 @@ void DrawTriangleFan(const glm::vec2 *points, int pointCount, Color color)
 
 // Draw a triangle strip defined by points
 // NOTE: Every new vertex connects with previous two
-void DrawTriangleStrip(const glm::vec2 *points, int pointCount, Color color)
+void DrawTriangleStrip(const vec2 *points, int pointCount, Color color)
 {
     if (pointCount >= 3)
     {
@@ -598,39 +598,39 @@ void DrawTriangleStrip(const glm::vec2 *points, int pointCount, Color color)
 // Draw a color-filled rectangle
 void DrawRectangle(int posX, int posY, int width, int height, Color color)
 {
-    DrawRectangleV(glm::vec2{ static_cast<float>(posX), static_cast<float>(posY) }, glm::vec2{ static_cast<float>(width), static_cast<float>(height) }, color);
+    DrawRectangleV(vec2{ static_cast<float>(posX), static_cast<float>(posY) }, vec2{ static_cast<float>(width), static_cast<float>(height) }, color);
 }
 
 // Draw a color-filled rectangle (Vector version)
 // NOTE: On OpenGL 3.3 and ES2 using QUADS to avoid drawing order issues
-void DrawRectangleV(glm::vec2 position, glm::vec2 size, Color color)
+void DrawRectangleV(vec2 position, vec2 size, Color color)
 {
-    DrawRectanglePro(Rectangle{ position.x, position.y, size.x, size.y }, glm::vec2{ 0.0f, 0.0f }, 0.0f, color);
+    DrawRectanglePro(Rectangle{ position.x, position.y, size.x, size.y }, vec2{ 0.0f, 0.0f }, 0.0f, color);
 }
 
 // Draw a color-filled rectangle
 void DrawRectangleRec(Rectangle rec, Color color)
 {
-    DrawRectanglePro(rec, glm::vec2{ 0.0f, 0.0f }, 0.0f, color);
+    DrawRectanglePro(rec, vec2{ 0.0f, 0.0f }, 0.0f, color);
 }
 
 // Draw a color-filled rectangle with pro parameters
-void DrawRectanglePro(Rectangle rec, glm::vec2 origin, float rotation, Color color)
+void DrawRectanglePro(Rectangle rec, vec2 origin, float rotation, Color color)
 {
-    glm::vec2 topLeft{};
-    glm::vec2 topRight{};
-    glm::vec2 bottomLeft{};
-    glm::vec2 bottomRight{};
+    vec2 topLeft{};
+    vec2 topRight{};
+    vec2 bottomLeft{};
+    vec2 bottomRight{};
 
     // Only calculate rotation if needed
     if (rotation == 0.0f)
     {
         const float x = rec.x - origin.x;
         const float y = rec.y - origin.y;
-        topLeft = glm::vec2{ x, y };
-        topRight = glm::vec2{ x + rec.width, y };
-        bottomLeft = glm::vec2{ x, y + rec.height };
-        bottomRight = glm::vec2{ x + rec.width, y + rec.height };
+        topLeft = vec2{ x, y };
+        topRight = vec2{ x + rec.width, y };
+        bottomLeft = vec2{ x, y + rec.height };
+        bottomRight = vec2{ x + rec.width, y + rec.height };
     }
     else
     {
@@ -743,7 +743,7 @@ void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, 
 // but it solves another issue: https://github.com/raysan5/raylib/issues/3884
 void DrawRectangleLines(int posX, int posY, int width, int height, Color color)
 {
-    Matrix mat = rlGetMatrixTransform();
+    mat4 mat = rlGetMatrixTransform();
     const float xOffset = 0.5f/mat[0][0];
     const float yOffset = 0.5f/mat[1][1];
 
@@ -907,7 +907,7 @@ void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color co
     float y2 = (rec.y + rec.height) - radius;
     float y3 = rec.y + rec.height;
 
-    const glm::vec2 points[12] = {
+    const vec2 points[12] = {
         { x0, y0 }, // P0
         { x1, y0 }, // P1
         { x2, y1 }, // P2
@@ -922,7 +922,7 @@ void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color co
         { x0, y2 }  // P11
     };
 
-    const glm::vec2 centers[4] = { points[8], points[9], points[10], points[11] };
+    const vec2 centers[4] = { points[8], points[9], points[10], points[11] };
     const float angles[4] = { 180.0f, 270.0f, 0.0f, 90.0f };
 
 #if SUPPORT_QUADS_DRAW_MODE
@@ -934,7 +934,7 @@ void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color co
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            const glm::vec2 center = centers[k];
+            const vec2 center = centers[k];
 
             // NOTE: Every QUAD actually represents two segments
             for (int i = 0; i < segments/2; i++)
@@ -1037,7 +1037,7 @@ void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color co
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            glm::vec2 center = centers[k];
+            vec2 center = centers[k];
             for (int i = 0; i < segments; i++)
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
@@ -1152,7 +1152,7 @@ void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Col
     float y2 = (rec.y + rec.height) - radius - 0.5f;
     float y3 = (rec.y + rec.height) - 0.5f;
 
-    const glm::vec2 points[8] = {
+    const vec2 points[8] = {
         { x0, y0 }, // P0
         { x1, y0 }, // P1
         { x2, y1 }, // P2
@@ -1163,7 +1163,7 @@ void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Col
         { x3, y1 }, // P7
     };
 
-    const glm::vec2 centers[4] = {
+    const vec2 centers[4] = {
         { x0, y1 }, // P8
         { x1, y1 }, // P9
         { x1, y2 }, // P10
@@ -1177,7 +1177,7 @@ void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Col
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            const glm::vec2 center = centers[k];
+            const vec2 center = centers[k];
 
             for (int i = 0; i < segments; i++)
             {
@@ -1307,7 +1307,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
     float y4 = rec.y + roundedOutlineThick;
     float y5 = (rec.y + rec.height) - roundedOutlineThick;
 
-    const glm::vec2 points[16] = {
+    const vec2 points[16] = {
         { x0, y0 }, // P0
         { x1, y0 }, // P1
         { x2, y1 }, // P2
@@ -1326,7 +1326,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
         { x5, y1 }  // P15
     };
 
-    const glm::vec2 centers[4] = {
+    const vec2 centers[4] = {
         { x0, y1 }, // P16
         { x1, y1 }, // P17
         { x1, y2 }, // P18
@@ -1345,7 +1345,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            const glm::vec2 center = centers[k];
+            const vec2 center = centers[k];
             for (int i = 0; i < segments; i++)
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
@@ -1419,7 +1419,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
         for (int k = 0; k < 4; k++) // Hope the compiler is smart enough to unroll this loop
         {
             float angle = angles[k];
-            glm::vec2 center = centers[k];
+            vec2 center = centers[k];
 
             for (int i = 0; i < segments; i++)
             {
@@ -1477,7 +1477,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, f
 }
 
 // Draw a polygon of n sides
-void DrawPoly(glm::vec2 center, int sides, float radius, float rotation, Color color)
+void DrawPoly(vec2 center, int sides, float radius, float rotation, Color color)
 {
     if (sides < 3) sides = 3;
     float centralAngle = rotation*DEG2RAD;
@@ -1526,7 +1526,7 @@ void DrawPoly(glm::vec2 center, int sides, float radius, float rotation, Color c
 }
 
 // Draw a polygon outline of n sides
-void DrawPolyLines(glm::vec2 center, int sides, float radius, float rotation, Color color)
+void DrawPolyLines(vec2 center, int sides, float radius, float rotation, Color color)
 {
     if (sides < 3) sides = 3;
     float centralAngle = rotation*DEG2RAD;
@@ -1545,7 +1545,7 @@ void DrawPolyLines(glm::vec2 center, int sides, float radius, float rotation, Co
     rlEnd();
 }
 
-void DrawPolyLinesEx(glm::vec2 center, int sides, float radius, float rotation, float thick, Color color)
+void DrawPolyLinesEx(vec2 center, int sides, float radius, float rotation, float thick, Color color)
 {
     if (sides < 3) sides = 3;
     float centralAngle = rotation*DEG2RAD;
@@ -1616,18 +1616,18 @@ void DrawPolyLinesEx(glm::vec2 center, int sides, float radius, float rotation, 
 // Draw a color-filled circle
 void DrawCircle(int centerX, int centerY, float radius, Color color)
 {
-    DrawCircleV(glm::vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radius, color);
+    DrawCircleV(vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radius, color);
 }
 
 // Draw a color-filled circle (Vector version)
 // NOTE: On OpenGL 3.3 and ES2 using QUADS to avoid drawing order issues
-void DrawCircleV(glm::vec2 center, float radius, Color color)
+void DrawCircleV(vec2 center, float radius, Color color)
 {
     DrawCircleSector(center, radius, 0, 360, 36, color);
 }
 
 // Draw a gradient-filled circle
-void DrawCircleGradient(glm::vec2 center, float radius, Color inner, Color outer)
+void DrawCircleGradient(vec2 center, float radius, Color inner, Color outer)
 {
     rlBegin(RL_TRIANGLES);
         for (int i = 0; i < 360; i += 10)
@@ -1643,7 +1643,7 @@ void DrawCircleGradient(glm::vec2 center, float radius, Color inner, Color outer
 }
 
 // Draw a piece of a circle
-void DrawCircleSector(glm::vec2 center, float radius, float startAngle, float endAngle, int segments, Color color)
+void DrawCircleSector(vec2 center, float radius, float startAngle, float endAngle, int segments, Color color)
 {
     if (startAngle == endAngle) return;
     if (radius <= 0.0f) return; // There's nothing to draw (also avoid div by zero)
@@ -1738,7 +1738,7 @@ void DrawCircleSector(glm::vec2 center, float radius, float startAngle, float en
 }
 
 // Draw a piece of a circle outlines
-void DrawCircleSectorLines(glm::vec2 center, float radius, float startAngle, float endAngle, int segments, Color color)
+void DrawCircleSectorLines(vec2 center, float radius, float startAngle, float endAngle, int segments, Color color)
 {
     if (startAngle == endAngle) return;
     if (radius <= 0.0f) return; // There's nothing to draw (also avoid div by zero)
@@ -1802,7 +1802,7 @@ void DrawCircleSectorLines(glm::vec2 center, float radius, float startAngle, flo
 }
 
 // Draw a piece of a circle outlines with thickness
-void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, float endAngle, int segments, float thick, Color color)
+void DrawCircleSectorLinesEx(vec2 center, float radius, float startAngle, float endAngle, int segments, float thick, Color color)
 {
     if (startAngle == endAngle) return;
     if (radius <= 0.0f) return; // There's nothing to draw (also avoid div by zero)
@@ -1909,14 +1909,14 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
     }
 
     // Cap 1 vertices
-    glm::vec2 c0{};
-    glm::vec2 c1{};
-    glm::vec2 c2{};
+    vec2 c0{};
+    vec2 c1{};
+    vec2 c2{};
 
     // Cap 2 vertices
-    glm::vec2 c3{};
-    glm::vec2 c4{};
-    glm::vec2 c5{};
+    vec2 c3{};
+    vec2 c4{};
+    vec2 c5{};
 
     // The number of angle steps that come before C1 (from `startAngle`, counter clockwise)
     int stepsBeforeC1 = 0;
@@ -1929,8 +1929,8 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
     {
         if (thick >= 0.0f)
         {
-            c2 = glm::vec2{ center.x + cosf(DEG2RAD*startAngle)*innerRadius, center.y + sinf(DEG2RAD*startAngle)*innerRadius };
-            c5 = glm::vec2{ center.x + cosf(DEG2RAD*endAngle)*innerRadius, center.y + sinf(DEG2RAD*endAngle)*innerRadius };
+            c2 = vec2{ center.x + cosf(DEG2RAD*startAngle)*innerRadius, center.y + sinf(DEG2RAD*startAngle)*innerRadius };
+            c5 = vec2{ center.x + cosf(DEG2RAD*endAngle)*innerRadius, center.y + sinf(DEG2RAD*endAngle)*innerRadius };
 
             // For C1 and C4, we need to find the point that lies on the circle (n-sided polygon, actually)
             // We want C1 and C4 to be `thick` pixels perpendicularly from the `startAngle` and `endAngle` edges
@@ -1982,22 +1982,22 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
              p2
             */
 
-            glm::vec2 p1 = { cosf(DEG2RAD*vertexAngleBeforeC1)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC1)*innerRadius };
-            glm::vec2 p2 = { cosf(DEG2RAD*vertexAngleAfterC1)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC1)*innerRadius };
+            vec2 p1 = { cosf(DEG2RAD*vertexAngleBeforeC1)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC1)*innerRadius };
+            vec2 p2 = { cosf(DEG2RAD*vertexAngleAfterC1)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC1)*innerRadius };
 
             // Find the `t` of C1 between p1 and p2 ('t' as in `Lerp(start, end, t)`)
             // This is used to lerp between the actual vertices (outside of our modified frame of reference)
             // before and after C1
             float t = (p1.y - thick)/(p1.y - p2.y);
 
-            glm::vec2 vertexBeforeCap1Vertex = { center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius };
-            glm::vec2 vertexAfterCap1Vertex = { center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius };
+            vec2 vertexBeforeCap1Vertex = { center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius };
+            vec2 vertexAfterCap1Vertex = { center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius };
 
             c1.x = vertexBeforeCap1Vertex.x + (vertexAfterCap1Vertex.x - vertexBeforeCap1Vertex.x)*t;
             c1.y = vertexBeforeCap1Vertex.y + (vertexAfterCap1Vertex.y - vertexBeforeCap1Vertex.y)*t;
 
-            glm::vec2 vertexBeforeCap2Vertex = { center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius };
-            glm::vec2 vertexAfterCap2Vertex = { center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius };
+            vec2 vertexBeforeCap2Vertex = { center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius };
+            vec2 vertexAfterCap2Vertex = { center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius };
 
             c4.x = vertexBeforeCap2Vertex.x + (vertexAfterCap2Vertex.x - vertexBeforeCap2Vertex.x)*t;
             c4.y = vertexBeforeCap2Vertex.y + (vertexAfterCap2Vertex.y - vertexBeforeCap2Vertex.y)*t;
@@ -2041,11 +2041,11 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
                 // S1 is inside of the circle
 
                 const float betweenStartAndEndAngle = (endAngle + startAngle)/2.0f;
-                c0 = glm::vec2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
+                c0 = vec2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
                 c3 = c0;
 
-                p1 = glm::vec2{ c1.x - center.x, c1.y - center.y };
-                p2 = glm::vec2{ c0.x - center.x, c0.y - center.y };
+                p1 = vec2{ c1.x - center.x, c1.y - center.y };
+                p2 = vec2{ c0.x - center.x, c0.y - center.y };
 
                 // Copied from "raymath.h" Vector2Angle()
                 const float dot = p1.x*p2.x + p1.y*p2.y;
@@ -2078,19 +2078,19 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
                 const float vertexAngleBeforeC0 = stepLength*static_cast<float>(stepsBeforeC0);
                 const float vertexAngleAfterC0 = stepLength*(static_cast<float>(stepsBeforeC0 + 1));
 
-                p1 = glm::vec2{ cosf(DEG2RAD*vertexAngleBeforeC0)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC0)*innerRadius };
-                p2 = glm::vec2{ cosf(DEG2RAD*vertexAngleAfterC0)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC0)*innerRadius };
+                p1 = vec2{ cosf(DEG2RAD*vertexAngleBeforeC0)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC0)*innerRadius };
+                p2 = vec2{ cosf(DEG2RAD*vertexAngleAfterC0)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC0)*innerRadius };
 
                 t = (p1.y - thick)/(p1.y - p2.y);
 
-                vertexBeforeCap1Vertex = glm::vec2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius };
-                vertexAfterCap1Vertex = glm::vec2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius };
+                vertexBeforeCap1Vertex = vec2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC0))*innerRadius };
+                vertexAfterCap1Vertex = vec2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC0))*innerRadius };
 
                 c0.x = vertexBeforeCap1Vertex.x + (vertexAfterCap1Vertex.x - vertexBeforeCap1Vertex.x)*t;
                 c0.y = vertexBeforeCap1Vertex.y + (vertexAfterCap1Vertex.y - vertexBeforeCap1Vertex.y)*t;
 
-                vertexBeforeCap2Vertex = glm::vec2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius };
-                vertexAfterCap2Vertex = glm::vec2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius };
+                vertexBeforeCap2Vertex = vec2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC0))*innerRadius };
+                vertexAfterCap2Vertex = vec2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC0))*innerRadius };
 
                 c3.x = vertexBeforeCap2Vertex.x + (vertexAfterCap2Vertex.x - vertexBeforeCap2Vertex.x)*t;
                 c3.y = vertexBeforeCap2Vertex.y + (vertexAfterCap2Vertex.y - vertexBeforeCap2Vertex.y)*t;
@@ -2101,17 +2101,17 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
             const float outerAngleBetweenCapEnds = ((endAngle + 90.0f) - (startAngle - 90.0f))/2.0f;
             const float s1Length = thick/cosf(DEG2RAD*outerAngleBetweenCapEnds);
             const float betweenStartAndEndAngle = 180.0f + (endAngle + startAngle)/2.0f;
-            c0 = glm::vec2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
+            c0 = vec2{ center.x + cosf(DEG2RAD*betweenStartAndEndAngle)*s1Length, center.y + sinf(DEG2RAD*betweenStartAndEndAngle)*s1Length };
             c3 = c0;
 
-            c2 = glm::vec2{ center.x + cosf(DEG2RAD*startAngle)*outerRadius, center.y + sinf(DEG2RAD*startAngle)*outerRadius };
-            c5 = glm::vec2{ center.x + cosf(DEG2RAD*endAngle)*outerRadius, center.y + sinf(DEG2RAD*endAngle)*outerRadius };
+            c2 = vec2{ center.x + cosf(DEG2RAD*startAngle)*outerRadius, center.y + sinf(DEG2RAD*startAngle)*outerRadius };
+            c5 = vec2{ center.x + cosf(DEG2RAD*endAngle)*outerRadius, center.y + sinf(DEG2RAD*endAngle)*outerRadius };
 
             // Change the frame of reference so that `center` is the origin and `startAngle` is 0 degrees
 
-            glm::vec2 c0Translated = { c0.x - center.x, c0.y - center.y };
-            glm::vec2 circleVertex1 = { c2.x - center.x, c2.y - center.y };
-            glm::vec2 circleVertex2 = { cosf(DEG2RAD*(startAngle + stepLength))*outerRadius, sinf(DEG2RAD*(startAngle + stepLength))*outerRadius };
+            vec2 c0Translated = { c0.x - center.x, c0.y - center.y };
+            vec2 circleVertex1 = { c2.x - center.x, c2.y - center.y };
+            vec2 circleVertex2 = { cosf(DEG2RAD*(startAngle + stepLength))*outerRadius, sinf(DEG2RAD*(startAngle + stepLength))*outerRadius };
 
             // Copied from "raymath.h" Vector2Rotate()
             float tempX = c0Translated.x;
@@ -2134,15 +2134,15 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
             const float c1Run = (c1Rise/rise)*run;
             const float c1DistanceFromC0 = (circleVertex1.x + c1Run) - c0Translated.x;
 
-            c1 = glm::vec2{ c0.x + cosf(DEG2RAD*startAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*startAngle)*c1DistanceFromC0 };
-            c4 = glm::vec2{ c0.x + cosf(DEG2RAD*endAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*endAngle)*c1DistanceFromC0 };
+            c1 = vec2{ c0.x + cosf(DEG2RAD*startAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*startAngle)*c1DistanceFromC0 };
+            c4 = vec2{ c0.x + cosf(DEG2RAD*endAngle)*c1DistanceFromC0, c0.y + sinf(DEG2RAD*endAngle)*c1DistanceFromC0 };
 
             if (c1DistanceFromC0 < 0.0f)
             {
                 // The caps are intersecting each other
 
-                glm::vec2 circleVertex3 = { c5.x - center.x, c5.y - center.y };
-                glm::vec2 circleVertex4 = { cosf(DEG2RAD*(endAngle - stepLength))*outerRadius, sinf(DEG2RAD*(endAngle - stepLength))*outerRadius };
+                vec2 circleVertex3 = { c5.x - center.x, c5.y - center.y };
+                vec2 circleVertex4 = { cosf(DEG2RAD*(endAngle - stepLength))*outerRadius, sinf(DEG2RAD*(endAngle - stepLength))*outerRadius };
 
                 tempX = circleVertex3.x;
                 circleVertex3.x = cosf(-DEG2RAD*startAngle)*tempX - sinf(-DEG2RAD*startAngle)*circleVertex3.y;
@@ -2154,7 +2154,7 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
 
                 // `startAngle` is 0 degrees within this frame of reference,
                 // so C1 just goes horizontally out from C0
-                glm::vec2 c1Translated = { c0Translated.x + c1DistanceFromC0, c0Translated.y };
+                vec2 c1Translated = { c0Translated.x + c1DistanceFromC0, c0Translated.y };
 
                 // Make `circleVertex2` the origin
                 circleVertex1.x -= circleVertex2.x;
@@ -2195,14 +2195,14 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
 
                 const float t = (c1Translated.x - targetX)/(c1Translated.x - circleVertex1.x);
 
-                c1 = glm::vec2{ c1.x + (c2.x - c1.x)*t, c1.y + (c2.y - c1.y)*t };
+                c1 = vec2{ c1.x + (c2.x - c1.x)*t, c1.y + (c2.y - c1.y)*t };
                 c4 = c1;
                 c0 = c1;
                 c3 = c1;
             }
 
             // Swap vertices to correct the winding order
-            glm::vec2 temp = c0;
+            vec2 temp = c0;
             c0 = c2;
             c2 = temp;
 
@@ -2537,11 +2537,11 @@ void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, f
 // Draw circle outline
 void DrawCircleLines(int centerX, int centerY, float radius, Color color)
 {
-    DrawCircleLinesV(glm::vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radius, color);
+    DrawCircleLinesV(vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radius, color);
 }
 
 // Draw circle outline (Vector version)
-void DrawCircleLinesV(glm::vec2 center, float radius, Color color)
+void DrawCircleLinesV(vec2 center, float radius, Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -2555,7 +2555,7 @@ void DrawCircleLinesV(glm::vec2 center, float radius, Color color)
     rlEnd();
 }
 
-void DrawCircleLinesEx(glm::vec2 center, float radius, float thick, Color color)
+void DrawCircleLinesEx(vec2 center, float radius, float thick, Color color)
 {
     DrawRing(center, radius - thick, radius, 0.0f, 360.0f, 36, color);
 }
@@ -2563,11 +2563,11 @@ void DrawCircleLinesEx(glm::vec2 center, float radius, float thick, Color color)
 // Draw ellipse
 void DrawEllipse(int centerX, int centerY, float radiusH, float radiusV, Color color)
 {
-    DrawEllipseV(glm::vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radiusH, radiusV, color);
+    DrawEllipseV(vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radiusH, radiusV, color);
 }
 
 // Draw ellipse (Vector version)
-void DrawEllipseV(glm::vec2 center, float radiusH, float radiusV, Color color)
+void DrawEllipseV(vec2 center, float radiusH, float radiusV, Color color)
 {
     rlBegin(RL_TRIANGLES);
         for (int i = 0; i < 360; i += 10)
@@ -2583,11 +2583,11 @@ void DrawEllipseV(glm::vec2 center, float radiusH, float radiusV, Color color)
 // Draw ellipse outline
 void DrawEllipseLines(int centerX, int centerY, float radiusH, float radiusV, Color color)
 {
-    DrawEllipseLinesV(glm::vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radiusH, radiusV, color);
+    DrawEllipseLinesV(vec2{ static_cast<float>(centerX), static_cast<float>(centerY) }, radiusH, radiusV, color);
 }
 
 // Draw ellipse outline
-void DrawEllipseLinesV(glm::vec2 center, float radiusH, float radiusV, Color color)
+void DrawEllipseLinesV(vec2 center, float radiusH, float radiusV, Color color)
 {
     rlBegin(RL_LINES);
         for (int i = 0; i < 360; i += 10)
@@ -2600,7 +2600,7 @@ void DrawEllipseLinesV(glm::vec2 center, float radiusH, float radiusV, Color col
 }
 
 // Draw ellipse outline with thickness
-void DrawEllipseLinesEx(glm::vec2 center, float radiusH, float radiusV, float thick, Color color)
+void DrawEllipseLinesEx(vec2 center, float radiusH, float radiusV, float thick, Color color)
 {
     float outerRadiusH = radiusH;
     float innerRadiusH = radiusH - thick;
@@ -2672,7 +2672,7 @@ void DrawEllipseLinesEx(glm::vec2 center, float radiusH, float radiusV, float th
 }
 
 // Draw ring
-void DrawRing(glm::vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color)
+void DrawRing(vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color)
 {
     if (startAngle == endAngle) return;
 
@@ -2766,7 +2766,7 @@ void DrawRing(glm::vec2 center, float innerRadius, float outerRadius, float star
 }
 
 // Draw ring outline
-void DrawRingLines(glm::vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color)
+void DrawRingLines(vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color)
 {
     if (startAngle == endAngle) return;
 
@@ -2848,7 +2848,7 @@ void DrawRingLines(glm::vec2 center, float innerRadius, float outerRadius, float
 }
 
 // Draw ring outline with line thickness
-void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, float thick, Color color)
+void DrawRingLinesEx(vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, float thick, Color color)
 {
     if (startAngle == endAngle) return;
 
@@ -2951,12 +2951,12 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
     bool innerAnglesCrossEachOther = false;
 
     // For negative `thick` values
-    glm::vec2 cap1SecondInnerVertex{};
-    glm::vec2 cap1SecondOuterVertex{};
-    glm::vec2 cap2SecondInnerVertex{};
-    glm::vec2 cap2SecondOuterVertex{};
+    vec2 cap1SecondInnerVertex{};
+    vec2 cap1SecondOuterVertex{};
+    vec2 cap2SecondInnerVertex{};
+    vec2 cap2SecondOuterVertex{};
     bool capsIntersect = false;
-    glm::vec2 capIntersectionVertex{};
+    vec2 capIntersectionVertex{};
 
     if (showCapLines)
     {
@@ -2986,13 +2986,13 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
             //
             // With that, we know these lines intersect when 'y' equals 0,
             // so we just need to solve for 't' (as in `Lerp(start, end, t)`)
-            const glm::vec2 beforeInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
-            const glm::vec2 afterInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
+            const vec2 beforeInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
+            const vec2 afterInnerVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
             tInner = beforeInnerVertex.y/(beforeInnerVertex.y - afterInnerVertex.y);
 
             // The same as above, but for the outer edge
-            const glm::vec2 beforeOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
-            const glm::vec2 afterOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
+            const vec2 beforeOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
+            const vec2 afterOuterVertex = { cosf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<float>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
             tOuter = beforeOuterVertex.y/(beforeOuterVertex.y - afterOuterVertex.y);
         }
         else
@@ -3030,27 +3030,27 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
             and, if there's any intersection, I0->I2 is one of the edges
             */
 
-            glm::vec2 cap1O0 = { outerOuterRadius, 0.0f };
-            glm::vec2 cap1O1 = { cosf(DEG2RAD*stepLength)*outerOuterRadius, sinf(DEG2RAD*stepLength)*outerOuterRadius };
+            vec2 cap1O0 = { outerOuterRadius, 0.0f };
+            vec2 cap1O1 = { cosf(DEG2RAD*stepLength)*outerOuterRadius, sinf(DEG2RAD*stepLength)*outerOuterRadius };
 
             // Assuming a linear interpolation such as `value = Lerp(start, end, t)`
             // We can find O2 by getting its 't' between O1.y and O0.y (which is always greater than 1)
             // We can solve for `t` using `t = (start - value)/(start - end)`
             // Since we know `end = 0` we can simplify it to `t = (start - value)/start`
             const float tOuter = (cap1O1.y - thick)/cap1O1.y;
-            glm::vec2 cap1O2 = { cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, thick };
+            vec2 cap1O2 = { cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, thick };
 
-            //glm::vec2 cap1I0 = { innerInnerRadius, 0.0f }; // Not used
+            //vec2 cap1I0 = { innerInnerRadius, 0.0f }; // Not used
 
             const float capLongEdgeLength = outerOuterRadius - innerInnerRadius;
-            glm::vec2 cap1I2 = { cap1O2.x - capLongEdgeLength, thick };
+            vec2 cap1I2 = { cap1O2.x - capLongEdgeLength, thick };
 
-            glm::vec2 cap2O0 = { cosf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius };
-            glm::vec2 cap2O1 = { cosf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius };
-            glm::vec2 cap2O2 = { cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
+            vec2 cap2O0 = { cosf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius };
+            vec2 cap2O1 = { cosf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius };
+            vec2 cap2O2 = { cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
 
-            glm::vec2 cap2I0 = { cosf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius, sinf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius };
-            glm::vec2 cap2I2 = { cap2O2.x - cosf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength};
+            vec2 cap2I0 = { cosf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius, sinf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius };
+            vec2 cap2I2 = { cap2O2.x - cosf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength};
 
             // The 't' of the intersection between I2 and O2 (`Lerp(I2, O2, t)`)
             float tCapLongEdgeCross = -1.0f;
@@ -3092,33 +3092,33 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
             // With our additional information, calculate the vertices we need
             // outside of our modified frame of reference
 
-            cap1O0 = glm::vec2{ center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
-            cap1O1 = glm::vec2{ center.x + cosf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius };
-            cap1O2 = glm::vec2{ cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, cap1O1.y + (cap1O0.y - cap1O1.y)*tOuter };
+            cap1O0 = vec2{ center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
+            cap1O1 = vec2{ center.x + cosf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + stepLength))*outerOuterRadius };
+            cap1O2 = vec2{ cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, cap1O1.y + (cap1O0.y - cap1O1.y)*tOuter };
 
-            cap2O0 = glm::vec2{ center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
-            cap2O1 = glm::vec2{ center.x + cosf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius };
-            cap2O2 = glm::vec2{ cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
+            cap2O0 = vec2{ center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
+            cap2O1 = vec2{ center.x + cosf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - stepLength))*outerOuterRadius };
+            cap2O2 = vec2{ cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
 
-            //cap1I0 = glm::vec2{ center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
-            cap1I2 = glm::vec2{ cap1O2.x - cosf(DEG2RAD*startAngle)*capLongEdgeLength, cap1O2.y - sinf(DEG2RAD*startAngle)*capLongEdgeLength };
+            //cap1I0 = vec2{ center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
+            cap1I2 = vec2{ cap1O2.x - cosf(DEG2RAD*startAngle)*capLongEdgeLength, cap1O2.y - sinf(DEG2RAD*startAngle)*capLongEdgeLength };
 
-            cap2I0 = glm::vec2{ center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
-            cap2I2 = glm::vec2{ cap2O2.x - cosf(DEG2RAD*endAngle)*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*endAngle)*capLongEdgeLength };
+            cap2I0 = vec2{ center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
+            cap2I2 = vec2{ cap2O2.x - cosf(DEG2RAD*endAngle)*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*endAngle)*capLongEdgeLength };
 
             if (capsIntersect)
             {
-                capIntersectionVertex = glm::vec2{ cap2I2.x + (cap2O2.x - cap2I2.x)*tCapLongEdgeCross, cap2I2.y + (cap2O2.y - cap2I2.y)*tCapLongEdgeCross };
+                capIntersectionVertex = vec2{ cap2I2.x + (cap2O2.x - cap2I2.x)*tCapLongEdgeCross, cap2I2.y + (cap2O2.y - cap2I2.y)*tCapLongEdgeCross };
 
-                cap2I2 = glm::vec2{ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
+                cap2I2 = vec2{ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
                 cap1I2 = cap2I2;
             }
             else if ((tCrossOuter >= 0.0f) && (tCrossOuter <= 1.0f))
             {
-                cap2O2 = glm::vec2{ cap2O0.x + (cap2O2.x - cap2O0.x)*tCrossOuter, cap2O0.y + (cap2O2.y - cap2O0.y)*tCrossOuter };
+                cap2O2 = vec2{ cap2O0.x + (cap2O2.x - cap2O0.x)*tCrossOuter, cap2O0.y + (cap2O2.y - cap2O0.y)*tCrossOuter };
                 cap1O2 = cap2O2;
 
-                cap2I2 = glm::vec2{ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
+                cap2I2 = vec2{ cap2I0.x + (cap2I2.x - cap2I0.x)*tCrossInner, cap2I0.y + (cap2I2.y - cap2I0.y)*tCrossInner };
                 cap1I2 = cap2I2;
             }
 
@@ -3212,20 +3212,20 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                 const int innerStepsLeft = stepsBeforeInner - stepsBeforeOuter;
 
                 // Cap 1
-                const glm::vec2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
-                const glm::vec2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
-                const glm::vec2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                const glm::vec2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
-                const glm::vec2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
-                const glm::vec2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
+                const vec2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
+                const vec2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
+                const vec2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                const vec2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                const vec2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
+                const vec2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
 
                 // Cap 2
-                const glm::vec2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
-                const glm::vec2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
-                const glm::vec2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                const glm::vec2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
-                const glm::vec2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
-                const glm::vec2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
+                const vec2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
+                const vec2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
+                const vec2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                const vec2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                const vec2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
+                const vec2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
 
                 const int stepsCount = (innerAnglesCrossEachOther)? totalStepsLeft/2 : innerStepsLeft;
 
@@ -3302,9 +3302,9 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                     // That point is then used instead to prevent the outline from intersecting itself
 
                     // Make `cap1InnerVertexEnd` the origin and the angle to `cap1OuterVertexEnd` 0 degrees
-                    const glm::vec2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
-                    const glm::vec2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
-                    const glm::vec2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    const vec2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    const vec2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
+                    const vec2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
 
                     const float rotateBy = -atan2f(tempCap1OuterVertexEnd.y, tempCap1OuterVertexEnd.x);
                     // We only need the y coordinates, so only rotate the y coordinates
@@ -3312,13 +3312,13 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                     const float end = sinf(rotateBy)*tempCap2OuterVertexEnd.x + cosf(rotateBy)*tempCap2OuterVertexEnd.y;
                     const float tCross = start/(start - end);
 
-                    const glm::vec2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
+                    const vec2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
 
                     if ((segments%2) == 0)
                     {
                         // There are an even number of segments (which means there's an odd number of vertices), so there's 1 vertex exactly in the middle
 
-                        const glm::vec2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        const vec2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
 
                         // Cap 1
                         rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
@@ -3350,8 +3350,8 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                     {
                         // There are an odd number of segments (which means there's an even number of vertices), so there are 2 vertices in the middle
 
-                        const glm::vec2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
-                        const glm::vec2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
+                        const vec2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        const vec2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
 
                         // Cap 1
                         rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
@@ -3425,8 +3425,8 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
             else
             {
                 // Cap 1
-                const glm::vec2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
-                const glm::vec2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
+                const vec2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
+                const vec2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
 
                 rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
                 rlVertex2f(cap1FirstInnerVertex.x, cap1FirstInnerVertex.y);
@@ -3441,8 +3441,8 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                 rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
                 // Cap 2
-                const glm::vec2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
-                const glm::vec2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
+                const vec2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
+                const vec2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
 
                 rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
                 rlVertex2f(cap2FirstInnerVertex.x, cap2FirstInnerVertex.y);
@@ -3549,20 +3549,20 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                 int innerStepsLeft = stepsBeforeInner - stepsBeforeOuter;
 
                 // Cap 1
-                glm::vec2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
-                glm::vec2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
-                glm::vec2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                glm::vec2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
-                glm::vec2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
-                glm::vec2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
+                vec2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
+                vec2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
+                vec2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                vec2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
+                vec2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
+                vec2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
 
                 // Cap 2
-                glm::vec2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
-                glm::vec2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
-                glm::vec2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                glm::vec2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
-                glm::vec2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
-                glm::vec2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
+                vec2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
+                vec2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
+                vec2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                vec2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<float>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
+                vec2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
+                vec2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
 
                 int stepsCount = (innerAnglesCrossEachOther)? totalStepsLeft/2 : innerStepsLeft;
 
@@ -3590,9 +3590,9 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                     // That point is then used instead to prevent the outline from intersecting itself
 
                     // Make `cap1InnerVertexEnd` the origin and the angle to `cap1OuterVertexEnd` 0 degrees
-                    glm::vec2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
-                    glm::vec2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
-                    glm::vec2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    vec2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    vec2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
+                    vec2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
 
                     float rotateBy = -atan2f(tempCap1OuterVertexEnd.y, tempCap1OuterVertexEnd.x);
                     // We only need the y coordinates, so only rotate the y coordinates
@@ -3600,13 +3600,13 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                     float end = sinf(rotateBy)*tempCap2OuterVertexEnd.x + cosf(rotateBy)*tempCap2OuterVertexEnd.y;
                     float tCross = start/(start - end);
 
-                    glm::vec2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
+                    vec2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
 
                     if (segments%2 == 0)
                     {
                         // There are an even number of segments (which means there's an odd number of vertices), so there's 1 vertex exactly in the middle
 
-                        glm::vec2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        vec2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
 
                         // Cap 1
                         rlVertex2f(intersection.x, intersection.y);
@@ -3630,8 +3630,8 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                     {
                         // There are an odd number of segments (which means there's an even number of vertices), so there are 2 vertices in the middle
 
-                        glm::vec2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
-                        glm::vec2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
+                        vec2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        vec2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
 
                         // Cap 1
                         rlVertex2f(intersection.x, intersection.y);
@@ -3685,8 +3685,8 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
             else
             {
                 // Cap 1
-                glm::vec2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
-                glm::vec2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
+                vec2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
+                vec2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
 
                 rlVertex2f(cap1FirstInnerVertex.x, cap1FirstInnerVertex.y);
                 rlVertex2f(cap1FirstOuterVertex.x, cap1FirstOuterVertex.y);
@@ -3697,8 +3697,8 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
                 rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
                 // Cap 2
-                glm::vec2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
-                glm::vec2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
+                vec2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
+                vec2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
 
                 rlVertex2f(cap2FirstInnerVertex.x, cap2FirstInnerVertex.y);
                 rlVertex2f(cap2SecondInnerVertex.x, cap2SecondInnerVertex.y);
@@ -3732,12 +3732,12 @@ void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, flo
 //----------------------------------------------------------------------------------
 
 // Draw spline: linear, minimum 2 points
-void DrawSplineLinear(const glm::vec2 *points, int pointCount, float thick, Color color)
+void DrawSplineLinear(const vec2 *points, int pointCount, float thick, Color color)
 {
     if (pointCount < 2) return;
 
 #if SUPPORT_SPLINE_MITERS
-    glm::vec2 prevNormal = glm::vec2{-(points[1].y - points[0].y), (points[1].x - points[0].x)};
+    vec2 prevNormal = vec2{-(points[1].y - points[0].y), (points[1].x - points[0].x)};
     float prevLength = sqrtf(prevNormal.x*prevNormal.x + prevNormal.y*prevNormal.y);
 
     if (prevLength > 0.0f)
@@ -3751,15 +3751,15 @@ void DrawSplineLinear(const glm::vec2 *points, int pointCount, float thick, Colo
         prevNormal.y = 0.0f;
     }
 
-    glm::vec2 prevRadius = { 0.5f*thick*prevNormal.x, 0.5f*thick*prevNormal.y };
+    vec2 prevRadius = { 0.5f*thick*prevNormal.x, 0.5f*thick*prevNormal.y };
 
     for (int i = 0; i < pointCount - 1; i++)
     {
-        glm::vec2 normal{};
+        vec2 normal{};
 
         if (i < pointCount - 2)
         {
-            normal = glm::vec2{-(points[i + 2].y - points[i + 1].y), (points[i + 2].x - points[i + 1].x)};
+            normal = vec2{-(points[i + 2].y - points[i + 1].y), (points[i + 2].x - points[i + 1].x)};
             float normalLength = sqrtf(normal.x*normal.x + normal.y*normal.y);
 
             if (normalLength > 0.0f)
@@ -3775,7 +3775,7 @@ void DrawSplineLinear(const glm::vec2 *points, int pointCount, float thick, Colo
         }
         else normal = prevNormal;
 
-        glm::vec2 radius = { prevNormal.x + normal.x, prevNormal.y + normal.y };
+        vec2 radius = { prevNormal.x + normal.x, prevNormal.y + normal.y };
         float radiusLength = sqrtf(radius.x*radius.x + radius.y*radius.y);
 
         if (radiusLength > 0.0f)
@@ -3802,7 +3802,7 @@ void DrawSplineLinear(const glm::vec2 *points, int pointCount, float thick, Colo
             radius.y = 0.0f;
         }
 
-        glm::vec2 strip[4] = {
+        vec2 strip[4] = {
             { points[i].x - prevRadius.x, points[i].y - prevRadius.y },
             { points[i].x + prevRadius.x, points[i].y + prevRadius.y },
             { points[i + 1].x - radius.x, points[i + 1].y - radius.y },
@@ -3817,19 +3817,19 @@ void DrawSplineLinear(const glm::vec2 *points, int pointCount, float thick, Colo
 
 #else   // !SUPPORT_SPLINE_MITERS
 
-    glm::vec2 delta{};
+    vec2 delta{};
     float length = 0.0f;
     float scale = 0.0f;
 
     for (int i = 0; i < pointCount - 1; i++)
     {
-        delta = glm::vec2{ points[i + 1].x - points[i].x, points[i + 1].y - points[i].y };
+        delta = vec2{ points[i + 1].x - points[i].x, points[i + 1].y - points[i].y };
         length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
         if (length > 0) scale = thick/(2*length);
 
-        const glm::vec2 radius = { -scale*delta.y, scale*delta.x };
-        glm::vec2 strip[4] = {
+        const vec2 radius = { -scale*delta.y, scale*delta.x };
+        vec2 strip[4] = {
             { points[i].x - radius.x, points[i].y - radius.y },
             { points[i].x + radius.x, points[i].y + radius.y },
             { points[i + 1].x - radius.x, points[i + 1].y - radius.y },
@@ -3846,7 +3846,7 @@ void DrawSplineLinear(const glm::vec2 *points, int pointCount, float thick, Colo
 }
 
 // Draw spline: B-Spline, minimum 4 points
-void DrawSplineBasis(const glm::vec2 *points, int pointCount, float thick, Color color)
+void DrawSplineBasis(const vec2 *points, int pointCount, float thick, Color color)
 {
     if (pointCount < 4) return;
 
@@ -3856,14 +3856,14 @@ void DrawSplineBasis(const glm::vec2 *points, int pointCount, float thick, Color
     float dx = 0.0f;
     float size = 0.0f;
 
-    glm::vec2 currentPoint{};
-    glm::vec2 nextPoint{};
-    glm::vec2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
+    vec2 currentPoint{};
+    vec2 nextPoint{};
+    vec2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 0; i < (pointCount - 3); i++)
     {
         float t = 0.0f;
-        const glm::vec2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
+        const vec2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
 
         a[0] = (-p1.x + 3.0f*p2.x - 3.0f*p3.x + p4.x)/6.0f;
         a[1] = (3.0f*p1.x - 6.0f*p2.x + 3.0f*p3.x)/6.0f;
@@ -3923,7 +3923,7 @@ void DrawSplineBasis(const glm::vec2 *points, int pointCount, float thick, Color
 }
 
 // Draw spline: Catmull-Rom, minimum 4 points
-void DrawSplineCatmullRom(const glm::vec2 *points, int pointCount, float thick, Color color)
+void DrawSplineCatmullRom(const vec2 *points, int pointCount, float thick, Color color)
 {
     if (pointCount < 4) return;
 
@@ -3931,16 +3931,16 @@ void DrawSplineCatmullRom(const glm::vec2 *points, int pointCount, float thick, 
     float dx = 0.0f;
     float size = 0.0f;
 
-    glm::vec2 currentPoint = points[1];
-    glm::vec2 nextPoint{};
-    glm::vec2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
+    vec2 currentPoint = points[1];
+    vec2 nextPoint{};
+    vec2 vertices[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     DrawCircleV(currentPoint, thick/2.0f, color);   // Draw init line circle-cap
 
     for (int i = 0; i < (pointCount - 3); i++)
     {
         float t = 0.0f;
-        const glm::vec2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
+        const vec2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
 
         if (i > 0)
         {
@@ -3990,7 +3990,7 @@ void DrawSplineCatmullRom(const glm::vec2 *points, int pointCount, float thick, 
 }
 
 // Draw spline: Quadratic Bezier, minimum 3 points (1 control point): [p1, c2, p3, c4...]
-void DrawSplineBezierQuadratic(const glm::vec2 *points, int pointCount, float thick, Color color)
+void DrawSplineBezierQuadratic(const vec2 *points, int pointCount, float thick, Color color)
 {
     if (pointCount >= 3)
     {
@@ -4002,7 +4002,7 @@ void DrawSplineBezierQuadratic(const glm::vec2 *points, int pointCount, float th
 }
 
 // Draw spline: Cubic Bezier, minimum 4 points (2 control points): [p1, c2, c3, p4, c5, c6...]
-void DrawSplineBezierCubic(const glm::vec2 *points, int pointCount, float thick, Color color)
+void DrawSplineBezierCubic(const vec2 *points, int pointCount, float thick, Color color)
 {
     if (pointCount >= 4)
     {
@@ -4014,19 +4014,19 @@ void DrawSplineBezierCubic(const glm::vec2 *points, int pointCount, float thick,
 }
 
 // Draw spline segment: Linear, 2 points
-void DrawSplineSegmentLinear(glm::vec2 p1, glm::vec2 p2, float thick, Color color)
+void DrawSplineSegmentLinear(vec2 p1, vec2 p2, float thick, Color color)
 {
     // NOTE: For the linear spline no subdivisions are used, only a single quad
 
-    const glm::vec2 delta = { p2.x - p1.x, p2.y - p1.y };
+    const vec2 delta = { p2.x - p1.x, p2.y - p1.y };
     const float length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
     if ((length > 0) && (thick > 0))
     {
         const float scale = thick/(2*length);
 
-        const glm::vec2 radius = { -scale*delta.y, scale*delta.x };
-        glm::vec2 strip[4] = {
+        const vec2 radius = { -scale*delta.y, scale*delta.x };
+        vec2 strip[4] = {
             { p1.x - radius.x, p1.y - radius.y },
             { p1.x + radius.x, p1.y + radius.y },
             { p2.x - radius.x, p2.y - radius.y },
@@ -4038,15 +4038,15 @@ void DrawSplineSegmentLinear(glm::vec2 p1, glm::vec2 p2, float thick, Color colo
 }
 
 // Draw spline segment: B-Spline, 4 points
-void DrawSplineSegmentBasis(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float thick, Color color)
+void DrawSplineSegmentBasis(vec2 p1, vec2 p2, vec2 p3, vec2 p4, float thick, Color color)
 {
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
-    glm::vec2 currentPoint{};
-    glm::vec2 nextPoint{};
+    vec2 currentPoint{};
+    vec2 nextPoint{};
     float t = 0.0f;
 
-    glm::vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
+    vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     float a[4] = { 0 };
     float b[4] = { 0 };
@@ -4095,15 +4095,15 @@ void DrawSplineSegmentBasis(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 
 }
 
 // Draw spline segment: Catmull-Rom, 4 points
-void DrawSplineSegmentCatmullRom(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float thick, Color color)
+void DrawSplineSegmentCatmullRom(vec2 p1, vec2 p2, vec2 p3, vec2 p4, float thick, Color color)
 {
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
-    glm::vec2 currentPoint = p1;
-    glm::vec2 nextPoint{};
+    vec2 currentPoint = p1;
+    vec2 nextPoint{};
     float t = 0.0f;
 
-    glm::vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
+    vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 0; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -4141,15 +4141,15 @@ void DrawSplineSegmentCatmullRom(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::
 }
 
 // Draw spline segment: Quadratic Bezier, 2 points, 1 control point
-void DrawSplineSegmentBezierQuadratic(glm::vec2 p1, glm::vec2 c2, glm::vec2 p3, float thick, Color color)
+void DrawSplineSegmentBezierQuadratic(vec2 p1, vec2 c2, vec2 p3, float thick, Color color)
 {
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
-    glm::vec2 previous = p1;
-    glm::vec2 current{};
+    vec2 previous = p1;
+    vec2 current{};
     float t = 0.0f;
 
-    glm::vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
+    vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 1; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -4187,15 +4187,15 @@ void DrawSplineSegmentBezierQuadratic(glm::vec2 p1, glm::vec2 c2, glm::vec2 p3, 
 }
 
 // Draw spline segment: Cubic Bezier, 2 points, 2 control points
-void DrawSplineSegmentBezierCubic(glm::vec2 p1, glm::vec2 c2, glm::vec2 c3, glm::vec2 p4, float thick, Color color)
+void DrawSplineSegmentBezierCubic(vec2 p1, vec2 c2, vec2 c3, vec2 p4, float thick, Color color)
 {
     const float step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
-    glm::vec2 previous = p1;
-    glm::vec2 current{};
+    vec2 previous = p1;
+    vec2 current{};
     float t = 0.0f;
 
-    glm::vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
+    vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
     for (int i = 1; i <= SPLINE_SEGMENT_DIVISIONS; i++)
     {
@@ -4233,9 +4233,9 @@ void DrawSplineSegmentBezierCubic(glm::vec2 p1, glm::vec2 c2, glm::vec2 c3, glm:
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Linear
-glm::vec2 GetSplinePointLinear(glm::vec2 startPos, glm::vec2 endPos, float t)
+vec2 GetSplinePointLinear(vec2 startPos, vec2 endPos, float t)
 {
-    glm::vec2 point{};
+    vec2 point{};
 
     point.x = startPos.x*(1.0f - t) + endPos.x*t;
     point.y = startPos.y*(1.0f - t) + endPos.y*t;
@@ -4244,9 +4244,9 @@ glm::vec2 GetSplinePointLinear(glm::vec2 startPos, glm::vec2 endPos, float t)
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], B-Spline
-glm::vec2 GetSplinePointBasis(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float t)
+vec2 GetSplinePointBasis(vec2 p1, vec2 p2, vec2 p3, vec2 p4, float t)
 {
-    glm::vec2 point{};
+    vec2 point{};
 
     float a[4] = { 0 };
     float b[4] = { 0 };
@@ -4268,9 +4268,9 @@ glm::vec2 GetSplinePointBasis(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Catmull-Rom
-glm::vec2 GetSplinePointCatmullRom(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float t)
+vec2 GetSplinePointCatmullRom(vec2 p1, vec2 p2, vec2 p3, vec2 p4, float t)
 {
-    glm::vec2 point{};
+    vec2 point{};
 
     const float q0 = (-1*t*t*t) + (2*t*t) + (-1*t);
     const float q1 = (3*t*t*t) + (-5*t*t) + 2;
@@ -4284,9 +4284,9 @@ glm::vec2 GetSplinePointCatmullRom(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Quadratic Bezier
-glm::vec2 GetSplinePointBezierQuadratic(glm::vec2 startPos, glm::vec2 controlPos, glm::vec2 endPos, float t)
+vec2 GetSplinePointBezierQuadratic(vec2 startPos, vec2 controlPos, vec2 endPos, float t)
 {
-    glm::vec2 point{};
+    vec2 point{};
 
     const float a = powf(1.0f - t, 2);
     const float b = 2.0f*(1.0f - t)*t;
@@ -4299,9 +4299,9 @@ glm::vec2 GetSplinePointBezierQuadratic(glm::vec2 startPos, glm::vec2 controlPos
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Cubic Bezier
-glm::vec2 GetSplinePointBezierCubic(glm::vec2 startPos, glm::vec2 startControlPos, glm::vec2 endControlPos, glm::vec2 endPos, float t)
+vec2 GetSplinePointBezierCubic(vec2 startPos, vec2 startControlPos, vec2 endControlPos, vec2 endPos, float t)
 {
-    glm::vec2 point{};
+    vec2 point{};
 
     const float a = powf(1.0f - t, 3);
     const float b = 3.0f*powf(1.0f - t, 2)*t;
@@ -4319,7 +4319,7 @@ glm::vec2 GetSplinePointBezierCubic(glm::vec2 startPos, glm::vec2 startControlPo
 //----------------------------------------------------------------------------------
 
 // Check if point is inside rectangle
-bool CheckCollisionPointRec(glm::vec2 point, Rectangle rec)
+bool CheckCollisionPointRec(vec2 point, Rectangle rec)
 {
     bool collision = false;
 
@@ -4329,7 +4329,7 @@ bool CheckCollisionPointRec(glm::vec2 point, Rectangle rec)
 }
 
 // Check if point is inside circle
-bool CheckCollisionPointCircle(glm::vec2 point, glm::vec2 center, float radius)
+bool CheckCollisionPointCircle(vec2 point, vec2 center, float radius)
 {
     bool collision = false;
 
@@ -4341,7 +4341,7 @@ bool CheckCollisionPointCircle(glm::vec2 point, glm::vec2 center, float radius)
 }
 
 // Check if point is inside a triangle defined by three points (p1, p2, p3)
-bool CheckCollisionPointTriangle(glm::vec2 point, glm::vec2 p1, glm::vec2 p2, glm::vec2 p3)
+bool CheckCollisionPointTriangle(vec2 point, vec2 p1, vec2 p2, vec2 p3)
 {
     bool collision = false;
 
@@ -4360,7 +4360,7 @@ bool CheckCollisionPointTriangle(glm::vec2 point, glm::vec2 p1, glm::vec2 p2, gl
 
 // Check if point is within a polygon described by array of vertices
 // NOTE: Based on http://jeffreythompson.org/collision-detection/poly-point.php
-bool CheckCollisionPointPoly(glm::vec2 point, const glm::vec2 *points, int pointCount)
+bool CheckCollisionPointPoly(vec2 point, const vec2 *points, int pointCount)
 {
     bool collision = false;
 
@@ -4391,7 +4391,7 @@ bool CheckCollisionRecs(Rectangle rec1, Rectangle rec2)
 }
 
 // Check collision between two circles
-bool CheckCollisionCircles(glm::vec2 center1, float radius1, glm::vec2 center2, float radius2)
+bool CheckCollisionCircles(vec2 center1, float radius1, vec2 center2, float radius2)
 {
     bool collision = false;
 
@@ -4408,7 +4408,7 @@ bool CheckCollisionCircles(glm::vec2 center1, float radius1, glm::vec2 center2, 
 
 // Check collision between circle and rectangle
 // NOTE: Reviewed version to take into account corner limit case
-bool CheckCollisionCircleRec(glm::vec2 center, float radius, Rectangle rec)
+bool CheckCollisionCircleRec(vec2 center, float radius, Rectangle rec)
 {
     bool collision = false;
 
@@ -4436,7 +4436,7 @@ bool CheckCollisionCircleRec(glm::vec2 center, float radius, Rectangle rec)
 
 // Check the collision between two lines defined by two points each, returns collision point by reference
 // REF: https://en.wikipedia.org/wiki/Line–line_intersection#Given_two_points_on_each_line_segment
-bool CheckCollisionLines(glm::vec2 startPos1, glm::vec2 endPos1, glm::vec2 startPos2, glm::vec2 endPos2, glm::vec2 *collisionPoint)
+bool CheckCollisionLines(vec2 startPos1, vec2 endPos1, vec2 startPos2, vec2 endPos2, vec2 *collisionPoint)
 {
     bool collision = false;
 
@@ -4471,7 +4471,7 @@ bool CheckCollisionLines(glm::vec2 startPos1, glm::vec2 endPos1, glm::vec2 start
 }
 
 // Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold]
-bool CheckCollisionPointLine(glm::vec2 point, glm::vec2 p1, glm::vec2 p2, int threshold)
+bool CheckCollisionPointLine(vec2 point, vec2 p1, vec2 p2, int threshold)
 {
     bool collision = false;
 
@@ -4491,7 +4491,7 @@ bool CheckCollisionPointLine(glm::vec2 point, glm::vec2 p1, glm::vec2 p2, int th
 }
 
 // Check if circle collides with a line created between two points [p1] and [p2]
-bool CheckCollisionCircleLine(glm::vec2 center, float radius, glm::vec2 p1, glm::vec2 p2)
+bool CheckCollisionCircleLine(vec2 center, float radius, vec2 p1, vec2 p2)
 {
     bool collision = false;
 

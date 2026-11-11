@@ -134,19 +134,19 @@ int main()
             DrawText("ADD CODEPOINTS: [1][2][3][4]", 20, 20, 20, MAROON);
 
             // Render test strings in different languages
-            DrawTextEx(font, "> English: Hello World!", glm::vec2{ 50, 70 }, 32, 1, DARKGRAY); // English
-            DrawTextEx(font, "> Español: Hola mundo!", glm::vec2{ 50, 120 }, 32, 1, DARKGRAY); // Spanish
-            DrawTextEx(font, "> Ελληνικά: Γειά σου κόσμε!", glm::vec2{ 50, 170 }, 32, 1, DARKGRAY); // Greek
-            DrawTextEx(font, "> Русский: Привет мир!", glm::vec2{ 50, 220 }, 32, 0, DARKGRAY); // Russian
-            DrawTextEx(font, "> 中文: 你好世界!", glm::vec2{ 50, 270 }, 32, 1, DARKGRAY);      // Chinese
-            DrawTextEx(font, "> 日本語: こんにちは世界!", glm::vec2{ 50, 320 }, 32, 1, DARKGRAY); // Japanese
-            //DrawTextEx(font, "देवनागरी: होला मुंडो!", glm::vec2{ 50, 350 }, 32, 1, DARKGRAY);     // Devanagari (glyphs not available in font)
+            DrawTextEx(font, "> English: Hello World!", vec2{ 50, 70 }, 32, 1, DARKGRAY);      // English
+            DrawTextEx(font, "> Español: Hola mundo!", vec2{ 50, 120 }, 32, 1, DARKGRAY);      // Spanish
+            DrawTextEx(font, "> Ελληνικά: Γειά σου κόσμε!", vec2{ 50, 170 }, 32, 1, DARKGRAY); // Greek
+            DrawTextEx(font, "> Русский: Привет мир!", vec2{ 50, 220 }, 32, 0, DARKGRAY);      // Russian
+            DrawTextEx(font, "> 中文: 你好世界!", vec2{ 50, 270 }, 32, 1, DARKGRAY);                 // Chinese
+            DrawTextEx(font, "> 日本語: こんにちは世界!", vec2{ 50, 320 }, 32, 1, DARKGRAY);             // Japanese
+            //DrawTextEx(font, "देवनागरी: होला मुंडो!", vec2{ 50, 350 }, 32, 1, DARKGRAY);     // Devanagari (glyphs not available in font)
 
             // Draw font texture scaled to screen
             const float atlasScale = 380.0f/font.texture.width;
             DrawRectangleRec(Rectangle{ 400.0f, 16.0f, font.texture.width* atlasScale, font.texture.height* atlasScale }, BLACK);
             DrawTexturePro(font.texture, Rectangle{ 0, 0, static_cast<float>(font.texture.width), static_cast<float>(font.texture.height) },
-                Rectangle{ 400.0f, 16.0f, font.texture.width*atlasScale, font.texture.height*atlasScale }, glm::vec2{ 0, 0 }, 0.0f, WHITE);
+                Rectangle{ 400.0f, 16.0f, font.texture.width*atlasScale, font.texture.height*atlasScale }, vec2{ 0, 0 }, 0.0f, WHITE);
             DrawRectangleLines(400, 16, 380, 380, RED);
 
             DrawText(TextFormat("ATLAS SIZE: %ix%i px (x%02.2f)", font.texture.width, font.texture.height, atlasScale), 20, 380, 20, BLUE);

@@ -22,8 +22,8 @@
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static void DrawTextStyled(Font font, std::string_view text, glm::vec2 position, float fontSize, float spacing, Color color);
-static glm::vec2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing);
+static void DrawTextStyled(Font font, std::string_view text, vec2 position, float fontSize, float spacing, Color color);
+static vec2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -37,7 +37,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - inline styling");
 
-    glm::vec2 textSize = {}; // Measure text box for provided font and text
+    vec2 textSize = {};         // Measure text box for provided font and text
     Color colRandom = RED;      // Random color used on text
     int frameCounter = 0;       // Used to generate a new random color every certain frames
 
@@ -75,20 +75,20 @@ int main()
             // Example: [bAA00AAFF][cFF0000FF]red text on gray background[r] normal text
 
             DrawTextStyled(GetFontDefault(), "This changes the [cFF0000FF]foreground color[r] of provided text!!!",
-                glm::vec2{ 100, 80 }, 20.0f, 2.0f, BLACK);
+                vec2{ 100, 80 }, 20.0f, 2.0f, BLACK);
 
             DrawTextStyled(GetFontDefault(), "This changes the [bFF00FFFF]background color[r] of provided text!!!",
-                glm::vec2{ 100, 120 }, 20.0f, 2.0f, BLACK);
+                vec2{ 100, 120 }, 20.0f, 2.0f, BLACK);
 
             DrawTextStyled(GetFontDefault(), "This changes the [c00ff00ff][bff0000ff]foreground and background colors[r]!!!",
-                glm::vec2{ 100, 160 }, 20.0f, 2.0f, BLACK);
+                vec2{ 100, 160 }, 20.0f, 2.0f, BLACK);
 
             DrawTextStyled(GetFontDefault(), "This changes the [c00ff00ff]alpha[r] relative [cffffffff][b000000ff]from source[r] [cff000088]color[r]!!!",
-                glm::vec2{ 100, 200 }, 20.0f, 2.0f, Color{ 0, 0, 0, 100 });
+                vec2{ 100, 200 }, 20.0f, 2.0f, Color{ 0, 0, 0, 100 });
 
             // Get pointer to formated text
             const std::string text = TextFormat("Let's be [c%02x%02x%02xFF]CREATIVE[r] !!!", colRandom.r, colRandom.g, colRandom.b);
-            DrawTextStyled(GetFontDefault(), text, glm::vec2{ 100, 240 }, 40.0f, 2.0f, BLACK);
+            DrawTextStyled(GetFontDefault(), text, vec2{ 100, 240 }, 40.0f, 2.0f, BLACK);
 
             textSize = MeasureTextStyled(GetFontDefault(), text, 40.0f, 2.0f);
             DrawRectangleLines(100, 240, static_cast<int>(textSize.x), static_cast<int>(textSize.y), GREEN);
@@ -111,7 +111,7 @@ int main()
 // Draw text using inline styling
 // PARAM: color is the default text color, background color is BLANK by default
 // NOTE: Using input color as the base alpha multiplied to inline styles
-static void DrawTextStyled(Font font, std::string_view text, glm::vec2 position, float fontSize, float spacing, Color color)
+static void DrawTextStyled(Font font, std::string_view text, vec2 position, float fontSize, float spacing, Color color)
 {
     // Text inline styling strategy used: [ ] delimiters for format
     // - Define foreground color:      [cRRGGBBAA]
@@ -189,7 +189,7 @@ static void DrawTextStyled(Font font, std::string_view text, glm::vec2 position,
 					}
 
                     i += (colHexCount + 1); // Skip color value retrieved and ']'
-                    continue;   // Do not draw characters
+                    continue;               // Do not draw characters
                 }
             }
 
@@ -204,7 +204,7 @@ static void DrawTextStyled(Font font, std::string_view text, glm::vec2 position,
 
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                DrawTextCodepoint(font, codepoint, glm::vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, colFront);
+                DrawTextCodepoint(font, codepoint, vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, colFront);
             }
 
             textOffsetX += increaseX;
@@ -217,9 +217,9 @@ static void DrawTextStyled(Font font, std::string_view text, glm::vec2 position,
 // Measure inline styled text
 // NOTE: Measuring styled text requires skipping styling data
 // WARNING: Not considering line breaks
-static glm::vec2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing)
+static vec2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing)
 {
-    glm::vec2 textSize = {};
+    vec2 textSize = {};
 
     if ((font.texture.id == 0) || text.empty()) return textSize; // Security check
 
@@ -265,7 +265,7 @@ static glm::vec2 MeasureTextStyled(Font font, std::string_view text, float fontS
                 }
 
                 i += (colHexCount + 1); // Skip color value retrieved and ']'
-                continue;   // Do not measure characters
+                continue;               // Do not measure characters
             }
         }
         else if (codepoint != '\n')

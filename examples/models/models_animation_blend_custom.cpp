@@ -60,15 +60,15 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 4.0f, 4.0f, 4.0f }; // Camera position
-    camera.target = glm::vec3{ 0.0f, 1.0f, 0.0f };// Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };    // Camera up vector (rotation towards target)
+    camera.position = vec3{ 4.0f, 4.0f, 4.0f };     // Camera position
+    camera.target = vec3{ 0.0f, 1.0f, 0.0f };       // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };           // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                            // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
     // Load gltf model
     Model model = LoadModel("resources/models/gltf/greenman.glb");
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
 
     // Load skinning shader
     // WARNING: GPU skinning must be enabled in raylib with a compilation flag,
@@ -153,8 +153,8 @@ int main()
     // De-Initialization
     //--------------------------------------------------------------------------------------
     UnloadModelAnimations(anims, animCount); // Unload model animation
-    UnloadModel(model);    // Unload model and meshes/material
-    UnloadShader(skinningShader);   // Unload GPU skinning shader
+    UnloadModel(model);                      // Unload model and meshes/material
+    UnloadShader(skinningShader);            // Unload GPU skinning shader
 
     CloseWindow();                  // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
                 // Upper body: use anim1 (attack), Lower body: use anim0 (walk)
                 // blend = 0.0 means full anim0 (walk), 1.0 means full anim1 (attack)
                 if (isUpperBody) boneBlendFactor = blend; // Upper body: blend towards anim1 (attack)
-                else boneBlendFactor = 1.0f - blend; // Lower body: blend towards anim0 (walk) - invert the blend
+                else boneBlendFactor = 1.0f - blend;      // Lower body: blend towards anim0 (walk) - invert the blend
             }
 
             // Get transforms from both animations
@@ -246,10 +246,10 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             blended.scale = glm::mix(animTransform0->scale, animTransform1->scale, boneBlendFactor);
 
             // Convert bind pose to matrix
-            const Matrix bindMatrix = ((glm::translate(Matrix(1.0f), glm::vec3{bindTransform->translation.x, bindTransform->translation.y, bindTransform->translation.z})) * (((glm::mat4_cast(bindTransform->rotation)) * (glm::scale(Matrix(1.0f), glm::vec3{bindTransform->scale.x, bindTransform->scale.y, bindTransform->scale.z})))));
+            const mat4 bindMatrix = ((glm::translate(mat4(1.0f), vec3{bindTransform->translation.x, bindTransform->translation.y, bindTransform->translation.z})) * (((glm::mat4_cast(bindTransform->rotation)) * (glm::scale(mat4(1.0f), vec3{bindTransform->scale.x, bindTransform->scale.y, bindTransform->scale.z})))));
 
             // Convert blended transform to matrix
-            const Matrix blendedMatrix = ((glm::translate(Matrix(1.0f), glm::vec3{blended.translation.x, blended.translation.y, blended.translation.z})) * (((glm::mat4_cast(blended.rotation)) * (glm::scale(Matrix(1.0f), glm::vec3{blended.scale.x, blended.scale.y, blended.scale.z})))));
+            const mat4 blendedMatrix = ((glm::translate(mat4(1.0f), vec3{blended.translation.x, blended.translation.y, blended.translation.z})) * (((glm::mat4_cast(blended.rotation)) * (glm::scale(mat4(1.0f), vec3{blended.scale.x, blended.scale.y, blended.scale.z})))));
 
             // Calculate final bone matrix (similar to UpdateModelAnimationBones)
             model->boneMatrices[boneIndex] = ((blendedMatrix) * (glm::inverse(bindMatrix)));
@@ -260,8 +260,8 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
         for (int m = 0; m < model->meshCount; m++)
         {
             const Mesh mesh = model->meshes[m];
-            glm::vec3 animVertex = {};
-            glm::vec3 animNormal = {};
+            vec3 animVertex = {};
+            vec3 animNormal = {};
             const int vertexValuesCount = mesh.vertexCount*3;
 
             int boneIndex = 0;
@@ -293,8 +293,8 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
 
                     // Early stop when no transformation will be applied
                     if (boneWeight == 0.0f) continue;
-                    animVertex = glm::vec3{ mesh.vertices[vCounter], mesh.vertices[vCounter + 1], mesh.vertices[vCounter + 2] };
-                    animVertex = glm::vec3((model->boneMatrices[boneIndex])*glm::vec4(animVertex, 1.0f));
+                    animVertex = vec3{ mesh.vertices[vCounter], mesh.vertices[vCounter + 1], mesh.vertices[vCounter + 2] };
+                    animVertex = vec3((model->boneMatrices[boneIndex])*vec4(animVertex, 1.0f));
                     mesh.animVertices[vCounter] += animVertex.x*boneWeight;
                     mesh.animVertices[vCounter + 1] += animVertex.y*boneWeight;
                     mesh.animVertices[vCounter + 2] += animVertex.z*boneWeight;
@@ -304,8 +304,8 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
                     // NOTE: We use meshes.baseNormals (default normal) to calculate meshes.normals (animated normals)
                     if ((mesh.normals != nullptr) && (mesh.animNormals != nullptr ))
                     {
-                        animNormal = glm::vec3{ mesh.normals[vCounter], mesh.normals[vCounter + 1], mesh.normals[vCounter + 2] };
-                        animNormal = glm::vec3((glm::transpose(glm::inverse(model->boneMatrices[boneIndex])))*glm::vec4(animNormal, 1.0f));
+                        animNormal = vec3{ mesh.normals[vCounter], mesh.normals[vCounter + 1], mesh.normals[vCounter + 2] };
+                        animNormal = vec3((glm::transpose(glm::inverse(model->boneMatrices[boneIndex])))*vec4(animNormal, 1.0f));
                         mesh.animNormals[vCounter] += animNormal.x*boneWeight;
                         mesh.animNormals[vCounter + 1] += animNormal.y*boneWeight;
                         mesh.animNormals[vCounter + 2] += animNormal.z*boneWeight;

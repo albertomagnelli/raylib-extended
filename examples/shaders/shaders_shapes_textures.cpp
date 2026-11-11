@@ -69,7 +69,7 @@ int main()
             DrawText("USING DEFAULT SHADER", 20, 40, 10, RED);
 
             DrawCircle(80, 120, 35, DARKBLUE);
-            DrawCircleGradient(glm::vec2{ 80.0f, 220.0f }, 60, GREEN, SKYBLUE);
+            DrawCircleGradient(vec2{ 80.0f, 220.0f }, 60, GREEN, SKYBLUE);
             DrawCircleLines(80, 340, 80, DARKBLUE);
 
 
@@ -87,15 +87,15 @@ int main()
 
             DrawText("USING DEFAULT SHADER", 370, 40, 10, RED);
 
-            DrawTriangle(glm::vec2{430, 80},
-                         glm::vec2{430 - 60, 150},
-                         glm::vec2{430 + 60, 150}, VIOLET);
+            DrawTriangle(vec2{430, 80},
+                         vec2{430 - 60, 150},
+                         vec2{430 + 60, 150}, VIOLET);
 
-            DrawTriangleLines(glm::vec2{430, 160},
-                              glm::vec2{430 - 20, 230},
-                              glm::vec2{430 + 20, 230}, DARKBLUE);
+            DrawTriangleLines(vec2{430, 160},
+                              vec2{430 - 20, 230},
+                              vec2{430 + 20, 230}, DARKBLUE);
 
-            DrawPoly(glm::vec2{430, 320}, 6, 80, 0, BROWN);
+            DrawPoly(vec2{430, 320}, 6, 80, 0, BROWN);
 
             // Activate our custom shader to be applied on next shapes/textures drawings
             BeginShaderMode(shader);

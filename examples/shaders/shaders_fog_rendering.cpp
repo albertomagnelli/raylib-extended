@@ -48,9 +48,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 2.0f, 2.0f, 6.0f };  // Camera position
-    camera.target = glm::vec3{ 0.0f, 0.5f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 2.0f, 2.0f, 6.0f };         // Camera position
+    camera.target = vec3{ 0.0f, 0.5f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -72,11 +72,11 @@ int main()
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
     // Ambient light level
-    glm::vec4 ambient = glm::vec4{ 0.2f, 0.2f, 0.2f, 1.0f };
+    vec4 ambient = vec4{ 0.2f, 0.2f, 0.2f, 1.0f };
     const int ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, &ambient, SHADER_UNIFORM_VEC4);
 
-    glm::vec4 fogColor = ColorNormalize(GRAY);
+    vec4 fogColor = ColorNormalize(GRAY);
     const int fogColorLoc = GetShaderLocation(shader, "fogColor");
     SetShaderValue(shader, fogColorLoc, &fogColor, SHADER_UNIFORM_VEC4);
 
@@ -90,7 +90,7 @@ int main()
     modelC.materials[0].shader = shader;
 
     // Using just 1 point lights
-    CreateLight(LIGHT_POINT, glm::vec3{ 0, 2, 6 }, glm::vec3{}, WHITE, shader);
+    CreateLight(LIGHT_POINT, vec3{ 0, 2, 6 }, vec3{}, WHITE, shader);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -117,8 +117,8 @@ int main()
         SetShaderValue(shader, fogDensityLoc, &fogDensity, SHADER_UNIFORM_FLOAT);
 
         // Rotate the torus
-        modelA.transform = ((glm::rotate(Matrix(1.0f), -0.025f, glm::vec3{1.0f, 0.0f, 0.0f})) * (modelA.transform));
-        modelA.transform = ((glm::rotate(Matrix(1.0f), 0.012f, glm::vec3{0.0f, 0.0f, 1.0f})) * (modelA.transform));
+        modelA.transform = ((glm::rotate(mat4(1.0f), -0.025f, vec3{1.0f, 0.0f, 0.0f})) * (modelA.transform));
+        modelA.transform = ((glm::rotate(mat4(1.0f), 0.012f, vec3{0.0f, 0.0f, 1.0f})) * (modelA.transform));
 
         // Update the light shader with the camera view position
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], &camera.position.x, SHADER_UNIFORM_VEC3);
@@ -133,11 +133,11 @@ int main()
             BeginMode3D(camera);
 
                 // Draw the three models
-                DrawModel(modelA, glm::vec3{}, 1.0f, WHITE);
-                DrawModel(modelB, glm::vec3{ -2.6f, 0, 0 }, 1.0f, WHITE);
-                DrawModel(modelC, glm::vec3{ 2.6f, 0, 0 }, 1.0f, WHITE);
+                DrawModel(modelA, vec3{}, 1.0f, WHITE);
+                DrawModel(modelB, vec3{ -2.6f, 0, 0 }, 1.0f, WHITE);
+                DrawModel(modelC, vec3{ 2.6f, 0, 0 }, 1.0f, WHITE);
 
-                for (int i = -20; i < 20; i += 2) DrawModel(modelA,glm::vec3{ static_cast<float>(i), 0, 2 }, 1.0f, WHITE);
+                for (int i = -20; i < 20; i += 2) DrawModel(modelA,vec3{ static_cast<float>(i), 0, 2 }, 1.0f, WHITE);
 
             EndMode3D();
 

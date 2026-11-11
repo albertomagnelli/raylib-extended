@@ -73,8 +73,8 @@ int main()
     SetActionsDefault();
     bool releaseAction = false;
 
-    glm::vec2 position = glm::vec2{ 400.0f, 200.0f };
-    const glm::vec2 size = glm::vec2{ 40.0f, 40.0f };
+    vec2 position = vec2{ 400.0f, 200.0f };
+    const vec2 size = vec2{ 40.0f, 40.0f };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

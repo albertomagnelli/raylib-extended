@@ -63,7 +63,7 @@
 *           Support automatic events recording and playing, useful for automated testing systems or AI based game playing
 *
 *   DEPENDENCIES:
-*       raymath  - 3D math functionality (glm::vec2, glm::vec3, Matrix, Quaternion)
+*       raymath  - 3D math functionality (vec2, vec3, mat4, quat)
 *       camera   - Multiple 3D camera modes (free, orbital, 1st person, 3rd person)
 *       gestures - Gestures system for touch-ready devices (or simulated from mouse inputs)
 *
@@ -125,7 +125,7 @@
 #define RLGL_IMPLEMENTATION
 #include "rlgl.h"                   // OpenGL abstraction layer to OpenGL 1.1, 3.3+ or ES2
 
-#include "raymath.h"                // glm::vec2, glm::vec3, Quaternion and Matrix helpers (glm based)
+#include "raymath.h"                // vec2, vec3, quat and mat4 helpers (glm based)
 
 #if SUPPORT_GESTURES_SYSTEM
     #define RGESTURES_IMPLEMENTATION
@@ -322,7 +322,7 @@ typedef struct CoreData {
         Size currentFbo;                    // Current framebuffer render width and height (depends on active render texture)
         Size screenMin;                     // Screen minimum width and height (for resizable window)
         Size screenMax;                     // Screen maximum width and height (for resizable window)
-        Matrix screenScale;                 // Matrix to scale screen (framebuffer rendering)
+        mat4 screenScale;                   // mat4 to scale screen (framebuffer rendering)
 
         char **dropFilepaths;               // Store dropped files paths pointers (provided by GLFW)
         unsigned int dropFileCount;         // Count dropped files strings
@@ -334,8 +334,8 @@ typedef struct CoreData {
     } Storage;
     struct {
         struct {
-            int exitKey;                    // Default exit key
-            char currentKeyState[MAX_KEYBOARD_KEYS]; // Registers current frame key state
+            int exitKey;                              // Default exit key
+            char currentKeyState[MAX_KEYBOARD_KEYS];  // Registers current frame key state
             char previousKeyState[MAX_KEYBOARD_KEYS]; // Registers previous frame key state
 
             // NOTE: Since key press logic involves comparing previous vs current key state,
@@ -343,43 +343,43 @@ typedef struct CoreData {
             char keyRepeatInFrame[MAX_KEYBOARD_KEYS]; // Registers key repeats for current frame
 
             int keyPressedQueue[MAX_KEY_PRESSED_QUEUE]; // Input keys queue
-            int keyPressedQueueCount;       // Input keys queue count
+            int keyPressedQueueCount;                   // Input keys queue count
 
             int charPressedQueue[MAX_CHAR_PRESSED_QUEUE]; // Input characters queue (unicode)
-            int charPressedQueueCount;      // Input characters queue count
+            int charPressedQueueCount;                    // Input characters queue count
 
         } Keyboard;
         struct {
-            glm::vec2 offset;               // Mouse offset
-            glm::vec2 scale;                // Mouse scaling
-            glm::vec2 currentPosition;      // Mouse position on screen
-            glm::vec2 previousPosition;     // Previous mouse position
-            glm::vec2 lockedPosition;       // Mouse position when locked
+            vec2 offset;               // Mouse offset
+            vec2 scale;                // Mouse scaling
+            vec2 currentPosition;      // Mouse position on screen
+            vec2 previousPosition;     // Previous mouse position
+            vec2 lockedPosition;       // Mouse position when locked
 
             int cursor;                     // Tracks current mouse cursor
             bool cursorHidden;              // Track if cursor is hidden
             bool cursorLocked;              // Track if cursor is locked (disabled)
             bool cursorOnScreen;            // Tracks if cursor is inside client area
 
-            char currentButtonState[MAX_MOUSE_BUTTONS]; // Registers current mouse button state
+            char currentButtonState[MAX_MOUSE_BUTTONS];  // Registers current mouse button state
             char previousButtonState[MAX_MOUSE_BUTTONS]; // Registers previous mouse button state
-            glm::vec2 currentWheelMove;     // Registers current mouse wheel variation
-            glm::vec2 previousWheelMove;    // Registers previous mouse wheel variation
+            vec2 currentWheelMove;                       // Registers current mouse wheel variation
+            vec2 previousWheelMove;                      // Registers previous mouse wheel variation
 
         } Mouse;
         struct {
             int pointCount;                                 // Number of touch points active
             int pointId[MAX_TOUCH_POINTS];                  // Point identifiers
-            glm::vec2 position[MAX_TOUCH_POINTS];           // Touch position on screen
-            glm::vec2 previousPosition[MAX_TOUCH_POINTS];   // Previous touch position on screen
+            vec2 position[MAX_TOUCH_POINTS];                // Touch position on screen
+            vec2 previousPosition[MAX_TOUCH_POINTS];        // Previous touch position on screen
             char currentTouchState[MAX_TOUCH_POINTS];       // Registers current touch state
             char previousTouchState[MAX_TOUCH_POINTS];      // Registers previous touch state
 
         } Touch;
         struct {
-            int lastButtonPressed;          // Register last gamepad button pressed
-            int axisCount[MAX_GAMEPADS];    // Register number of available gamepad axes
-            bool ready[MAX_GAMEPADS];       // Flag to know if gamepad is ready
+            int lastButtonPressed;                                          // Register last gamepad button pressed
+            int axisCount[MAX_GAMEPADS];                                    // Register number of available gamepad axes
+            bool ready[MAX_GAMEPADS];                                       // Flag to know if gamepad is ready
             char name[MAX_GAMEPADS][MAX_GAMEPAD_NAME_LENGTH];               // Gamepad name holder
             char currentButtonState[MAX_GAMEPADS][MAX_GAMEPAD_BUTTONS];     // Current gamepad buttons state
             char previousButtonState[MAX_GAMEPADS][MAX_GAMEPAD_BUTTONS];    // Previous gamepad buttons state
@@ -486,7 +486,7 @@ static constexpr const char *autoEventTypeName[MAX_AUTOMATION_EVENT_TYPES] = {
 };
 
 static AutomationEventList *currentEventList = nullptr;        // Current automation events list, set by user, keep internal pointer
-static bool automationEventRecording = false;               // Recording automation events flag
+static bool automationEventRecording = false;                  // Recording automation events flag
 //static short automationEventEnabled = 0b0000001111111111; // Automation events enabled for recording/playing
 #endif
 //-----------------------------------------------------------------------------------
@@ -578,8 +578,8 @@ std::string TextFormat(std::string_view text, ...); // Formatting of text with v
 //void SetWindowOpacity(float opacity)
 //void SetWindowFocused(void)
 //void *GetWindowHandle(void)
-//glm::vec2 GetWindowPosition(void)
-//glm::vec2 GetWindowScaleDPI(void)
+//vec2 GetWindowPosition(void)
+//vec2 GetWindowScaleDPI(void)
 
 //int GetMonitorCount(void)
 //int GetCurrentMonitor(void)
@@ -588,7 +588,7 @@ std::string TextFormat(std::string_view text, ...); // Formatting of text with v
 //int GetMonitorPhysicalWidth(int monitor)
 //int GetMonitorPhysicalHeight(int monitor)
 //int GetMonitorRefreshRate(int monitor)
-//glm::vec2 GetMonitorPosition(int monitor)
+//vec2 GetMonitorPosition(int monitor)
 //const char *GetMonitorName(int monitor)
 
 //void SetClipboardText(const char *text)
@@ -727,12 +727,12 @@ void InitWindow(int width, int height, std::string_view titleView)
     CORE.Window.screen.height = height;
 
     CORE.Window.eventWaiting = false;
-    CORE.Window.screenScale = Matrix(1.0f); // No draw scaling required by default
+    CORE.Window.screenScale = mat4(1.0f); // No draw scaling required by default
     if ((title != nullptr) && (title[0] != 0)) CORE.Window.title = title;
 
     // Initialize global input state
     CORE.Input.Keyboard.exitKey = KEY_ESCAPE;
-    CORE.Input.Mouse.scale = glm::vec2{ 1.0f, 1.0f };
+    CORE.Input.Mouse.scale = vec2{ 1.0f, 1.0f };
     CORE.Input.Mouse.cursor = MOUSE_CURSOR_ARROW;
     CORE.Input.Gamepad.lastButtonPressed = GAMEPAD_BUTTON_UNKNOWN;
 
@@ -960,7 +960,7 @@ void BeginDrawing(void)
     CORE.Time.update = CORE.Time.current - CORE.Time.previous;
     CORE.Time.previous = CORE.Time.current;
 
-    rlLoadIdentity();                   // Reset current matrix (modelview)
+    rlLoadIdentity();                                      // Reset current matrix (modelview)
     rlMultMatrixf(MatrixToFloat(CORE.Window.screenScale)); // Apply screen scaling
 
     //rlTranslatef(0.375, 0.375, 0);    // HACK to have 2D pixel-perfect drawing on OpenGL 1.1
@@ -1066,7 +1066,7 @@ void BeginMode3D(Camera camera)
     rlLoadIdentity();               // Reset current matrix (modelview)
 
     // Setup Camera view
-    const Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+    const mat4 matView = glm::lookAt(camera.position, camera.target, camera.up);
     rlMultMatrixf(MatrixToFloat(matView));      // Multiply modelview matrix by view matrix (camera)
 
     rlEnableDepthTest();            // Enable DEPTH_TEST for 3D
@@ -1130,8 +1130,8 @@ void EndTextureMode(void)
     SetupViewport(CORE.Window.render.width, CORE.Window.render.height);
 
     // Go back to the modelview state from BeginDrawing, back to the main framebuffer
-    rlMatrixMode(RL_MODELVIEW);     // Switch back to modelview matrix
-    rlLoadIdentity();               // Reset current matrix (modelview)
+    rlMatrixMode(RL_MODELVIEW);                            // Switch back to modelview matrix
+    rlLoadIdentity();                                      // Reset current matrix (modelview)
     rlMultMatrixf(MatrixToFloat(CORE.Window.screenScale)); // Apply screen scaling if required
 
     // Reset current fbo to screen size
@@ -1176,13 +1176,13 @@ void BeginScissorMode(int x, int y, int width, int height)
 #if defined(__APPLE__)
     if (!CORE.Window.usingFbo)
     {
-        glm::vec2 scale = GetWindowScaleDPI();
+        vec2 scale = GetWindowScaleDPI();
         rlScissor(static_cast<int>((x*scale.x)), static_cast<int>((GetScreenHeight()*scale.y - (((y + height)*scale.y)))), static_cast<int>((width*scale.x)), static_cast<int>((height*scale.y)));
     }
 #else
     if (!CORE.Window.usingFbo && FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
-        const glm::vec2 scale = GetWindowScaleDPI();
+        const vec2 scale = GetWindowScaleDPI();
         rlScissor(static_cast<int>(x*scale.x), static_cast<int>(CORE.Window.currentFbo.height - (y + height)*scale.y), static_cast<int>(width*scale.x), static_cast<int>(height*scale.y));
     }
 #endif
@@ -1263,17 +1263,17 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
 
         // Compute camera projection matrices
         const float projOffset = 4.0f*lensShift;      // Scaled to projection space coordinates [-1..1]
-        const Matrix proj = glm::perspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        const mat4 proj = glm::perspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
 
-        config.projection[0] = glm::translate(Matrix(1.0f), glm::vec3{projOffset, 0.0f, 0.0f})*proj;
-        config.projection[1] = glm::translate(Matrix(1.0f), glm::vec3{-projOffset, 0.0f, 0.0f})*proj;
+        config.projection[0] = glm::translate(mat4(1.0f), vec3{projOffset, 0.0f, 0.0f})*proj;
+        config.projection[1] = glm::translate(mat4(1.0f), vec3{-projOffset, 0.0f, 0.0f})*proj;
 
         // Compute camera transformation matrices
         // NOTE: Camera movement might seem more natural if modelling the head
         // Axis of rotation is the base of the head, so adding some y (base of head to eye level
         // and -z (center of head to eye protrusion) to the camera positions
-        config.viewOffset[0] = glm::translate(Matrix(1.0f), glm::vec3{device.interpupillaryDistance*0.5f, 0.075f, 0.045f});
-        config.viewOffset[1] = glm::translate(Matrix(1.0f), glm::vec3{-device.interpupillaryDistance*0.5f, 0.075f, 0.045f});
+        config.viewOffset[0] = glm::translate(mat4(1.0f), vec3{device.interpupillaryDistance*0.5f, 0.075f, 0.045f});
+        config.viewOffset[1] = glm::translate(mat4(1.0f), vec3{-device.interpupillaryDistance*0.5f, 0.075f, 0.045f});
 
         // Compute eyes Viewports
         /*
@@ -1476,7 +1476,7 @@ void SetShaderValueV(Shader shader, int locIndex, const void *value, int uniform
 }
 
 // Set shader uniform value (matrix 4x4)
-void SetShaderValueMatrix(Shader shader, int locIndex, Matrix mat)
+void SetShaderValueMatrix(Shader shader, int locIndex, mat4 mat)
 {
     if (locIndex > -1)
     {
@@ -1502,7 +1502,7 @@ void SetShaderValueTexture(Shader shader, int locIndex, Texture2D texture)
 //----------------------------------------------------------------------------------
 
 // Get a ray trace from screen position (i.e mouse)
-Ray GetScreenToWorldRay(glm::vec2 position, Camera camera)
+Ray GetScreenToWorldRay(vec2 position, Camera camera)
 {
     Ray ray = GetScreenToWorldRayEx(position, camera, GetScreenWidth(), GetScreenHeight());
 
@@ -1510,7 +1510,7 @@ Ray GetScreenToWorldRay(glm::vec2 position, Camera camera)
 }
 
 // Get a ray trace from the screen position (i.e mouse) within a specific section of the screen
-Ray GetScreenToWorldRayEx(glm::vec2 position, Camera camera, int width, int height)
+Ray GetScreenToWorldRayEx(vec2 position, Camera camera, int width, int height)
 {
     Ray ray{};
 
@@ -1521,12 +1521,12 @@ Ray GetScreenToWorldRayEx(glm::vec2 position, Camera camera, int width, int heig
     constexpr float z = 1.0f;
 
     // Store values in a vector
-    const glm::vec3 deviceCoords = { x, y, z };
+    const vec3 deviceCoords = { x, y, z };
 
     // Calculate view matrix from camera look at
-    const Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+    const mat4 matView = glm::lookAt(camera.position, camera.target, camera.up);
 
-    Matrix matProj = Matrix(1.0f);
+    mat4 matProj = mat4(1.0f);
 
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
@@ -1544,17 +1544,17 @@ Ray GetScreenToWorldRayEx(glm::vec2 position, Camera camera, int width, int heig
     }
 
     // Unproject far/near points
-    const glm::vec3 nearPoint = Vector3Unproject(glm::vec3{ deviceCoords.x, deviceCoords.y, 0.0f }, matProj, matView);
-    const glm::vec3 farPoint = Vector3Unproject(glm::vec3{ deviceCoords.x, deviceCoords.y, 1.0f }, matProj, matView);
+    const vec3 nearPoint = Vector3Unproject(vec3{ deviceCoords.x, deviceCoords.y, 0.0f }, matProj, matView);
+    const vec3 farPoint = Vector3Unproject(vec3{ deviceCoords.x, deviceCoords.y, 1.0f }, matProj, matView);
 
     // Unproject the mouse cursor in the near plane
     // It is needed as the source position because orthographic projects,
     // compared to perspective doesn't have a convergence point,
     // meaning that the "eye" of the camera is more like a plane than a point
-    const glm::vec3 cameraPlanePointerPos = Vector3Unproject(glm::vec3{ deviceCoords.x, deviceCoords.y, -1.0f }, matProj, matView);
+    const vec3 cameraPlanePointerPos = Vector3Unproject(vec3{ deviceCoords.x, deviceCoords.y, -1.0f }, matProj, matView);
 
     // Calculate normalized direction vector
-    const glm::vec3 direction = glm::normalize(farPoint - nearPoint);
+    const vec3 direction = glm::normalize(farPoint - nearPoint);
 
     if (camera.projection == CAMERA_PERSPECTIVE) ray.position = camera.position;
     else if (camera.projection == CAMERA_ORTHOGRAPHIC) ray.position = cameraPlanePointerPos;
@@ -1566,17 +1566,17 @@ Ray GetScreenToWorldRayEx(glm::vec2 position, Camera camera, int width, int heig
 }
 
 // Get transform matrix for camera
-Matrix GetCameraMatrix(Camera camera)
+mat4 GetCameraMatrix(Camera camera)
 {
-    Matrix mat = glm::lookAt(camera.position, camera.target, camera.up);
+    mat4 mat = glm::lookAt(camera.position, camera.target, camera.up);
 
     return mat;
 }
 
 // Get camera 2d transform matrix
-Matrix GetCameraMatrix2D(Camera2D camera)
+mat4 GetCameraMatrix2D(Camera2D camera)
 {
-    Matrix matTransform{};
+    mat4 matTransform{};
     // The camera in world-space is set by
     //   1. Move it to target
     //   2. Rotate by -rotation and scale by (1/zoom)
@@ -1591,10 +1591,10 @@ Matrix GetCameraMatrix2D(Camera2D camera)
     //   1. Move to offset
     //   2. Rotate and Scale
     //   3. Move by -target
-    const Matrix matOrigin = glm::translate(Matrix(1.0f), glm::vec3{-camera.target.x, -camera.target.y, 0.0f});
-    const Matrix matRotation = glm::rotate(Matrix(1.0f), camera.rotation*DEG2RAD, glm::vec3{0.0f, 0.0f, 1.0f});
-    const Matrix matScale = glm::scale(Matrix(1.0f), glm::vec3{camera.zoom, camera.zoom, 1.0f});
-    const Matrix matTranslation = glm::translate(Matrix(1.0f), glm::vec3{camera.offset.x, camera.offset.y, 0.0f});
+    const mat4 matOrigin = glm::translate(mat4(1.0f), vec3{-camera.target.x, -camera.target.y, 0.0f});
+    const mat4 matRotation = glm::rotate(mat4(1.0f), camera.rotation*DEG2RAD, vec3{0.0f, 0.0f, 1.0f});
+    const mat4 matScale = glm::scale(mat4(1.0f), vec3{camera.zoom, camera.zoom, 1.0f});
+    const mat4 matTranslation = glm::translate(mat4(1.0f), vec3{camera.offset.x, camera.offset.y, 0.0f});
 
     matTransform = matTranslation*(matRotation*matScale)*matOrigin;
 
@@ -1602,18 +1602,18 @@ Matrix GetCameraMatrix2D(Camera2D camera)
 }
 
 // Get screen space position from a 3d world space position
-glm::vec2 GetWorldToScreen(glm::vec3 position, Camera camera)
+vec2 GetWorldToScreen(vec3 position, Camera camera)
 {
-    const glm::vec2 screenPosition = GetWorldToScreenEx(position, camera, GetScreenWidth(), GetScreenHeight());
+    const vec2 screenPosition = GetWorldToScreenEx(position, camera, GetScreenWidth(), GetScreenHeight());
 
     return screenPosition;
 }
 
 // Get sized screen space position for a 3d world space position (useful for texture drawing)
-glm::vec2 GetWorldToScreenEx(glm::vec3 position, Camera camera, int width, int height)
+vec2 GetWorldToScreenEx(vec3 position, Camera camera, int width, int height)
 {
     // Calculate projection matrix (from perspective instead of frustum
-    Matrix matProj = Matrix(1.0f);
+    mat4 matProj = mat4(1.0f);
 
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
@@ -1631,10 +1631,10 @@ glm::vec2 GetWorldToScreenEx(glm::vec3 position, Camera camera, int width, int h
     }
 
     // Calculate view matrix from camera look at (and transpose it)
-    const Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
+    const mat4 matView = glm::lookAt(camera.position, camera.target, camera.up);
 
     // Convert world position vector to homogeneous clip-space position
-    glm::vec4 worldPos = { position.x, position.y, position.z, 1.0f };
+    vec4 worldPos = { position.x, position.y, position.z, 1.0f };
 
     // Transform world position to view
     worldPos = matView*worldPos;
@@ -1643,30 +1643,30 @@ glm::vec2 GetWorldToScreenEx(glm::vec3 position, Camera camera, int width, int h
     worldPos = matProj*worldPos;
 
     // Calculate normalized device coordinates (inverted y)
-    const glm::vec3 ndcPos = { worldPos.x/worldPos.w, -worldPos.y/worldPos.w, worldPos.z/worldPos.w };
+    const vec3 ndcPos = { worldPos.x/worldPos.w, -worldPos.y/worldPos.w, worldPos.z/worldPos.w };
 
     // Calculate 2d screen position vector
-    const glm::vec2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*static_cast<float>(width), (ndcPos.y + 1.0f)/2.0f*static_cast<float>(height) };
+    const vec2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*static_cast<float>(width), (ndcPos.y + 1.0f)/2.0f*static_cast<float>(height) };
 
     return screenPosition;
 }
 
 // Get screen space position for a 2d camera world space position
-glm::vec2 GetWorldToScreen2D(glm::vec2 position, Camera2D camera)
+vec2 GetWorldToScreen2D(vec2 position, Camera2D camera)
 {
-    const Matrix matCamera = GetCameraMatrix2D(camera);
-    const glm::vec3 transform = glm::vec3(matCamera*glm::vec4(position.x, position.y, 0.0f, 1.0f));
+    const mat4 matCamera = GetCameraMatrix2D(camera);
+    const vec3 transform = vec3(matCamera*vec4(position.x, position.y, 0.0f, 1.0f));
 
-    return glm::vec2{ transform.x, transform.y };
+    return vec2{ transform.x, transform.y };
 }
 
 // Get world space position for a 2d camera screen space position
-glm::vec2 GetScreenToWorld2D(glm::vec2 position, Camera2D camera)
+vec2 GetScreenToWorld2D(vec2 position, Camera2D camera)
 {
-    const Matrix invMatCamera = glm::inverse(GetCameraMatrix2D(camera));
-    const glm::vec3 transform = glm::vec3(invMatCamera*glm::vec4(position.x, position.y, 0.0f, 1.0f));
+    const mat4 invMatCamera = glm::inverse(GetCameraMatrix2D(camera));
+    const vec3 transform = vec3(invMatCamera*vec4(position.x, position.y, 0.0f, 1.0f));
 
-    return glm::vec2{ transform.x, transform.y };
+    return vec2{ transform.x, transform.y };
 }
 
 //----------------------------------------------------------------------------------
@@ -1850,7 +1850,7 @@ int GetRandomValue(int min, int max)
         // Rejection sampling to get a uniform integer in [min, max]
         unsigned long c = static_cast<unsigned long>(RAND_MAX) + 1UL; // Number of possible results
         unsigned long m = static_cast<unsigned long>(range);          // Size of the target interval
-        unsigned long t = c - (c%m);                     // Largest multiple of m <= c
+        unsigned long t = c - (c%m);                                  // Largest multiple of m <= c
         unsigned long r = 0;
 
         for (;;)
@@ -1927,7 +1927,7 @@ void TakeScreenshot(std::string_view fileNameView)
     if (strchr(fileName, '\'') != nullptr) { TRACELOG(LOG_WARNING, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
 
     // Apply content scaling if required
-    glm::vec2 scale = { 1.0f, 1.0f };
+    vec2 scale = { 1.0f, 1.0f };
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)) scale = GetWindowScaleDPI();
 
     unsigned char *imgData = rlReadScreenPixels(static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y));
@@ -2727,7 +2727,7 @@ std::string GetFileNameWithoutExt(std::string_view filePathView)
     {
         const std::string baseName = GetFileName(filePath);
         snprintf(fileName, MAX_FILENAME_LENGTH, "%s", baseName.c_str()); // Get filename.ext without path
-        const int fileNameLength = static_cast<int>(strlen(fileName)); // Get size in bytes
+        const int fileNameLength = static_cast<int>(strlen(fileName));   // Get size in bytes
 
         for (int i = fileNameLength; i > 0; i--) // Reverse search '.'
         {
@@ -2907,7 +2907,7 @@ std::string GetApplicationDirectory(void)
 
 #elif defined(__APPLE__)
 
-    uint32_t size = sizeof(appDir);
+    u32 size = sizeof(appDir);
 
     if (_NSGetExecutablePath(appDir, &size) == 0)
     {
@@ -3006,7 +3006,7 @@ int MakeDirectory(std::string_view dirPathView)
     const char *dirPath = dirPathStr.c_str();
 
     if ((dirPath == nullptr) || (dirPath[0] == '\0')) return -1; // Path is not valid
-    if (DirectoryExists(dirPath)) return 0; // Path already exists (is valid)
+    if (DirectoryExists(dirPath)) return 0;                      // Path already exists (is valid)
 
     // Copy path string to avoid modifying original
     const int dirPathLength = static_cast<int>(strlen(dirPath)) + 1;
@@ -3332,7 +3332,7 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
         unsigned int octetC = 0;
         unsigned int octetPack = 0;
 
-        octetA = data[i]; // Generates 2 sextets
+        octetA = data[i];                               // Generates 2 sextets
         octetB = ((i + 1) < dataSize)? data[i + 1] : 0; // Generates 3 sextets
         octetC = ((i + 2) < dataSize)? data[i + 2] : 0; // Generates 4 sextets
 
@@ -4053,8 +4053,8 @@ void PlayAutomationEvent(AutomationEvent event)
                 CORE.Input.Touch.position[event.params[0]].x = static_cast<float>(event.params[1]);
                 CORE.Input.Touch.position[event.params[0]].y = static_cast<float>(event.params[2]);
             } break;
-            case INPUT_GAMEPAD_CONNECT: CORE.Input.Gamepad.ready[event.params[0]] = true; break;                // param[0]: gamepad
-            case INPUT_GAMEPAD_DISCONNECT: CORE.Input.Gamepad.ready[event.params[0]] = false; break;            // param[0]: gamepad
+            case INPUT_GAMEPAD_CONNECT: CORE.Input.Gamepad.ready[event.params[0]] = true; break;                                     // param[0]: gamepad
+            case INPUT_GAMEPAD_DISCONNECT: CORE.Input.Gamepad.ready[event.params[0]] = false; break;                                 // param[0]: gamepad
             case INPUT_GAMEPAD_BUTTON_UP: CORE.Input.Gamepad.currentButtonState[event.params[0]][event.params[1]] = false; break;    // param[0]: gamepad, param[1]: button
             case INPUT_GAMEPAD_BUTTON_DOWN: CORE.Input.Gamepad.currentButtonState[event.params[0]][event.params[1]] = true; break;   // param[0]: gamepad, param[1]: button
             case INPUT_GAMEPAD_AXIS_MOTION: // param[0]: gamepad, param[1]: axis, param[2]: delta
@@ -4406,9 +4406,9 @@ int GetMouseY(void)
 }
 
 // Get mouse position XY
-glm::vec2 GetMousePosition(void)
+vec2 GetMousePosition(void)
 {
-    glm::vec2 position{};
+    vec2 position{};
 
     position.x = (CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x;
     position.y = (CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y;
@@ -4417,9 +4417,9 @@ glm::vec2 GetMousePosition(void)
 }
 
 // Get mouse delta between frames
-glm::vec2 GetMouseDelta(void)
+vec2 GetMouseDelta(void)
 {
-    glm::vec2 delta{};
+    vec2 delta{};
 
     delta.x = (CORE.Input.Mouse.currentPosition.x - CORE.Input.Mouse.previousPosition.x)*CORE.Input.Mouse.scale.x;
     delta.y = (CORE.Input.Mouse.currentPosition.y - CORE.Input.Mouse.previousPosition.y)*CORE.Input.Mouse.scale.y;
@@ -4431,14 +4431,14 @@ glm::vec2 GetMouseDelta(void)
 // NOTE: Useful when rendering to different size targets
 void SetMouseOffset(int offsetX, int offsetY)
 {
-    CORE.Input.Mouse.offset = glm::vec2{ static_cast<float>(offsetX), static_cast<float>(offsetY) };
+    CORE.Input.Mouse.offset = vec2{ static_cast<float>(offsetX), static_cast<float>(offsetY) };
 }
 
 // Set mouse scaling
 // NOTE: Useful when rendering to different size targets
 void SetMouseScale(float scaleX, float scaleY)
 {
-    CORE.Input.Mouse.scale = glm::vec2{ scaleX, scaleY };
+    CORE.Input.Mouse.scale = vec2{ scaleX, scaleY };
 }
 
 // Get mouse wheel movement Y
@@ -4453,9 +4453,9 @@ float GetMouseWheelMove(void)
 }
 
 // Get mouse wheel movement X/Y as a vector
-glm::vec2 GetMouseWheelMoveV(void)
+vec2 GetMouseWheelMoveV(void)
 {
-    glm::vec2 result{};
+    vec2 result{};
 
     result = CORE.Input.Mouse.currentWheelMove;
 
@@ -4481,9 +4481,9 @@ int GetTouchY(void)
 }
 
 // Get touch position XY for a touch point index (relative to screen size)
-glm::vec2 GetTouchPosition(int index)
+vec2 GetTouchPosition(int index)
 {
-    glm::vec2 position = { -1.0f, -1.0f };
+    vec2 position = { -1.0f, -1.0f };
 
     if (index < MAX_TOUCH_POINTS) position = CORE.Input.Touch.position[index];
     else TRACELOG(LOG_WARNING, "INPUT: Required touch point out of range (Max touch points: %i)", MAX_TOUCH_POINTS);

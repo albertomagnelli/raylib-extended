@@ -43,15 +43,15 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 6.0f, 6.0f, 6.0f }; // Camera position
-    camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };// Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };    // Camera up vector (rotation towards target)
+    camera.position = vec3{ 6.0f, 6.0f, 6.0f };     // Camera position
+    camera.target = vec3{ 0.0f, 2.0f, 0.0f };       // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };           // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                            // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
     // Load model
     const Model model = LoadModel("resources/models/gltf/robot.glb"); // Load character model
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
+    const vec3 position = { 0.0f, 0.0f, 0.0f };                       // Set model world position
 
 #if SUPPORT_GPU_SKINNING
     // WARNING: SUPPORT_GPU_SKINNING is required to be enabled at raylib compile time (disabled by default)
@@ -88,7 +88,7 @@ int main()
                                         // NOTE: 0.0f results in full anim0[] and 1.0f in full anim1[]
 
     constexpr float animBlendTime = 2.0f;         // Time to blend from one playing animation to another (in seconds)
-    float animBlendTimeCounter = 0.0f;  // Time counter (delta time)
+    float animBlendTimeCounter = 0.0f;            // Time counter (delta time)
 
     bool animPause = false;             // Pause animation
 
@@ -243,7 +243,7 @@ int main()
 
             // Blending process progress bar
             if (nextAnimToPlay == 1) GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 0); // Left-->Right
-            else GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 1); // Right-->Left
+            else GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 1);                     // Right-->Left
             GuiProgressBar(Rectangle{ 180, 14, 440, 16 }, nullptr, nullptr, &animBlendProgress, 0.0f, 1.0f);
             GuiSetStyle(PROGRESSBAR, PROGRESS_SIDE, 0); // Reset to Left-->Right
 
@@ -283,7 +283,7 @@ int main()
     // De-Initialization
     //--------------------------------------------------------------------------------------
     UnloadModelAnimations(anims, animCount); // Unload model animation
-    UnloadModel(model);             // Unload model and meshes/material
+    UnloadModel(model);                      // Unload model and meshes/material
 #if SUPPORT_GPU_SKINNING
     UnloadShader(skinningShader);   // Unload GPU skinning shader
 #endif

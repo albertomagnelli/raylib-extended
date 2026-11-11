@@ -74,18 +74,18 @@ typedef struct {
 typedef struct {
     // Store data for both Hover and Touch events
     // Used to ignore Hover events which are interpreted as Touch events
-    int32_t pointCount;                             // Number of touch points active
-    int32_t pointId[MAX_TOUCH_POINTS];              // Point identifiers
-    glm::vec2 position[MAX_TOUCH_POINTS];           // Touch position on screen
+    i32 pointCount;                             // Number of touch points active
+    i32 pointId[MAX_TOUCH_POINTS];              // Point identifiers
+    vec2 position[MAX_TOUCH_POINTS];            // Touch position on screen
 
-    int32_t hoverPoints[MAX_TOUCH_POINTS];          // Hover Points
+    i32 hoverPoints[MAX_TOUCH_POINTS];          // Hover Points
 } TouchRaw;
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
-static PlatformData platform = {};   // Platform specific data
+static PlatformData platform = {};      // Platform specific data
 
 //----------------------------------------------------------------------------------
 // Local Variables Definition
@@ -264,8 +264,8 @@ static TouchRaw touchRaw = {};
 int InitPlatform(void);          // Initialize platform (graphics, inputs and more)
 void ClosePlatform(void);        // Close platform
 
-static void AndroidCommandCallback(struct android_app *app, int32_t cmd);           // Process Android activity lifecycle commands
-static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event);   // Process Android inputs
+static void AndroidCommandCallback(struct android_app *app, i32 cmd);               // Process Android activity lifecycle commands
+static i32 AndroidInputCallback(struct android_app *app, AInputEvent *event);       // Process Android inputs
 static GamepadButton AndroidTranslateGamepadButton(int button);                     // Map Android gamepad button to raylib gamepad button
 
 static void SetupFramebuffer(int width, int height); // Setup main framebuffer (required by InitPlatform())
@@ -518,10 +518,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-glm::vec2 GetMonitorPosition(int monitor)
+vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -571,18 +571,18 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-glm::vec2 GetWindowPosition(void)
+vec2 GetWindowPosition(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowPosition() not implemented on target platform");
-    return glm::vec2{ 0, 0 };
+    return vec2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
-glm::vec2 GetWindowScaleDPI(void)
+vec2 GetWindowScaleDPI(void)
 {
     int density = AConfiguration_getDensity(platform.app->config);
     float scale = static_cast<float>(density)/160;
-    return glm::vec2{ scale, scale };
+    return vec2{ scale, scale };
 }
 
 // Set clipboard text content
@@ -734,7 +734,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -783,7 +783,7 @@ void PollInputEvents(void)
     for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.previousTouchState[i] = CORE.Input.Touch.currentTouchState[i];
 
     // Reset touch positions
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = vec2{ 0, 0 };
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys
@@ -946,14 +946,14 @@ static int InitGraphicsDevice(void)
 
     const EGLint framebufferAttribs[] = {
         EGL_RENDERABLE_TYPE, (rlGetVersion() == RL_OPENGL_ES_30)? EGL_OPENGL_ES3_BIT : EGL_OPENGL_ES2_BIT, // Type of context support
-        EGL_RED_SIZE, 8,            // RED color bit depth (alternative: 5)
-        EGL_GREEN_SIZE, 8,          // GREEN color bit depth (alternative: 6)
-        EGL_BLUE_SIZE, 8,           // BLUE color bit depth (alternative: 5)
+        EGL_RED_SIZE, 8,                                                                                   // RED color bit depth (alternative: 5)
+        EGL_GREEN_SIZE, 8,                                                                                 // GREEN color bit depth (alternative: 6)
+        EGL_BLUE_SIZE, 8,                                                                                  // BLUE color bit depth (alternative: 5)
         //EGL_TRANSPARENT_TYPE, EGL_NONE, // Request transparent framebuffer (EGL_TRANSPARENT_RGB does not work on RPI)
         EGL_DEPTH_SIZE, 24,         // Depth buffer size (Required to use Depth testing!)
         //EGL_STENCIL_SIZE, 8,      // Stencil buffer size
         EGL_SAMPLE_BUFFERS, sampleBuffer, // Activate MSAA
-        EGL_SAMPLES, samples,       // 4x Antialiasing if activated (Free on MALI GPUs)
+        EGL_SAMPLES, samples,             // 4x Antialiasing if activated (Free on MALI GPUs)
         EGL_NONE
     };
 
@@ -1049,7 +1049,7 @@ static int InitGraphicsDevice(void)
 }
 
 // ANDROID: Process activity lifecycle commands
-static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
+static void AndroidCommandCallback(struct android_app *app, i32 cmd)
 {
     switch (cmd)
     {
@@ -1211,7 +1211,7 @@ static GamepadButton AndroidTranslateGamepadButton(int button)
 }
 
 // ANDROID: Get input events
-static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
+static i32 AndroidInputCallback(struct android_app *app, AInputEvent *event)
 {
     // If additional inputs are required check:
     // REF: https://developer.android.com/ndk/reference/group/input
@@ -1282,8 +1282,8 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
     }
     else if (type == AINPUT_EVENT_TYPE_KEY)
     {
-        int32_t keycode = AKeyEvent_getKeyCode(event);
-        //int32_t AKeyEvent_getMetaState(event);
+        i32 keycode = AKeyEvent_getKeyCode(event);
+        //i32 AKeyEvent_getMetaState(event);
 
         // Handle gamepad button presses and releases. AOSP stamps the
         // KEYBOARD source bit on every key event from a gamepad, so
@@ -1357,7 +1357,7 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
         touchRaw.pointId[i] = AMotionEvent_getPointerId(event, i);
 
         // Register touch points position
-        touchRaw.position[i] = glm::vec2{ AMotionEvent_getX(event, i), AMotionEvent_getY(event, i) };
+        touchRaw.position[i] = vec2{ AMotionEvent_getX(event, i), AMotionEvent_getY(event, i) };
 
         // Normalize CORE.Input.Touch.position[i] for CORE.Window.screen.width and CORE.Window.screen.height
         float widthRatio = static_cast<float>((CORE.Window.screen.width + CORE.Window.renderOffset.x))/static_cast<float>(CORE.Window.display.width);
@@ -1366,9 +1366,9 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
         touchRaw.position[i].y = touchRaw.position[i].y*heightRatio - static_cast<float>(CORE.Window.renderOffset.y)/2;
     }
 
-    int32_t action = AMotionEvent_getAction(event);
+    i32 action = AMotionEvent_getAction(event);
     unsigned int flags = action & AMOTION_EVENT_ACTION_MASK;
-    int32_t pointerIndex = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+    i32 pointerIndex = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
 
     if (flags == AMOTION_EVENT_ACTION_HOVER_ENTER)
     {
@@ -1478,7 +1478,7 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
 
     // Map touch[0] as mouse input for convenience
     CORE.Input.Mouse.currentPosition = CORE.Input.Touch.position[0];
-    CORE.Input.Mouse.currentWheelMove = glm::vec2{ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = vec2{ 0.0f, 0.0f };
 
     return 0;
 }
@@ -1513,7 +1513,7 @@ static void SetupFramebuffer(int width, int height)
 
         // Screen scaling required
         float scaleRatio = static_cast<float>(CORE.Window.render.width)/static_cast<float>(CORE.Window.screen.width);
-        CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleRatio, scaleRatio, 1.0f});
+        CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{scaleRatio, scaleRatio, 1.0f});
 
         // NOTE: Rendering to full display resolution
         // Above parameters need to be calculate for downscale matrix and offsets

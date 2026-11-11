@@ -19,7 +19,7 @@
 #include <math.h>
 
 // Check if point is inside ellipse
-static bool CheckCollisionPointEllipse(glm::vec2 point, glm::vec2 center, float rx, float ry)
+static bool CheckCollisionPointEllipse(vec2 point, vec2 center, float rx, float ry)
 {
     const float dx = (point.x - center.x)/rx;
     const float dy = (point.y - center.y)/ry;
@@ -28,7 +28,7 @@ static bool CheckCollisionPointEllipse(glm::vec2 point, glm::vec2 center, float 
 
 // Check if two ellipses collide
 // Uses radial boundary distance in the direction between centers — scales correctly with radii
-static bool CheckCollisionEllipses(glm::vec2 c1, float rx1, float ry1, glm::vec2 c2, float rx2, float ry2)
+static bool CheckCollisionEllipses(vec2 c1, float rx1, float ry1, vec2 c2, float rx2, float ry2)
 {
     const float dx = c2.x - c1.x;
     const float dy = c2.y - c1.y;
@@ -62,11 +62,11 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ellipse collision");
     SetTargetFPS(60);
 
-    glm::vec2 ellipseACenter = { static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2 };
+    vec2 ellipseACenter = { static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2 };
     constexpr float ellipseARx = 120.0f;
     constexpr float ellipseARy = 70.0f;
 
-    glm::vec2 ellipseBCenter = { static_cast<float>(screenWidth)*3/4, static_cast<float>(screenHeight)/2 };
+    vec2 ellipseBCenter = { static_cast<float>(screenWidth)*3/4, static_cast<float>(screenHeight)/2 };
     constexpr float ellipseBRx = 90.0f;
     constexpr float ellipseBRy = 140.0f;
 

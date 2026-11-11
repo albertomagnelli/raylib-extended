@@ -85,12 +85,12 @@ int main()
         BeginDrawing();
 
             DrawTexture(backgroundTexture, 0, 0, WHITE);
-            DrawTexturePro(fudesumiTexture, fudesumiRec, fudesumiPos, glm::vec2{0, 0}, 0, WHITE);
+            DrawTexturePro(fudesumiTexture, fudesumiRec, fudesumiPos, vec2{0, 0}, 0, WHITE);
 
-            DrawTexturePro(textureRed, fudesumiRec, redPos, glm::vec2{0, 0}, 0, RED);
-            DrawTexturePro(textureGreen, fudesumiRec, greenPos, glm::vec2{0, 0}, 0, GREEN);
-            DrawTexturePro(textureBlue, fudesumiRec, bluePos, glm::vec2{0, 0}, 0, BLUE);
-            DrawTexturePro(textureAlpha, fudesumiRec, alphaPos, glm::vec2{0, 0}, 0, WHITE);
+            DrawTexturePro(textureRed, fudesumiRec, redPos, vec2{0, 0}, 0, RED);
+            DrawTexturePro(textureGreen, fudesumiRec, greenPos, vec2{0, 0}, 0, GREEN);
+            DrawTexturePro(textureBlue, fudesumiRec, bluePos, vec2{0, 0}, 0, BLUE);
+            DrawTexturePro(textureAlpha, fudesumiRec, alphaPos, vec2{0, 0}, 0, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

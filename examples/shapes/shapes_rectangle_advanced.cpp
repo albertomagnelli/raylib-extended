@@ -133,7 +133,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
     */
 
     // Coordinates of the 12 points also apdated from `DrawRectangleRounded`
-    const glm::vec2 point[12] = {
+    const vec2 point[12] = {
         // PO, P1, P2
         {rec.x + radiusLeft, rec.y}, {(rec.x + rec.width) - radiusRight, rec.y}, { rec.x + rec.width, rec.y + radiusRight },
         // P3, P4
@@ -146,7 +146,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
         {(rec.x + rec.width) - radiusRight, (rec.y + rec.height) - radiusRight}, {rec.x + radiusLeft, (rec.y + rec.height) - radiusLeft}
     };
 
-    const glm::vec2 centers[4] = { point[8], point[9], point[10], point[11] };
+    const vec2 centers[4] = { point[8], point[9], point[10], point[11] };
     const float angles[4] = { 180.0f, 270.0f, 0.0f, 90.0f };
 
 #if defined(SUPPORT_QUADS_DRAW_MODE)
@@ -164,7 +164,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
             if (k == 2) color = right, radius = radiusRight;    // [5] Lower Right Corner
             if (k == 3) color = left,  radius = radiusLeft;     // [7] Lower Left Corner
             float angle = angles[k];
-            const glm::vec2 center = centers[k];
+            const vec2 center = centers[k];
 
             for (int i = 0; i < segments/2; i++)
             {
@@ -289,7 +289,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
             if (k == 3) color = left,  radius = radiusLeft;     // [7] Lower Left Corner
 
             float angle = angles[k];
-            const glm::vec2 center = centers[k];
+            const vec2 center = centers[k];
 
             for (int i = 0; i < segments; i++)
             {

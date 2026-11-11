@@ -81,7 +81,7 @@ int main()
 
             BeginShaderMode(shader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, glm::vec2{ 0.0f, 0.0f }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, vec2{ 0.0f, 0.0f }, WHITE);
             EndShaderMode();
         EndDrawing();
         //----------------------------------------------------------------------------------

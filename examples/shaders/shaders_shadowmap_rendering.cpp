@@ -50,19 +50,19 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - shadowmap rendering");
 
     Camera3D camera = {};
-    camera.position = glm::vec3{ 10.0f, 10.0f, 10.0f };
-    camera.target = glm::vec3{};
+    camera.position = vec3{ 10.0f, 10.0f, 10.0f };
+    camera.target = vec3{};
     camera.projection = CAMERA_PERSPECTIVE;
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
 
     const Shader shadowShader = LoadShader(TextFormat("resources/shaders/glsl%i/shadowmap.vs", GLSL_VERSION),
                                      TextFormat("resources/shaders/glsl%i/shadowmap.fs", GLSL_VERSION));
     shadowShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shadowShader, "viewPos");
 
-    glm::vec3 lightDir = glm::normalize(glm::vec3{ 0.35f, -1.0f, -0.35f });
+    vec3 lightDir = glm::normalize(vec3{ 0.35f, -1.0f, -0.35f });
     const Color lightColor = WHITE;
-    glm::vec4 lightColorNormalized = ColorNormalize(lightColor);
+    vec4 lightColorNormalized = ColorNormalize(lightColor);
     const int lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
     const int lightColLoc = GetShaderLocation(shadowShader, "lightColor");
     SetShaderValue(shadowShader, lightDirLoc, &lightDir, SHADER_UNIFORM_VEC3);
@@ -88,17 +88,17 @@ int main()
     // For the shadowmapping algorithm, we will be rendering everything from the light's point of view
     Camera3D lightCamera = {};
     lightCamera.position = ((lightDir) * (-15.0f));
-    lightCamera.target = glm::vec3{};
+    lightCamera.target = vec3{};
     lightCamera.projection = CAMERA_ORTHOGRAPHIC; // Use an orthographic projection for directional lights
-    lightCamera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+    lightCamera.up = vec3{ 0.0f, 1.0f, 0.0f };
     lightCamera.fovy = 20.0f;
 
     int frameCounter = 0;
 
     // Store the light matrices
-    Matrix lightView = {};
-    Matrix lightProj = {};
-    Matrix lightViewProj = {};
+    mat4 lightView = {};
+    mat4 lightProj = {};
+    mat4 lightViewProj = {};
     int textureActiveSlot = 10; // Can be anything 0 to 15, but 0 will probably be taken up
 
     SetTargetFPS(60);
@@ -114,7 +114,7 @@ int main()
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         // send the updated camera position to the shader so that it can calculate the correct lighting for the scene
-        glm::vec3 cameraPos = camera.position;
+        vec3 cameraPos = camera.position;
         SetShaderValue(shadowShader, shadowShader.locs[SHADER_LOC_VECTOR_VIEW], &cameraPos, SHADER_UNIFORM_VEC3);
 
         frameCounter++;
@@ -257,7 +257,7 @@ static void UnloadShadowmapRenderTexture(RenderTexture2D target)
 // NOTE: Required  to be called several time to generate shadowmap
 static void DrawScene(Model cube, Model robot)
 {
-    DrawModelEx(cube, glm::vec3{}, glm::vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, glm::vec3{ 10.0f, 1.0f, 10.0f }, BLUE);
-    DrawModelEx(cube, glm::vec3{ 1.5f, 1.0f, -1.5f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, glm::vec3(1.0f), WHITE);
-    DrawModelEx(robot, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, glm::vec3{ 1.0f, 1.0f, 1.0f }, RED);
+    DrawModelEx(cube, vec3{}, vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, vec3{ 10.0f, 1.0f, 10.0f }, BLUE);
+    DrawModelEx(cube, vec3{ 1.5f, 1.0f, -1.5f }, vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, vec3(1.0f), WHITE);
+    DrawModelEx(robot, vec3{ 0.0f, 0.5f, 0.0f }, vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, vec3{ 1.0f, 1.0f, 1.0f }, RED);
 }

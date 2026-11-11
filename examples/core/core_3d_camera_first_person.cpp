@@ -32,9 +32,9 @@ int main()
 
     // Define the camera to look into our 3d world (position, target, up vector)
     Camera camera = {};
-    camera.position = glm::vec3{ 0.0f, 2.0f, 4.0f };  // Camera position
-    camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 0.0f, 2.0f, 4.0f };         // Camera position
+    camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -42,13 +42,13 @@ int main()
 
     // Generates some random columns
     float heights[MAX_COLUMNS] = {};
-    glm::vec3 positions[MAX_COLUMNS] = {};
+    vec3 positions[MAX_COLUMNS] = {};
     Color colors[MAX_COLUMNS] = {};
 
     for (int i = 0; i < MAX_COLUMNS; i++)
     {
         heights[i] = static_cast<float>(GetRandomValue(1, 12));
-        positions[i] = glm::vec3{ static_cast<float>(GetRandomValue(-15, 15)), heights[i]/2.0f, static_cast<float>(GetRandomValue(-15, 15)) };
+        positions[i] = vec3{ static_cast<float>(GetRandomValue(-15, 15)), heights[i]/2.0f, static_cast<float>(GetRandomValue(-15, 15)) };
         colors[i] = Color{ static_cast<unsigned char>(GetRandomValue(20, 255)), static_cast<unsigned char>(GetRandomValue(10, 55)), 30, 255 };
     }
 
@@ -66,25 +66,25 @@ int main()
         if (IsKeyPressed(KEY_ONE))
         {
             cameraMode = CAMERA_FREE;
-            camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
+            camera.up = vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
         }
 
         if (IsKeyPressed(KEY_TWO))
         {
             cameraMode = CAMERA_FIRST_PERSON;
-            camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
+            camera.up = vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
         }
 
         if (IsKeyPressed(KEY_THREE))
         {
             cameraMode = CAMERA_THIRD_PERSON;
-            camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
+            camera.up = vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
         }
 
         if (IsKeyPressed(KEY_FOUR))
         {
             cameraMode = CAMERA_ORBITAL;
-            camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
+            camera.up = vec3{ 0.0f, 1.0f, 0.0f }; // Reset roll
         }
 
         // Switch camera projection
@@ -95,9 +95,9 @@ int main()
                 // Create isometric view
                 cameraMode = CAMERA_THIRD_PERSON;
                 // Note: The target distance is related to the render distance in the orthographic projection
-                camera.position = glm::vec3{ 0.0f, 2.0f, -100.0f };
-                camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };
-                camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+                camera.position = vec3{ 0.0f, 2.0f, -100.0f };
+                camera.target = vec3{ 0.0f, 2.0f, 0.0f };
+                camera.up = vec3{ 0.0f, 1.0f, 0.0f };
                 camera.projection = CAMERA_ORTHOGRAPHIC;
                 camera.fovy = 20.0f; // near plane width in CAMERA_ORTHOGRAPHIC
                 CameraYaw(&camera, -135*DEG2RAD, true);
@@ -107,9 +107,9 @@ int main()
             {
                 // Reset to default view
                 cameraMode = CAMERA_THIRD_PERSON;
-                camera.position = glm::vec3{ 0.0f, 2.0f, 10.0f };
-                camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };
-                camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+                camera.position = vec3{ 0.0f, 2.0f, 10.0f };
+                camera.target = vec3{ 0.0f, 2.0f, 0.0f };
+                camera.up = vec3{ 0.0f, 1.0f, 0.0f };
                 camera.projection = CAMERA_PERSPECTIVE;
                 camera.fovy = 60.0f;
             }
@@ -124,14 +124,14 @@ int main()
         // This new camera function allows custom movement/rotation values to be directly provided
         // as input parameters, with this approach, rcamera module is internally independent of raylib inputs
         UpdateCameraPro(&camera,
-            glm::vec3{
+            vec3{
                 (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))*0.1f -      // Move forward-backward
                 (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))*0.1f,
                 (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))*0.1f -   // Move right-left
                 (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))*0.1f,
                 0.0f                                                // Move up-down
             },
-            glm::vec3{
+            vec3{
                 GetMouseDelta().x*0.05f,                            // Rotation: yaw
                 GetMouseDelta().y*0.05f,                            // Rotation: pitch
                 0.0f                                                // Rotation: roll
@@ -148,10 +148,10 @@ int main()
 
             BeginMode3D(camera);
 
-                DrawPlane(glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 32.0f, 32.0f }, LIGHTGRAY); // Draw ground
-                DrawCube(glm::vec3{ -16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, BLUE);   // Draw a blue wall
-                DrawCube(glm::vec3{ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIME);    // Draw a green wall
-                DrawCube(glm::vec3{ 0.0f, 2.5f, 16.0f }, 32.0f, 5.0f, 1.0f, GOLD);    // Draw a yellow wall
+                DrawPlane(vec3{ 0.0f, 0.0f, 0.0f }, vec2{ 32.0f, 32.0f }, LIGHTGRAY); // Draw ground
+                DrawCube(vec3{ -16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, BLUE);        // Draw a blue wall
+                DrawCube(vec3{ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIME);         // Draw a green wall
+                DrawCube(vec3{ 0.0f, 2.5f, 16.0f }, 32.0f, 5.0f, 1.0f, GOLD);         // Draw a yellow wall
 
                 // Draw some cubes around
                 for (int i = 0; i < MAX_COLUMNS; i++)

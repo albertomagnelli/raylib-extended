@@ -26,10 +26,10 @@
 // Animated text type
 typedef struct {
     char str[MAX_TEXT_LENGTH]; // Text to animate
-    glm::vec2 position;     // Text position on screen
-    float delta;            // Intensity of the effect (does not apply for flashing)
-    float offset;           // Time offset (in frames) between each char
-    float duration;         // Time duration (in frames) of the animation
+    vec2 position;             // Text position on screen
+    float delta;               // Intensity of the effect (does not apply for flashing)
+    float offset;              // Time offset (in frames) between each char
+    float duration;            // Time duration (in frames) of the animation
 } AnimatedText;
 
 //------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ int main()
     AnimatedText text = { "This is an animated text!", { 200, 250 }, 24.0f, 6, 60 };
     int frameCount = 0;
 
-    glm::vec2 glyphPosition[MAX_TEXT_LENGTH] = {};
+    vec2 glyphPosition[MAX_TEXT_LENGTH] = {};
     unsigned char glyphAlpha[MAX_TEXT_LENGTH] = {};
 
     SetTargetFPS(60);
@@ -76,7 +76,7 @@ int main()
         for (unsigned int i = 0, offsetX = 0; i < TextLength(text.str); i++)
         {
             // NOTE: Calculating every glyph position by its width
-            glyphPosition[i] = glm::vec2{ text.position.x + offsetX, text.position.y };
+            glyphPosition[i] = vec2{ text.position.x + offsetX, text.position.y };
             glyphAlpha[i] = 255U;
 
             offsetX += (MeasureText(TextSubtext(text.str, i, 1), 30) + TEXT_SPACING);

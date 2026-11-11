@@ -29,8 +29,8 @@
 typedef struct TextParticle {
     std::string text;
     Rectangle rect;    // Boundary
-    glm::vec2 vel;     // Velocity
-    glm::vec2 ppos;    // Previous position
+    vec2 vel;          // Velocity
+    vec2 ppos;         // Previous position
     float padding;
     float borderWidth;
     float friction;
@@ -65,7 +65,7 @@ int main()
     TextParticle textParticles[MAX_TEXT_PARTICLES] = {};
     int particleCount = 0;
     TextParticle *grabbedTextParticle = nullptr;
-    glm::vec2 pressOffset = {};
+    vec2 pressOffset = {};
 
     PrepareFirstTextParticle("raylib => fun videogames programming!", textParticles, &particleCount);
 
@@ -78,7 +78,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         const float delta = GetFrameTime();
-        const glm::vec2 mousePos = GetMousePosition();
+        const vec2 mousePos = GetMousePosition();
 
         // Checks if a text particle was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -133,7 +133,7 @@ int main()
         {
             for (int i = 0; i < particleCount; i++)
             {
-                if (!textParticles[i].grabbed) textParticles[i].vel = glm::vec2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
+                if (!textParticles[i].grabbed) textParticles[i].vel = vec2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
             }
         }
 
@@ -168,7 +168,7 @@ int main()
                 if ((tp->rect.x + tp->rect.width) >= screenWidth)
                 {
                     tp->rect.x = screenWidth - tp->rect.width; // Text particle repositioning
-                    tp->vel.x = -tp->vel.x*tp->elasticity;  // Elasticity makes the text particle lose 10% of its velocity on hit
+                    tp->vel.x = -tp->vel.x*tp->elasticity;     // Elasticity makes the text particle lose 10% of its velocity on hit
                 }
                 // Does the text particle hit the screen left boundary?
                 else if (tp->rect.x <= 0)

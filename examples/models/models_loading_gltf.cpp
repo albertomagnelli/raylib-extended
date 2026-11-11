@@ -36,15 +36,15 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 6.0f, 6.0f, 6.0f };  // Camera position
-    camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 6.0f, 6.0f, 6.0f };         // Camera position
+    camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load model
     const Model model = LoadModel("resources/models/gltf/robot.glb");
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
+    const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
 
     // Load model animations
     int animCount = 0;
@@ -97,7 +97,7 @@ int main()
     // De-Initialization
     //--------------------------------------------------------------------------------------
     UnloadModelAnimations(anims, animCount); // Unload model animations data
-    UnloadModel(model);         // Unload model
+    UnloadModel(model);                      // Unload model
 
     CloseWindow();              // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

@@ -11,7 +11,7 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
 - Vendored `src/external/*` compile as C++ with warning fixes only — no rewrites.
 
 ## Names
-- Global PascalCase API stays: `DrawTexture()`, `Quaternion`, `rlEnableDepthTest()` … no namespaces, no classes-as-API.
+- Global PascalCase API stays: `DrawTexture()`, `QuaternionFromEuler()`, `rlEnableDepthTest()` … no namespaces, no classes-as-API.
 - Plain `enum`s stay (not `enum class`).
 
 ## C++ vocabulary
@@ -22,9 +22,11 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
 - Prefer `std::string_view` / `std::string` over `const char *` (see the Text APIs entry below).
 
 ## Types & math
-- The math types are glm: vectors are used as `glm::vec2`, `glm::vec3` and `glm::vec4` directly
-  (no raylib aliases), `Quaternion = glm::quat`, `Matrix = glm::mat4`. `Color` and `Rectangle` are plain structs with
-  constructors (defaulted components keep the old C partial-init semantics: `Color c = { 255 }`).
+- The math types come from `types.h`, which aliases glm: `vec2`, `vec3`, `vec4`, `ivec*`, `uvec*`,
+  `dvec*`, `mat2`/`mat3`/`mat4`, `quat`, plus the fixed-width integers `i8`…`u64` and `f32`/`f64`.
+  Use those short names, not `glm::vec3`/`glm::mat4`/`glm::quat`, in declarations and signatures.
+  `Color` and `Rectangle` are plain structs with constructors (defaulted components keep the old
+  C partial-init semantics: `Color c = { 255 }`).
 - New code uses glm vocabulary directly: `a + b`, `glm::normalize(v)`, `glm::cross(a, b)`,
   `glm::lookAt(...)`, `q * v`, `m * v`, `glm::inverse(m)`.
 - `raymath.h` is a small residue of helpers that glm does not express directly: raylib's Euler
@@ -32,12 +34,12 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
   `OrthoNormalize`, `Project/Reject`, `Barycenter`, `Unproject`, `CubicHermite`, `MatrixCompose/
   Decompose`, `QuaternionNlerp`, 2D helpers (`Vector2Rotate`, `Vector2Angle`, …) and the
   `float3`/`float16` upload buffers.
-- **Matrix layout**: matrices are column-major and multiply column vectors. `glm::mat4` and raylib's
+- **Matrix layout**: matrices are column-major and multiply column vectors. `mat4` and raylib's
   former `Matrix` describe the same transform, so `mN` (old field) maps to `mat[N/4][N%4]`.
 - **Multiplication order**: raylib's `MatrixMultiply(A, B)` means "apply A, then B", i.e. glm
   `B * A`. Do not translate it to `A * B`.
 - Quaternions are glm `(w, x, y, z)`. glTF/binary data is `(x, y, z, w)` and must be reordered on load.
-- No compound literals in `.cpp` files: `(glm::vec2){ 1, 2 }` → `glm::vec2{ 1, 2 }`.
+- No compound literals in `.cpp` files: `(vec2){ 1, 2 }` → `vec2{ 1, 2 }`.
   `CLITERAL(Color){ ... }` still expands to `Color{ ... }` for the color macros.
 
 ## Memory & resources
@@ -51,7 +53,7 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
   arguments passed through them need `.c_str()`.
 
 ## Examples
-- `int main()` (no `(void)`), constructor-init for structs, `glm::vec2{}` literals,
+- `int main()` (no `(void)`), constructor-init for structs, `vec2{}` literals,
   `const` locals kept as-is. One file per example, `.cpp` extension.
 - Text is passed as string literals or `std::string`; APIs accept `std::string_view`, so no
   `.c_str()` is needed for normal calls. Only varargs (`TextFormat`, `TraceLog`) need it.

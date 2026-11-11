@@ -37,16 +37,16 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 10.0f, 10.0f, 10.0f }; // Camera position
-    camera.target = glm::vec3{ 0.0f, 4.0f, 0.0f };    // Camera looking at point
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
+    camera.position = vec3{ 10.0f, 10.0f, 10.0f };      // Camera position
+    camera.target = vec3{ 0.0f, 4.0f, 0.0f };           // Camera looking at point
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera mode type
 
     const Model model = LoadModel("resources/models/iqm/guy.iqm");                    // Load the animated model mesh and basic data
     const Texture2D texture = LoadTexture("resources/models/iqm/guytex.png");         // Load model texture and set material
-    SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);     // Set model material map texture
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);           // Set model material map texture
+    const vec3 position = { 0.0f, 0.0f, 0.0f };                                       // Set model position
 
     // Load animation data
     int animCount = 0;
@@ -94,7 +94,7 @@ int main()
 
             BeginMode3D(camera);
 
-                DrawModelEx(model, position, glm::vec3{ 1.0f, 0.0f, 0.0f }, -90.0f, glm::vec3{ 1.0f, 1.0f, 1.0f }, WHITE);
+                DrawModelEx(model, position, vec3{ 1.0f, 0.0f, 0.0f }, -90.0f, vec3{ 1.0f, 1.0f, 1.0f }, WHITE);
 
                 DrawGrid(10, 1.0f);
 

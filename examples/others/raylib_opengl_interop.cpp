@@ -137,11 +137,11 @@ int main()
 
                 glUniform1f(currentTimeLoc, GetTime());
 
-                glm::vec4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
+                vec4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
                 glUniform4fv(colorLoc, 1, reinterpret_cast<float *>(&color));
 
                 // Get the current modelview and projection matrix so the particle system is displayed and transformed
-                const Matrix modelViewProjection = ((rlGetMatrixProjection()) * (rlGetMatrixModelview()));
+                const mat4 modelViewProjection = ((rlGetMatrixProjection()) * (rlGetMatrixModelview()));
 
                 glUniformMatrix4fv(shader.locs[SHADER_LOC_MATRIX_MVP], 1, false, MatrixToFloat(modelViewProjection));
 

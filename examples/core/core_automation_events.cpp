@@ -28,7 +28,7 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct Player {
-    glm::vec2 position;
+    vec2 position;
     float speed;
     bool canJump;
 } Player;
@@ -53,7 +53,7 @@ int main()
 
     // Define player
     Player player = {};
-    player.position = glm::vec2{ 400, 280 };
+    player.position = vec2{ 400, 280 };
     player.speed = 0;
     player.canJump = false;
 
@@ -69,7 +69,7 @@ int main()
     // Define camera
     Camera2D camera = {};
     camera.target = player.position;
-    camera.offset = glm::vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -112,12 +112,12 @@ int main()
                 playFrameCounter = 0;
                 currentPlayFrame = 0;
 
-                player.position = glm::vec2{ 400, 280 };
+                player.position = vec2{ 400, 280 };
                 player.speed = 0;
                 player.canJump = false;
 
                 camera.target = player.position;
-                camera.offset = glm::vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+                camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
                 camera.rotation = 0.0f;
                 camera.zoom = 1.0f;
             }
@@ -139,7 +139,7 @@ int main()
         for (int i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
         {
             EnvElement *element = &envElements[i];
-            glm::vec2 *p = &(player.position);
+            vec2 *p = &(player.position);
             if (element->blocking &&
                 element->rect.x <= p->x &&
                 element->rect.x + element->rect.width >= p->x &&
@@ -163,12 +163,12 @@ int main()
         if (IsKeyPressed(KEY_R))
         {
             // Reset game state
-            player.position = glm::vec2{ 400, 280 };
+            player.position = vec2{ 400, 280 };
             player.speed = 0;
             player.canJump = false;
 
             camera.target = player.position;
-            camera.offset = glm::vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+            camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
             camera.rotation = 0.0f;
             camera.zoom = 1.0f;
         }
@@ -204,7 +204,7 @@ int main()
         // Update camera
         //----------------------------------------------------------------------------------
         camera.target = player.position;
-        camera.offset = glm::vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+        camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
         float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
 
         // WARNING: On event replay, mouse-wheel internal value is set
@@ -221,8 +221,8 @@ int main()
             maxY = fmaxf(element->rect.y + element->rect.height, maxY);
         }
 
-        const glm::vec2 max = GetWorldToScreen2D(glm::vec2{ maxX, maxY }, camera);
-        const glm::vec2 min = GetWorldToScreen2D(glm::vec2{ minX, minY }, camera);
+        const vec2 max = GetWorldToScreen2D(vec2{ maxX, maxY }, camera);
+        const vec2 min = GetWorldToScreen2D(vec2{ minX, minY }, camera);
 
         if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - static_cast<float>(screenWidth)/2);
         if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - static_cast<float>(screenHeight)/2);
@@ -261,12 +261,12 @@ int main()
                 playFrameCounter = 0;
                 currentPlayFrame = 0;
 
-                player.position = glm::vec2{ 400, 280 };
+                player.position = vec2{ 400, 280 };
                 player.speed = 0;
                 player.canJump = false;
 
                 camera.target = player.position;
-                camera.offset = glm::vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+                camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
                 camera.rotation = 0.0f;
                 camera.zoom = 1.0f;
             }
@@ -320,7 +320,7 @@ int main()
             {
                 DrawRectangle(10, 160, 290, 30, Fade(LIME, 0.3f));
                 DrawRectangleLines(10, 160, 290, 30, Fade(DARKGREEN, 0.8f));
-                DrawTriangle(glm::vec2{ 20, 155 + 10 }, glm::vec2{ 20, 155 + 30 }, glm::vec2{ 40, 155 + 20 }, DARKGREEN);
+                DrawTriangle(vec2{ 20, 155 + 10 }, vec2{ 20, 155 + 30 }, vec2{ 40, 155 + 20 }, DARKGREEN);
 
                 if (((frameCounter/15)%2) == 1) DrawText(TextFormat("PLAYING RECORDED EVENTS... [%i]", currentPlayFrame), 50, 170, 10, DARKGREEN);
             }

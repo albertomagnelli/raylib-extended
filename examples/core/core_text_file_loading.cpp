@@ -79,7 +79,7 @@ int main()
                 }
 
                 if(before != '\0') lines[i][j] = ' ';  // Resetting the space back
-                lastSpace = j; // Since we encountered a new space we update our last encountered space location
+                lastSpace = j;                         // Since we encountered a new space we update our last encountered space location
             }
 
             j++;
@@ -91,7 +91,7 @@ int main()
 
     for (int i = 0; i < lineCount; i++)
     {
-        const glm::vec2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
+        const vec2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
         textHeight += static_cast<int>(size.y) + 10;
     }
 
@@ -133,7 +133,7 @@ int main()
                 for (int i = 0, t = textTop; i < lineCount; i++)
                 {
                     // Each time we go through and calculate the height of the text to move the cursor appropriately
-                    glm::vec2 size;
+                    vec2 size;
                     if(strcmp(lines[i].c_str(), "")){
                         // Fix for empty line in the text file
                         size = MeasureTextEx( GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);

@@ -75,12 +75,12 @@ int main()
 
             if (!useTtf)
             {
-                DrawTextEx(fontBm, msg, glm::vec2{ 20.0f, 100.0f }, static_cast<float>(fontBm.baseSize), 2, MAROON);
+                DrawTextEx(fontBm, msg, vec2{ 20.0f, 100.0f }, static_cast<float>(fontBm.baseSize), 2, MAROON);
                 DrawText("Using BMFont (Angelcode) imported", 20, GetScreenHeight() - 30, 20, GRAY);
             }
             else
             {
-                DrawTextEx(fontTtf, msg, glm::vec2{ 20.0f, 100.0f }, static_cast<float>(fontTtf.baseSize), 2, LIME);
+                DrawTextEx(fontTtf, msg, vec2{ 20.0f, 100.0f }, static_cast<float>(fontTtf.baseSize), 2, LIME);
                 DrawText("Using TTF font generated", 20, GetScreenHeight() - 30, 20, GRAY);
             }
 

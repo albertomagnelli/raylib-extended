@@ -60,7 +60,7 @@ int main()
     Camera camera = { { 5.0f, 5.0f, 5.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
 
     // Model drawing position
-    const glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+    const vec3 position = { 0.0f, 0.0f, 0.0f };
 
     int currentModel = 0;
 

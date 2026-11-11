@@ -21,7 +21,7 @@
 
 // Monitor info
 typedef struct MonitorInfo {
-    glm::vec2 position;
+    vec2 position;
     std::string name;
     int width;
     int height;
@@ -139,10 +139,10 @@ int main()
                 if (i == currentMonitorIndex)
                 {
                     DrawRectangleLinesEx(rec, 5, RED);
-                    const glm::vec2 windowPosition = glm::vec2{ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
+                    const vec2 windowPosition = vec2{ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
 
                     // Draw window position based on monitors
-                    DrawRectangleV(windowPosition, glm::vec2{screenWidth*monitorScale, screenHeight*monitorScale}, Fade(GREEN, 0.5));
+                    DrawRectangleV(windowPosition, vec2{screenWidth*monitorScale, screenHeight*monitorScale}, Fade(GREEN, 0.5));
                 }
                 else DrawRectangleLinesEx(rec, 5, GRAY);
             }

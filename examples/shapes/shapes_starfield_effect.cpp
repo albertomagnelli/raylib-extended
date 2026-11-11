@@ -41,8 +41,8 @@ int main()
     // We're either drawing lines or circles
     bool drawLines = true;
 
-    glm::vec3 stars[STAR_COUNT] = {};
-    glm::vec2 starsScreenPos[STAR_COUNT] = {};
+    vec3 stars[STAR_COUNT] = {};
+    vec2 starsScreenPos[STAR_COUNT] = {};
 
     // Setup the stars with a random position
     for (int i = 0; i < STAR_COUNT; i++)
@@ -76,7 +76,7 @@ int main()
             stars[i].z -= dt*speed;
 
             // Calculate the screen position
-            starsScreenPos[i] = glm::vec2{
+            starsScreenPos[i] = vec2{
                 screenWidth*0.5f + stars[i].x/stars[i].z,
                 screenHeight*0.5f + stars[i].y/stars[i].z,
             };
@@ -109,7 +109,7 @@ int main()
                     if ((t - stars[i].z) > 1e-3)
                     {
                         // Calculate the screen position of the old point
-                        const glm::vec2 startPos = glm::vec2{
+                        const vec2 startPos = vec2{
                             screenWidth*0.5f + stars[i].x/t,
                             screenHeight*0.5f + stars[i].y/t,
                         };

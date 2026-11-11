@@ -31,9 +31,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = glm::vec3{ 0.0f, 3.0f, 3.0f };
-    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
-    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
+    camera.position = vec3{ 0.0f, 3.0f, 3.0f };
+    camera.target = vec3{ 0.0f, 0.0f, 0.0f };
+    camera.up = vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -69,8 +69,8 @@ int main()
             BeginMode3D(camera);
 
                 // Draw model defining: position, size, rotation-axis, rotation (degrees), size, and tint-color
-                DrawModelEx(model, glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec3{ 0.5f, 1.0f, 0.0f },
-                    rotation, glm::vec3{ 1.0f, 1.0f, 1.0f }, WHITE);
+                DrawModelEx(model, vec3{ 0.0f, 0.0f, 0.0f }, vec3{ 0.5f, 1.0f, 0.0f },
+                    rotation, vec3{ 1.0f, 1.0f, 1.0f }, WHITE);
 
                 DrawGrid(10, 1.0f);
 

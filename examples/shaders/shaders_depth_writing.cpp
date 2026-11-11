@@ -48,9 +48,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {
-        .position = glm::vec3{ 2.0f, 2.0f, 3.0f },  // Camera position
-        .target = glm::vec3{ 0.0f, 0.5f, 0.0f },    // Camera looking at point
-        .up = glm::vec3{ 0.0f, 1.0f, 0.0f },        // Camera up vector (rotation towards target)
+        .position = vec3{ 2.0f, 2.0f, 3.0f },         // Camera position
+        .target = vec3{ 0.0f, 0.5f, 0.0f },           // Camera looking at point
+        .up = vec3{ 0.0f, 1.0f, 0.0f },               // Camera up vector (rotation towards target)
         .fovy = 45.0f,                                // Camera field-of-view Y
         .projection = CAMERA_PERSPECTIVE              // Camera projection type
     };
@@ -80,10 +80,10 @@ int main()
 
             BeginMode3D(camera);
                 BeginShaderMode(shader);
-                    DrawCubeWiresV(glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, RED);
-                    DrawCubeV(glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, PURPLE);
-                    DrawCubeWiresV(glm::vec3{ 0.0f, 0.5f, -1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, DARKGREEN);
-                    DrawCubeV(glm::vec3{ 0.0f, 0.5f, -1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, YELLOW);
+                    DrawCubeWiresV(vec3{ 0.0f, 0.5f, 1.0f }, vec3{ 1.0f, 1.0f, 1.0f }, RED);
+                    DrawCubeV(vec3{ 0.0f, 0.5f, 1.0f }, vec3{ 1.0f, 1.0f, 1.0f }, PURPLE);
+                    DrawCubeWiresV(vec3{ 0.0f, 0.5f, -1.0f }, vec3{ 1.0f, 1.0f, 1.0f }, DARKGREEN);
+                    DrawCubeV(vec3{ 0.0f, 0.5f, -1.0f }, vec3{ 1.0f, 1.0f, 1.0f }, YELLOW);
                     DrawGrid(10, 1.0f);
                 EndShaderMode();
             EndMode3D();
@@ -93,7 +93,7 @@ int main()
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, glm::vec2{ 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, vec2{ 0, 0 }, WHITE);
 
             DrawFPS(10, 10);
         EndDrawing();

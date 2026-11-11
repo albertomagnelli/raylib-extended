@@ -6,9 +6,10 @@ Current Release:    raylib 6.2 (15 October 2026)
 -------------------------------------------------------------------------
 Fork:        glm math migration (C++20)
 -------------------------------------------------------------------------
- - CHANGED: Public math types are glm: vectors are `glm::vec2`/`glm::vec3`/`glm::vec4`
-            directly (the raylib `Vector2`/`Vector3`/`Vector4` aliases are gone),
-            Quaternion = glm::quat, Matrix = glm::mat4
+ - CHANGED: Public math types are glm through the short aliases in `types.h`:
+            `vec2`/`vec3`/`vec4`, `mat4`, `quat` (the raylib `Vector2`/`Vector3`/`Vector4`
+            and `Matrix`/`Quaternion` aliases are gone); fixed-width integers use
+            `i8`…`u64`, with `f32`/`f64` available for new code
  - CHANGED: raylib.h is C++-only (C++17+); the exported API keeps its `extern "C"` block
  - CHANGED: raymath.h is reduced to the helpers glm does not express directly (Euler conventions,
             MatrixCompose/Decompose, MoveTowards, Project/Reject, Unproject, CubicHermite, 2D helpers,
