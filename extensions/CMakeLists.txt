@@ -42,3 +42,12 @@ target_link_libraries(shadows_example PRIVATE raylib glm::glm)
 
 set_target_properties(shadows_example PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+# Noise example, 1D/2D/3D simplex noise textures via compute shaders (needs OPENGL_VERSION 4.3 or 4.6)
+add_executable(noise_example noise_example.cpp)
+
+target_include_directories(noise_example PRIVATE "${CMAKE_CURRENT_LIST_DIR}")
+target_link_libraries(noise_example PRIVATE raylib)
+
+set_target_properties(noise_example PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

@@ -8,6 +8,8 @@ camera at a fixed speed with no acceleration and no rotation smoothing.
 extensions/
 ├── camera_controller.hpp           # The CameraController class, header-only
 ├── camera_controller_example.cpp   # Runnable example with all four modes
+├── noise.h                         # The Noise class, 1D/2D/3D simplex noise via compute shaders
+├── noise_example.cpp               # Renders the three noise textures and self-checks them
 ├── particle_example.cpp            # 2d particle demo, ported from the RayLib-Demo project
 ├── shadows_example.cpp             # Directional light with shadow mapping, ported from RayLib-Demo
 ├── CMakeLists.txt                  # Builds the examples, standalone or with raylib
@@ -171,6 +173,7 @@ With the raylib project (the root `CMakeLists.txt` adds `extensions/` when `BUIL
 cmake -B build
 cmake --build build
 ./build/camera_controller_example
+./build/noise_example
 ./build/particle_example
 ./build/shadows_example
 ```
@@ -182,6 +185,7 @@ cd extensions
 cmake -B build
 cmake --build build
 ./build/camera_controller_example
+./build/noise_example
 ./build/particle_example
 ./build/shadows_example
 ```
@@ -278,6 +282,67 @@ These were the three traps while porting, all of them easy to reproduce:
 
 After the custom passes the example restores the state the raylib batch expects for the 2d
 overlay: texture slot 0, backface culling off, depth test off, default shader reactivated.
+
+## noise.h (1D/2D/3D simplex noise via compute shaders)
+
+`noise.h` wraps the three simplex noise GLSL compute sources in the header-only class `Noise`:
+it allocates the texture, binds it as image, sets the uniforms, dispatches the grid, inserts the
+barrier and can copy the result back to the CPU.
+
+```cpp
+#include "noise.h"
+
+InitWindow(800, 600, "noise");                              // GL context first
+Noise noise;                                                // programs are built on first use
+
+Texture2D noise2D = noise.Create2D(512, 512, 0.01f);        // raylib texture, ready for DrawTexture()
+Noise::Texture3D noise3D = noise.Create3D(64, 64, 64, 0.05f);// GL_TEXTURE_3D for raymarching
+Noise::Texture1D noise1D = noise.Create1D(1024, 0.02f);
+
+Image slice = noise.Read(noise3D, 32);                      // CPU copy of one layer (RGBA32F)
+UnloadImage(slice);
+```
+
+| Call | Description |
+| :--- | :--- |
+| `Noise::IsSupported()` | Whether the GL context provides compute shaders (OpenGL 4.3+), check before use |
+| `IsReady()` | Compile the three programs now instead of lazily |
+| `Create1D(width, scale, offset)` | `GL_TEXTURE_1D`, work group `64x1x1` |
+| `Create2D(width, height, scale, offset)` | `Texture2D` (format `PIXELFORMAT_UNCOMPRESSED_R32G32B32A32`), work group `8x8x1` |
+| `Create3D(width, height, depth, scale, offset)` | `GL_TEXTURE_3D`, all layers in one dispatch, work group `8x8x8` |
+| `Read(texture)` / `Read(texture3D, layer)` | Copy the whole texture or a single layer back as `Image` |
+| `UnloadPrograms()` | Delete the compute programs, **call it before `CloseWindow()`** |
+
+The textures are `GL_RGBA32F` with `GL_LINEAR` filtering; the noise is written to rgb, normalized
+to `[0.0, 1.0]`, alpha stays `1.0`. Dimensions are rounded up to a multiple of the work group size
+(the returned struct reports the real size) so no invocation writes outside the texture.
+
+### Things to know about the compute path
+
+- **Image binding for 3D must be layered**: `glBindImageTexture(..., layered = GL_TRUE, ...)`.
+  With `GL_FALSE` only one layer of the 3D texture is exposed and every write with
+  `gl_GlobalInvocationID.z > 0` is out of bounds.
+- **The barrier is mandatory**: after `glDispatchCompute()` the texels are only visible to
+  sampling and `glGetTextureImage()` after
+  `glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT | GL_TEXTURE_UPDATE_BARRIER_BIT)`.
+- **Read a 3D texture with `glGetTextureSubImage()`**, not with `glGetTextureImage()`: the latter
+  copies all layers, so a buffer sized for one layer overflows the heap. That one showed up as
+  huge garbage values and a segfault at exit.
+- **The programs belong to the GL context**: deleting them after `CloseWindow()` crashes.
+- **Three bugs were in the original GLSL sources** and are fixed in `noise.h`:
+  `frac()` does not exist in GLSL (it is `fract()`), the 1D `permute()` called a missing
+  `mod289(vec2)`, `p * C.wwww` mixed a `vec3` with a `vec4` (correct is `C.www`), and the 3D
+  gradient step was `floor(p * ns.z)` instead of `floor(p * ns.z * ns.z)`, which made `snoise()`
+  return values in the thousands. The 1D kernel also only reaches about `0.05`, so its result is
+  scaled by `20.0` to use the full `[-1.0, 1.0]` range.
+- The self check in `noise_example.cpp` catches exactly these cases: it reads the textures back and
+  verifies range, mean, contrast and alpha, and that two 3D layers differ.
+
+| Input | Action |
+| :--- | :--- |
+| `SPACE` | New random offset, renders all three textures again |
+| `MOUSE WHEEL` | Cycle the displayed 3D layer |
+| `1` / `2` / `3` | Save the 1D / 2D / 3D result as PNG |
 
 ## MSAA 8x / 16x in the examples
 

@@ -79,6 +79,7 @@ endif ()
 # raylib to run with an OpenGL 4.6 context (cmake -DOPENGL_VERSION=4.6)
 if (NOT "${PLATFORM}" MATCHES "Desktop|SDL|RGFW|Win32")
     list(REMOVE_ITEM example_sources ${CMAKE_CURRENT_SOURCE_DIR}/others/opengl46_compute_particles.cpp)
+    list(REMOVE_ITEM example_sources ${CMAKE_CURRENT_SOURCE_DIR}/others/opengl46_indirect_elements.cpp)
 endif ()
 
 if (${PLATFORM} MATCHES "Android")
