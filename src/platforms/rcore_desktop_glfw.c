@@ -1109,7 +1109,7 @@ Image GetClipboardImage(void)
     int width = 0;
     int height = 0;
 
-    bmpData = static_cast<void *>(Win32GetClipboardImageData(&width, &height, &dataSize);
+    bmpData = static_cast<void *>(Win32GetClipboardImageData(&width, &height, &dataSize));
 
     if (bmpData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data.");
     else

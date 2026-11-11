@@ -17,31 +17,23 @@
 
 #include "raylib.h"
 
-#include <stdio.h>          // Required for: printf(), vprintf(), fprintf()
-#include <time.h>           // Required for: time_t, tm, time(), localtime(), strftime()
+#include <stdio.h>          // Required for: printf(), fflush()
 
 // Custom logging function
-void CustomTraceLog(int msgType, std::string_view text, va_list args)
+// NOTE: 'text' is the fully formatted log line, timestamp and level included
+void CustomTraceLog(int msgType, std::string_view text)
 {
-    char timeStr[64] = {};
-    const time_t now = time(nullptr);
-    struct tm *tm_info = localtime(&now);
-
-    strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", tm_info);
-    printf("[%s] ", timeStr);
-
     switch (msgType)
     {
-        case LOG_INFO: printf("[INFO] : "); break;
-        case LOG_ERROR: printf("[ERROR]: "); break;
-        case LOG_WARNING: printf("[WARN] : "); break;
-        case LOG_DEBUG: printf("[DEBUG]: "); break;
+        case LOG_INFO: printf("\x1b[32m"); break;
+        case LOG_WARNING: printf("\x1b[33m"); break;
+        case LOG_ERROR: printf("\x1b[31m"); break;
+        case LOG_DEBUG: printf("\x1b[36m"); break;
         default: break;
     }
 
-    const std::string textStr(text);
-    vprintf(textStr.c_str(), args);
-    printf("\n");
+    printf("[CUSTOM] %.*s\x1b[0m\n", static_cast<int>(text.size()), text.data());
+    fflush(stdout);
 }
 
 //------------------------------------------------------------------------------------

@@ -105,9 +105,11 @@
 #include "raylib.h"                 // Declares module functions
 
 #include "config.h"                 // Defines module configuration flags
+#include "logging.h"                // Log levels and central logging pipeline
 
 #include <stdlib.h>                 // Required for: srand(), rand(), exit()
 #include <array>                    // Required for: std::array [Used in DecodeDataBase64()]
+#include <format>                   // Required for: std::format [Used in trace-log call sites]
 #include <stdio.h>                  // Required for: FILE, fopen(), fseek(), ftell(), fread(), fwrite(), fprintf(), vprintf(), fclose(), sprintf() [Used in OpenURL()]
 #include <string.h>                 // Required for: strlen(), strcmp(), strrchr(), memset(), memcpy(), strcat()
 #include <stdarg.h>                 // Required for: va_list, va_start(), va_end() [Used in TraceLog()]
@@ -218,10 +220,6 @@
 //----------------------------------------------------------------------------------
 // Defines and Macros
 //----------------------------------------------------------------------------------
-#ifndef MAX_TRACELOG_MSG_LENGTH
-    #define MAX_TRACELOG_MSG_LENGTH      256        // Max length of one trace-log message
-#endif
-
 #ifndef MAX_FILEPATH_CAPACITY
     #define MAX_FILEPATH_CAPACITY       8192        // Maximum capacity for filepath
 #endif
@@ -410,8 +408,6 @@ CoreData CORE = {};                              // Global CORE state context
 
 // Convert a C string that may be NULL into a std::string
 static std::string GetStringOrEmpty(const char *str) { return (str != nullptr)? std::string(str) : std::string(); }
-
-static int logTypeLevel = LOG_INFO;                 // Minimum log type level
 
 static TraceLogCallback traceLog = nullptr;            // TraceLog callback function pointer
 static LoadFileDataCallback loadFileData = nullptr;    // LoadFileData callback function pointer
@@ -619,7 +615,7 @@ void SetWindowSamples(int samples)
 {
     if (CORE.Window.ready)
     {
-        TRACELOG(LOG_WARNING, "WINDOW: MSAA samples can only be configured before window initialization");
+        logMessage(LogLevel::warning, "WINDOW: MSAA samples can only be configured before window initialization");
         return;
     }
 
@@ -659,7 +655,7 @@ static void UpdateWindowProvidedSamples(void)
     glGetIntegerv(GL_SAMPLES, &providedSamples);
     CORE.Window.samples = providedSamples;
 
-    if (providedSamples < requestedSamples) TRACELOG(LOG_WARNING, "DISPLAY: Graphics device only provided MSAA x%i", providedSamples);
+    if (providedSamples < requestedSamples) logMessage(LogLevel::warning, std::format("DISPLAY: Graphics device only provided MSAA x{}", providedSamples));
 #endif
 }
 
@@ -669,57 +665,57 @@ void InitWindow(int width, int height, std::string_view titleView)
     const std::string titleStr(titleView);
     const char *title = titleStr.c_str();
 
-    TRACELOG(LOG_INFO, "Initializing raylib %s", RAYLIB_VERSION);
+    logMessage(LogLevel::info, std::format("Initializing raylib {}", RAYLIB_VERSION));
 
 #if defined(PLATFORM_DESKTOP_GLFW)
-    TRACELOG(LOG_INFO, "Platform backend: DESKTOP (GLFW)");
+    logMessage(LogLevel::info, "Platform backend: DESKTOP (GLFW)");
 #elif defined(PLATFORM_DESKTOP_SDL)
-    TRACELOG(LOG_INFO, "Platform backend: DESKTOP (SDL)");
+    logMessage(LogLevel::info, "Platform backend: DESKTOP (SDL)");
 #elif defined(PLATFORM_DESKTOP_RGFW)
-    TRACELOG(LOG_INFO, "Platform backend: DESKTOP (RGFW)");
+    logMessage(LogLevel::info, "Platform backend: DESKTOP (RGFW)");
 #elif defined(PLATFORM_DESKTOP_WIN32)
-    TRACELOG(LOG_INFO, "Platform backend: DESKTOP (WIN32)");
+    logMessage(LogLevel::info, "Platform backend: DESKTOP (WIN32)");
 #elif defined(PLATFORM_WEB_RGFW)
-    TRACELOG(LOG_INFO, "Platform backend: WEB (RGFW) (HTML5)");
+    logMessage(LogLevel::info, "Platform backend: WEB (RGFW) (HTML5)");
 #elif defined(PLATFORM_WEB)
-    TRACELOG(LOG_INFO, "Platform backend: WEB (HTML5)");
+    logMessage(LogLevel::info, "Platform backend: WEB (HTML5)");
 #elif defined(PLATFORM_DRM)
-    TRACELOG(LOG_INFO, "Platform backend: NATIVE DRM");
+    logMessage(LogLevel::info, "Platform backend: NATIVE DRM");
 #elif defined(PLATFORM_ANDROID)
-    TRACELOG(LOG_INFO, "Platform backend: ANDROID");
+    logMessage(LogLevel::info, "Platform backend: ANDROID");
 #elif defined(PLATFORM_MEMORY)
-    TRACELOG(LOG_INFO, "Platform backend: MEMORY (No OS)");
+    logMessage(LogLevel::info, "Platform backend: MEMORY (No OS)");
 #else
-    TRACELOG(LOG_INFO, "Platform backend: CUSTOM");
+    logMessage(LogLevel::info, "Platform backend: CUSTOM");
 #endif
 
-    TRACELOG(LOG_INFO, "Supported raylib modules:");
-    TRACELOG(LOG_INFO, "    > rcore:..... loaded (mandatory)");
-    TRACELOG(LOG_INFO, "    > rlgl:...... loaded (mandatory)");
+    logMessage(LogLevel::info, "Supported raylib modules:");
+    logMessage(LogLevel::info, "    > rcore:..... loaded (mandatory)");
+    logMessage(LogLevel::info, "    > rlgl:...... loaded (mandatory)");
 #if SUPPORT_MODULE_RSHAPES
-    TRACELOG(LOG_INFO, "    > rshapes:... loaded (optional)");
+    logMessage(LogLevel::info, "    > rshapes:... loaded (optional)");
 #else
-    TRACELOG(LOG_INFO, "    > rshapes:... not loaded (optional)");
+    logMessage(LogLevel::info, "    > rshapes:... not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RTEXTURES
-    TRACELOG(LOG_INFO, "    > rtextures:. loaded (optional)");
+    logMessage(LogLevel::info, "    > rtextures:. loaded (optional)");
 #else
-    TRACELOG(LOG_INFO, "    > rtextures:. not loaded (optional)");
+    logMessage(LogLevel::info, "    > rtextures:. not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RTEXT
-    TRACELOG(LOG_INFO, "    > rtext:..... loaded (optional)");
+    logMessage(LogLevel::info, "    > rtext:..... loaded (optional)");
 #else
-    TRACELOG(LOG_INFO, "    > rtext:..... not loaded (optional)");
+    logMessage(LogLevel::info, "    > rtext:..... not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RMODELS
-    TRACELOG(LOG_INFO, "    > rmodels:... loaded (optional)");
+    logMessage(LogLevel::info, "    > rmodels:... loaded (optional)");
 #else
-    TRACELOG(LOG_INFO, "    > rmodels:... not loaded (optional)");
+    logMessage(LogLevel::info, "    > rmodels:... not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RAUDIO
-    TRACELOG(LOG_INFO, "    > raudio:.... loaded (optional)");
+    logMessage(LogLevel::info, "    > raudio:.... loaded (optional)");
 #else
-    TRACELOG(LOG_INFO, "    > raudio:.... not loaded (optional)");
+    logMessage(LogLevel::info, "    > raudio:.... not loaded (optional)");
 #endif
 
     // Initialize window data
@@ -746,7 +742,7 @@ void InitWindow(int width, int height, std::string_view titleView)
 
     if (result != 0)
     {
-        TRACELOG(LOG_WARNING, "SYSTEM: Failed to initialize platform");
+        logMessage(LogLevel::warning, "SYSTEM: Failed to initialize platform");
         return;
     }
 
@@ -810,7 +806,7 @@ void InitWindow(int width, int height, std::string_view titleView)
     SetRandomSeed(get_rand_32());
 #endif
 
-    TRACELOG(LOG_INFO, "SYSTEM: Working Directory: %s", GetWorkingDirectory().c_str());
+    logMessage(LogLevel::info, std::format("SYSTEM: Working Directory: {}", GetWorkingDirectory().c_str()));
 }
 
 // Close window and unload OpenGL context
@@ -830,7 +826,7 @@ void CloseWindow(void)
     // Clear CORE data, in case new window is initialized
     CORE = CoreData{};
     
-    TRACELOG(LOG_INFO, "Window closed successfully");
+    logMessage(LogLevel::info, "Window closed successfully");
 }
 
 // Check if window has been initialized successfully
@@ -1288,7 +1284,7 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
         config.eyeViewportLeft[3] = device.vResolution;
         */
     }
-    else TRACELOG(LOG_WARNING, "RLGL: VR Simulator not supported on OpenGL 1.1");
+    else logMessage(LogLevel::warning, "RLGL: VR Simulator not supported on OpenGL 1.1");
 
     return config;
 }
@@ -1296,7 +1292,7 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
 // Unload VR stereo config properties
 void UnloadVrStereoConfig(VrStereoConfig config)
 {
-    TRACELOG(LOG_INFO, "UnloadVrStereoConfig not implemented in rcore.c");
+    logMessage(LogLevel::info, "UnloadVrStereoConfig not implemented in rcore.c");
 }
 
 //----------------------------------------------------------------------------------
@@ -1320,7 +1316,7 @@ Shader LoadShader(std::string_view vsFileNameView, std::string_view fsFileNameVi
     if (!vsFileNameView.empty()) vShaderStr = LoadFileText(vsFileNameView);
     if (!fsFileNameView.empty()) fShaderStr = LoadFileText(fsFileNameView);
 
-    if (vShaderStr.empty() && fShaderStr.empty()) TRACELOG(LOG_WARNING, "SHADER: Shader files provided are not valid, using default shader");
+    if (vShaderStr.empty() && fShaderStr.empty()) logMessage(LogLevel::warning, "SHADER: Shader files provided are not valid, using default shader");
 
     shader = LoadShaderFromMemory(vShaderStr, fShaderStr);
 
@@ -1682,7 +1678,7 @@ void SetTargetFPS(int fps)
     if (fps < 1) CORE.Time.target = 0.0;
     else CORE.Time.target = 1.0/static_cast<double>(fps);
 
-    TRACELOG(LOG_INFO, "TIMER: Target time per frame: %02.03f milliseconds", static_cast<float>(CORE.Time.target)*1000.0f);
+    logMessage(LogLevel::info, std::format("TIMER: Target time per frame: {:02.03f} milliseconds", static_cast<float>(CORE.Time.target)*1000.0f));
 }
 
 // Get current FPS
@@ -1832,7 +1828,7 @@ int GetRandomValue(int min, int max)
     // NOTE: Depending on the library it can be as low as 32767
     if (static_cast<unsigned int>((max - min)) > static_cast<unsigned int>(RAND_MAX))
     {
-        TRACELOG(LOG_WARNING, "Invalid GetRandomValue() arguments, range should not be higher than %i", RAND_MAX);
+        logMessage(LogLevel::warning, std::format("Invalid GetRandomValue() arguments, range should not be higher than {}", RAND_MAX));
     }
 
     // NOTE: This one-line approach produces a non-uniform distribution,
@@ -1924,7 +1920,7 @@ void TakeScreenshot(std::string_view fileNameView)
 
 #if SUPPORT_MODULE_RTEXTURES
     // Security check to (partially) avoid malicious code
-    if (strchr(fileName, '\'') != nullptr) { TRACELOG(LOG_WARNING, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
+    if (strchr(fileName, '\'') != nullptr) { logMessage(LogLevel::warning, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
 
     // Apply content scaling if required
     vec2 scale = { 1.0f, 1.0f };
@@ -1940,10 +1936,10 @@ void TakeScreenshot(std::string_view fileNameView)
     ExportImage(image, path); // WARNING: Module required: rtextures
     free(imgData);
 
-    if (FileExists(path)) TRACELOG(LOG_INFO, "SYSTEM: [%s] Screenshot taken successfully", path);
-    else TRACELOG(LOG_WARNING, "SYSTEM: [%s] Screenshot could not be saved", path);
+    if (FileExists(path)) logMessage(LogLevel::info, std::format("SYSTEM: [{}] Screenshot taken successfully", path));
+    else logMessage(LogLevel::warning, std::format("SYSTEM: [{}] Screenshot could not be saved", path));
 #else
-    TRACELOG(LOG_WARNING,"IMAGE: ExportImage() requires module: rtextures");
+    logMessage(LogLevel::warning, "IMAGE: ExportImage() requires module: rtextures");
 #endif
 }
 
@@ -1953,7 +1949,7 @@ void TakeScreenshot(std::string_view fileNameView)
 // To configure window states after creation, use SetWindowState()
 void SetConfigFlags(unsigned int flags)
 {
-    if (CORE.Window.ready) TRACELOG(LOG_WARNING, "WINDOW: SetConfigFlags called after window initialization, Use \"SetWindowState\" to set flags instead");
+    if (CORE.Window.ready) logMessage(LogLevel::warning, "WINDOW: SetConfigFlags called after window initialization, Use \"SetWindowState\" to set flags instead");
 
     // Selected flags are set but not evaluated at this point,
     // flag evaluation happens at InitWindow() or SetWindowState()
@@ -1963,71 +1959,81 @@ void SetConfigFlags(unsigned int flags)
 //----------------------------------------------------------------------------------
 // Module Functions Definition: Logging system
 //----------------------------------------------------------------------------------
+// Map raylib log levels to the engine log levels
+static LogLevel ToLogLevel(int logType)
+{
+    switch (logType)
+    {
+        case LOG_ALL:     return LogLevel::trace;
+        case LOG_TRACE:   return LogLevel::trace;
+        case LOG_DEBUG:   return LogLevel::debug;
+        case LOG_INFO:    return LogLevel::info;
+        case LOG_WARNING: return LogLevel::warning;
+        case LOG_ERROR:   return LogLevel::error;
+        case LOG_FATAL:   return LogLevel::fatal;
+        default:          return LogLevel::info;
+    }
+}
+
+// Map engine log levels back to raylib log levels
+static int ToRaylibLogLevel(LogLevel level)
+{
+    switch (level)
+    {
+        case LogLevel::trace:   return LOG_TRACE;
+        case LogLevel::debug:   return LOG_DEBUG;
+        case LogLevel::info:    return LOG_INFO;
+        case LogLevel::warning: return LOG_WARNING;
+        case LogLevel::error:   return LOG_ERROR;
+        case LogLevel::fatal:   return LOG_FATAL;
+        default:                return LOG_NONE;
+    }
+}
+
+// Bridge from the engine logging pipeline to the public TraceLogCallback
+// NOTE: The callback receives the fully formatted line (timestamp and level included)
+static void TraceLogBridge(LogLevel level, std::string_view line, void *userData)
+{
+    (void)userData;
+    if (traceLog != nullptr) traceLog(ToRaylibLogLevel(level), line);
+}
+
 // Set the current threshold (minimum) log level
-void SetTraceLogLevel(int logType) { logTypeLevel = logType; }
+void SetTraceLogLevel(int logType) { setLogLevel(ToLogLevel(logType)); }
 
 // Show trace log messages (LOG_INFO, LOG_WARNING, LOG_ERROR, LOG_DEBUG)
-void TraceLog(int logType, std::string_view textView, ...)
+// NOTE: printf-style varargs adapter, the formatted message is forwarded to the logging system
+void TraceLog(int logType, std::string_view text, ...)
 {
-    const std::string textStr(textView);
-    const char *text = textStr.c_str();
-
-#if SUPPORT_TRACELOG
-    // Message has level below current threshold, don't emit
-    if (logType < logTypeLevel) return;
+    const std::string formatStr(text);  // vsnprintf() requires a null-terminated string
 
     va_list args;
-    va_start(args, textView);
+    va_start(args, text);
 
-    if (traceLog != nullptr)
+    va_list argsCopy;
+    va_copy(argsCopy, args);
+    const int textLength = std::vsnprintf(nullptr, 0, formatStr.c_str(), argsCopy);
+    va_end(argsCopy);
+
+    std::string message;
+    if (textLength >= 0)
     {
-        traceLog(logType, text, args);
-        va_end(args);
-        return;
+        message.resize(static_cast<std::size_t>(textLength));
+        std::vsnprintf(message.data(), message.size() + 1, formatStr.c_str(), args);
     }
-
-#if defined(PLATFORM_ANDROID)
-    switch (logType)
-    {
-        case LOG_TRACE: __android_log_vprint(ANDROID_LOG_VERBOSE, "raylib", text, args); break;
-        case LOG_DEBUG: __android_log_vprint(ANDROID_LOG_DEBUG, "raylib", text, args); break;
-        case LOG_INFO: __android_log_vprint(ANDROID_LOG_INFO, "raylib", text, args); break;
-        case LOG_WARNING: __android_log_vprint(ANDROID_LOG_WARN, "raylib", text, args); break;
-        case LOG_ERROR: __android_log_vprint(ANDROID_LOG_ERROR, "raylib", text, args); break;
-        case LOG_FATAL: __android_log_vprint(ANDROID_LOG_FATAL, "raylib", text, args); break;
-        default: break;
-    }
-#else
-    char buffer[MAX_TRACELOG_MSG_LENGTH] = { 0 };
-
-    switch (logType)
-    {
-        case LOG_TRACE: memcpy(buffer, "TRACE: ", 7); break;
-        case LOG_DEBUG: memcpy(buffer, "DEBUG: ", 7); break;
-        case LOG_INFO: memcpy(buffer, "INFO: ", 6); break;
-        case LOG_WARNING: memcpy(buffer, "WARNING: ", 9); break;
-        case LOG_ERROR: memcpy(buffer, "ERROR: ", 7); break;
-        case LOG_FATAL: memcpy(buffer, "FATAL: ", 7); break;
-        default: break;
-    }
-
-    const unsigned int textLength = static_cast<unsigned int>(strlen(text));
-    memcpy(buffer + strlen(buffer), text, (textLength < (MAX_TRACELOG_MSG_LENGTH - 12))? textLength : (MAX_TRACELOG_MSG_LENGTH - 12));
-    strcat(buffer, "\n");
-    vprintf(buffer, args);
-    fflush(stdout);
-#endif
 
     va_end(args);
 
+    logMessage(ToLogLevel(logType), message);
+
     if (logType == LOG_FATAL) exit(EXIT_FAILURE);  // If fatal logging, exit program
-#endif
 }
 
 // Set custom trace log
 void SetTraceLogCallback(TraceLogCallback callback)
 {
     traceLog = callback;
+    setLogCallback((callback != nullptr)? TraceLogBridge : nullptr, nullptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -2093,7 +2099,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                     // dataSize is unified along raylib as a 'int' type, so, for file-sizes >INT_MAX (2147483647 bytes) there is a limitation
                     if (count > 2147483647)
                     {
-                        TRACELOG(LOG_WARNING, "FILEIO: [%s] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName);
+                        logMessage(LogLevel::warning, std::format("FILEIO: [{}] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName));
 
                         free(data);
                         data = nullptr;
@@ -2102,19 +2108,19 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                     {
                         *dataSize = static_cast<int>(count);
 
-                        if ((*dataSize) != size) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially loaded (%i bytes out of %i)", fileName, *dataSize, size);
-                        else TRACELOG(LOG_INFO, "FILEIO: [%s] File loaded successfully", fileName);
+                        if ((*dataSize) != size) logMessage(LogLevel::warning, std::format("FILEIO: [{}] File partially loaded ({} bytes out of {})", fileName, *dataSize, size));
+                        else logMessage(LogLevel::info, std::format("FILEIO: [{}] File loaded successfully", fileName));
                     }
                 }
-                else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to allocated memory for file reading", fileName);
+                else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
             }
-            else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to read file", fileName);
+            else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to read file", fileName));
 
             fclose(file);
         }
-        else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open file", fileName);
+        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open file", fileName));
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
 
     return data;
 }
@@ -2145,16 +2151,16 @@ bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
             // and expects a size_t input value but as dataSize is limited to INT_MAX (2147483647 bytes), there shouldn't be a problem
             const int count = static_cast<int>(fwrite(data, sizeof(unsigned char), dataSize, file));
 
-            if (count == 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write file", fileName);
-            else if (count != dataSize) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially written", fileName);
-            else TRACELOG(LOG_INFO, "FILEIO: [%s] File saved successfully", fileName);
+            if (count == 0) logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to write file", fileName));
+            else if (count != dataSize) logMessage(LogLevel::warning, std::format("FILEIO: [{}] File partially written", fileName));
+            else logMessage(LogLevel::info, std::format("FILEIO: [{}] File saved successfully", fileName));
 
             const int closed = fclose(file);
             if (closed == 0) result = true;
         }
-        else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open file", fileName);
+        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open file", fileName));
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
 
     return result;
 }
@@ -2209,8 +2215,8 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
 
     free(txtData);
 
-    if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Data as code exported successfully", fileName);
-    else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export data as code", fileName);
+    if (result != 0) logMessage(LogLevel::info, std::format("FILEIO: [{}] Data as code exported successfully", fileName));
+    else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to export data as code", fileName));
 
     return result;
 }
@@ -2255,17 +2261,17 @@ std::string LoadFileText(std::string_view fileNameView)
                     text[count] = '\0';
                     textLength = count;
 
-                    TRACELOG(LOG_INFO, "FILEIO: [%s] Text file loaded successfully", fileName);
+                    logMessage(LogLevel::info, std::format("FILEIO: [{}] Text file loaded successfully", fileName));
                 }
-                else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to allocated memory for file reading", fileName);
+                else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
             }
-            else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to read text file", fileName);
+            else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to read text file", fileName));
 
             fclose(file);
         }
-        else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open text file", fileName);
+        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open text file", fileName));
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
 
     std::string fileText;
     if (text != nullptr) fileText.assign(text, textLength);
@@ -2300,15 +2306,15 @@ bool SaveFileText(std::string_view fileNameView, std::string_view textView)
         {
             const int count = fprintf(file, "%s", text);
 
-            if (count < 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write text file", fileName);
-            else TRACELOG(LOG_INFO, "FILEIO: [%s] Text file saved successfully", fileName);
+            if (count < 0) logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to write text file", fileName));
+            else logMessage(LogLevel::info, std::format("FILEIO: [{}] Text file saved successfully", fileName));
 
             const int closed = fclose(file);
             if (closed == 0) result = true;
         }
-        else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open text file", fileName);
+        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open text file", fileName));
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
 
     return result;
 }
@@ -2427,12 +2433,12 @@ int FileMove(std::string_view srcPathView, std::string_view dstPathView)
             if (FileExists(dstPath) && (GetFileLength(srcPath) == GetFileLength(dstPath)))
             {
                 result = FileRemove(srcPath);
-                if (result != 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to remove source file after copy", srcPath);
+                if (result != 0) logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to remove source file after copy", srcPath));
             }
-            else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to copy file to [%s]", srcPath, dstPath);
+            else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to copy file to [{}]", srcPath, dstPath));
         }
     }
-	else TRACELOG(LOG_WARNING, "FILEIO: [%s] Source file does not exist", srcPath);
+	else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Source file does not exist", srcPath));
 
     return result;
 }
@@ -2462,7 +2468,7 @@ int FileTextReplace(std::string_view fileNameView, std::string_view searchView, 
         }
     }
 #else
-    TRACELOG(LOG_WARNING, "FILE: File text replace requires [rtext] module");
+    logMessage(LogLevel::warning, "FILE: File text replace requires [rtext] module");
 #endif
 
     return result;
@@ -2644,7 +2650,7 @@ int GetFileLength(std::string_view fileNameView)
         const long int fileSize = ftell(file);
 
         // Check for size overflow (INT_MAX)
-        if (fileSize > 2147483647) TRACELOG(LOG_WARNING, "[%s] File size overflows expected limit, do not use GetFileLength()", fileName);
+        if (fileSize > 2147483647) logMessage(LogLevel::warning, std::format("[{}] File size overflows expected limit, do not use GetFileLength()", fileName));
         else size = static_cast<int>(fileSize);
 
         fclose(file);
@@ -2794,7 +2800,7 @@ std::string GetDirectoryPath(std::string_view filePathView)
             }
             else
             {
-                TRACELOG(LOG_WARNING, "FILEIO: Directory path too long");
+                logMessage(LogLevel::warning, "FILEIO: Directory path too long");
                 dirPath[0] = '\0';
             }
         }
@@ -2829,7 +2835,7 @@ std::string GetPrevDirectoryPath(std::string_view dirPathView)
             if (!isFile)
             {
                 if (i < MAX_FILEPATH_LENGTH) memcpy(prevDirPath, dirPath, i);
-                else TRACELOG(LOG_WARNING, "FILEIO: Directory path too long");
+                else logMessage(LogLevel::warning, "FILEIO: Directory path too long");
                 break;
             }
             else isFile = false;
@@ -2994,7 +3000,7 @@ FilePathList LoadDirectoryFilesEx(std::string_view basePathView, std::string_vie
         // WARNING: basePath is always prepended to scanned paths
         ScanDirectoryFiles(basePath, &files, filter, scanSubdirs);
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: Directory cannot be opened (%s)", basePath);  // Maybe it's a file...
+    else logMessage(LogLevel::warning, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
 
     return files;
 }
@@ -3049,8 +3055,8 @@ int ChangeDirectory(std::string_view dirPathView)
     // depending on the filesystem, other errors can be returned
     const int result = CHDIR(dirPath);
 
-    if (result != 0) TRACELOG(LOG_WARNING, "SYSTEM: Failed to change to directory: %s", dirPath);
-    else TRACELOG(LOG_INFO, "SYSTEM: Working Directory: %s", dirPath);
+    if (result != 0) logMessage(LogLevel::warning, std::format("SYSTEM: Failed to change to directory: {}", dirPath));
+    else logMessage(LogLevel::info, std::format("SYSTEM: Working Directory: {}", dirPath));
 
     return result;
 }
@@ -3232,7 +3238,7 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
                 // Don't add to count if path too long
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
                 {
-                    TRACELOG(LOG_WARNING, "FILEIO: Path longer than %d characters (%s...)", MAX_FILEPATH_LENGTH, basePath);
+                    logMessage(LogLevel::warning, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
                 }
                 else if (IsPathFile(path))
                 {
@@ -3248,7 +3254,7 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
         }
         closedir(dir);
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: Directory cannot be opened (%s)", basePath);  // Maybe it's a file...
+    else logMessage(LogLevel::warning, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
     return fileCounter;
 }
 
@@ -3272,7 +3278,7 @@ unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDa
     *compDataSize = sdeflate(sdefl, compData, data, dataSize, COMPRESSION_QUALITY_DEFLATE);   // Compression level 8, same as stbiw
     free(sdefl);
 
-    TRACELOG(LOG_INFO, "SYSTEM: Compress data: Original size: %i -> Comp. size: %i", dataSize, *compDataSize);
+    logMessage(LogLevel::info, std::format("SYSTEM: Compress data: Original size: {} -> Comp. size: {}", dataSize, *compDataSize));
 #endif
 
     return compData;
@@ -3296,7 +3302,7 @@ unsigned char *DecompressData(const unsigned char *compData, int compDataSize, i
     memset(data0, 0, MAX_DECOMPRESSION_SIZE*1024*1024); // Wipe memory, is memset() safe?
     free(data0);
 
-    TRACELOG(LOG_INFO, "SYSTEM: Decompress data: Comp. size: %i -> Original size: %i", compDataSize, size);
+    logMessage(LogLevel::info, std::format("SYSTEM: Decompress data: Comp. size: {} -> Original size: {}", compDataSize, size));
 
     *dataSize = size;
 #endif
@@ -3353,7 +3359,7 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
     encodedData[outputCount] = '\0';
     outputCount++;
 
-    if (outputCount != estimatedOutputSize) TRACELOG(LOG_WARNING, "BASE64: Output size differs from estimation");
+    if (outputCount != estimatedOutputSize) logMessage(LogLevel::warning, "BASE64: Output size differs from estimation");
 
     *outputSize = estimatedOutputSize;
 
@@ -3405,7 +3411,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
         // Every 4 sextets must generate 3 octets
         if ((i + 2) >= dataSize)
         {
-            TRACELOG(LOG_WARNING, "BASE64: Decoding error: Input data size is not valid");
+            logMessage(LogLevel::warning, "BASE64: Decoding error: Input data size is not valid");
             break;
         }
 
@@ -3418,7 +3424,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
 
         if ((outputCount + 3) > maxOutputSize)
         {
-            TRACELOG(LOG_WARNING, "BASE64: Decoding error: Output data size is too small");
+            logMessage(LogLevel::warning, "BASE64: Decoding error: Output data size is too small");
             break;
         }
 
@@ -3429,7 +3435,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
         i += 4;
     }
 
-    if (estimatedOutputSize != (outputCount - padding)) TRACELOG(LOG_WARNING, "BASE64: Decoded size differs from estimation");
+    if (estimatedOutputSize != (outputCount - padding)) logMessage(LogLevel::warning, "BASE64: Decoded size differs from estimation");
 
     *outputSize = estimatedOutputSize;
     return decodedData;
@@ -3830,7 +3836,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
     list.events = static_cast<AutomationEvent *>(calloc(MAX_AUTOMATION_EVENTS, sizeof(AutomationEvent)));
     list.capacity = MAX_AUTOMATION_EVENTS;
 
-    if (fileNameView.empty()) TRACELOG(LOG_INFO, "AUTOMATION: New empty events list loaded successfully");
+    if (fileNameView.empty()) logMessage(LogLevel::info, "AUTOMATION: New empty events list loaded successfully");
     else
     {
         // Load automation events file (binary)
@@ -3846,7 +3852,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
         if ((fileId[0] == 'r') && (fileId[1] == 'A') && (fileId[2] == 'E') && (fileId[1] == ' '))
         {
             fread(&eventCount, sizeof(int), 1, raeFile);
-            TRACELOG(LOG_WARNING, "Events loaded: %i\n", eventCount);
+            logMessage(LogLevel::warning, std::format("Events loaded: {}\n", eventCount));
             fread(events, sizeof(AutomationEvent), eventCount, raeFile);
         }
 
@@ -3864,7 +3870,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
             char eventDesc[64] = { 0 };
 
             char *result = fgets(buffer, 256, raeFile);
-            if (result != buffer) TRACELOG(LOG_WARNING, "AUTOMATION: [%s] Issue reading line to buffer", fileName);
+            if (result != buffer) logMessage(LogLevel::warning, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
 
             while (!feof(raeFile))
             {
@@ -3880,27 +3886,27 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 
                             counter++;
                         }
-                        else TRACELOG(LOG_WARNING, "AUTOMATION: Event goes beyond automated list capacity (MAX: %u): %s", list.capacity, buffer);
+                        else logMessage(LogLevel::warning, std::format("AUTOMATION: Event goes beyond automated list capacity (MAX: {}): {}", list.capacity, buffer));
                     } break;
                     default: break;
                 }
 
                 result = fgets(buffer, 256, raeFile);
-                if (result != buffer) TRACELOG(LOG_WARNING, "AUTOMATION: [%s] Issue reading line to buffer", fileName);
+                if (result != buffer) logMessage(LogLevel::warning, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
             }
 
             if (counter != list.count)
             {
-                TRACELOG(LOG_WARNING, "AUTOMATION: Events read from file [%i] do not mach event count specified [%i]", counter, list.count);
+                logMessage(LogLevel::warning, std::format("AUTOMATION: Events read from file [{}] do not mach event count specified [{}]", counter, list.count));
                 list.count = counter;
             }
 
             fclose(raeFile);
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Events file loaded successfully");
+            logMessage(LogLevel::info, "AUTOMATION: Events file loaded successfully");
         }
 
-        TRACELOG(LOG_INFO, "AUTOMATION: Events loaded from file: %i", list.count);
+        logMessage(LogLevel::info, std::format("AUTOMATION: Events loaded from file: {}", list.count));
     }
 #endif
     return list;
@@ -4081,7 +4087,7 @@ void PlayAutomationEvent(AutomationEvent event)
             default: break;
         }
 
-        TRACELOG(LOG_INFO, "AUTOMATION PLAY: Frame: %i | Event type: %i | Event parameters: %i, %i, %i", event.frame, event.type, event.params[0], event.params[1], event.params[2]);
+        logMessage(LogLevel::info, std::format("AUTOMATION PLAY: Frame: {} | Event type: {} | Event parameters: {}, {}, {}", event.frame, event.type, event.params[0], event.params[1], event.params[2]));
     }
 #endif
 }
@@ -4486,7 +4492,7 @@ vec2 GetTouchPosition(int index)
     vec2 position = { -1.0f, -1.0f };
 
     if (index < MAX_TOUCH_POINTS) position = CORE.Input.Touch.position[index];
-    else TRACELOG(LOG_WARNING, "INPUT: Required touch point out of range (Max touch points: %i)", MAX_TOUCH_POINTS);
+    else logMessage(LogLevel::warning, std::format("INPUT: Required touch point out of range (Max touch points: {})", MAX_TOUCH_POINTS));
 
     return position;
 }
@@ -4533,7 +4539,7 @@ void InitTimer(void)
     {
         CORE.Time.base = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
     }
-    else TRACELOG(LOG_WARNING, "TIMER: Hi-resolution timer not available");
+    else logMessage(LogLevel::warning, "TIMER: Hi-resolution timer not available");
 #endif
 
     CORE.Time.previous = GetTime(); // Get time as double
@@ -4586,7 +4592,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
                 {
-                    TRACELOG(LOG_WARNING, "FILEIO: Path longer than %d characters (%s...)", MAX_FILEPATH_LENGTH, basePath);
+                    logMessage(LogLevel::warning, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
                 }
                 else if (IsPathFile(path))
                 {
@@ -4610,7 +4616,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 
         closedir(dir);
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: Directory cannot be opened (%s)", basePath);  // Maybe it's a file...
+    else logMessage(LogLevel::warning, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
 }
 
 #if SUPPORT_AUTOMATION_EVENTS
@@ -4634,7 +4640,7 @@ static void RecordAutomationEvent(void)
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_KEY_UP | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_KEY_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
         }
 
@@ -4649,7 +4655,7 @@ static void RecordAutomationEvent(void)
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_KEY_DOWN | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_KEY_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
         }
 
@@ -4670,7 +4676,7 @@ static void RecordAutomationEvent(void)
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_MOUSE_BUTTON_UP | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_BUTTON_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
         }
 
@@ -4685,7 +4691,7 @@ static void RecordAutomationEvent(void)
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_MOUSE_BUTTON_DOWN | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_BUTTON_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
         }
 
@@ -4702,7 +4708,7 @@ static void RecordAutomationEvent(void)
         currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Mouse.currentPosition.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
-        TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_MOUSE_POSITION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+        logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
         currentEventList->count++;
 
         if (currentEventList->count == currentEventList->capacity) return;    // Security check
@@ -4718,7 +4724,7 @@ static void RecordAutomationEvent(void)
         currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Mouse.currentWheelMove.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
-        TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_MOUSE_WHEEL_MOTION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+        logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_WHEEL_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
         currentEventList->count++;
 
         if (currentEventList->count == currentEventList->capacity) return;    // Security check
@@ -4738,7 +4744,7 @@ static void RecordAutomationEvent(void)
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_TOUCH_UP | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
         }
 
@@ -4753,7 +4759,7 @@ static void RecordAutomationEvent(void)
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_TOUCH_DOWN | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
         }
 
@@ -4769,7 +4775,7 @@ static void RecordAutomationEvent(void)
             currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Touch.position[id].x);
             currentEventList->events[currentEventList->count].params[2] = static_cast<int>(CORE.Input.Touch.position[id].y);
 
-            TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_TOUCH_POSITION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
         }
 
@@ -4811,7 +4817,7 @@ static void RecordAutomationEvent(void)
                 currentEventList->events[currentEventList->count].params[1] = button;
                 currentEventList->events[currentEventList->count].params[2] = 0;
 
-                TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_GAMEPAD_BUTTON_UP | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+                logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_BUTTON_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
                 currentEventList->count++;
             }
 
@@ -4826,7 +4832,7 @@ static void RecordAutomationEvent(void)
                 currentEventList->events[currentEventList->count].params[1] = button;
                 currentEventList->events[currentEventList->count].params[2] = 0;
 
-                TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_GAMEPAD_BUTTON_DOWN | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+                logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_BUTTON_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
                 currentEventList->count++;
             }
 
@@ -4845,7 +4851,7 @@ static void RecordAutomationEvent(void)
                 currentEventList->events[currentEventList->count].params[1] = axis;
                 currentEventList->events[currentEventList->count].params[2] = static_cast<int>(CORE.Input.Gamepad.axisState[gamepad][axis]*32768.0f);
 
-                TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_GAMEPAD_AXIS_MOTION | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+                logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_AXIS_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
                 currentEventList->count++;
             }
 
@@ -4866,7 +4872,7 @@ static void RecordAutomationEvent(void)
         currentEventList->events[currentEventList->count].params[1] = 0;
         currentEventList->events[currentEventList->count].params[2] = 0;
 
-        TRACELOG(LOG_INFO, "AUTOMATION: Frame: %i | Event type: INPUT_GESTURE | Event parameters: %i, %i, %i", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
+        logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GESTURE | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
         currentEventList->count++;
 
         if (currentEventList->count == currentEventList->capacity) return;    // Security check

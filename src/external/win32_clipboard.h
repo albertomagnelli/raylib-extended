@@ -254,7 +254,7 @@ unsigned char *Win32GetClipboardImageData(int *width, int *height, unsigned int 
                     bmpFileHeader.bfSize = (DWORD)bmpFileSize; // Up to 4GB works fine
                     bmpFileHeader.bfOffBits = sizeof(bmpFileHeader) + pixelOffset;
 
-                    bmpData = (unsigned char *)RL_MALLOC(sizeof(bmpFileHeader) + clipDataSize);
+                    bmpData = (unsigned char *)malloc(sizeof(bmpFileHeader) + clipDataSize);
                     memcpy(bmpData, &bmpFileHeader, sizeof(bmpFileHeader)); // Add BMP file header data
                     memcpy(bmpData + sizeof(bmpFileHeader), bmpInfoHeader, clipDataSize); // Add BMP info header data
 

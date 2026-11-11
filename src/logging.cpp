@@ -1,4 +1,4 @@
-#include "loggging.h"
+#include "logging.h"
 
 #include <algorithm>
 #include <array>
@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstdio>
 #include <ctime>
+#include <format>
 #include <fstream>
 #include <iterator>
 #include <mutex>
@@ -97,7 +98,7 @@ Status setLogFile(std::string_view path) {
     g_file.open(std::string{path}, std::ios::out | std::ios::trunc);
     if (!g_file.is_open()) {
         return std::unexpected(
-            makeError(ErrorCode::ioFailure, std::format("Logdatei '{}' nicht beschreibbar", path)));
+            makeError(ErrorCode::ioFailure, std::format("Log file '{}' is not writable", path)));
     }
 
     return {};

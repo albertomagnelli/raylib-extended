@@ -84,7 +84,7 @@
 #ifndef RAYLIB_H
 #define RAYLIB_H
 
-#include <stdarg.h>     // Required for: va_list - Only used by TraceLogCallback
+#include <string_view>    // Required for: std::string_view text API parameters
 
 #define RAYLIB_VERSION_MAJOR 6
 #define RAYLIB_VERSION_MINOR 5
@@ -938,7 +938,7 @@ typedef enum {
 
 // Callbacks to hook some internal functions
 // WARNING: These callbacks are intended for advanced users
-typedef void (*TraceLogCallback)(int logLevel, std::string_view text, va_list args);             // Logging: Redirect trace log messages
+typedef void (*TraceLogCallback)(int logLevel, std::string_view text);                            // Logging: Redirect trace log messages (text is already formatted)
 typedef unsigned char *(*LoadFileDataCallback)(std::string_view fileName, int *dataSize);        // FileIO: Load binary data
 typedef bool (*SaveFileDataCallback)(std::string_view fileName, const void *data, int dataSize); // FileIO: Save binary data
 typedef std::string (*LoadFileTextCallback)(std::string_view fileName);                          // FileIO: Load text data
