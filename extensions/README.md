@@ -355,14 +355,24 @@ heightmap is produced on the GPU in roughly 180 ms:
 | Step | What runs on the GPU |
 | :--- | :--- |
 | 1. Noise octaves | `Noise::Create2D()` renders 5 textures (4096, 2048, 1024, 512, 256) |
-| 2. Combine | compute shader: domain warp, fBm sum, ridged mountain mask, height curve → `GL_R32F` heightmap |
+| 2. Combine | compute shader: domain warp, fBm sum quantized into 7 terrace levels, ridged mountains outside the basin radius → `GL_R32F` heightmap |
 | 3. Erosion | 10 thermal erosion passes, ping pong between two heightmaps (talus angle) |
 | 4. Terrain | 512x512 quad grid, displaced in the vertex shader by sampling the heightmap |
 | 5. Shading | normals from a central difference stencil, sand/grass/rock/snow by height and slope, sun + sky light, distance fog |
 
+**Layout of the heightmap** (all radii and heights are uniforms in `HeightAt()`):
+
+| Region | Shape |
+| :--- | :--- |
+| Center, `radius < 0.42` | flat basin, the fractal sum is quantized into 7 terraces of 0.15 height each (`floor()` for the level, a `smoothstep()` over the riser for the edge) |
+| `0.42 .. 0.82` | blend from the terraces into the ridged mountains |
+| `radius > 0.82` | ridged mountains up to 0.7 height, plus a rim rise so the map closes into a bowl |
+| Outer 2% | falls off again, so the border of the map is not a wall |
+
 4096x4096 texels are far too many for a mesh, so the grid samples the heightmap instead: the
 heightmap stays a texture (67 MB as `R32F`) and is only read back to the CPU for the camera
-collision and the statistics in the HUD.
+collision and the statistics in the HUD. The thermal erosion skips the basin
+(`u_erodeBasin = 0`), otherwise the terrace risers get eroded into soft slopes within a few passes.
 
 | Input | Action |
 | :--- | :--- |
@@ -389,6 +399,9 @@ collision and the statistics in the HUD.
   the terrain draw.
 - **`DrawFPS()` needs a full second** to produce a number; in a 60 frame self run it still prints
   single digits. The example smooths `GetFrameTime()` itself and shows ms/frame.
+- **A sun direction with negative `y` only lights vertical walls**: `dot(normal, u_sunDirection)` is
+  zero for flat ground, which turns a flat basin into a black hole. `u_sunDirection` must point
+  *towards* the sun (positive `y`).
 
 ## MSAA 8x / 16x in the examples
 

@@ -7,10 +7,12 @@
 *
 *       1. Noise::Create2D() renders five octaves of GPU simplex noise
 *          (4096, 2048, 1024, 512, 256 texels, each with the doubled frequency)
-*       2. A compute shader combines them into one 4096x4096 R32F heightmap:
-*          domain warping, fractal sum (fBm), ridged mountain mask and a height curve
+*       2. A compute shader combines them into one 4096x4096 R32F heightmap with the requested
+*          layout: a flat basin of seven terrace levels in the middle (fractal sum, quantized into
+*          steps), ringed by ridged mountains that rise towards the border of the map
 *       3. Thermal erosion: a few ping-pong compute passes move material from steep cells
-*          into their lower neighbours (talus angle), which carves the ridges
+*          into their lower neighbours (talus angle), which carves the ridges. The basin is
+*          masked out, so the terraces keep their crisp edges
 *       4. The terrain itself is a 512x512 quad grid that is displaced in the vertex shader by
 *          sampling the heightmap, its normals come from central differences of the heightmap
 *       5. The fragment shader picks sand/grass/rock/snow from height and slope, adds sun light,
@@ -88,41 +90,94 @@ layout(binding = 0, r32f) readonly uniform image2D imgHeightIn;
 layout(binding = 1, r32f) writeonly uniform image2D imgHeightOut;
 
 uniform sampler2D u_octaves[4];
-uniform float u_amplitudes[4];
 uniform int u_octaveCount;
 uniform float u_warpStrength;
-uniform float u_ridgeStrength;
+
+uniform float u_basinRadius;        // Radius (in uv units, 0.5 = edge) where the flat terraced basin ends
+uniform float u_rimRadius;          // Radius where the mountain rim is fully developed
+uniform float u_terraceCount;       // Number of terrace levels in the basin
+uniform float u_basinHeight;        // Height of the lowest terrace
+uniform float u_terraceRise;        // Height gained per terrace level
+uniform float u_mountainHeight;     // Height of the ridged mountains on the rim
+uniform float u_rimRise;            // Extra rise towards the border of the map
 uniform float u_heightCurve;
+
 uniform int u_size;
-uniform int u_pass;                 // 0: fBm + warp, 1: erosion
+uniform int u_pass;                 // 0: height from the octaves, 1: thermal erosion
 uniform float u_erosionStrength;
 uniform float u_talus;              // Maximum height difference between two neighboured cells
+uniform bool u_erodeBasin;          // Erode the flat basin too (keeps the terraces crisp when false)
 
-// Warped fractal brownian motion, the warp uses the second octave as displacement field
-float HeightAt(vec2 uv)
+// Domain warp, the second and third octave displace the sample position
+vec2 Warp(vec2 uv)
 {
-    vec2 warp = vec2(texture(u_octaves[1], uv*0.75).r, texture(u_octaves[2], uv*0.75 + 0.37).r) - 0.5;
-    vec2 warped = uv + warp*u_warpStrength;
+    return vec2(texture(u_octaves[1], uv*0.75).r, texture(u_octaves[2], uv*0.75 + 0.37).r) - 0.5;
+}
 
+// Smooth fractal sum (fBm), 0..1
+float Fractal(vec2 uv)
+{
     float sum = 0.0;
     float amplitude = 1.0;
     float amplitudeSum = 0.0;
 
     for (int i = 0; i < u_octaveCount; i++)
     {
-        sum += texture(u_octaves[i], warped).r*amplitude;
+        sum += texture(u_octaves[i], uv).r*amplitude;
         amplitudeSum += amplitude;
         amplitude *= 0.5;
     }
 
-    sum /= amplitudeSum;                    // 0..1
+    return clamp(sum/amplitudeSum, 0.0, 1.0);
+}
 
-    // Ridged mask: the low octave decides where mountains are, the ridges sharpen them
-    float ridge = 1.0 - abs(texture(u_octaves[0], warped*0.35).r*2.0 - 1.0);
-    ridge = ridge*ridge;
-    sum = mix(sum, sum*ridge*1.6, u_ridgeStrength);
+// Ridged fractal sum, the sharp crests of |2n-1| give the mountain ridges, 0..1
+float Ridged(vec2 uv)
+{
+    float sum = 0.0;
+    float amplitude = 1.0;
+    float amplitudeSum = 0.0;
 
-    return clamp(pow(clamp(sum, 0.0, 1.0), u_heightCurve), 0.0, 1.0);
+    for (int i = 0; i < u_octaveCount; i++)
+    {
+        float ridge = 1.0 - abs(texture(u_octaves[i], uv).r*2.0 - 1.0);
+        sum += ridge*ridge*amplitude;
+        amplitudeSum += amplitude;
+        amplitude *= 0.5;
+    }
+
+    return clamp(sum/amplitudeSum, 0.0, 1.0);
+}
+
+// 0 in the flat basin, 1 on the mountain rim
+float RimMask(float radius)
+{
+    return smoothstep(u_basinRadius, u_rimRadius, radius);
+}
+
+float HeightAt(vec2 uv)
+{
+    vec2 warped = uv + Warp(uv)*u_warpStrength;
+    float radius = length(uv*2.0 - 1.0);        // 0 at the center, 1 at the border
+
+    // --- Center: flat basin made of terraces ---
+    // floor() gives the level, the smoothstep() over the riser keeps the step edges from aliasing
+    float level = Fractal(warped)*u_terraceCount;
+    float riser = fract(level);
+    float tier = (floor(level) + smoothstep(0.0, 0.12, riser))/u_terraceCount;
+
+    float basin = u_basinHeight + tier*u_terraceRise;
+
+    // --- Rim: ridged mountains ---
+    float mountain = u_basinHeight + u_terraceRise + Ridged(warped*1.1)*u_mountainHeight;
+
+    float height = mix(basin, mountain, RimMask(radius));
+
+    // Everything rises towards the border, the outermost texels fall off again
+    height += u_rimRise*smoothstep(u_basinRadius, 1.0, radius);
+    height *= 1.0 - 0.5*smoothstep(1.02, 1.30, radius);
+
+    return clamp(pow(clamp(height, 0.0, 1.0), u_heightCurve), 0.0, 1.0);
 }
 
 void main()
@@ -130,9 +185,10 @@ void main()
     ivec2 texel = ivec2(gl_GlobalInvocationID.xy);
     if ((texel.x >= u_size) || (texel.y >= u_size)) return;
 
+    vec2 uv = (vec2(texel) + 0.5)/float(u_size);
+
     if (u_pass == 0)
     {
-        vec2 uv = (vec2(texel) + 0.5)/float(u_size);
         imageStore(imgHeightOut, texel, vec4(HeightAt(uv), 0.0, 0.0, 1.0));
         return;
     }
@@ -142,7 +198,6 @@ void main()
     float center = imageLoad(imgHeightIn, texel).r;
 
     float transfer = 0.0;
-    int neighbours = 0;
 
     const ivec2 offsets[4] = { ivec2(-1, 0), ivec2(1, 0), ivec2(0, -1), ivec2(0, 1) };
 
@@ -152,10 +207,13 @@ void main()
         float difference = center - imageLoad(imgHeightIn, neighbour).r;
 
         if (difference > u_talus) transfer += (difference - u_talus)*0.25;
-        neighbours++;
     }
 
-    imageStore(imgHeightOut, texel, vec4(center - transfer*u_erosionStrength, 0.0, 0.0, 1.0));
+    // In the basin the terraces stay crisp, erosion only shapes the mountain rim
+    float radius = length(uv*2.0 - 1.0);
+    float erosionMask = u_erodeBasin? 1.0 : RimMask(radius);
+
+    imageStore(imgHeightOut, texel, vec4(center - transfer*u_erosionStrength*erosionMask, 0.0, 0.0, 1.0));
 }
 )";
 
@@ -254,7 +312,7 @@ void main()
     vec3 ambientColor = mix(vec3(0.30, 0.28, 0.24), vec3(0.42, 0.50, 0.62), sky);
     vec3 sunColor = vec3(1.06, 1.00, 0.90);
 
-    vec3 color = albedo*(ambientColor*0.55 + sunColor*diffuse*1.25);
+    vec3 color = albedo*(ambientColor*0.70 + sunColor*diffuse*1.15);
 
     // Distance fog into the sky color
     float distance = length(u_cameraPosition - v_worldPosition);
@@ -405,18 +463,25 @@ static void GenerateHeightmap(Noise &noise, HeightmapData &heightmap, const f32 
     GLint units[OCTAVE_COUNT] = { 0, 1, 2, 3 };
     for (i32 i = 0; i < OCTAVE_COUNT; i++) glBindTextureUnit(static_cast<GLuint>(i), octaveTextures[i]);
 
-    const f32 amplitudes[OCTAVE_COUNT] = { 1.0f, 0.45f, 0.20f, 0.09f };
-
     glUseProgram(combineProgram);
     glUniform1iv(glGetUniformLocation(combineProgram, "u_octaves[0]"), OCTAVE_COUNT, units);
-    glUniform1fv(glGetUniformLocation(combineProgram, "u_amplitudes[0]"), OCTAVE_COUNT, amplitudes);
     glUniform1i(glGetUniformLocation(combineProgram, "u_octaveCount"), OCTAVE_COUNT);
-    glUniform1f(glGetUniformLocation(combineProgram, "u_warpStrength"), 0.20f);
-    glUniform1f(glGetUniformLocation(combineProgram, "u_ridgeStrength"), 0.10f);
-    glUniform1f(glGetUniformLocation(combineProgram, "u_heightCurve"), 1.30f);
+    glUniform1f(glGetUniformLocation(combineProgram, "u_warpStrength"), 0.18f);
+
+    // Shape of the terrain: flat terraced basin in the middle, ridged mountains around it
+    glUniform1f(glGetUniformLocation(combineProgram, "u_basinRadius"), 0.42f);      // Flat basin up to ~42% of the half width
+    glUniform1f(glGetUniformLocation(combineProgram, "u_rimRadius"), 0.82f);        // Mountains fully developed from here
+    glUniform1f(glGetUniformLocation(combineProgram, "u_terraceCount"), 7.0f);      // Seven terrace levels in the basin
+    glUniform1f(glGetUniformLocation(combineProgram, "u_basinHeight"), 0.10f);      // Lowest terrace
+    glUniform1f(glGetUniformLocation(combineProgram, "u_terraceRise"), 0.15f);      // Step height between two terraces
+    glUniform1f(glGetUniformLocation(combineProgram, "u_mountainHeight"), 0.70f);   // Ridge height on the rim
+    glUniform1f(glGetUniformLocation(combineProgram, "u_rimRise"), 0.10f);          // Extra rise towards the border
+    glUniform1f(glGetUniformLocation(combineProgram, "u_heightCurve"), 1.10f);
+
     glUniform1i(glGetUniformLocation(combineProgram, "u_size"), HEIGHTMAP_SIZE);
     glUniform1f(glGetUniformLocation(combineProgram, "u_erosionStrength"), 0.65f);
     glUniform1f(glGetUniformLocation(combineProgram, "u_talus"), 0.0012f);
+    glUniform1i(glGetUniformLocation(combineProgram, "u_erodeBasin"), 0);           // Keep the terraces crisp
 
     const GLint passLoc = glGetUniformLocation(combineProgram, "u_pass");
     const GLuint groups = HEIGHTMAP_SIZE/COMBINE_GROUP_SIZE;
@@ -761,8 +826,8 @@ i32 main(const i32 argc, char **argv)
     glUniform1f(normalStepLoc, static_cast<f32>(HEIGHTMAP_SIZE)/GRID_QUADS);   // One grid quad in texels
     glUniform3f(skyColorLoc, 0.58f, 0.70f, 0.86f);
     glUniform3f(fogColorLoc, 0.58f, 0.70f, 0.86f);       // Same as the clear color, so the ridges fade into the sky
-    glUniform1f(fogStartLoc, 320.0f);
-    glUniform1f(fogEndLoc, 1700.0f);
+    glUniform1f(fogStartLoc, 1800.0f);
+    glUniform1f(fogEndLoc, 6500.0f);
     glUniform1f(maxHeightLoc, 1.0f);
     glUseProgram(0);
 
@@ -778,20 +843,38 @@ i32 main(const i32 argc, char **argv)
     auto frame = 0;
     auto frameTimeMs = 0.0f;                    // Smoothed frame time, DrawFPS() needs a full second to settle
 
-    const vec3 sunDirection = normalize(vec3{ -0.35f, -0.72f, -0.42f });
+    const vec3 sunDirection = normalize(vec3{ 0.35f, 0.62f, 0.42f });   // Points towards the sun, so flat ground is lit
+
+    // Point the camera at a world position
+    auto LookAtTarget = [&](const vec3 target)
+    {
+        const vec3 direction = normalize(target - cameraPosition);
+
+        cameraYaw = atan2f(direction.x, direction.z);
+        cameraPitch = asinf(Clamp(direction.y, -1.0f, 1.0f));
+    };
 
     // Auto mode flies a fixed path so the screenshots are reproducible
-    auto AutoCamera = [&](const f32 time)
+    auto AutoCamera = [&](const f32 time, const i32 frameIndex)
     {
-        const f32 angle = time*0.16f;
+        if (frameIndex < 30)
+        {
+            // Low orbit over the terraced basin, looking out to the mountain rim
+            const f32 angle = time*0.9f;
 
-        cameraPosition = vec3{
-            sinf(angle)*1250.0f,
-            TERRAIN_HEIGHT*0.55f + 70.0f*sinf(time*0.35f),
-            -cosf(angle)*1250.0f
-        };
-        cameraYaw = angle + PI*0.5f;
-        cameraPitch = -0.06f + 0.03f*sinf(time*0.25f);
+            cameraPosition = vec3{
+                sinf(angle)*760.0f,
+                TERRAIN_HEIGHT*0.30f + 22.0f*sinf(time*1.3f),
+                -cosf(angle)*760.0f
+            };
+            LookAtTarget(vec3{ sinf(angle + 1.2f)*1800.0f, TERRAIN_HEIGHT*0.5f, -cosf(angle + 1.2f)*1800.0f });
+        }
+        else
+        {
+            // Overview from above: the terraced basin fills the frame, the mountain rim closes it
+            cameraPosition = vec3{ 640.0f, TERRAIN_HEIGHT*1.75f, -660.0f };
+            LookAtTarget(vec3{ 0.0f, TERRAIN_HEIGHT*0.25f, 40.0f });
+        }
     };
 
     //----------------------------------------------------------------------------------
@@ -844,7 +927,7 @@ i32 main(const i32 argc, char **argv)
         }
         else
         {
-            AutoCamera(static_cast<f32>(frame)/60.0f);
+            AutoCamera(static_cast<f32>(frame)/60.0f, frame);
         }
 
         // Smoothed frame time for the HUD (DrawFPS() would need a full second of samples)
@@ -902,11 +985,11 @@ i32 main(const i32 argc, char **argv)
                                 heightmap.size, heightmap.size, OCTAVE_COUNT, EROSION_ITERATIONS, static_cast<double>(heightmap.generationMilliseconds)),
                      20, 52, 20, RAYWHITE);
             DrawText(TextFormat("height min %.3f  max %.3f  mean %.3f  deviation %.3f", heightmap.minimum, heightmap.maximum, heightmap.mean, heightmap.deviation), 20, 78, 20, LIGHTGRAY);
-            DrawText(TextFormat("grid %ix%i quads = %u triangles   height scale %.0f   view: %s",
-                                GRID_QUADS, GRID_QUADS, grid.indexCount/3, TERRAIN_HEIGHT,
-                                (debugView == 0)? "shaded" : ((debugView == 1)? "heightmap" : "normals")), 20, 104, 20, LIGHTGRAY);
+            DrawText(TextFormat("grid %ix%i quads = %u triangles   height scale %.0f   terrace basin + %i levels, mountain rim",
+                                GRID_QUADS, GRID_QUADS, grid.indexCount/3, TERRAIN_HEIGHT, 7), 20, 104, 20, LIGHTGRAY);
+            DrawText(TextFormat("view: %s", (debugView == 0)? "shaded" : ((debugView == 1)? "heightmap" : "normals")), 20, 130, 20, LIGHTGRAY);
             DrawText(TextFormat("camera %.0f / %.0f / %.0f   altitude above terrain %.0f   speed %.0f",
-                                cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraPosition.y - terrainHeight, flightSpeed), 20, 130, 20, LIGHTGRAY);
+                                cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraPosition.y - terrainHeight, flightSpeed), 20, 156, 20, LIGHTGRAY);
             DrawText("WASD: fly, E/Q: up/down, RMB: look, wheel: speed, T: view, F: wireframe, K: save heightmap PNG, G: regenerate, R: reset", 20, screenHeight - 40, 20, DARKGRAY);
 
             if (autoMode && ((frame%15) == 0))
@@ -927,16 +1010,23 @@ i32 main(const i32 argc, char **argv)
                 ExportHeightmapPng(heightmap, "terrain_heightmap_4096.png");
             }
 
-            if (frame == 30) debugView = 1;             // heightmap view
-            if (frame == 36)
+            // Overview from above: shows the terraced basin and the surrounding mountain rim
+            if (frame == 38)
+            {
+                TakeScreenshot("terrain_overview.png");
+                printf("INFO  screenshot saved: terrain_overview.png\n");
+            }
+
+            if (frame == 44) debugView = 1;             // heightmap view
+            if (frame == 48)
             {
                 TakeScreenshot("terrain_heightmap.png");
                 printf("INFO  screenshot saved: terrain_heightmap.png\n");
             }
 
-            if (frame == 42) debugView = 2;             // normal view
+            if (frame == 50) debugView = 2;             // normal view
 
-            if (frame == 48)
+            if (frame == 54)
             {
                 TakeScreenshot("terrain_normals.png");
                 printf("INFO  screenshot saved: terrain_normals.png\n");
