@@ -29,13 +29,13 @@
 //--------------------------------------------------------------------------------------
 // Arrays that holds the random emojis
 struct {
-    int index;      // Index inside `emojiCodepoints`
-    int message;    // Message index
+    i32 index;      // Index inside `emojiCodepoints`
+    i32 message;    // Message index
     Color color;    // Emoji color
 } emoji[EMOJI_PER_WIDTH*EMOJI_PER_HEIGHT] = {};
 
-static int hovered = -1;
-static int selected = -1;
+static i32 hovered = -1;
+static i32 selected = -1;
 
 // String containing 180 emoji codepoints separated by a '\0' char
 const char *const emojiCodepoints = "\xF0\x9F\x8C\x80\x00\xF0\x9F\x98\x80\x00\xF0\x9F\x98\x82\x00\xF0\x9F\xA4\xA3\x00\xF0\x9F\x98\x83\x00\xF0\x9F\x98\x86\x00\xF0\x9F\x98\x89\x00"
@@ -150,18 +150,18 @@ struct {
 //--------------------------------------------------------------------------------------
 static void RandomizeEmoji(void);    // Fills the emoji array with random emojis
 
-static void DrawTextBoxed(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint);                                                                                         // Draw text using font inside rectangle limits
-static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint, int selectStart, int selectLength, Color selectTint, Color selectBackTint);    // Draw text using font inside rectangle limits with support for text selection
+static void DrawTextBoxed(Font font, const char *text, Rectangle rec, f32 fontSize, f32 spacing, bool wordWrap, Color tint);                                                                                         // Draw text using font inside rectangle limits
+static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, f32 fontSize, f32 spacing, bool wordWrap, Color tint, i32 selectStart, i32 selectLength, Color selectTint, Color selectBackTint);    // Draw text using font inside rectangle limits with support for text selection
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [text] example - unicode emojis");
@@ -210,18 +210,18 @@ int main()
 
             // Draw random emojis in the background
             //------------------------------------------------------------------------------
-            for (int i = 0; i < SIZEOF(emoji); i++)
+            for (i32 i = 0; i < SIZEOF(emoji); i++)
             {
                 const char *txt = &emojiCodepoints[emoji[i].index];
-                const Rectangle emojiRect = { position.x, position.y, static_cast<float>(fontEmoji.baseSize), static_cast<float>(fontEmoji.baseSize) };
+                const Rectangle emojiRect = { position.x, position.y, static_cast<f32>(fontEmoji.baseSize), static_cast<f32>(fontEmoji.baseSize) };
 
                 if (!CheckCollisionPointRec(mouse, emojiRect))
                 {
-                    DrawTextEx(fontEmoji, txt, position, static_cast<float>(fontEmoji.baseSize), 1.0f, selected == i ? emoji[i].color : Fade(LIGHTGRAY, 0.4f));
+                    DrawTextEx(fontEmoji, txt, position, static_cast<f32>(fontEmoji.baseSize), 1.0f, selected == i ? emoji[i].color : Fade(LIGHTGRAY, 0.4f));
                 }
                 else
                 {
-                    DrawTextEx(fontEmoji, txt, position, static_cast<float>(fontEmoji.baseSize), 1.0f, emoji[i].color );
+                    DrawTextEx(fontEmoji, txt, position, static_cast<f32>(fontEmoji.baseSize), 1.0f, emoji[i].color );
                     hovered = i;
                     hoveredPos = position;
                 }
@@ -235,8 +235,8 @@ int main()
             //------------------------------------------------------------------------------
             if (selected != -1)
             {
-                const int message = emoji[selected].message;
-                const int horizontalPadding = 20, verticalPadding = 30;
+                const i32 message = emoji[selected].message;
+                const i32 horizontalPadding = 20, verticalPadding = 30;
                 Font *font = &fontDefault;
 
                 // Set correct font for asian languages
@@ -245,7 +245,7 @@ int main()
                     TextIsEqual(messages[message].language, "Japanese")) font = &fontAsian;
 
                 // Calculate size for the message box (approximate the height and width)
-                vec2 sz = MeasureTextEx(*font, messages[message].text, static_cast<float>(font->baseSize), 1.0f);
+                vec2 sz = MeasureTextEx(*font, messages[message].text, static_cast<f32>(font->baseSize), 1.0f);
                 if (sz.x > 300) { sz.y *= sz.x/300; sz.x = 300; }
                 else if (sz.x < 160) sz.x = 160;
 
@@ -277,16 +277,16 @@ int main()
                 DrawTriangle(a, b, c, emoji[selected].color);
 
                 // Draw the main text message
-                const Rectangle textRect = { msgRect.x + static_cast<float>(horizontalPadding)/2, msgRect.y + static_cast<float>(verticalPadding)/2, msgRect.width - horizontalPadding, msgRect.height };
-                DrawTextBoxed(*font, messages[message].text, textRect, static_cast<float>(font->baseSize), 1.0f, true, WHITE);
+                const Rectangle textRect = { msgRect.x + static_cast<f32>(horizontalPadding)/2, msgRect.y + static_cast<f32>(verticalPadding)/2, msgRect.width - horizontalPadding, msgRect.height };
+                DrawTextBoxed(*font, messages[message].text, textRect, static_cast<f32>(font->baseSize), 1.0f, true, WHITE);
 
                 // Draw the info text below the main message
-                const int size = static_cast<int>(strlen(messages[message].text));
-                const int length = GetCodepointCount(messages[message].text);
+                const i32 size = static_cast<i32>(strlen(messages[message].text));
+                const i32 length = GetCodepointCount(messages[message].text);
                 const std::string info = TextFormat("%s %u characters %i bytes", messages[message].language, length, size);
                 sz = MeasureTextEx(GetFontDefault(), info, 10, 1.0f);
 
-                DrawText(info, static_cast<int>(textRect.x + textRect.width - sz.x), static_cast<int>(msgRect.y + msgRect.height - sz.y - 2), 10, RAYWHITE);
+                DrawText(info, static_cast<i32>(textRect.x + textRect.width - sz.x), static_cast<i32>(msgRect.y + msgRect.height - sz.y - 2), 10, RAYWHITE);
             }
             //------------------------------------------------------------------------------
 
@@ -314,15 +314,15 @@ int main()
 static void RandomizeEmoji(void)
 {
     hovered = selected = -1;
-    const int start = GetRandomValue(45, 360);
+    const i32 start = GetRandomValue(45, 360);
 
-    for (int i = 0; i < SIZEOF(emoji); i++)
+    for (i32 i = 0; i < SIZEOF(emoji); i++)
     {
         // 0-179 emoji codepoints (from emoji char array) each 4bytes + null char
         emoji[i].index = GetRandomValue(0, 179)*5;
 
         // Generate a random color for this emoji
-        emoji[i].color = Fade(ColorFromHSV(static_cast<float>((start*(i + 1))%360), 0.6f, 0.85f), 0.8f);
+        emoji[i].color = Fade(ColorFromHSV(static_cast<f32>((start*(i + 1))%360), 0.6f, 0.85f), 0.8f);
 
         // Set a random message for this emoji
         emoji[i].message = GetRandomValue(0, SIZEOF(messages) - 1);
@@ -334,42 +334,42 @@ static void RandomizeEmoji(void)
 //--------------------------------------------------------------------------------------
 
 // Draw text using font inside rectangle limits
-static void DrawTextBoxed(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint)
+static void DrawTextBoxed(Font font, const char *text, Rectangle rec, f32 fontSize, f32 spacing, bool wordWrap, Color tint)
 {
     DrawTextBoxedSelectable(font, text, rec, fontSize, spacing, wordWrap, tint, 0, 0, WHITE, WHITE);
 }
 
 // Draw text using font inside rectangle limits with support for text selection
-static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, float fontSize, float spacing, bool wordWrap, Color tint, int selectStart, int selectLength, Color selectTint, Color selectBackTint)
+static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, f32 fontSize, f32 spacing, bool wordWrap, Color tint, i32 selectStart, i32 selectLength, Color selectTint, Color selectBackTint)
 {
-    const int length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
+    const i32 length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
 
-    float textOffsetY = 0.0f;       // Offset between lines (on line break '\n')
-    float textOffsetX = 0.0f;       // Offset X to next character to draw
+    f32 textOffsetY = 0.0f;       // Offset between lines (on line break '\n')
+    f32 textOffsetX = 0.0f;       // Offset X to next character to draw
 
-    const float scaleFactor = fontSize/static_cast<float>(font.baseSize);     // Character rectangle scaling factor
+    const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);     // Character rectangle scaling factor
 
     // Word/character wrapping mechanism variables
     enum { MEASURE_STATE = 0, DRAW_STATE = 1 };
-    int state = wordWrap? MEASURE_STATE : DRAW_STATE;
+    i32 state = wordWrap? MEASURE_STATE : DRAW_STATE;
 
-    int startLine = -1;         // Index where to begin drawing (where a line begins)
-    int endLine = -1;           // Index where to stop drawing (where a line ends)
-    int lastk = -1;             // Holds last value of the character position
+    i32 startLine = -1;         // Index where to begin drawing (where a line begins)
+    i32 endLine = -1;           // Index where to stop drawing (where a line ends)
+    i32 lastk = -1;             // Holds last value of the character position
 
-    for (int i = 0, k = 0; i < length; i++, k++)
+    for (i32 i = 0, k = 0; i < length; i++, k++)
     {
         // Get next codepoint from byte string and glyph index in font
-        int codepointByteCount = 0;
-        const int codepoint = GetCodepoint(&text[i], &codepointByteCount);
-        const int index = GetGlyphIndex(font, codepoint);
+        i32 codepointByteCount = 0;
+        const i32 codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        const i32 index = GetGlyphIndex(font, codepoint);
 
         // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
         // but we need to draw all of the bad bytes using the '?' symbol moving one byte
         if (codepoint == 0x3f) codepointByteCount = 1;
         i += (codepointByteCount - 1);
 
-        float glyphWidth = 0;
+        f32 glyphWidth = 0;
         if (codepoint != '\n')
         {
             glyphWidth = (font.glyphs[index].advanceX == 0) ? font.recs[index].width*scaleFactor : font.glyphs[index].advanceX*scaleFactor;
@@ -410,7 +410,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 glyphWidth = 0;
 
                 // Save character position when we switch states
-                const int tmp = lastk;
+                const i32 tmp = lastk;
                 lastk = k - 1;
                 k = tmp;
             }
@@ -421,7 +421,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
             {
                 if (!wordWrap)
                 {
-                    textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
+                    textOffsetY += (font.baseSize + static_cast<f32>(font.baseSize)/2)*scaleFactor;
                     textOffsetX = 0;
                 }
             }
@@ -429,7 +429,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
             {
                 if (!wordWrap && ((textOffsetX + glyphWidth) > rec.width))
                 {
-                    textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
+                    textOffsetY += (font.baseSize + static_cast<f32>(font.baseSize)/2)*scaleFactor;
                     textOffsetX = 0;
                 }
 
@@ -440,7 +440,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 bool isGlyphSelected = false;
                 if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
                 {
-                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, static_cast<float>(font.baseSize)*scaleFactor }, selectBackTint);
+                    DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, static_cast<f32>(font.baseSize)*scaleFactor }, selectBackTint);
                     isGlyphSelected = true;
                 }
 
@@ -453,7 +453,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
 
             if (wordWrap && (i == endLine))
             {
-                textOffsetY += (font.baseSize + static_cast<float>(font.baseSize)/2)*scaleFactor;
+                textOffsetY += (font.baseSize + static_cast<f32>(font.baseSize)/2)*scaleFactor;
                 textOffsetX = 0;
                 startLine = endLine;
                 endLine = -1;

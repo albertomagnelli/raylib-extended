@@ -23,12 +23,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - clock of clocks");
@@ -36,9 +36,9 @@ int main()
     const Color bgColor = ColorLerp(DARKBLUE, BLACK, 0.75f);
     const Color handsColor = ColorLerp(YELLOW, RAYWHITE, .25f);
 
-    constexpr float clockFaceSize = 24;
-    constexpr float clockFaceSpacing = 8.0f;
-    constexpr float sectionSpacing = 16.0f;
+    constexpr f32 clockFaceSize = 24;
+    constexpr f32 clockFaceSpacing = 8.0f;
+    constexpr f32 sectionSpacing = 16.0f;
 
     const vec2 TL = vec2{   0.0f,  90.0f }; // Top-left corner
     const vec2 TR = vec2{  90.0f, 180.0f }; // Top-right corner
@@ -62,15 +62,15 @@ int main()
     };
 
     // Time for the hands to move to the new position (in seconds); this must be <1s
-    constexpr float handsMoveDuration = 0.5f;
+    constexpr f32 handsMoveDuration = 0.5f;
 
-    int prevSeconds = -1;
+    i32 prevSeconds = -1;
     vec2 currentAngles[6][24] = {};
     vec2 srcAngles[6][24] = {};
     vec2 dstAngles[6][24] = {};
 
-    float handsMoveTimer = 0.0f;
-    int hourMode = 24;
+    f32 handsMoveTimer = 0.0f;
+    i32 hourMode = 24;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -96,9 +96,9 @@ int main()
             std::string clockDigits = TextFormat("%02d%02d%02d", timeinfo->tm_hour%hourMode, timeinfo->tm_min, timeinfo->tm_sec);
 
             // Fetch where we want all the hands to be
-            for (int digit = 0; digit < 6; digit++)
+            for (i32 digit = 0; digit < 6; digit++)
             {
-                for (int cell = 0; cell < 24; cell++)
+                for (i32 cell = 0; cell < 24; cell++)
                 {
                     srcAngles[digit][cell] = currentAngles[digit][cell];
                     dstAngles[digit][cell] = digitAngles[clockDigits[digit] - '0'][cell];
@@ -121,14 +121,14 @@ int main()
             handsMoveTimer = Clamp(handsMoveTimer + GetFrameTime(), 0, handsMoveDuration);
 
             // Calculate the%completion of the animation
-            float t = handsMoveTimer/handsMoveDuration;
+            f32 t = handsMoveTimer/handsMoveDuration;
 
             // A little cheeky smoothstep
             t = t*t*(3.0f - 2.0f*t);
 
-            for (int digit = 0; digit < 6; digit++)
+            for (i32 digit = 0; digit < 6; digit++)
             {
-                for (int cell = 0; cell < 24; cell++)
+                for (i32 cell = 0; cell < 24; cell++)
                 {
                     currentAngles[digit][cell].x = Lerp(srcAngles[digit][cell].x, dstAngles[digit][cell].x, t);
                     currentAngles[digit][cell].y = Lerp(srcAngles[digit][cell].y, dstAngles[digit][cell].y, t);
@@ -148,13 +148,13 @@ int main()
 
             DrawText(TextFormat("%d-h mode, space to change", hourMode), 10, 30, 20, RAYWHITE);
 
-            float xOffset = 4.0f;
+            f32 xOffset = 4.0f;
 
-            for (unsigned int digit = 0; digit < 6; digit++)
+            for (u32 digit = 0; digit < 6; digit++)
             {
-                for (int row = 0; row < 6; row++)
+                for (i32 row = 0; row < 6; row++)
                 {
-                    for (int col = 0; col < 4; col++)
+                    for (i32 col = 0; col < 4; col++)
                     {
                         const vec2 centre = vec2{
                             xOffset + col*(clockFaceSize+clockFaceSpacing) + clockFaceSize*0.5f,

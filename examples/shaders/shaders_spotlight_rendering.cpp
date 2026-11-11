@@ -50,13 +50,13 @@
 typedef struct Spot {
     vec2 position;
     vec2 speed;
-    float inner;
-    float radius;
+    f32 inner;
+    f32 radius;
 
     // Shader locations
-    unsigned int positionLoc;
-    unsigned int innerLoc;
-    unsigned int radiusLoc;
+    u32 positionLoc;
+    u32 innerLoc;
+    u32 radiusLoc;
 } Spot;
 
 // Stars in the star field have a position and velocity
@@ -74,12 +74,12 @@ static void ResetStar(Star *star);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - spotlight rendering");
     HideCursor();
@@ -88,15 +88,15 @@ int main()
 
     Star stars[MAX_STARS] = {};
 
-    for (int n = 0; n < MAX_STARS; n++) ResetStar(&stars[n]);
+    for (i32 n = 0; n < MAX_STARS; n++) ResetStar(&stars[n]);
 
     // Progress all the stars on, so they don't all start in the centre
-    for (int m = 0; m < screenWidth/2.0; m++)
+    for (i32 m = 0; m < screenWidth/2.0; m++)
     {
-        for (int n = 0; n < MAX_STARS; n++) UpdateStar(&stars[n]);
+        for (i32 n = 0; n < MAX_STARS; n++) UpdateStar(&stars[n]);
     }
 
-    int frameCounter = 0;
+    i32 frameCounter = 0;
 
     // Use default vert shader
     const Shader shdrSpot = LoadShader({}, TextFormat("resources/shaders/glsl%i/spotlight.fs", GLSL_VERSION));
@@ -104,7 +104,7 @@ int main()
     // Get the locations of spots in the shader
     Spot spots[MAX_SPOTS];
 
-    for (int i = 0; i < MAX_SPOTS; i++)
+    for (i32 i = 0; i < MAX_SPOTS; i++)
     {
         char posName[32] = "spots[x].pos\0";
         char innerName[32] = "spots[x].inner\0";
@@ -121,16 +121,16 @@ int main()
 
     // Tell the shader how wide the screen is so we can have
     // a pitch black half and a dimly lit half
-    const unsigned int wLoc = GetShaderLocation(shdrSpot, "screenWidth");
-    float sw = static_cast<float>(GetScreenWidth());
+    const u32 wLoc = GetShaderLocation(shdrSpot, "screenWidth");
+    f32 sw = static_cast<f32>(GetScreenWidth());
     SetShaderValue(shdrSpot, wLoc, &sw, SHADER_UNIFORM_FLOAT);
 
     // Randomize the locations and velocities of the spotlights
     // and initialize the shader locations
-    for (int i = 0; i < MAX_SPOTS; i++)
+    for (i32 i = 0; i < MAX_SPOTS; i++)
     {
-        spots[i].position.x = static_cast<float>(GetRandomValue(64, screenWidth - 64));
-        spots[i].position.y = static_cast<float>(GetRandomValue(64, screenHeight - 64));
+        spots[i].position.x = static_cast<f32>(GetRandomValue(64, screenWidth - 64));
+        spots[i].position.y = static_cast<f32>(GetRandomValue(64, screenHeight - 64));
         spots[i].speed = vec2{ 0, 0 };
 
         while ((fabs(spots[i].speed.x) + fabs(spots[i].speed.y)) < 2)
@@ -158,10 +158,10 @@ int main()
         frameCounter++;
 
         // Move the stars, resetting them if the go offscreen
-        for (int n = 0; n < MAX_STARS; n++) UpdateStar(&stars[n]);
+        for (i32 n = 0; n < MAX_STARS; n++) UpdateStar(&stars[n]);
 
         // Update the spots, send them to the shader
-        for (int i = 0; i < MAX_SPOTS; i++)
+        for (i32 i = 0; i < MAX_SPOTS; i++)
         {
             if (i == 0)
             {
@@ -190,17 +190,17 @@ int main()
             ClearBackground(DARKBLUE);
 
             // Draw stars and bobs
-            for (int n = 0; n < MAX_STARS; n++)
+            for (i32 n = 0; n < MAX_STARS; n++)
             {
                 // Single pixel is just too small these days!
-                DrawRectangle(static_cast<int>(stars[n].position.x), static_cast<int>(stars[n].position.y), 2, 2, WHITE);
+                DrawRectangle(static_cast<i32>(stars[n].position.x), static_cast<i32>(stars[n].position.y), 2, 2, WHITE);
             }
 
-            for (int i = 0; i < 16; i++)
+            for (i32 i = 0; i < 16; i++)
             {
                 DrawTexture(texRay,
-                    static_cast<int>((screenWidth/2.0f) + cos((frameCounter + i*8)/51.45f)*(screenWidth/2.2f) - 32),
-                    static_cast<int>((screenHeight/2.0f) + sin((frameCounter + i*8)/17.87f)*(screenHeight/4.2f)), WHITE);
+                    static_cast<i32>((screenWidth/2.0f) + cos((frameCounter + i*8)/51.45f)*(screenWidth/2.2f) - 32),
+                    static_cast<i32>((screenHeight/2.0f) + sin((frameCounter + i*8)/17.87f)*(screenHeight/4.2f)), WHITE);
             }
 
             // Draw spot lights
@@ -215,8 +215,8 @@ int main()
             DrawFPS(10, 10);
 
             DrawText("Move the mouse!", 10, 30, 20, GREEN);
-            DrawText("Pitch Black", static_cast<int>(screenWidth*0.2f), screenHeight/2, 20, GREEN);
-            DrawText("Dark", static_cast<int>(screenWidth*.66f), screenHeight/2, 20, GREEN);
+            DrawText("Pitch Black", static_cast<i32>(screenWidth*0.2f), screenHeight/2, 20, GREEN);
+            DrawText("Dark", static_cast<i32>(screenWidth*.66f), screenHeight/2, 20, GREEN);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -240,13 +240,13 @@ static void ResetStar(Star *star)
 {
     star->position = vec2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
-    star->speed.x = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
-    star->speed.y = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
+    star->speed.x = static_cast<f32>(GetRandomValue(-1000, 1000))/100.0f;
+    star->speed.y = static_cast<f32>(GetRandomValue(-1000, 1000))/100.0f;
 
     while (!(fabs(star->speed.x) + (fabs(star->speed.y) > 1)))
     {
-        star->speed.x = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
-        star->speed.y = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
+        star->speed.x = static_cast<f32>(GetRandomValue(-1000, 1000))/100.0f;
+        star->speed.y = static_cast<f32>(GetRandomValue(-1000, 1000))/100.0f;
     }
 
     star->position = ((star->position) + (((star->speed) * (vec2{ 8.0f, 8.0f }))));

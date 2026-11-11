@@ -22,35 +22,35 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void NormalizeKernel(float *kernel, int size);
+static void NormalizeKernel(f32 *kernel, i32 size);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image kernel");
 
     Image image = LoadImage("resources/cat.png"); // Loaded in CPU memory (RAM)
 
-    float gaussiankernel[] = {
+    f32 gaussiankernel[] = {
         1.0f, 2.0f, 1.0f,
         2.0f, 4.0f, 2.0f,
         1.0f, 2.0f, 1.0f
     };
 
-    float sobelkernel[] = {
+    f32 sobelkernel[] = {
         1.0f, 0.0f, -1.0f,
         2.0f, 0.0f, -2.0f,
         1.0f, 0.0f, -1.0f
     };
 
-    float sharpenkernel[] = {
+    f32 sharpenkernel[] = {
         0.0f, -1.0f, 0.0f,
        -1.0f, 5.0f, -1.0f,
         0.0f, -1.0f, 0.0f
@@ -68,15 +68,15 @@ int main()
 
     Image catGaussian = ImageCopy(image);
 
-    for (int i = 0; i < 6; i++)
+    for (i32 i = 0; i < 6; i++)
     {
         ImageKernelConvolution(&catGaussian, gaussiankernel, 9);
     }
 
-    ImageCrop(&image, Rectangle{ 0, 0, static_cast<float>(200), static_cast<float>(450) });
-    ImageCrop(&catGaussian, Rectangle{ 0, 0, static_cast<float>(200), static_cast<float>(450) });
-    ImageCrop(&catSobel, Rectangle{ 0, 0, static_cast<float>(200), static_cast<float>(450) });
-    ImageCrop(&catSharpend, Rectangle{ 0, 0, static_cast<float>(200), static_cast<float>(450) });
+    ImageCrop(&image, Rectangle{ 0, 0, static_cast<f32>(200), static_cast<f32>(450) });
+    ImageCrop(&catGaussian, Rectangle{ 0, 0, static_cast<f32>(200), static_cast<f32>(450) });
+    ImageCrop(&catSobel, Rectangle{ 0, 0, static_cast<f32>(200), static_cast<f32>(450) });
+    ImageCrop(&catSharpend, Rectangle{ 0, 0, static_cast<f32>(200), static_cast<f32>(450) });
 
     // Images converted to texture, GPU memory (VRAM)
     const Texture2D texture = LoadTextureFromImage(image);
@@ -133,13 +133,13 @@ int main()
 //------------------------------------------------------------------------------------
 // Module Functions Definition
 //------------------------------------------------------------------------------------
-static void NormalizeKernel(float *kernel, int size)
+static void NormalizeKernel(f32 *kernel, i32 size)
 {
-    float sum = 0.0f;
-    for (int i = 0; i < size; i++) sum += kernel[i];
+    f32 sum = 0.0f;
+    for (i32 i = 0; i < size; i++) sum += kernel[i];
 
     if (sum != 0.0f)
     {
-        for (int i = 0; i < size; i++) kernel[i] /= sum;
+        for (i32 i = 0; i < size; i++) kernel[i] /= sum;
     }
 }

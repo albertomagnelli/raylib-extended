@@ -26,12 +26,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font sdf");
 
@@ -40,8 +40,8 @@ int main()
     const char msg[50] = "Signed Distance Fields";
 
     // Loading file to memory
-    int fileSize = 0;
-    unsigned char *fileData = LoadFileData("resources/anonymous_pro_bold.ttf", &fileSize);
+    i32 fileSize = 0;
+    u8 *fileData = LoadFileData("resources/anonymous_pro_bold.ttf", &fileSize);
 
     // Default font generation from TTF font
     Font fontDefault = {};
@@ -76,8 +76,8 @@ int main()
 
     vec2 fontPosition = { 40, screenHeight/2.0f - 50 };
     vec2 textSize = { 0.0f, 0.0f };
-    float fontSize = 16.0f;
-    int currentFont = 0;            // 0 - fontDefault, 1 - fontSDF
+    f32 fontSize = 16.0f;
+    i32 currentFont = 0;            // 0 - fontDefault, 1 - fontSDF
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -97,8 +97,8 @@ int main()
         if (currentFont == 0) textSize = MeasureTextEx(fontDefault, msg, fontSize, 0);
         else textSize = MeasureTextEx(fontSDF, msg, fontSize, 0);
 
-        fontPosition.x = static_cast<float>(GetScreenWidth())/2 - textSize.x/2;
-        fontPosition.y = static_cast<float>(GetScreenHeight())/2 - textSize.y/2 + 80;
+        fontPosition.x = static_cast<f32>(GetScreenWidth())/2 - textSize.x/2;
+        fontPosition.y = static_cast<f32>(GetScreenHeight())/2 - textSize.y/2 + 80;
         //----------------------------------------------------------------------------------
 
         // Draw

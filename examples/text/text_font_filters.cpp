@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font filters");
 
@@ -42,13 +42,13 @@ int main()
     // NOTE: On 2D drawing it won't be noticeable, it looks like FILTER_BILINEAR
     GenTextureMipmaps(&font.texture);
 
-    float fontSize = static_cast<float>(font.baseSize);
+    f32 fontSize = static_cast<f32>(font.baseSize);
     vec2 fontPosition = { 40.0f, screenHeight/2.0f - 80.0f };
     vec2 textSize = { 0.0f, 0.0f };
 
     // Setup texture scaling filter
     SetTextureFilter(font.texture, TEXTURE_FILTER_POINT);
-    int currentFontFilter = 0;      // TEXTURE_FILTER_POINT
+    i32 currentFontFilter = 0;      // TEXTURE_FILTER_POINT
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ int main()
             if (IsFileExtension(droppedFiles.paths[0], ".ttf"))
             {
                 UnloadFont(font);
-                font = LoadFontEx(droppedFiles.paths[0], static_cast<int>(fontSize), nullptr, 0);
+                font = LoadFontEx(droppedFiles.paths[0], static_cast<i32>(fontSize), nullptr, 0);
             }
 
                 // Unload filepaths from memory

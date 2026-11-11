@@ -30,32 +30,32 @@
 //----------------------------------------------------------------------------------
 typedef struct TurtleState {
     vec2 origin;
-    float angle;
+    f32 angle;
 } TurtleState;
 
 typedef struct PenroseLSystem {
-    int steps;
+    i32 steps;
     char *production;
     const char *ruleW;
     const char *ruleX;
     const char *ruleY;
     const char *ruleZ;
-    float drawLength;
-    float theta;
+    f32 drawLength;
+    f32 theta;
 } PenroseLSystem;
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
 static TurtleState turtleStack[TURTLE_STACK_MAX_SIZE];
-static int turtleTop = -1;
+static i32 turtleTop = -1;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
 static void PushTurtleState(TurtleState state);
 static TurtleState PopTurtleState(void);
-static PenroseLSystem LoadPenroseLSystem(float drawLength);
+static PenroseLSystem LoadPenroseLSystem(f32 drawLength);
 static void UnloadPenroseLSystem(PenroseLSystem ls);
 static void BuildProductionStep(PenroseLSystem *ls);
 static void DrawPenroseLSystem(PenroseLSystem *ls);
@@ -63,24 +63,24 @@ static void DrawPenroseLSystem(PenroseLSystem *ls);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - penrose tile");
 
-    constexpr float drawLength = 460.0f;
-    constexpr int minGenerations = 0;
-    constexpr int maxGenerations = 4;
-    int generations = 1;
+    constexpr f32 drawLength = 460.0f;
+    constexpr i32 minGenerations = 0;
+    constexpr i32 maxGenerations = 4;
+    i32 generations = 1;
 
     // Initialize new penrose tile
-    PenroseLSystem ls = LoadPenroseLSystem(drawLength*(generations/static_cast<float>(maxGenerations)));
-    for (int i = 0; i < generations; i++) BuildProductionStep(&ls);
+    PenroseLSystem ls = LoadPenroseLSystem(drawLength*(generations/static_cast<f32>(maxGenerations)));
+    for (i32 i = 0; i < generations; i++) BuildProductionStep(&ls);
 
     SetTargetFPS(120);              // Set our game to run at 120 frames-per-second
     //---------------------------------------------------------------------------------------
@@ -111,8 +111,8 @@ int main()
         if (rebuild)
         {
             UnloadPenroseLSystem(ls); // Free previous production for re-creation
-            ls = LoadPenroseLSystem(drawLength*(generations/static_cast<float>(maxGenerations)));
-            for (int i = 0; i < generations; i++) BuildProductionStep(&ls);
+            ls = LoadPenroseLSystem(drawLength*(generations/static_cast<f32>(maxGenerations)));
+            for (i32 i = 0; i < generations; i++) BuildProductionStep(&ls);
         }
         //----------------------------------------------------------------------------------
 
@@ -162,7 +162,7 @@ static TurtleState PopTurtleState(void)
 }
 
 // Load a new penrose tile structure
-static PenroseLSystem LoadPenroseLSystem(float drawLength)
+static PenroseLSystem LoadPenroseLSystem(f32 drawLength)
 {
     PenroseLSystem ls = {
         .steps = 0,
@@ -193,12 +193,12 @@ static void BuildProductionStep(PenroseLSystem *ls)
     char *newProduction = static_cast<char *>(malloc(sizeof(char)*STR_MAX_SIZE));
     newProduction[0] = '\0';
 
-    const int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
+    const i32 productionLength = static_cast<i32>(strnlen(ls->production, STR_MAX_SIZE));
 
-    for (int i = 0; i < productionLength; i++)
+    for (i32 i = 0; i < productionLength; i++)
     {
         const char step = ls->production[i];
-        const int remainingSpace = STR_MAX_SIZE - static_cast<int>(strnlen(newProduction, STR_MAX_SIZE)) - 1;
+        const i32 remainingSpace = STR_MAX_SIZE - static_cast<i32>(strnlen(newProduction, STR_MAX_SIZE)) - 1;
         switch (step)
         {
             case 'W': strncat(newProduction, ls->ruleW, remainingSpace); break;
@@ -209,7 +209,7 @@ static void BuildProductionStep(PenroseLSystem *ls)
             {
                 if (step != 'F')
                 {
-                    const int t = static_cast<int>(strnlen(newProduction, STR_MAX_SIZE));
+                    const i32 t = static_cast<i32>(strnlen(newProduction, STR_MAX_SIZE));
                     newProduction[t] = step;
                     newProduction[t + 1] = '\0';
                 }
@@ -233,21 +233,21 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
         .angle = -90.0f
     };
 
-    int repeats = 1;
-    const int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
+    i32 repeats = 1;
+    const i32 productionLength = static_cast<i32>(strnlen(ls->production, STR_MAX_SIZE));
     ls->steps += 12;
 
     if (ls->steps > productionLength) ls->steps = productionLength;
 
-    for (int i = 0; i < ls->steps; i++)
+    for (i32 i = 0; i < ls->steps; i++)
     {
         const char step = ls->production[i];
         if (step == 'F')
         {
-            for (int j = 0; j < repeats; j++)
+            for (i32 j = 0; j < repeats; j++)
             {
                 const vec2 startPosWorld = turtle.origin;
-                const float radAngle = DEG2RAD*turtle.angle;
+                const f32 radAngle = DEG2RAD*turtle.angle;
                 turtle.origin.x += ls->drawLength*cosf(radAngle);
                 turtle.origin.y += ls->drawLength*sinf(radAngle);
                 const vec2 startPosScreen = { startPosWorld.x + screenCenter.x, startPosWorld.y + screenCenter.y };
@@ -260,19 +260,19 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
         }
         else if (step == '+')
         {
-            for (int j = 0; j < repeats; j++) turtle.angle += ls->theta;
+            for (i32 j = 0; j < repeats; j++) turtle.angle += ls->theta;
 
             repeats = 1;
         }
         else if (step == '-')
         {
-            for (int j = 0; j < repeats; j++) turtle.angle += -ls->theta;
+            for (i32 j = 0; j < repeats; j++) turtle.angle += -ls->theta;
 
             repeats = 1;
         }
         else if (step == '[') PushTurtleState(turtle);
         else if (step == ']') turtle = PopTurtleState();
-        else if ((step >= 48) && (step <= 57)) repeats = static_cast<int>(step) - 48;
+        else if ((step >= 48) && (step <= 57)) repeats = static_cast<i32>(step) - 48;
     }
 
     turtleTop = -1;

@@ -43,32 +43,32 @@ typedef enum {
 
 // Light data
 typedef struct {
-    int type;
-    int enabled;
+    i32 type;
+    i32 enabled;
     vec3 position;
     vec3 target;
-    float color[4];
-    float intensity;
+    f32 color[4];
+    f32 intensity;
 
     // Shader light parameters locations
-    int typeLoc;
-    int enabledLoc;
-    int positionLoc;
-    int targetLoc;
-    int colorLoc;
-    int intensityLoc;
+    i32 typeLoc;
+    i32 enabledLoc;
+    i32 positionLoc;
+    i32 targetLoc;
+    i32 colorLoc;
+    i32 intensityLoc;
 } Light;
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static int lightCount = 0;     // Current number of dynamic lights that have been created
+static i32 lightCount = 0;     // Current number of dynamic lights that have been created
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
 // Create a light and get shader locations
-static Light CreateLight(int type, vec3 position, vec3 target, Color color, float intensity, Shader shader);
+static Light CreateLight(i32 type, vec3 position, vec3 target, Color color, f32 intensity, Shader shader);
 
 // Update light properties on shader
 // NOTE: Light shader locations should be available
@@ -77,12 +77,12 @@ static void UpdateLight(Shader shader, Light light);
 //----------------------------------------------------------------------------------
 // Program main entry point
 //----------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - basic pbr");
@@ -112,23 +112,23 @@ int main()
 
     // Setup additional required shader locations, including lights data
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
-    const int lightCountLoc = GetShaderLocation(shader, "numOfLights");
-    int maxLightCount = MAX_LIGHTS;
+    const i32 lightCountLoc = GetShaderLocation(shader, "numOfLights");
+    i32 maxLightCount = MAX_LIGHTS;
     SetShaderValue(shader, lightCountLoc, &maxLightCount, SHADER_UNIFORM_INT);
 
     // Setup ambient color and intensity parameters
-    float ambientIntensity = 0.02f;
+    f32 ambientIntensity = 0.02f;
     const Color ambientColor = Color{ 26, 32, 135, 255 };
     vec3 ambientColorNormalized = vec3{ ambientColor.r/255.0f, ambientColor.g/255.0f, ambientColor.b/255.0f };
     SetShaderValue(shader, GetShaderLocation(shader, "ambientColor"), &ambientColorNormalized, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, GetShaderLocation(shader, "ambient"), &ambientIntensity, SHADER_UNIFORM_FLOAT);
 
     // Get location for shader parameters that can be modified in real time
-    const int metallicValueLoc = GetShaderLocation(shader, "metallicValue");
-    const int roughnessValueLoc = GetShaderLocation(shader, "roughnessValue");
-    const int emissiveIntensityLoc = GetShaderLocation(shader, "emissivePower");
-    const int emissiveColorLoc = GetShaderLocation(shader, "emissiveColor");
-    const int textureTilingLoc = GetShaderLocation(shader, "tiling");
+    const i32 metallicValueLoc = GetShaderLocation(shader, "metallicValue");
+    const i32 roughnessValueLoc = GetShaderLocation(shader, "roughnessValue");
+    const i32 emissiveIntensityLoc = GetShaderLocation(shader, "emissivePower");
+    const i32 emissiveColorLoc = GetShaderLocation(shader, "emissiveColor");
+    const i32 textureTilingLoc = GetShaderLocation(shader, "tiling");
 
     // Load old car model using PBR maps and shader
     // WARNING: We know this model consists of a single model.meshes[0] and
@@ -187,7 +187,7 @@ int main()
 
     // Setup material texture maps usage in shader
     // NOTE: By default, the texture maps are always used
-    int usage = 1;
+    i32 usage = 1;
     SetShaderValue(shader, GetShaderLocation(shader, "useTexAlbedo"), &usage, SHADER_UNIFORM_INT);
     SetShaderValue(shader, GetShaderLocation(shader, "useTexNormal"), &usage, SHADER_UNIFORM_INT);
     SetShaderValue(shader, GetShaderLocation(shader, "useTexMRA"), &usage, SHADER_UNIFORM_INT);
@@ -204,7 +204,7 @@ int main()
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         // Update the shader with the camera view vector (points towards { 0.0f, 0.0f, 0.0f })
-        float cameraPos[3] = {camera.position.x, camera.position.y, camera.position.z};
+        f32 cameraPos[3] = {camera.position.x, camera.position.y, camera.position.z};
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
         // Check key inputs to enable/disable lights
@@ -214,7 +214,7 @@ int main()
         if (IsKeyPressed(KEY_FOUR)) { lights[0].enabled = !lights[0].enabled; }
 
         // Update light values on shader (actually, only enable/disable them)
-        for (int i = 0; i < MAX_LIGHTS; i++) UpdateLight(shader, lights[i]);
+        for (i32 i = 0; i < MAX_LIGHTS; i++) UpdateLight(shader, lights[i]);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -240,7 +240,7 @@ int main()
                 SetShaderValue(shader, textureTilingLoc, &carTextureTiling, SHADER_UNIFORM_VEC2);
                 vec4 carEmissiveColor = ColorNormalize(car.materials[0].maps[MATERIAL_MAP_EMISSION].color);
                 SetShaderValue(shader, emissiveColorLoc, &carEmissiveColor, SHADER_UNIFORM_VEC4);
-                float emissiveIntensity = 0.01f;
+                f32 emissiveIntensity = 0.01f;
                 SetShaderValue(shader, emissiveIntensityLoc, &emissiveIntensity, SHADER_UNIFORM_FLOAT);
 
                 // Set old car metallic and roughness values
@@ -250,13 +250,13 @@ int main()
                 DrawModel(car, vec3{ 0.0f, 0.0f, 0.0f }, 0.25f, WHITE); // Draw car model
 
                 // Draw spheres to show the lights positions
-                for (int i = 0; i < MAX_LIGHTS; i++)
+                for (i32 i = 0; i < MAX_LIGHTS; i++)
                 {
                     const Color lightColor = Color{
-                        static_cast<unsigned char>(lights[i].color[0]*255),
-                        static_cast<unsigned char>(lights[i].color[1]*255),
-                        static_cast<unsigned char>(lights[i].color[2]*255),
-                        static_cast<unsigned char>(lights[i].color[3]*255) };
+                        static_cast<u8>(lights[i].color[0]*255),
+                        static_cast<u8>(lights[i].color[1]*255),
+                        static_cast<u8>(lights[i].color[2]*255),
+                        static_cast<u8>(lights[i].color[3]*255) };
 
                     if (lights[i].enabled) DrawSphereEx(lights[i].position, 0.2f, 8, 8, lightColor);
                     else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lightColor, 0.3f));
@@ -301,7 +301,7 @@ int main()
 //----------------------------------------------------------------------------------
 // Create light with provided data
 // NOTE: It updated the global lightCount and it's limited to MAX_LIGHTS
-static Light CreateLight(int type, vec3 position, vec3 target, Color color, float intensity, Shader shader)
+static Light CreateLight(i32 type, vec3 position, vec3 target, Color color, f32 intensity, Shader shader)
 {
     Light light = {};
 
@@ -311,10 +311,10 @@ static Light CreateLight(int type, vec3 position, vec3 target, Color color, floa
         light.type = type;
         light.position = position;
         light.target = target;
-        light.color[0] = static_cast<float>(color.r)/255.0f;
-        light.color[1] = static_cast<float>(color.g)/255.0f;
-        light.color[2] = static_cast<float>(color.b)/255.0f;
-        light.color[3] = static_cast<float>(color.a)/255.0f;
+        light.color[0] = static_cast<f32>(color.r)/255.0f;
+        light.color[1] = static_cast<f32>(color.g)/255.0f;
+        light.color[2] = static_cast<f32>(color.b)/255.0f;
+        light.color[3] = static_cast<f32>(color.a)/255.0f;
         light.intensity = intensity;
 
         // NOTE: Shader parameters names for lights must match the requested ones
@@ -341,11 +341,11 @@ static void UpdateLight(Shader shader, Light light)
     SetShaderValue(shader, light.typeLoc, &light.type, SHADER_UNIFORM_INT);
 
     // Send to shader light position values
-    float position[3] = { light.position.x, light.position.y, light.position.z };
+    f32 position[3] = { light.position.x, light.position.y, light.position.z };
     SetShaderValue(shader, light.positionLoc, position, SHADER_UNIFORM_VEC3);
 
     // Send to shader light target position values
-    float target[3] = { light.target.x, light.target.y, light.target.z };
+    f32 target[3] = { light.target.x, light.target.y, light.target.z };
     SetShaderValue(shader, light.targetLoc, target, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, light.colorLoc, light.color, SHADER_UNIFORM_VEC4);
     SetShaderValue(shader, light.intensityLoc, &light.intensity, SHADER_UNIFORM_FLOAT);

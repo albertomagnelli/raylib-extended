@@ -26,42 +26,42 @@
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static vec2 CalculatePendulumEndPoint(float l, float theta);
-static vec2 CalculateDoublePendulumEndPoint(float l1, float theta1, float l2, float theta2);
+static vec2 CalculatePendulumEndPoint(f32 l, f32 theta);
+static vec2 CalculateDoublePendulumEndPoint(f32 l1, f32 theta1, f32 l2, f32 theta2);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - double pendulum");
 
     // Simulation Parameters
-    constexpr float l1 = 15.0f, m1 = 0.2f;
-    float theta1 = DEG2RAD*170, w1 = 0;
-    constexpr float l2 = 15.0f, m2 = 0.1f;
-    float theta2 = 0, w2 = 0;
-    constexpr float lengthScaler = 0.1f;
-    const float totalM = m1 + m2;
+    constexpr f32 l1 = 15.0f, m1 = 0.2f;
+    f32 theta1 = DEG2RAD*170, w1 = 0;
+    constexpr f32 l2 = 15.0f, m2 = 0.1f;
+    f32 theta2 = 0, w2 = 0;
+    constexpr f32 lengthScaler = 0.1f;
+    const f32 totalM = m1 + m2;
 
     vec2 previousPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
-    previousPosition.x += (static_cast<float>(screenWidth)/2);
-    previousPosition.y += (static_cast<float>(screenHeight)/2 - 100);
+    previousPosition.x += (static_cast<f32>(screenWidth)/2);
+    previousPosition.y += (static_cast<f32>(screenHeight)/2 - 100);
 
     // Scale length
-    const float L1 = l1*lengthScaler;
-    const float L2 = l2*lengthScaler;
+    const f32 L1 = l1*lengthScaler;
+    const f32 L2 = l2*lengthScaler;
 
     // Draw parameters
-    constexpr float lineThick = 20.0f;
-    constexpr float trailThick = 2.0f;
-    constexpr float fateAlpha = 0.01f;
+    constexpr f32 lineThick = 20.0f;
+    constexpr f32 trailThick = 2.0f;
+    constexpr f32 fateAlpha = 0.01f;
 
     // Create framebuffer
     const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
@@ -75,27 +75,27 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float dt = GetFrameTime();
-        const float step = dt/SIMULATION_STEPS;
-        const float step2 = step*step;
+        const f32 dt = GetFrameTime();
+        const f32 step = dt/SIMULATION_STEPS;
+        const f32 step2 = step*step;
 
         // Update Physics - larger steps = better approximation
-        for (int i = 0; i < SIMULATION_STEPS; i++)
+        for (i32 i = 0; i < SIMULATION_STEPS; i++)
         {
-            const float delta = theta1 - theta2;
-            const float sinD = sinf(delta);
-            const float cosD = cosf(delta), cos2D = cosf(2*delta);
-            const float ww1 = w1*w1;
-            const float ww2 = w2*w2;
+            const f32 delta = theta1 - theta2;
+            const f32 sinD = sinf(delta);
+            const f32 cosD = cosf(delta), cos2D = cosf(2*delta);
+            const f32 ww1 = w1*w1;
+            const f32 ww2 = w2*w2;
 
             // Calculate a1
-            const float a1 = (-G*(2*m1 + m2)*sinf(theta1)
+            const f32 a1 = (-G*(2*m1 + m2)*sinf(theta1)
                          - m2*G*sinf(theta1 - 2*theta2)
                          - 2*sinD*m2*(ww2*L2 + ww1*L1*cosD))
                         /(L1*(2*m1 + m2 - m2*cos2D));
 
             // Calculate a2
-            const float a2 = (2*sinD*(ww1*L1*totalM
+            const f32 a2 = (2*sinD*(ww1*L1*totalM
                          + G*totalM*cosf(theta1)
                          + ww2*L2*m2*cosD))
                         /(L2*(2*m1 + m2 - m2*cos2D));
@@ -111,8 +111,8 @@ int main()
 
         // Calculate position
         vec2 currentPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
-        currentPosition.x += static_cast<float>(screenWidth)/2;
-        currentPosition.y += static_cast<float>(screenHeight)/2 - 100;
+        currentPosition.x += static_cast<f32>(screenWidth)/2;
+        currentPosition.y += static_cast<f32>(screenHeight)/2 - 100;
 
         // Draw to render texture
         BeginTextureMode(target);
@@ -135,7 +135,7 @@ int main()
             ClearBackground(BLACK);
 
             // Draw trails texture
-            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
 
             // Draw double pendulum
             DrawRectanglePro(Rectangle{ screenWidth/2.0f, screenHeight/2.0f - 100, 10*l1, lineThick },
@@ -163,13 +163,13 @@ int main()
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Calculate pendulum end point
-static vec2 CalculatePendulumEndPoint(float l, float theta)
+static vec2 CalculatePendulumEndPoint(f32 l, f32 theta)
 {
     return vec2{ 10*l*sinf(theta), 10*l*cosf(theta) };
 }
 
 // Calculate double pendulum end point
-static vec2 CalculateDoublePendulumEndPoint(float l1, float theta1, float l2, float theta2)
+static vec2 CalculateDoublePendulumEndPoint(f32 l1, f32 theta1, f32 l2, f32 theta2)
 {
     const vec2 endpoint1 = CalculatePendulumEndPoint(l1, theta1);
     const vec2 endpoint2 = CalculatePendulumEndPoint(l2, theta2);

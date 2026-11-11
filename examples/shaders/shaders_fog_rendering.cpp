@@ -36,12 +36,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Enable Multi Sampling Anti Aliasing 4x (if available)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - fog rendering");
@@ -73,15 +73,15 @@ int main()
 
     // Ambient light level
     vec4 ambient = vec4{ 0.2f, 0.2f, 0.2f, 1.0f };
-    const int ambientLoc = GetShaderLocation(shader, "ambient");
+    const i32 ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, &ambient, SHADER_UNIFORM_VEC4);
 
     vec4 fogColor = ColorNormalize(GRAY);
-    const int fogColorLoc = GetShaderLocation(shader, "fogColor");
+    const i32 fogColorLoc = GetShaderLocation(shader, "fogColor");
     SetShaderValue(shader, fogColorLoc, &fogColor, SHADER_UNIFORM_VEC4);
 
-    float fogDensity = 0.15f;
-    const int fogDensityLoc = GetShaderLocation(shader, "fogDensity");
+    f32 fogDensity = 0.15f;
+    const i32 fogDensityLoc = GetShaderLocation(shader, "fogDensity");
     SetShaderValue(shader, fogDensityLoc, &fogDensity, SHADER_UNIFORM_FLOAT);
 
     // NOTE: All models share the same shader
@@ -137,7 +137,7 @@ int main()
                 DrawModel(modelB, vec3{ -2.6f, 0, 0 }, 1.0f, WHITE);
                 DrawModel(modelC, vec3{ 2.6f, 0, 0 }, 1.0f, WHITE);
 
-                for (int i = -20; i < 20; i += 2) DrawModel(modelA,vec3{ static_cast<float>(i), 0, 2 }, 1.0f, WHITE);
+                for (i32 i = -20; i < 20; i += 2) DrawModel(modelA,vec3{ static_cast<f32>(i), 0, 2 }, 1.0f, WHITE);
 
             EndMode3D();
 

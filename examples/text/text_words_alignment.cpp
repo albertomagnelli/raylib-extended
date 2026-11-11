@@ -31,36 +31,36 @@ typedef enum TextAlignment {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - words alignment");
 
     // Define the rectangle we will draw the text in
-    const Rectangle textContainerRect = Rectangle{ static_cast<float>(screenWidth)/2-static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2-static_cast<float>(screenHeight)/3, static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)*2/3 };
+    const Rectangle textContainerRect = Rectangle{ static_cast<f32>(screenWidth)/2-static_cast<f32>(screenWidth)/4, static_cast<f32>(screenHeight)/2-static_cast<f32>(screenHeight)/3, static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)*2/3 };
 
     // Some text to display the current alignment
     const char *textAlignNameH[] = { "Left", "Centre", "Right" };
     const char *textAlignNameV[] = { "Top", "Middle", "Bottom" };
 
     // Define the text we're going to draw in the rectangle
-    int wordIndex = 0;
+    i32 wordIndex = 0;
     std::vector<std::string> words = TextSplit("raylib is a simple and easy-to-use library to enjoy videogames programming", ' ');
-    const int wordCount = static_cast<int>(words.size());
+    const i32 wordCount = static_cast<i32>(words.size());
 
     // Initialize the font size we're going to use
-    constexpr int fontSize = 40;
+    constexpr i32 fontSize = 40;
 
     // And of course the font...
     const Font font = GetFontDefault();
 
     // Initialize the alignment variables
-    int hAlign = TEXT_ALIGN_CENTRE;
-    int vAlign = TEXT_ALIGN_MIDDLE;
+    i32 hAlign = TEXT_ALIGN_CENTRE;
+    i32 vAlign = TEXT_ALIGN_MIDDLE;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ int main()
         }
 
         // One word per second
-        if (wordCount > 0)  wordIndex = static_cast<int>(GetTime())%wordCount;
+        if (wordCount > 0)  wordIndex = static_cast<i32>(GetTime())%wordCount;
         else  wordIndex = 0;
         //----------------------------------------------------------------------------------
 
@@ -109,16 +109,16 @@ int main()
             DrawRectangleRec(textContainerRect, BLUE);
 
             // Get the size of the text to draw
-            const vec2 textSize = MeasureTextEx(font, words[wordIndex], static_cast<float>(fontSize), fontSize*.1f);
+            const vec2 textSize = MeasureTextEx(font, words[wordIndex], static_cast<f32>(fontSize), fontSize*.1f);
 
             // Calculate the top-left text position based on the rectangle and alignment
             const vec2 textPos = vec2{
-                textContainerRect.x + Lerp(0.0f, textContainerRect.width  - textSize.x, (static_cast<float>(hAlign))*0.5f),
-                textContainerRect.y + Lerp(0.0f, textContainerRect.height - textSize.y, (static_cast<float>(vAlign))*0.5f)
+                textContainerRect.x + Lerp(0.0f, textContainerRect.width  - textSize.x, (static_cast<f32>(hAlign))*0.5f),
+                textContainerRect.y + Lerp(0.0f, textContainerRect.height - textSize.y, (static_cast<f32>(vAlign))*0.5f)
             };
 
             // Draw the text
-            DrawTextEx(font, words[wordIndex], textPos, static_cast<float>(fontSize), fontSize*.1f, RAYWHITE);
+            DrawTextEx(font, words[wordIndex], textPos, static_cast<f32>(fontSize), fontSize*.1f, RAYWHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

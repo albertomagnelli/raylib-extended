@@ -40,7 +40,7 @@
 #define PER_SAMPLE_BIT_DEPTH           16
 #define AUDIO_STREAM_RING_BUFFER_SIZE  (FFT_WINDOW_SIZE*2)
 #define EFFECTIVE_SAMPLE_RATE          (SAMPLE_RATE_F*0.5f)
-#define WINDOW_TIME                    (static_cast<double>(FFT_WINDOW_SIZE)/static_cast<double>(EFFECTIVE_SAMPLE_RATE))
+#define WINDOW_TIME                    (static_cast<f64>(FFT_WINDOW_SIZE)/static_cast<f64>(EFFECTIVE_SAMPLE_RATE))
 #define FFT_HISTORICAL_SMOOTHING_DUR   2.0f
 #define MIN_DECIBELS                   (-100.0f) // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/minDecibels
 #define MAX_DECIBELS                   (-30.0f)  // https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/maxDecibels
@@ -51,44 +51,44 @@
 #define FFT_ROW                        0
 #define UNUSED_CHANNEL                 0.0f
 
-typedef struct FFTComplex { float real, imaginary; } FFTComplex;
+typedef struct FFTComplex { f32 real, imaginary; } FFTComplex;
 
 typedef struct FFTData {
     FFTComplex *spectrum;
     FFTComplex *workBuffer;
-    float *prevMagnitudes;
-    float (*fftHistory)[BUFFER_SIZE];
-    int fftHistoryLen;
-    int historyPos;
-    double lastFftTime;
-    float tapbackPos;
+    f32 *prevMagnitudes;
+    f32 (*fftHistory)[BUFFER_SIZE];
+    i32 fftHistoryLen;
+    i32 historyPos;
+    f64 lastFftTime;
+    f32 tapbackPos;
 } FFTData;
 
-static void CaptureFrame(FFTData *fftData, const float *audioSamples);
+static void CaptureFrame(FFTData *fftData, const f32 *audioSamples);
 static void RenderFrame(const FFTData *fftData, Image *fftImage);
-static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n);
+static void CooleyTukeyFFTSlow(FFTComplex *spectrum, i32 n);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //-----------------------------------------------------------------------------------     ---
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - spectrum visualizer");
 
     Image fftImage = GenImageColor(BUFFER_SIZE, TEXTURE_HEIGHT, WHITE);
     const Texture2D fftTexture = LoadTextureFromImage(fftImage);
     const RenderTexture2D bufferA = LoadRenderTexture(screenWidth, screenHeight);
-    vec2 iResolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
+    vec2 iResolution = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
 
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
 
-    const int iResolutionLocation = GetShaderLocation(shader, "iResolution");
-    const int iChannel0Location = GetShaderLocation(shader, "iChannel0");
+    const i32 iResolutionLocation = GetShaderLocation(shader, "iResolution");
+    const i32 iChannel0Location = GetShaderLocation(shader, "iChannel0");
     SetShaderValue(shader, iResolutionLocation, &iResolution, SHADER_UNIFORM_VEC2);
     SetShaderValueTexture(shader, iChannel0Location, fftTexture);
 
@@ -102,24 +102,24 @@ int main()
     const AudioStream audioStream = LoadAudioStream(SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
     PlayAudioStream(audioStream);
 
-    const int fftHistoryLen = static_cast<int>(ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME)) + 1;
+    const i32 fftHistoryLen = static_cast<i32>(ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME)) + 1;
 
     FFTData fft = {
         .spectrum = static_cast<FFTComplex *>(calloc(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
         .workBuffer = static_cast<FFTComplex *>(calloc(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
-        .prevMagnitudes = static_cast<float *>(calloc(BUFFER_SIZE, sizeof(float))),
-        .fftHistory = static_cast<float (*)[BUFFER_SIZE]>(calloc(fftHistoryLen, sizeof(float[BUFFER_SIZE]))),
+        .prevMagnitudes = static_cast<f32 *>(calloc(BUFFER_SIZE, sizeof(f32))),
+        .fftHistory = static_cast<f32 (*)[BUFFER_SIZE]>(calloc(fftHistoryLen, sizeof(f32[BUFFER_SIZE]))),
         .fftHistoryLen = fftHistoryLen,
         .historyPos = 0,
         .lastFftTime = 0.0,
         .tapbackPos = 0.01f
     };
 
-    unsigned int wavCursor = 0;
+    u32 wavCursor = 0;
     const short *wavPCM16 = static_cast<const short *>(wav.data);
 
     short chunkSamples[AUDIO_STREAM_RING_BUFFER_SIZE] = {};
-    float audioSamples[FFT_WINDOW_SIZE] = {};
+    f32 audioSamples[FFT_WINDOW_SIZE] = {};
 
     SetTargetFPS(60);
     //----------------------------------------------------------------------------------
@@ -131,10 +131,10 @@ int main()
         //----------------------------------------------------------------------------------
         while (IsAudioStreamProcessed(audioStream))
         {
-            for (int i = 0; i < AUDIO_STREAM_RING_BUFFER_SIZE; i++)
+            for (i32 i = 0; i < AUDIO_STREAM_RING_BUFFER_SIZE; i++)
             {
-                const int left = (wav.channels == 2)? wavPCM16[wavCursor*2 + 0] : wavPCM16[wavCursor];
-                const int right = (wav.channels == 2)? wavPCM16[wavCursor*2 + 1] : left;
+                const i32 left = (wav.channels == 2)? wavPCM16[wavCursor*2 + 0] : wavPCM16[wavCursor];
+                const i32 right = (wav.channels == 2)? wavPCM16[wavCursor*2 + 1] : left;
                 chunkSamples[i] = static_cast<short>((left + right)/2);
 
                 if (++wavCursor >= wav.frameCount) wavCursor = 0;
@@ -142,7 +142,7 @@ int main()
 
             UpdateAudioStream(audioStream, chunkSamples, AUDIO_STREAM_RING_BUFFER_SIZE);
 
-            for (int i = 0; i < FFT_WINDOW_SIZE; i++) audioSamples[i] = (chunkSamples[i*2] + chunkSamples[i*2 + 1])*0.5f/32767.0f;
+            for (i32 i = 0; i < FFT_WINDOW_SIZE; i++) audioSamples[i] = (chunkSamples[i*2] + chunkSamples[i*2 + 1])*0.5f/32767.0f;
         }
 
         CaptureFrame(&fft, audioSamples);
@@ -159,7 +159,7 @@ int main()
             BeginShaderMode(shader);
                 SetShaderValueTexture(shader, iChannel0Location, fftTexture);
                 DrawTextureRec(bufferA.texture,
-                    Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) },
+                    Rectangle{ 0, 0, static_cast<f32>(screenWidth), static_cast<f32>(-screenHeight) },
                     vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
@@ -189,12 +189,12 @@ int main()
 }
 
 // Cooley–Tukey FFT https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm#Data_reordering,_bit_reversal,_and_in-place_algorithms
-static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n)
+static void CooleyTukeyFFTSlow(FFTComplex *spectrum, i32 n)
 {
-    int j = 0;
-    for (int i = 1; i < n - 1; i++)
+    i32 j = 0;
+    for (i32 i = 1; i < n - 1; i++)
     {
-        int bit = n >> 1;
+        i32 bit = n >> 1;
         while (j >= bit)
         {
             j -= bit;
@@ -209,14 +209,14 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n)
         }
     }
 
-    for (int len = 2; len <= n; len <<= 1)
+    for (i32 len = 2; len <= n; len <<= 1)
     {
-        const float angle = -2.0f*PI/len;
+        const f32 angle = -2.0f*PI/len;
         const FFTComplex twiddleUnit = { cosf(angle), sinf(angle) };
-        for (int i = 0; i < n; i += len)
+        for (i32 i = 0; i < n; i += len)
         {
             FFTComplex twiddleCurrent = { 1.0f, 0.0f };
-            for (int j = 0; j < len/2; j++)
+            for (i32 j = 0; j < len/2; j++)
             {
                 const FFTComplex even = spectrum[i + j];
                 const FFTComplex odd = spectrum[i + j + len/2];
@@ -230,7 +230,7 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n)
                 spectrum[i + j + len/2].real = even.real - twiddledOdd.real;
                 spectrum[i + j + len/2].imaginary = even.imaginary - twiddledOdd.imaginary;
 
-                const float twiddleRealNext = twiddleCurrent.real*twiddleUnit.real - twiddleCurrent.imaginary*twiddleUnit.imaginary;
+                const f32 twiddleRealNext = twiddleCurrent.real*twiddleUnit.real - twiddleCurrent.imaginary*twiddleUnit.imaginary;
                 twiddleCurrent.imaginary = twiddleCurrent.real*twiddleUnit.imaginary + twiddleCurrent.imaginary*twiddleUnit.real;
                 twiddleCurrent.real = twiddleRealNext;
             }
@@ -238,12 +238,12 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, int n)
     }
 }
 
-static void CaptureFrame(FFTData *fftData, const float *audioSamples)
+static void CaptureFrame(FFTData *fftData, const f32 *audioSamples)
 {
-    for (int i = 0; i < FFT_WINDOW_SIZE; i++)
+    for (i32 i = 0; i < FFT_WINDOW_SIZE; i++)
     {
-        const float x = (2.0f*PI*i)/(FFT_WINDOW_SIZE - 1.0f);
-        const float blackmanWeight  = 0.42f - 0.5f*cosf(x) + 0.08f*cosf(2.0f*x); // https://en.wikipedia.org/wiki/Window_function#Blackman_window
+        const f32 x = (2.0f*PI*i)/(FFT_WINDOW_SIZE - 1.0f);
+        const f32 blackmanWeight  = 0.42f - 0.5f*cosf(x) + 0.08f*cosf(2.0f*x); // https://en.wikipedia.org/wiki/Window_function#Blackman_window
         fftData->workBuffer[i].real = audioSamples[i]*blackmanWeight;
         fftData->workBuffer[i].imaginary = 0.0f;
     }
@@ -251,19 +251,19 @@ static void CaptureFrame(FFTData *fftData, const float *audioSamples)
     CooleyTukeyFFTSlow(fftData->workBuffer, FFT_WINDOW_SIZE);
     memcpy(fftData->spectrum, fftData->workBuffer, sizeof(FFTComplex)*FFT_WINDOW_SIZE);
 
-    float smoothedSpectrum[BUFFER_SIZE];
+    f32 smoothedSpectrum[BUFFER_SIZE];
 
-    for (int bin = 0; bin < BUFFER_SIZE; bin++)
+    for (i32 bin = 0; bin < BUFFER_SIZE; bin++)
     {
-        const float re = fftData->workBuffer[bin].real;
-        const float im = fftData->workBuffer[bin].imaginary;
-        const float linearMagnitude = sqrtf(re*re + im*im)/FFT_WINDOW_SIZE;
+        const f32 re = fftData->workBuffer[bin].real;
+        const f32 im = fftData->workBuffer[bin].imaginary;
+        const f32 linearMagnitude = sqrtf(re*re + im*im)/FFT_WINDOW_SIZE;
 
-        const float smoothedMagnitude = SMOOTHING_TIME_CONSTANT*fftData->prevMagnitudes[bin] + (1.0f - SMOOTHING_TIME_CONSTANT)*linearMagnitude;
+        const f32 smoothedMagnitude = SMOOTHING_TIME_CONSTANT*fftData->prevMagnitudes[bin] + (1.0f - SMOOTHING_TIME_CONSTANT)*linearMagnitude;
         fftData->prevMagnitudes[bin] = smoothedMagnitude;
 
-        const float db = logf(fmaxf(smoothedMagnitude, 1e-40f))*DB_TO_LINEAR_SCALE;
-        const float normalized = (db - MIN_DECIBELS)*INVERSE_DECIBEL_RANGE;
+        const f32 db = logf(fmaxf(smoothedMagnitude, 1e-40f))*DB_TO_LINEAR_SCALE;
+        const f32 normalized = (db - MIN_DECIBELS)*INVERSE_DECIBEL_RANGE;
         smoothedSpectrum[bin] = Clamp(normalized, 0.0f, 1.0f);
     }
 
@@ -274,12 +274,12 @@ static void CaptureFrame(FFTData *fftData, const float *audioSamples)
 
 static void RenderFrame(const FFTData *fftData, Image *fftImage)
 {
-    float framesSinceTapback = floorf(static_cast<float>(fftData->tapbackPos/WINDOW_TIME));
-    framesSinceTapback = Clamp(framesSinceTapback, 0.0f, static_cast<float>(fftData->fftHistoryLen - 1));
+    f32 framesSinceTapback = floorf(static_cast<f32>(fftData->tapbackPos/WINDOW_TIME));
+    framesSinceTapback = Clamp(framesSinceTapback, 0.0f, static_cast<f32>(fftData->fftHistoryLen - 1));
 
-    int historyPosition = (fftData->historyPos - 1 - static_cast<int>(framesSinceTapback))%fftData->fftHistoryLen;
+    i32 historyPosition = (fftData->historyPos - 1 - static_cast<i32>(framesSinceTapback))%fftData->fftHistoryLen;
     if (historyPosition < 0) historyPosition += fftData->fftHistoryLen;
 
-    const float *amplitude = fftData->fftHistory[historyPosition];
-    for (int bin = 0; bin < BUFFER_SIZE; bin++) ImageDrawPixel(fftImage, bin, FFT_ROW, ColorFromNormalized(vec4{ amplitude[bin], UNUSED_CHANNEL, UNUSED_CHANNEL, UNUSED_CHANNEL }));
+    const f32 *amplitude = fftData->fftHistory[historyPosition];
+    for (i32 bin = 0; bin < BUFFER_SIZE; bin++) ImageDrawPixel(fftImage, bin, FFT_ROW, ColorFromNormalized(vec4{ amplitude[bin], UNUSED_CHANNEL, UNUSED_CHANNEL, UNUSED_CHANNEL }));
 }

@@ -33,24 +33,24 @@ typedef struct ColorRect {
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 static Color GenerateRandomColor(void);
-static ColorRect *GenerateRandomColorRectSequence(float rectCount, float rectWidth, float screenWidth, float screenHeight);
-static void ShuffleColorRectSequence(ColorRect *rectangles, int rectCount);
+static ColorRect *GenerateRandomColorRectSequence(f32 rectCount, f32 rectWidth, f32 screenWidth, f32 screenHeight);
+static void ShuffleColorRectSequence(ColorRect *rectangles, i32 rectCount);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - random sequence");
 
-    int rectCount = 20;
-    float rectSize = static_cast<float>(screenWidth)/rectCount;
-    ColorRect *rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
+    i32 rectCount = 20;
+    f32 rectSize = static_cast<f32>(screenWidth)/rectCount;
+    ColorRect *rectangles = GenerateRandomColorRectSequence(static_cast<f32>(rectCount), rectSize, static_cast<f32>(screenWidth), 0.75f*screenHeight);
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -65,11 +65,11 @@ int main()
         if (IsKeyPressed(KEY_UP))
         {
             rectCount++;
-            rectSize = static_cast<float>(screenWidth)/rectCount;
+            rectSize = static_cast<f32>(screenWidth)/rectCount;
             free(rectangles);
 
             // Re-generate random sequence with new count
-            rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
+            rectangles = GenerateRandomColorRectSequence(static_cast<f32>(rectCount), rectSize, static_cast<f32>(screenWidth), 0.75f*screenHeight);
         }
 
         if (IsKeyPressed(KEY_DOWN))
@@ -77,11 +77,11 @@ int main()
             if (rectCount >= 4)
             {
                 rectCount--;
-                rectSize = static_cast<float>(screenWidth)/rectCount;
+                rectSize = static_cast<f32>(screenWidth)/rectCount;
                 free(rectangles);
 
                 // Re-generate random sequence with new count
-                rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
+                rectangles = GenerateRandomColorRectSequence(static_cast<f32>(rectCount), rectSize, static_cast<f32>(screenWidth), 0.75f*screenHeight);
             }
         }
         //----------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < rectCount; i++)
+            for (i32 i = 0; i < rectCount; i++)
             {
                 DrawRectangleRec(rectangles[i].rect, rectangles[i].color);
 
@@ -124,29 +124,29 @@ int main()
 static Color GenerateRandomColor(void)
 {
     Color color = {
-        static_cast<unsigned char>(GetRandomValue(0, 255)),
-        static_cast<unsigned char>(GetRandomValue(0, 255)),
-        static_cast<unsigned char>(GetRandomValue(0, 255)),
+        static_cast<u8>(GetRandomValue(0, 255)),
+        static_cast<u8>(GetRandomValue(0, 255)),
+        static_cast<u8>(GetRandomValue(0, 255)),
         255
     };
 
     return color;
 }
 
-static ColorRect *GenerateRandomColorRectSequence(float rectCount, float rectWidth, float screenWidth, float screenHeight)
+static ColorRect *GenerateRandomColorRectSequence(f32 rectCount, f32 rectWidth, f32 screenWidth, f32 screenHeight)
 {
-    ColorRect *rectangles = static_cast<ColorRect *>(calloc(static_cast<int>(rectCount), sizeof(ColorRect)));
+    ColorRect *rectangles = static_cast<ColorRect *>(calloc(static_cast<i32>(rectCount), sizeof(ColorRect)));
 
-    int *seq = LoadRandomSequence(static_cast<unsigned int>(rectCount), 0, static_cast<unsigned int>(rectCount) - 1);
-    const float rectSeqWidth = rectCount*rectWidth;
-    const float startX = (screenWidth - rectSeqWidth)*0.5f;
+    i32 *seq = LoadRandomSequence(static_cast<u32>(rectCount), 0, static_cast<u32>(rectCount) - 1);
+    const f32 rectSeqWidth = rectCount*rectWidth;
+    const f32 startX = (screenWidth - rectSeqWidth)*0.5f;
 
-    for (int i = 0; i < rectCount; i++)
+    for (i32 i = 0; i < rectCount; i++)
     {
-        const int rectHeight = static_cast<int>(Remap(static_cast<float>(seq[i]), 0, rectCount - 1, 0, screenHeight));
+        const i32 rectHeight = static_cast<i32>(Remap(static_cast<f32>(seq[i]), 0, rectCount - 1, 0, screenHeight));
 
         rectangles[i].color = GenerateRandomColor();
-        rectangles[i].rect = CLITERAL(Rectangle){ startX + i*rectWidth, screenHeight - rectHeight, rectWidth, static_cast<float>(rectHeight) };
+        rectangles[i].rect = CLITERAL(Rectangle){ startX + i*rectWidth, screenHeight - rectHeight, rectWidth, static_cast<f32>(rectHeight) };
     }
 
     UnloadRandomSequence(seq);
@@ -154,11 +154,11 @@ static ColorRect *GenerateRandomColorRectSequence(float rectCount, float rectWid
     return rectangles;
 }
 
-static void ShuffleColorRectSequence(ColorRect *rectangles, int rectCount)
+static void ShuffleColorRectSequence(ColorRect *rectangles, i32 rectCount)
 {
-    int *seq = LoadRandomSequence(rectCount, 0, rectCount -  1);
+    i32 *seq = LoadRandomSequence(rectCount, 0, rectCount -  1);
 
-    for (int i1 = 0; i1 < rectCount; i1++)
+    for (i32 i1 = 0; i1 < rectCount; i1++)
     {
         ColorRect *r1 = &rectangles[i1];
         ColorRect *r2 = &rectangles[seq[i1]];

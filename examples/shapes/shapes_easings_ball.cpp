@@ -20,22 +20,22 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings ball");
 
     // Ball variable value to be animated with easings
-    int ballPositionX = -100;
-    int ballRadius = 20;
-    float ballAlpha = 0.0f;
+    i32 ballPositionX = -100;
+    i32 ballRadius = 20;
+    f32 ballAlpha = 0.0f;
 
-    int state = 0;
-    int framesCounter = 0;
+    i32 state = 0;
+    i32 framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ int main()
         if (state == 0)             // Move ball position X with easing
         {
             framesCounter++;
-            ballPositionX = static_cast<int>(EaseElasticOut(static_cast<float>(framesCounter), -100, screenWidth/2.0f + 100, 120));
+            ballPositionX = static_cast<i32>(EaseElasticOut(static_cast<f32>(framesCounter), -100, screenWidth/2.0f + 100, 120));
 
             if (framesCounter >= 120)
             {
@@ -59,7 +59,7 @@ int main()
         else if (state == 1)        // Increase ball radius with easing
         {
             framesCounter++;
-            ballRadius = static_cast<int>(EaseElasticIn(static_cast<float>(framesCounter), 20, 500, 200));
+            ballRadius = static_cast<i32>(EaseElasticIn(static_cast<f32>(framesCounter), 20, 500, 200));
 
             if (framesCounter >= 200)
             {
@@ -70,7 +70,7 @@ int main()
         else if (state == 2)        // Change ball alpha with easing (background color blending)
         {
             framesCounter++;
-            ballAlpha = EaseCubicOut(static_cast<float>(framesCounter), 0.0f, 1.0f, 200);
+            ballAlpha = EaseCubicOut(static_cast<f32>(framesCounter), 0.0f, 1.0f, 200);
 
             if (framesCounter >= 200)
             {
@@ -100,7 +100,7 @@ int main()
             ClearBackground(RAYWHITE);
 
             if (state >= 2) DrawRectangle(0, 0, screenWidth, screenHeight, GREEN);
-            DrawCircle(ballPositionX, 200, static_cast<float>(ballRadius), Fade(RED, 1.0f - ballAlpha));
+            DrawCircle(ballPositionX, 200, static_cast<f32>(ballRadius), Fade(RED, 1.0f - ballAlpha));
 
             if (state == 3) DrawText("PRESS [ENTER] TO PLAY AGAIN!", 240, 200, 20, BLACK);
 

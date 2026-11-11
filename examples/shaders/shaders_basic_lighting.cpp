@@ -38,12 +38,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Enable Multi Sampling Anti Aliasing 4x (if available)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - basic lighting");
@@ -66,8 +66,8 @@ int main()
     //shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
 
     // Ambient light level (some basic lighting)
-    const int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.1f, 0.1f, 0.1f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
+    const i32 ambientLoc = GetShaderLocation(shader, "ambient");
+    SetShaderValue(shader, ambientLoc, std::initializer_list<f32>{ 0.1f, 0.1f, 0.1f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Create lights
     Light lights[MAX_LIGHTS] = {};
@@ -87,7 +87,7 @@ int main()
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         // Update the shader with the camera view vector (points towards { 0.0f, 0.0f, 0.0f })
-        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        f32 cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
         // Check key inputs to enable/disable lights
@@ -97,7 +97,7 @@ int main()
         if (IsKeyPressed(KEY_B)) { lights[3].enabled = !lights[3].enabled; }
 
         // Update light values (actually, only enable/disable them)
-        for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
+        for (i32 i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -116,7 +116,7 @@ int main()
                 EndShaderMode();
 
                 // Draw spheres to show where the lights are
-                for (int i = 0; i < MAX_LIGHTS; i++)
+                for (i32 i = 0; i < MAX_LIGHTS; i++)
                 {
                     if (lights[i].enabled) DrawSphereEx(lights[i].position, 0.2f, 8, 8, lights[i].color);
                     else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lights[i].color, 0.3f));

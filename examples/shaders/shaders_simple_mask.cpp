@@ -34,12 +34,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - simple mask");
 
@@ -78,13 +78,13 @@ int main()
     shader.locs[SHADER_LOC_MAP_EMISSION] = GetShaderLocation(shader, "mask");
 
     // Frame is incremented each frame to animate the shader
-    const int shaderFrame = GetShaderLocation(shader, "frame");
+    const i32 shaderFrame = GetShaderLocation(shader, "frame");
 
     // Apply the shader to the two models
     model1.materials[0].shader = shader;
     model2.materials[0].shader = shader;
 
-    int framesCounter = 0;
+    i32 framesCounter = 0;
     vec3 rotation = {};         // Model rotation angles
 
     DisableCursor();                    // Limit cursor to relative movement inside the window

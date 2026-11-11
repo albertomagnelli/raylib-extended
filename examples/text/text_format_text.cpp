@@ -18,18 +18,18 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - format text");
 
-    constexpr int score = 100020;
-    constexpr int hiscore = 200450;
-    constexpr int lives = 5;
+    constexpr i32 score = 100020;
+    constexpr i32 hiscore = 200450;
+    constexpr i32 lives = 5;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

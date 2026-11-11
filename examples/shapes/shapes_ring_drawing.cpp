@@ -23,23 +23,23 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ring drawing");
 
     const vec2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
-    float innerRadius = 80.0f;
-    float outerRadius = 190.0f;
+    f32 innerRadius = 80.0f;
+    f32 outerRadius = 190.0f;
 
-    float startAngle = 0.0f;
-    float endAngle = 360.0f;
-    float segments = 0.0f;
+    f32 startAngle = 0.0f;
+    f32 endAngle = 360.0f;
+    f32 segments = 0.0f;
 
     bool drawRing = true;
     bool drawRingLines = false;
@@ -65,9 +65,9 @@ int main()
             DrawLine(500, 0, 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.6f));
             DrawRectangle(500, 0, GetScreenWidth() - 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.3f));
 
-            if (drawRing) DrawRing(center, innerRadius, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(MAROON, 0.3f));
-            if (drawRingLines) DrawRingLines(center, innerRadius, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(BLACK, 0.4f));
-            if (drawCircleLines) DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(BLACK, 0.4f));
+            if (drawRing) DrawRing(center, innerRadius, outerRadius, startAngle, endAngle, static_cast<i32>(segments), Fade(MAROON, 0.3f));
+            if (drawRingLines) DrawRingLines(center, innerRadius, outerRadius, startAngle, endAngle, static_cast<i32>(segments), Fade(BLACK, 0.4f));
+            if (drawCircleLines) DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, static_cast<i32>(segments), Fade(BLACK, 0.4f));
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ int main()
             GuiCheckBox(Rectangle{ 600, 380, 20, 20 }, "Draw CircleLines", &drawCircleLines);
             //------------------------------------------------------------------------------
 
-            const int minSegments = static_cast<int>(ceilf((endAngle - startAngle)/90));
+            const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
             DrawText(TextFormat("MODE: %s", (segments >= minSegments)? "MANUAL" : "AUTO"), 600, 270, 10, (segments >= minSegments)? MAROON : DARKGRAY);
 
             DrawFPS(10, 10);

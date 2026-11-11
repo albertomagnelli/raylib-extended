@@ -38,12 +38,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - cel shading");
@@ -69,15 +69,15 @@ int main()
     model.materials[0].shader = celShader;
 
     // numBands: controls toon quantization steps (2 = hard binary, 20 = near-smooth)
-    float numBands = 10.0f;
-    const int numBandsLoc = GetShaderLocation(celShader, "numBands");
+    f32 numBands = 10.0f;
+    const i32 numBandsLoc = GetShaderLocation(celShader, "numBands");
     SetShaderValue(celShader, numBandsLoc, &numBands, SHADER_UNIFORM_FLOAT);
 
     // Inverted-hull outline shader: draws back faces extruded along normals
     const Shader outlineShader = LoadShader(
         TextFormat("resources/shaders/glsl%i/outline_hull.vs", GLSL_VERSION),
         TextFormat("resources/shaders/glsl%i/outline_hull.fs", GLSL_VERSION));
-    const int outlineThicknessLoc = GetShaderLocation(outlineShader, "outlineThickness");
+    const i32 outlineThicknessLoc = GetShaderLocation(outlineShader, "outlineThickness");
 
     // Single directional white light, angled so toon bands are visible on the model sides.
     // Spins opposite to CAMERA_ORBITAL (0.5 rad/s) so lighting changes as you watch.
@@ -97,7 +97,7 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        f32 cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         SetShaderValue(celShader, celShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
         // [Z] Toggle cel shading on/off
@@ -117,10 +117,10 @@ int main()
         SetShaderValue(celShader, numBandsLoc, &numBands, SHADER_UNIFORM_FLOAT);
 
         // Spin light opposite to CAMERA_ORBITAL (0.5 rad/s), angled 45 degrees off vertical
-        const float t = static_cast<float>(GetTime());
+        const f32 t = static_cast<f32>(GetTime());
         lights[0].position = vec3{ sinf(-t*0.3f)*5.0f, 5.0f, cosf(-t*0.3f)*5.0f };
 
-        for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(celShader, lights[i]);
+        for (i32 i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(celShader, lights[i]);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -134,7 +134,7 @@ int main()
                 if (outlineEnabled)
                 {
                     // Outline pass: cull front faces, draw extruded back faces as silhouette
-                    float thickness = 0.005f;
+                    f32 thickness = 0.005f;
                     SetShaderValue(outlineShader, outlineThicknessLoc, &thickness, SHADER_UNIFORM_FLOAT);
 
                     rlSetCullFace(RL_CULL_FACE_FRONT);

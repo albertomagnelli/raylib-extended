@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input multitouch");
 
@@ -42,11 +42,11 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Get the touch point count ( how many fingers are touching the screen )
-        int tCount = GetTouchPointCount();
+        i32 tCount = GetTouchPointCount();
         // Clamp touch points available ( set the maximum touch points allowed )
         if (tCount > MAX_TOUCH_POINTS) tCount = MAX_TOUCH_POINTS;
         // Get touch points positions
-        for (int i = 0; i < tCount; i++) touchPositions[i] = GetTouchPosition(i);
+        for (i32 i = 0; i < tCount; i++) touchPositions[i] = GetTouchPosition(i);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -55,14 +55,14 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < tCount; i++)
+            for (i32 i = 0; i < tCount; i++)
             {
                 // Make sure point is not (0, 0) as this means there is no touch for it
                 if ((touchPositions[i].x > 0) && (touchPositions[i].y > 0))
                 {
                     // Draw circle and touch index number
                     DrawCircleV(touchPositions[i], 34, ORANGE);
-                    DrawText(TextFormat("%d", i), static_cast<int>(touchPositions[i].x) - 10, static_cast<int>(touchPositions[i].y) - 70, 40, BLACK);
+                    DrawText(TextFormat("%d", i), static_cast<i32>(touchPositions[i].x) - 10, static_cast<i32>(touchPositions[i].y) - 70, 40, BLACK);
                 }
             }
 

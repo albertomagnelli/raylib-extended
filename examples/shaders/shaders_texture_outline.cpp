@@ -29,12 +29,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture outline");
 
@@ -42,14 +42,14 @@ int main()
 
     const Shader shdrOutline = LoadShader({}, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
 
-    float outlineSize = 2.0f;
-    float outlineColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };     // Normalized RED color
-    float textureSize[2] = { static_cast<float>(texture.width), static_cast<float>(texture.height) };
+    f32 outlineSize = 2.0f;
+    f32 outlineColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };     // Normalized RED color
+    f32 textureSize[2] = { static_cast<f32>(texture.width), static_cast<f32>(texture.height) };
 
     // Get shader locations
-    const int outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
-    const int outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
-    const int textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
+    const i32 outlineSizeLoc = GetShaderLocation(shdrOutline, "outlineSize");
+    const i32 outlineColorLoc = GetShaderLocation(shdrOutline, "outlineColor");
+    const i32 textureSizeLoc = GetShaderLocation(shdrOutline, "textureSize");
 
     // Set shader values (they can be changed later)
     SetShaderValue(shdrOutline, outlineSizeLoc, &outlineSize, SHADER_UNIFORM_FLOAT);
@@ -84,7 +84,7 @@ int main()
 
             DrawText("Shader-based\ntexture\noutline", 10, 10, 20, GRAY);
             DrawText("Scroll mouse wheel to\nchange outline size", 10, 72, 20, GRAY);
-            DrawText(TextFormat("Outline size: %i px", static_cast<int>(outlineSize)), 10, 120, 20, MAROON);
+            DrawText(TextFormat("Outline size: %i px", static_cast<i32>(outlineSize)), 10, 120, 20, MAROON);
 
             DrawFPS(710, 10);
 

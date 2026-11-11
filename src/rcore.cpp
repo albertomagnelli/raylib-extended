@@ -166,9 +166,9 @@
     __declspec(dllimport) unsigned long __stdcall GetFileAttributesA(const char *lpFileName);
     __declspec(dllimport) unsigned long __stdcall GetModuleFileNameA(struct HINSTANCE__ *hModule, char *lpFilename, unsigned long nSize);
     __declspec(dllimport) unsigned long __stdcall GetModuleFileNameW(struct HINSTANCE__ *hModule, wchar_t *lpFilename, unsigned long nSize);
-    __declspec(dllimport) int __stdcall WideCharToMultiByte(unsigned int cp, unsigned long flags, const wchar_t *widestr, int cchwide, char *str, int cbmb, const char *defchar, int *used_default);
-    __declspec(dllimport) unsigned int __stdcall timeBeginPeriod(unsigned int uPeriod);
-    __declspec(dllimport) unsigned int __stdcall timeEndPeriod(unsigned int uPeriod);
+    __declspec(dllimport) i32 __stdcall WideCharToMultiByte(u32 cp, unsigned long flags, const wchar_t *widestr, i32 cchwide, char *str, i32 cbmb, const char *defchar, i32 *used_default);
+    __declspec(dllimport) u32 __stdcall timeBeginPeriod(u32 uPeriod);
+    __declspec(dllimport) u32 __stdcall timeEndPeriod(u32 uPeriod);
     #if defined(__cplusplus)
     }
     #endif
@@ -295,15 +295,15 @@
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
-typedef struct { int x; int y; } Point;
-typedef struct { unsigned int width; unsigned int height; } Size;
+typedef struct { i32 x; i32 y; } Point;
+typedef struct { u32 width; u32 height; } Size;
 
 // Core global state context data
 typedef struct CoreData {
     struct {
         std::string title;                  // Window text title
-        unsigned int flags;                 // Configuration flags (bit based), keeps window state
-        int samples;                        // MSAA samples in use, zero means MSAA disabled
+        u32 flags;                 // Configuration flags (bit based), keeps window state
+        i32 samples;                        // MSAA samples in use, zero means MSAA disabled
         bool ready;                         // Check if window has been initialized successfully
         bool shouldClose;                   // Check if window set for closing
         bool resizedLastFrame;              // Check if window has been resized last frame
@@ -323,7 +323,7 @@ typedef struct CoreData {
         mat4 screenScale;                   // mat4 to scale screen (framebuffer rendering)
 
         char **dropFilepaths;               // Store dropped files paths pointers (provided by GLFW)
-        unsigned int dropFileCount;         // Count dropped files strings
+        u32 dropFileCount;         // Count dropped files strings
 
     } Window;
     struct {
@@ -332,7 +332,7 @@ typedef struct CoreData {
     } Storage;
     struct {
         struct {
-            int exitKey;                              // Default exit key
+            i32 exitKey;                              // Default exit key
             char currentKeyState[MAX_KEYBOARD_KEYS];  // Registers current frame key state
             char previousKeyState[MAX_KEYBOARD_KEYS]; // Registers previous frame key state
 
@@ -340,11 +340,11 @@ typedef struct CoreData {
             // key repeats needs to be handled specially
             char keyRepeatInFrame[MAX_KEYBOARD_KEYS]; // Registers key repeats for current frame
 
-            int keyPressedQueue[MAX_KEY_PRESSED_QUEUE]; // Input keys queue
-            int keyPressedQueueCount;                   // Input keys queue count
+            i32 keyPressedQueue[MAX_KEY_PRESSED_QUEUE]; // Input keys queue
+            i32 keyPressedQueueCount;                   // Input keys queue count
 
-            int charPressedQueue[MAX_CHAR_PRESSED_QUEUE]; // Input characters queue (unicode)
-            int charPressedQueueCount;                    // Input characters queue count
+            i32 charPressedQueue[MAX_CHAR_PRESSED_QUEUE]; // Input characters queue (unicode)
+            i32 charPressedQueueCount;                    // Input characters queue count
 
         } Keyboard;
         struct {
@@ -354,7 +354,7 @@ typedef struct CoreData {
             vec2 previousPosition;     // Previous mouse position
             vec2 lockedPosition;       // Mouse position when locked
 
-            int cursor;                     // Tracks current mouse cursor
+            i32 cursor;                     // Tracks current mouse cursor
             bool cursorHidden;              // Track if cursor is hidden
             bool cursorLocked;              // Track if cursor is locked (disabled)
             bool cursorOnScreen;            // Tracks if cursor is inside client area
@@ -366,8 +366,8 @@ typedef struct CoreData {
 
         } Mouse;
         struct {
-            int pointCount;                                 // Number of touch points active
-            int pointId[MAX_TOUCH_POINTS];                  // Point identifiers
+            i32 pointCount;                                 // Number of touch points active
+            i32 pointId[MAX_TOUCH_POINTS];                  // Point identifiers
             vec2 position[MAX_TOUCH_POINTS];                // Touch position on screen
             vec2 previousPosition[MAX_TOUCH_POINTS];        // Previous touch position on screen
             char currentTouchState[MAX_TOUCH_POINTS];       // Registers current touch state
@@ -375,26 +375,26 @@ typedef struct CoreData {
 
         } Touch;
         struct {
-            int lastButtonPressed;                                          // Register last gamepad button pressed
-            int axisCount[MAX_GAMEPADS];                                    // Register number of available gamepad axes
+            i32 lastButtonPressed;                                          // Register last gamepad button pressed
+            i32 axisCount[MAX_GAMEPADS];                                    // Register number of available gamepad axes
             bool ready[MAX_GAMEPADS];                                       // Flag to know if gamepad is ready
             char name[MAX_GAMEPADS][MAX_GAMEPAD_NAME_LENGTH];               // Gamepad name holder
             char currentButtonState[MAX_GAMEPADS][MAX_GAMEPAD_BUTTONS];     // Current gamepad buttons state
             char previousButtonState[MAX_GAMEPADS][MAX_GAMEPAD_BUTTONS];    // Previous gamepad buttons state
-            float axisState[MAX_GAMEPADS][MAX_GAMEPAD_AXES];                // Gamepad axes state
+            f32 axisState[MAX_GAMEPADS][MAX_GAMEPAD_AXES];                // Gamepad axes state
 
         } Gamepad;
 
     } Input;
     struct {
-        double current;                     // Current time measure (seconds)
-        double previous;                    // Previous time measure (seconds)
-        double update;                      // Time measure for frame update (seconds)
-        double draw;                        // Time measure for frame draw (seconds)
-        double frame;                       // Time measure for one frame (seconds)
-        double target;                      // Desired time for one frame, if 0 not applied (seconds)
+        f64 current;                     // Current time measure (seconds)
+        f64 previous;                    // Previous time measure (seconds)
+        f64 update;                      // Time measure for frame update (seconds)
+        f64 draw;                        // Time measure for frame draw (seconds)
+        f64 frame;                       // Time measure for one frame (seconds)
+        f64 target;                      // Desired time for one frame, if 0 not applied (seconds)
         unsigned long long base;            // Base time measure for hi-res timer (ticks or nanoseconds)
-        unsigned int frameCounter;          // Frame counter (frames)
+        u32 frameCounter;          // Frame counter (frames)
 
     } Time;
 } CoreData;
@@ -416,7 +416,7 @@ static LoadFileTextCallback loadFileText = nullptr;    // LoadFileText callback 
 static SaveFileTextCallback saveFileText = nullptr;    // SaveFileText callback function pointer
 
 #if SUPPORT_SCREEN_CAPTURE
-static int screenshotCounter = 0;                   // Screenshots counter
+static i32 screenshotCounter = 0;                   // Screenshots counter
 #endif
 
 #if SUPPORT_AUTOMATION_EVENTS
@@ -496,12 +496,12 @@ extern void LoadFontDefault(void);      // [Module: text] Loads default font on 
 extern void UnloadFontDefault(void);    // [Module: text] Unloads default font from GPU memory
 #endif
 
-extern int InitPlatform(void);          // Initialize platform (graphics, inputs and more)
+extern i32 InitPlatform(void);          // Initialize platform (graphics, inputs and more)
 extern void ClosePlatform(void);        // Close platform
 
 static void InitTimer(void);                                // Initialize timer, hi-resolution if available (required by InitPlatform())
-static void SetupViewport(int width, int height);           // Set viewport for a provided width and height
-static int GetWindowRequestedSamples(void);                 // Get the MSAA samples requested by the window flags (required by InitPlatform())
+static void SetupViewport(i32 width, i32 height);           // Set viewport for a provided width and height
+static i32 GetWindowRequestedSamples(void);                 // Get the MSAA samples requested by the window flags (required by InitPlatform())
 static void UpdateWindowProvidedSamples(void);              // Get the MSAA samples really provided by the graphics device (required by InitWindow())
 
 static void ScanDirectoryFiles(const char *basePath, FilePathList *list, const char *filter, bool scanSubdirs); // Scan all files and directories in a base path
@@ -597,9 +597,9 @@ std::string TextFormat(std::string_view text, ...); // Formatting of text with v
 
 // Get the MSAA samples requested for the window, zero means MSAA disabled
 // NOTE: FLAG_MSAA_4X_HINT, FLAG_MSAA_8X_HINT and FLAG_MSAA_16X_HINT configure it, the highest one set wins
-static int GetWindowRequestedSamples(void)
+static i32 GetWindowRequestedSamples(void)
 {
-    int samples = 0;
+    i32 samples = 0;
 
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_16X_HINT)) samples = 16;
     else if (FLAG_IS_SET(CORE.Window.flags, FLAG_MSAA_8X_HINT)) samples = 8;
@@ -611,7 +611,7 @@ static int GetWindowRequestedSamples(void)
 // Set the MSAA samples to request for the window, only powers of two are actually requested,
 // the graphics device may provide less samples than the requested ones
 // NOTE: It must be called before InitWindow(), samples can not be changed once the window context exists
-void SetWindowSamples(int samples)
+void SetWindowSamples(i32 samples)
 {
     if (CORE.Window.ready)
     {
@@ -633,7 +633,7 @@ void SetWindowSamples(int samples)
 // Get the MSAA samples in use, zero means MSAA disabled
 // NOTE: Before InitWindow() it returns the requested samples,
 // once the window is created it returns the samples really provided by the graphics device
-int GetWindowSamples(void)
+i32 GetWindowSamples(void)
 {
     return CORE.Window.samples;
 }
@@ -644,14 +644,14 @@ int GetWindowSamples(void)
 static void UpdateWindowProvidedSamples(void)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
-    const int requestedSamples = GetWindowRequestedSamples();
+    const i32 requestedSamples = GetWindowRequestedSamples();
     if (requestedSamples == 0)
     {
         CORE.Window.samples = 0;
         return;
     }
 
-    int providedSamples = 0;
+    i32 providedSamples = 0;
     glGetIntegerv(GL_SAMPLES, &providedSamples);
     CORE.Window.samples = providedSamples;
 
@@ -660,7 +660,7 @@ static void UpdateWindowProvidedSamples(void)
 }
 
 // Initialize window and OpenGL context
-void InitWindow(int width, int height, std::string_view titleView)
+void InitWindow(i32 width, i32 height, std::string_view titleView)
 {
     const std::string titleStr(titleView);
     const char *title = titleStr.c_str();
@@ -738,7 +738,7 @@ void InitWindow(int width, int height, std::string_view titleView)
 
     // Initialize platform
     //--------------------------------------------------------------
-    const int result = InitPlatform();
+    const i32 result = InitPlatform();
 
     if (result != 0)
     {
@@ -801,7 +801,7 @@ void InitWindow(int width, int height, std::string_view titleView)
 
     // Initialize random seed using available timer source instead of standard time() on embedded platforms
 #ifndef PICO_RP2350
-    SetRandomSeed(static_cast<unsigned int>(time(nullptr)));
+    SetRandomSeed(static_cast<u32>(time(nullptr)));
 #else
     SetRandomSeed(get_rand_32());
 #endif
@@ -872,27 +872,27 @@ bool IsWindowResized(void)
 }
 
 // Check if one specific window flag is enabled
-bool IsWindowState(unsigned int flag)
+bool IsWindowState(u32 flag)
 {
     return FLAG_IS_SET(CORE.Window.flags, flag);
 }
 
 // Get current screen width
-int GetScreenWidth(void)
+i32 GetScreenWidth(void)
 {
     return CORE.Window.screen.width;
 }
 
 // Get current screen height
-int GetScreenHeight(void)
+i32 GetScreenHeight(void)
 {
     return CORE.Window.screen.height;
 }
 
 // Get current render width which is equal to screen width*dpi scale
-int GetRenderWidth(void)
+i32 GetRenderWidth(void)
 {
-    int width = 0;
+    i32 width = 0;
 
     if (CORE.Window.usingFbo) width = CORE.Window.currentFbo.width;
     else width = CORE.Window.render.width;
@@ -901,9 +901,9 @@ int GetRenderWidth(void)
 }
 
 // Get current screen height which is equal to screen height*dpi scale
-int GetRenderHeight(void)
+i32 GetRenderHeight(void)
 {
-    int height = 0;
+    i32 height = 0;
 
     if (CORE.Window.usingFbo) height = CORE.Window.currentFbo.height;
     else height = CORE.Window.render.height;
@@ -988,7 +988,7 @@ void EndDrawing(void)
         WaitTime(CORE.Time.target - CORE.Time.frame);
 
         CORE.Time.current = GetTime();
-        const double waitTime = CORE.Time.current - CORE.Time.previous;
+        const f64 waitTime = CORE.Time.current - CORE.Time.previous;
         CORE.Time.previous = CORE.Time.current;
 
         CORE.Time.frame += waitTime;    // Total frame time: update + draw + wait
@@ -1038,22 +1038,22 @@ void BeginMode3D(Camera camera)
     rlPushMatrix();                 // Save previous matrix, which contains the settings for the 2d ortho projection
     rlLoadIdentity();               // Reset current matrix (projection)
 
-    const float aspect = static_cast<float>(CORE.Window.currentFbo.width)/static_cast<float>(CORE.Window.currentFbo.height);
+    const f32 aspect = static_cast<f32>(CORE.Window.currentFbo.width)/static_cast<f32>(CORE.Window.currentFbo.height);
 
     // NOTE: zNear and zFar values are important when computing depth buffer values
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Setup perspective projection
-        const float top = rlGetCullDistanceNear()*tanf(camera.fovy*0.5f*DEG2RAD);
-        const float right = top*aspect;
+        const f32 top = rlGetCullDistanceNear()*tanf(camera.fovy*0.5f*DEG2RAD);
+        const f32 right = top*aspect;
 
         rlFrustum(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
         // Setup orthographic projection
-        const float top = camera.fovy/2.0f;
-        const float right = top*aspect;
+        const f32 top = camera.fovy/2.0f;
+        const f32 right = top*aspect;
 
         rlOrtho(-right, right, -top,top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
@@ -1101,7 +1101,7 @@ void BeginTextureMode(RenderTexture2D target)
 
     // Set orthographic projection to current framebuffer size
     // NOTE: Configured top-left corner as (0, 0)
-    rlOrtho(0.0f, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height), 0.0f, 0.0f, 1.0f);
+    rlOrtho(0.0f, static_cast<f32>(target.texture.width), static_cast<f32>(target.texture.height), 0.0f, 0.0f, 1.0f);
 
     rlMatrixMode(RL_MODELVIEW);     // Switch back to modelview matrix
     rlLoadIdentity();               // Reset current matrix (modelview)
@@ -1150,7 +1150,7 @@ void EndShaderMode(void)
 
 // Begin blending mode (alpha, additive, multiplied, subtract, custom)
 // NOTE: Blend modes supported are enumerated in BlendMode enum
-void BeginBlendMode(int mode)
+void BeginBlendMode(i32 mode)
 {
     rlSetBlendMode(mode);
 }
@@ -1163,7 +1163,7 @@ void EndBlendMode(void)
 
 // Begin scissor mode (define screen area for following drawing)
 // NOTE: Scissor rec refers to bottom-left corner, changing it to upper-left
-void BeginScissorMode(int x, int y, int width, int height)
+void BeginScissorMode(i32 x, i32 y, i32 width, i32 height)
 {
     rlDrawRenderBatchActive();      // Update and draw internal render batch
 
@@ -1173,13 +1173,13 @@ void BeginScissorMode(int x, int y, int width, int height)
     if (!CORE.Window.usingFbo)
     {
         vec2 scale = GetWindowScaleDPI();
-        rlScissor(static_cast<int>((x*scale.x)), static_cast<int>((GetScreenHeight()*scale.y - (((y + height)*scale.y)))), static_cast<int>((width*scale.x)), static_cast<int>((height*scale.y)));
+        rlScissor(static_cast<i32>((x*scale.x)), static_cast<i32>((GetScreenHeight()*scale.y - (((y + height)*scale.y)))), static_cast<i32>((width*scale.x)), static_cast<i32>((height*scale.y)));
     }
 #else
     if (!CORE.Window.usingFbo && FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
         const vec2 scale = GetWindowScaleDPI();
-        rlScissor(static_cast<int>(x*scale.x), static_cast<int>(CORE.Window.currentFbo.height - (y + height)*scale.y), static_cast<int>(width*scale.x), static_cast<int>(height*scale.y));
+        rlScissor(static_cast<i32>(x*scale.x), static_cast<i32>(CORE.Window.currentFbo.height - (y + height)*scale.y), static_cast<i32>(width*scale.x), static_cast<i32>(height*scale.y));
     }
 #endif
     else
@@ -1223,10 +1223,10 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
     if (rlGetVersion() != RL_OPENGL_11)
     {
         // Compute aspect ratio
-        const float aspect = (static_cast<float>(device.hResolution)*0.5f)/static_cast<float>(device.vResolution);
+        const f32 aspect = (static_cast<f32>(device.hResolution)*0.5f)/static_cast<f32>(device.vResolution);
 
         // Compute lens parameters
-        const float lensShift = (device.hScreenSize*0.25f - device.lensSeparationDistance*0.5f)/device.hScreenSize;
+        const f32 lensShift = (device.hScreenSize*0.25f - device.lensSeparationDistance*0.5f)/device.hScreenSize;
         config.leftLensCenter[0] = 0.25f + lensShift;
         config.leftLensCenter[1] = 0.5f;
         config.rightLensCenter[0] = 0.75f - lensShift;
@@ -1238,15 +1238,15 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
 
         // Compute distortion scale parameters
         // NOTE: To get lens max radius, lensShift must be normalized to [-1..1]
-        const float lensRadius = fabsf(-1.0f - 4.0f*lensShift);
-        const float lensRadiusSq = lensRadius*lensRadius;
-        const float distortionScale = device.lensDistortionValues[0] +
+        const f32 lensRadius = fabsf(-1.0f - 4.0f*lensShift);
+        const f32 lensRadiusSq = lensRadius*lensRadius;
+        const f32 distortionScale = device.lensDistortionValues[0] +
                                 device.lensDistortionValues[1]*lensRadiusSq +
                                 device.lensDistortionValues[2]*lensRadiusSq*lensRadiusSq +
                                 device.lensDistortionValues[3]*lensRadiusSq*lensRadiusSq*lensRadiusSq;
 
-        constexpr float normScreenWidth = 0.5f;
-        constexpr float normScreenHeight = 1.0f;
+        constexpr f32 normScreenWidth = 0.5f;
+        constexpr f32 normScreenHeight = 1.0f;
         config.scaleIn[0] = 2.0f/normScreenWidth;
         config.scaleIn[1] = 2.0f/normScreenHeight/aspect;
         config.scale[0] = normScreenWidth*0.5f/distortionScale;
@@ -1254,11 +1254,11 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
 
         // Fovy is normally computed with: 2*atan2f(device.vScreenSize, 2*device.eyeToScreenDistance)
         // ...but with lens distortion it is increased (see Oculus SDK Documentation)
-        const float fovy = 2.0f*atan2f(device.vScreenSize*0.5f*distortionScale, device.eyeToScreenDistance);     // Really need distortionScale?
+        const f32 fovy = 2.0f*atan2f(device.vScreenSize*0.5f*distortionScale, device.eyeToScreenDistance);     // Really need distortionScale?
        // float fovy = 2.0f*(float)atan2f(device.vScreenSize*0.5f, device.eyeToScreenDistance);
 
         // Compute camera projection matrices
-        const float projOffset = 4.0f*lensShift;      // Scaled to projection space coordinates [-1..1]
+        const f32 projOffset = 4.0f*lensShift;      // Scaled to projection space coordinates [-1..1]
         const mat4 proj = glm::perspective(fovy, aspect, rlGetCullDistanceNear(), rlGetCullDistanceFar());
 
         config.projection[0] = glm::translate(mat4(1.0f), vec3{projOffset, 0.0f, 0.0f})*proj;
@@ -1339,8 +1339,8 @@ Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCode
     {
         // Shader could not be loaded but still loading the location points to avoid potential crashes
         // NOTE: All locations set to -1 (no location found)
-        shader.locs = static_cast<int *>(calloc(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
-        for (int i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
+        shader.locs = static_cast<i32 *>(calloc(RL_MAX_SHADER_LOCATIONS, sizeof(i32)));
+        for (i32 i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
     }
     else if (shader.id == rlGetShaderIdDefault()) shader.locs = rlGetShaderLocsDefault();
     else if (shader.id > 0)
@@ -1360,8 +1360,8 @@ Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCode
 
         // Load shader locations array
         // NOTE: All locations set to -1 (no location)
-        shader.locs = static_cast<int *>(calloc(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
-        for (int i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
+        shader.locs = static_cast<i32 *>(calloc(RL_MAX_SHADER_LOCATIONS, sizeof(i32)));
+        for (i32 i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
 
         // Get handles to GLSL input attribute locations
         shader.locs[SHADER_LOC_VERTEX_POSITION] = rlGetLocationAttrib(shader.id, RL_DEFAULT_SHADER_ATTRIB_NAME_POSITION);
@@ -1437,7 +1437,7 @@ void UnloadShader(Shader shader)
 }
 
 // Get shader uniform location
-int GetShaderLocation(Shader shader, std::string_view uniformNameView)
+i32 GetShaderLocation(Shader shader, std::string_view uniformNameView)
 {
     const std::string uniformNameStr(uniformNameView);
     const char *uniformName = uniformNameStr.c_str();
@@ -1446,7 +1446,7 @@ int GetShaderLocation(Shader shader, std::string_view uniformNameView)
 }
 
 // Get shader attribute location
-int GetShaderLocationAttrib(Shader shader, std::string_view attribNameView)
+i32 GetShaderLocationAttrib(Shader shader, std::string_view attribNameView)
 {
     const std::string attribNameStr(attribNameView);
     const char *attribName = attribNameStr.c_str();
@@ -1455,13 +1455,13 @@ int GetShaderLocationAttrib(Shader shader, std::string_view attribNameView)
 }
 
 // Set shader uniform value
-void SetShaderValue(Shader shader, int locIndex, const void *value, int uniformType)
+void SetShaderValue(Shader shader, i32 locIndex, const void *value, i32 uniformType)
 {
     SetShaderValueV(shader, locIndex, value, uniformType, 1);
 }
 
 // Set shader uniform value vector
-void SetShaderValueV(Shader shader, int locIndex, const void *value, int uniformType, int count)
+void SetShaderValueV(Shader shader, i32 locIndex, const void *value, i32 uniformType, i32 count)
 {
     if (locIndex > -1)
     {
@@ -1472,7 +1472,7 @@ void SetShaderValueV(Shader shader, int locIndex, const void *value, int uniform
 }
 
 // Set shader uniform value (matrix 4x4)
-void SetShaderValueMatrix(Shader shader, int locIndex, mat4 mat)
+void SetShaderValueMatrix(Shader shader, i32 locIndex, mat4 mat)
 {
     if (locIndex > -1)
     {
@@ -1483,7 +1483,7 @@ void SetShaderValueMatrix(Shader shader, int locIndex, mat4 mat)
 }
 
 // Set shader uniform value for texture
-void SetShaderValueTexture(Shader shader, int locIndex, Texture2D texture)
+void SetShaderValueTexture(Shader shader, i32 locIndex, Texture2D texture)
 {
     if (locIndex > -1)
     {
@@ -1506,15 +1506,15 @@ Ray GetScreenToWorldRay(vec2 position, Camera camera)
 }
 
 // Get a ray trace from the screen position (i.e mouse) within a specific section of the screen
-Ray GetScreenToWorldRayEx(vec2 position, Camera camera, int width, int height)
+Ray GetScreenToWorldRayEx(vec2 position, Camera camera, i32 width, i32 height)
 {
     Ray ray{};
 
     // Calculate normalized device coordinates
     // NOTE: y value is negative
-    const float x = (2.0f*position.x)/static_cast<float>(width) - 1.0f;
-    const float y = 1.0f - (2.0f*position.y)/static_cast<float>(height);
-    constexpr float z = 1.0f;
+    const f32 x = (2.0f*position.x)/static_cast<f32>(width) - 1.0f;
+    const f32 y = 1.0f - (2.0f*position.y)/static_cast<f32>(height);
+    constexpr f32 z = 1.0f;
 
     // Store values in a vector
     const vec3 deviceCoords = { x, y, z };
@@ -1527,13 +1527,13 @@ Ray GetScreenToWorldRayEx(vec2 position, Camera camera, int width, int height)
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Calculate projection matrix from perspective
-        matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(width)/static_cast<float>(height), rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<f32>(width)/static_cast<f32>(height), rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
-        const float aspect = static_cast<float>(width)/static_cast<float>(height);
-        const float top = camera.fovy/2.0f;
-        const float right = top*aspect;
+        const f32 aspect = static_cast<f32>(width)/static_cast<f32>(height);
+        const f32 top = camera.fovy/2.0f;
+        const f32 right = top*aspect;
 
         // Calculate projection matrix from orthographic
         matProj = glm::ortho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
@@ -1606,7 +1606,7 @@ vec2 GetWorldToScreen(vec3 position, Camera camera)
 }
 
 // Get sized screen space position for a 3d world space position (useful for texture drawing)
-vec2 GetWorldToScreenEx(vec3 position, Camera camera, int width, int height)
+vec2 GetWorldToScreenEx(vec3 position, Camera camera, i32 width, i32 height)
 {
     // Calculate projection matrix (from perspective instead of frustum
     mat4 matProj = mat4(1.0f);
@@ -1614,13 +1614,13 @@ vec2 GetWorldToScreenEx(vec3 position, Camera camera, int width, int height)
     if (camera.projection == CAMERA_PERSPECTIVE)
     {
         // Calculate projection matrix from perspective
-        matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(width)/static_cast<float>(height), rlGetCullDistanceNear(), rlGetCullDistanceFar());
+        matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<f32>(width)/static_cast<f32>(height), rlGetCullDistanceNear(), rlGetCullDistanceFar());
     }
     else if (camera.projection == CAMERA_ORTHOGRAPHIC)
     {
-        const float aspect = static_cast<float>(width)/static_cast<float>(height);
-        const float top = camera.fovy/2.0f;
-        const float right = top*aspect;
+        const f32 aspect = static_cast<f32>(width)/static_cast<f32>(height);
+        const f32 top = camera.fovy/2.0f;
+        const f32 right = top*aspect;
 
         // Calculate projection matrix from orthographic
         matProj = glm::ortho(-right, right, -top, top, rlGetCullDistanceNear(), rlGetCullDistanceFar());
@@ -1642,7 +1642,7 @@ vec2 GetWorldToScreenEx(vec3 position, Camera camera, int width, int height)
     const vec3 ndcPos = { worldPos.x/worldPos.w, -worldPos.y/worldPos.w, worldPos.z/worldPos.w };
 
     // Calculate 2d screen position vector
-    const vec2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*static_cast<float>(width), (ndcPos.y + 1.0f)/2.0f*static_cast<float>(height) };
+    const vec2 screenPosition = { (ndcPos.x + 1.0f)/2.0f*static_cast<f32>(width), (ndcPos.y + 1.0f)/2.0f*static_cast<f32>(height) };
 
     return screenPosition;
 }
@@ -1673,30 +1673,30 @@ vec2 GetScreenToWorld2D(vec2 position, Camera2D camera)
 //double GetTime(void)
 
 // Set target FPS (maximum)
-void SetTargetFPS(int fps)
+void SetTargetFPS(i32 fps)
 {
     if (fps < 1) CORE.Time.target = 0.0;
-    else CORE.Time.target = 1.0/static_cast<double>(fps);
+    else CORE.Time.target = 1.0/static_cast<f64>(fps);
 
-    logMessage(LogLevel::info, std::format("TIMER: Target time per frame: {:02.03f} milliseconds", static_cast<float>(CORE.Time.target)*1000.0f));
+    logMessage(LogLevel::info, std::format("TIMER: Target time per frame: {:02.03f} milliseconds", static_cast<f32>(CORE.Time.target)*1000.0f));
 }
 
 // Get current FPS
 // NOTE: Calculating an average framerate
-int GetFPS(void)
+i32 GetFPS(void)
 {
-    int fps = 0;
+    i32 fps = 0;
 
 #if !SUPPORT_CUSTOM_FRAME_CONTROL
     #define FPS_CAPTURE_FRAMES_COUNT    30      // 30 captures
     #define FPS_AVERAGE_TIME_SECONDS   0.5f     // 500 milliseconds
     #define FPS_STEP (FPS_AVERAGE_TIME_SECONDS/FPS_CAPTURE_FRAMES_COUNT)
 
-    static int index = 0;
-    static unsigned int captureFramesCounted = 0;
-    static float history[FPS_CAPTURE_FRAMES_COUNT] = { 0 };
-    static float average = 0, last = 0;
-    const float fpsFrame = GetFrameTime();
+    static i32 index = 0;
+    static u32 captureFramesCounted = 0;
+    static f32 history[FPS_CAPTURE_FRAMES_COUNT] = { 0 };
+    static f32 average = 0, last = 0;
+    const f32 fpsFrame = GetFrameTime();
 
     // If reseting the window, reset the FPS info
     if (CORE.Time.frameCounter == 0)
@@ -1706,14 +1706,14 @@ int GetFPS(void)
         index = 0;
         captureFramesCounted = 0;
 
-        for (int i = 0; i < FPS_CAPTURE_FRAMES_COUNT; i++) history[i] = 0;
+        for (i32 i = 0; i < FPS_CAPTURE_FRAMES_COUNT; i++) history[i] = 0;
     }
 
     if (fpsFrame != 0)
     {
         if ((GetTime() - last) > FPS_STEP)
         {
-            last = static_cast<float>(GetTime());
+            last = static_cast<f32>(GetTime());
             index = (index + 1)%FPS_CAPTURE_FRAMES_COUNT;
             average -= history[index];
             history[index] = fpsFrame/FPS_CAPTURE_FRAMES_COUNT;
@@ -1722,7 +1722,7 @@ int GetFPS(void)
             if (captureFramesCounted < FPS_CAPTURE_FRAMES_COUNT) captureFramesCounted += 1;
         }
 
-        if (captureFramesCounted > 0) fps = static_cast<int>(roundf(captureFramesCounted/(average*FPS_CAPTURE_FRAMES_COUNT)));
+        if (captureFramesCounted > 0) fps = static_cast<i32>(roundf(captureFramesCounted/(average*FPS_CAPTURE_FRAMES_COUNT)));
     }
     else fps = 0;
 #endif
@@ -1731,9 +1731,9 @@ int GetFPS(void)
 }
 
 // Get time in seconds for last frame drawn (delta time)
-float GetFrameTime(void)
+f32 GetFrameTime(void)
 {
-    return static_cast<float>(CORE.Time.frame);
+    return static_cast<f32>(CORE.Time.frame);
 }
 
 //----------------------------------------------------------------------------------
@@ -1749,21 +1749,21 @@ float GetFrameTime(void)
 // take longer than expected... for that reason a busy wait loop is used
 // REF: http://stackoverflow.com/questions/43057578/c-programming-win32-games-sleep-taking-longer-than-expected
 // REF: http://www.geisswerks.com/ryan/FAQS/timing.html --> All about timing on Win32!
-void WaitTime(double seconds)
+void WaitTime(f64 seconds)
 {
     if (seconds < 0) return;    // Security check
 
 #if SUPPORT_BUSY_WAIT_LOOP || SUPPORT_PARTIALBUSY_WAIT_LOOP
-    const double destinationTime = GetTime() + seconds;
+    const f64 destinationTime = GetTime() + seconds;
 #endif
 
 #if SUPPORT_BUSY_WAIT_LOOP
     while (GetTime() < destinationTime) { }
 #else
     #if SUPPORT_PARTIALBUSY_WAIT_LOOP
-        const double sleepSeconds = seconds - seconds*0.05;  // NOTE: Reserve a percentage of the time for busy waiting
+        const f64 sleepSeconds = seconds - seconds*0.05;  // NOTE: Reserve a percentage of the time for busy waiting
     #else
-        double sleepSeconds = seconds;
+        f64 sleepSeconds = seconds;
     #endif
 
     // System halt functions
@@ -1798,7 +1798,7 @@ void WaitTime(double seconds)
 //void OpenURL(const char *url)
 
 // Set the seed for the random number generator
-void SetRandomSeed(unsigned int seed)
+void SetRandomSeed(u32 seed)
 {
 #if SUPPORT_RPRAND_GENERATOR
     rprand_set_seed(seed);
@@ -1808,13 +1808,13 @@ void SetRandomSeed(unsigned int seed)
 }
 
 // Get a random value between min and max included
-int GetRandomValue(int min, int max)
+i32 GetRandomValue(i32 min, i32 max)
 {
-    int value = 0;
+    i32 value = 0;
 
     if (min > max)
     {
-        const int tmp = max;
+        const i32 tmp = max;
         max = min;
         min = tmp;
     }
@@ -1826,7 +1826,7 @@ int GetRandomValue(int min, int max)
     // More specifically, if (max - min) > INT_MAX there will be an overflow,
     // and otherwise if (max - min) > RAND_MAX the random value will incorrectly never exceed a certain threshold
     // NOTE: Depending on the library it can be as low as 32767
-    if (static_cast<unsigned int>((max - min)) > static_cast<unsigned int>(RAND_MAX))
+    if (static_cast<u32>((max - min)) > static_cast<u32>(RAND_MAX))
     {
         logMessage(LogLevel::warn, std::format("Invalid GetRandomValue() arguments, range should not be higher than {}", RAND_MAX));
     }
@@ -1837,7 +1837,7 @@ int GetRandomValue(int min, int max)
     //value = (rand()%(abs(max - min) + 1) + min);
 
     // More uniform range solution
-    int range = (max - min) + 1;
+    i32 range = (max - min) + 1;
 
     // Degenerate/overflow case: fall back to min (same behavior as "always min" instead of UB)
     if (range <= 0) value = min;
@@ -1855,7 +1855,7 @@ int GetRandomValue(int min, int max)
             if (r < t) break;   // Only accept values within the fair region
         }
 
-        value = min + static_cast<int>((r%m));
+        value = min + static_cast<i32>((r%m));
     }
 #endif
 
@@ -1863,26 +1863,26 @@ int GetRandomValue(int min, int max)
 }
 
 // Load random values sequence, no values repeated, min and max included
-int *LoadRandomSequence(unsigned int count, int min, int max)
+i32 *LoadRandomSequence(u32 count, i32 min, i32 max)
 {
-    int *values = nullptr;
+    i32 *values = nullptr;
 
 #if SUPPORT_RPRAND_GENERATOR
     values = rprand_load_sequence(count, min, max);
 #else
-    if (count > (static_cast<unsigned int>(abs(max - min)) + 1)) return values;  // Security check
+    if (count > (static_cast<u32>(abs(max - min)) + 1)) return values;  // Security check
 
-    values = static_cast<int *>(calloc(count, sizeof(int)));
+    values = static_cast<i32 *>(calloc(count, sizeof(i32)));
 
-    int value = 0;
+    i32 value = 0;
     bool dupValue = false;
 
-    for (int i = 0; i < static_cast<int>(count);)
+    for (i32 i = 0; i < static_cast<i32>(count);)
     {
         value = GetRandomValue(min, max);
         dupValue = false;
 
-        for (int j = 0; j < i; j++)
+        for (i32 j = 0; j < i; j++)
         {
             if (values[j] == value)
             {
@@ -1903,7 +1903,7 @@ int *LoadRandomSequence(unsigned int count, int min, int max)
 }
 
 // Unload random values sequence
-void UnloadRandomSequence(int *sequence)
+void UnloadRandomSequence(i32 *sequence)
 {
 #if SUPPORT_RPRAND_GENERATOR
     rprand_unload_sequence(sequence);
@@ -1926,8 +1926,8 @@ void TakeScreenshot(std::string_view fileNameView)
     vec2 scale = { 1.0f, 1.0f };
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)) scale = GetWindowScaleDPI();
 
-    unsigned char *imgData = rlReadScreenPixels(static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y));
-    const Image image = { imgData, static_cast<int>(static_cast<float>(CORE.Window.render.width)*scale.x), static_cast<int>(static_cast<float>(CORE.Window.render.height)*scale.y), 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
+    u8 *imgData = rlReadScreenPixels(static_cast<i32>(static_cast<f32>(CORE.Window.render.width)*scale.x), static_cast<i32>(static_cast<f32>(CORE.Window.render.height)*scale.y));
+    const Image image = { imgData, static_cast<i32>(static_cast<f32>(CORE.Window.render.width)*scale.x), static_cast<i32>(static_cast<f32>(CORE.Window.render.height)*scale.y), 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
 
     char path[MAX_FILEPATH_LENGTH] = { 0 };
     if (!IsPathAbsolute(fileName)) snprintf(path, MAX_FILEPATH_LENGTH, "%s", TextFormat("%s/%s", CORE.Storage.basePath.c_str(), fileName).c_str());
@@ -1947,7 +1947,7 @@ void TakeScreenshot(std::string_view fileNameView)
 // NOTE: This function is expected to be called before window creation,
 // because it sets up some flags for the window creation process
 // To configure window states after creation, use SetWindowState()
-void SetConfigFlags(unsigned int flags)
+void SetConfigFlags(u32 flags)
 {
     if (CORE.Window.ready) logMessage(LogLevel::warn, "WINDOW: SetConfigFlags called after window initialization, Use \"SetWindowState\" to set flags instead");
 
@@ -1960,7 +1960,7 @@ void SetConfigFlags(unsigned int flags)
 // Module Functions Definition: Logging system
 //----------------------------------------------------------------------------------
 // Map raylib log levels to the engine log levels
-static LogLevel ToLogLevel(int logType)
+static LogLevel ToLogLevel(i32 logType)
 {
     switch (logType)
     {
@@ -1976,7 +1976,7 @@ static LogLevel ToLogLevel(int logType)
 }
 
 // Map engine log levels back to raylib log levels
-static int ToRaylibLogLevel(LogLevel level)
+static i32 ToRaylibLogLevel(LogLevel level)
 {
     switch (level)
     {
@@ -1999,11 +1999,11 @@ static void TraceLogBridge(LogLevel level, std::string_view line, void *userData
 }
 
 // Set the current threshold (minimum) log level
-void SetTraceLogLevel(int logType) { setLogLevel(ToLogLevel(logType)); }
+void SetTraceLogLevel(i32 logType) { setLogLevel(ToLogLevel(logType)); }
 
 // Show trace log messages (LOG_INFO, LOG_WARNING, LOG_ERROR, LOG_DEBUG)
 // NOTE: printf-style varargs adapter, the formatted message is forwarded to the logging system
-void TraceLog(int logType, std::string_view text, ...)
+void TraceLog(i32 logType, std::string_view text, ...)
 {
     const std::string formatStr(text);  // vsnprintf() requires a null-terminated string
 
@@ -2012,7 +2012,7 @@ void TraceLog(int logType, std::string_view text, ...)
 
     va_list argsCopy;
     va_copy(argsCopy, args);
-    const int textLength = std::vsnprintf(nullptr, 0, formatStr.c_str(), argsCopy);
+    const i32 textLength = std::vsnprintf(nullptr, 0, formatStr.c_str(), argsCopy);
     va_end(argsCopy);
 
     std::string message;
@@ -2041,14 +2041,14 @@ void SetTraceLogCallback(TraceLogCallback callback)
 //----------------------------------------------------------------------------------
 // Internal memory allocator
 // NOTE: Initializes to zero by default
-void *MemAlloc(unsigned int size)
+void *MemAlloc(u32 size)
 {
     void *ptr = calloc(size, 1);
     return ptr;
 }
 
 // Internal memory reallocator
-void *MemRealloc(void *ptr, unsigned int size)
+void *MemRealloc(void *ptr, u32 size)
 {
     void *ret = realloc(ptr, size);
     return ret;
@@ -2064,12 +2064,12 @@ void MemFree(void *ptr)
 // Module Functions Definition: File System management
 //----------------------------------------------------------------------------------
 // Load data from file into a buffer
-unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
+u8 * LoadFileData(std::string_view fileNameView, i32 *dataSize)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    unsigned char *data = nullptr;
+    u8 *data = nullptr;
     *dataSize = 0;
 
     if (fileName != nullptr)
@@ -2083,17 +2083,17 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
             // WARNING: On binary streams SEEK_END could not be found,
             // using fseek() and ftell() could not work in some (rare) cases
             fseek(file, 0, SEEK_END);
-            const int size = ftell(file);     // WARNING: ftell() returns 'long int', maximum size returned is INT_MAX (2147483647 bytes)
+            const i32 size = ftell(file);     // WARNING: ftell() returns 'long int', maximum size returned is INT_MAX (2147483647 bytes)
             fseek(file, 0, SEEK_SET);
 
             if (size > 0)
             {
-                data = static_cast<unsigned char *>(calloc(size, sizeof(unsigned char)));
+                data = static_cast<u8 *>(calloc(size, sizeof(u8)));
 
                 if (data != nullptr)
                 {
                     // NOTE: fread() returns number of read elements instead of bytes, so reading [1 byte, size elements]
-                    const size_t count = fread(data, sizeof(unsigned char), size, file);
+                    const size_t count = fread(data, sizeof(u8), size, file);
 
                     // WARNING: fread() returns a size_t value, usually 'unsigned int' (32bit compilation) and 'unsigned long long' (64bit compilation)
                     // dataSize is unified along raylib as a 'int' type, so, for file-sizes >INT_MAX (2147483647 bytes) there is a limitation
@@ -2106,7 +2106,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                     }
                     else
                     {
-                        *dataSize = static_cast<int>(count);
+                        *dataSize = static_cast<i32>(count);
 
                         if ((*dataSize) != size) logMessage(LogLevel::warn, std::format("FILEIO: [{}] File partially loaded ({} bytes out of {})", fileName, *dataSize, size));
                         else logMessage(LogLevel::info, std::format("FILEIO: [{}] File loaded successfully", fileName));
@@ -2126,13 +2126,13 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
 }
 
 // Unload file data allocated by LoadFileData()
-void UnloadFileData(unsigned char *data)
+void UnloadFileData(u8 *data)
 {
     free(data);
 }
 
 // Save data to file from buffer
-bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
+bool SaveFileData(std::string_view fileNameView, const void *data, i32 dataSize)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
@@ -2149,13 +2149,13 @@ bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
         {
             // WARNING: fwrite() returns a size_t value, usually 'unsigned int' (32bit compilation) and 'unsigned long long' (64bit compilation)
             // and expects a size_t input value but as dataSize is limited to INT_MAX (2147483647 bytes), there shouldn't be a problem
-            const int count = static_cast<int>(fwrite(data, sizeof(unsigned char), dataSize, file));
+            const i32 count = static_cast<i32>(fwrite(data, sizeof(u8), dataSize, file));
 
             if (count == 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to write file", fileName));
             else if (count != dataSize) logMessage(LogLevel::warn, std::format("FILEIO: [{}] File partially written", fileName));
             else logMessage(LogLevel::info, std::format("FILEIO: [{}] File saved successfully", fileName));
 
-            const int closed = fclose(file);
+            const i32 closed = fclose(file);
             if (closed == 0) result = true;
         }
         else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open file", fileName));
@@ -2166,7 +2166,7 @@ bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
 }
 
 // Export data to code (.h), returns true on success
-bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view fileNameView)
+bool ExportDataAsCode(const u8 *data, i32 dataSize, std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
@@ -2181,7 +2181,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
     // and requiring 6 char bytes for every byte: "0x00, "
     char *txtData = static_cast<char *>(calloc(dataSize*6 + 2000, sizeof(char)));
 
-    int byteCount = 0;
+    i32 byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
     byteCount += sprintf(txtData + byteCount, "//                                                                                    //\n");
     byteCount += sprintf(txtData + byteCount, "// DataAsCode exporter v1.0 - Raw data exported as an array of bytes                  //\n");
@@ -2196,7 +2196,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
     // Get file name from path
     char varFileName[256] = { 0 };
     snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str());
-    for (int i = 0; varFileName[i] != '\0'; i++)
+    for (i32 i = 0; varFileName[i] != '\0'; i++)
     {
         // Convert variable name to uppercase
         if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
@@ -2207,7 +2207,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
     byteCount += sprintf(txtData + byteCount, "#define %s_DATA_SIZE     %i\n\n", varFileName, dataSize);
 
     byteCount += sprintf(txtData + byteCount, "static unsigned char %s_DATA[%s_DATA_SIZE] = { ", varFileName, varFileName);
-    for (int i = 0; i < (dataSize - 1); i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%x,\n" : "0x%x, "), data[i]);
+    for (i32 i = 0; i < (dataSize - 1); i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%x,\n" : "0x%x, "), data[i]);
     byteCount += sprintf(txtData + byteCount, "0x%x };\n", data[dataSize - 1]);
 
     // NOTE: Text data size exported is determined by '\0' (NULL) character
@@ -2242,7 +2242,7 @@ std::string LoadFileText(std::string_view fileNameView)
             // text mode causes carriage return-linefeed translation...
             // ...but using fseek() should return correct byte-offset
             fseek(file, 0, SEEK_END);
-            const unsigned int size = static_cast<unsigned int>(ftell(file));
+            const u32 size = static_cast<u32>(ftell(file));
             fseek(file, 0, SEEK_SET);
 
             if (size > 0)
@@ -2251,7 +2251,7 @@ std::string LoadFileText(std::string_view fileNameView)
 
                 if (text != nullptr)
                 {
-                    const unsigned int count = static_cast<unsigned int>(fread(text, sizeof(char), size, file));
+                    const u32 count = static_cast<u32>(fread(text, sizeof(char), size, file));
 
                     // WARNING: \r\n is converted to \n on reading, so,
                     // read bytes count gets reduced by the number of lines
@@ -2304,12 +2304,12 @@ bool SaveFileText(std::string_view fileNameView, std::string_view textView)
 
         if (file != nullptr)
         {
-            const int count = fprintf(file, "%s", text);
+            const i32 count = fprintf(file, "%s", text);
 
             if (count < 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to write text file", fileName));
             else logMessage(LogLevel::info, std::format("FILEIO: [{}] Text file saved successfully", fileName));
 
-            const int closed = fclose(file);
+            const i32 closed = fclose(file);
             if (closed == 0) result = true;
         }
         else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open text file", fileName));
@@ -2348,14 +2348,14 @@ void SetSaveFileTextCallback(SaveFileTextCallback callback)
 
 // Rename file (if exists)
 // NOTE: Only rename file name required, not full path
-int FileRename(std::string_view fileNameView, std::string_view fileRenameView)
+i32 FileRename(std::string_view fileNameView, std::string_view fileRenameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
     const std::string fileRenameStr(fileRenameView);
     const char *fileRename = fileRenameStr.c_str();
 
-    int result = -1;
+    i32 result = -1;
 
     if (FileExists(fileName))
     {
@@ -2366,12 +2366,12 @@ int FileRename(std::string_view fileNameView, std::string_view fileRenameView)
 }
 
 // Remove file (if exists)
-int FileRemove(std::string_view fileNameView)
+i32 FileRemove(std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    int result = -1;
+    i32 result = -1;
 
     if (FileExists(fileName))
     {
@@ -2383,16 +2383,16 @@ int FileRemove(std::string_view fileNameView)
 
 // Copy file from one path to another
 // NOTE: If destination path does not exist, it is created!
-int FileCopy(std::string_view srcPathView, std::string_view dstPathView)
+i32 FileCopy(std::string_view srcPathView, std::string_view dstPathView)
 {
     const std::string srcPathStr(srcPathView);
     const char *srcPath = srcPathStr.c_str();
     const std::string dstPathStr(dstPathView);
     const char *dstPath = dstPathStr.c_str();
 
-    int result = -1;
-    int srcDataSize = 0;
-    unsigned char *srcFileData = LoadFileData(srcPath, &srcDataSize);
+    i32 result = -1;
+    i32 srcDataSize = 0;
+    u8 *srcFileData = LoadFileData(srcPath, &srcDataSize);
 
     if ((srcFileData != nullptr) && (srcDataSize > 0))
     {
@@ -2414,14 +2414,14 @@ int FileCopy(std::string_view srcPathView, std::string_view dstPathView)
 
 // Move file from one directory to another
 // NOTE: If dst directories do not exists they are created
-int FileMove(std::string_view srcPathView, std::string_view dstPathView)
+i32 FileMove(std::string_view srcPathView, std::string_view dstPathView)
 {
     const std::string srcPathStr(srcPathView);
     const char *srcPath = srcPathStr.c_str();
     const std::string dstPathStr(dstPathView);
     const char *dstPath = dstPathStr.c_str();
 
-    int result = -1;
+    i32 result = -1;
 
     if (FileExists(srcPath))
     {
@@ -2445,7 +2445,7 @@ int FileMove(std::string_view srcPathView, std::string_view dstPathView)
 
 // Replace text in an existing file
 // WARNING: DEPENDENCY: [rtext] module
-int FileTextReplace(std::string_view fileNameView, std::string_view searchView, std::string_view replacementView)
+i32 FileTextReplace(std::string_view fileNameView, std::string_view searchView, std::string_view replacementView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
@@ -2454,7 +2454,7 @@ int FileTextReplace(std::string_view fileNameView, std::string_view searchView, 
     const std::string replacementStr(replacementView);
     const char *replacement = replacementStr.c_str();
 
-    int result = -1;
+    i32 result = -1;
 
 #if SUPPORT_MODULE_RTEXT
     if (FileExists(fileName))
@@ -2476,14 +2476,14 @@ int FileTextReplace(std::string_view fileNameView, std::string_view searchView, 
 
 // Find text index position in existing file
 // WARNING: DEPENDENCY: [rtext] module
-int FileTextFindIndex(std::string_view fileNameView, std::string_view searchView)
+i32 FileTextFindIndex(std::string_view fileNameView, std::string_view searchView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
     const std::string searchStr(searchView);
     const char *search = searchStr.c_str();
 
-    int result = -1;
+    i32 result = -1;
 
     if (FileExists(fileName))
     {
@@ -2491,7 +2491,7 @@ int FileTextFindIndex(std::string_view fileNameView, std::string_view searchView
         if (!fileText.empty())
         {
             const size_t pos = fileText.find(search);
-            if (pos != std::string::npos) result = static_cast<int>(pos);
+            if (pos != std::string::npos) result = static_cast<i32>(pos);
         }
     }
 
@@ -2534,23 +2534,23 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
 
     if (!fileExt.empty())
     {
-        const int fileExtLength = static_cast<int>(fileExt.size());
+        const i32 fileExtLength = static_cast<i32>(fileExt.size());
         char fileExtLower[16] = { 0 };
-        for (int i = 0; (i < fileExtLength) && (i < 15); i++)
+        for (i32 i = 0; (i < fileExtLength) && (i < 15); i++)
         {
             // Copy and convert to lower-case
             if ((fileExt[i] >= 'A') && (fileExt[i] <= 'Z')) fileExtLower[i] =  fileExt[i] + 32;
             else fileExtLower[i] =  fileExt[i];
         }
 
-        int extCount = 1;
-        const int extLength = static_cast<int>(strlen(ext));
+        i32 extCount = 1;
+        const i32 extLength = static_cast<i32>(strlen(ext));
         char *extList = static_cast<char *>(calloc(extLength + 1, 1));
         char *extListPtrs[MAX_FILE_EXTENSIONS] = { nullptr };
         memcpy(extList, ext, extLength);
         extListPtrs[0] = extList;
 
-        for (int i = 0; i < extLength; i++)
+        for (i32 i = 0; i < extLength; i++)
         {
             // Convert to lower-case if extension is upper-case
             if ((extList[i] >= 'A') && (extList[i] <= 'Z')) extList[i] += 32;
@@ -2568,7 +2568,7 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
             }
         }
 
-        for (int i = 0; i < extCount; i++)
+        for (i32 i = 0; i < extCount; i++)
         {
             // Consider the case where extension provided
             // does not start with the '.'
@@ -2629,12 +2629,12 @@ bool DirectoryExists(std::string_view dirPathView)
 
 // Get file length in bytes
 // NOTE: GetFileSize() conflicts with windows.h
-int GetFileLength(std::string_view fileNameView)
+i32 GetFileLength(std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    int size = 0;
+    i32 size = 0;
 
     // NOTE: On Unix-like systems, it can by used the POSIX system call: stat(),
     // but depending on the platform that call could not be available
@@ -2647,11 +2647,11 @@ int GetFileLength(std::string_view fileNameView)
     if (file != nullptr)
     {
         fseek(file, 0L, SEEK_END);
-        const long int fileSize = ftell(file);
+        const i32 fileSize = ftell(file);
 
         // Check for size overflow (INT_MAX)
         if (fileSize > 2147483647) logMessage(LogLevel::warn, std::format("[{}] File size overflows expected limit, do not use GetFileLength()", fileName));
-        else size = static_cast<int>(fileSize);
+        else size = static_cast<i32>(fileSize);
 
         fclose(file);
     }
@@ -2733,9 +2733,9 @@ std::string GetFileNameWithoutExt(std::string_view filePathView)
     {
         const std::string baseName = GetFileName(filePath);
         snprintf(fileName, MAX_FILENAME_LENGTH, "%s", baseName.c_str()); // Get filename.ext without path
-        const int fileNameLength = static_cast<int>(strlen(fileName));   // Get size in bytes
+        const i32 fileNameLength = static_cast<i32>(strlen(fileName));   // Get size in bytes
 
-        for (int i = fileNameLength; i > 0; i--) // Reverse search '.'
+        for (i32 i = fileNameLength; i > 0; i--) // Reverse search '.'
         {
             if (fileName[i] == '.')
             {
@@ -2790,8 +2790,8 @@ std::string GetDirectoryPath(std::string_view filePathView)
         }
         else
         {
-            const int dirPathOffset = isRelative? 2 : 0;          // Skip "./" added for relative paths
-            const int dirPathLength = static_cast<int>(lastSlash - filePath);
+            const i32 dirPathOffset = isRelative? 2 : 0;          // Skip "./" added for relative paths
+            const i32 dirPathLength = static_cast<i32>(lastSlash - filePath);
 
             if ((dirPathOffset + dirPathLength) < MAX_FILEPATH_LENGTH)
             {
@@ -2818,9 +2818,9 @@ std::string GetPrevDirectoryPath(std::string_view dirPathView)
     static char prevDirPath[MAX_FILEPATH_LENGTH] = { 0 };
     memset(prevDirPath, 0, MAX_FILEPATH_LENGTH);
 
-    const int lastIndex = static_cast<int>(strlen(dirPath)) - 1;
+    const i32 lastIndex = static_cast<i32>(strlen(dirPath)) - 1;
     bool isFile = IsPathFile(dirPath);
-    for (int i = lastIndex; i >= 0; i--)
+    for (i32 i = lastIndex; i >= 0; i--)
     {
         // If the character is a path separator.
         if ((dirPath[i] == '\\') || (dirPath[i] == '/'))
@@ -2862,10 +2862,10 @@ std::string GetApplicationDirectory(void)
     memset(appDir, 0, MAX_FILEPATH_LENGTH);
 
 #if defined(_WIN32)
-    int len = 0;
+    i32 len = 0;
 
     #if defined(UNICODE)
-    unsigned short widePath[MAX_PATH];
+    u16 widePath[MAX_PATH];
     len = GetModuleFileNameW(nullptr, static_cast<wchar_t *>(widePath), MAX_PATH);
     len = WideCharToMultiByte(0, 0, static_cast<wchar_t *>(widePath), len, appDir, MAX_PATH, nullptr, nullptr);
     #else
@@ -2874,7 +2874,7 @@ std::string GetApplicationDirectory(void)
 
     if (len > 0)
     {
-        for (int i = len; i >= 0; i--)
+        for (i32 i = len; i >= 0; i--)
         {
             if (appDir[i] == '\\')
             {
@@ -2891,12 +2891,12 @@ std::string GetApplicationDirectory(void)
 
 #elif defined(__linux__)
 
-    const unsigned int size = sizeof(appDir);
+    const u32 size = sizeof(appDir);
     const ssize_t len = readlink("/proc/self/exe", appDir, size);
 
     if (len > 0)
     {
-        for (int i = len; i >= 0; i--)
+        for (i32 i = len; i >= 0; i--)
         {
             if (appDir[i] == '/')
             {
@@ -2917,8 +2917,8 @@ std::string GetApplicationDirectory(void)
 
     if (_NSGetExecutablePath(appDir, &size) == 0)
     {
-        int appDirLength = static_cast<int>(strlen(appDir));
-        for (int i = appDirLength; i >= 0; i--)
+        i32 appDirLength = static_cast<i32>(strlen(appDir));
+        for (i32 i = appDirLength; i >= 0; i--)
         {
             if (appDir[i] == '/')
             {
@@ -2936,12 +2936,12 @@ std::string GetApplicationDirectory(void)
 #elif defined(__FreeBSD__)
 
     size_t size = sizeof(appDir);
-    int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
+    i32 mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PATHNAME, -1};
 
     if (sysctl(mib, 4, appDir, &size, nullptr, 0) == 0)
     {
-        int appDirLength = static_cast<int>(strlen(appDir));
-        for (int i = appDirLength; i >= 0; i--)
+        i32 appDirLength = static_cast<i32>(strlen(appDir));
+        for (i32 i = appDirLength; i >= 0; i--)
         {
             if (appDir[i] == '/')
             {
@@ -3006,7 +3006,7 @@ FilePathList LoadDirectoryFilesEx(std::string_view basePathView, std::string_vie
 }
 
 // Create directories (including full path requested), returns 0 on success
-int MakeDirectory(std::string_view dirPathView)
+i32 MakeDirectory(std::string_view dirPathView)
 {
     const std::string dirPathStr(dirPathView);
     const char *dirPath = dirPathStr.c_str();
@@ -3015,12 +3015,12 @@ int MakeDirectory(std::string_view dirPathView)
     if (DirectoryExists(dirPath)) return 0;                      // Path already exists (is valid)
 
     // Copy path string to avoid modifying original
-    const int dirPathLength = static_cast<int>(strlen(dirPath)) + 1;
+    const i32 dirPathLength = static_cast<i32>(strlen(dirPath)) + 1;
     char *pathcpy = static_cast<char *>(calloc(dirPathLength, 1));
     memcpy(pathcpy, dirPath, dirPathLength);
 
     // Iterate over pathcpy, create each subdirectory as needed
-    for (int i = 0; (i < dirPathLength) && (pathcpy[i] != '\0'); i++)
+    for (i32 i = 0; (i < dirPathLength) && (pathcpy[i] != '\0'); i++)
     {
         if (pathcpy[i] == ':') i++;
         else
@@ -3046,14 +3046,14 @@ int MakeDirectory(std::string_view dirPathView)
 }
 
 // Change working directory, returns true on success
-int ChangeDirectory(std::string_view dirPathView)
+i32 ChangeDirectory(std::string_view dirPathView)
 {
     const std::string dirPathStr(dirPathView);
     const char *dirPath = dirPathStr.c_str();
 
     // NOTE: On success, CHDIR() return 0; on error, returns -1 and errno is set to indicate the error,
     // depending on the filesystem, other errors can be returned
-    const int result = CHDIR(dirPath);
+    const i32 result = CHDIR(dirPath);
 
     if (result != 0) logMessage(LogLevel::warn, std::format("SYSTEM: Failed to change to directory: {}", dirPath));
     else logMessage(LogLevel::info, std::format("SYSTEM: Working Directory: {}", dirPath));
@@ -3097,7 +3097,7 @@ bool IsPathAbsolute(std::string_view pathView)
     const std::string pathStr(pathView);
     const char *path = pathStr.c_str();
 
-    int result = false;
+    i32 result = false;
 
     if ((path != nullptr) && (path[0] != '\0'))
     {
@@ -3126,10 +3126,10 @@ bool IsFileNameValid(std::string_view fileNameView)
 
     if ((fileName != nullptr) && (fileName[0] != '\0'))
     {
-        const int fileNameLength = static_cast<int>(strlen(fileName));
+        const i32 fileNameLength = static_cast<i32>(strlen(fileName));
         bool allPeriods = true;
 
-        for (int i = 0; i < fileNameLength; i++)
+        for (i32 i = 0; i < fileNameLength; i++)
         {
             // Check invalid characters
             if ((fileName[i] == '<') ||
@@ -3143,7 +3143,7 @@ bool IsFileNameValid(std::string_view fileNameView)
                 (fileName[i] == '*')) { valid = false; break; }
 
             // Check non-glyph characters
-            if (static_cast<unsigned char>(fileName[i]) < 32) { valid = false; break; }
+            if (static_cast<u8>(fileName[i]) < 32) { valid = false; break; }
 
             // Check if filename is not all periods
             if (fileName[i] != '.') allPeriods = false;
@@ -3191,13 +3191,13 @@ FilePathList LoadDroppedFiles(void)
     FilePathList files;
 
     files.paths.reserve(CORE.Window.dropFileCount);
-    for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++) files.paths.emplace_back(CORE.Window.dropFilepaths[i]);
+    for (u32 i = 0; i < CORE.Window.dropFileCount; i++) files.paths.emplace_back(CORE.Window.dropFilepaths[i]);
 
     return files;
 }
 
 // Get the file count in a directory
-unsigned int GetDirectoryFileCount(std::string_view dirPathView)
+u32 GetDirectoryFileCount(std::string_view dirPathView)
 {
     const std::string dirPathStr(dirPathView);
     const char *dirPath = dirPathStr.c_str();
@@ -3206,14 +3206,14 @@ unsigned int GetDirectoryFileCount(std::string_view dirPathView)
 }
 
 // Get the file count in a directory with extension filtering and recursive directory scan. Use 'FILE_FILTER_TAG_DIR_ONLY' in the filter string to include directories in the result
-unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_view filterView, bool scanSubdirs)
+u32 GetDirectoryFileCountEx(std::string_view basePathView, std::string_view filterView, bool scanSubdirs)
 {
     const std::string basePathStr(basePathView);
     const char *basePath = basePathStr.c_str();
     const std::string filterStr(filterView);
     const char *filter = filterStr.c_str();
 
-    unsigned int fileCounter = 0;
+    u32 fileCounter = 0;
 
     // WARNING: Path can not be static or it will be reused between recursive function calls!
     char path[MAX_FILEPATH_LENGTH] = { 0 };
@@ -3231,9 +3231,9 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
             {
                 // Construct new path from our base path
                 #if defined(_WIN32)
-                    int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s\\%s", basePath, entity->d_name);
+                    i32 pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s\\%s", basePath, entity->d_name);
                 #else
-                    const int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, entity->d_name);
+                    const i32 pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, entity->d_name);
                 #endif
                 // Don't add to count if path too long
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
@@ -3263,17 +3263,17 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
 //----------------------------------------------------------------------------------
 
 // Compress data (DEFLATE algorithm)
-unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDataSize)
+u8 *CompressData(const u8 *data, i32 dataSize, i32 *compDataSize)
 {
     #define COMPRESSION_QUALITY_DEFLATE  8
 
-    unsigned char *compData = nullptr;
+    u8 *compData = nullptr;
 
 #if SUPPORT_COMPRESSION_API
     // Compress data and generate a valid DEFLATE stream
     struct sdefl *sdefl = static_cast<struct sdefl *>(calloc(1, sizeof(struct sdefl)));   // WARNING: Possible stack overflow, struct sdefl is almost 1MB
-    const int bounds = sdefl_bound(dataSize);
-    compData = static_cast<unsigned char *>(calloc(bounds, 1));
+    const i32 bounds = sdefl_bound(dataSize);
+    compData = static_cast<u8 *>(calloc(bounds, 1));
 
     *compDataSize = sdeflate(sdefl, compData, data, dataSize, COMPRESSION_QUALITY_DEFLATE);   // Compression level 8, same as stbiw
     free(sdefl);
@@ -3285,19 +3285,19 @@ unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDa
 }
 
 // Decompress data (DEFLATE algorithm)
-unsigned char *DecompressData(const unsigned char *compData, int compDataSize, int *dataSize)
+u8 *DecompressData(const u8 *compData, i32 compDataSize, i32 *dataSize)
 {
-    unsigned char *data = nullptr;
+    u8 *data = nullptr;
 
 #if SUPPORT_COMPRESSION_API
     // Decompress data from a valid DEFLATE stream
-    unsigned char *data0 = static_cast<unsigned char *>(calloc(MAX_DECOMPRESSION_SIZE*1024*1024, 1));
-    const int size = sinflate(data0, MAX_DECOMPRESSION_SIZE*1024*1024, compData, compDataSize);
+    u8 *data0 = static_cast<u8 *>(calloc(MAX_DECOMPRESSION_SIZE*1024*1024, 1));
+    const i32 size = sinflate(data0, MAX_DECOMPRESSION_SIZE*1024*1024, compData, compDataSize);
 
     // WARNING: realloc can make (and leave) data copies in memory,
     // that can be a security concern in case of compression of sensitive data
     // So, using a second buffer to copy data manually, wiping original buffer memory
-    data = static_cast<unsigned char *>(calloc(size, 1));
+    data = static_cast<u8 *>(calloc(size, 1));
     memcpy(data, data0, size);
     memset(data0, 0, MAX_DECOMPRESSION_SIZE*1024*1024); // Wipe memory, is memset() safe?
     free(data0);
@@ -3312,17 +3312,17 @@ unsigned char *DecompressData(const unsigned char *compData, int compDataSize, i
 
 // Encode data to Base64 string
 // NOTE: Returned string includes NULL terminator, considered on outputSize
-std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outputSize)
+std::string EncodeDataBase64(const u8 *data, i32 dataSize, i32 *outputSize)
 {
     // Base64 conversion table from RFC 4648 [0..63]
     // NOTE: They represent 64 values (6 bits), to encode 3 bytes of data into 4 "sextets" (6bit characters)
     static constexpr char base64EncodeTable[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     // Compute expected size and padding
-    int paddedSize = dataSize;
+    i32 paddedSize = dataSize;
     while (paddedSize%3 != 0) paddedSize++; // Padding bytes to round 4*(dataSize/3) to 4 bytes
-    int estimatedOutputSize = 4*(paddedSize/3);
-    const int padding = paddedSize - dataSize;
+    i32 estimatedOutputSize = 4*(paddedSize/3);
+    const i32 padding = paddedSize - dataSize;
 
     // Adding null terminator to string
     estimatedOutputSize += 1;
@@ -3330,13 +3330,13 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
     // Load some memory to store encoded string
     char *encodedData = static_cast<char *>(calloc(estimatedOutputSize, 1));
 
-    int outputCount = 0;
-    for (int i = 0; i < dataSize;)
+    i32 outputCount = 0;
+    for (i32 i = 0; i < dataSize;)
     {
-        unsigned int octetA = 0;
-        unsigned int octetB = 0;
-        unsigned int octetC = 0;
-        unsigned int octetPack = 0;
+        u32 octetA = 0;
+        u32 octetB = 0;
+        u32 octetC = 0;
+        u32 octetPack = 0;
 
         octetA = data[i];                               // Generates 2 sextets
         octetB = ((i + 1) < dataSize)? data[i + 1] : 0; // Generates 3 sextets
@@ -3344,16 +3344,16 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
 
         octetPack = (octetA << 16) | (octetB << 8) | octetC;
 
-        encodedData[outputCount + 0] = static_cast<unsigned char>(base64EncodeTable[(octetPack >> 18) & 0x3f]);
-        encodedData[outputCount + 1] = static_cast<unsigned char>(base64EncodeTable[(octetPack >> 12) & 0x3f]);
-        encodedData[outputCount + 2] = static_cast<unsigned char>(base64EncodeTable[(octetPack >> 6) & 0x3f]);
-        encodedData[outputCount + 3] = static_cast<unsigned char>(base64EncodeTable[octetPack & 0x3f]);
+        encodedData[outputCount + 0] = static_cast<u8>(base64EncodeTable[(octetPack >> 18) & 0x3f]);
+        encodedData[outputCount + 1] = static_cast<u8>(base64EncodeTable[(octetPack >> 12) & 0x3f]);
+        encodedData[outputCount + 2] = static_cast<u8>(base64EncodeTable[(octetPack >> 6) & 0x3f]);
+        encodedData[outputCount + 3] = static_cast<u8>(base64EncodeTable[octetPack & 0x3f]);
         outputCount += 4;
         i += 3;
     }
 
     // Add required padding bytes
-    for (int p = 0; p < padding; p++) encodedData[outputCount - p - 1] = '=';
+    for (i32 p = 0; p < padding; p++) encodedData[outputCount - p - 1] = '=';
 
     // Add null terminator to string
     encodedData[outputCount] = '\0';
@@ -3370,7 +3370,7 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
 }
 
 // Decode Base64 string (expected NULL terminated)
-unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
+u8 * DecodeDataBase64(std::string_view textView, i32 *outputSize)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -3379,11 +3379,11 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
     // NOTE: Following ASCII order [0..255] assigning the expected sixtet value to
     // every character in the corresponding ASCII position
     // NOTE: Built with a lambda initializer, designated initializers (['A'] = 0) are not valid C++
-    static constexpr std::array<unsigned char, 256> base64DecodeTable = []() {
-        std::array<unsigned char, 256> table{};
-        for (int c = 'A'; c <= 'Z'; c++) table[c] = static_cast<unsigned char>(c - 'A');
-        for (int c = 'a'; c <= 'z'; c++) table[c] = static_cast<unsigned char>(c - 'a' + 26);
-        for (int c = '0'; c <= '9'; c++) table[c] = static_cast<unsigned char>(c - '0' + 52);
+    static constexpr std::array<u8, 256> base64DecodeTable = []() {
+        std::array<u8, 256> table{};
+        for (i32 c = 'A'; c <= 'Z'; c++) table[c] = static_cast<u8>(c - 'A');
+        for (i32 c = 'a'; c <= 'z'; c++) table[c] = static_cast<u8>(c - 'a' + 26);
+        for (i32 c = '0'; c <= '9'; c++) table[c] = static_cast<u8>(c - '0' + 52);
         table['+'] = 62;
         table['/'] = 63;
         return table;
@@ -3393,20 +3393,20 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
     if (text == nullptr) return nullptr;
 
     // Compute expected size and padding
-    const int dataSize = static_cast<int>(strlen(text)); // WARNING: Expecting NULL terminated strings!
-    int ending = dataSize - 1;
-    int padding = 0;
+    const i32 dataSize = static_cast<i32>(strlen(text)); // WARNING: Expecting NULL terminated strings!
+    i32 ending = dataSize - 1;
+    i32 padding = 0;
     while ((ending >= 0) && (text[ending] == '=')) { padding++; ending--; }
-    int estimatedOutputSize = 3*(dataSize/4) - padding;
+    i32 estimatedOutputSize = 3*(dataSize/4) - padding;
     if (estimatedOutputSize < 0) estimatedOutputSize = 0;   // Invalid input, i.e. "QQ=" or "===="
-    const int maxOutputSize = 3*(dataSize/4);
+    const i32 maxOutputSize = 3*(dataSize/4);
 
     // Load some memory to store decoded data
     // NOTE: Allocated enough size to include padding
-    unsigned char *decodedData = static_cast<unsigned char *>(calloc(maxOutputSize, 1));
+    u8 *decodedData = static_cast<u8 *>(calloc(maxOutputSize, 1));
 
-    int outputCount = 0;
-    for (int i = 0; i < dataSize;)
+    i32 outputCount = 0;
+    for (i32 i = 0; i < dataSize;)
     {
         // Every 4 sextets must generate 3 octets
         if ((i + 2) >= dataSize)
@@ -3415,12 +3415,12 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
             break;
         }
 
-        const unsigned int sixtetA = base64DecodeTable[static_cast<unsigned char>(text[i])];
-        const unsigned int sixtetB = base64DecodeTable[static_cast<unsigned char>(text[i + 1])];
-        const unsigned int sixtetC = (((i + 2) < dataSize) && static_cast<unsigned char>(text[i + 2]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 2])] : 0;
-        const unsigned int sixtetD = (((i + 3) < dataSize) && static_cast<unsigned char>(text[i + 3]) != '=')? base64DecodeTable[static_cast<unsigned char>(text[i + 3])] : 0;
+        const u32 sixtetA = base64DecodeTable[static_cast<u8>(text[i])];
+        const u32 sixtetB = base64DecodeTable[static_cast<u8>(text[i + 1])];
+        const u32 sixtetC = (((i + 2) < dataSize) && static_cast<u8>(text[i + 2]) != '=')? base64DecodeTable[static_cast<u8>(text[i + 2])] : 0;
+        const u32 sixtetD = (((i + 3) < dataSize) && static_cast<u8>(text[i + 3]) != '=')? base64DecodeTable[static_cast<u8>(text[i + 3])] : 0;
 
-        const unsigned int octetPack = (sixtetA << 18) | (sixtetB << 12)  | (sixtetC << 6) | sixtetD;
+        const u32 octetPack = (sixtetA << 18) | (sixtetB << 12)  | (sixtetC << 6) | sixtetD;
 
         if ((outputCount + 3) > maxOutputSize)
         {
@@ -3442,9 +3442,9 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
 }
 
 // Compute CRC32 hash code
-unsigned int ComputeCRC32(const unsigned char *data, int dataSize)
+u32 ComputeCRC32(const u8 *data, i32 dataSize)
 {
-    static const unsigned int crcTable[256] = {
+    static const u32 crcTable[256] = {
         0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
         0x0edb8832, 0x79dcb8a4, 0xe0d5e91e, 0x97d2d988, 0x09b64c2b, 0x7eb17cbd, 0xe7b82d07, 0x90bf1d91,
         0x1db71064, 0x6ab020f2, 0xf3b97148, 0x84be41de, 0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7,
@@ -3479,25 +3479,25 @@ unsigned int ComputeCRC32(const unsigned char *data, int dataSize)
         0xb3667a2e, 0xc4614ab8, 0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b, 0x2d02ef8d
     };
 
-    unsigned int crc = ~0u;
+    u32 crc = ~0u;
 
-    for (int i = 0; i < dataSize; i++) crc = (crc >> 8) ^ crcTable[data[i] ^ (crc & 0xff)];
+    for (i32 i = 0; i < dataSize; i++) crc = (crc >> 8) ^ crcTable[data[i] ^ (crc & 0xff)];
 
     return ~crc;
 }
 
 // Compute MD5 hash code
 // NOTE: Returns a static int[4] array (16 bytes)
-unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
+u32 *ComputeMD5(const u8 *data, i32 dataSize)
 {
     #define ROTATE_LEFT(x, c) (((x) << (c)) | ((x) >> (32 - (c))))
 
-    static unsigned int hash[4] = { 0 };  // Hash to be returned
+    static u32 hash[4] = { 0 };  // Hash to be returned
 
     // WARNING: All variables are unsigned 32 bit and wrap modulo 2^32 when calculating
 
     // NOTE: r specifies the per-round shift amounts
-    const unsigned int r[] = {
+    const u32 r[] = {
         7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
         5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20, 5,  9, 14, 20,
         4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
@@ -3505,7 +3505,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
     };
 
     // Using binary integer part of the sines of integers (in radians) as constants
-    const unsigned int k[] = {
+    const u32 k[] = {
         0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
         0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
         0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
@@ -3538,31 +3538,31 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
     // Append '0' bit until message length in bit 448 (mod 512)
     // Append length mod (2 pow 64) to message
 
-    const int newDataSize = ((((dataSize + 8)/64) + 1)*64) - 8;
+    const i32 newDataSize = ((((dataSize + 8)/64) + 1)*64) - 8;
 
-    unsigned char *msg = static_cast<unsigned char *>(calloc(newDataSize + 64, 1)); // Initialize with '0' bits, allocating 64 extra bytes
+    u8 *msg = static_cast<u8 *>(calloc(newDataSize + 64, 1)); // Initialize with '0' bits, allocating 64 extra bytes
     memcpy(msg, data, dataSize);
     msg[dataSize] = 128; // Write the '1' bit
 
-    unsigned int bitsLen = 8*dataSize;
+    u32 bitsLen = 8*dataSize;
     memcpy(msg + newDataSize, &bitsLen, 4); // Append the len in bits at the end of the buffer
 
     // Process the message in successive 512-bit chunks for each 512-bit chunk of message
-    for (int offset = 0; offset < newDataSize; offset += 64)  // 512/8
+    for (i32 offset = 0; offset < newDataSize; offset += 64)  // 512/8
     {
         // Break chunk into sixteen 32-bit words w[j], 0 <= j <= 15
-        unsigned int *w = reinterpret_cast<unsigned int *>(msg + offset);
+        u32 *w = reinterpret_cast<u32 *>(msg + offset);
 
         // Initialize hash value for this chunk
-        unsigned int a = hash[0];
-        unsigned int b = hash[1];
-        unsigned int c = hash[2];
-        unsigned int d = hash[3];
+        u32 a = hash[0];
+        u32 b = hash[1];
+        u32 c = hash[2];
+        u32 d = hash[3];
 
-        for (int i = 0; i < 64; i++)
+        for (i32 i = 0; i < 64; i++)
         {
-            unsigned int f = 0;
-            unsigned int g = 0;
+            u32 f = 0;
+            u32 g = 0;
 
             if (i < 16)
             {
@@ -3585,7 +3585,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
                 g = (7*i)%16;
             }
 
-            const unsigned int temp = d;
+            const u32 temp = d;
             d = c;
             c = b;
             b = b + ROTATE_LEFT((a + f + k[i] + w[g]), r[i]);
@@ -3606,11 +3606,11 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
 
 // Compute SHA-1 hash code
 // NOTE: Returns a static int[5] array (20 bytes)
-unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
+u32 *ComputeSHA1(const u8 *data, i32 dataSize)
 {
     #define SHA1_ROTATE_LEFT(x, c) (((x) << (c)) | ((x) >> (32 - (c))))
 
-    static unsigned int hash[5] = { 0 };  // Hash to be returned
+    static u32 hash[5] = { 0 };  // Hash to be returned
 
     // Initialize hash values
     hash[0] = 0x67452301;
@@ -3628,49 +3628,49 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
     // Append '0' bit until message length in bit 448 (mod 512)
     // Append length mod (2 pow 64) to message
 
-    const int newDataSize = ((((dataSize + 8)/64) + 1)*64);
+    const i32 newDataSize = ((((dataSize + 8)/64) + 1)*64);
 
-    unsigned char *msg = static_cast<unsigned char *>(calloc(newDataSize, 1)); // Initialize with '0' bits
+    u8 *msg = static_cast<u8 *>(calloc(newDataSize, 1)); // Initialize with '0' bits
     memcpy(msg, data, dataSize);
     msg[dataSize] = 128; // Write the '1' bit
 
     const unsigned long long bitsLen = 8ULL*dataSize;
-    msg[newDataSize - 1] = static_cast<unsigned char>(bitsLen);
-    msg[newDataSize - 2] = static_cast<unsigned char>(bitsLen >> 8);
-    msg[newDataSize - 3] = static_cast<unsigned char>(bitsLen >> 16);
-    msg[newDataSize - 4] = static_cast<unsigned char>(bitsLen >> 24);
-    msg[newDataSize - 5] = static_cast<unsigned char>(bitsLen >> 32);
-    msg[newDataSize - 6] = static_cast<unsigned char>(bitsLen >> 40);
-    msg[newDataSize - 7] = static_cast<unsigned char>(bitsLen >> 48);
-    msg[newDataSize - 8] = static_cast<unsigned char>(bitsLen >> 56);
+    msg[newDataSize - 1] = static_cast<u8>(bitsLen);
+    msg[newDataSize - 2] = static_cast<u8>(bitsLen >> 8);
+    msg[newDataSize - 3] = static_cast<u8>(bitsLen >> 16);
+    msg[newDataSize - 4] = static_cast<u8>(bitsLen >> 24);
+    msg[newDataSize - 5] = static_cast<u8>(bitsLen >> 32);
+    msg[newDataSize - 6] = static_cast<u8>(bitsLen >> 40);
+    msg[newDataSize - 7] = static_cast<u8>(bitsLen >> 48);
+    msg[newDataSize - 8] = static_cast<u8>(bitsLen >> 56);
 
     // Process the message in successive 512-bit chunks
-    for (int offset = 0; offset < newDataSize; offset += 64)  // 512/8
+    for (i32 offset = 0; offset < newDataSize; offset += 64)  // 512/8
     {
         // Break chunk into sixteen 32-bit words w[j], 0 <= j <= 15
-        unsigned int w[80] = { 0 };
-        for (int i = 0; i < 16; i++)
+        u32 w[80] = { 0 };
+        for (i32 i = 0; i < 16; i++)
         {
-            w[i] = (static_cast<unsigned int>(msg[offset + (i*4) + 0]) << 24) |
-                   (static_cast<unsigned int>(msg[offset + (i*4) + 1]) << 16) |
-                   (static_cast<unsigned int>(msg[offset + (i*4) + 2]) << 8) |
-                   (static_cast<unsigned int>(msg[offset + (i*4) + 3]));
+            w[i] = (static_cast<u32>(msg[offset + (i*4) + 0]) << 24) |
+                   (static_cast<u32>(msg[offset + (i*4) + 1]) << 16) |
+                   (static_cast<u32>(msg[offset + (i*4) + 2]) << 8) |
+                   (static_cast<u32>(msg[offset + (i*4) + 3]));
         }
 
         // Message schedule: extend the sixteen 32-bit words into eighty 32-bit words:
-        for (int i = 16; i < 80; i++) w[i] = SHA1_ROTATE_LEFT(w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16], 1);
+        for (i32 i = 16; i < 80; i++) w[i] = SHA1_ROTATE_LEFT(w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16], 1);
 
         // Initialize hash value for this chunk
-        unsigned int a = hash[0];
-        unsigned int b = hash[1];
-        unsigned int c = hash[2];
-        unsigned int d = hash[3];
-        unsigned int e = hash[4];
+        u32 a = hash[0];
+        u32 b = hash[1];
+        u32 c = hash[2];
+        u32 d = hash[3];
+        u32 e = hash[4];
 
-        for (int i = 0; i < 80; i++)
+        for (i32 i = 0; i < 80; i++)
         {
-            unsigned int f = 0;
-            unsigned int k = 0;
+            u32 f = 0;
+            u32 k = 0;
 
             if (i < 20)
             {
@@ -3693,7 +3693,7 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
                 k = 0xCA62C1D6;
             }
 
-            const unsigned int temp = SHA1_ROTATE_LEFT(a, 5) + f + e + k + w[i];
+            const u32 temp = SHA1_ROTATE_LEFT(a, 5) + f + e + k + w[i];
             e = d;
             d = c;
             c = SHA1_ROTATE_LEFT(b, 30);
@@ -3716,13 +3716,13 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
 
 // Compute SHA-256 hash code
 // NOTE: Returns a static int[8] array (32 bytes)
-unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
+u32 *ComputeSHA256(const u8 *data, i32 dataSize)
 {
-    #define SHA256_ROTATE_RIGHT(x, c) ((x >> c) | (x << ((sizeof(unsigned int)*8) - c)))
+    #define SHA256_ROTATE_RIGHT(x, c) ((x >> c) | (x << ((sizeof(u32)*8) - c)))
     #define SHA256_A0(x) (SHA256_ROTATE_RIGHT(x, 7) ^ SHA256_ROTATE_RIGHT(x, 18) ^ (x >> 3))
     #define SHA256_A1(x) (SHA256_ROTATE_RIGHT(x, 17) ^ SHA256_ROTATE_RIGHT(x, 19) ^ (x >> 10))
 
-    static constexpr unsigned int k[64] = {
+    static constexpr u32 k[64] = {
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
         0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
         0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
@@ -3741,7 +3741,7 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
         0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
     };
 
-    static unsigned int hash[8] = { 0 };
+    static u32 hash[8] = { 0 };
     hash[0] = 0x6A09e667;
     hash[1] = 0xbb67ae85;
     hash[2] = 0x3c6ef372;
@@ -3754,45 +3754,45 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
     const unsigned long long bitLen = 8ULL*dataSize;
     unsigned long long paddedSize = dataSize + sizeof(bitLen); // Reserve room for the 64 bit message length appended at the end
     paddedSize += (64 - (paddedSize%64));
-    unsigned char *buffer = static_cast<unsigned char *>(calloc(paddedSize, sizeof(unsigned char)));
+    u8 *buffer = static_cast<u8 *>(calloc(paddedSize, sizeof(u8)));
 
     memcpy(buffer, data, dataSize);
     buffer[dataSize] = 0x80;
-    for (int i = 1; i <= sizeof(bitLen); i++)
+    for (i32 i = 1; i <= sizeof(bitLen); i++)
     {
         buffer[(paddedSize - sizeof(bitLen)) + (i - 1)] = (bitLen >> (8*(sizeof(bitLen) - i))) & 0xFF;
     }
 
     for (unsigned long long blockN = 0; blockN < paddedSize/64; blockN++)
     {
-        unsigned int a = hash[0];
-        unsigned int b = hash[1];
-        unsigned int c = hash[2];
-        unsigned int d = hash[3];
-        unsigned int e = hash[4];
-        unsigned int f = hash[5];
-        unsigned int g = hash[6];
-        unsigned int h = hash[7];
+        u32 a = hash[0];
+        u32 b = hash[1];
+        u32 c = hash[2];
+        u32 d = hash[3];
+        u32 e = hash[4];
+        u32 f = hash[5];
+        u32 g = hash[6];
+        u32 h = hash[7];
 
-        unsigned char *block = buffer + (blockN*64);
-        unsigned int w[64] = { 0 };
-        for (int i = 0; i < 16; i++)
+        u8 *block = buffer + (blockN*64);
+        u32 w[64] = { 0 };
+        for (i32 i = 0; i < 16; i++)
         {
-            w[i] = (static_cast<unsigned int>(block[i*4 + 0]) << 24) |
-                   (static_cast<unsigned int>(block[i*4 + 1]) << 16) |
-                   (static_cast<unsigned int>(block[i*4 + 2]) << 8)  |
-                   (static_cast<unsigned int>(block[i*4 + 3]));
+            w[i] = (static_cast<u32>(block[i*4 + 0]) << 24) |
+                   (static_cast<u32>(block[i*4 + 1]) << 16) |
+                   (static_cast<u32>(block[i*4 + 2]) << 8)  |
+                   (static_cast<u32>(block[i*4 + 3]));
         }
-        for (int t = 16; t < 64; t++) w[t] = SHA256_A1(w[t - 2]) + w[t - 7] + SHA256_A0(w[t - 15]) + w[t - 16];
+        for (i32 t = 16; t < 64; t++) w[t] = SHA256_A1(w[t - 2]) + w[t - 7] + SHA256_A0(w[t - 15]) + w[t - 16];
 
-        for (int t = 0; t < 64; t++)
+        for (i32 t = 0; t < 64; t++)
         {
-            const unsigned int e1 = (SHA256_ROTATE_RIGHT(e, 6) ^ SHA256_ROTATE_RIGHT(e, 11) ^ SHA256_ROTATE_RIGHT(e, 25));
-            const unsigned int ch = ((e & f) ^ (~e & g));
-            const unsigned int t1 = (h + e1 + ch + k[t] + w[t]);
-            const unsigned int e0 = (SHA256_ROTATE_RIGHT(a, 2) ^ SHA256_ROTATE_RIGHT(a, 13) ^ SHA256_ROTATE_RIGHT(a, 22));
-            const unsigned int maj = ((a & b) ^ (a & c) ^ (b & c));
-            const unsigned int t2 = e0 + maj;
+            const u32 e1 = (SHA256_ROTATE_RIGHT(e, 6) ^ SHA256_ROTATE_RIGHT(e, 11) ^ SHA256_ROTATE_RIGHT(e, 25));
+            const u32 ch = ((e & f) ^ (~e & g));
+            const u32 t1 = (h + e1 + ch + k[t] + w[t]);
+            const u32 e0 = (SHA256_ROTATE_RIGHT(a, 2) ^ SHA256_ROTATE_RIGHT(a, 13) ^ SHA256_ROTATE_RIGHT(a, 22));
+            const u32 maj = ((a & b) ^ (a & c) ^ (b & c));
+            const u32 t2 = e0 + maj;
 
             h = g;
             g = f;
@@ -3865,7 +3865,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 
         if (raeFile != nullptr)
         {
-            unsigned int counter = 0;
+            u32 counter = 0;
             char buffer[256] = { 0 };
             char eventDesc[64] = { 0 };
 
@@ -3953,7 +3953,7 @@ bool ExportAutomationEventList(AutomationEventList list, std::string_view fileNa
     // NOTE: Save to memory buffer and SaveFileText()
     char *txtData = static_cast<char *>(calloc(256*list.count + 2048, sizeof(char))); // 256 characters per line plus some header
 
-    int byteCount = 0;
+    i32 byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "#\n");
     byteCount += sprintf(txtData + byteCount, "# Automation events exporter v1.0 - raylib automation events list\n");
     byteCount += sprintf(txtData + byteCount, "#\n");
@@ -3968,7 +3968,7 @@ bool ExportAutomationEventList(AutomationEventList list, std::string_view fileNa
 
     // Add events data
     byteCount += sprintf(txtData + byteCount, "c %i\n", list.count);
-    for (unsigned int i = 0; i < list.count; i++)
+    for (u32 i = 0; i < list.count; i++)
     {
         if ((list.events[i].type < 0) || (list.events[i].type >= MAX_AUTOMATION_EVENT_TYPES)) list.events[i].type = 0;
         
@@ -3994,7 +3994,7 @@ void SetAutomationEventList(AutomationEventList *list)
 }
 
 // Set automation event internal base frame to start recording
-void SetAutomationEventBaseFrame(int frame)
+void SetAutomationEventBaseFrame(i32 frame)
 {
     CORE.Time.frameCounter = frame;
 }
@@ -4044,20 +4044,20 @@ void PlayAutomationEvent(AutomationEvent event)
             case INPUT_MOUSE_BUTTON_DOWN: CORE.Input.Mouse.currentButtonState[event.params[0]] = true; break;   // param[0]: key
             case INPUT_MOUSE_POSITION:      // param[0]: x, param[1]: y
             {
-                CORE.Input.Mouse.currentPosition.x = static_cast<float>(event.params[0]);
-                CORE.Input.Mouse.currentPosition.y = static_cast<float>(event.params[1]);
+                CORE.Input.Mouse.currentPosition.x = static_cast<f32>(event.params[0]);
+                CORE.Input.Mouse.currentPosition.y = static_cast<f32>(event.params[1]);
             } break;
             case INPUT_MOUSE_WHEEL_MOTION:  // param[0]: x delta, param[1]: y delta
             {
-                CORE.Input.Mouse.currentWheelMove.x = static_cast<float>(event.params[0]);
-                CORE.Input.Mouse.currentWheelMove.y = static_cast<float>(event.params[1]);
+                CORE.Input.Mouse.currentWheelMove.x = static_cast<f32>(event.params[0]);
+                CORE.Input.Mouse.currentWheelMove.y = static_cast<f32>(event.params[1]);
             } break;
             case INPUT_TOUCH_UP: CORE.Input.Touch.currentTouchState[event.params[0]] = false; break;            // param[0]: id
             case INPUT_TOUCH_DOWN: CORE.Input.Touch.currentTouchState[event.params[0]] = true; break;           // param[0]: id
             case INPUT_TOUCH_POSITION:      // param[0]: id, param[1]: x, param[2]: y
             {
-                CORE.Input.Touch.position[event.params[0]].x = static_cast<float>(event.params[1]);
-                CORE.Input.Touch.position[event.params[0]].y = static_cast<float>(event.params[2]);
+                CORE.Input.Touch.position[event.params[0]].x = static_cast<f32>(event.params[1]);
+                CORE.Input.Touch.position[event.params[0]].y = static_cast<f32>(event.params[2]);
             } break;
             case INPUT_GAMEPAD_CONNECT: CORE.Input.Gamepad.ready[event.params[0]] = true; break;                                     // param[0]: gamepad
             case INPUT_GAMEPAD_DISCONNECT: CORE.Input.Gamepad.ready[event.params[0]] = false; break;                                 // param[0]: gamepad
@@ -4065,7 +4065,7 @@ void PlayAutomationEvent(AutomationEvent event)
             case INPUT_GAMEPAD_BUTTON_DOWN: CORE.Input.Gamepad.currentButtonState[event.params[0]][event.params[1]] = true; break;   // param[0]: gamepad, param[1]: button
             case INPUT_GAMEPAD_AXIS_MOTION: // param[0]: gamepad, param[1]: axis, param[2]: delta
             {
-                CORE.Input.Gamepad.axisState[event.params[0]][event.params[1]] = (static_cast<float>(event.params[2])/32768.0f);
+                CORE.Input.Gamepad.axisState[event.params[0]][event.params[1]] = (static_cast<f32>(event.params[2])/32768.0f);
             } break;
     #if SUPPORT_GESTURES_SYSTEM
             case INPUT_GESTURE: GESTURES.current = event.params[0]; break;     // param[0]: gesture (enum Gesture) -> rgestures.h: GESTURES.current
@@ -4097,7 +4097,7 @@ void PlayAutomationEvent(AutomationEvent event)
 //----------------------------------------------------------------------------------
 
 // Check if key has been pressed once
-bool IsKeyPressed(int key)
+bool IsKeyPressed(i32 key)
 {
     bool pressed = false;
 
@@ -4110,7 +4110,7 @@ bool IsKeyPressed(int key)
 }
 
 // Check if key has been pressed again
-bool IsKeyPressedRepeat(int key)
+bool IsKeyPressedRepeat(i32 key)
 {
     bool repeat = false;
 
@@ -4123,7 +4123,7 @@ bool IsKeyPressedRepeat(int key)
 }
 
 // Check if key is being pressed (key held down)
-bool IsKeyDown(int key)
+bool IsKeyDown(i32 key)
 {
     bool down = false;
 
@@ -4136,7 +4136,7 @@ bool IsKeyDown(int key)
 }
 
 // Check if key has been released once
-bool IsKeyReleased(int key)
+bool IsKeyReleased(i32 key)
 {
     bool released = false;
 
@@ -4149,7 +4149,7 @@ bool IsKeyReleased(int key)
 }
 
 // Check if key is NOT being pressed (key not held down)
-bool IsKeyUp(int key)
+bool IsKeyUp(i32 key)
 {
     bool up = false;
 
@@ -4162,9 +4162,9 @@ bool IsKeyUp(int key)
 }
 
 // Get the last key pressed
-int GetKeyPressed(void)
+i32 GetKeyPressed(void)
 {
-    int value = 0;
+    i32 value = 0;
 
     if (CORE.Input.Keyboard.keyPressedQueueCount > 0)
     {
@@ -4172,7 +4172,7 @@ int GetKeyPressed(void)
         value = CORE.Input.Keyboard.keyPressedQueue[0];
 
         // Shift elements 1 step toward the head
-        for (int i = 0; i < (CORE.Input.Keyboard.keyPressedQueueCount - 1); i++)
+        for (i32 i = 0; i < (CORE.Input.Keyboard.keyPressedQueueCount - 1); i++)
             CORE.Input.Keyboard.keyPressedQueue[i] = CORE.Input.Keyboard.keyPressedQueue[i + 1];
 
         // Reset last character in the queue
@@ -4184,9 +4184,9 @@ int GetKeyPressed(void)
 }
 
 // Get the last char pressed
-int GetCharPressed(void)
+i32 GetCharPressed(void)
 {
-    int value = 0;
+    i32 value = 0;
 
     if (CORE.Input.Keyboard.charPressedQueueCount > 0)
     {
@@ -4194,7 +4194,7 @@ int GetCharPressed(void)
         value = CORE.Input.Keyboard.charPressedQueue[0];
 
         // Shift elements 1 step toward the head
-        for (int i = 0; i < (CORE.Input.Keyboard.charPressedQueueCount - 1); i++)
+        for (i32 i = 0; i < (CORE.Input.Keyboard.charPressedQueueCount - 1); i++)
             CORE.Input.Keyboard.charPressedQueue[i] = CORE.Input.Keyboard.charPressedQueue[i + 1];
 
         // Reset last character in the queue
@@ -4207,7 +4207,7 @@ int GetCharPressed(void)
 
 // Set a custom key to exit program
 // NOTE: default exitKey is set to ESCAPE
-void SetExitKey(int key)
+void SetExitKey(i32 key)
 {
     CORE.Input.Keyboard.exitKey = key;
 }
@@ -4220,7 +4220,7 @@ void SetExitKey(int key)
 //int SetGamepadMappings(const char *mappings)
 
 // Check if gamepad is available
-bool IsGamepadAvailable(int gamepad)
+bool IsGamepadAvailable(i32 gamepad)
 {
     bool result = false;
 
@@ -4230,7 +4230,7 @@ bool IsGamepadAvailable(int gamepad)
 }
 
 // Get gamepad internal name id
-std::string GetGamepadName(int gamepad)
+std::string GetGamepadName(i32 gamepad)
 {
     const char *name = nullptr;
 
@@ -4240,7 +4240,7 @@ std::string GetGamepadName(int gamepad)
 }
 
 // Check if gamepad button has been pressed once
-bool IsGamepadButtonPressed(int gamepad, int button)
+bool IsGamepadButtonPressed(i32 gamepad, i32 button)
 {
     bool pressed = false;
 
@@ -4253,7 +4253,7 @@ bool IsGamepadButtonPressed(int gamepad, int button)
 }
 
 // Check if gamepad button is being pressed
-bool IsGamepadButtonDown(int gamepad, int button)
+bool IsGamepadButtonDown(i32 gamepad, i32 button)
 {
     bool down = false;
 
@@ -4266,7 +4266,7 @@ bool IsGamepadButtonDown(int gamepad, int button)
 }
 
 // Check if gamepad button has NOT been pressed once
-bool IsGamepadButtonReleased(int gamepad, int button)
+bool IsGamepadButtonReleased(i32 gamepad, i32 button)
 {
     bool released = false;
 
@@ -4279,7 +4279,7 @@ bool IsGamepadButtonReleased(int gamepad, int button)
 }
 
 // Check if gamepad button is NOT being pressed
-bool IsGamepadButtonUp(int gamepad, int button)
+bool IsGamepadButtonUp(i32 gamepad, i32 button)
 {
     bool up = false;
 
@@ -4293,15 +4293,15 @@ bool IsGamepadButtonUp(int gamepad, int button)
 
 // Get the last gamepad button pressed
 // NOTE: Returns last gamepad button down, down->up change not considered
-int GetGamepadButtonPressed(void)
+i32 GetGamepadButtonPressed(void)
 {
     return CORE.Input.Gamepad.lastButtonPressed;
 }
 
 // Get gamepad axis count
-int GetGamepadAxisCount(int gamepad)
+i32 GetGamepadAxisCount(i32 gamepad)
 {
-    int result = 0;
+    i32 result = 0;
 
     if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS)) result = CORE.Input.Gamepad.axisCount[gamepad];
 
@@ -4309,13 +4309,13 @@ int GetGamepadAxisCount(int gamepad)
 }
 
 // Get axis movement vector for a gamepad
-float GetGamepadAxisMovement(int gamepad, int axis)
+f32 GetGamepadAxisMovement(i32 gamepad, i32 axis)
 {
-    float value = ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))? -1.0f : 0.0f;
+    f32 value = ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))? -1.0f : 0.0f;
 
     if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (axis < MAX_GAMEPAD_AXES))
     {
-        const float movement = (value < 0.0f)? CORE.Input.Gamepad.axisState[gamepad][axis] : fabsf(CORE.Input.Gamepad.axisState[gamepad][axis]);
+        const f32 movement = (value < 0.0f)? CORE.Input.Gamepad.axisState[gamepad][axis] : fabsf(CORE.Input.Gamepad.axisState[gamepad][axis]);
 
         if (movement > value) value = CORE.Input.Gamepad.axisState[gamepad][axis];
     }
@@ -4332,7 +4332,7 @@ float GetGamepadAxisMovement(int gamepad, int axis)
 //void SetMouseCursor(int cursor)
 
 // Check if mouse button has been pressed once
-bool IsMouseButtonPressed(int button)
+bool IsMouseButtonPressed(i32 button)
 {
     bool pressed = false;
 
@@ -4348,7 +4348,7 @@ bool IsMouseButtonPressed(int button)
 }
 
 // Check if mouse button is being pressed
-bool IsMouseButtonDown(int button)
+bool IsMouseButtonDown(i32 button)
 {
     bool down = false;
 
@@ -4364,7 +4364,7 @@ bool IsMouseButtonDown(int button)
 }
 
 // Check if mouse button has been released once
-bool IsMouseButtonReleased(int button)
+bool IsMouseButtonReleased(i32 button)
 {
     bool released = false;
 
@@ -4380,7 +4380,7 @@ bool IsMouseButtonReleased(int button)
 }
 
 // Check if mouse button is NOT being pressed
-bool IsMouseButtonUp(int button)
+bool IsMouseButtonUp(i32 button)
 {
     bool up = false;
 
@@ -4396,17 +4396,17 @@ bool IsMouseButtonUp(int button)
 }
 
 // Get mouse position X
-int GetMouseX(void)
+i32 GetMouseX(void)
 {
-    const int mouseX = static_cast<int>((CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x);
+    const i32 mouseX = static_cast<i32>((CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x);
 
     return mouseX;
 }
 
 // Get mouse position Y
-int GetMouseY(void)
+i32 GetMouseY(void)
 {
-    const int mouseY = static_cast<int>((CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y);
+    const i32 mouseY = static_cast<i32>((CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y);
 
     return mouseY;
 }
@@ -4435,22 +4435,22 @@ vec2 GetMouseDelta(void)
 
 // Set mouse offset
 // NOTE: Useful when rendering to different size targets
-void SetMouseOffset(int offsetX, int offsetY)
+void SetMouseOffset(i32 offsetX, i32 offsetY)
 {
-    CORE.Input.Mouse.offset = vec2{ static_cast<float>(offsetX), static_cast<float>(offsetY) };
+    CORE.Input.Mouse.offset = vec2{ static_cast<f32>(offsetX), static_cast<f32>(offsetY) };
 }
 
 // Set mouse scaling
 // NOTE: Useful when rendering to different size targets
-void SetMouseScale(float scaleX, float scaleY)
+void SetMouseScale(f32 scaleX, f32 scaleY)
 {
     CORE.Input.Mouse.scale = vec2{ scaleX, scaleY };
 }
 
 // Get mouse wheel movement Y
-float GetMouseWheelMove(void)
+f32 GetMouseWheelMove(void)
 {
-    float result = 0.0f;
+    f32 result = 0.0f;
 
     if (fabsf(CORE.Input.Mouse.currentWheelMove.x) > fabsf(CORE.Input.Mouse.currentWheelMove.y)) result = CORE.Input.Mouse.currentWheelMove.x;
     else result = CORE.Input.Mouse.currentWheelMove.y;
@@ -4473,21 +4473,21 @@ vec2 GetMouseWheelMoveV(void)
 //----------------------------------------------------------------------------------
 
 // Get touch position X for touch point 0 (relative to screen size)
-int GetTouchX(void)
+i32 GetTouchX(void)
 {
-    const int touchX = static_cast<int>(CORE.Input.Touch.position[0].x);
+    const i32 touchX = static_cast<i32>(CORE.Input.Touch.position[0].x);
     return touchX;
 }
 
 // Get touch position Y for touch point 0 (relative to screen size)
-int GetTouchY(void)
+i32 GetTouchY(void)
 {
-    const int touchY = static_cast<int>(CORE.Input.Touch.position[0].y);
+    const i32 touchY = static_cast<i32>(CORE.Input.Touch.position[0].y);
     return touchY;
 }
 
 // Get touch position XY for a touch point index (relative to screen size)
-vec2 GetTouchPosition(int index)
+vec2 GetTouchPosition(i32 index)
 {
     vec2 position = { -1.0f, -1.0f };
 
@@ -4498,9 +4498,9 @@ vec2 GetTouchPosition(int index)
 }
 
 // Get touch point identifier for provided index
-int GetTouchPointId(int index)
+i32 GetTouchPointId(i32 index)
 {
-    int id = -1;
+    i32 id = -1;
 
     if (index < MAX_TOUCH_POINTS) id = CORE.Input.Touch.pointId[index];
 
@@ -4508,7 +4508,7 @@ int GetTouchPointId(int index)
 }
 
 // Get number of touch points
-int GetTouchPointCount(void)
+i32 GetTouchPointCount(void)
 {
     return CORE.Input.Touch.pointCount;
 }
@@ -4546,7 +4546,7 @@ void InitTimer(void)
 }
 
 // Set viewport for a provided width and height
-void SetupViewport(int width, int height)
+void SetupViewport(i32 width, i32 height)
 {
     CORE.Window.render.width = width;
     CORE.Window.render.height = height;
@@ -4559,7 +4559,7 @@ void SetupViewport(int width, int height)
 
     // Set orthographic projection to current framebuffer size
     // NOTE: Configured top-left corner as (0, 0)
-    rlOrtho(0.0f, static_cast<float>(CORE.Window.render.width), static_cast<float>(CORE.Window.render.height), 0.0f, 0.0f, 1.0f);
+    rlOrtho(0.0f, static_cast<f32>(CORE.Window.render.width), static_cast<f32>(CORE.Window.render.height), 0.0f, 0.0f, 1.0f);
 
     rlMatrixMode(RL_MODELVIEW);         // Switch back to modelview matrix
     rlLoadIdentity();                   // Reset current matrix (modelview)
@@ -4585,9 +4585,9 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
             {
                 // Construct new path from our base path
             #if defined(_WIN32)
-                int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s\\%s", basePath, dp->d_name);
+                i32 pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s\\%s", basePath, dp->d_name);
             #else
-                const int pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, dp->d_name);
+                const i32 pathLength = snprintf(path, MAX_FILEPATH_LENGTH, "%s/%s", basePath, dp->d_name);
             #endif
 
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
@@ -4629,7 +4629,7 @@ static void RecordAutomationEvent(void)
 
     // Keyboard input events recording
     //-------------------------------------------------------------------------------------
-    for (int key = 0; key < MAX_KEYBOARD_KEYS; key++)
+    for (i32 key = 0; key < MAX_KEYBOARD_KEYS; key++)
     {
         // Event type: INPUT_KEY_UP (only saved once)
         if (CORE.Input.Keyboard.previousKeyState[key] && !CORE.Input.Keyboard.currentKeyState[key])
@@ -4665,7 +4665,7 @@ static void RecordAutomationEvent(void)
 
     // Mouse input currentEventList->events recording
     //-------------------------------------------------------------------------------------
-    for (int button = 0; button < MAX_MOUSE_BUTTONS; button++)
+    for (i32 button = 0; button < MAX_MOUSE_BUTTONS; button++)
     {
         // Event type: INPUT_MOUSE_BUTTON_UP
         if (CORE.Input.Mouse.previousButtonState[button] && !CORE.Input.Mouse.currentButtonState[button])
@@ -4699,13 +4699,13 @@ static void RecordAutomationEvent(void)
     }
 
     // Event type: INPUT_MOUSE_POSITION (only saved if changed)
-    if ((static_cast<int>(CORE.Input.Mouse.currentPosition.x) != static_cast<int>(CORE.Input.Mouse.previousPosition.x)) ||
-        (static_cast<int>(CORE.Input.Mouse.currentPosition.y) != static_cast<int>(CORE.Input.Mouse.previousPosition.y)))
+    if ((static_cast<i32>(CORE.Input.Mouse.currentPosition.x) != static_cast<i32>(CORE.Input.Mouse.previousPosition.x)) ||
+        (static_cast<i32>(CORE.Input.Mouse.currentPosition.y) != static_cast<i32>(CORE.Input.Mouse.previousPosition.y)))
     {
         currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
         currentEventList->events[currentEventList->count].type = INPUT_MOUSE_POSITION;
-        currentEventList->events[currentEventList->count].params[0] = static_cast<int>(CORE.Input.Mouse.currentPosition.x);
-        currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Mouse.currentPosition.y);
+        currentEventList->events[currentEventList->count].params[0] = static_cast<i32>(CORE.Input.Mouse.currentPosition.x);
+        currentEventList->events[currentEventList->count].params[1] = static_cast<i32>(CORE.Input.Mouse.currentPosition.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
         logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
@@ -4715,13 +4715,13 @@ static void RecordAutomationEvent(void)
     }
 
     // Event type: INPUT_MOUSE_WHEEL_MOTION
-    if ((static_cast<int>(CORE.Input.Mouse.currentWheelMove.x) != static_cast<int>(CORE.Input.Mouse.previousWheelMove.x)) ||
-        (static_cast<int>(CORE.Input.Mouse.currentWheelMove.y) != static_cast<int>(CORE.Input.Mouse.previousWheelMove.y)))
+    if ((static_cast<i32>(CORE.Input.Mouse.currentWheelMove.x) != static_cast<i32>(CORE.Input.Mouse.previousWheelMove.x)) ||
+        (static_cast<i32>(CORE.Input.Mouse.currentWheelMove.y) != static_cast<i32>(CORE.Input.Mouse.previousWheelMove.y)))
     {
         currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
         currentEventList->events[currentEventList->count].type = INPUT_MOUSE_WHEEL_MOTION;
-        currentEventList->events[currentEventList->count].params[0] = static_cast<int>(CORE.Input.Mouse.currentWheelMove.x);
-        currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Mouse.currentWheelMove.y);
+        currentEventList->events[currentEventList->count].params[0] = static_cast<i32>(CORE.Input.Mouse.currentWheelMove.x);
+        currentEventList->events[currentEventList->count].params[1] = static_cast<i32>(CORE.Input.Mouse.currentWheelMove.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
         logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_WHEEL_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
@@ -4733,7 +4733,7 @@ static void RecordAutomationEvent(void)
 
     // Touch input currentEventList->events recording
     //-------------------------------------------------------------------------------------
-    for (int id = 0; id < MAX_TOUCH_POINTS; id++)
+    for (i32 id = 0; id < MAX_TOUCH_POINTS; id++)
     {
         // Event type: INPUT_TOUCH_UP
         if (CORE.Input.Touch.previousTouchState[id] && !CORE.Input.Touch.currentTouchState[id])
@@ -4766,14 +4766,14 @@ static void RecordAutomationEvent(void)
         if (currentEventList->count == currentEventList->capacity) return;    // Security check
 
         // Event type: INPUT_TOUCH_POSITION
-        if ((static_cast<int>(CORE.Input.Touch.position[id].x) != static_cast<int>(CORE.Input.Touch.previousPosition[id].x)) ||
-            (static_cast<int>(CORE.Input.Touch.position[id].y) != static_cast<int>(CORE.Input.Touch.previousPosition[id].y)))
+        if ((static_cast<i32>(CORE.Input.Touch.position[id].x) != static_cast<i32>(CORE.Input.Touch.previousPosition[id].x)) ||
+            (static_cast<i32>(CORE.Input.Touch.position[id].y) != static_cast<i32>(CORE.Input.Touch.previousPosition[id].y)))
         {
             currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
             currentEventList->events[currentEventList->count].type = INPUT_TOUCH_POSITION;
             currentEventList->events[currentEventList->count].params[0] = id;
-            currentEventList->events[currentEventList->count].params[1] = static_cast<int>(CORE.Input.Touch.position[id].x);
-            currentEventList->events[currentEventList->count].params[2] = static_cast<int>(CORE.Input.Touch.position[id].y);
+            currentEventList->events[currentEventList->count].params[1] = static_cast<i32>(CORE.Input.Touch.position[id].x);
+            currentEventList->events[currentEventList->count].params[2] = static_cast<i32>(CORE.Input.Touch.position[id].y);
 
             logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
             currentEventList->count++;
@@ -4786,7 +4786,7 @@ static void RecordAutomationEvent(void)
 
     // Gamepad input currentEventList->events recording
     //-------------------------------------------------------------------------------------
-    for (int gamepad = 0; gamepad < MAX_GAMEPADS; gamepad++)
+    for (i32 gamepad = 0; gamepad < MAX_GAMEPADS; gamepad++)
     {
         // Event type: INPUT_GAMEPAD_CONNECT
         /*
@@ -4806,7 +4806,7 @@ static void RecordAutomationEvent(void)
         }
         */
 
-        for (int button = 0; button < MAX_GAMEPAD_BUTTONS; button++)
+        for (i32 button = 0; button < MAX_GAMEPAD_BUTTONS; button++)
         {
             // Event type: INPUT_GAMEPAD_BUTTON_UP
             if (CORE.Input.Gamepad.previousButtonState[gamepad][button] && !CORE.Input.Gamepad.currentButtonState[gamepad][button])
@@ -4839,17 +4839,17 @@ static void RecordAutomationEvent(void)
             if (currentEventList->count == currentEventList->capacity) return;    // Security check
         }
 
-        for (int axis = 0; axis < MAX_GAMEPAD_AXES; axis++)
+        for (i32 axis = 0; axis < MAX_GAMEPAD_AXES; axis++)
         {
             // Event type: INPUT_GAMEPAD_AXIS_MOTION
-            const float defaultMovement = ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))? -1.0f : 0.0f;
+            const f32 defaultMovement = ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))? -1.0f : 0.0f;
             if (GetGamepadAxisMovement(gamepad, axis) != defaultMovement)
             {
                 currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
                 currentEventList->events[currentEventList->count].type = INPUT_GAMEPAD_AXIS_MOTION;
                 currentEventList->events[currentEventList->count].params[0] = gamepad;
                 currentEventList->events[currentEventList->count].params[1] = axis;
-                currentEventList->events[currentEventList->count].params[2] = static_cast<int>(CORE.Input.Gamepad.axisState[gamepad][axis]*32768.0f);
+                currentEventList->events[currentEventList->count].params[2] = static_cast<i32>(CORE.Input.Gamepad.axisState[gamepad][axis]*32768.0f);
 
                 logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_AXIS_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
                 currentEventList->count++;
@@ -4899,7 +4899,7 @@ std::string TextFormat(std::string_view textView, ...)
 
     // Define an array of buffers, so strings don't expire until MAX_TEXTFORMAT_BUFFERS invocations
     static char buffers[MAX_TEXTFORMAT_BUFFERS][MAX_TEXT_BUFFER_LENGTH] = { 0 };
-    static int index = 0;
+    static i32 index = 0;
 
     char *currentBuffer = buffers[index];
     memset(currentBuffer, 0, MAX_TEXT_BUFFER_LENGTH);   // Clear buffer before using
@@ -4908,7 +4908,7 @@ std::string TextFormat(std::string_view textView, ...)
     {
         va_list args;
         va_start(args, text);
-        int requiredByteCount = vsnprintf(currentBuffer, MAX_TEXT_BUFFER_LENGTH, text, args);
+        i32 requiredByteCount = vsnprintf(currentBuffer, MAX_TEXT_BUFFER_LENGTH, text, args);
         va_end(args);
 
         // If requiredByteCount is larger than the MAX_TEXT_BUFFER_LENGTH, then overflow occurred

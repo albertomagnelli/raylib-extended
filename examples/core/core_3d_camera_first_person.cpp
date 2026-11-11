@@ -21,12 +21,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera first person");
 
@@ -38,18 +38,18 @@ int main()
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    int cameraMode = CAMERA_FIRST_PERSON;
+    i32 cameraMode = CAMERA_FIRST_PERSON;
 
     // Generates some random columns
-    float heights[MAX_COLUMNS] = {};
+    f32 heights[MAX_COLUMNS] = {};
     vec3 positions[MAX_COLUMNS] = {};
     Color colors[MAX_COLUMNS] = {};
 
-    for (int i = 0; i < MAX_COLUMNS; i++)
+    for (i32 i = 0; i < MAX_COLUMNS; i++)
     {
-        heights[i] = static_cast<float>(GetRandomValue(1, 12));
-        positions[i] = vec3{ static_cast<float>(GetRandomValue(-15, 15)), heights[i]/2.0f, static_cast<float>(GetRandomValue(-15, 15)) };
-        colors[i] = Color{ static_cast<unsigned char>(GetRandomValue(20, 255)), static_cast<unsigned char>(GetRandomValue(10, 55)), 30, 255 };
+        heights[i] = static_cast<f32>(GetRandomValue(1, 12));
+        positions[i] = vec3{ static_cast<f32>(GetRandomValue(-15, 15)), heights[i]/2.0f, static_cast<f32>(GetRandomValue(-15, 15)) };
+        colors[i] = Color{ static_cast<u8>(GetRandomValue(20, 255)), static_cast<u8>(GetRandomValue(10, 55)), 30, 255 };
     }
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
@@ -154,7 +154,7 @@ int main()
                 DrawCube(vec3{ 0.0f, 2.5f, 16.0f }, 32.0f, 5.0f, 1.0f, GOLD);         // Draw a yellow wall
 
                 // Draw some cubes around
-                for (int i = 0; i < MAX_COLUMNS; i++)
+                for (i32 i = 0; i < MAX_COLUMNS; i++)
                 {
                     DrawCube(positions[i], 2.0f, heights[i], 2.0f, colors[i]);
                     DrawCubeWires(positions[i], 2.0f, heights[i], 2.0f, MAROON);

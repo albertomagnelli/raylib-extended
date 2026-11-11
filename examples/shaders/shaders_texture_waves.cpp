@@ -33,12 +33,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture waves");
 
@@ -48,23 +48,23 @@ int main()
     // Load shader and setup location points and values
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/wave.fs", GLSL_VERSION));
 
-    const int secondsLoc = GetShaderLocation(shader, "seconds");
-    const int freqXLoc = GetShaderLocation(shader, "freqX");
-    const int freqYLoc = GetShaderLocation(shader, "freqY");
-    const int ampXLoc = GetShaderLocation(shader, "ampX");
-    const int ampYLoc = GetShaderLocation(shader, "ampY");
-    const int speedXLoc = GetShaderLocation(shader, "speedX");
-    const int speedYLoc = GetShaderLocation(shader, "speedY");
+    const i32 secondsLoc = GetShaderLocation(shader, "seconds");
+    const i32 freqXLoc = GetShaderLocation(shader, "freqX");
+    const i32 freqYLoc = GetShaderLocation(shader, "freqY");
+    const i32 ampXLoc = GetShaderLocation(shader, "ampX");
+    const i32 ampYLoc = GetShaderLocation(shader, "ampY");
+    const i32 speedXLoc = GetShaderLocation(shader, "speedX");
+    const i32 speedYLoc = GetShaderLocation(shader, "speedY");
 
     // Shader uniform values that can be updated at any time
-    float freqX = 25.0f;
-    float freqY = 25.0f;
-    float ampX = 5.0f;
-    float ampY = 5.0f;
-    float speedX = 8.0f;
-    float speedY = 8.0f;
+    f32 freqX = 25.0f;
+    f32 freqY = 25.0f;
+    f32 ampX = 5.0f;
+    f32 ampY = 5.0f;
+    f32 speedX = 8.0f;
+    f32 speedY = 8.0f;
 
-    float screenSize[2] = { static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
+    f32 screenSize[2] = { static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) };
     SetShaderValue(shader, GetShaderLocation(shader, "size"), &screenSize, SHADER_UNIFORM_VEC2);
     SetShaderValue(shader, freqXLoc, &freqX, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, freqYLoc, &freqY, SHADER_UNIFORM_FLOAT);
@@ -73,7 +73,7 @@ int main()
     SetShaderValue(shader, speedXLoc, &speedX, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, speedYLoc, &speedY, SHADER_UNIFORM_FLOAT);
 
-    float seconds = 0.0f;
+    f32 seconds = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     // -------------------------------------------------------------------------------------------------------------

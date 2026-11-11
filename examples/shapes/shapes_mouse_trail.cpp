@@ -25,12 +25,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - mouse trail");
 
@@ -49,7 +49,7 @@ int main()
 
         // Shift all existing positions backward by one slot in the array
         // The last element (the oldest position) is dropped
-        for (int i = MAX_TRAIL_LENGTH - 1; i > 0; i--)
+        for (i32 i = MAX_TRAIL_LENGTH - 1; i > 0; i--)
         {
             trailPositions[i] = trailPositions[i - 1];
         }
@@ -65,20 +65,20 @@ int main()
             ClearBackground(BLACK);
 
             // Draw the trail by looping through the history array
-            for (int i = 0; i < MAX_TRAIL_LENGTH; i++)
+            for (i32 i = 0; i < MAX_TRAIL_LENGTH; i++)
             {
                 // Ensure we skip drawing if the array hasn't been fully filled on startup
                 if ((trailPositions[i].x != 0.0f) || (trailPositions[i].y != 0.0f))
                 {
                     // Calculate relative trail strength (ratio is near 1.0 for new, near 0.0 for old)
-                    const float ratio = static_cast<float>(MAX_TRAIL_LENGTH - i)/MAX_TRAIL_LENGTH;
+                    const f32 ratio = static_cast<f32>(MAX_TRAIL_LENGTH - i)/MAX_TRAIL_LENGTH;
 
                     // Fade effect: oldest positions are more transparent
                     // Fade (color, alpha) - alpha is 0.5 to 1.0 based on ratio
                     const Color trailColor = Fade(SKYBLUE, ratio*0.5f + 0.5f);
 
                     // Size effect: oldest positions are smaller
-                    const float trailRadius = 15.0f*ratio;
+                    const f32 trailRadius = 15.0f*ratio;
 
                     DrawCircleV(trailPositions[i], trailRadius, trailColor);
                 }

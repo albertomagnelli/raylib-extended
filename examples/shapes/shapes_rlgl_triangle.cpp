@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rlgl triangle");
@@ -37,9 +37,9 @@ int main()
     vec2 trianglePositions[3] = { startingPositions[0], startingPositions[1], startingPositions[2] };
 
     // Currently selected vertex, -1 means none
-    int triangleIndex = -1;
+    i32 triangleIndex = -1;
     bool linesMode = false;
-    constexpr float handleRadius = 8.0f;
+    constexpr f32 handleRadius = 8.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ int main()
         if (IsKeyPressed(KEY_SPACE)) linesMode = !linesMode;
 
         // Check selected vertex
-        for (unsigned int i = 0; i < 3; i++)
+        for (u32 i = 0; i < 3; i++)
         {
             // If the mouse is within the handle circle
             if (CheckCollisionPointCircle(GetMousePosition(), trianglePositions[i], handleRadius) &&
@@ -137,7 +137,7 @@ int main()
             }
 
             // Render the vertex handles, reacting to mouse movement/input
-            for (unsigned int i = 0; i < 3; i++)
+            for (u32 i = 0; i < 3; i++)
             {
                 // Draw handle fill focused by mouse
                 if (CheckCollisionPointCircle(GetMousePosition(), trianglePositions[i], handleRadius))

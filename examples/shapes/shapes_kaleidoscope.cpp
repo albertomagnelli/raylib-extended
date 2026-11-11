@@ -37,19 +37,19 @@ static Line lines[MAX_DRAW_LINES] = {};
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - kaleidoscope");
 
     // Line drawing properties
-    constexpr int symmetry = 6;
-    const float angle = 360.0f/static_cast<float>(symmetry);
-    constexpr float thickness = 3.0f;
+    constexpr i32 symmetry = 6;
+    const f32 angle = 360.0f/static_cast<f32>(symmetry);
+    constexpr f32 thickness = 3.0f;
     const Rectangle resetButtonRec = { screenWidth - 55.0f, 5.0f, 50, 25 };
     const Rectangle backButtonRec = { screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };
     const Rectangle nextButtonRec = { screenWidth - 30.0f, screenHeight - 30.0f, 25, 25 };
@@ -64,11 +64,11 @@ int main()
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    int currentLineCounter = 0;
-    int totalLineCounter = 0;
-    int resetButtonClicked = false;
-    int backButtonClicked = false;
-    int nextButtonClicked = false;
+    i32 currentLineCounter = 0;
+    i32 totalLineCounter = 0;
+    i32 resetButtonClicked = false;
+    i32 backButtonClicked = false;
+    i32 nextButtonClicked = false;
 
     SetTargetFPS(20);
     //--------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ int main()
             && (CheckCollisionPointRec(mousePos, nextButtonRec) == false)
         )
         {
-            for (int s = 0; (s < symmetry) && (totalLineCounter < (MAX_DRAW_LINES - 1)); s++)
+            for (i32 s = 0; (s < symmetry) && (totalLineCounter < (MAX_DRAW_LINES - 1)); s++)
             {
                 lineStart = Vector2Rotate(lineStart, angle*DEG2RAD);
                 lineEnd = Vector2Rotate(lineEnd, angle*DEG2RAD);
@@ -134,9 +134,9 @@ int main()
             ClearBackground(RAYWHITE);
             BeginMode2D(camera);
 
-                for (int s = 0; s < symmetry; s++)
+                for (i32 s = 0; s < symmetry; s++)
                 {
-                    for (int i = 0; i < currentLineCounter; i += 2)
+                    for (i32 i = 0; i < currentLineCounter; i += 2)
                     {
                         DrawLineEx(lines[i].start, lines[i].end, thickness, BLACK);
                         DrawLineEx(lines[i + 1].start, lines[i + 1].end, thickness, BLACK);

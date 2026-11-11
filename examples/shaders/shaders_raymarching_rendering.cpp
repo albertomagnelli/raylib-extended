@@ -27,12 +27,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - raymarching rendering");
@@ -49,15 +49,15 @@ int main()
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/raymarching.fs", GLSL_VERSION));
 
     // Get shader locations for required uniforms
-    const int viewEyeLoc = GetShaderLocation(shader, "viewEye");
-    const int viewCenterLoc = GetShaderLocation(shader, "viewCenter");
-    const int runTimeLoc = GetShaderLocation(shader, "runTime");
-    const int resolutionLoc = GetShaderLocation(shader, "resolution");
+    const i32 viewEyeLoc = GetShaderLocation(shader, "viewEye");
+    const i32 viewCenterLoc = GetShaderLocation(shader, "viewCenter");
+    const i32 runTimeLoc = GetShaderLocation(shader, "runTime");
+    const i32 resolutionLoc = GetShaderLocation(shader, "resolution");
 
-    float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
+    f32 resolution[2] = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    float runTime = 0.0f;
+    f32 runTime = 0.0f;
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
@@ -70,10 +70,10 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
-        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
-        float cameraTarget[3] = { camera.target.x, camera.target.y, camera.target.z };
+        f32 cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        f32 cameraTarget[3] = { camera.target.x, camera.target.y, camera.target.z };
 
-        const float deltaTime = GetFrameTime();
+        const f32 deltaTime = GetFrameTime();
         runTime += deltaTime;
 
         // Set shader required uniform values
@@ -84,8 +84,8 @@ int main()
         // Check if screen is resized
         if (IsWindowResized())
         {
-            resolution[0] = static_cast<float>(GetScreenWidth());
-            resolution[1] = static_cast<float>(GetScreenHeight());
+            resolution[0] = static_cast<f32>(GetScreenWidth());
+            resolution[1] = static_cast<f32>(GetScreenHeight());
             SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
         }
         //----------------------------------------------------------------------------------

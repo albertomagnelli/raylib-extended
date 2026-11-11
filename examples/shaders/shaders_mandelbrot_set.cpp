@@ -31,7 +31,7 @@
 #endif
 
 // A few good interesting places
-const float pointsOfInterest[6][3] =
+const f32 pointsOfInterest[6][3] =
 {
     { -1.76826775f, -0.00422996283f, 28435.9238f },
     { 0.322004497f, -0.0357099883f, 56499.7266f },
@@ -41,18 +41,18 @@ const float pointsOfInterest[6][3] =
     { 0.317785531f, -0.0322612226f, 29297.9258f },
 };
 
-constexpr int screenWidth = 800;
-constexpr int screenHeight = 450;
-constexpr float zoomSpeed = 1.01f;
-constexpr float offsetSpeedMul = 2.0f;
+constexpr i32 screenWidth = 800;
+constexpr i32 screenHeight = 450;
+constexpr f32 zoomSpeed = 1.01f;
+constexpr f32 offsetSpeedMul = 2.0f;
 
-constexpr float startingZoom = 0.6f;
-const float startingOffset[2] = { -0.5f, 0.0f };
+constexpr f32 startingZoom = 0.6f;
+const f32 startingOffset[2] = { -0.5f, 0.0f };
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -66,23 +66,23 @@ int main()
     const RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     // Offset and zoom to draw the mandelbrot set at. (centered on screen and default size)
-    float offset[2] = { startingOffset[0], startingOffset[1] };
-    float zoom = startingZoom;
+    f32 offset[2] = { startingOffset[0], startingOffset[1] };
+    f32 zoom = startingZoom;
     // Depending on the zoom the mximum number of iterations must be adapted to get more detail as we zzoom in
     // The solution is not perfect, so a control has been added to increase/decrease the number of iterations with UP/DOWN keys
 #if defined(PLATFORM_DESKTOP)
-    int maxIterations = 333;
-    float maxIterationsMultiplier = 166.5f;
+    i32 maxIterations = 333;
+    f32 maxIterationsMultiplier = 166.5f;
 #else
-    int maxIterations = 43;
-    float maxIterationsMultiplier = 22.0f;
+    i32 maxIterations = 43;
+    f32 maxIterationsMultiplier = 22.0f;
 #endif
 
     // Get variable (uniform) locations on the shader to connect with the program
     // NOTE: If uniform variable could not be found in the shader, function returns -1
-    const int zoomLoc = GetShaderLocation(shader, "zoom");
-    const int offsetLoc = GetShaderLocation(shader, "offset");
-    const int maxIterationsLoc = GetShaderLocation(shader, "maxIterations");
+    const i32 zoomLoc = GetShaderLocation(shader, "zoom");
+    const i32 offsetLoc = GetShaderLocation(shader, "offset");
+    const i32 maxIterationsLoc = GetShaderLocation(shader, "maxIterations");
 
     // Upload the shader uniform values!
     SetShaderValue(shader, zoomLoc, &zoom, SHADER_UNIFORM_FLOAT);
@@ -109,7 +109,7 @@ int main()
             IsKeyPressed(KEY_FIVE) ||
             IsKeyPressed(KEY_SIX))
         {
-            int interestIndex = 0;
+            i32 interestIndex = 0;
             if (IsKeyPressed(KEY_ONE)) interestIndex = 0;
             else if (IsKeyPressed(KEY_TWO)) interestIndex = 1;
             else if (IsKeyPressed(KEY_THREE)) interestIndex = 2;
@@ -157,8 +157,8 @@ int main()
             vec2 offsetVelocity;
             // Find the velocity at which to change the camera. Take the distance of the mouse
             // From the center of the screen as the direction, and adjust magnitude based on the current zoom
-            offsetVelocity.x = (mousePos.x/static_cast<float>(screenWidth) - 0.5f)*offsetSpeedMul/zoom;
-            offsetVelocity.y = (mousePos.y/static_cast<float>(screenHeight) - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.x = (mousePos.x/static_cast<f32>(screenWidth) - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.y = (mousePos.y/static_cast<f32>(screenHeight) - 0.5f)*offsetSpeedMul/zoom;
 
             // Apply move velocity to camera
             offset[0] += GetFrameTime()*offsetVelocity.x;
@@ -172,7 +172,7 @@ int main()
         {
             // As we zoom in, increase the number of max iterations to get more detail
             // Aproximate formula, but it works-ish
-            maxIterations = static_cast<int>(sqrtf(2.0f*sqrtf(fabsf(1.0f - sqrtf(37.5f*zoom))))*maxIterationsMultiplier);
+            maxIterations = static_cast<i32>(sqrtf(2.0f*sqrtf(fabsf(1.0f - sqrtf(37.5f*zoom))))*maxIterationsMultiplier);
 
             // Update the shader uniform values!
             SetShaderValue(shader, zoomLoc, &zoom, SHADER_UNIFORM_FLOAT);

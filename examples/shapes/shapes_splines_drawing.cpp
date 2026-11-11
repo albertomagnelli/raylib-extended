@@ -43,12 +43,12 @@ typedef enum {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - splines drawing");
@@ -65,23 +65,23 @@ int main()
     // including control points interleaved with start-end segment points
     vec2 pointsInterleaved[3*(MAX_SPLINE_POINTS - 1) + 1] = {};
 
-    int pointCount = 5;
-    int selectedPoint = -1;
-    int focusedPoint = -1;
+    i32 pointCount = 5;
+    i32 selectedPoint = -1;
+    i32 focusedPoint = -1;
     vec2 *selectedControlPoint = nullptr;
     vec2 *focusedControlPoint = nullptr;
 
     // Cubic Bezier control points initialization
     ControlPoint control[MAX_SPLINE_POINTS-1] = {};
-    for (int i = 0; i < pointCount - 1; i++)
+    for (i32 i = 0; i < pointCount - 1; i++)
     {
         control[i].start = vec2{ points[i].x + 50, points[i].y };
         control[i].end = vec2{ points[i + 1].x - 50, points[i + 1].y };
     }
 
     // Spline config variables
-    float splineThickness = 8.0f;
-    int splineTypeActive = SPLINE_LINEAR; // 0-Linear, 1-BSpline, 2-CatmullRom, 3-Bezier
+    f32 splineThickness = 8.0f;
+    i32 splineTypeActive = SPLINE_LINEAR; // 0-Linear, 1-BSpline, 2-CatmullRom, 3-Bezier
     bool splineTypeEditMode = false;
     bool splineHelpersActive = true;
 
@@ -97,7 +97,7 @@ int main()
         if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON) && (pointCount < MAX_SPLINE_POINTS))
         {
             points[pointCount] = GetMousePosition();
-            const int i = pointCount - 1;
+            const i32 i = pointCount - 1;
             control[i].start = vec2{ points[i].x + 50, points[i].y };
             control[i].end = vec2{ points[i + 1].x - 50, points[i + 1].y };
             pointCount++;
@@ -107,7 +107,7 @@ int main()
         if ((selectedPoint == -1) && ((splineTypeActive != SPLINE_BEZIER) || (selectedControlPoint == nullptr)))
         {
             focusedPoint = -1;
-            for (int i = 0; i < pointCount; i++)
+            for (i32 i = 0; i < pointCount; i++)
             {
                 if (CheckCollisionPointCircle(GetMousePosition(), points[i], 8.0f))
                 {
@@ -132,7 +132,7 @@ int main()
             if (selectedControlPoint == nullptr)
             {
                 focusedControlPoint = nullptr;
-                for (int i = 0; i < pointCount - 1; i++)
+                for (i32 i = 0; i < pointCount - 1; i++)
                 {
                     if (CheckCollisionPointCircle(GetMousePosition(), control[i].start, 6.0f))
                     {
@@ -207,7 +207,7 @@ int main()
             {
                 // NOTE: Cubic-bezier spline requires the 2 control points of each segnment to be
                 // provided interleaved with the start and end point of every segment
-                for (int i = 0; i < (pointCount - 1); i++)
+                for (i32 i = 0; i < (pointCount - 1); i++)
                 {
                     pointsInterleaved[3*i] = points[i];
                     pointsInterleaved[3*i + 1] = control[i].start;
@@ -228,7 +228,7 @@ int main()
                 */
 
                 // Draw spline control points
-                for (int i = 0; i < pointCount - 1; i++)
+                for (i32 i = 0; i < pointCount - 1; i++)
                 {
                     // Every cubic bezier point have two control points
                     DrawCircleV(control[i].start, 6, GOLD);
@@ -248,14 +248,14 @@ int main()
             if (splineHelpersActive)
             {
                 // Draw spline point helpers
-                for (int i = 0; i < pointCount; i++)
+                for (i32 i = 0; i < pointCount; i++)
                 {
                     DrawCircleLinesV(points[i], (focusedPoint == i)? 12.0f : 8.0f, (focusedPoint == i)? BLUE: DARKBLUE);
                     if ((splineTypeActive != SPLINE_LINEAR) &&
                         (splineTypeActive != SPLINE_BEZIER) &&
                         (i < pointCount - 1)) DrawLineV(points[i], points[i + 1], GRAY);
 
-                    DrawText(TextFormat("[%.0f, %.0f]", points[i].x, points[i].y), static_cast<int>(points[i].x), static_cast<int>(points[i].y) + 10, 10, BLACK);
+                    DrawText(TextFormat("[%.0f, %.0f]", points[i].x, points[i].y), static_cast<i32>(points[i].x), static_cast<i32>(points[i].y) + 10, 10, BLACK);
                 }
             }
 
@@ -263,7 +263,7 @@ int main()
             if (splineTypeEditMode || (selectedPoint != -1) || (selectedControlPoint != nullptr)) GuiLock();
 
             // Draw spline config
-            GuiLabel(Rectangle{ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", static_cast<int>(splineThickness)).c_str());
+            GuiLabel(Rectangle{ 12, 62, 140, 24 }, TextFormat("Spline thickness: %i", static_cast<i32>(splineThickness)).c_str());
             GuiSliderBar(Rectangle{ 12, 60 + 24, 140, 16 }, nullptr, nullptr, &splineThickness, 1.0f, 40.0f);
 
             GuiCheckBox(Rectangle{ 12, 110, 20, 20 }, "Show point helpers", &splineHelpersActive);

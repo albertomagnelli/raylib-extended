@@ -28,12 +28,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - math sine cosine");
@@ -42,14 +42,14 @@ int main()
     vec2 cosPoints[WAVE_POINTS];
     const vec2 center = { (screenWidth/2.0f) - 30.0f, screenHeight/2.0f };
     const Rectangle start = { 20.0f, screenHeight - 120.f , 200.0f, 100.0f};
-    constexpr float radius = 130.0f;
-    float angle = 0.0f;
+    constexpr f32 radius = 130.0f;
+    f32 angle = 0.0f;
     bool pause = false;
 
-    for (int i = 0; i < WAVE_POINTS; i++)
+    for (i32 i = 0; i < WAVE_POINTS; i++)
     {
-        const float t = i/static_cast<float>(WAVE_POINTS - 1);
-        const float currentAngle = t*360.0f*DEG2RAD;
+        const f32 t = i/static_cast<f32>(WAVE_POINTS - 1);
+        const f32 currentAngle = t*360.0f*DEG2RAD;
         sinePoints[i] = vec2{ start.x + t*start.width, start.y + start.height/2.0f - sinf(currentAngle)*(start.height/2.0f) };
         cosPoints[i] = vec2{ start.x + t*start.width, start.y + start.height/2.0f - cosf(currentAngle)*(start.height/2.0f) };
     }
@@ -62,20 +62,20 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float angleRad = angle*DEG2RAD;
-        const float cosRad = cosf(angleRad);
-        const float sinRad = sinf(angleRad);
+        const f32 angleRad = angle*DEG2RAD;
+        const f32 cosRad = cosf(angleRad);
+        const f32 sinRad = sinf(angleRad);
 
         const vec2 point = { center.x + cosRad*radius, center.y - sinRad*radius };
         const vec2 limitMin = { center.x - radius, center.y - radius };
         const vec2 limitMax = { center.x + radius, center.y + radius };
 
-        const float complementary = 90.0f - angle;
-        const float supplementary = 180.0f - angle;
-        const float explementary = 360.0f - angle;
+        const f32 complementary = 90.0f - angle;
+        const f32 supplementary = 180.0f - angle;
+        const f32 explementary = 360.0f - angle;
 
-        const float tangent = Clamp(tanf(angleRad), -10.0f, 10.0f);
-        const float cotangent = (fabsf(tangent) > 0.001f) ? Clamp(1.0f/tangent, -radius, radius) : 0.0f;
+        const f32 tangent = Clamp(tanf(angleRad), -10.0f, 10.0f);
+        const f32 cotangent = (fabsf(tangent) > 0.001f) ? Clamp(1.0f/tangent, -radius, radius) : 0.0f;
         const vec2 tangentPoint = { center.x + radius, center.y - tangent*radius };
         const vec2 cotangentPoint = { center.x + cotangent*radius, center.y - radius };
 
@@ -106,11 +106,11 @@ int main()
             DrawLineEx(vec2{ start.x, start.y + start.height/2 }, vec2{ start.x + start.width, start.y + start.height/2 }, 2.0f, GRAY);
 
             // Wave graph axis labels
-            DrawText("1", static_cast<int>(start.x) - 8, static_cast<int>(start.y), 6, GRAY);
-            DrawText("0", static_cast<int>(start.x) - 8, static_cast<int>(start.y) + static_cast<int>(start.height)/2 - 6, 6, GRAY);
-            DrawText("-1", static_cast<int>(start.x) - 12, static_cast<int>(start.y) + static_cast<int>(start.height) - 8, 6, GRAY);
-            DrawText("0", static_cast<int>(start.x) - 2, static_cast<int>(start.y) + static_cast<int>(start.height) + 4, 6, GRAY);
-            DrawText("360", static_cast<int>(start.x) + static_cast<int>(start.width) - 8, static_cast<int>(start.y) + static_cast<int>(start.height) + 4, 6, GRAY);
+            DrawText("1", static_cast<i32>(start.x) - 8, static_cast<i32>(start.y), 6, GRAY);
+            DrawText("0", static_cast<i32>(start.x) - 8, static_cast<i32>(start.y) + static_cast<i32>(start.height)/2 - 6, 6, GRAY);
+            DrawText("-1", static_cast<i32>(start.x) - 12, static_cast<i32>(start.y) + static_cast<i32>(start.height) - 8, 6, GRAY);
+            DrawText("0", static_cast<i32>(start.x) - 2, static_cast<i32>(start.y) + static_cast<i32>(start.height) + 4, 6, GRAY);
+            DrawText("360", static_cast<i32>(start.x) + static_cast<i32>(start.width) - 8, static_cast<i32>(start.y) + static_cast<i32>(start.height) + 4, 6, GRAY);
 
             // Sine (red - vertical)
             DrawLineEx(vec2{ center.x, center.y }, vec2{ center.x, point.y }, 2.0f, RED);

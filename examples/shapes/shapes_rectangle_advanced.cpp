@@ -25,17 +25,17 @@
 // Module Functions Declaration
 //--------------------------------------------------------------------------------------
 // Draw rectangle with rounded edges and horizontal gradient, with options to choose side of roundness
-static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, float roundnessRight, int segments, Color left, Color right);
+static void DrawRectangleRoundedGradientH(Rectangle rec, f32 roundnessLeft, f32 roundnessRight, i32 segments, Color left, Color right);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rectangle advanced");
 
@@ -47,8 +47,8 @@ int main()
     {
         // Update rectangle bounds
         //----------------------------------------------------------------------------------
-        const float width = GetScreenWidth()/2.0f;
-        const float height = GetScreenHeight()/6.0f;
+        const f32 width = GetScreenWidth()/2.0f;
+        const f32 height = GetScreenHeight()/6.0f;
         Rectangle rec = {
             GetScreenWidth()/2.0f - width/2,
             GetScreenHeight()/2.0f - 5*(height/2),
@@ -92,7 +92,7 @@ int main()
 //--------------------------------------------------------------------------------------
 // Draw rectangle with rounded edges and horizontal gradient, with options to choose side of roundness
 // NOTE: Adapted from both 'DrawRectangleRounded()' and 'DrawRectangleGradientH()' raylib [rshapes] implementations
-static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, float roundnessRight, int segments, Color left, Color right)
+static void DrawRectangleRoundedGradientH(Rectangle rec, f32 roundnessLeft, f32 roundnessRight, i32 segments, Color left, Color right)
 {
     // Neither side is rounded
     if ((roundnessLeft <= 0.0f && roundnessRight <= 0.0f) || (rec.width < 1) || (rec.height < 1 ))
@@ -105,16 +105,16 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
     if (roundnessRight >= 1.0f) roundnessRight = 1.0f;
 
     // Calculate corner radius both from right and left
-    const float recSize = rec.width > rec.height ? rec.height : rec.width;
-    float radiusLeft  = (recSize*roundnessLeft)/2;
-    float radiusRight = (recSize*roundnessRight)/2;
+    const f32 recSize = rec.width > rec.height ? rec.height : rec.width;
+    f32 radiusLeft  = (recSize*roundnessLeft)/2;
+    f32 radiusRight = (recSize*roundnessRight)/2;
 
     if (radiusLeft <= 0.0f) radiusLeft = 0.0f;
     if (radiusRight <= 0.0f) radiusRight = 0.0f;
 
     if (radiusRight <= 0.0f && radiusLeft <= 0.0f) return;
 
-    const float stepLength = 90.0f/static_cast<float>(segments);
+    const f32 stepLength = 90.0f/static_cast<f32>(segments);
 
     /*
     Diagram Copied here for reference, original at 'DrawRectangleRounded()' source code
@@ -147,7 +147,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
     };
 
     const vec2 centers[4] = { point[8], point[9], point[10], point[11] };
-    const float angles[4] = { 180.0f, 270.0f, 0.0f, 90.0f };
+    const f32 angles[4] = { 180.0f, 270.0f, 0.0f, 90.0f };
 
 #if defined(SUPPORT_QUADS_DRAW_MODE)
     rlSetTexture(GetShapesTexture().id);
@@ -155,18 +155,18 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
 
     rlBegin(RL_QUADS);
         // Draw all the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right Corner, [7] Lower Left Corner
-        for (int k = 0; k < 4; ++k)
+        for (i32 k = 0; k < 4; ++k)
         {
             Color color;
-            float radius;
+            f32 radius;
             if (k == 0) color = left,  radius = radiusLeft;     // [1] Upper Left Corner
             if (k == 1) color = right, radius = radiusRight;    // [3] Upper Right Corner
             if (k == 2) color = right, radius = radiusRight;    // [5] Lower Right Corner
             if (k == 3) color = left,  radius = radiusLeft;     // [7] Lower Left Corner
-            float angle = angles[k];
+            f32 angle = angles[k];
             const vec2 center = centers[k];
 
-            for (int i = 0; i < segments/2; i++)
+            for (i32 i = 0; i < segments/2; i++)
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
                 rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
@@ -279,19 +279,19 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, float roundnessLeft, fl
 
     rlBegin(RL_TRIANGLES);
         // Draw all of the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right Corner, [7] Lower Left Corner
-        for (int k = 0; k < 4; ++k)
+        for (i32 k = 0; k < 4; ++k)
         {
             Color color = {};
-            float radius = 0.0f;
+            f32 radius = 0.0f;
             if (k == 0) color = left,  radius = radiusLeft;     // [1] Upper Left Corner
             if (k == 1) color = right, radius = radiusRight;    // [3] Upper Right Corner
             if (k == 2) color = right, radius = radiusRight;    // [5] Lower Right Corner
             if (k == 3) color = left,  radius = radiusLeft;     // [7] Lower Left Corner
 
-            float angle = angles[k];
+            f32 angle = angles[k];
             const vec2 center = centers[k];
 
-            for (int i = 0; i < segments; i++)
+            for (i32 i = 0; i < segments; i++)
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
                 rlVertex2f(center.x, center.y);

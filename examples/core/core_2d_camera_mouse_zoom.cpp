@@ -23,19 +23,19 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera mouse zoom");
 
     Camera2D camera = {};
     camera.zoom = 1.0f;
 
-    int zoomMode = 0;       // 0-Mouse Wheel, 1-Mouse Move
+    i32 zoomMode = 0;       // 0-Mouse Wheel, 1-Mouse Move
 
     SetTargetFPS(60);       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -56,12 +56,12 @@ int main()
             camera.target = ((camera.target) + (delta));
         }
 
-        const vec2 renderScale = { static_cast<float>(GetRenderWidth())/GetScreenWidth(), static_cast<float>(GetRenderHeight())/GetScreenHeight() };
+        const vec2 renderScale = { static_cast<f32>(GetRenderWidth())/GetScreenWidth(), static_cast<f32>(GetRenderHeight())/GetScreenHeight() };
 
         if (zoomMode == 0)
         {
             // Zoom based on mouse wheel
-            const float wheel = GetMouseWheelMove();
+            const f32 wheel = GetMouseWheelMove();
             if (wheel != 0)
             {
                 // Get the world point that is under the mouse
@@ -76,7 +76,7 @@ int main()
 
                 // Zoom increment
                 // Uses log scaling to provide consistent zoom speed
-                const float scale = 0.2f*wheel;
+                const f32 scale = 0.2f*wheel;
                 camera.zoom = Clamp(expf(logf(camera.zoom)+scale), 0.125f, 64.0f);
             }
         }
@@ -100,8 +100,8 @@ int main()
             {
                 // Zoom increment
                 // Uses log scaling to provide consistent zoom speed
-                const float deltaX = GetMouseDelta().x;
-                const float scale = 0.005f*deltaX;
+                const f32 deltaX = GetMouseDelta().x;
+                const f32 scale = 0.005f*deltaX;
                 camera.zoom = Clamp(expf(logf(camera.zoom)+scale), 0.125f, 64.0f);
             }
         }

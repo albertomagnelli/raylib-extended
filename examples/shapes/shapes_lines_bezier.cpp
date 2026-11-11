@@ -18,18 +18,18 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - lines bezier");
 
     vec2 startPoint = { 30, 30 };
-    vec2 endPoint = { static_cast<float>(screenWidth) - 30, static_cast<float>(screenHeight) - 30 };
+    vec2 endPoint = { static_cast<f32>(screenWidth) - 30, static_cast<f32>(screenHeight) - 30 };
     bool moveStartPoint = false;
     bool moveEndPoint = false;
 

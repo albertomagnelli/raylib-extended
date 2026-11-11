@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image rotate");
 
@@ -48,7 +48,7 @@ int main()
     UnloadImage(image90);
     UnloadImage(imageNeg90);
 
-    int currentTexture = 0;
+    i32 currentTexture = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    for (int i = 0; i < NUM_TEXTURES; i++) UnloadTexture(textures[i]);
+    for (i32 i = 0; i < NUM_TEXTURES; i++) UnloadTexture(textures[i]);
 
     CloseWindow();                // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

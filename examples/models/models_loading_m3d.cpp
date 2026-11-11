@@ -21,17 +21,17 @@
 
 #include "raylib.h"
 
-static void DrawModelSkeleton(ModelSkeleton skeleton, ModelAnimPose pose, float scale, Color color);
+static void DrawModelSkeleton(ModelSkeleton skeleton, ModelAnimPose pose, f32 scale, Color color);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading m3d");
 
@@ -48,12 +48,12 @@ int main()
     const vec3 position = { 0.0f, 0.0f, 0.0f };                                       // Set model position
 
     // Load animation data
-    int animCount = 0;
+    i32 animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/m3d/cesium_man.m3d", &animCount);
 
     // Animation playing variables
-    unsigned int animIndex = 0;         // Current animation playing
-    float animCurrentFrame = 0.0f;      // Current animation frame (supporting interpolated frames)
+    u32 animIndex = 0;         // Current animation playing
+    f32 animCurrentFrame = 0.0f;      // Current animation frame (supporting interpolated frames)
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ int main()
                 else
                 {
                     // Draw the animated skeleton
-                    DrawModelSkeleton(model.skeleton, anims[animIndex].keyframePoses[static_cast<int>(animCurrentFrame)], 1.0f, RED);
+                    DrawModelSkeleton(model.skeleton, anims[animIndex].keyframePoses[static_cast<i32>(animCurrentFrame)], 1.0f, RED);
                 }
 
                 DrawGrid(10, 1.0f);
@@ -115,11 +115,11 @@ int main()
 }
 
 // Draw model skeleton
-static void DrawModelSkeleton(ModelSkeleton skeleton, ModelAnimPose pose, float scale, Color color)
+static void DrawModelSkeleton(ModelSkeleton skeleton, ModelAnimPose pose, f32 scale, Color color)
 {
     // Loop to (boneCount - 1) because the last one is a special "no bone" bone,
     // needed to workaround buggy models without a -1, a cube is always drawn at the origin
-    for (unsigned int i = 0; i < skeleton.boneCount - 1; i++)
+    for (u32 i = 0; i < skeleton.boneCount - 1; i++)
     {
         // Display the frame-pose skeleton
         DrawCube(pose[i].translation, scale*0.05f, scale*0.05f, scale*0.05f, color);

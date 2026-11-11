@@ -58,9 +58,9 @@ static vec2 sensitivity = { 0.001f, 0.001f };
 
 static Body player = {};
 static vec2 lookRotation = {};
-static float headTimer = 0.0f;
-static float walkLerp = 0.0f;
-static float headLerp = STAND_HEIGHT;
+static f32 headTimer = 0.0f;
+static f32 walkLerp = 0.0f;
+static f32 headLerp = STAND_HEIGHT;
 static vec2 lean = {};
 
 //----------------------------------------------------------------------------------
@@ -68,17 +68,17 @@ static vec2 lean = {};
 //----------------------------------------------------------------------------------
 static void DrawLevel(void);
 static void UpdateCameraFPS(Camera *camera);
-static void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed, bool crouchHold);
+static void UpdateBody(Body *body, f32 rot, char side, char forward, bool jumpPressed, bool crouchHold);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera fps");
 
@@ -114,7 +114,7 @@ int main()
         const bool crouching = IsKeyDown(KEY_LEFT_CONTROL);
         UpdateBody(&player, lookRotation.x, sideway, forward, IsKeyPressed(KEY_SPACE), crouching);
 
-        const float delta = GetFrameTime();
+        const f32 delta = GetFrameTime();
         headLerp = Lerp(headLerp, (crouching ? CROUCH_HEIGHT : STAND_HEIGHT), 20.0f*delta);
         camera.position = vec3{
             player.position.x,
@@ -175,16 +175,16 @@ int main()
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Update body considering current world state
-void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed, bool crouchHold)
+void UpdateBody(Body *body, f32 rot, char side, char forward, bool jumpPressed, bool crouchHold)
 {
-    vec2 input = vec2{ static_cast<float>(side), static_cast<float>(-forward) };
+    vec2 input = vec2{ static_cast<f32>(side), static_cast<f32>(-forward) };
 
 #if defined(NORMALIZE_INPUT)
     // Slow down diagonal movement
     if ((side != 0) && (forward != 0)) input = glm::normalize(input);
 #endif
 
-    const float delta = GetFrameTime();
+    const f32 delta = GetFrameTime();
 
     if (!body->isGrounded) body->velocity.y -= GRAVITY*delta;
 
@@ -204,20 +204,20 @@ void UpdateBody(Body *body, float rot, char side, char forward, bool jumpPressed
     const vec3 desiredDir = vec3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
     body->dir = glm::mix(body->dir, desiredDir, CONTROL*delta);
 
-    const float decel = (body->isGrounded ? FRICTION : AIR_DRAG);
+    const f32 decel = (body->isGrounded ? FRICTION : AIR_DRAG);
     vec3 hvel = vec3{ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
 
-    const float hvelLength = glm::length(hvel); // Magnitude
+    const f32 hvelLength = glm::length(hvel); // Magnitude
     if (hvelLength < (MAX_SPEED*0.01f)) hvel = vec3{};
 
     // This is what creates strafing
-    const float speed = glm::dot(hvel, body->dir);
+    const f32 speed = glm::dot(hvel, body->dir);
 
     // Whenever the amount of acceleration to add is clamped by the maximum acceleration constant,
     // a Player can make the speed faster by bringing the direction closer to horizontal velocity angle
     // More info here: https://youtu.be/v3zT3Z5apaM?t=165
-    const float maxSpeed = (crouchHold? CROUCH_SPEED : MAX_SPEED);
-    const float accel = Clamp(maxSpeed - speed, 0.f, MAX_ACCEL*delta);
+    const f32 maxSpeed = (crouchHold? CROUCH_SPEED : MAX_SPEED);
+    const f32 accel = Clamp(maxSpeed - speed, 0.f, MAX_ACCEL*delta);
     hvel.x += body->dir.x*accel;
     hvel.z += body->dir.z*accel;
 
@@ -247,12 +247,12 @@ static void UpdateCameraFPS(Camera *camera)
     const vec3 yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
 
     // Clamp view up
-    float maxAngleUp = Vector3Angle(up, yaw);
+    f32 maxAngleUp = Vector3Angle(up, yaw);
     maxAngleUp -= 0.001f; // Avoid numerical errors
     if ( -(lookRotation.y) > maxAngleUp) { lookRotation.y = -maxAngleUp; }
 
     // Clamp view down
-    float maxAngleDown = Vector3Angle((-(up)), yaw);
+    f32 maxAngleDown = Vector3Angle((-(up)), yaw);
     maxAngleDown *= -1.0f;  // Downwards angle is negative
     maxAngleDown += 0.001f; // Avoid numerical errors
     if ( -(lookRotation.y) < maxAngleDown) { lookRotation.y = -maxAngleDown; }
@@ -261,20 +261,20 @@ static void UpdateCameraFPS(Camera *camera)
     const vec3 right = glm::normalize(glm::cross(yaw, up));
 
     // Rotate view vector around right axis
-    float pitchAngle = -lookRotation.y - lean.y;
+    f32 pitchAngle = -lookRotation.y - lean.y;
     pitchAngle = Clamp(pitchAngle, -PI/2 + 0.0001f, PI/2 - 0.0001f); // Clamp angle so it doesn't go past straight up or straight down
     const vec3 pitch = Vector3RotateByAxisAngle(yaw, right, pitchAngle);
 
     // Head animation
     // Rotate up direction around forward axis
-    const float headSin = sinf(headTimer*PI);
-    const float headCos = cosf(headTimer*PI);
-    constexpr float stepRotation = 0.01f;
+    const f32 headSin = sinf(headTimer*PI);
+    const f32 headCos = cosf(headTimer*PI);
+    constexpr f32 stepRotation = 0.01f;
     camera->up = Vector3RotateByAxisAngle(up, pitch, headSin*stepRotation + lean.x);
 
     // Camera BOB
-    constexpr float bobSide = 0.1f;
-    constexpr float bobUp = 0.15f;
+    constexpr f32 bobSide = 0.1f;
+    constexpr f32 bobUp = 0.15f;
     vec3 bobbing = ((right) * (headSin*bobSide));
     bobbing.y = fabsf(headCos*bobUp);
 
@@ -285,14 +285,14 @@ static void UpdateCameraFPS(Camera *camera)
 // Draw game level
 static void DrawLevel(void)
 {
-    constexpr int floorExtent = 25;
-    constexpr float tileSize = 5.0f;
+    constexpr i32 floorExtent = 25;
+    constexpr f32 tileSize = 5.0f;
     const Color tileColor1 = Color{ 150, 200, 200, 255 };
 
     // Floor tiles
-    for (int y = -floorExtent; y < floorExtent; y++)
+    for (i32 y = -floorExtent; y < floorExtent; y++)
     {
-        for (int x = -floorExtent; x < floorExtent; x++)
+        for (i32 x = -floorExtent; x < floorExtent; x++)
         {
             if ((y & 1) && (x & 1))
             {

@@ -21,18 +21,18 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void DrawCameraPrism(Camera3D camera, float aspect, Color color);
+static void DrawCameraPrism(Camera3D camera, f32 aspect, Color color);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
-    const int splitWidth = screenWidth/2;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
+    const i32 splitWidth = screenWidth/2;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - framebuffer rendering");
 
@@ -54,16 +54,16 @@ int main()
 
     // Set up render textures
     const RenderTexture2D observerTarget = LoadRenderTexture(splitWidth, screenHeight);
-    const Rectangle observerSource = { 0.0f, 0.0f, static_cast<float>(observerTarget.texture.width), -static_cast<float>(observerTarget.texture.height) };
-    const Rectangle observerDest = { 0.0f, 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
+    const Rectangle observerSource = { 0.0f, 0.0f, static_cast<f32>(observerTarget.texture.width), -static_cast<f32>(observerTarget.texture.height) };
+    const Rectangle observerDest = { 0.0f, 0.0f, static_cast<f32>(splitWidth), static_cast<f32>(screenHeight) };
 
     const RenderTexture2D subjectTarget = LoadRenderTexture(splitWidth, screenHeight);
-    const Rectangle subjectSource = { 0.0f, 0.0f, static_cast<float>(subjectTarget.texture.width), -static_cast<float>(subjectTarget.texture.height) };
-    const Rectangle subjectDest = { static_cast<float>(splitWidth), 0.0f, static_cast<float>(splitWidth), static_cast<float>(screenHeight) };
-    const float textureAspectRatio = static_cast<float>(subjectTarget.texture.width)/static_cast<float>(subjectTarget.texture.height);
+    const Rectangle subjectSource = { 0.0f, 0.0f, static_cast<f32>(subjectTarget.texture.width), -static_cast<f32>(subjectTarget.texture.height) };
+    const Rectangle subjectDest = { static_cast<f32>(splitWidth), 0.0f, static_cast<f32>(splitWidth), static_cast<f32>(screenHeight) };
+    const f32 textureAspectRatio = static_cast<f32>(subjectTarget.texture.width)/static_cast<f32>(subjectTarget.texture.height);
 
     // Rectangles for cropping render texture
-    constexpr float captureSize = 128.0f;
+    constexpr f32 captureSize = 128.0f;
     const Rectangle cropSource = { (subjectTarget.texture.width - captureSize)/2.0f, (subjectTarget.texture.height - captureSize)/2.0f, captureSize, -captureSize };
     const Rectangle cropDest = { splitWidth + 20.0f, 20.0f, captureSize, captureSize};
 
@@ -115,7 +115,7 @@ int main()
 
             EndMode3D();
 
-            DrawRectangleLines(static_cast<int>((subjectTarget.texture.width - captureSize)/2.0f), static_cast<int>((subjectTarget.texture.height - captureSize)/2.0f), static_cast<int>(captureSize), static_cast<int>(captureSize), GREEN);
+            DrawRectangleLines(static_cast<i32>((subjectTarget.texture.width - captureSize)/2.0f), static_cast<i32>((subjectTarget.texture.height - captureSize)/2.0f), static_cast<i32>(captureSize), static_cast<i32>(captureSize), GREEN);
             DrawText("Subject View", 10, subjectTarget.texture.height - 30, 20, BLACK);
 
         EndTextureMode();
@@ -158,9 +158,9 @@ int main()
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
-static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
+static void DrawCameraPrism(Camera3D camera, f32 aspect, Color color)
 {
-    const float length = glm::distance(camera.position, camera.target);
+    const f32 length = glm::distance(camera.position, camera.target);
     // Define the 4 corners of the camera's prism plane sliced at the target in Normalized Device Coordinates
     const vec3 planeNDC[4] = {
         { -1.0f, -1.0f, 1.0f }, // Bottom Left
@@ -179,18 +179,18 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
 
     // Transform the 4 plane corners from NDC into world space
     vec3 corners[4];
-    for (int i = 0; i < 4; i++)
+    for (i32 i = 0; i < 4; i++)
     {
-        const float x = planeNDC[i].x;
-        const float y = planeNDC[i].y;
-        const float z = planeNDC[i].z;
+        const f32 x = planeNDC[i].x;
+        const f32 y = planeNDC[i].y;
+        const f32 z = planeNDC[i].z;
 
         // Multiply NDC position by the inverse view-projection matrix
         // This produces a homogeneous (x, y, z, w) position in world space
-        const float vx = inverseViewProj[0][0]*x + inverseViewProj[1][0]*y + inverseViewProj[2][0]*z + inverseViewProj[3][0];
-        const float vy = inverseViewProj[0][1]*x + inverseViewProj[1][1]*y + inverseViewProj[2][1]*z + inverseViewProj[3][1];
-        const float vz = inverseViewProj[0][2]*x + inverseViewProj[1][2]*y + inverseViewProj[2][2]*z + inverseViewProj[3][2];
-        const float vw = inverseViewProj[0][3]*x + inverseViewProj[1][3]*y + inverseViewProj[2][3]*z + inverseViewProj[3][3];
+        const f32 vx = inverseViewProj[0][0]*x + inverseViewProj[1][0]*y + inverseViewProj[2][0]*z + inverseViewProj[3][0];
+        const f32 vy = inverseViewProj[0][1]*x + inverseViewProj[1][1]*y + inverseViewProj[2][1]*z + inverseViewProj[3][1];
+        const f32 vz = inverseViewProj[0][2]*x + inverseViewProj[1][2]*y + inverseViewProj[2][2]*z + inverseViewProj[3][2];
+        const f32 vw = inverseViewProj[0][3]*x + inverseViewProj[1][3]*y + inverseViewProj[2][3]*z + inverseViewProj[3][3];
 
         corners[i] = vec3{ vx/vw, vy/vw, vz/vw };
     }
@@ -202,7 +202,7 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
     DrawLine3D(corners[3], corners[0], color);
 
     // Draw the prism lines from the far plane to the camera position
-    for (int i = 0; i < 4; i++)
+    for (i32 i = 0; i < 4; i++)
     {
         DrawLine3D(camera.position, corners[i], color);
     }

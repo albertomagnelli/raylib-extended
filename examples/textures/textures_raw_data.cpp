@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - raw data");
 
@@ -37,8 +37,8 @@ int main()
     UnloadImage(fudesumiRaw);                                // Unload CPU (RAM) image data
 
     // Generate a checked texture by code
-    constexpr int imWidth = 960;
-    constexpr int imHeight = 480;
+    constexpr i32 imWidth = 960;
+    constexpr i32 imHeight = 480;
 
     // Dynamic memory allocation to store pixels data (Color type)
     // WARNING: Using raylib provided MemAlloc() that uses default raylib
@@ -46,9 +46,9 @@ int main()
     // that also uses raylib internal memory de-allocator
     Color *pixels = static_cast<Color *>(MemAlloc(imWidth*imHeight*sizeof(Color)));
 
-    for (int y = 0; y < imHeight; y++)
+    for (i32 y = 0; y < imHeight; y++)
     {
-        for (int x = 0; x < imWidth; x++)
+        for (i32 x = 0; x < imWidth; x++)
         {
             if (((x/32+y/32)/1)%2 == 0) pixels[y*imWidth + x] = ORANGE;
             else pixels[y*imWidth + x] = GOLD;

@@ -43,8 +43,8 @@ namespace
 {
     // Growable triangle-soup buffer used while building a clipped decal mesh
     typedef struct MeshBuilder {
-        int vertexCount;
-        int vertexCapacity;
+        i32 vertexCount;
+        i32 vertexCapacity;
         vec3 *vertices;
         vec2 *uvs;
     } MeshBuilder;
@@ -56,18 +56,18 @@ namespace
 static void AddTriangleToMeshBuilder(MeshBuilder *mb, vec3 v0, vec3 v1, vec3 v2);
 static void FreeMeshBuilder(MeshBuilder *mb);
 static Mesh BuildMesh(const MeshBuilder *mb);
-static vec3 ClipSegment(vec3 v0, vec3 v1, vec3 p, float s);
-static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float decalOffset);
+static vec3 ClipSegment(vec3 v0, vec3 v1, vec3 p, f32 s);
+static Mesh GenMeshDecal(Model model, mat4 projection, f32 decalSize, f32 decalOffset);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [models] example - procedural decals");
@@ -91,10 +91,10 @@ int main()
     const BoundingBox modelBBox = GetMeshBoundingBox(model.meshes[0]);
     camera.target = glm::mix(modelBBox.min, modelBBox.max, 0.5f);
 
-    const float modelSize = fminf(fminf(fabsf(modelBBox.max.x - modelBBox.min.x),
+    const f32 modelSize = fminf(fminf(fabsf(modelBBox.max.x - modelBBox.min.x),
         fabsf(modelBBox.max.y - modelBBox.min.y)), fabsf(modelBBox.max.z - modelBBox.min.z));
 
-    const float decalSize = modelSize*0.35f;
+    const f32 decalSize = modelSize*0.35f;
 
     // Translucent cube previewing where the next decal will land
     Model placementCube = LoadModelFromMesh(GenMeshCube(decalSize, decalSize, decalSize));
@@ -117,7 +117,7 @@ int main()
 
     bool showModel = true;
     Model decals[MAX_DECALS] = {};
-    int decalCount = 0;
+    i32 decalCount = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ int main()
 
         if (GetRayCollisionBox(ray, modelBBox).hit && (decalCount < MAX_DECALS))
         {
-            for (int m = 0; m < model.meshCount; m++)
+            for (i32 m = 0; m < model.meshCount; m++)
             {
                 const RayCollision meshHit = GetRayCollisionMesh(ray, model.meshes[m], model.transform);
                 if (meshHit.hit && (!collision.hit || (meshHit.distance < collision.distance))) collision = meshHit;
@@ -145,10 +145,10 @@ int main()
         // Project a new decal at the hit point, facing along the surface normal
         if (collision.hit && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (decalCount < MAX_DECALS))
         {
-            constexpr float decalOffset = 0.01f;
+            constexpr f32 decalOffset = 0.01f;
             const vec3 lookTarget = ((collision.point) + (collision.normal));
             mat4 splat = glm::lookAt(collision.point, lookTarget, vec3{ 0.0f, 1.0f, 0.0f });
-            splat = ((glm::rotate(mat4(1.0f), DEG2RAD*static_cast<float>(GetRandomValue(-180, 180)), vec3{0.0f, 0.0f, 1.0f})) * (splat));
+            splat = ((glm::rotate(mat4(1.0f), DEG2RAD*static_cast<f32>(GetRandomValue(-180, 180)), vec3{0.0f, 0.0f, 1.0f})) * (splat));
 
             if (const Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset); decalMesh.vertexCount > 0)
             {
@@ -169,7 +169,7 @@ int main()
 
                 if (showModel) DrawModel(model, vec3{}, 1.0f, WHITE);
 
-                for (int i = 0; i < decalCount; i++) DrawModel(decals[i], vec3{}, 1.0f, WHITE);
+                for (i32 i = 0; i < decalCount; i++) DrawModel(decals[i], vec3{}, 1.0f, WHITE);
 
                 // Preview cube at the surface point currently under the mouse
                 if (collision.hit)
@@ -185,21 +185,21 @@ int main()
             EndMode3D();
 
             // Vertex/triangle counts: base model vs total once decal geometry is added
-            int baseVertices = 0, baseTriangles = 0;
-            for (int i = 0; i < model.meshCount; i++)
+            i32 baseVertices = 0, baseTriangles = 0;
+            for (i32 i = 0; i < model.meshCount; i++)
             {
                 baseVertices += model.meshes[i].vertexCount;
                 baseTriangles += model.meshes[i].triangleCount;
             }
 
-            int totalVertices = baseVertices, totalTriangles = baseTriangles;
-            for (int i = 0; i < decalCount; i++)
+            i32 totalVertices = baseVertices, totalTriangles = baseTriangles;
+            for (i32 i = 0; i < decalCount; i++)
             {
                 totalVertices += decals[i].meshes[0].vertexCount;
                 totalTriangles += decals[i].meshes[0].triangleCount;
             }
 
-        constexpr int statX = screenWidth - 280;
+        constexpr i32 statX = screenWidth - 280;
             DrawText("Vertices", statX + 90, 10, 10, LIME);
             DrawText("Triangles", statX + 180, 10, 10, LIME);
             DrawText("Base Model", statX, 25, 10, LIME);
@@ -214,7 +214,7 @@ int main()
 
             if (GuiButton(Rectangle{ 120, screenHeight - 80.0f, 100, 40 }, "Clear Decals"))
             {
-                for (int i = 0; i < decalCount; i++) UnloadModel(decals[i]);
+                for (i32 i = 0; i < decalCount; i++) UnloadModel(decals[i]);
                 decalCount = 0;
             }
 
@@ -227,7 +227,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    for (int i = 0; i < decalCount; i++) UnloadModel(decals[i]);
+    for (i32 i = 0; i < decalCount; i++) UnloadModel(decals[i]);
 
     UnloadModel(placementCube);
     UnloadTexture(decalTexture);
@@ -249,7 +249,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, vec3 v0, vec3 v1, vec3 v2)
 {
     if (mb->vertexCapacity <= (mb->vertexCount + 3))
     {
-        const int newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
+        const i32 newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
         auto *newVertices = static_cast<vec3 *>(MemAlloc(newVertexCapacity*sizeof(vec3)));
 
         if (mb->vertexCapacity > 0)
@@ -262,7 +262,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, vec3 v0, vec3 v1, vec3 v2)
         mb->vertexCapacity = newVertexCapacity;
     }
 
-    const int index = mb->vertexCount;
+    const i32 index = mb->vertexCount;
     mb->vertexCount += 3;
 
     mb->vertices[index + 0] = v0;
@@ -285,10 +285,10 @@ static Mesh BuildMesh(const MeshBuilder *mb)
 
     outMesh.vertexCount = mb->vertexCount;
     outMesh.triangleCount = mb->vertexCount/3;
-    outMesh.vertices = static_cast<float *>(MemAlloc(outMesh.vertexCount*3*sizeof(float)));
-    if (mb->uvs != nullptr) outMesh.texcoords = static_cast<float *>(MemAlloc(outMesh.vertexCount*2*sizeof(float)));
+    outMesh.vertices = static_cast<f32 *>(MemAlloc(outMesh.vertexCount*3*sizeof(f32)));
+    if (mb->uvs != nullptr) outMesh.texcoords = static_cast<f32 *>(MemAlloc(outMesh.vertexCount*2*sizeof(f32)));
 
-    for (int i = 0; i < mb->vertexCount; i++)
+    for (i32 i = 0; i < mb->vertexCount; i++)
     {
         outMesh.vertices[3*i + 0] = mb->vertices[i].x;
         outMesh.vertices[3*i + 1] = mb->vertices[i].y;
@@ -307,11 +307,11 @@ static Mesh BuildMesh(const MeshBuilder *mb)
 }
 
 // Clips the segment [v0, v1] against the plane p.x = s, returning the intersection point
-static vec3 ClipSegment(vec3 v0, vec3 v1, vec3 p, float s)
+static vec3 ClipSegment(vec3 v0, vec3 v1, vec3 p, f32 s)
 {
-    const float d0 = glm::dot(v0, p) - s;
-    const float d1 = glm::dot(v1, p) - s;
-    const float t = d0/(d0 - d1);
+    const f32 d0 = glm::dot(v0, p) - s;
+    const f32 d1 = glm::dot(v1, p) - s;
+    const f32 t = d0/(d0 - d1);
 
     return glm::mix(v0, v1, t);
 }
@@ -321,25 +321,25 @@ static vec3 ClipSegment(vec3 v0, vec3 v1, vec3 p, float s)
 // following the same clip-space projection idea used by engines' decal systems (and by
 // three.js' DecalGeometry, which the technique is commonly traced back to). What's left
 // after clipping becomes the decal's own small mesh, UV-mapped from its local coordinates
-static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float decalOffset)
+static Mesh GenMeshDecal(Model model, mat4 projection, f32 decalSize, f32 decalOffset)
 {
     const mat4 invProj = glm::inverse(projection);
     MeshBuilder meshBuilders[2] = {};
-    int mbIndex = 0;
+    i32 mbIndex = 0;
 
     // Gather triangles that land anywhere near the decal box; this is a loose, cheap
     // pre-filter meant to skip most of the model, the precise clip happens below
-    for (int meshIndex = 0; meshIndex < model.meshCount; meshIndex++)
+    for (i32 meshIndex = 0; meshIndex < model.meshCount; meshIndex++)
     {
         const Mesh mesh = model.meshes[meshIndex];
 
-        for (int tri = 0; tri < mesh.triangleCount; tri++)
+        for (i32 tri = 0; tri < mesh.triangleCount; tri++)
         {
             vec3 vertices[3] = {};
 
             if (mesh.indices == nullptr)
             {
-                for (int v = 0; v < 3; v++)
+                for (i32 v = 0; v < 3; v++)
                 {
                     vertices[v] = vec3{
                         mesh.vertices[3*3*tri + 3*v + 0],
@@ -350,9 +350,9 @@ static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float de
             }
             else
             {
-                for (int v = 0; v < 3; v++)
+                for (i32 v = 0; v < 3; v++)
                 {
-                    const int idx = mesh.indices[3*tri + v];
+                    const i32 idx = mesh.indices[3*tri + v];
                     vertices[v] = vec3{
                         mesh.vertices[3*idx + 0],
                         mesh.vertices[3*idx + 1],
@@ -361,7 +361,7 @@ static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float de
                 }
             }
 
-            int insideCount = 0;
+            i32 insideCount = 0;
             for (auto & vertice : vertices)
             {
                 const auto v = vec3((projection)*vec4(vertice, 1.0f));
@@ -375,7 +375,7 @@ static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float de
 
     // Clip the surviving triangles against each of the decal box's 6 faces in turn
 
-    for (int face = 0; face < 6; face++)
+    for (i32 face = 0; face < 6; face++)
     {
         mbIndex = 1 - mbIndex;
 
@@ -383,9 +383,9 @@ static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float de
         MeshBuilder *outMesh = &meshBuilders[mbIndex];
 
         outMesh->vertexCount = 0;
-        const float s = 0.5f*decalSize;
+        const f32 s = 0.5f*decalSize;
 
-        for (int i = 0; i < inMesh->vertexCount; i += 3)
+        for (i32 i = 0; i < inMesh->vertexCount; i += 3)
         {
             const vec3 planes[6] = {
                 {  1,  0,  0 }, { -1,  0,  0 },
@@ -394,15 +394,15 @@ static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float de
             };
             vec3 nV1, nV2, nV3, nV4;
 
-            const float d1 = glm::dot(inMesh->vertices[i + 0], planes[face]) - s;
-            const float d2 = glm::dot(inMesh->vertices[i + 1], planes[face]) - s;
-            const float d3 = glm::dot(inMesh->vertices[i + 2], planes[face]) - s;
+            const f32 d1 = glm::dot(inMesh->vertices[i + 0], planes[face]) - s;
+            const f32 d2 = glm::dot(inMesh->vertices[i + 1], planes[face]) - s;
+            const f32 d3 = glm::dot(inMesh->vertices[i + 2], planes[face]) - s;
 
-            const int v1Out = (d1 > 0);
-            const int v2Out = (d2 > 0);
-            const int v3Out = (d3 > 0);
+            const i32 v1Out = (d1 > 0);
+            const i32 v2Out = (d2 > 0);
+            const i32 v3Out = (d3 > 0);
 
-            switch (const int total = v1Out + v2Out + v3Out)
+            switch (const i32 total = v1Out + v2Out + v3Out)
             {
                 case 0:
                     // Whole triangle is inside this face, keep it as-is
@@ -481,7 +481,7 @@ static Mesh GenMeshDecal(Model model, mat4 projection, float decalSize, float de
     {
         finalMesh->uvs = static_cast<vec2 *>(MemAlloc(sizeof(vec2)*finalMesh->vertexCount));
 
-        for (int i = 0; i < finalMesh->vertexCount; i++)
+        for (i32 i = 0; i < finalMesh->vertexCount; i++)
         {
             // Clipped coordinates run roughly (-decalSize/2 .. decalSize/2); remap to (0..1)
             finalMesh->uvs[i].x = (finalMesh->vertices[i].x/decalSize + 0.5f);

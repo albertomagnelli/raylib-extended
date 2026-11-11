@@ -50,12 +50,12 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, vec2 *outUV);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh uv painting");
 
@@ -78,7 +78,7 @@ int main()
 
     ToolMode currentTool = TOOL_PAINT;
     Color activeColor = RED;
-    int brushRadius = 12;
+    i32 brushRadius = 12;
     vec2 lastHitUV = {};
     bool hasLastHit = false;
 
@@ -105,24 +105,24 @@ int main()
 
             if (GetMeshHitUV(ray, model, modelBBox, &hitUV))
             {
-                const int px = static_cast<int>(hitUV.x * CANVAS_SIZE);
-                const int py = static_cast<int>(hitUV.y * CANVAS_SIZE);
+                const i32 px = static_cast<i32>(hitUV.x * CANVAS_SIZE);
+                const i32 py = static_cast<i32>(hitUV.y * CANVAS_SIZE);
 
                 if (currentTool == TOOL_PAINT)
                 {
                     // Stroke from the last hit to this one, guarding against jumps across a UV seam
                     if (hasLastHit && (fabsf(hitUV.x - lastHitUV.x) < 0.25f) && (fabsf(hitUV.y - lastHitUV.y) < 0.25f))
                     {
-                        const int lastPx = static_cast<int>(lastHitUV.x * CANVAS_SIZE);
-                        const int lastPy = static_cast<int>(lastHitUV.y * CANVAS_SIZE);
-                        const float dist = glm::distance(vec2{ static_cast<float>(lastPx), static_cast<float>(lastPy) }, vec2{ static_cast<float>(px), static_cast<float>(py) });
-                        const int steps = static_cast<int>(dist / 2.0f) + 1;
+                        const i32 lastPx = static_cast<i32>(lastHitUV.x * CANVAS_SIZE);
+                        const i32 lastPy = static_cast<i32>(lastHitUV.y * CANVAS_SIZE);
+                        const f32 dist = glm::distance(vec2{ static_cast<f32>(lastPx), static_cast<f32>(lastPy) }, vec2{ static_cast<f32>(px), static_cast<f32>(py) });
+                        const i32 steps = static_cast<i32>(dist / 2.0f) + 1;
 
-                        for (int i = 0; i <= steps; i++)
+                        for (i32 i = 0; i <= steps; i++)
                         {
-                            const float t = static_cast<float>(i) / static_cast<float>(steps);
-                            ImageDrawCircle(&canvasImage, static_cast<int>(Lerp(static_cast<float>(lastPx), static_cast<float>(px), t)),
-                                static_cast<int>(Lerp(static_cast<float>(lastPy), static_cast<float>(py), t)), brushRadius, activeColor);
+                            const f32 t = static_cast<f32>(i) / static_cast<f32>(steps);
+                            ImageDrawCircle(&canvasImage, static_cast<i32>(Lerp(static_cast<f32>(lastPx), static_cast<f32>(px), t)),
+                                static_cast<i32>(Lerp(static_cast<f32>(lastPy), static_cast<f32>(py), t)), brushRadius, activeColor);
                         }
                     }
                     else ImageDrawCircle(&canvasImage, px, py, brushRadius, activeColor);
@@ -188,7 +188,7 @@ int main()
 
             // Color swatches
             DrawText("Palette Swatches:", 25, 225, 10, LIGHTGRAY);
-            for (int i = 0; i < PALETTE_COUNT; i++)
+            for (i32 i = 0; i < PALETTE_COUNT; i++)
             {
                 const Rectangle swatchRec = { 25.0f + (i%4)*48, 245.0f + (i/4)*45, 40.0f, 38.0f };
                 DrawRectangleRec(swatchRec, palette[i]);
@@ -275,13 +275,13 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, vec2 *outUV)
     if (!GetRayCollisionBox(ray, bbox).hit) return false; // Fast reject
 
     const Mesh mesh = model.meshes[0];
-    float closestDistance = 1e9f;
+    f32 closestDistance = 1e9f;
     bool found = false;
     vec2 hitUV = {};
 
-    for (int tri = 0; tri < mesh.triangleCount; tri++)
+    for (i32 tri = 0; tri < mesh.triangleCount; tri++)
     {
-        int i0, i1, i2;
+        i32 i0, i1, i2;
 
         if (mesh.indices != nullptr)
         {

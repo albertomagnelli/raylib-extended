@@ -31,12 +31,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - normalmap rendering");
@@ -62,7 +62,7 @@ int main()
 
     // This example uses just 1 point light
     vec3 lightPosition = { 0.0f, 1.0f, 0.0f };
-    const int lightPosLoc = GetShaderLocation(shader, "lightPos");
+    const i32 lightPosLoc = GetShaderLocation(shader, "lightPos");
 
     // Load a plane model that has proper normals and tangents
     Model plane = LoadModel("resources/models/plane.glb");
@@ -80,12 +80,12 @@ int main()
     SetTextureFilter(plane.materials[0].maps[MATERIAL_MAP_NORMAL].texture, TEXTURE_FILTER_TRILINEAR);
 
     // Specular exponent AKA shininess of the material
-    float specularExponent = 8.0f;
-    const int specularExponentLoc = GetShaderLocation(shader, "specularExponent");
+    f32 specularExponent = 8.0f;
+    const i32 specularExponentLoc = GetShaderLocation(shader, "specularExponent");
 
     // Allow toggling the normal map on and off for comparison purposes
-    int useNormalMap = 1;
-    const int useNormalMapLoc = GetShaderLocation(shader, "useNormalMap");
+    i32 useNormalMap = 1;
+    const i32 useNormalMapLoc = GetShaderLocation(shader, "useNormalMap");
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -113,13 +113,13 @@ int main()
         if (IsKeyPressed(KEY_N)) useNormalMap = !useNormalMap;
 
         // Spin plane model at a constant rate
-        plane.transform = glm::rotate(mat4(1.0f), static_cast<float>(GetTime())*0.5f, vec3{0.0f, 1.0f, 0.0f});
+        plane.transform = glm::rotate(mat4(1.0f), static_cast<f32>(GetTime())*0.5f, vec3{0.0f, 1.0f, 0.0f});
 
         // Update shader values
-        float lightPos[3] = {lightPosition.x, lightPosition.y, lightPosition.z};
+        f32 lightPos[3] = {lightPosition.x, lightPosition.y, lightPosition.z};
         SetShaderValue(shader, lightPosLoc, lightPos, SHADER_UNIFORM_VEC3);
 
-        float camPos[3] = {camera.position.x, camera.position.y, camera.position.z};
+        f32 camPos[3] = {camera.position.x, camera.position.y, camera.position.z};
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], camPos, SHADER_UNIFORM_VEC3);
 
         SetShaderValue(shader, specularExponentLoc, &specularExponent, SHADER_UNIFORM_FLOAT);
@@ -150,7 +150,7 @@ int main()
             const char *toggleStr = (useNormalMap) ? "On" : "Off";
             DrawText(TextFormat("Use key [N] to toggle normal map: %s", toggleStr), 10, 10, 10, textColor);
 
-            constexpr int yOffset = 24;
+            constexpr i32 yOffset = 24;
             DrawText("Use keys [W][A][S][D] to move the light", 10, 10 + yOffset*1, 10, BLACK);
             DrawText("Use keys [Up][Down] to change specular exponent", 10, 10 + yOffset*2, 10, BLACK);
             DrawText(TextFormat("Specular Exponent: %.2f", specularExponent), 10, 10 + yOffset*3, 10, BLUE);

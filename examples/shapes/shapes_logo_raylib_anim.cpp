@@ -18,29 +18,29 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - logo raylib anim");
 
-    const int logoPositionX = screenWidth/2 - 128;
-    const int logoPositionY = screenHeight/2 - 128;
+    const i32 logoPositionX = screenWidth/2 - 128;
+    const i32 logoPositionY = screenHeight/2 - 128;
 
-    int framesCounter = 0;
-    int lettersCount = 0;
+    i32 framesCounter = 0;
+    i32 lettersCount = 0;
 
-    int topSideRecWidth = 16;
-    int leftSideRecHeight = 16;
+    i32 topSideRecWidth = 16;
+    i32 leftSideRecHeight = 16;
 
-    int bottomSideRecWidth = 16;
-    int rightSideRecHeight = 16;
+    i32 bottomSideRecWidth = 16;
+    i32 rightSideRecHeight = 16;
 
-    int state = 0;                  // Tracking animation states (State Machine)
-    float alpha = 1.0f;             // Useful for fading
+    i32 state = 0;                  // Tracking animation states (State Machine)
+    f32 alpha = 1.0f;             // Useful for fading
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -36,22 +36,22 @@ typedef enum ActionType {
 
 // Key and button inputs
 typedef struct ActionInput {
-    int key;
-    int button;
+    i32 key;
+    i32 button;
 } ActionInput;
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static int gamepadIndex = 0; // Gamepad default index
+static i32 gamepadIndex = 0; // Gamepad default index
 static ActionInput actionInputs[MAX_ACTION] = {};
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static bool IsActionPressed(int action);    // Check action key/button pressed
-static bool IsActionReleased(int action);   // Check action key/button released
-static bool IsActionDown(int action);       // Check action key/button down
+static bool IsActionPressed(i32 action);    // Check action key/button pressed
+static bool IsActionReleased(i32 action);   // Check action key/button released
+static bool IsActionDown(i32 action);       // Check action key/button down
 
 static void SetActionsDefault(void);        // Set the "default" keyset
 static void SetActionsCursor(void);         // Set the "alternate" keyset
@@ -59,12 +59,12 @@ static void SetActionsCursor(void);         // Set the "alternate" keyset
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input actions");
 
@@ -137,7 +137,7 @@ int main()
 //----------------------------------------------------------------------------------
 // Check action key/button pressed
 // NOTE: Combines key pressed and gamepad button pressed in one action
-static bool IsActionPressed(int action)
+static bool IsActionPressed(i32 action)
 {
     bool result = false;
 
@@ -148,7 +148,7 @@ static bool IsActionPressed(int action)
 
 // Check action key/button released
 // NOTE: Combines key released and gamepad button released in one action
-static bool IsActionReleased(int action)
+static bool IsActionReleased(i32 action)
 {
     bool result = false;
 
@@ -159,7 +159,7 @@ static bool IsActionReleased(int action)
 
 // Check action key/button down
 // NOTE: Combines key down and gamepad button down in one action
-static bool IsActionDown(int action)
+static bool IsActionDown(i32 action)
 {
     bool result = false;
 

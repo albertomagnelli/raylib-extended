@@ -248,7 +248,7 @@ static constexpr KeyboardKey mapScancodeToKey[SCANCODE_MAPPED_NUM] = {
     KEY_RIGHT_SUPER     //SDL_SCANCODE_RGUI
 };
 
-static constexpr int CursorsLUT[] = {
+static constexpr i32 CursorsLUT[] = {
     SDL_SYSTEM_CURSOR_ARROW,       // 0  MOUSE_CURSOR_DEFAULT
     SDL_SYSTEM_CURSOR_ARROW,       // 1  MOUSE_CURSOR_ARROW
     SDL_SYSTEM_CURSOR_IBEAM,       // 2  MOUSE_CURSOR_IBEAM
@@ -289,11 +289,11 @@ static constexpr int CursorsLUT[] = {
 #define SDL_DROPFILE  SDL_EVENT_DROP_FILE
 
 // SDL2 implementation for SDL3 function
-const char *SDL_GameControllerNameForIndex(int joystickIndex)
+const char *SDL_GameControllerNameForIndex(i32 joystickIndex)
 {
     // NOTE: SDL3 uses the IDs itself (SDL_JoystickID) instead of SDL2 joystick_index
     const char *name = nullptr;
-    int numJoysticks = 0;
+    i32 numJoysticks = 0;
     SDL_JoystickID *joysticks = SDL_GetJoysticks(&numJoysticks);
 
     if (joysticks)
@@ -310,9 +310,9 @@ const char *SDL_GameControllerNameForIndex(int joystickIndex)
     return name;
 }
 
-int SDL_GetNumVideoDisplays(void)
+i32 SDL_GetNumVideoDisplays(void)
 {
-    int monitorCount = 0;
+    i32 monitorCount = 0;
     SDL_DisplayID *displays = SDL_GetDisplays(&monitorCount);
 
     // Safe because If 'mem' is NULL, SDL_free does nothing
@@ -323,7 +323,7 @@ int SDL_GetNumVideoDisplays(void)
 
 // SLD3 Migration: To emulate SDL2 this function should return 'SDL_DISABLE' or 'SDL_ENABLE'
 // representing the *processing state* of the event before this function makes any changes to it
-Uint8 SDL_EventState(Uint32 type, int state)
+Uint8 SDL_EventState(Uint32 type, i32 state)
 {
     Uint8 stateBefore = SDL_EventEnabled(type);
 
@@ -348,7 +348,7 @@ void SDL_GetCurrentDisplayMode_Adapter(SDL_DisplayID displayID, SDL_DisplayMode 
 // SDL3 Migration: Renamed
 #define SDL_GetCurrentDisplayMode SDL_GetCurrentDisplayMode_Adapter
 
-SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, i32 width, i32 height, i32 depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
     return SDL_CreateSurface(width, height, SDL_GetPixelFormatForMasks(depth, Rmask, Gmask, Bmask, Amask));
 }
@@ -357,9 +357,9 @@ SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth
 // SDL_GetDisplayDPI() not reliable across platforms, approximately replaced by multiplying
 // SDL_GetWindowDisplayScale() times 160 on iPhone and Android, and 96 on other platforms
 // returns 0 on success or a negative error code on failure
-int SDL_GetDisplayDPI(int displayIndex, float *ddpi, float *hdpi, float *vdpi)
+i32 SDL_GetDisplayDPI(i32 displayIndex, f32 *ddpi, f32 *hdpi, f32 *vdpi)
 {
-    float dpi = SDL_GetWindowDisplayScale(platform.window)*96.0;
+    f32 dpi = SDL_GetWindowDisplayScale(platform.window)*96.0;
 
     if (ddpi != nullptr) *ddpi = dpi;
     if (hdpi != nullptr) *hdpi = dpi;
@@ -368,24 +368,24 @@ int SDL_GetDisplayDPI(int displayIndex, float *ddpi, float *hdpi, float *vdpi)
     return 0;
 }
 
-SDL_Surface *SDL_CreateRGBSurfaceWithFormat(Uint32 flags, int width, int height, int depth, Uint32 format)
+SDL_Surface *SDL_CreateRGBSurfaceWithFormat(Uint32 flags, i32 width, i32 height, i32 depth, Uint32 format)
 {
     return SDL_CreateSurface(width, height, format);
 }
 
-SDL_Surface *SDL_CreateRGBSurfaceFrom(void *pixels, int width, int height, int depth, int pitch, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+SDL_Surface *SDL_CreateRGBSurfaceFrom(void *pixels, i32 width, i32 height, i32 depth, i32 pitch, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
     return SDL_CreateSurfaceFrom(width, height, SDL_GetPixelFormatForMasks(depth, Rmask, Gmask, Bmask, Amask), pixels, pitch);
 }
 
-SDL_Surface *SDL_CreateRGBSurfaceWithFormatFrom(void *pixels, int width, int height, int depth, int pitch, Uint32 format)
+SDL_Surface *SDL_CreateRGBSurfaceWithFormatFrom(void *pixels, i32 width, i32 height, i32 depth, i32 pitch, Uint32 format)
 {
     return SDL_CreateSurfaceFrom(width, height, format, pixels, pitch);
 }
 
-int SDL_NumJoysticks(void)
+i32 SDL_NumJoysticks(void)
 {
-    int numJoysticks;
+    i32 numJoysticks;
     SDL_JoystickID *joysticks = SDL_GetJoysticks(&numJoysticks);
     SDL_free(joysticks);
     return numJoysticks;
@@ -394,7 +394,7 @@ int SDL_NumJoysticks(void)
 // SDL_SetRelativeMouseMode
 // returns 0 on success or a negative error code on failure
 // If relative mode is not supported, this returns -1
-int SDL_SetRelativeMouseMode_Adapter(SDL_bool enabled)
+i32 SDL_SetRelativeMouseMode_Adapter(SDL_bool enabled)
 {
     // SDL_SetWindowRelativeMouseMode(SDL_Window *window, bool enabled)
     // \returns true on success or false on failure; call SDL_GetError() for more
@@ -417,10 +417,10 @@ bool SDL_GetRelativeMouseMode_Adapter(void)
 
 #define SDL_GetRelativeMouseMode SDL_GetRelativeMouseMode_Adapter
 
-int SDL_GetNumTouchFingers(SDL_TouchID touchID)
+i32 SDL_GetNumTouchFingers(SDL_TouchID touchID)
 {
     // SDL_Finger **SDL_GetTouchFingers(SDL_TouchID touchID, int *count)
-    int count = 0;
+    i32 count = 0;
     SDL_Finger **fingers = SDL_GetTouchFingers(touchID, &count);
     SDL_free(fingers);
     return count;
@@ -443,11 +443,11 @@ void *SDL_GetClipboardData(const char *mime_type, size_t *size)
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-int InitPlatform(void);         // Initialize platform (graphics, inputs and more)
+i32 InitPlatform(void);         // Initialize platform (graphics, inputs and more)
 void ClosePlatform(void);       // Close platform
 
 static KeyboardKey ConvertScancodeToKey(SDL_Scancode sdlScancode);    // Help convert SDL scancodes to raylib key
-static int GetCodepointNextSDL(const char *text, int *codepointSize); // Get next codepoint in a byte sequence and bytes processed
+static i32 GetCodepointNextSDL(const char *text, i32 *codepointSize); // Get next codepoint in a byte sequence and bytes processed
 static void UpdateTouchPointsSDL(SDL_TouchFingerEvent event);         // Update CORE input touch point info from SDL touch data
 
 //----------------------------------------------------------------------------------
@@ -469,7 +469,7 @@ bool WindowShouldClose(void)
 // Toggle fullscreen mode
 void ToggleFullscreen(void)
 {
-    const int monitor = SDL_GetWindowDisplayIndex(platform.window);
+    const i32 monitor = SDL_GetWindowDisplayIndex(platform.window);
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -494,7 +494,7 @@ void ToggleFullscreen(void)
 // Toggle borderless windowed mode
 void ToggleBorderlessWindowed(void)
 {
-    const int monitor = SDL_GetWindowDisplayIndex(platform.window);
+    const i32 monitor = SDL_GetWindowDisplayIndex(platform.window);
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -538,7 +538,7 @@ void RestoreWindow(void)
 }
 
 // Set window configuration state using flags
-void SetWindowState(unsigned int flags)
+void SetWindowState(u32 flags)
 {
     if (!CORE.Window.ready) TRACELOG(LOG_WARNING, "WINDOW: SetWindowState does nothing before window initialization, Use \"SetConfigFlags\" instead");
 
@@ -550,7 +550,7 @@ void SetWindowState(unsigned int flags)
     }
     if (FLAG_IS_SET(flags, FLAG_FULLSCREEN_MODE))
     {
-        const int monitor = SDL_GetWindowDisplayIndex(platform.window);
+        const i32 monitor = SDL_GetWindowDisplayIndex(platform.window);
 
     #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
         if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -611,7 +611,7 @@ void SetWindowState(unsigned int flags)
     }
     if (FLAG_IS_SET(flags, FLAG_BORDERLESS_WINDOWED_MODE))
     {
-        const int monitor = SDL_GetWindowDisplayIndex(platform.window);
+        const i32 monitor = SDL_GetWindowDisplayIndex(platform.window);
 
     #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
         if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -625,7 +625,7 @@ void SetWindowState(unsigned int flags)
     }
     if ((flags & MSAA_FLAGS) != 0)
     {
-        int requestedSamples = GetWindowRequestedSamples();
+        i32 requestedSamples = GetWindowRequestedSamples();
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);                // Enable multisampling buffers
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples); // Enable multisampling
     }
@@ -636,7 +636,7 @@ void SetWindowState(unsigned int flags)
 }
 
 // Clear window configuration state flags
-void ClearWindowState(unsigned int flags)
+void ClearWindowState(u32 flags)
 {
     FLAG_CLEAR(CORE.Window.flags, flags);
 
@@ -711,9 +711,9 @@ void SetWindowIcon(Image image)
 {
     SDL_Surface *iconSurface = nullptr;
 
-    unsigned int rmask = 0, gmask = 0, bmask = 0, amask = 0;
-    int depth = 0;  // Depth in bits
-    int pitch = 0;  // Pixel spacing (pitch) in bytes
+    u32 rmask = 0, gmask = 0, bmask = 0, amask = 0;
+    i32 depth = 0;  // Depth in bits
+    i32 pitch = 0;  // Pixel spacing (pitch) in bytes
 
     switch (image.format)
     {
@@ -809,7 +809,7 @@ void SetWindowIcon(Image image)
 }
 
 // Set icon for window
-void SetWindowIcons(Image *images, int count)
+void SetWindowIcons(Image *images, i32 count)
 {
     TRACELOG(LOG_WARNING, "SetWindowIcons() not available on target platform");
 }
@@ -826,7 +826,7 @@ void SetWindowTitle(std::string_view titleView)
 }
 
 // Set window position on screen (windowed mode)
-void SetWindowPosition(int x, int y)
+void SetWindowPosition(i32 x, i32 y)
 {
     SDL_SetWindowPosition(platform.window, x, y);
 
@@ -835,7 +835,7 @@ void SetWindowPosition(int x, int y)
 }
 
 // Set monitor for the current window
-void SetWindowMonitor(int monitor)
+void SetWindowMonitor(i32 monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -848,8 +848,8 @@ void SetWindowMonitor(int monitor)
         // NOTE 2: A workaround for SDL2 is leaving fullscreen, moving the window, then entering full screen again
         const bool wasFullscreen = (FLAG_IS_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE))? true : false;
 
-        const int screenWidth = CORE.Window.screen.width;
-        const int screenHeight = CORE.Window.screen.height;
+        const i32 screenWidth = CORE.Window.screen.width;
+        const i32 screenHeight = CORE.Window.screen.height;
         SDL_Rect usableBounds;
 
     #if defined(USING_VERSION_SDL3) // Different style for success checking
@@ -876,8 +876,8 @@ void SetWindowMonitor(int monitor)
             }
             else
             {
-                const int x = usableBounds.x + (usableBounds.w/2) - (screenWidth/2);
-                const int y = usableBounds.y + (usableBounds.h/2) - (screenHeight/2);
+                const i32 x = usableBounds.x + (usableBounds.w/2) - (screenWidth/2);
+                const i32 y = usableBounds.y + (usableBounds.h/2) - (screenHeight/2);
                 SDL_SetWindowPosition(platform.window, x, y);
                 CORE.Window.position.x = x;
                 CORE.Window.position.y = y;
@@ -891,7 +891,7 @@ void SetWindowMonitor(int monitor)
 }
 
 // Set window minimum dimensions (FLAG_WINDOW_RESIZABLE)
-void SetWindowMinSize(int width, int height)
+void SetWindowMinSize(i32 width, i32 height)
 {
     SDL_SetWindowMinimumSize(platform.window, width, height);
 
@@ -900,7 +900,7 @@ void SetWindowMinSize(int width, int height)
 }
 
 // Set window maximum dimensions (FLAG_WINDOW_RESIZABLE)
-void SetWindowMaxSize(int width, int height)
+void SetWindowMaxSize(i32 width, i32 height)
 {
     SDL_SetWindowMaximumSize(platform.window, width, height);
 
@@ -909,7 +909,7 @@ void SetWindowMaxSize(int width, int height)
 }
 
 // Set window dimensions
-void SetWindowSize(int width, int height)
+void SetWindowSize(i32 width, i32 height)
 {
     SDL_SetWindowSize(platform.window, width, height);
 
@@ -918,7 +918,7 @@ void SetWindowSize(int width, int height)
 }
 
 // Set window opacity, value opacity is between 0.0 and 1.0
-void SetWindowOpacity(float opacity)
+void SetWindowOpacity(f32 opacity)
 {
     if (opacity >= 1.0f) opacity = 1.0f;
     else if (opacity <= 0.0f) opacity = 0.0f;
@@ -990,20 +990,20 @@ void *GetWindowHandle(void)
 }
 
 // Get number of monitors
-int GetMonitorCount(void)
+i32 GetMonitorCount(void)
 {
     return SDL_GetNumVideoDisplays();
 }
 
 // Get current monitor where window is placed
-int GetCurrentMonitor(void)
+i32 GetCurrentMonitor(void)
 {
     // Be aware that this returns an ID in SDL3 and a Index in SDL2
     return SDL_GetWindowDisplayIndex(platform.window);
 }
 
 // Get selected monitor position
-vec2 GetMonitorPosition(int monitor)
+vec2 GetMonitorPosition(i32 monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1019,7 +1019,7 @@ vec2 GetMonitorPosition(int monitor)
         if (SDL_GetDisplayUsableBounds(monitor, &displayBounds) == 0)
     #endif
         {
-            return vec2{ static_cast<float>(displayBounds.x), static_cast<float>(displayBounds.y) };
+            return vec2{ static_cast<f32>(displayBounds.x), static_cast<f32>(displayBounds.y) };
         }
         else TRACELOG(LOG_WARNING, "SDL: Failed to get selected display usable bounds");
     }
@@ -1028,9 +1028,9 @@ vec2 GetMonitorPosition(int monitor)
 }
 
 // Get selected monitor width (currently used by monitor)
-int GetMonitorWidth(int monitor)
+i32 GetMonitorWidth(i32 monitor)
 {
-    int width = 0;
+    i32 width = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1048,9 +1048,9 @@ int GetMonitorWidth(int monitor)
 }
 
 // Get selected monitor height (currently used by monitor)
-int GetMonitorHeight(int monitor)
+i32 GetMonitorHeight(i32 monitor)
 {
-    int height = 0;
+    i32 height = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1068,9 +1068,9 @@ int GetMonitorHeight(int monitor)
 }
 
 // Get selected monitor physical width in millimetres
-int GetMonitorPhysicalWidth(int monitor)
+i32 GetMonitorPhysicalWidth(i32 monitor)
 {
-    int width = 0;
+    i32 width = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1078,12 +1078,12 @@ int GetMonitorPhysicalWidth(int monitor)
     if ((monitor >= 0) && (monitor < SDL_GetNumVideoDisplays()))
 #endif
     {
-        float ddpi = 0.0f;
+        f32 ddpi = 0.0f;
         SDL_GetDisplayDPI(monitor, &ddpi, nullptr, nullptr);
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
         // Calculate size on inches, then convert to millimeter
-        if (ddpi > 0.0f) width = static_cast<int>(((mode.w/ddpi)*25.4f));
+        if (ddpi > 0.0f) width = static_cast<i32>(((mode.w/ddpi)*25.4f));
     }
     else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
 
@@ -1091,9 +1091,9 @@ int GetMonitorPhysicalWidth(int monitor)
 }
 
 // Get selected monitor physical height in millimetres
-int GetMonitorPhysicalHeight(int monitor)
+i32 GetMonitorPhysicalHeight(i32 monitor)
 {
-    int height = 0;
+    i32 height = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1101,12 +1101,12 @@ int GetMonitorPhysicalHeight(int monitor)
     if ((monitor >= 0) && (monitor < SDL_GetNumVideoDisplays()))
 #endif
     {
-        float ddpi = 0.0f;
+        f32 ddpi = 0.0f;
         SDL_GetDisplayDPI(monitor, &ddpi, nullptr, nullptr);
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
         // Calculate size on inches, then convert to millimeter
-        if (ddpi > 0.0f) height = static_cast<int>(((mode.h/ddpi)*25.4f));
+        if (ddpi > 0.0f) height = static_cast<i32>(((mode.h/ddpi)*25.4f));
     }
     else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
 
@@ -1114,9 +1114,9 @@ int GetMonitorPhysicalHeight(int monitor)
 }
 
 // Get selected monitor refresh rate
-int GetMonitorRefreshRate(int monitor)
+i32 GetMonitorRefreshRate(i32 monitor)
 {
-    int refresh = 0;
+    i32 refresh = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1134,7 +1134,7 @@ int GetMonitorRefreshRate(int monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-std::string GetMonitorName(int monitor)
+std::string GetMonitorName(i32 monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1152,12 +1152,12 @@ std::string GetMonitorName(int monitor)
 // Get window position XY on monitor
 vec2 GetWindowPosition(void)
 {
-    int x = 0;
-    int y = 0;
+    i32 x = 0;
+    i32 y = 0;
 
     SDL_GetWindowPosition(platform.window, &x, &y);
 
-    return vec2{ static_cast<float>(x), static_cast<float>(y) };
+    return vec2{ static_cast<f32>(x), static_cast<f32>(y) };
 }
 
 // Get window scale DPI factor for current monitor
@@ -1195,7 +1195,7 @@ std::string GetClipboardText(void)
 
     char *clipboard = SDL_GetClipboardText();
 
-    int clipboardSize = snprintf(buffer, MAX_CLIPBOARD_BUFFER_LENGTH, "%s", clipboard);
+    i32 clipboardSize = snprintf(buffer, MAX_CLIPBOARD_BUFFER_LENGTH, "%s", clipboard);
     if (clipboardSize >= MAX_CLIPBOARD_BUFFER_LENGTH)
     {
         char *truncate = buffer + MAX_CLIPBOARD_BUFFER_LENGTH - 4;
@@ -1245,13 +1245,13 @@ Image GetClipboardImage(void)
     size_t dataSize = 0;
     void  *fileData = nullptr;
 
-    for (int i = 0; i < SDL_arraysize(imageFormats); i++)
+    for (i32 i = 0; i < SDL_arraysize(imageFormats); i++)
     {
         fileData = SDL_GetClipboardData(imageFormats[i], &dataSize);
 
         if (fileData)
         {
-            image = LoadImageFromMemory(imageExtensions[i], fileData, static_cast<int>(dataSize));
+            image = LoadImageFromMemory(imageExtensions[i], fileData, static_cast<i32>(dataSize));
 
             SDL_free(fileData);
 
@@ -1327,9 +1327,9 @@ void SwapScreenBuffer(void)
 //----------------------------------------------------------------------------------
 
 // Get elapsed time measure in seconds
-double GetTime(void)
+f64 GetTime(void)
 {
-    double time = (static_cast<double>(SDL_GetPerformanceCounter())/static_cast<double>(SDL_GetPerformanceFrequency())) - CORE.Time.base;
+    f64 time = (static_cast<f64>(SDL_GetPerformanceCounter())/static_cast<f64>(SDL_GetPerformanceFrequency())) - CORE.Time.base;
 
     return time;
 }
@@ -1362,12 +1362,12 @@ void OpenURL(std::string_view urlView)
 //----------------------------------------------------------------------------------
 
 // Set internal gamepad mappings
-int SetGamepadMappings(std::string_view mappingsView)
+i32 SetGamepadMappings(std::string_view mappingsView)
 {
     const std::string mappingsStr(mappingsView);
     const char *mappings = mappingsStr.c_str();
 
-    const int mappingsLength = strlen(mappings);
+    const i32 mappingsLength = strlen(mappings);
     char *buffer = static_cast<char *>(calloc(mappingsLength + 1, sizeof(char)));
     memcpy(buffer, mappings, mappingsLength);
     char *p = strtok(buffer, "\n");
@@ -1389,7 +1389,7 @@ int SetGamepadMappings(std::string_view mappingsView)
 }
 
 // Set gamepad vibration
-void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float duration)
+void SetGamepadVibration(i32 gamepad, f32 leftMotor, f32 rightMotor, f32 duration)
 {
     if ((gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (duration > 0.0f))
     {
@@ -1404,15 +1404,15 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 }
 
 // Set mouse position XY
-void SetMousePosition(int x, int y)
+void SetMousePosition(i32 x, i32 y)
 {
     SDL_WarpMouseInWindow(platform.window, x, y);
 
-    CORE.Input.Mouse.currentPosition = vec2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = vec2{ static_cast<f32>(x), static_cast<f32>(y) };
 }
 
 // Set mouse cursor
-void SetMouseCursor(int cursor)
+void SetMouseCursor(i32 cursor)
 {
     platform.cursor = SDL_CreateSystemCursor(CursorsLUT[cursor]);
     SDL_SetCursor(platform.cursor);
@@ -1421,7 +1421,7 @@ void SetMouseCursor(int cursor)
 }
 
 // Get physical key name
-std::string GetKeyName(int key)
+std::string GetKeyName(i32 key)
 {
     return GetStringOrEmpty(SDL_GetKeyName(key));
 }
@@ -1452,13 +1452,13 @@ void PollInputEvents(void)
     else CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
 
     // Reset last gamepad button/axis registered state
-    for (int i = 0; (i < SDL_NumJoysticks()) && (i < MAX_GAMEPADS); i++)
+    for (i32 i = 0; (i < SDL_NumJoysticks()) && (i < MAX_GAMEPADS); i++)
     {
         // Check if gamepad is available
         if (CORE.Input.Gamepad.ready[i])
         {
             // Register previous gamepad button states
-            for (int k = 0; k < MAX_GAMEPAD_BUTTONS; k++)
+            for (i32 k = 0; k < MAX_GAMEPAD_BUTTONS; k++)
             {
                 CORE.Input.Gamepad.previousButtonState[i][k] = CORE.Input.Gamepad.currentButtonState[i][k];
             }
@@ -1466,24 +1466,24 @@ void PollInputEvents(void)
     }
 
     // Register previous touch states
-    for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.previousTouchState[i] = CORE.Input.Touch.currentTouchState[i];
+    for (i32 i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.previousTouchState[i] = CORE.Input.Touch.currentTouchState[i];
 
     // Map touch position to mouse position for convenience
     if (CORE.Input.Touch.pointCount == 0) CORE.Input.Touch.position[0] = CORE.Input.Mouse.currentPosition;
 
-    int touchAction = -1;       // 0-TOUCH_ACTION_UP, 1-TOUCH_ACTION_DOWN, 2-TOUCH_ACTION_MOVE
+    i32 touchAction = -1;       // 0-TOUCH_ACTION_UP, 1-TOUCH_ACTION_DOWN, 2-TOUCH_ACTION_MOVE
     bool realTouch = false;     // Flag to differentiate real touch gestures from mouse ones
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys
-    for (int i = 0; i < MAX_KEYBOARD_KEYS; i++)
+    for (i32 i = 0; i < MAX_KEYBOARD_KEYS; i++)
     {
         CORE.Input.Keyboard.previousKeyState[i] = CORE.Input.Keyboard.currentKeyState[i];
         CORE.Input.Keyboard.keyRepeatInFrame[i] = 0;
     }
 
     // Register previous mouse states
-    for (int i = 0; i < MAX_MOUSE_BUTTONS; i++) CORE.Input.Mouse.previousButtonState[i] = CORE.Input.Mouse.currentButtonState[i];
+    for (i32 i = 0; i < MAX_MOUSE_BUTTONS; i++) CORE.Input.Mouse.previousButtonState[i] = CORE.Input.Mouse.currentButtonState[i];
 
     // Poll input events for current platform
     //-----------------------------------------------------------------------------
@@ -1511,7 +1511,7 @@ void PollInputEvents(void)
             case SDL_DROPFILE:      // Dropped file
             {
                 // NOTE: SDL sends one event per file, so every event adds a new path to the list
-                int newCount = CORE.Window.dropFileCount + 1;
+                i32 newCount = CORE.Window.dropFileCount + 1;
 
                 // Reallocate array to fit the new file path pointer
                 char **tempPaths = static_cast<char **>(realloc(CORE.Window.dropFilepaths, newCount*sizeof(char *)));
@@ -1555,15 +1555,15 @@ void PollInputEvents(void)
                     case SDL_WINDOWEVENT_RESIZED:
                     case SDL_WINDOWEVENT_SIZE_CHANGED:
                     {
-                        const int width = event.window.data1;
-                        const int height = event.window.data2;
+                        const i32 width = event.window.data1;
+                        const i32 height = event.window.data2;
                         SetupViewport(width, height);
 
                         // Consider content scaling if required
                         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
                         {
-                            CORE.Window.screen.width = static_cast<int>((width/GetWindowScaleDPI().x));
-                            CORE.Window.screen.height = static_cast<int>((height/GetWindowScaleDPI().y));
+                            CORE.Window.screen.width = static_cast<i32>((width/GetWindowScaleDPI().x));
+                            CORE.Window.screen.height = static_cast<i32>((height/GetWindowScaleDPI().y));
                         }
                         else
                         {
@@ -1579,10 +1579,10 @@ void PollInputEvents(void)
                         // to remove the FLAG_WINDOW_MAXIMIZED accordingly
                         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_MAXIMIZED))
                         {
-                            int borderTop = 0;
-                            int borderLeft = 0;
-                            int borderBottom = 0;
-                            int borderRight = 0;
+                            i32 borderTop = 0;
+                            i32 borderLeft = 0;
+                            i32 borderBottom = 0;
+                            i32 borderRight = 0;
                             SDL_GetWindowBordersSize(platform.window, &borderTop, &borderLeft, &borderBottom, &borderRight);
                             SDL_Rect usableBounds;
                             SDL_GetDisplayUsableBounds(SDL_GetWindowDisplayIndex(platform.window), &usableBounds);
@@ -1693,10 +1693,10 @@ void PollInputEvents(void)
                     // Add character (codepoint) to the queue
                 #if defined(USING_VERSION_SDL3)
                     size_t textLen = strlen(event.text.text);
-                    unsigned int codepoint = static_cast<unsigned int>(SDL_StepUTF8(&event.text.text, &textLen));
+                    u32 codepoint = static_cast<u32>(SDL_StepUTF8(&event.text.text, &textLen));
                 #else
-                    int codepointSize = 0;
-                    int codepoint = GetCodepointNextSDL(event.text.text, &codepointSize);
+                    i32 codepointSize = 0;
+                    i32 codepoint = GetCodepointNextSDL(event.text.text, &codepointSize);
                 #endif
 
                     CORE.Input.Keyboard.charPressedQueue[CORE.Input.Keyboard.charPressedQueueCount] = codepoint;
@@ -1709,7 +1709,7 @@ void PollInputEvents(void)
             {
                 // NOTE: SDL2 mouse button order is LEFT, MIDDLE, RIGHT, but raylib uses LEFT, RIGHT, MIDDLE like GLFW
                 // The following conditions align SDL with raylib.h MouseButton enum order
-                int btn = event.button.button - 1;
+                i32 btn = event.button.button - 1;
                 if (btn == 2) btn = 1;
                 else if (btn == 1) btn = 2;
 
@@ -1722,7 +1722,7 @@ void PollInputEvents(void)
             {
                 // NOTE: SDL2 mouse button order is LEFT, MIDDLE, RIGHT, but raylib uses LEFT, RIGHT, MIDDLE like GLFW
                 // The following conditions align SDL with raylib.h MouseButton enum order
-                int btn = event.button.button - 1;
+                i32 btn = event.button.button - 1;
                 if (btn == 2) btn = 1;
                 else if (btn == 1) btn = 2;
 
@@ -1745,13 +1745,13 @@ void PollInputEvents(void)
             {
                 if (CORE.Input.Mouse.cursorLocked)
                 {
-                    CORE.Input.Mouse.currentPosition.x += static_cast<float>(event.motion.xrel);
-                    CORE.Input.Mouse.currentPosition.y += static_cast<float>(event.motion.yrel);
+                    CORE.Input.Mouse.currentPosition.x += static_cast<f32>(event.motion.xrel);
+                    CORE.Input.Mouse.currentPosition.y += static_cast<f32>(event.motion.yrel);
                 }
                 else
                 {
-                    CORE.Input.Mouse.currentPosition.x = static_cast<float>(event.motion.x);
-                    CORE.Input.Mouse.currentPosition.y = static_cast<float>(event.motion.y);
+                    CORE.Input.Mouse.currentPosition.x = static_cast<f32>(event.motion.x);
+                    CORE.Input.Mouse.currentPosition.y = static_cast<f32>(event.motion.y);
                 }
 
                 CORE.Input.Touch.position[0] = CORE.Input.Mouse.currentPosition;
@@ -1781,15 +1781,15 @@ void PollInputEvents(void)
             // Check Gamepad events
             case SDL_JOYDEVICEADDED:
             {
-                int jid = event.jdevice.which; // Joystick device index
+                i32 jid = event.jdevice.which; // Joystick device index
 
                 // Check if already added at InitPlatform
-                for (int i = 0; i < MAX_GAMEPADS; i++)
+                for (i32 i = 0; i < MAX_GAMEPADS; i++)
                 {
                     if (jid == platform.gamepadId[i]) return;
                 }
 
-                int nextAvailableSlot = 0;
+                i32 nextAvailableSlot = 0;
                 while (nextAvailableSlot < MAX_GAMEPADS && CORE.Input.Gamepad.ready[nextAvailableSlot])
                 {
                     nextAvailableSlot++;
@@ -1816,9 +1816,9 @@ void PollInputEvents(void)
             } break;
             case SDL_JOYDEVICEREMOVED:
             {
-                int jid = event.jdevice.which; // Joystick instance id
+                i32 jid = event.jdevice.which; // Joystick instance id
 
-                for (int i = 0; i < MAX_GAMEPADS; i++)
+                for (i32 i = 0; i < MAX_GAMEPADS; i++)
                 {
                     if (platform.gamepadId[i] == jid)
                     {
@@ -1832,7 +1832,7 @@ void PollInputEvents(void)
             } break;
             case SDL_CONTROLLERBUTTONDOWN:
             {
-                int button = -1;
+                i32 button = -1;
 
             #if defined(USING_VERSION_SDL3)
                 switch (event.gbutton.button)
@@ -1864,7 +1864,7 @@ void PollInputEvents(void)
 
                 if (button >= 0)
                 {
-                    for (int i = 0; i < MAX_GAMEPADS; i++)
+                    for (i32 i = 0; i < MAX_GAMEPADS; i++)
                     {
                     #if defined(USING_VERSION_SDL3)
                         if (platform.gamepadId[i] == event.gbutton.which)
@@ -1881,7 +1881,7 @@ void PollInputEvents(void)
             } break;
             case SDL_CONTROLLERBUTTONUP:
             {
-                int button = -1;
+                i32 button = -1;
 
             #if defined(USING_VERSION_SDL3)
                 switch (event.gbutton.button)
@@ -1913,7 +1913,7 @@ void PollInputEvents(void)
 
                 if (button >= 0)
                 {
-                    for (int i = 0; i < MAX_GAMEPADS; i++)
+                    for (i32 i = 0; i < MAX_GAMEPADS; i++)
                     {
                     #if defined(USING_VERSION_SDL3)
                         if (platform.gamepadId[i] == event.gbutton.which)
@@ -1930,7 +1930,7 @@ void PollInputEvents(void)
             } break;
             case SDL_CONTROLLERAXISMOTION:
             {
-                int axis = -1;
+                i32 axis = -1;
 
                 switch (event.jaxis.axis)
                 {
@@ -1945,19 +1945,19 @@ void PollInputEvents(void)
 
                 if (axis >= 0)
                 {
-                    for (int i = 0; i < MAX_GAMEPADS; i++)
+                    for (i32 i = 0; i < MAX_GAMEPADS; i++)
                     {
                         if (platform.gamepadId[i] == event.jaxis.which)
                         {
                             // SDL axis value range is -32768 to 32767, normalizing it to raylib's -1.0 to 1.0f range
-                            float value = event.jaxis.value/static_cast<float>(32767);
+                            f32 value = event.jaxis.value/static_cast<f32>(32767);
                             CORE.Input.Gamepad.axisState[i][axis] = value;
 
                             // Register button state for triggers in addition to their axes
                             if ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))
                             {
-                                int button = (axis == GAMEPAD_AXIS_LEFT_TRIGGER)? GAMEPAD_BUTTON_LEFT_TRIGGER_2 : GAMEPAD_BUTTON_RIGHT_TRIGGER_2;
-                                int pressed = (value > 0.1f);
+                                i32 button = (axis == GAMEPAD_AXIS_LEFT_TRIGGER)? GAMEPAD_BUTTON_LEFT_TRIGGER_2 : GAMEPAD_BUTTON_RIGHT_TRIGGER_2;
+                                i32 pressed = (value > 0.1f);
                                 CORE.Input.Gamepad.currentButtonState[i][button] = pressed;
                                 if (pressed) CORE.Input.Gamepad.lastButtonPressed = button;
                                 else if (CORE.Input.Gamepad.lastButtonPressed == button) CORE.Input.Gamepad.lastButtonPressed = 0;
@@ -1990,8 +1990,8 @@ void PollInputEvents(void)
             else gestureEvent.position[0] = GetMousePosition();
 
             // Normalize gestureEvent.position[0] for CORE.Window.screen.width and CORE.Window.screen.height
-            gestureEvent.position[0].x /= static_cast<float>(GetScreenWidth());
-            gestureEvent.position[0].y /= static_cast<float>(GetScreenHeight());
+            gestureEvent.position[0].x /= static_cast<f32>(GetScreenWidth());
+            gestureEvent.position[0].y /= static_cast<f32>(GetScreenHeight());
 
             // Gesture data is sent to gestures-system for processing
             ProcessGestureEvent(gestureEvent);
@@ -2008,16 +2008,16 @@ void PollInputEvents(void)
 //----------------------------------------------------------------------------------
 
 // Initialize platform: graphics, inputs and more
-int InitPlatform(void)
+i32 InitPlatform(void)
 {
     // Initialize SDL internal global state, only required systems
     // NOTE: Not all systems need to be initialized, SDL_INIT_AUDIO is not required, managed by miniaudio
-    int result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER);
+    i32 result = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS | SDL_INIT_GAMECONTROLLER);
     if (result < 0) { TRACELOG(LOG_WARNING, "SDL: Failed to initialize SDL"); return -1; }
 
     // Initialize graphic device: display/window and graphic context
     //----------------------------------------------------------------------------
-    unsigned int flags = 0;
+    u32 flags = 0;
     FLAG_SET(flags, SDL_WINDOW_SHOWN);
     FLAG_SET(flags, SDL_WINDOW_INPUT_FOCUS);
     FLAG_SET(flags, SDL_WINDOW_MOUSE_FOCUS);
@@ -2095,7 +2095,7 @@ int InitPlatform(void)
 
         if ((CORE.Window.flags & MSAA_FLAGS) != 0)
         {
-            int requestedSamples = GetWindowRequestedSamples();
+            i32 requestedSamples = GetWindowRequestedSamples();
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples);
         }
@@ -2165,19 +2165,19 @@ int InitPlatform(void)
     // Initialize input events system
     //----------------------------------------------------------------------------
     // Initialize gamepads
-    for (int i = 0; i < MAX_GAMEPADS; i++)
+    for (i32 i = 0; i < MAX_GAMEPADS; i++)
     {
         platform.gamepadId[i] = -1; // Set all gamepad initial instance ids as invalid to not conflict with instance id zero
     }
 
 #if defined(USING_VERSION_SDL3)
-    int numJoysticks;
+    i32 numJoysticks;
     SDL_JoystickID *joysticks = SDL_GetJoysticks(&numJoysticks);
 #else
-    int numJoysticks = SDL_NumJoysticks();
+    i32 numJoysticks = SDL_NumJoysticks();
 #endif
 
-    for (int i = 0; (i < numJoysticks) && (i < MAX_GAMEPADS); i++)
+    for (i32 i = 0; (i < numJoysticks) && (i < MAX_GAMEPADS); i++)
     {
 #if defined(USING_VERSION_SDL3)
         platform.gamepad[i] = SDL_OpenGamepad(joysticks[i]);
@@ -2214,7 +2214,7 @@ int InitPlatform(void)
     // Initialize timing system
     //----------------------------------------------------------------------------
     // Get base time from window initialization
-    CORE.Time.base = static_cast<double>(SDL_GetPerformanceCounter())/static_cast<double>(SDL_GetPerformanceFrequency());
+    CORE.Time.base = static_cast<f64>(SDL_GetPerformanceCounter())/static_cast<f64>(SDL_GetPerformanceFrequency());
 
     #if defined(_WIN32) && SUPPORT_WINMM_HIGHRES_TIMER && !SUPPORT_BUSY_WAIT_LOOP
     SDL_SetHint(SDL_HINT_TIMER_RESOLUTION, "1"); // SDL equivalent of timeBeginPeriod() and timeEndPeriod()
@@ -2262,10 +2262,10 @@ static KeyboardKey ConvertScancodeToKey(SDL_Scancode sdlScancode)
 }
 
 // Get next codepoint in a byte sequence and bytes processed
-static int GetCodepointNextSDL(const char *text, int *codepointSize)
+static i32 GetCodepointNextSDL(const char *text, i32 *codepointSize)
 {
     const char *ptr = text;
-    int codepoint = 0x3f;       // Codepoint (defaults to '?')
+    i32 codepoint = 0x3f;       // Codepoint (defaults to '?')
     *codepointSize = 1;
 
     // Get current codepoint and bytes processed
@@ -2304,11 +2304,11 @@ static int GetCodepointNextSDL(const char *text, int *codepointSize)
 static void UpdateTouchPointsSDL(SDL_TouchFingerEvent event)
 {
 #if defined(USING_VERSION_SDL3) // SDL3
-    int count = 0;
+    i32 count = 0;
     SDL_Finger **fingers = SDL_GetTouchFingers(event.touchID, &count);
     CORE.Input.Touch.pointCount = count;
 
-    for (int i = 0; i < CORE.Input.Touch.pointCount; i++)
+    for (i32 i = 0; i < CORE.Input.Touch.pointCount; i++)
     {
         SDL_Finger *finger = fingers[i];
         CORE.Input.Touch.pointId[i] = finger->id;
@@ -2323,15 +2323,15 @@ static void UpdateTouchPointsSDL(SDL_TouchFingerEvent event)
 
     CORE.Input.Touch.pointCount = SDL_GetNumTouchFingers(event.touchId);
 
-    for (int i = 0; i < CORE.Input.Touch.pointCount; i++)
+    for (i32 i = 0; i < CORE.Input.Touch.pointCount; i++)
     {
         SDL_Finger *finger = SDL_GetTouchFinger(event.touchId, i);
-        CORE.Input.Touch.pointId[i] = static_cast<int>(finger->id);
+        CORE.Input.Touch.pointId[i] = static_cast<i32>(finger->id);
         CORE.Input.Touch.position[i].x = finger->x*CORE.Window.screen.width;
         CORE.Input.Touch.position[i].y = finger->y*CORE.Window.screen.height;
         CORE.Input.Touch.currentTouchState[i] = 1;
     }
 #endif
 
-    for (int i = CORE.Input.Touch.pointCount; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.currentTouchState[i] = 0;
+    for (i32 i = CORE.Input.Touch.pointCount; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.currentTouchState[i] = 0;
 }

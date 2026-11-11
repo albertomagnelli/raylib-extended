@@ -23,22 +23,22 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - circle sector drawing");
 
     const vec2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
-    float outerRadius = 180.0f;
-    float startAngle = 0.0f;
-    float endAngle = 180.0f;
-    float segments = 10.0f;
-    float minSegments = 4;
+    f32 outerRadius = 180.0f;
+    f32 startAngle = 0.0f;
+    f32 endAngle = 180.0f;
+    f32 segments = 10.0f;
+    f32 minSegments = 4;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -60,8 +60,8 @@ int main()
             DrawLine(500, 0, 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.6f));
             DrawRectangle(500, 0, GetScreenWidth() - 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.3f));
 
-            DrawCircleSector(center, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(MAROON, 0.3f));
-            DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, static_cast<int>(segments), Fade(MAROON, 0.6f));
+            DrawCircleSector(center, outerRadius, startAngle, endAngle, static_cast<i32>(segments), Fade(MAROON, 0.3f));
+            DrawCircleSectorLines(center, outerRadius, startAngle, endAngle, static_cast<i32>(segments), Fade(MAROON, 0.6f));
 
             // Draw GUI controls
             //------------------------------------------------------------------------------

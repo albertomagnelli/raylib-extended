@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera split screen");
 
@@ -50,11 +50,11 @@ int main()
     const RenderTexture screenPlayer2 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Build a flipped rectangle the size of the split view to use for drawing later
-    const Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<float>(screenPlayer1.texture.width), static_cast<float>(-screenPlayer1.texture.height) };
+    const Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<f32>(screenPlayer1.texture.width), static_cast<f32>(-screenPlayer1.texture.height) };
 
     // Grid data
-    constexpr int count = 5;
-    constexpr float spacing = 4;
+    constexpr i32 count = 5;
+    constexpr f32 spacing = 4;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ int main()
         //----------------------------------------------------------------------------------
         // If anyone moves this frame, how far will they move based on the time since the last frame
         // this moves things at 10 world units per second, regardless of the actual FPS
-        const float offsetThisFrame = 10.0f*GetFrameTime();
+        const f32 offsetThisFrame = 10.0f*GetFrameTime();
 
         // Move Player1 forward and backwards (no turning)
         if (IsKeyDown(KEY_W))
@@ -104,9 +104,9 @@ int main()
                 // Draw scene: grid of cube trees on a plane to make a "world"
                 DrawPlane(vec3{ 0, 0, 0 }, vec2{ 50, 50 }, BEIGE); // Simple world plane
 
-                for (float x = -count*spacing; x <= count*spacing; x += spacing)
+                for (f32 x = -count*spacing; x <= count*spacing; x += spacing)
                 {
-                    for (float z = -count*spacing; z <= count*spacing; z += spacing)
+                    for (f32 z = -count*spacing; z <= count*spacing; z += spacing)
                     {
                         DrawCube(vec3{ x, 1.5f, z }, 1, 1, 1, LIME);
                         DrawCube(vec3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
@@ -133,9 +133,9 @@ int main()
                 // Draw scene: grid of cube trees on a plane to make a "world"
                 DrawPlane(vec3{ 0, 0, 0 }, vec2{ 50, 50 }, BEIGE); // Simple world plane
 
-                for (float x = -count*spacing; x <= count*spacing; x += spacing)
+                for (f32 x = -count*spacing; x <= count*spacing; x += spacing)
                 {
-                    for (float z = -count*spacing; z <= count*spacing; z += spacing)
+                    for (f32 z = -count*spacing; z <= count*spacing; z += spacing)
                     {
                         DrawCube(vec3{ x, 1.5f, z }, 1, 1, 1, LIME);
                         DrawCube(vec3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);

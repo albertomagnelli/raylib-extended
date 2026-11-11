@@ -28,12 +28,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture tiling");
 
@@ -54,7 +54,7 @@ int main()
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
     // Set the texture tiling using a shader
-    float tiling[2] = { 3.0f, 3.0f };
+    f32 tiling[2] = { 3.0f, 3.0f };
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/tiling.fs", GLSL_VERSION));
     SetTextureWrap(texture, TEXTURE_WRAP_REPEAT);
     SetShaderValue(shader, GetShaderLocation(shader, "tiling"), tiling, SHADER_UNIFORM_VEC2);

@@ -20,26 +20,26 @@
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static float *delayBuffer = nullptr;
-static unsigned int delayBufferSize = 0;
-static unsigned int delayReadIndex = 2;
-static unsigned int delayWriteIndex = 0;
+static f32 *delayBuffer = nullptr;
+static u32 delayBufferSize = 0;
+static u32 delayReadIndex = 2;
+static u32 delayWriteIndex = 0;
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void AudioProcessEffectLPF(void *buffer, unsigned int frames);   // Audio effect: lowpass filter
-static void AudioProcessEffectDelay(void *buffer, unsigned int frames); // Audio effect: delay
+static void AudioProcessEffectLPF(void *buffer, u32 frames);   // Audio effect: lowpass filter
+static void AudioProcessEffectDelay(void *buffer, u32 frames); // Audio effect: delay
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - stream effects");
 
@@ -49,11 +49,11 @@ int main()
 
     // Allocate buffer for the delay effect
     delayBufferSize = 48000*2;      // 1 second delay (device sampleRate*channels)
-    delayBuffer = static_cast<float *>(calloc(delayBufferSize, sizeof(float)));
+    delayBuffer = static_cast<f32 *>(calloc(delayBufferSize, sizeof(f32)));
 
     PlayMusicStream(music);
 
-    float timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
+    f32 timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
     bool pause = false;             // Music playing paused
 
     bool enableEffectLPF = false;   // Enable effect low-pass-filter
@@ -116,7 +116,7 @@ int main()
             DrawText("MUSIC SHOULD BE PLAYING!", 245, 150, 20, LIGHTGRAY);
 
             DrawRectangle(200, 180, 400, 12, LIGHTGRAY);
-            DrawRectangle(200, 180, static_cast<int>(timePlayed*400.0f), 12, MAROON);
+            DrawRectangle(200, 180, static_cast<i32>(timePlayed*400.0f), 12, MAROON);
             DrawRectangleLines(200, 180, 400, 12, GRAY);
 
             DrawText("PRESS SPACE TO RESTART MUSIC", 215, 230, 20, LIGHTGRAY);
@@ -147,18 +147,18 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Audio effect: lowpass filter
-static void AudioProcessEffectLPF(void *buffer, unsigned int frames)
+static void AudioProcessEffectLPF(void *buffer, u32 frames)
 {
-    static float low[2] = { 0.0f, 0.0f };
-    static const float cutoff = 70.0f/44100.0f; // 70 Hz lowpass filter
-    const float k = cutoff/(cutoff + 0.1591549431f); // RC filter formula
+    static f32 low[2] = { 0.0f, 0.0f };
+    static const f32 cutoff = 70.0f/44100.0f; // 70 Hz lowpass filter
+    const f32 k = cutoff/(cutoff + 0.1591549431f); // RC filter formula
 
     // Converts the buffer data before using it
-    float *bufferData = static_cast<float *>(buffer);
-    for (unsigned int i = 0; i < frames*2; i += 2)
+    f32 *bufferData = static_cast<f32 *>(buffer);
+    for (u32 i = 0; i < frames*2; i += 2)
     {
-        const float l = bufferData[i];
-        const float r = bufferData[i + 1];
+        const f32 l = bufferData[i];
+        const f32 r = bufferData[i + 1];
 
         low[0] += k*(l - low[0]);
         low[1] += k*(r - low[1]);
@@ -168,20 +168,20 @@ static void AudioProcessEffectLPF(void *buffer, unsigned int frames)
 }
 
 // Audio effect: delay
-static void AudioProcessEffectDelay(void *buffer, unsigned int frames)
+static void AudioProcessEffectDelay(void *buffer, u32 frames)
 {
-    for (unsigned int i = 0; i < frames*2; i += 2)
+    for (u32 i = 0; i < frames*2; i += 2)
     {
-        const float leftDelay = delayBuffer[delayReadIndex++];    // ERROR: Reading buffer -> WHY??? Maybe thread related???
-        const float rightDelay = delayBuffer[delayReadIndex++];
+        const f32 leftDelay = delayBuffer[delayReadIndex++];    // ERROR: Reading buffer -> WHY??? Maybe thread related???
+        const f32 rightDelay = delayBuffer[delayReadIndex++];
 
         if (delayReadIndex == delayBufferSize) delayReadIndex = 0;
 
-        (static_cast<float *>(buffer))[i] = 0.5f*(static_cast<float *>(buffer))[i] + 0.5f*leftDelay;
-        (static_cast<float *>(buffer))[i + 1] = 0.5f*(static_cast<float *>(buffer))[i + 1] + 0.5f*rightDelay;
+        (static_cast<f32 *>(buffer))[i] = 0.5f*(static_cast<f32 *>(buffer))[i] + 0.5f*leftDelay;
+        (static_cast<f32 *>(buffer))[i + 1] = 0.5f*(static_cast<f32 *>(buffer))[i + 1] + 0.5f*rightDelay;
 
-        delayBuffer[delayWriteIndex++] = (static_cast<float *>(buffer))[i];
-        delayBuffer[delayWriteIndex++] = (static_cast<float *>(buffer))[i + 1];
+        delayBuffer[delayWriteIndex++] = (static_cast<f32 *>(buffer))[i];
+        delayBuffer[delayWriteIndex++] = (static_cast<f32 *>(buffer))[i + 1];
         if (delayWriteIndex == delayBufferSize) delayWriteIndex = 0;
     }
 }

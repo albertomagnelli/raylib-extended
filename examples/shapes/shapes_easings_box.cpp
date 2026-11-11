@@ -20,22 +20,22 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings box");
 
     // Box variables to be animated with easings
     Rectangle rec = { GetScreenWidth()/2.0f, -100, 100, 100 };
-    float rotation = 0.0f;
-    float alpha = 1.0f;
+    f32 rotation = 0.0f;
+    f32 alpha = 1.0f;
 
-    int state = 0;
-    int framesCounter = 0;
+    i32 state = 0;
+    i32 framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ int main()
 
                 // NOTE: Remember that 3rd parameter of easing function refers to
                 // desired value variation, do not confuse it with expected final value!
-                rec.y = EaseElasticOut(static_cast<float>(framesCounter), -100, GetScreenHeight()/2.0f + 100, 120);
+                rec.y = EaseElasticOut(static_cast<f32>(framesCounter), -100, GetScreenHeight()/2.0f + 100, 120);
 
                 if (framesCounter >= 120)
                 {
@@ -64,8 +64,8 @@ int main()
             case 1:     // Scale box to an horizontal bar
             {
                 framesCounter++;
-                rec.height = EaseBounceOut(static_cast<float>(framesCounter), 100, -90, 120);
-                rec.width = EaseBounceOut(static_cast<float>(framesCounter), 100, static_cast<float>(GetScreenWidth()), 120);
+                rec.height = EaseBounceOut(static_cast<f32>(framesCounter), 100, -90, 120);
+                rec.width = EaseBounceOut(static_cast<f32>(framesCounter), 100, static_cast<f32>(GetScreenWidth()), 120);
 
                 if (framesCounter >= 120)
                 {
@@ -76,7 +76,7 @@ int main()
             case 2:     // Rotate horizontal bar rectangle
             {
                 framesCounter++;
-                rotation = EaseQuadOut(static_cast<float>(framesCounter), 0.0f, 270.0f, 240);
+                rotation = EaseQuadOut(static_cast<f32>(framesCounter), 0.0f, 270.0f, 240);
 
                 if (framesCounter >= 240)
                 {
@@ -87,7 +87,7 @@ int main()
             case 3:     // Increase bar size to fill all screen
             {
                 framesCounter++;
-                rec.height = EaseCircOut(static_cast<float>(framesCounter), 10, static_cast<float>(GetScreenWidth()), 120);
+                rec.height = EaseCircOut(static_cast<f32>(framesCounter), 10, static_cast<f32>(GetScreenWidth()), 120);
 
                 if (framesCounter >= 120)
                 {
@@ -98,7 +98,7 @@ int main()
             case 4:     // Fade out animation
             {
                 framesCounter++;
-                alpha = EaseSineOut(static_cast<float>(framesCounter), 1.0f, -1.0f, 160);
+                alpha = EaseSineOut(static_cast<f32>(framesCounter), 1.0f, -1.0f, 160);
 
                 if (framesCounter >= 160)
                 {

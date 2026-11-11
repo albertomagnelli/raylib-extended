@@ -88,8 +88,8 @@
         vec3 position;          // Camera position
         vec3 target;            // Camera target it looks-at
         vec3 up;                // Camera up vector (rotation over its axis)
-        float fovy;             // Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic
-        int projection;         // Camera projection type: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
+        f32 fovy;             // Camera field-of-view aperture in Y (degrees) in perspective, used as near plane width in orthographic
+        i32 projection;         // Camera projection type: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
     } Camera3D;
 
     typedef Camera3D Camera;    // Camera type fallback, defaults to Camera3D
@@ -128,18 +128,18 @@ RLAPI vec3 GetCameraUp(const Camera *camera);
 RLAPI vec3 GetCameraRight(const Camera *camera);
 
 // Camera movement
-RLAPI void CameraMoveForward(Camera *camera, float distance, bool moveInWorldPlane);
-RLAPI void CameraMoveUp(Camera *camera, float distance);
-RLAPI void CameraMoveRight(Camera *camera, float distance, bool moveInWorldPlane);
-RLAPI void CameraMoveToTarget(Camera *camera, float delta);
+RLAPI void CameraMoveForward(Camera *camera, f32 distance, bool moveInWorldPlane);
+RLAPI void CameraMoveUp(Camera *camera, f32 distance);
+RLAPI void CameraMoveRight(Camera *camera, f32 distance, bool moveInWorldPlane);
+RLAPI void CameraMoveToTarget(Camera *camera, f32 delta);
 
 // Camera rotation
-RLAPI void CameraYaw(Camera *camera, float angle, bool rotateAroundTarget);
-RLAPI void CameraPitch(Camera *camera, float angle, bool lockView, bool rotateAroundTarget, bool rotateUp);
-RLAPI void CameraRoll(Camera *camera, float angle);
+RLAPI void CameraYaw(Camera *camera, f32 angle, bool rotateAroundTarget);
+RLAPI void CameraPitch(Camera *camera, f32 angle, bool lockView, bool rotateAroundTarget, bool rotateUp);
+RLAPI void CameraRoll(Camera *camera, f32 angle);
 
 RLAPI mat4 GetCameraViewMatrix(const Camera *camera);
-RLAPI mat4 GetCameraProjectionMatrix(const Camera *camera, float aspect);
+RLAPI mat4 GetCameraProjectionMatrix(const Camera *camera, f32 aspect);
 
 #if defined(__cplusplus)
 }
@@ -224,7 +224,7 @@ vec3 GetCameraRight(const Camera *camera)
 }
 
 // Moves the camera in its forward direction
-void CameraMoveForward(Camera *camera, const float distance, const bool moveInWorldPlane)
+void CameraMoveForward(Camera *camera, const f32 distance, const bool moveInWorldPlane)
 {
     vec3 forward = GetCameraForward(camera);
 
@@ -247,7 +247,7 @@ void CameraMoveForward(Camera *camera, const float distance, const bool moveInWo
 }
 
 // Moves the camera in its up direction
-void CameraMoveUp(Camera *camera, float distance)
+void CameraMoveUp(Camera *camera, f32 distance)
 {
     vec3 up = GetCameraUp(camera);
 
@@ -260,7 +260,7 @@ void CameraMoveUp(Camera *camera, float distance)
 }
 
 // Moves the camera target in its current right direction
-void CameraMoveRight(Camera *camera, const float distance, const bool moveInWorldPlane)
+void CameraMoveRight(Camera *camera, const f32 distance, const bool moveInWorldPlane)
 {
     vec3 right = GetCameraRight(camera);
 
@@ -283,9 +283,9 @@ void CameraMoveRight(Camera *camera, const float distance, const bool moveInWorl
 }
 
 // Moves the camera position closer/farther to/from the camera target
-void CameraMoveToTarget(Camera *camera, float delta)
+void CameraMoveToTarget(Camera *camera, f32 delta)
 {
-    float distance = glm::distance(camera->position, camera->target);
+    f32 distance = glm::distance(camera->position, camera->target);
 
     // Apply delta
     distance += delta;
@@ -302,7 +302,7 @@ void CameraMoveToTarget(Camera *camera, float delta)
 // Yaw is "looking left and right"
 // If rotateAroundTarget is false, the camera rotates around its position
 // Note: angle must be provided in radians
-void CameraYaw(Camera *camera, const float angle, const bool rotateAroundTarget)
+void CameraYaw(Camera *camera, const f32 angle, const bool rotateAroundTarget)
 {
     // Rotation axis
     const vec3 up = GetCameraUp(camera);
@@ -330,7 +330,7 @@ void CameraYaw(Camera *camera, const float angle, const bool rotateAroundTarget)
 //  - rotateAroundTarget defines if rotation is around target or around its position
 //  - rotateUp rotates the up direction as well (typically only useful in CAMERA_FREE)
 // NOTE: [angle] must be provided in radians
-void CameraPitch(Camera *camera, float angle, const bool lockView, const bool rotateAroundTarget, bool rotateUp)
+void CameraPitch(Camera *camera, f32 angle, const bool lockView, const bool rotateAroundTarget, bool rotateUp)
 {
     // Up direction
     const vec3 up = GetCameraUp(camera);
@@ -344,12 +344,12 @@ void CameraPitch(Camera *camera, float angle, const bool lockView, const bool ro
         // to allow only viewing straight up or down
 
         // Clamp view up
-        float maxAngleUp = glm::degrees(glm::angle(up, targetPosition));
+        f32 maxAngleUp = glm::degrees(glm::angle(up, targetPosition));
         maxAngleUp -= 0.001f; // avoid numerical errors
         if (angle > maxAngleUp) angle = maxAngleUp;
 
         // Clamp view down
-        float maxAngleDown = glm::degrees(glm::angle(-up, targetPosition));
+        f32 maxAngleDown = glm::degrees(glm::angle(-up, targetPosition));
         maxAngleDown *= -1.0f;  // downwards angle is negative
         maxAngleDown += 0.001f; // avoid numerical errors
         if (angle < maxAngleDown) angle = maxAngleDown;
@@ -382,7 +382,7 @@ void CameraPitch(Camera *camera, float angle, const bool lockView, const bool ro
 // Rotates the camera around its forward vector
 // Roll is "turning your head sideways to the left or right"
 // Note: angle must be provided in radians
-void CameraRoll(Camera *camera, const float angle)
+void CameraRoll(Camera *camera, const f32 angle)
 {
     // Rotation axis
     const vec3 forward = GetCameraForward(camera);
@@ -398,7 +398,7 @@ mat4 GetCameraViewMatrix(const Camera *camera)
 }
 
 // Returns the camera projection matrix
-mat4 GetCameraProjectionMatrix(const Camera *camera, const float aspect)
+mat4 GetCameraProjectionMatrix(const Camera *camera, const f32 aspect)
 {
     if (camera->projection == CAMERA_PERSPECTIVE)
     {
@@ -406,8 +406,8 @@ mat4 GetCameraProjectionMatrix(const Camera *camera, const float aspect)
     }
     else if (camera->projection == CAMERA_ORTHOGRAPHIC)
     {
-        const float top = camera->fovy/2.0f;
-        const float right = top*aspect;
+        const f32 top = camera->fovy/2.0f;
+        const f32 right = top*aspect;
 
         return glm::ortho(-right, right, -top, top, CAMERA_CULL_DISTANCE_NEAR, CAMERA_CULL_DISTANCE_FAR);
     }
@@ -418,7 +418,7 @@ mat4 GetCameraProjectionMatrix(const Camera *camera, const float aspect)
 #if !defined(RCAMERA_STANDALONE)
 // Update camera position for selected mode
 // Camera mode: CAMERA_FREE, CAMERA_FIRST_PERSON, CAMERA_THIRD_PERSON, CAMERA_ORBITAL or CUSTOM
-void UpdateCamera(Camera *camera, const int mode)
+void UpdateCamera(Camera *camera, const i32 mode)
 {
     const vec2 mousePositionDelta = GetMouseDelta();
 
@@ -427,10 +427,10 @@ void UpdateCamera(Camera *camera, const int mode)
     const bool lockView = ((mode == CAMERA_FREE) || (mode == CAMERA_FIRST_PERSON) || (mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL));
 
     // Camera speeds based on frame time
-    const float cameraMoveSpeed = CAMERA_MOVE_SPEED*GetFrameTime();
-    const float cameraRotationSpeed = CAMERA_ROTATION_SPEED*GetFrameTime();
-    const float cameraPanSpeed = CAMERA_PAN_SPEED*GetFrameTime();
-    const float cameraOrbitalSpeed = CAMERA_ORBITAL_SPEED*GetFrameTime();
+    const f32 cameraMoveSpeed = CAMERA_MOVE_SPEED*GetFrameTime();
+    const f32 cameraRotationSpeed = CAMERA_ROTATION_SPEED*GetFrameTime();
+    const f32 cameraPanSpeed = CAMERA_PAN_SPEED*GetFrameTime();
+    const f32 cameraOrbitalSpeed = CAMERA_ORBITAL_SPEED*GetFrameTime();
 
     if (mode == CAMERA_CUSTOM) {}
     else if (mode == CAMERA_ORBITAL)
@@ -505,7 +505,7 @@ void UpdateCamera(Camera *camera, const int mode)
 #endif // !RCAMERA_STANDALONE
 
 // Update camera movement, movement/rotation values should be provided by user
-void UpdateCameraPro(Camera *camera, const vec3 movement, const vec3 rotation, const float zoom)
+void UpdateCameraPro(Camera *camera, const vec3 movement, const vec3 rotation, const f32 zoom)
 {
     // Required values
     // movement.x - Move forward/backward

@@ -20,25 +20,25 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - following eyes");
 
     const vec2 scleraLeftPosition = { GetScreenWidth()/2.0f - 100.0f, GetScreenHeight()/2.0f };
     const vec2 scleraRightPosition = { GetScreenWidth()/2.0f + 100.0f, GetScreenHeight()/2.0f };
-    constexpr float scleraRadius = 80;
+    constexpr f32 scleraRadius = 80;
 
     vec2 irisLeftPosition = { GetScreenWidth()/2.0f - 100.0f, GetScreenHeight()/2.0f };
     vec2 irisRightPosition = { GetScreenWidth()/2.0f + 100.0f, GetScreenHeight()/2.0f };
-    constexpr float irisRadius = 24;
+    constexpr f32 irisRadius = 24;
 
-    float angle = 0.0f;
-    float dx = 0.0f, dy = 0.0f, dxx = 0.0f, dyy = 0.0f;
+    f32 angle = 0.0f;
+    f32 dx = 0.0f, dy = 0.0f, dxx = 0.0f, dyy = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

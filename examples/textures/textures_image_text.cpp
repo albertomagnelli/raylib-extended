@@ -18,12 +18,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image text");
 
@@ -32,19 +32,19 @@ int main()
     // When no codepoints are provided, LoadFontEx() loads a default set of codepoints
     // This set includes '@', which "KAISG.ttf" doesn't have a glyph for, causing a warning to be logged
     // We avoid this by just excluding it from the list of codepoints we load
-    int codepointCount = 0;
-    int *codepoints = LoadCodepoints(" !\"#$%&'()*+,-./0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", &codepointCount);
+    i32 codepointCount = 0;
+    i32 *codepoints = LoadCodepoints(" !\"#$%&'()*+,-./0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", &codepointCount);
     // TTF Font loading with custom generation parameters
     const Font font = LoadFontEx("resources/KAISG.ttf", 64, codepoints, codepointCount);
     UnloadCodepoints(codepoints);
 
     // Draw over image using custom font
-    ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", vec2{ 20.0f, 20.0f }, static_cast<float>(font.baseSize), 0.0f, RED);
+    ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", vec2{ 20.0f, 20.0f }, static_cast<f32>(font.baseSize), 0.0f, RED);
 
     const Texture2D texture = LoadTextureFromImage(parrots);  // Image converted to texture, uploaded to GPU memory (VRAM)
     UnloadImage(parrots);                                     // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
-    const vec2 position = { static_cast<float>(screenWidth)/2 - static_cast<float>(texture.width)/2, static_cast<float>(screenHeight)/2 - static_cast<float>(texture.height)/2 - 20 };
+    const vec2 position = { static_cast<f32>(screenWidth)/2 - static_cast<f32>(texture.width)/2, static_cast<f32>(screenHeight)/2 - static_cast<f32>(texture.height)/2 - 20 };
 
     bool showFont = false;
 
@@ -73,22 +73,22 @@ int main()
 
                 // Draw text directly using sprite font
                 DrawTextEx(font, "[Parrots font drawing]", vec2{ position.x + 20,
-                           position.y + 20 + 280 }, static_cast<float>(font.baseSize), 0.0f, WHITE);
+                           position.y + 20 + 280 }, static_cast<f32>(font.baseSize), 0.0f, WHITE);
             }
             else
             {
                 // Make the font atlas texture fit the screen, so we can see the whole thing
-                float scale = 1.0f;
+                f32 scale = 1.0f;
 
-                const float atlasRatio = static_cast<float>(font.texture.width)/static_cast<float>(font.texture.height);
-                const float screenRatio = static_cast<float>(screenWidth)/static_cast<float>(screenHeight);
-                if (atlasRatio >= screenRatio) scale = static_cast<float>(screenWidth)/static_cast<float>(font.texture.width);
-                else scale = static_cast<float>(screenHeight)/static_cast<float>(font.texture.height);
+                const f32 atlasRatio = static_cast<f32>(font.texture.width)/static_cast<f32>(font.texture.height);
+                const f32 screenRatio = static_cast<f32>(screenWidth)/static_cast<f32>(screenHeight);
+                if (atlasRatio >= screenRatio) scale = static_cast<f32>(screenWidth)/static_cast<f32>(font.texture.width);
+                else scale = static_cast<f32>(screenHeight)/static_cast<f32>(font.texture.height);
 
-                const float width = static_cast<float>(font.texture.width) * scale;
-                const float height = static_cast<float>(font.texture.height) * scale;
+                const f32 width = static_cast<f32>(font.texture.width) * scale;
+                const f32 height = static_cast<f32>(font.texture.height) * scale;
 
-                DrawTextureEx(font.texture, vec2{ (static_cast<float>(screenWidth) - width)/2, (static_cast<float>(screenHeight) - height)/2 }, 0, scale, BLACK);
+                DrawTextureEx(font.texture, vec2{ (static_cast<f32>(screenWidth) - width)/2, (static_cast<f32>(screenHeight) - height)/2 }, 0, scale, BLACK);
             }
 
             DrawText("PRESS SPACE to SHOW FONT ATLAS USED", 290, 420, 10, DARKGRAY);

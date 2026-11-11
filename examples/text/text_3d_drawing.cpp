@@ -64,27 +64,27 @@ typedef struct WaveTextConfig {
 // Module Functions Declaration
 //--------------------------------------------------------------------------------------
 // Draw a codepoint in 3D space
-static void DrawTextCodepoint3D(Font font, int codepoint, vec3 position, float fontSize, bool backface, Color tint);
+static void DrawTextCodepoint3D(Font font, i32 codepoint, vec3 position, f32 fontSize, bool backface, Color tint);
 // Draw a 2D text in 3D space
-static void DrawText3D(Font font, std::string_view text, vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint);
+static void DrawText3D(Font font, std::string_view text, vec3 position, f32 fontSize, f32 fontSpacing, f32 lineSpacing, bool backface, Color tint);
 
 // Draw a 2D text in 3D space and wave the parts that start with '~~' and end with '~~'
 // This is a modified version of the original code by @Nighten found here https://github.com/NightenDushi/Raylib_DrawTextStyle
-static void DrawTextWave3D(Font font, std::string_view text, vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig *config, float time, Color tint);
+static void DrawTextWave3D(Font font, std::string_view text, vec3 position, f32 fontSize, f32 fontSpacing, f32 lineSpacing, bool backface, WaveTextConfig *config, f32 time, Color tint);
 // Measure a text in 3D ignoring the `~~` chars
-static vec3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing);
+static vec3 MeasureTextWave3D(Font font, std::string_view text, f32 fontSize, f32 fontSpacing, f32 lineSpacing);
 // Generates a nice color with a random hue
-static Color GenerateRandomColor(float s, float v);
+static Color GenerateRandomColor(f32 s, f32 v);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT|FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [text] example - 3d drawing");
@@ -100,30 +100,30 @@ int main()
     camera.fovy = 45.0f;                                    // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
-    int camera_mode = CAMERA_ORBITAL;
+    i32 camera_mode = CAMERA_ORBITAL;
 
     const vec3 cubePosition = { 0.0f, 1.0f, 0.0f };
     const vec3 cubeSize = { 2.0f, 2.0f, 2.0f };
 
     // Use the default font
     Font font = GetFontDefault();
-    float fontSize = 0.8f;
-    float fontSpacing = 0.05f;
-    float lineSpacing = -0.1f;
+    f32 fontSize = 0.8f;
+    f32 fontSpacing = 0.05f;
+    f32 lineSpacing = -0.1f;
 
     // Set the text (using markdown!)
     char text[64] = "Hello ~~World~~ in 3D!";
     vec3 tbox = {};
-    int layers = 1;
-    int quads = 0;
-    float layerDistance = 0.01f;
+    i32 layers = 1;
+    i32 quads = 0;
+    f32 layerDistance = 0.01f;
 
     WaveTextConfig wcfg;
     wcfg.waveSpeed.x = wcfg.waveSpeed.y = 3.0f; wcfg.waveSpeed.z = 0.5f;
     wcfg.waveOffset.x = wcfg.waveOffset.y = wcfg.waveOffset.z = 0.35f;
     wcfg.waveRange.x = wcfg.waveRange.y = wcfg.waveRange.z = 0.45f;
 
-    float time = 0.0f;
+    f32 time = 0.0f;
 
     // Setup a light and dark color
     Color light = MAROON;
@@ -156,13 +156,13 @@ int main()
             if (IsFileExtension(droppedFiles.paths[0], ".ttf"))
             {
                 UnloadFont(font);
-                font = LoadFontEx(droppedFiles.paths[0], static_cast<int>(fontSize), nullptr, 0);
+                font = LoadFontEx(droppedFiles.paths[0], static_cast<i32>(fontSize), nullptr, 0);
             }
             else if (IsFileExtension(droppedFiles.paths[0], ".fnt"))
             {
                 UnloadFont(font);
                 font = LoadFont(droppedFiles.paths[0]);
-                fontSize = static_cast<float>(font.baseSize);
+                fontSize = static_cast<f32>(font.baseSize);
             }
 
 
@@ -231,7 +231,7 @@ int main()
             if (multicolor)
             {
                 // Fill color array with random colors
-                for (int i = 0; i < TEXT_MAX_LAYERS; i++)
+                for (i32 i = 0; i < TEXT_MAX_LAYERS; i++)
                 {
                     multi[i] = GenerateRandomColor(0.5f, 0.8f);
                     multi[i].a = GetRandomValue(0, 255);
@@ -240,17 +240,17 @@ int main()
         }
 
         // Handle text input
-        const int ch = GetCharPressed();
+        const i32 ch = GetCharPressed();
         if (IsKeyPressed(KEY_BACKSPACE))
         {
             // Remove last char
-            const int len = TextLength(text);
+            const i32 len = TextLength(text);
             if (len > 0) text[len - 1] = '\0';
         }
         else if (IsKeyPressed(KEY_ENTER))
         {
             // handle newline
-            const int len = TextLength(text);
+            const i32 len = TextLength(text);
             if (len < sizeof(text) - 1)
             {
                 text[len] = '\n';
@@ -260,7 +260,7 @@ int main()
         else
         {
             // append only printable chars
-            const int len = TextLength(text);
+            const i32 len = TextLength(text);
             if (len < sizeof(text) - 1)
             {
                 text[len] = ch;
@@ -296,7 +296,7 @@ int main()
                         rlRotatef(90.0f, 1.0f, 0.0f, 0.0f);
                         rlRotatef(90.0f, 0.0f, 0.0f, -1.0f);
 
-                        for (int i = 0; i < layers; i++)
+                        for (i32 i = 0; i < layers; i++)
                         {
                             Color clr = light;
                             if (multicolor) clr = multi[i];
@@ -414,7 +414,7 @@ int main()
 
             quads += TextLength(text)*2*layers;
             std::string tmp = TextFormat("%2i layer(s) | %s camera | %4i quads (%4i verts)", layers, spin? "ORBITAL" : "FREE", quads, quads*4);
-            int width = MeasureText(tmp, 10);
+            i32 width = MeasureText(tmp, 10);
             DrawText(tmp, screenWidth - 20 - width, 10, 10, DARKGREEN);
 
             tmp = "[Home]/[End] to add/remove 3D text layers";
@@ -454,37 +454,37 @@ int main()
 // Module Functions Definitions
 //--------------------------------------------------------------------------------------
 // Draw codepoint at specified position in 3D space
-static void DrawTextCodepoint3D(Font font, int codepoint, vec3 position, float fontSize, bool backface, Color tint)
+static void DrawTextCodepoint3D(Font font, i32 codepoint, vec3 position, f32 fontSize, bool backface, Color tint)
 {
     // Character index position in sprite font
     // NOTE: In case a codepoint is not available in the font, index returned points to '?'
-    const int index = GetGlyphIndex(font, codepoint);
-    const float scale = fontSize/static_cast<float>(font.baseSize);
+    const i32 index = GetGlyphIndex(font, codepoint);
+    const f32 scale = fontSize/static_cast<f32>(font.baseSize);
 
     // Character destination rectangle on screen
     // NOTE: We consider charsPadding on drawing
-    position.x += static_cast<float>(font.glyphs[index].offsetX - font.glyphPadding)*scale;
-    position.z += static_cast<float>(font.glyphs[index].offsetY - font.glyphPadding)*scale;
+    position.x += static_cast<f32>(font.glyphs[index].offsetX - font.glyphPadding)*scale;
+    position.z += static_cast<f32>(font.glyphs[index].offsetY - font.glyphPadding)*scale;
 
     // Character source rectangle from font texture atlas
     // NOTE: We consider chars padding when drawing, it could be required for outline/glow shader effects
-    const Rectangle srcRec = { font.recs[index].x - static_cast<float>(font.glyphPadding), font.recs[index].y - static_cast<float>(font.glyphPadding),
+    const Rectangle srcRec = { font.recs[index].x - static_cast<f32>(font.glyphPadding), font.recs[index].y - static_cast<f32>(font.glyphPadding),
                          font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding };
 
-    const float width = (font.recs[index].width + 2.0f*font.glyphPadding)*scale;
-    const float height = (font.recs[index].height + 2.0f*font.glyphPadding)*scale;
+    const f32 width = (font.recs[index].width + 2.0f*font.glyphPadding)*scale;
+    const f32 height = (font.recs[index].height + 2.0f*font.glyphPadding)*scale;
 
     if (font.texture.id > 0)
     {
-        constexpr float x = 0.0f;
-        constexpr float y = 0.0f;
-        constexpr float z = 0.0f;
+        constexpr f32 x = 0.0f;
+        constexpr f32 y = 0.0f;
+        constexpr f32 z = 0.0f;
 
         // normalized texture coordinates of the glyph inside the font texture (0.0f -> 1.0f)
-        const float tx = srcRec.x/font.texture.width;
-        const float ty = srcRec.y/font.texture.height;
-        const float tw = (srcRec.x+srcRec.width)/font.texture.width;
-        const float th = (srcRec.y+srcRec.height)/font.texture.height;
+        const f32 tx = srcRec.x/font.texture.width;
+        const f32 ty = srcRec.y/font.texture.height;
+        const f32 tw = (srcRec.x+srcRec.width)/font.texture.width;
+        const f32 th = (srcRec.y+srcRec.height)/font.texture.height;
 
         if (SHOW_LETTER_BOUNDRY) DrawCubeWiresV(vec3{ position.x + width/2, position.y, position.z + height/2}, vec3{ width, LETTER_BOUNDRY_SIZE, height }, LETTER_BOUNDRY_COLOR);
 
@@ -521,21 +521,21 @@ static void DrawTextCodepoint3D(Font font, int codepoint, vec3 position, float f
 }
 
 // Draw a 2D text in 3D space
-static void DrawText3D(Font font, std::string_view text, vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint)
+static void DrawText3D(Font font, std::string_view text, vec3 position, f32 fontSize, f32 fontSpacing, f32 lineSpacing, bool backface, Color tint)
 {
-    const int length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
+    const i32 length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
-    float textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
-    float textOffsetX = 0.0f;               // Offset X to next character to draw
+    f32 textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
+    f32 textOffsetX = 0.0f;               // Offset X to next character to draw
 
-    const float scale = fontSize/static_cast<float>(font.baseSize);
+    const f32 scale = fontSize/static_cast<f32>(font.baseSize);
 
-    for (int i = 0; i < length;)
+    for (i32 i = 0; i < length;)
     {
         // Get next codepoint from byte string and glyph index in font
-        int codepointByteCount = 0;
-        const int codepoint = GetCodepoint(&text[i], &codepointByteCount);
-        const int index = GetGlyphIndex(font, codepoint);
+        i32 codepointByteCount = 0;
+        const i32 codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        const i32 index = GetGlyphIndex(font, codepoint);
 
         // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
         // but we need to draw all of the bad bytes using the '?' symbol moving one byte
@@ -554,7 +554,7 @@ static void DrawText3D(Font font, std::string_view text, vec3 position, float fo
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += font.recs[index].width*scale + fontSpacing;
-            else textOffsetX += static_cast<float>(font.glyphs[index].advanceX)*scale + fontSpacing;
+            else textOffsetX += static_cast<f32>(font.glyphs[index].advanceX)*scale + fontSpacing;
         }
 
         i += codepointByteCount;   // Move text bytes counter to next codepoint
@@ -563,23 +563,23 @@ static void DrawText3D(Font font, std::string_view text, vec3 position, float fo
 
 // Draw a 2D text in 3D space and wave the parts that start with `~~` and end with `~~`
 // This is a modified version of the original code by @Nighten found here https://github.com/NightenDushi/Raylib_DrawTextStyle
-static void DrawTextWave3D(Font font, std::string_view text, vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig* config, float time, Color tint)
+static void DrawTextWave3D(Font font, std::string_view text, vec3 position, f32 fontSize, f32 fontSpacing, f32 lineSpacing, bool backface, WaveTextConfig* config, f32 time, Color tint)
 {
-    const int length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
+    const i32 length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
-    float textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
-    float textOffsetX = 0.0f;               // Offset X to next character to draw
+    f32 textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
+    f32 textOffsetX = 0.0f;               // Offset X to next character to draw
 
-    const float scale = fontSize/static_cast<float>(font.baseSize);
+    const f32 scale = fontSize/static_cast<f32>(font.baseSize);
 
     bool wave = false;
 
-    for (int i = 0, k = 0; i < length; ++k)
+    for (i32 i = 0, k = 0; i < length; ++k)
     {
         // Get next codepoint from byte string and glyph index in font
-        int codepointByteCount = 0;
-        const int codepoint = GetCodepoint(&text[i], &codepointByteCount);
-        const int index = GetGlyphIndex(font, codepoint);
+        i32 codepointByteCount = 0;
+        const i32 codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        const i32 index = GetGlyphIndex(font, codepoint);
 
         // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
         // but we need to draw all of the bad bytes using the '?' symbol moving one byte
@@ -615,7 +615,7 @@ static void DrawTextWave3D(Font font, std::string_view text, vec3 position, floa
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += font.recs[index].width*scale + fontSpacing;
-            else textOffsetX += static_cast<float>(font.glyphs[index].advanceX)*scale + fontSpacing;
+            else textOffsetX += static_cast<f32>(font.glyphs[index].advanceX)*scale + fontSpacing;
         }
 
         i += codepointByteCount;   // Move text bytes counter to next codepoint
@@ -623,24 +623,24 @@ static void DrawTextWave3D(Font font, std::string_view text, vec3 position, floa
 }
 
 // Measure a text in 3D ignoring the `~~` chars
-static vec3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing)
+static vec3 MeasureTextWave3D(Font font, std::string_view text, f32 fontSize, f32 fontSpacing, f32 lineSpacing)
 {
-    const int len = TextLength(text);
-    int tempLen = 0;                // Used to count longer text line num chars
-    int lenCounter = 0;
+    const i32 len = TextLength(text);
+    i32 tempLen = 0;                // Used to count longer text line num chars
+    i32 lenCounter = 0;
 
-    float tempTextWidth = 0.0f;     // Used to count longer text line width
+    f32 tempTextWidth = 0.0f;     // Used to count longer text line width
 
-    const float scale = fontSize/static_cast<float>(font.baseSize);
-    float textHeight = scale;
-    float textWidth = 0.0f;
+    const f32 scale = fontSize/static_cast<f32>(font.baseSize);
+    f32 textHeight = scale;
+    f32 textWidth = 0.0f;
 
-    int letter = 0;                 // Current character
-    int index = 0;                  // Index position in sprite font
+    i32 letter = 0;                 // Current character
+    i32 index = 0;                  // Index position in sprite font
 
-    for (int i = 0; i < len; i++)
+    for (i32 i = 0; i < len; i++)
     {
-        int next = 0;
+        i32 next = 0;
         letter = GetCodepoint(&text[i], &next);
         index = GetGlyphIndex(font, letter);
 
@@ -684,10 +684,10 @@ static vec3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, 
 }
 
 // Generates a nice color with a random hue
-static Color GenerateRandomColor(float s, float v)
+static Color GenerateRandomColor(f32 s, f32 v)
 {
-    constexpr float Phi = 0.618033988749895f; // Golden ratio conjugate
-    float h = static_cast<float>(GetRandomValue(0, 360));
+    constexpr f32 Phi = 0.618033988749895f; // Golden ratio conjugate
+    f32 h = static_cast<f32>(GetRandomValue(0, 360));
     h = fmodf((h + h*Phi), 360.0f);
     return ColorFromHSV(h, s, v);
 }

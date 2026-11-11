@@ -65,14 +65,14 @@ enum EasingTypes {
 
 typedef struct EasingFuncs {
     const char *name;
-    float (*func)(float, float, float, float);
+    f32 (*func)(f32, f32, f32, f32);
 } EasingFuncs;
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Function used when "no easing" is selected for any axis
-static float NoEase(float t, float b, float c, float d);
+static f32 NoEase(f32 t, f32 b, f32 c, f32 d);
 
 //------------------------------------------------------------------------------------
 // Global Variables Definition
@@ -113,24 +113,24 @@ static const EasingFuncs easings[] = {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings testbed");
 
     vec2 ballPosition = { 100.0f, 100.0f };
 
-    float t = 0.0f;             // Current time (in any unit measure, but same unit as duration)
-    float d = 300.0f;           // Total time it should take to complete (duration)
+    f32 t = 0.0f;             // Current time (in any unit measure, but same unit as duration)
+    f32 d = 300.0f;           // Total time it should take to complete (duration)
     bool paused = true;
     bool boundedT = true;       // If true, t will stop when d >= td, otherwise t will keep adding td to its value every loop
 
-    int easingX = EASING_NONE;  // Easing selected for x axis
-    int easingY = EASING_NONE;  // Easing selected for y axis
+    i32 easingX = EASING_NONE;  // Easing selected for x axis
+    i32 easingY = EASING_NONE;  // Easing selected for y axis
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -237,10 +237,10 @@ int main()
 //------------------------------------------------------------------------------------
 // NoEase function, used when "no easing" is selected for any axis
 // It just ignores all parameters besides b
-static float NoEase(float t, float b, float c, float d)
+static f32 NoEase(f32 t, f32 b, f32 c, f32 d)
 {
     // Hack to avoid compiler warning (about unused variables)
-    const float burn = t + b + c + d;
+    const f32 burn = t + b + c + d;
     d += burn;
 
     return b;

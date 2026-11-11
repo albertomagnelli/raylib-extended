@@ -20,24 +20,24 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bouncing ball");
 
     vec2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
     vec2 ballSpeed = { 5.0f, 4.0f };
-    constexpr int ballRadius = 20;
-    constexpr float gravity = 0.2f;
+    constexpr i32 ballRadius = 20;
+    constexpr f32 gravity = 0.2f;
 
     bool useGravity = true;
     bool pause = 0;
-    int framesCounter = 0;
+    i32 framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------
@@ -70,7 +70,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawCircleV(ballPosition, static_cast<float>(ballRadius), MAROON);
+            DrawCircleV(ballPosition, static_cast<f32>(ballRadius), MAROON);
             DrawText("PRESS SPACE to PAUSE BALL MOVEMENT", 10, GetScreenHeight() - 25, 20, LIGHTGRAY);
 
             if (useGravity) DrawText("GRAVITY: ON (Press G to disable)", 10, GetScreenHeight() - 50, 20, DARKGREEN);

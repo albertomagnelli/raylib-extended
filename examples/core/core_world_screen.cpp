@@ -18,12 +18,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - world screen");
 
@@ -69,9 +69,9 @@ int main()
 
             EndMode3D();
 
-            DrawText("Enemy: 100/100", static_cast<int>(cubeScreenPosition.x) - MeasureText("Enemy: 100/100", 20)/2, static_cast<int>(cubeScreenPosition.y), 20, BLACK);
+            DrawText("Enemy: 100/100", static_cast<i32>(cubeScreenPosition.x) - MeasureText("Enemy: 100/100", 20)/2, static_cast<i32>(cubeScreenPosition.y), 20, BLACK);
 
-            DrawText(TextFormat("Cube position in screen space coordinates: [%i, %i]", static_cast<int>(cubeScreenPosition.x), static_cast<int>(cubeScreenPosition.y)), 10, 10, 20, LIME);
+            DrawText(TextFormat("Cube position in screen space coordinates: [%i, %i]", static_cast<i32>(cubeScreenPosition.x), static_cast<i32>(cubeScreenPosition.y)), 10, 10, 20, LIME);
             DrawText("Text 2d should be always on top of the cube", 10, 40, 20, GRAY);
 
         EndDrawing();

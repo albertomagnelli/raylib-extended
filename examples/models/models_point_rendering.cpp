@@ -27,19 +27,19 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static Mesh GenMeshPoints(int numPoints);                                                                           // Generate mesh using points
-void DrawModelPoints(Model model, vec3 position, float scale, Color tint);                                          // Draw a model as points
-void DrawModelPointsEx(Model model, vec3 position, vec3 rotationAxis, float rotationAngle, vec3 scale, Color tint); // Draw a model as points with extended parameters
+static Mesh GenMeshPoints(i32 numPoints);                                                                           // Generate mesh using points
+void DrawModelPoints(Model model, vec3 position, f32 scale, Color tint);                                          // Draw a model as points
+void DrawModelPointsEx(Model model, vec3 position, vec3 rotationAxis, f32 rotationAngle, vec3 scale, Color tint); // Draw a model as points with extended parameters
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - point rendering");
 
@@ -54,7 +54,7 @@ int main()
     const vec3 position = { 0.0f, 0.0f, 0.0f };
     bool useDrawModelPoints = true;
     bool numPointsChanged = false;
-    int numPoints = 1000;
+    i32 numPoints = 1000;
 
     Mesh mesh = GenMeshPoints(numPoints);
     Model model = LoadModelFromMesh(mesh);
@@ -103,7 +103,7 @@ int main()
                 else
                 {
                     // The old method must continually draw the "points" (lines)
-                    for (int i = 0; i < numPoints; i++)
+                    for (i32 i = 0; i < numPoints; i++)
                     {
                         const vec3 pos = {
                             mesh.vertices[i*3 + 0],
@@ -153,20 +153,20 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Generate a spherical point cloud
-static Mesh GenMeshPoints(int numPoints)
+static Mesh GenMeshPoints(i32 numPoints)
 {
     Mesh mesh{};
     mesh.vertexCount = numPoints;
     mesh.triangleCount = 1;
-    mesh.vertices = static_cast<float *>(MemAlloc(numPoints*3*sizeof(float)));
-    mesh.colors = static_cast<unsigned char *>(MemAlloc(numPoints*4*sizeof(unsigned char)));
+    mesh.vertices = static_cast<f32 *>(MemAlloc(numPoints*3*sizeof(f32)));
+    mesh.colors = static_cast<u8 *>(MemAlloc(numPoints*4*sizeof(u8)));
 
     // REF: https://en.wikipedia.org/wiki/Spherical_coordinate_system
-    for (int i = 0; i < numPoints; i++)
+    for (i32 i = 0; i < numPoints; i++)
     {
-        const float theta = (PI*rand())/(static_cast<float>(RAND_MAX));
-        const float phi = (2.0f*PI*rand())/(static_cast<float>(RAND_MAX));
-        const float r = (10.0f*rand())/(static_cast<float>(RAND_MAX));
+        const f32 theta = (PI*rand())/(static_cast<f32>(RAND_MAX));
+        const f32 phi = (2.0f*PI*rand())/(static_cast<f32>(RAND_MAX));
+        const f32 r = (10.0f*rand())/(static_cast<f32>(RAND_MAX));
 
         mesh.vertices[i*3 + 0] = r*sinf(theta)*cosf(phi);
         mesh.vertices[i*3 + 1] = r*sinf(theta)*sinf(phi);
@@ -189,7 +189,7 @@ static Mesh GenMeshPoints(int numPoints)
 
 // Draw a model points
 // WARNING: OpenGL ES 2.0 does not support point mode drawing
-void DrawModelPoints(Model model, vec3 position, float scale, Color tint)
+void DrawModelPoints(Model model, vec3 position, f32 scale, Color tint)
 {
     rlEnablePointMode();
     rlDisableBackfaceCulling();
@@ -202,7 +202,7 @@ void DrawModelPoints(Model model, vec3 position, float scale, Color tint)
 
 // Draw a model points
 // WARNING: OpenGL ES 2.0 does not support point mode drawing
-void DrawModelPointsEx(Model model, vec3 position, vec3 rotationAxis, float rotationAngle, vec3 scale, Color tint)
+void DrawModelPointsEx(Model model, vec3 position, vec3 rotationAxis, f32 rotationAngle, vec3 scale, Color tint)
 {
     rlEnablePointMode();
     rlDisableBackfaceCulling();

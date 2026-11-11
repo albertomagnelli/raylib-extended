@@ -100,9 +100,9 @@ typedef enum {
 
 // Gesture event
 typedef struct {
-    int touchAction;
-    int pointCount;
-    int pointId[MAX_TOUCH_POINTS];
+    i32 touchAction;
+    i32 pointCount;
+    i32 pointId[MAX_TOUCH_POINTS];
     vec2 position[MAX_TOUCH_POINTS];
 } GestureEvent;
 
@@ -123,15 +123,15 @@ void ProcessGestureEvent(GestureEvent event);           // Process gesture event
 void UpdateGestures(void);                              // Update gestures detected (must be called every frame)
 
 #if defined(RGESTURES_STANDALONE)
-void SetGesturesEnabled(unsigned int flags);            // Enable a set of gestures using flags
-bool IsGestureDetected(int gesture);                    // Check if gesture has been detected
-int GetGestureDetected(void);                           // Get latest detected gesture
+void SetGesturesEnabled(u32 flags);            // Enable a set of gestures using flags
+bool IsGestureDetected(i32 gesture);                    // Check if gesture has been detected
+i32 GetGestureDetected(void);                           // Get latest detected gesture
 
-float GetGestureHoldDuration(void);                     // Get gesture hold time in seconds
+f32 GetGestureHoldDuration(void);                     // Get gesture hold time in seconds
 vec2 GetGestureDragVector(void);                        // Get gesture drag vector
-float GetGestureDragAngle(void);                        // Get gesture drag angle
+f32 GetGestureDragAngle(void);                        // Get gesture drag angle
 vec2 GetGesturePinchVector(void);                       // Get gesture pinch delta
-float GetGesturePinchAngle(void);                       // Get gesture pinch angle
+f32 GetGesturePinchAngle(void);                       // Get gesture pinch angle
 #endif
 
 #if defined(__cplusplus)
@@ -154,8 +154,8 @@ float GetGesturePinchAngle(void);                       // Get gesture pinch ang
     extern "C" {        // Prevents name mangling of functions
     #endif
     // Functions required to query time on Windows
-    int __stdcall QueryPerformanceCounter(unsigned long long *lpPerformanceCount);
-    int __stdcall QueryPerformanceFrequency(unsigned long long *lpFrequency);
+    i32 __stdcall QueryPerformanceCounter(unsigned long long *lpPerformanceCount);
+    i32 __stdcall QueryPerformanceFrequency(unsigned long long *lpFrequency);
     #if defined(__cplusplus)
     }
     #endif
@@ -192,12 +192,12 @@ float GetGesturePinchAngle(void);                       // Get gesture pinch ang
 
 // Gestures module state context [136 bytes]
 typedef struct {
-    unsigned int current;               // Current detected gesture
-    unsigned int enabledFlags;          // Enabled gestures flags
+    u32 current;               // Current detected gesture
+    u32 enabledFlags;          // Enabled gestures flags
     struct {
-        int firstId;                    // Touch id for first touch point
-        int pointCount;                 // Touch points counter
-        double eventTime;               // Time stamp when an event happened
+        i32 firstId;                    // Touch id for first touch point
+        i32 pointCount;                 // Touch points counter
+        f64 eventTime;               // Time stamp when an event happened
         vec2 upPosition;                // Touch up position
         vec2 downPositionA;             // First touch down position
         vec2 downPositionB;             // Second touch down position
@@ -206,25 +206,25 @@ typedef struct {
         vec2 moveDownPositionB;         // Second touch down position on move
         vec2 previousPositionA;         // Previous position A to compare for pinch gestures
         vec2 previousPositionB;         // Previous position B to compare for pinch gestures
-        int tapCounter;                 // TAP counter (one tap implies TOUCH_ACTION_DOWN and TOUCH_ACTION_UP actions)
+        i32 tapCounter;                 // TAP counter (one tap implies TOUCH_ACTION_DOWN and TOUCH_ACTION_UP actions)
     } Touch;
     struct {
         bool resetRequired;             // HOLD reset to get first touch point again
-        double timeDuration;            // HOLD duration in seconds
+        f64 timeDuration;            // HOLD duration in seconds
     } Hold;
     struct {
         vec2 vector;                    // DRAG vector (between initial and current position)
-        float angle;                    // DRAG angle (relative to x-axis)
-        float distance;                 // DRAG distance (from initial touch point to final) (normalized [0..1])
-        float intensity;                // DRAG intensity, how far why did the DRAG (pixels per frame)
+        f32 angle;                    // DRAG angle (relative to x-axis)
+        f32 distance;                 // DRAG distance (from initial touch point to final) (normalized [0..1])
+        f32 intensity;                // DRAG intensity, how far why did the DRAG (pixels per frame)
     } Drag;
     struct {
-        double startTime;               // SWIPE start time to calculate drag intensity
+        f64 startTime;               // SWIPE start time to calculate drag intensity
     } Swipe;
     struct {
         vec2 vector;                    // PINCH vector (between first and second touch points)
-        float angle;                    // PINCH angle (relative to x-axis)
-        float distance;                 // PINCH displacement distance (normalized [0..1])
+        f32 angle;                    // PINCH angle (relative to x-axis)
+        f32 distance;                 // PINCH displacement distance (normalized [0..1])
     } Pinch;
 } GesturesData;
 
@@ -242,22 +242,22 @@ static GesturesData GESTURES = {
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static float rgVector2Angle(vec2 initialPosition, vec2 finalPosition);
-static float rgVector2Distance(vec2 v1, vec2 v2);
-static double rgGetCurrentTime(void);
+static f32 rgVector2Angle(vec2 initialPosition, vec2 finalPosition);
+static f32 rgVector2Distance(vec2 v1, vec2 v2);
+static f64 rgGetCurrentTime(void);
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 
 // Enable only desired gestures to be detected
-void SetGesturesEnabled(unsigned int flags)
+void SetGesturesEnabled(u32 flags)
 {
     GESTURES.enabledFlags = flags;
 }
 
 // Check if gesture have been detected
-bool IsGestureDetected(unsigned int gesture)
+bool IsGestureDetected(u32 gesture)
 {
     if ((GESTURES.enabledFlags & GESTURES.current) == gesture) return true;
     else return false;
@@ -304,7 +304,7 @@ void ProcessGestureEvent(GestureEvent event)
 
             // NOTE: GESTURES.Drag.intensity is dependent on the resolution of the screen
             GESTURES.Drag.distance = rgVector2Distance(GESTURES.Touch.downPositionA, GESTURES.Touch.upPosition);
-            GESTURES.Drag.intensity = GESTURES.Drag.distance/static_cast<float>((rgGetCurrentTime() - GESTURES.Swipe.startTime));
+            GESTURES.Drag.intensity = GESTURES.Drag.distance/static_cast<f32>((rgGetCurrentTime() - GESTURES.Swipe.startTime));
 
             // Detect GESTURE_SWIPE
             if ((GESTURES.Drag.intensity > FORCE_TO_SWIPE) && (GESTURES.current != GESTURE_DRAG))
@@ -430,22 +430,22 @@ void UpdateGestures(void)
 }
 
 // Get latest detected gesture
-int GetGestureDetected(void)
+i32 GetGestureDetected(void)
 {
     // Get current gesture only if enabled
     return (GESTURES.enabledFlags & GESTURES.current);
 }
 
 // Hold time measured in seconds
-float GetGestureHoldDuration(void)
+f32 GetGestureHoldDuration(void)
 {
     // NOTE: time is calculated on current gesture HOLD
 
-    double time = 0.0;
+    f64 time = 0.0;
 
     if (GESTURES.current == GESTURE_HOLD) time = rgGetCurrentTime() - GESTURES.Hold.timeDuration;
 
-    return static_cast<float>(time);
+    return static_cast<f32>(time);
 }
 
 // Get drag vector (between initial touch point to current)
@@ -458,7 +458,7 @@ vec2 GetGestureDragVector(void)
 
 // Get drag angle
 // NOTE: Angle in degrees, horizontal-right is 0, counterclockwise
-float GetGestureDragAngle(void)
+f32 GetGestureDragAngle(void)
 {
     // NOTE: drag angle is calculated on one touch points TOUCH_ACTION_UP
 
@@ -475,7 +475,7 @@ vec2 GetGesturePinchVector(void)
 
 // Get angle between two pinch points
 // NOTE: Angle in degrees, horizontal-right is 0, counterclockwise
-float GetGesturePinchAngle(void)
+f32 GetGesturePinchAngle(void)
 {
     // NOTE: pinch angle is calculated on two touch points TOUCH_ACTION_MOVE
 
@@ -486,9 +486,9 @@ float GetGesturePinchAngle(void)
 // Module Internal Functions Definition
 //----------------------------------------------------------------------------------
 // Get angle from two-points vector with X-axis
-static float rgVector2Angle(vec2 v1, vec2 v2)
+static f32 rgVector2Angle(vec2 v1, vec2 v2)
 {
-    float angle = atan2f(v2.y - v1.y, v2.x - v1.x)*(180.0f/PI);
+    f32 angle = atan2f(v2.y - v1.y, v2.x - v1.x)*(180.0f/PI);
 
     if (angle < 0) angle += 360.0f;
 
@@ -496,12 +496,12 @@ static float rgVector2Angle(vec2 v1, vec2 v2)
 }
 
 // Calculate distance between two vec2
-static float rgVector2Distance(vec2 v1, vec2 v2)
+static f32 rgVector2Distance(vec2 v1, vec2 v2)
 {
-    float result;
+    f32 result;
 
-    const float dx = v2.x - v1.x;
-    const float dy = v2.y - v1.y;
+    const f32 dx = v2.x - v1.x;
+    const f32 dy = v2.y - v1.y;
 
     result = sqrt(dx*dx + dy*dy);
 
@@ -509,9 +509,9 @@ static float rgVector2Distance(vec2 v1, vec2 v2)
 }
 
 // Time measure returned are seconds
-static double rgGetCurrentTime(void)
+static f64 rgGetCurrentTime(void)
 {
-    double time = 0;
+    f64 time = 0;
 
 #if !defined(RGESTURES_STANDALONE)
     time = GetTime();
@@ -523,7 +523,7 @@ static double rgGetCurrentTime(void)
     QueryPerformanceFrequency(&clockFrequency); // BE CAREFUL: Costly operation!
     QueryPerformanceCounter(&currentClockTicks);
 
-    time = static_cast<double>(currentClockTicks)/clockFrequency; // Time in seconds
+    time = static_cast<f64>(currentClockTicks)/clockFrequency; // Time in seconds
 #endif
 #if defined(__linux__)
     // NOTE: Only for Linux-based systems
@@ -531,7 +531,7 @@ static double rgGetCurrentTime(void)
     clock_gettime(CLOCK_MONOTONIC, &now);
     unsigned long long nanoSeconds = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
 
-    time = (static_cast<double>(nanoSeconds)*1e-9); // Time in seconds
+    time = (static_cast<f64>(nanoSeconds)*1e-9); // Time in seconds
 #endif
 #if defined(__APPLE__)
     //#define CLOCK_REALTIME  CALENDAR_CLOCK    // returns UTC time since 1970-01-01
@@ -546,7 +546,7 @@ static double rgGetCurrentTime(void)
     mach_port_deallocate(mach_task_self(), cclock);
     unsigned long long nanoSeconds = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
 
-    time = (static_cast<double>(nanoSeconds)*1e-9); // Time in seconds
+    time = (static_cast<f64>(nanoSeconds)*1e-9); // Time in seconds
 #endif
 #endif
 

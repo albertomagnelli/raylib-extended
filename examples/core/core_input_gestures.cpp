@@ -20,23 +20,23 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures");
 
     vec2 touchPosition = { 0, 0 };
     const Rectangle touchArea = { 220, 10, screenWidth - 230.0f, screenHeight - 20.0f };
 
-    int gesturesCount = 0;
+    i32 gesturesCount = 0;
     std::string gestureStrings[MAX_GESTURE_STRINGS];
 
-    int currentGesture = GESTURE_NONE;
-    int lastGesture = GESTURE_NONE;
+    i32 currentGesture = GESTURE_NONE;
+    i32 lastGesture = GESTURE_NONE;
 
     //SetGesturesEnabled(0b0000000000001001);   // Enable only some gestures to be detected
 
@@ -77,7 +77,7 @@ int main()
                 // Reset gestures strings
                 if (gesturesCount >= MAX_GESTURE_STRINGS)
                 {
-                    for (int i = 0; i < MAX_GESTURE_STRINGS; i++) gestureStrings[i].clear();
+                    for (i32 i = 0; i < MAX_GESTURE_STRINGS; i++) gestureStrings[i].clear();
 
                     gesturesCount = 0;
                 }
@@ -96,7 +96,7 @@ int main()
 
             DrawText("GESTURES TEST AREA", screenWidth - 270, screenHeight - 40, 20, Fade(GRAY, 0.5f));
 
-            for (int i = 0; i < gesturesCount; i++)
+            for (i32 i = 0; i < gesturesCount; i++)
             {
                 if (i%2 == 0) DrawRectangle(10, 30 + 20*i, 200, 20, Fade(LIGHTGRAY, 0.5f));
                 else DrawRectangle(10, 30 + 20*i, 200, 20, Fade(LIGHTGRAY, 0.3f));

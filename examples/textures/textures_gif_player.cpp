@@ -21,16 +21,16 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - gif player");
 
-    int animFrames = 0;
+    i32 animFrames = 0;
 
     // Load all GIF animation frames into a single Image
     // NOTE: GIF data is always loaded as RGBA (32bit) by default
@@ -43,11 +43,11 @@ int main()
     // use spritesheets instead, like illustrated in textures_sprite_anim example
     const Texture2D texScarfyAnim = LoadTextureFromImage(imScarfyAnim);
 
-    unsigned int nextFrameDataOffset = 0;  // Current byte offset to next frame in image.data
+    u32 nextFrameDataOffset = 0;  // Current byte offset to next frame in image.data
 
-    int currentAnimFrame = 0;       // Current animation frame to load and draw
-    int frameDelay = 8;             // Frame delay to switch between animation frames
-    int frameCounter = 0;           // General frames counter
+    i32 currentAnimFrame = 0;       // Current animation frame to load and draw
+    i32 frameDelay = 8;             // Frame delay to switch between animation frames
+    i32 frameCounter = 0;           // General frames counter
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ int main()
 
             // Update GPU texture data with next frame image data
             // WARNING: Data size (frame size) and pixel format must match already created texture
-            UpdateTexture(texScarfyAnim, (static_cast<unsigned char *>(imScarfyAnim.data)) + nextFrameDataOffset);
+            UpdateTexture(texScarfyAnim, (static_cast<u8 *>(imScarfyAnim.data)) + nextFrameDataOffset);
 
             frameCounter = 0;
         }
@@ -97,7 +97,7 @@ int main()
             DrawText(TextFormat("%02i frames", frameDelay), 620, 305, 10, DARKGRAY);
             DrawText("PRESS RIGHT/LEFT KEYS to CHANGE SPEED!", 290, 350, 10, DARKGRAY);
 
-            for (int i = 0; i < MAX_FRAME_DELAY; i++)
+            for (i32 i = 0; i < MAX_FRAME_DELAY; i++)
             {
                 if (i < frameDelay) DrawRectangle(190 + 21*i, 300, 20, 20, RED);
                 DrawRectangleLines(190 + 21*i, 300, 20, 20, MAROON);

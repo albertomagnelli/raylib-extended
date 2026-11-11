@@ -59,40 +59,40 @@
 //------------------------------------------------------------------------------------
 // Particle type
 typedef struct Particle {
-    float x;
-    float y;
-    float period;
+    f32 x;
+    f32 y;
+    f32 period;
 } Particle;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - OpenGL interoperatibility");
 
     const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/point_particle.vs", GLSL_VERSION),
                                TextFormat("resources/shaders/glsl%i/point_particle.fs", GLSL_VERSION));
 
-    const int currentTimeLoc = GetShaderLocation(shader, "currentTime");
-    const int colorLoc = GetShaderLocation(shader, "color");
+    const i32 currentTimeLoc = GetShaderLocation(shader, "currentTime");
+    const i32 colorLoc = GetShaderLocation(shader, "color");
 
     // Initialize the vertex buffer for the particles and assign each particle random values
     Particle particles[MAX_PARTICLES] = {};
 
-    for (int i = 0; i < MAX_PARTICLES; i++)
+    for (i32 i = 0; i < MAX_PARTICLES; i++)
     {
-        particles[i].x = static_cast<float>(GetRandomValue(20, screenWidth - 20));
-        particles[i].y = static_cast<float>(GetRandomValue(50, screenHeight - 20));
+        particles[i].x = static_cast<f32>(GetRandomValue(20, screenWidth - 20));
+        particles[i].y = static_cast<f32>(GetRandomValue(50, screenHeight - 20));
 
         // Give each particle a slightly different period. But don't spread it to much
         // This way the particles line up every so often and you get a glimps of what is going on
-        particles[i].period = static_cast<float>(GetRandomValue(10, 30))/10.0f;
+        particles[i].period = static_cast<f32>(GetRandomValue(10, 30))/10.0f;
     }
 
     // Create a plain OpenGL vertex buffer with the data and an vertex array object
@@ -138,7 +138,7 @@ int main()
                 glUniform1f(currentTimeLoc, GetTime());
 
                 vec4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
-                glUniform4fv(colorLoc, 1, reinterpret_cast<float *>(&color));
+                glUniform4fv(colorLoc, 1, reinterpret_cast<f32 *>(&color));
 
                 // Get the current modelview and projection matrix so the particle system is displayed and transformed
                 const mat4 modelViewProjection = ((rlGetMatrixProjection()) * (rlGetMatrixModelview()));

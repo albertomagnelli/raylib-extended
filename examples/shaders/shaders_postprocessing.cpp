@@ -68,12 +68,12 @@ static const char *postproShaderText[] = {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
@@ -112,7 +112,7 @@ int main()
     shaders[FX_BLOOM] = LoadShader({}, TextFormat("resources/shaders/glsl%i/bloom.fs", GLSL_VERSION));
     shaders[FX_BLUR] = LoadShader({}, TextFormat("resources/shaders/glsl%i/blur.fs", GLSL_VERSION));
 
-    int currentShader = FX_GRAYSCALE;
+    i32 currentShader = FX_GRAYSCALE;
 
     // Create a RenderTexture2D to be used for render to texture
     const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
@@ -151,7 +151,7 @@ int main()
             // Render generated texture using selected postprocessing shader
             BeginShaderMode(shaders[currentShader]);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw 2d shapes and text over drawn texture
@@ -169,7 +169,7 @@ int main()
     // De-Initialization
     //--------------------------------------------------------------------------------------
     // Unload all postpro shaders
-    for (int i = 0; i < MAX_POSTPRO_SHADERS; i++) UnloadShader(shaders[i]);
+    for (i32 i = 0; i < MAX_POSTPRO_SHADERS; i++) UnloadShader(shaders[i]);
 
     UnloadTexture(texture);         // Unload texture
     UnloadModel(model);             // Unload model

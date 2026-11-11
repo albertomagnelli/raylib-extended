@@ -30,8 +30,8 @@ static Texture texRoad = {};
 
 static bool showCurve = false;
 
-static float curveWidth = 50;
-static int curveSegments = 24;
+static f32 curveWidth = 50;
+static i32 curveSegments = 24;
 
 static vec2 curveStartPosition = {};
 static vec2 curveStartPositionTangent = {};
@@ -49,12 +49,12 @@ static void DrawTexturedCurve(void);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - textured curve");
@@ -158,26 +158,26 @@ int main()
 // Draw textured curve using Spline Cubic Bezier
 static void DrawTexturedCurve(void)
 {
-    const float step = 1.0f/curveSegments;
+    const f32 step = 1.0f/curveSegments;
 
     vec2 previous = curveStartPosition;
     vec2 previousTangent = {};
-    float previousV = 0;
+    f32 previousV = 0;
 
     // We can't compute a tangent for the first point, so we need to reuse the tangent from the first segment
     bool tangentSet = false;
 
     vec2 current = {};
-    float t = 0.0f;
+    f32 t = 0.0f;
 
-    for (int i = 1; i <= curveSegments; i++)
+    for (i32 i = 1; i <= curveSegments; i++)
     {
-        t = step*static_cast<float>(i);
+        t = step*static_cast<f32>(i);
 
-        const float a = powf(1.0f - t, 3);
-        const float b = 3.0f*powf(1.0f - t, 2)*t;
-        const float c = 3.0f*(1.0f - t)*powf(t, 2);
-        const float d = powf(t, 3);
+        const f32 a = powf(1.0f - t, 3);
+        const f32 b = 3.0f*powf(1.0f - t, 2)*t;
+        const f32 c = 3.0f*(1.0f - t)*powf(t, 2);
+        const f32 d = powf(t, 3);
 
         // Compute the endpoint for this segment
         current.y = a*curveStartPosition.y + b*curveStartPositionTangent.y + c*curveEndPositionTangent.y + d*curveEndPosition.y;
@@ -190,7 +190,7 @@ static void DrawTexturedCurve(void)
         const vec2 normal = glm::normalize(vec2{ -delta.y, delta.x });
 
         // The v texture coordinate of the segment (add up the length of all the segments so far)
-        const float v = previousV + glm::length(delta) / static_cast<float>(texRoad.height * 2);
+        const f32 v = previousV + glm::length(delta) / static_cast<f32>(texRoad.height * 2);
 
         // Make sure the start point has a normal
         if (!tangentSet)

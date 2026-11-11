@@ -18,12 +18,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - box collisions");
 
@@ -38,7 +38,7 @@ int main()
     const vec3 enemyBoxSize = { 2.0f, 2.0f, 2.0f };
 
     const vec3 enemySpherePos = { 4.0f, 0.0f, 0.0f };
-    constexpr float enemySphereSize = 1.5f;
+    constexpr f32 enemySphereSize = 1.5f;
 
     bool collision = false;
 

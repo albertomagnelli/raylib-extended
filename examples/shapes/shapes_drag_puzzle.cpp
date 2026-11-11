@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------------
 typedef struct {
     vec2 center;
-    float radius;
+    f32 radius;
 } Circle;
 
 typedef struct {
@@ -35,12 +35,12 @@ typedef struct {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - drag puzzle");
 

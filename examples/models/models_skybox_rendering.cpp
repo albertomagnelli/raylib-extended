@@ -30,17 +30,17 @@
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Generate cubemap (6 faces) from equirectangular (panorama) texture
-static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int size, int format);
+static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, i32 size, i32 format);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - skybox rendering");
 
@@ -65,15 +65,15 @@ int main()
     skybox.materials[0].shader = LoadShader(TextFormat("resources/shaders/glsl%i/skybox.vs", GLSL_VERSION),
                                             TextFormat("resources/shaders/glsl%i/skybox.fs", GLSL_VERSION));
 
-    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "environmentMap"), std::initializer_list<int>{ MATERIAL_MAP_CUBEMAP }.begin(), SHADER_UNIFORM_INT);
-    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "doGamma"), std::initializer_list<int>{ useHDR? 1 : 0 }.begin(), SHADER_UNIFORM_INT);
-    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "vflipped"), std::initializer_list<int>{ useHDR? 1 : 0 }.begin(), SHADER_UNIFORM_INT);
+    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "environmentMap"), std::initializer_list<i32>{ MATERIAL_MAP_CUBEMAP }.begin(), SHADER_UNIFORM_INT);
+    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "doGamma"), std::initializer_list<i32>{ useHDR? 1 : 0 }.begin(), SHADER_UNIFORM_INT);
+    SetShaderValue(skybox.materials[0].shader, GetShaderLocation(skybox.materials[0].shader, "vflipped"), std::initializer_list<i32>{ useHDR? 1 : 0 }.begin(), SHADER_UNIFORM_INT);
 
     // Load cubemap shader and setup required shader locations
     const Shader shdrCubemap = LoadShader(TextFormat("resources/shaders/glsl%i/cubemap.vs", GLSL_VERSION),
                                     TextFormat("resources/shaders/glsl%i/cubemap.fs", GLSL_VERSION));
 
-    SetShaderValue(shdrCubemap, GetShaderLocation(shdrCubemap, "equirectangularMap"), std::initializer_list<int>{ 0 }.begin(), SHADER_UNIFORM_INT);
+    SetShaderValue(shdrCubemap, GetShaderLocation(shdrCubemap, "equirectangularMap"), std::initializer_list<i32>{ 0 }.begin(), SHADER_UNIFORM_INT);
 
     std::string skyboxFileName;
 
@@ -194,7 +194,7 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Generate cubemap texture from HDR texture
-static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int size, int format)
+static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, i32 size, i32 format)
 {
     TextureCubemap cubemap = {};
 
@@ -202,10 +202,10 @@ static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int s
 
     // STEP 1: Setup framebuffer
     //------------------------------------------------------------------------------------------
-    const unsigned int rbo = rlLoadTextureDepth(size, size, true);
+    const u32 rbo = rlLoadTextureDepth(size, size, true);
     cubemap.id = rlLoadTextureCubemap(nullptr, size, format, 1);
 
-    const unsigned int fbo = rlLoadFramebuffer();
+    const u32 fbo = rlLoadFramebuffer();
     rlFramebufferAttach(fbo, rbo, RL_ATTACHMENT_DEPTH, RL_ATTACHMENT_RENDERBUFFER, 0);
     rlFramebufferAttach(fbo, cubemap.id, RL_ATTACHMENT_COLOR_CHANNEL0, RL_ATTACHMENT_CUBEMAP_POSITIVE_X, 0);
 
@@ -238,7 +238,7 @@ static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, int s
     rlActiveTextureSlot(0);
     rlEnableTexture(panorama.id);
 
-    for (int i = 0; i < 6; i++)
+    for (i32 i = 0; i < 6; i++)
     {
         // Set the view matrix for the current cube face
         rlSetUniformMatrix(shader.locs[SHADER_LOC_MATRIX_VIEW], fboViews[i]);

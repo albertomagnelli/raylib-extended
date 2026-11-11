@@ -20,13 +20,13 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
+    constexpr i32 screenWidth = 800;
 
-    constexpr int screenHeight = 450;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - vector angle");
 
@@ -34,8 +34,8 @@ int main()
     vec2 v1 = ((v0) + (vec2{ 100.0f, 80.0f }));
     vec2 v2 = {};           // Updated with mouse position
 
-    float angle = 0.0f;             // Angle in degrees
-    int angleMode = 0;              // 0-Vector2Angle(), 1-Vector2LineAngle()
+    f32 angle = 0.0f;             // Angle in degrees
+    i32 angleMode = 0;              // 0-Vector2Angle(), 1-Vector2LineAngle()
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        float startangle = 0.0f;
+        f32 startangle = 0.0f;
 
         if (angleMode == 0) startangle = -Vector2LineAngle(v0, v1)*RAD2DEG;
         if (angleMode == 1) startangle = 0.0f;
@@ -97,17 +97,17 @@ int main()
                 DrawCircleSector(v0, 40.0f, startangle, startangle - angle, 32, Fade(GREEN, 0.6f));
             }
 
-            DrawText("v0", static_cast<int>(v0.x), static_cast<int>(v0.y), 10, DARKGRAY);
+            DrawText("v0", static_cast<i32>(v0.x), static_cast<i32>(v0.y), 10, DARKGRAY);
 
             // If the line from v0 to v1 would overlap the text, move it's position up 10
-            if (angleMode == 0 && ((v0) - (v1)).y > 0.0f) DrawText("v1", static_cast<int>(v1.x), static_cast<int>(v1.y)-10, 10, DARKGRAY);
-            if (angleMode == 0 && ((v0) - (v1)).y < 0.0f) DrawText("v1", static_cast<int>(v1.x), static_cast<int>(v1.y), 10, DARKGRAY);
+            if (angleMode == 0 && ((v0) - (v1)).y > 0.0f) DrawText("v1", static_cast<i32>(v1.x), static_cast<i32>(v1.y)-10, 10, DARKGRAY);
+            if (angleMode == 0 && ((v0) - (v1)).y < 0.0f) DrawText("v1", static_cast<i32>(v1.x), static_cast<i32>(v1.y), 10, DARKGRAY);
 
             // If angle mode 1, use v1 to emphasize the horizontal line
-            if (angleMode == 1) DrawText("v1", static_cast<int>(v0.x) + 40, static_cast<int>(v0.y), 10, DARKGRAY);
+            if (angleMode == 1) DrawText("v1", static_cast<i32>(v0.x) + 40, static_cast<i32>(v0.y), 10, DARKGRAY);
 
             // position adjusted by -10 so it isn't hidden by cursor
-            DrawText("v2", static_cast<int>(v2.x)-10, static_cast<int>(v2.y)-10, 10, DARKGRAY);
+            DrawText("v2", static_cast<i32>(v2.x)-10, static_cast<i32>(v2.y)-10, 10, DARKGRAY);
 
             DrawText("Press SPACE to change MODE", 460, 10, 20, DARKGRAY);
             DrawText(TextFormat("ANGLE: %2.2f", angle), 10, 70, 20, LIME);

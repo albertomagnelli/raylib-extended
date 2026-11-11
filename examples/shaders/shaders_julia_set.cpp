@@ -29,7 +29,7 @@
 #endif
 
 // A few good julia sets
-const float pointsOfInterest[6][2] =
+const f32 pointsOfInterest[6][2] =
 {
     { -0.348827f, 0.607167f },
     { -0.786268f, 0.169728f },
@@ -39,17 +39,17 @@ const float pointsOfInterest[6][2] =
     { -0.70176f, -0.3842f },
 };
 
-constexpr int screenWidth = 800;
-constexpr int screenHeight = 450;
-constexpr float zoomSpeed = 1.01f;
-constexpr float offsetSpeedMul = 2.0f;
+constexpr i32 screenWidth = 800;
+constexpr i32 screenHeight = 450;
+constexpr f32 zoomSpeed = 1.01f;
+constexpr f32 offsetSpeedMul = 2.0f;
 
-constexpr float startingZoom = 0.75f;
+constexpr f32 startingZoom = 0.75f;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -63,24 +63,24 @@ int main()
     const RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     // c constant to use in z^2 + c
-    float c[2] = { pointsOfInterest[0][0], pointsOfInterest[0][1] };
+    f32 c[2] = { pointsOfInterest[0][0], pointsOfInterest[0][1] };
 
     // Offset and zoom to draw the julia set at. (centered on screen and default size)
-    float offset[2] = { 0.0f, 0.0f };
-    float zoom = startingZoom;
+    f32 offset[2] = { 0.0f, 0.0f };
+    f32 zoom = startingZoom;
 
     // Get variable (uniform) locations on the shader to connect with the program
     // NOTE: If uniform variable could not be found in the shader, function returns -1
-    const int cLoc = GetShaderLocation(shader, "c");
-    const int zoomLoc = GetShaderLocation(shader, "zoom");
-    const int offsetLoc = GetShaderLocation(shader, "offset");
+    const i32 cLoc = GetShaderLocation(shader, "c");
+    const i32 zoomLoc = GetShaderLocation(shader, "zoom");
+    const i32 offsetLoc = GetShaderLocation(shader, "offset");
 
     // Upload the shader uniform values!
     SetShaderValue(shader, cLoc, c, SHADER_UNIFORM_VEC2);
     SetShaderValue(shader, zoomLoc, &zoom, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, offsetLoc, offset, SHADER_UNIFORM_VEC2);
 
-    int incrementSpeed = 0;             // Multiplier of speed to change c value
+    i32 incrementSpeed = 0;             // Multiplier of speed to change c value
     bool showControls = true;           // Show controls
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
@@ -135,8 +135,8 @@ int main()
             vec2 offsetVelocity;
             // Find the velocity at which to change the camera. Take the distance of the mouse
             // from the center of the screen as the direction, and adjust magnitude based on the current zoom
-            offsetVelocity.x = (mousePos.x/static_cast<float>(screenWidth) - 0.5f)*offsetSpeedMul/zoom;
-            offsetVelocity.y = (mousePos.y/static_cast<float>(screenHeight) - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.x = (mousePos.x/static_cast<f32>(screenWidth) - 0.5f)*offsetSpeedMul/zoom;
+            offsetVelocity.y = (mousePos.y/static_cast<f32>(screenHeight) - 0.5f)*offsetSpeedMul/zoom;
 
             // Apply move velocity to camera
             offset[0] += GetFrameTime()*offsetVelocity.x;
@@ -148,7 +148,7 @@ int main()
         }
 
         // Increment c value with time
-        const float dc = GetFrameTime()*static_cast<float>(incrementSpeed)*0.0005f;
+        const f32 dc = GetFrameTime()*static_cast<f32>(incrementSpeed)*0.0005f;
         c[0] += dc;
         c[1] += dc;
         SetShaderValue(shader, cLoc, c, SHADER_UNIFORM_VEC2);

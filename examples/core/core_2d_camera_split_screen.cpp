@@ -25,12 +25,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 440;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 440;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera split screen");
 
@@ -53,7 +53,7 @@ int main()
     const RenderTexture screenCamera2 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Build a flipped rectangle the size of the split view to use for drawing later
-    const Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<float>(screenCamera1.texture.width), static_cast<float>(-screenCamera1.texture.height) };
+    const Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<f32>(screenCamera1.texture.width), static_cast<f32>(-screenCamera1.texture.height) };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -85,19 +85,19 @@ int main()
             BeginMode2D(camera1);
 
                 // Draw full scene with first camera
-                for (int i = 0; i < screenWidth/PLAYER_SIZE + 1; i++)
+                for (i32 i = 0; i < screenWidth/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV(vec2{static_cast<float>(PLAYER_SIZE)*i, 0}, vec2{ static_cast<float>(PLAYER_SIZE)*i, static_cast<float>(screenHeight)}, LIGHTGRAY);
+                    DrawLineV(vec2{static_cast<f32>(PLAYER_SIZE)*i, 0}, vec2{ static_cast<f32>(PLAYER_SIZE)*i, static_cast<f32>(screenHeight)}, LIGHTGRAY);
                 }
 
-                for (int i = 0; i < screenHeight/PLAYER_SIZE + 1; i++)
+                for (i32 i = 0; i < screenHeight/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV(vec2{0, static_cast<float>(PLAYER_SIZE)*i}, vec2{ static_cast<float>(screenWidth), static_cast<float>(PLAYER_SIZE)*i}, LIGHTGRAY);
+                    DrawLineV(vec2{0, static_cast<f32>(PLAYER_SIZE)*i}, vec2{ static_cast<f32>(screenWidth), static_cast<f32>(PLAYER_SIZE)*i}, LIGHTGRAY);
                 }
 
-                for (int i = 0; i < screenWidth/PLAYER_SIZE; i++)
+                for (i32 i = 0; i < screenWidth/PLAYER_SIZE; i++)
                 {
-                    for (int j = 0; j < screenHeight/PLAYER_SIZE; j++)
+                    for (i32 j = 0; j < screenHeight/PLAYER_SIZE; j++)
                     {
                         DrawText(TextFormat("[%i,%i]", i, j), 10 + PLAYER_SIZE*i, 15 + PLAYER_SIZE*j, 10, LIGHTGRAY);
                     }
@@ -118,19 +118,19 @@ int main()
             BeginMode2D(camera2);
 
                 // Draw full scene with second camera
-                for (int i = 0; i < screenWidth/PLAYER_SIZE + 1; i++)
+                for (i32 i = 0; i < screenWidth/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV(vec2{ static_cast<float>(PLAYER_SIZE)*i, 0}, vec2{ static_cast<float>(PLAYER_SIZE)*i, static_cast<float>(screenHeight)}, LIGHTGRAY);
+                    DrawLineV(vec2{ static_cast<f32>(PLAYER_SIZE)*i, 0}, vec2{ static_cast<f32>(PLAYER_SIZE)*i, static_cast<f32>(screenHeight)}, LIGHTGRAY);
                 }
 
-                for (int i = 0; i < screenHeight/PLAYER_SIZE + 1; i++)
+                for (i32 i = 0; i < screenHeight/PLAYER_SIZE + 1; i++)
                 {
-                    DrawLineV(vec2{0, static_cast<float>(PLAYER_SIZE)*i}, vec2{ static_cast<float>(screenWidth), static_cast<float>(PLAYER_SIZE)*i}, LIGHTGRAY);
+                    DrawLineV(vec2{0, static_cast<f32>(PLAYER_SIZE)*i}, vec2{ static_cast<f32>(screenWidth), static_cast<f32>(PLAYER_SIZE)*i}, LIGHTGRAY);
                 }
 
-                for (int i = 0; i < screenWidth/PLAYER_SIZE; i++)
+                for (i32 i = 0; i < screenWidth/PLAYER_SIZE; i++)
                 {
-                    for (int j = 0; j < screenHeight/PLAYER_SIZE; j++)
+                    for (i32 j = 0; j < screenHeight/PLAYER_SIZE; j++)
                     {
                         DrawText(TextFormat("[%i,%i]", i, j), 10 + PLAYER_SIZE*i, 15 + PLAYER_SIZE*j, 10, LIGHTGRAY);
                     }

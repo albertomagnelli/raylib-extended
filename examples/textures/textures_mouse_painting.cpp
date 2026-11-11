@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - mouse painting");
 
@@ -40,7 +40,7 @@ int main()
     // Define colorsRecs data (for every rectangle)
     Rectangle colorsRecs[MAX_COLORS_COUNT] = {};
 
-    for (int i = 0; i < MAX_COLORS_COUNT; i++)
+    for (i32 i = 0; i < MAX_COLORS_COUNT; i++)
     {
         colorsRecs[i].x = 10 + 30.0f*i + 2*i;
         colorsRecs[i].y = 10;
@@ -48,16 +48,16 @@ int main()
         colorsRecs[i].height = 30;
     }
 
-    int colorSelected = 0;
-    int colorSelectedPrev = colorSelected;
-    int colorMouseHover = 0;
-    float brushSize = 20.0f;
+    i32 colorSelected = 0;
+    i32 colorSelectedPrev = colorSelected;
+    i32 colorMouseHover = 0;
+    f32 brushSize = 20.0f;
     bool mouseWasPressed = false;
 
     const Rectangle btnSaveRec = { 750, 10, 40, 30 };
     bool btnSaveMouseHover = false;
     bool showSaveMessage = false;
-    int saveMessageCounter = 0;
+    i32 saveMessageCounter = 0;
 
     // Create a RenderTexture2D to use as a canvas
     const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
@@ -85,7 +85,7 @@ int main()
         else if (colorSelected < 0) colorSelected = 0;
 
         // Choose color with mouse
-        for (int i = 0; i < MAX_COLORS_COUNT; i++)
+        for (i32 i = 0; i < MAX_COLORS_COUNT; i++)
         {
             if (CheckCollisionPointRec(mousePos, colorsRecs[i]))
             {
@@ -120,7 +120,7 @@ int main()
             // NOTE: To avoid discontinuous circles, we could store
             // previous-next mouse points and just draw a line using brush size
             BeginTextureMode(target);
-            if (mousePos.y > 50) DrawCircle(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), brushSize, colors[colorSelected]);
+            if (mousePos.y > 50) DrawCircle(static_cast<i32>(mousePos.x), static_cast<i32>(mousePos.y), brushSize, colors[colorSelected]);
             EndTextureMode();
         }
 
@@ -136,7 +136,7 @@ int main()
 
             // Erase circle from render texture
             BeginTextureMode(target);
-            if (mousePos.y > 50) DrawCircle(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), brushSize, colors[0]);
+            if (mousePos.y > 50) DrawCircle(static_cast<i32>(mousePos.x), static_cast<i32>(mousePos.y), brushSize, colors[0]);
             EndTextureMode();
         }
         else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && mouseWasPressed)
@@ -179,12 +179,12 @@ int main()
         ClearBackground(RAYWHITE);
 
         // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-        DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
+        DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
 
         // Draw drawing circle for reference
         if (mousePos.y > 50)
         {
-            if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) DrawCircleLines(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y), brushSize, GRAY);
+            if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) DrawCircleLines(static_cast<i32>(mousePos.x), static_cast<i32>(mousePos.y), brushSize, GRAY);
             else DrawCircle(GetMouseX(), GetMouseY(), brushSize, colors[colorSelected]);
         }
 
@@ -193,7 +193,7 @@ int main()
         DrawLine(0, 50, GetScreenWidth(), 50, LIGHTGRAY);
 
         // Draw color selection rectangles
-        for (int i = 0; i < MAX_COLORS_COUNT; i++) DrawRectangleRec(colorsRecs[i], colors[i]);
+        for (i32 i = 0; i < MAX_COLORS_COUNT; i++) DrawRectangleRec(colorsRecs[i], colors[i]);
         DrawRectangleLines(10, 10, 30, 30, LIGHTGRAY);
 
         if (colorMouseHover >= 0) DrawRectangleRec(colorsRecs[colorMouseHover], Fade(WHITE, 0.6f));

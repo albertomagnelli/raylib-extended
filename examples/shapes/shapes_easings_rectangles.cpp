@@ -31,20 +31,20 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings rectangles");
 
     Rectangle recs[MAX_RECS_X*MAX_RECS_Y] = {};
 
-    for (int y = 0; y < MAX_RECS_Y; y++)
+    for (i32 y = 0; y < MAX_RECS_Y; y++)
     {
-        for (int x = 0; x < MAX_RECS_X; x++)
+        for (i32 x = 0; x < MAX_RECS_X; x++)
         {
             recs[y*MAX_RECS_X + x].x = RECS_WIDTH/2.0f + RECS_WIDTH*x;
             recs[y*MAX_RECS_X + x].y = RECS_HEIGHT/2.0f + RECS_HEIGHT*y;
@@ -53,9 +53,9 @@ int main()
         }
     }
 
-    float rotation = 0.0f;
-    int framesCounter = 0;
-    int state = 0;                  // Rectangles animation state: 0-Playing, 1-Finished
+    f32 rotation = 0.0f;
+    i32 framesCounter = 0;
+    i32 state = 0;                  // Rectangles animation state: 0-Playing, 1-Finished
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -69,17 +69,17 @@ int main()
         {
             framesCounter++;
 
-            for (int i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
+            for (i32 i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
             {
-                recs[i].height = EaseCircOut(static_cast<float>(framesCounter), RECS_HEIGHT, -RECS_HEIGHT, PLAY_TIME_IN_FRAMES);
-                recs[i].width = EaseCircOut(static_cast<float>(framesCounter), RECS_WIDTH, -RECS_WIDTH, PLAY_TIME_IN_FRAMES);
+                recs[i].height = EaseCircOut(static_cast<f32>(framesCounter), RECS_HEIGHT, -RECS_HEIGHT, PLAY_TIME_IN_FRAMES);
+                recs[i].width = EaseCircOut(static_cast<f32>(framesCounter), RECS_WIDTH, -RECS_WIDTH, PLAY_TIME_IN_FRAMES);
 
                 if (recs[i].height < 0) recs[i].height = 0;
                 if (recs[i].width < 0) recs[i].width = 0;
 
                 if ((recs[i].height == 0) && (recs[i].width == 0)) state = 1;   // Finish playing
 
-                rotation = EaseLinearIn(static_cast<float>(framesCounter), 0.0f, 360.0f, PLAY_TIME_IN_FRAMES);
+                rotation = EaseLinearIn(static_cast<f32>(framesCounter), 0.0f, 360.0f, PLAY_TIME_IN_FRAMES);
             }
         }
         else if ((state == 1) && IsKeyPressed(KEY_SPACE))
@@ -87,7 +87,7 @@ int main()
             // When animation has finished, press space to restart
             framesCounter = 0;
 
-            for (int i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
+            for (i32 i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
             {
                 recs[i].height = RECS_HEIGHT;
                 recs[i].width = RECS_WIDTH;
@@ -105,7 +105,7 @@ int main()
 
             if (state == 0)
             {
-                for (int i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
+                for (i32 i = 0; i < MAX_RECS_X*MAX_RECS_Y; i++)
                 {
                     DrawRectanglePro(recs[i], vec2{ recs[i].width/2, recs[i].height/2 }, rotation, RED);
                 }

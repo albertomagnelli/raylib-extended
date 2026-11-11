@@ -31,10 +31,10 @@ typedef struct TextParticle {
     Rectangle rect;    // Boundary
     vec2 vel;          // Velocity
     vec2 ppos;         // Previous position
-    float padding;
-    float borderWidth;
-    float friction;
-    float elasticity;
+    f32 padding;
+    f32 borderWidth;
+    f32 friction;
+    f32 elasticity;
     Color color;
     bool grabbed;
 } TextParticle;
@@ -42,28 +42,28 @@ typedef struct TextParticle {
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-void PrepareFirstTextParticle(std::string_view text, TextParticle *tps, int *particleCount);
-TextParticle CreateTextParticle(std::string_view text, float x, float y, Color color);
-void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextParticle *tps, int *particleCount);
-void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, int *particleCount);
-void ShatterTextParticle(TextParticle *tp, int particlePos, TextParticle *tps, int *particleCount);
-void GlueTextParticles(TextParticle *grabbed, TextParticle *target, TextParticle *tps, int *particleCount);
-void RealocateTextParticles(TextParticle *tps, int particlePos, int *particleCount);
+void PrepareFirstTextParticle(std::string_view text, TextParticle *tps, i32 *particleCount);
+TextParticle CreateTextParticle(std::string_view text, f32 x, f32 y, Color color);
+void SliceTextParticle(TextParticle *tp, i32 particlePos, i32 sliceLength, TextParticle *tps, i32 *particleCount);
+void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, i32 *particleCount);
+void ShatterTextParticle(TextParticle *tp, i32 particlePos, TextParticle *tps, i32 *particleCount);
+void GlueTextParticles(TextParticle *grabbed, TextParticle *target, TextParticle *tps, i32 *particleCount);
+void RealocateTextParticles(TextParticle *tps, i32 particlePos, i32 *particleCount);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - strings management");
 
     TextParticle textParticles[MAX_TEXT_PARTICLES] = {};
-    int particleCount = 0;
+    i32 particleCount = 0;
     TextParticle *grabbedTextParticle = nullptr;
     vec2 pressOffset = {};
 
@@ -77,13 +77,13 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float delta = GetFrameTime();
+        const f32 delta = GetFrameTime();
         const vec2 mousePos = GetMousePosition();
 
         // Checks if a text particle was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            for (int i = particleCount - 1; i >= 0; i--)
+            for (i32 i = particleCount - 1; i >= 0; i--)
             {
                 TextParticle *tp = &textParticles[i];
                 pressOffset.x = mousePos.x - tp->rect.x;
@@ -110,7 +110,7 @@ int main()
         // Slice os shatter a text particle
         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
         {
-            for (int i = particleCount - 1; i >= 0; i--)
+            for (i32 i = particleCount - 1; i >= 0; i--)
             {
                 TextParticle *tp = &textParticles[i];
                 if (CheckCollisionPointRec(mousePos, tp->rect))
@@ -131,9 +131,9 @@ int main()
         // Shake text particles
         if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE))
         {
-            for (int i = 0; i < particleCount; i++)
+            for (i32 i = 0; i < particleCount; i++)
             {
-                if (!textParticles[i].grabbed) textParticles[i].vel = vec2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
+                if (!textParticles[i].grabbed) textParticles[i].vel = vec2{ static_cast<f32>(GetRandomValue(-2000, 2000)), static_cast<f32>(GetRandomValue(-2000, 2000)) };
             }
         }
 
@@ -153,7 +153,7 @@ int main()
         }
 
         // Updates each text particle state
-        for (int i = 0; i < particleCount; i++)
+        for (i32 i = 0; i < particleCount; i++)
         {
             TextParticle *tp = &textParticles[i];
 
@@ -208,7 +208,7 @@ int main()
                 // Glue text particles when dragging and pressing left ctrl
                 if (IsKeyDown(KEY_LEFT_CONTROL))
                 {
-                    for (int i = 0; i < particleCount; i++)
+                    for (i32 i = 0; i < particleCount; i++)
                     {
                         if (&textParticles[i] != grabbedTextParticle && grabbedTextParticle->grabbed)
                         {
@@ -230,12 +230,12 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < particleCount; i++)
+            for (i32 i = 0; i < particleCount; i++)
             {
                 TextParticle *tp = &textParticles[i];
                 DrawRectangleRec(Rectangle{ tp->rect.x - tp->borderWidth, tp->rect.y - tp->borderWidth, tp->rect.width + tp->borderWidth * 2, tp->rect.height + tp->borderWidth * 2 }, BLACK);
                 DrawRectangleRec(tp->rect, tp->color);
-                DrawText(tp->text, static_cast<int>(tp->rect.x+tp->padding), static_cast<int>(tp->rect.y+tp->padding), FONT_SIZE, BLACK);
+                DrawText(tp->text, static_cast<i32>(tp->rect.x+tp->padding), static_cast<i32>(tp->rect.y+tp->padding), FONT_SIZE, BLACK);
             }
 
             DrawText("grab a text particle by pressing with the mouse and throw it by releasing", 10, 10, 10, DARKGRAY);
@@ -261,7 +261,7 @@ int main()
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
-void PrepareFirstTextParticle(std::string_view text, TextParticle *tps, int *particleCount)
+void PrepareFirstTextParticle(std::string_view text, TextParticle *tps, i32 *particleCount)
 {
     tps[0] = CreateTextParticle(
         text,
@@ -272,12 +272,12 @@ void PrepareFirstTextParticle(std::string_view text, TextParticle *tps, int *par
     *particleCount = 1;
 }
 
-TextParticle CreateTextParticle(std::string_view text, float x, float y, Color color)
+TextParticle CreateTextParticle(std::string_view text, f32 x, f32 y, Color color)
 {
     TextParticle tp = {
         .text = "",
         .rect = { x, y, 30, 30 },
-        .vel = { static_cast<float>(GetRandomValue(-200, 200)), static_cast<float>(GetRandomValue(-200, 200)) },
+        .vel = { static_cast<f32>(GetRandomValue(-200, 200)), static_cast<f32>(GetRandomValue(-200, 200)) },
         .ppos = {},
         .padding = 5.0f,
         .borderWidth = 5.0f,
@@ -293,35 +293,35 @@ TextParticle CreateTextParticle(std::string_view text, float x, float y, Color c
     return tp;
 }
 
-void SliceTextParticle(TextParticle *tp, int particlePos, int sliceLength, TextParticle *tps, int *particleCount)
+void SliceTextParticle(TextParticle *tp, i32 particlePos, i32 sliceLength, TextParticle *tps, i32 *particleCount)
 {
-    const int length = TextLength(tp->text);
+    const i32 length = TextLength(tp->text);
 
     if((length > 1) && ((*particleCount+length) < MAX_TEXT_PARTICLES))
     {
-        for (int i = 0; i < length; i += sliceLength)
+        for (i32 i = 0; i < length; i += sliceLength)
         {
             const std::string text = (sliceLength == 1)? TextFormat("%c", tp->text[i]) : TextSubtext(tp->text, i, sliceLength);
             tps[(*particleCount)++] = CreateTextParticle(
                 text,
                 tp->rect.x + i * tp->rect.width/length,
                 tp->rect.y,
-                Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 }
+                Color{ static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), 255 }
             );
         }
         RealocateTextParticles(tps, particlePos, particleCount);
     }
 }
 
-void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, int *particleCount)
+void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, i32 *particleCount)
 {
     std::vector<std::string> tokens = TextSplit(tp->text, charToSlice);
-    const int tokenCount = static_cast<int>(tokens.size());
+    const i32 tokenCount = static_cast<i32>(tokens.size());
 
     if (tokenCount > 1)
     {
-        const int textLength = TextLength(tp->text);
-        for (int i = 0; i < textLength; i++)
+        const i32 textLength = TextLength(tp->text);
+        for (i32 i = 0; i < textLength; i++)
         {
             if (tp->text[i] == charToSlice)
             {
@@ -329,18 +329,18 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
                     TextFormat("%c", charToSlice),
                     tp->rect.x,
                     tp->rect.y,
-                    Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 }
+                    Color{ static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), 255 }
                 );
             }
         }
-        for (int i = 0; i < tokenCount; i++)
+        for (i32 i = 0; i < tokenCount; i++)
         {
-            const int tokenLength = TextLength(tokens[i]);
+            const i32 tokenLength = TextLength(tokens[i]);
             tps[(*particleCount)++] = CreateTextParticle(
                 tokens[i],
                 tp->rect.x + i * tp->rect.width/tokenLength,
                 tp->rect.y,
-                Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 }
+                Color{ static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), 255 }
             );
         }
         if (tokenCount)
@@ -350,17 +350,17 @@ void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *t
     }
 }
 
-void ShatterTextParticle(TextParticle *tp, int particlePos, TextParticle *tps, int *particleCount)
+void ShatterTextParticle(TextParticle *tp, i32 particlePos, TextParticle *tps, i32 *particleCount)
 {
     SliceTextParticle(tp, particlePos, 1, tps, particleCount);
 }
 
-void GlueTextParticles(TextParticle *grabbed, TextParticle *target, TextParticle *tps, int *particleCount)
+void GlueTextParticles(TextParticle *grabbed, TextParticle *target, TextParticle *tps, i32 *particleCount)
 {
-    int p1 = -1;
-    int p2 = -1;
+    i32 p1 = -1;
+    i32 p2 = -1;
 
-    for (int i = 0; i < *particleCount; i++)
+    for (i32 i = 0; i < *particleCount; i++)
     {
         if (&tps[i] == grabbed) p1 = i;
         if (&tps[i] == target) p2 = i;
@@ -390,9 +390,9 @@ void GlueTextParticles(TextParticle *grabbed, TextParticle *target, TextParticle
     }
 }
 
-void RealocateTextParticles(TextParticle *tps, int particlePos, int *particleCount)
+void RealocateTextParticles(TextParticle *tps, i32 particlePos, i32 *particleCount)
 {
-    for (int i = particlePos+1; i < *particleCount; i++)
+    for (i32 i = particlePos+1; i < *particleCount; i++)
     {
         tps[i-1] = tps[i];
     }

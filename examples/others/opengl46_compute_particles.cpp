@@ -50,17 +50,17 @@
 
 // Particle data layout, it must match the vec4-based struct in the shaders (std430)
 typedef struct Particle {
-    float positionSize[4];  // xy: position (NDC), z: unused, w: point size in pixels
-    float velocity[2];      // xy: velocity in normalized device coordinates per second
-    float padding[2];       // Unused, keeps the struct aligned to 32 bytes
+    f32 positionSize[4];  // xy: position (NDC), z: unused, w: point size in pixels
+    f32 velocity[2];      // xy: velocity in normalized device coordinates per second
+    f32 padding[2];       // Unused, keeps the struct aligned to 32 bytes
 } Particle;
 
 // Indirect draw command, it must match GL's DrawArraysIndirectCommand layout
 typedef struct DrawArraysIndirectCommand {
-    unsigned int count;         // Number of vertices (particles) to draw
-    unsigned int instanceCount; // Number of instances
-    unsigned int first;         // First particle index in the SSBO
-    unsigned int baseInstance;  // Unused
+    u32 count;         // Number of vertices (particles) to draw
+    u32 instanceCount; // Number of instances
+    u32 first;         // First particle index in the SSBO
+    u32 baseInstance;  // Unused
 } DrawArraysIndirectCommand;
 
 //------------------------------------------------------------------------------------
@@ -73,12 +73,12 @@ static void InitParticles(Particle *particles);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [others] example - OpenGL 4.6 compute particles");
@@ -244,9 +244,9 @@ int main()
     // Indirect draw commands: PARTICLE_BATCHES draws, one per palette color
     // NOTE: All batches read from the same SSBO, each one starting at a different particle
     DrawArraysIndirectCommand drawCommands[PARTICLE_BATCHES] = {};
-    const unsigned int particlesPerBatch = MAX_PARTICLES/PARTICLE_BATCHES;
+    const u32 particlesPerBatch = MAX_PARTICLES/PARTICLE_BATCHES;
 
-    for (int i = 0; i < PARTICLE_BATCHES; i++)
+    for (i32 i = 0; i < PARTICLE_BATCHES; i++)
     {
         drawCommands[i].count = particlesPerBatch;
         drawCommands[i].instanceCount = 1;
@@ -261,7 +261,7 @@ int main()
     // Draw count is also stored in a GPU buffer (GL_PARAMETER_BUFFER)
     // NOTE: OpenGL 4.6 multi-draw count reads the number of draws from this buffer
     GLuint drawCountBuffer = 0;
-    unsigned int drawCount = PARTICLE_BATCHES;
+    u32 drawCount = PARTICLE_BATCHES;
     glCreateBuffers(1, &drawCountBuffer);
     glNamedBufferData(drawCountBuffer, sizeof(drawCount), &drawCount, GL_STATIC_DRAW);
     glBindBuffer(GL_PARAMETER_BUFFER, drawCountBuffer);
@@ -275,7 +275,7 @@ int main()
     glEnable(GL_PROGRAM_POINT_SIZE);
 
     // Palette used by the vertex shader, one color per indirect draw
-    float palette[PARTICLE_BATCHES][3] = {
+    f32 palette[PARTICLE_BATCHES][3] = {
         { 1.00f, 0.62f, 0.16f },    // Orange
         { 0.35f, 0.85f, 1.00f },    // Sky blue
         { 1.00f, 0.45f, 0.75f },    // Pink
@@ -312,7 +312,7 @@ int main()
             rlDrawRenderBatchActive();
 
             // 1) Simulate all particles with a compute shader (GPU only)
-            const float deltaTime = fminf(GetFrameTime(), 1.0f/30.0f);
+            const f32 deltaTime = fminf(GetFrameTime(), 1.0f/30.0f);
 
             glUseProgram(computeProgram);
                 glUniform1ui(particleCountLoc, MAX_PARTICLES);
@@ -325,7 +325,7 @@ int main()
 
             // 2) Draw all particle batches with a single OpenGL 4.6 multi-draw call
             glUseProgram(renderProgram);
-                glUniform3fv(paletteLoc, PARTICLE_BATCHES, reinterpret_cast<float *>(palette));
+                glUniform3fv(paletteLoc, PARTICLE_BATCHES, reinterpret_cast<f32 *>(palette));
 
                 glBindVertexArray(vertexArray);
                     glMultiDrawArraysIndirectCount(GL_POINTS, nullptr, 0, PARTICLE_BATCHES, 0);
@@ -411,14 +411,14 @@ static GLuint LinkProgram(GLuint vertexShader, GLuint fragmentShader)
 // Initialize particle positions and velocities with random values
 static void InitParticles(Particle *particles)
 {
-    for (int i = 0; i < MAX_PARTICLES; i++)
+    for (i32 i = 0; i < MAX_PARTICLES; i++)
     {
-        particles[i].positionSize[0] = static_cast<float>(GetRandomValue(-1000, 1000))/1000.0f;
-        particles[i].positionSize[1] = static_cast<float>(GetRandomValue(-1000, 1000))/1000.0f;
+        particles[i].positionSize[0] = static_cast<f32>(GetRandomValue(-1000, 1000))/1000.0f;
+        particles[i].positionSize[1] = static_cast<f32>(GetRandomValue(-1000, 1000))/1000.0f;
 
         // Random velocity in the [-0.15, 0.15] range (normalized device coordinates per second)
-        particles[i].velocity[0] = static_cast<float>(GetRandomValue(-150, 150))/1000.0f;
-        particles[i].velocity[1] = static_cast<float>(GetRandomValue(-150, 150))/1000.0f;
+        particles[i].velocity[0] = static_cast<f32>(GetRandomValue(-150, 150))/1000.0f;
+        particles[i].velocity[1] = static_cast<f32>(GetRandomValue(-150, 150))/1000.0f;
 
         // Keep particles above a minimum speed so they do not stay frozen
         if ((fabsf(particles[i].velocity[0]) < 0.03f) && (fabsf(particles[i].velocity[1]) < 0.03f))
@@ -428,6 +428,6 @@ static void InitParticles(Particle *particles)
         }
 
         // Point size in pixels (stored in positionSize.w, as expected by the vertex shader)
-        particles[i].positionSize[3] = static_cast<float>(GetRandomValue(15, 45))/10.0f;
+        particles[i].positionSize[3] = static_cast<f32>(GetRandomValue(15, 45))/10.0f;
     }
 }

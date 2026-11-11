@@ -29,25 +29,25 @@
 //----------------------------------------------------------------------------------
 typedef struct Player {
     vec2 position;
-    float speed;
+    f32 speed;
     bool canJump;
 } Player;
 
 typedef struct EnvElement {
     Rectangle rect;
-    int blocking;
+    i32 blocking;
     Color color;
 } EnvElement;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - automation events");
 
@@ -79,9 +79,9 @@ int main()
     bool eventRecording = false;
     bool eventPlaying = false;
 
-    unsigned int frameCounter = 0;
-    unsigned int playFrameCounter = 0;
-    unsigned int currentPlayFrame = 0;
+    u32 frameCounter = 0;
+    u32 playFrameCounter = 0;
+    u32 currentPlayFrame = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        constexpr float deltaTime = 0.015f;//GetFrameTime();
+        constexpr f32 deltaTime = 0.015f;//GetFrameTime();
 
         // Dropped files logic
         //----------------------------------------------------------------------------------
@@ -135,8 +135,8 @@ int main()
             player.canJump = false;
         }
 
-        int hitObstacle = 0;
-        for (int i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
+        i32 hitObstacle = 0;
+        for (i32 i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
         {
             EnvElement *element = &envElements[i];
             vec2 *p = &(player.position);
@@ -205,14 +205,14 @@ int main()
         //----------------------------------------------------------------------------------
         camera.target = player.position;
         camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
-        float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
+        f32 minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
 
         // WARNING: On event replay, mouse-wheel internal value is set
         camera.zoom += (GetMouseWheelMove()*0.05f);
         if (camera.zoom > 3.0f) camera.zoom = 3.0f;
         else if (camera.zoom < 0.25f) camera.zoom = 0.25f;
 
-        for (int i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
+        for (i32 i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
         {
             EnvElement *element = &envElements[i];
             minX = fminf(element->rect.x, minX);
@@ -224,10 +224,10 @@ int main()
         const vec2 max = GetWorldToScreen2D(vec2{ maxX, maxY }, camera);
         const vec2 min = GetWorldToScreen2D(vec2{ minX, minY }, camera);
 
-        if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - static_cast<float>(screenWidth)/2);
-        if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - static_cast<float>(screenHeight)/2);
-        if (min.x > 0) camera.offset.x = static_cast<float>(screenWidth)/2 - min.x;
-        if (min.y > 0) camera.offset.y = static_cast<float>(screenHeight)/2 - min.y;
+        if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - static_cast<f32>(screenWidth)/2);
+        if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - static_cast<f32>(screenHeight)/2);
+        if (min.x > 0) camera.offset.x = static_cast<f32>(screenWidth)/2 - min.x;
+        if (min.y > 0) camera.offset.y = static_cast<f32>(screenHeight)/2 - min.y;
         //----------------------------------------------------------------------------------
 
         // Events management
@@ -285,7 +285,7 @@ int main()
             BeginMode2D(camera);
 
                 // Draw environment elements
-                for (int i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
+                for (i32 i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
                 {
                     DrawRectangleRec(envElements[i].rect, envElements[i].color);
                 }

@@ -19,12 +19,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - billboard rendering");
 
@@ -41,7 +41,7 @@ int main()
     const vec3 billPositionRotating = { 1.0f, 2.0f, 1.0f };           // Position of rotating billboard
 
     // Entire billboard texture, source is used to take a segment from a larger texture
-    const Rectangle source = { 0.0f, 0.0f, static_cast<float>(bill.width), static_cast<float>(bill.height) };
+    const Rectangle source = { 0.0f, 0.0f, static_cast<f32>(bill.width), static_cast<f32>(bill.height) };
 
     // NOTE: Billboard locked on axis-Y
     const vec3 billUp = { 0.0f, 1.0f, 0.0f };
@@ -55,9 +55,9 @@ int main()
 
     // Distance is needed for the correct billboard draw order
     // Larger distance (further away from the camera) should be drawn prior to smaller distance
-    float distanceStatic;
-    float distanceRotating;
-    float rotation = 0.0f;
+    f32 distanceStatic;
+    f32 distanceRotating;
+    f32 rotation = 0.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

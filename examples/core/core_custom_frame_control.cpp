@@ -33,27 +33,27 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - custom frame control");
 
     // Custom timming variables
-    double previousTime = GetTime();    // Previous time measure
-    double currentTime = 0.0;           // Current time measure
-    double updateDrawTime = 0.0;        // Update + Draw time
-    double waitTime = 0.0;              // Wait time (if target fps required)
-    float deltaTime = 0.0f;             // Frame time (Update + Draw + Wait time)
+    f64 previousTime = GetTime();    // Previous time measure
+    f64 currentTime = 0.0;           // Current time measure
+    f64 updateDrawTime = 0.0;        // Update + Draw time
+    f64 waitTime = 0.0;              // Wait time (if target fps required)
+    f32 deltaTime = 0.0f;             // Frame time (Update + Draw + Wait time)
 
-    float timeCounter = 0.0f;           // Accumulative time counter (seconds)
-    float position = 0.0f;              // Circle position
+    f32 timeCounter = 0.0f;           // Accumulative time counter (seconds)
+    f32 position = 0.0f;              // Circle position
     bool pause = false;                 // Pause control flag
 
-    int targetFPS = 60;                 // Our initial target fps
+    i32 targetFPS = 60;                 // Our initial target fps
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -90,12 +90,12 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < GetScreenWidth()/200; i++) DrawRectangle(200*i, 0, 1, GetScreenHeight(), SKYBLUE);
+            for (i32 i = 0; i < GetScreenWidth()/200; i++) DrawRectangle(200*i, 0, 1, GetScreenHeight(), SKYBLUE);
 
-            DrawCircle(static_cast<int>(position), GetScreenHeight()/2 - 25, 50, RED);
+            DrawCircle(static_cast<i32>(position), GetScreenHeight()/2 - 25, 50, RED);
 
-            DrawText(TextFormat("%03.0f ms", timeCounter*1000.0f), static_cast<int>(position) - 40, GetScreenHeight()/2 - 100, 20, MAROON);
-            DrawText(TextFormat("PosX: %03.0f", position), static_cast<int>(position) - 50, GetScreenHeight()/2 + 40, 20, BLACK);
+            DrawText(TextFormat("%03.0f ms", timeCounter*1000.0f), static_cast<i32>(position) - 40, GetScreenHeight()/2 - 100, 20, MAROON);
+            DrawText(TextFormat("PosX: %03.0f", position), static_cast<i32>(position) - 50, GetScreenHeight()/2 + 40, 20, BLACK);
 
             DrawText("Circle is moving at a constant 200 pixels/sec,\nindependently of the frame rate.", 10, 10, 20, DARKGRAY);
             DrawText("PRESS SPACE to PAUSE MOVEMENT", 10, GetScreenHeight() - 60, 20, GRAY);
@@ -103,7 +103,7 @@ int main()
             DrawText(TextFormat("TARGET FPS: %i", targetFPS), GetScreenWidth() - 220, 10, 20, LIME);
             if (deltaTime != 0)
             {
-                DrawText(TextFormat("CURRENT FPS: %i", static_cast<int>(1.0f/deltaTime)), GetScreenWidth() - 220, 40, 20, GREEN);
+                DrawText(TextFormat("CURRENT FPS: %i", static_cast<i32>(1.0f/deltaTime)), GetScreenWidth() - 220, 40, 20, GREEN);
             }
 
         EndDrawing();
@@ -118,15 +118,15 @@ int main()
 
         if (targetFPS > 0)          // We want a fixed frame rate
         {
-            waitTime = (1.0f/static_cast<float>(targetFPS)) - updateDrawTime;
+            waitTime = (1.0f/static_cast<f32>(targetFPS)) - updateDrawTime;
             if (waitTime > 0.0)
             {
-                WaitTime(static_cast<float>(waitTime));
+                WaitTime(static_cast<f32>(waitTime));
                 currentTime = GetTime();
-                deltaTime = static_cast<float>(currentTime - previousTime);
+                deltaTime = static_cast<f32>(currentTime - previousTime);
             }
         }
-        else deltaTime = static_cast<float>(updateDrawTime);    // Framerate could be variable
+        else deltaTime = static_cast<f32>(updateDrawTime);    // Framerate could be variable
 
         previousTime = currentTime;
         //----------------------------------------------------------------------------------

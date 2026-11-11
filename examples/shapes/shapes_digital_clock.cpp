@@ -30,12 +30,12 @@
 //----------------------------------------------------------------------------------
 // Clock hand type
 typedef struct {
-    int value;          // Time value
+    i32 value;          // Time value
 
     // Visual elements
-    float angle;        // Hand angle
-    int length;         // Hand length
-    int thickness;      // Hand thickness
+    f32 angle;        // Hand angle
+    i32 length;         // Hand length
+    i32 thickness;      // Hand thickness
     Color color;        // Hand color
 } ClockHand;
 
@@ -53,24 +53,24 @@ static void UpdateClock(Clock *clock);                    // Update clock time
 static void DrawClockAnalog(Clock clock, vec2 position);  // Draw analog clock at desired center position
 static void DrawClockDigital(Clock clock, vec2 position); // Draw digital clock at desired position
 
-static void DrawDisplayValue(vec2 position, int value, Color colorOn, Color colorOff);
+static void DrawDisplayValue(vec2 position, i32 value, Color colorOn, Color colorOff);
 static void Draw7SDisplay(vec2 position, char segments, Color colorOn, Color colorOff);
-static void DrawDisplaySegment(vec2 center, int length, int thick, bool vertical, Color color);
+static void DrawDisplaySegment(vec2 center, i32 length, i32 thick, bool vertical, Color color);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - digital clock");
 
-    int clockMode = CLOCK_DIGITAL;
+    i32 clockMode = CLOCK_DIGITAL;
 
     // Initialize clock
     // NOTE: Includes visual info for anlaog clock
@@ -170,7 +170,7 @@ static void DrawClockAnalog(Clock clock, vec2 position)
         DrawCircleV(position, 12.0f, GRAY);
 
         // Draw clock minutes/seconds lines
-        for (int i = 0; i < 60; i++)
+        for (i32 i = 0; i < 60; i++)
         {
             DrawLineEx(vec2{ position.x + (clock.second.length + ((i%5)? 10 : 6))*cosf((6.0f*i - 90.0f)*DEG2RAD),
                 position.y + (clock.second.length + ((i%5)? 10 : 6))*sinf((6.0f*i - 90.0f)*DEG2RAD) },
@@ -183,15 +183,15 @@ static void DrawClockAnalog(Clock clock, vec2 position)
         }
 
         // Draw hand seconds
-        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.second.length), static_cast<float>(clock.second.thickness) },
+        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<f32>(clock.second.length), static_cast<f32>(clock.second.thickness) },
             vec2{ 0.0f, clock.second.thickness/2.0f }, clock.second.angle, clock.second.color);
 
         // Draw hand minutes
-        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.minute.length), static_cast<float>(clock.minute.thickness) },
+        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<f32>(clock.minute.length), static_cast<f32>(clock.minute.thickness) },
             vec2{ 0.0f, clock.minute.thickness/2.0f }, clock.minute.angle, clock.minute.color);
 
         // Draw hand hours
-        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.hour.length), static_cast<float>(clock.hour.thickness) },
+        DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<f32>(clock.hour.length), static_cast<f32>(clock.hour.thickness) },
             vec2{ 0.0f, clock.hour.thickness/2.0f }, clock.hour.angle, clock.hour.color);
 }
 
@@ -203,21 +203,21 @@ static void DrawClockDigital(Clock clock, vec2 position)
     DrawDisplayValue(vec2{ position.x, position.y }, clock.hour.value/10, RED, Fade(LIGHTGRAY, 0.3f));
     DrawDisplayValue(vec2{ position.x + 120, position.y }, clock.hour.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
-    DrawCircle(static_cast<int>(position.x) + 240, static_cast<int>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
-    DrawCircle(static_cast<int>(position.x) + 240, static_cast<int>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<i32>(position.x) + 240, static_cast<i32>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<i32>(position.x) + 240, static_cast<i32>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
     DrawDisplayValue(vec2{ position.x + 260, position.y }, clock.minute.value/10, RED, Fade(LIGHTGRAY, 0.3f));
     DrawDisplayValue(vec2{ position.x + 380, position.y }, clock.minute.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
-    DrawCircle(static_cast<int>(position.x) + 500, static_cast<int>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
-    DrawCircle(static_cast<int>(position.x) + 500, static_cast<int>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<i32>(position.x) + 500, static_cast<i32>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
+    DrawCircle(static_cast<i32>(position.x) + 500, static_cast<i32>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
     DrawDisplayValue(vec2{ position.x + 520, position.y }, clock.second.value/10, RED, Fade(LIGHTGRAY, 0.3f));
     DrawDisplayValue(vec2{ position.x + 640, position.y }, clock.second.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 }
 
 // Draw 7-segment display with value
-static void DrawDisplayValue(vec2 position, int value, Color colorOn, Color colorOff)
+static void DrawDisplayValue(vec2 position, i32 value, Color colorOn, Color colorOff)
 {
     switch (value)
     {
@@ -240,9 +240,9 @@ static void DrawDisplayValue(vec2 position, int value, Color colorOn, Color colo
 // Parameter: segments, defines in binary the segments to be activated
 static void Draw7SDisplay(vec2 position, char segments, Color colorOn, Color colorOff)
 {
-    constexpr int segmentLen = 60;
-    constexpr int segmentThick = 20;
-    const float offsetYAdjust = segmentThick*0.3f; // HACK: Adjust gap space between segment limits
+    constexpr i32 segmentLen = 60;
+    constexpr i32 segmentThick = 20;
+    const f32 offsetYAdjust = segmentThick*0.3f; // HACK: Adjust gap space between segment limits
 
     // Segment A
     DrawDisplaySegment(vec2{ position.x + segmentThick + segmentLen/2.0f, position.y + segmentThick },
@@ -268,7 +268,7 @@ static void Draw7SDisplay(vec2 position, char segments, Color colorOn, Color col
 }
 
 // Draw one 7-segment display segment, horizontal or vertical
-static void DrawDisplaySegment(vec2 center, int length, int thick, bool vertical, Color color)
+static void DrawDisplaySegment(vec2 center, i32 length, i32 thick, bool vertical, Color color)
 {
     if (!vertical)
     {
@@ -300,7 +300,7 @@ static void DrawDisplaySegment(vec2 center, int length, int thick, bool vertical
             vec2{ center.x + thick/2.0f, center.y - length/2.0f },                     // Point 3
             vec2{ center.x - thick/2.0f,  center.y + length/2.0f },                    // Point 4
             vec2{ center.x + thick/2.0f,  center.y + length/2.0f },                    // Point 5
-            vec2{ center.x,  center.y + static_cast<float>(length)/2 + thick/2.0f },   // Point 6
+            vec2{ center.x,  center.y + static_cast<f32>(length)/2 + thick/2.0f },   // Point 6
         };
 
         DrawTriangleStrip(segmentPointsV, 6, color);

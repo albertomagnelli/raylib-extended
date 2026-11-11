@@ -26,12 +26,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - ascii rendering");
 
@@ -44,19 +44,19 @@ int main()
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/ascii.fs", GLSL_VERSION));
 
     // These locations are used to send data to the GPU
-    const int resolutionLoc = GetShaderLocation(shader, "resolution");
-    const int fontSizeLoc = GetShaderLocation(shader, "fontSize");
+    const i32 resolutionLoc = GetShaderLocation(shader, "resolution");
+    const i32 fontSizeLoc = GetShaderLocation(shader, "fontSize");
 
     // Set the character size for the ASCII effect
     // Fontsize should be 9 or more
-    float fontSize = 9.0f;
+    f32 fontSize = 9.0f;
 
     // Send the updated values to the shader
-    float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
+    f32 resolution[2] = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    vec2 circlePos = vec2{40.0f, static_cast<float>(screenHeight)*0.5f};
-    float circleSpeed = 1.0f;
+    vec2 circlePos = vec2{40.0f, static_cast<f32>(screenHeight)*0.5f};
+    f32 circleSpeed = 1.0f;
 
     // RenderTexture to apply the postprocessing later
     const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
@@ -95,7 +95,7 @@ int main()
                 // Draw the scene texture (that we rendered earlier) to the screen
                 // The shader will process every pixel of this texture
                 DrawTextureRec(target.texture,
-                    Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
+                    Rectangle{ 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) },
                     vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 

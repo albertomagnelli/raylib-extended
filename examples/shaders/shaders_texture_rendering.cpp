@@ -26,12 +26,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture rendering");
 
@@ -42,8 +42,8 @@ int main()
     // NOTE: Using GLSL 330 shader version, on OpenGL ES 2.0 use GLSL 100 shader version
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/cubes_panning.fs", GLSL_VERSION));
 
-    float time = 0.0f;
-    const int timeLoc = GetShaderLocation(shader, "uTime");
+    f32 time = 0.0f;
+    const i32 timeLoc = GetShaderLocation(shader, "uTime");
     SetShaderValue(shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -54,7 +54,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        time = static_cast<float>(GetTime());
+        time = static_cast<f32>(GetTime());
         SetShaderValue(shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
         //----------------------------------------------------------------------------------
 

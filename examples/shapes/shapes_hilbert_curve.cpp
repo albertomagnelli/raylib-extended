@@ -26,31 +26,31 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static vec2 *LoadHilbertPath(int order, float size, int *strokeCount);
+static vec2 *LoadHilbertPath(i32 order, f32 size, i32 *strokeCount);
 static void UnloadHilbertPath(vec2 *hilbertPath);
-static vec2 ComputeHilbertStep(int order, int index);
+static vec2 ComputeHilbertStep(i32 order, i32 index);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - hilbert curve");
 
-    int order = 2;
-    float size = static_cast<float>(GetScreenHeight());
-    int strokeCount = 0;
+    i32 order = 2;
+    f32 size = static_cast<f32>(GetScreenHeight());
+    i32 strokeCount = 0;
     vec2 *hilbertPath = LoadHilbertPath(order, size, &strokeCount);
 
-    int prevOrder = order;
-    int prevSize = static_cast<int>(size);       // NOTE: Size from slider is float but for comparison we use int
-    int counter = 0;
-    float thick = 2.0f;
+    i32 prevOrder = order;
+    i32 prevSize = static_cast<i32>(size);       // NOTE: Size from slider is float but for comparison we use int
+    i32 counter = 0;
+    f32 thick = 2.0f;
     bool animate = true;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -64,7 +64,7 @@ int main()
         //----------------------------------------------------------------------------------
         // Check if order or size have changed to regenerate
         // NOTE: Size from slider is float but for comparison we use int
-        if ((prevOrder != order) || (prevSize != static_cast<int>(size)))
+        if ((prevOrder != order) || (prevSize != static_cast<i32>(size)))
         {
             UnloadHilbertPath(hilbertPath);
             hilbertPath = LoadHilbertPath(order, size, &strokeCount);
@@ -73,7 +73,7 @@ int main()
             else counter = strokeCount;
 
             prevOrder = order;
-            prevSize = static_cast<int>(size);
+            prevSize = static_cast<i32>(size);
         }
         //----------------------------------------------------------------------------------
 
@@ -86,9 +86,9 @@ int main()
             if (counter < strokeCount)
             {
                 // Draw Hilbert path animation, one stroke every frame
-                for (int i = 1; i <= counter; i++)
+                for (i32 i = 1; i <= counter; i++)
                 {
-                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV((static_cast<float>(i)/strokeCount)*360.0f, 1.0f, 1.0f));
+                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV((static_cast<f32>(i)/strokeCount)*360.0f, 1.0f, 1.0f));
                 }
 
                 counter += 1;
@@ -96,9 +96,9 @@ int main()
             else
             {
                 // Draw full Hilbert path
-                for (int i = 1; i < strokeCount; i++)
+                for (i32 i = 1; i < strokeCount; i++)
                 {
-                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV((static_cast<float>(i)/strokeCount)*360.0f, 1.0f, 1.0f));
+                    DrawLineEx(hilbertPath[i], hilbertPath[i - 1], thick, ColorFromHSV((static_cast<f32>(i)/strokeCount)*360.0f, 1.0f, 1.0f));
                 }
             }
 
@@ -126,15 +126,15 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Load the whole Hilbert Path (including each U and their link)
-static vec2 *LoadHilbertPath(int order, float size, int *strokeCount)
+static vec2 *LoadHilbertPath(i32 order, f32 size, i32 *strokeCount)
 {
-    const int N = 1 << order;
-    const float len = size/N;
+    const i32 N = 1 << order;
+    const f32 len = size/N;
     *strokeCount = N*N;
 
     vec2 *hilbertPath = static_cast<vec2 *>(calloc(*strokeCount, sizeof(vec2)));
 
-    for (int i = 0; i < *strokeCount; i++)
+    for (i32 i = 0; i < *strokeCount; i++)
     {
         hilbertPath[i] = ComputeHilbertStep(order, i);
         hilbertPath[i].x = hilbertPath[i].x*len + len/2.0f;
@@ -151,7 +151,7 @@ static void UnloadHilbertPath(vec2 *hilbertPath)
 }
 
 // Compute Hilbert path U positions
-static vec2 ComputeHilbertStep(int order, int index)
+static vec2 ComputeHilbertStep(i32 order, i32 index)
 {
     // Hilbert points base pattern
     static const vec2 hilbertPoints[4] = {
@@ -161,12 +161,12 @@ static vec2 ComputeHilbertStep(int order, int index)
         { 1, 0 },
     };
 
-    int hilbertIndex = index&3;
+    i32 hilbertIndex = index&3;
     vec2 vect = hilbertPoints[hilbertIndex];
-    float temp = 0.0f;
-    int len = 0;
+    f32 temp = 0.0f;
+    i32 len = 0;
 
-    for (int j = 1; j < order; j++)
+    for (i32 j = 1; j < order; j++)
     {
         index = index >> 2;
         hilbertIndex = index&3;

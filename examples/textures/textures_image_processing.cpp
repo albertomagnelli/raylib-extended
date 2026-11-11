@@ -48,12 +48,12 @@ static const char *processText[] = {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image processing");
 
@@ -65,13 +65,13 @@ int main()
 
     Image imCopy = ImageCopy(imOrigin);
 
-    int currentProcess = NONE;
+    i32 currentProcess = NONE;
     bool textureReload = false;
 
     Rectangle toggleRecs[NUM_PROCESSES] = {};
-    int mouseHoverRec = -1;
+    i32 mouseHoverRec = -1;
 
-    for (int i = 0; i < NUM_PROCESSES; i++) toggleRecs[i] = Rectangle{ 40.0f, static_cast<float>(50 + 32*i), 150.0f, 30.0f };
+    for (i32 i = 0; i < NUM_PROCESSES; i++) toggleRecs[i] = Rectangle{ 40.0f, static_cast<f32>(50 + 32*i), 150.0f, 30.0f };
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ int main()
         //----------------------------------------------------------------------------------
 
         // Mouse toggle group logic
-        for (int i = 0; i < NUM_PROCESSES; i++)
+        for (i32 i = 0; i < NUM_PROCESSES; i++)
         {
             if (CheckCollisionPointRec(GetMousePosition(), toggleRecs[i]))
             {
@@ -152,11 +152,11 @@ int main()
             DrawText("IMAGE PROCESSING:", 40, 30, 10, DARKGRAY);
 
             // Draw rectangles
-            for (int i = 0; i < NUM_PROCESSES; i++)
+            for (i32 i = 0; i < NUM_PROCESSES; i++)
             {
                 DrawRectangleRec(toggleRecs[i], ((i == currentProcess) || (i == mouseHoverRec)) ? SKYBLUE : LIGHTGRAY);
-                DrawRectangleLines(static_cast<int>(toggleRecs[i].x), static_cast<int>(toggleRecs[i].y), static_cast<int>(toggleRecs[i].width), static_cast<int>(toggleRecs[i].height), ((i == currentProcess) || (i == mouseHoverRec)) ? BLUE : GRAY);
-                DrawText( processText[i], static_cast<int>( toggleRecs[i].x + toggleRecs[i].width/2 - static_cast<float>(MeasureText(processText[i], 10))/2), static_cast<int>(toggleRecs[i].y) + 11, 10, ((i == currentProcess) || (i == mouseHoverRec)) ? DARKBLUE : DARKGRAY);
+                DrawRectangleLines(static_cast<i32>(toggleRecs[i].x), static_cast<i32>(toggleRecs[i].y), static_cast<i32>(toggleRecs[i].width), static_cast<i32>(toggleRecs[i].height), ((i == currentProcess) || (i == mouseHoverRec)) ? BLUE : GRAY);
+                DrawText( processText[i], static_cast<i32>( toggleRecs[i].x + toggleRecs[i].width/2 - static_cast<f32>(MeasureText(processText[i], 10))/2), static_cast<i32>(toggleRecs[i].y) + 11, 10, ((i == currentProcess) || (i == mouseHoverRec)) ? DARKBLUE : DARKGRAY);
             }
 
             DrawTexture(texture, screenWidth - texture.width - 60, screenHeight/2 - texture.height/2, WHITE);

@@ -19,32 +19,32 @@
 #include <math.h>
 
 // Check if point is inside ellipse
-static bool CheckCollisionPointEllipse(vec2 point, vec2 center, float rx, float ry)
+static bool CheckCollisionPointEllipse(vec2 point, vec2 center, f32 rx, f32 ry)
 {
-    const float dx = (point.x - center.x)/rx;
-    const float dy = (point.y - center.y)/ry;
+    const f32 dx = (point.x - center.x)/rx;
+    const f32 dy = (point.y - center.y)/ry;
     return (dx*dx + dy*dy) <= 1.0f;
 }
 
 // Check if two ellipses collide
 // Uses radial boundary distance in the direction between centers — scales correctly with radii
-static bool CheckCollisionEllipses(vec2 c1, float rx1, float ry1, vec2 c2, float rx2, float ry2)
+static bool CheckCollisionEllipses(vec2 c1, f32 rx1, f32 ry1, vec2 c2, f32 rx2, f32 ry2)
 {
-    const float dx = c2.x - c1.x;
-    const float dy = c2.y - c1.y;
-    const float dist = sqrtf(dx*dx + dy*dy);
+    const f32 dx = c2.x - c1.x;
+    const f32 dy = c2.y - c1.y;
+    const f32 dist = sqrtf(dx*dx + dy*dy);
 
     // Ellipses are on top of each other
     if (dist == 0.0f) return true;
 
-    const float theta = atan2f(dy, dx);
-    const float cosT = cosf(theta);
-    const float sinT = sinf(theta);
+    const f32 theta = atan2f(dy, dx);
+    const f32 cosT = cosf(theta);
+    const f32 sinT = sinf(theta);
 
     // Radial distance from center to ellipse boundary in direction theta
     // r(theta) = (rx * ry) / sqrt((ry*cos)^2 + (rx*sin)^2)
-    const float r1 = (rx1*ry1)/sqrtf((ry1*cosT)*(ry1*cosT) + (rx1*sinT)*(rx1*sinT));
-    const float r2 = (rx2*ry2)/sqrtf((ry2*cosT)*(ry2*cosT) + (rx2*sinT)*(rx2*sinT));
+    const f32 r1 = (rx1*ry1)/sqrtf((ry1*cosT)*(ry1*cosT) + (rx1*sinT)*(rx1*sinT));
+    const f32 r2 = (rx2*ry2)/sqrtf((ry2*cosT)*(ry2*cosT) + (rx2*sinT)*(rx2*sinT));
 
     return dist <= (r1 + r2);
 }
@@ -52,26 +52,26 @@ static bool CheckCollisionEllipses(vec2 c1, float rx1, float ry1, vec2 c2, float
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ellipse collision");
     SetTargetFPS(60);
 
-    vec2 ellipseACenter = { static_cast<float>(screenWidth)/4, static_cast<float>(screenHeight)/2 };
-    constexpr float ellipseARx = 120.0f;
-    constexpr float ellipseARy = 70.0f;
+    vec2 ellipseACenter = { static_cast<f32>(screenWidth)/4, static_cast<f32>(screenHeight)/2 };
+    constexpr f32 ellipseARx = 120.0f;
+    constexpr f32 ellipseARy = 70.0f;
 
-    vec2 ellipseBCenter = { static_cast<float>(screenWidth)*3/4, static_cast<float>(screenHeight)/2 };
-    constexpr float ellipseBRx = 90.0f;
-    constexpr float ellipseBRy = 140.0f;
+    vec2 ellipseBCenter = { static_cast<f32>(screenWidth)*3/4, static_cast<f32>(screenHeight)/2 };
+    constexpr f32 ellipseBRx = 90.0f;
+    constexpr f32 ellipseBRy = 140.0f;
 
     // 0 = controlling A, 1 = controlling B
-    int controlled = 0;
+    i32 controlled = 0;
 
     //--------------------------------------------------------------------------------------
 
@@ -101,13 +101,13 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawEllipse(static_cast<int>(ellipseACenter.x), static_cast<int>(ellipseACenter.y), ellipseARx, ellipseARy, ellipsesCollide ? RED : BLUE);
+            DrawEllipse(static_cast<i32>(ellipseACenter.x), static_cast<i32>(ellipseACenter.y), ellipseARx, ellipseARy, ellipsesCollide ? RED : BLUE);
 
-            DrawEllipse(static_cast<int>(ellipseBCenter.x), static_cast<int>(ellipseBCenter.y), ellipseBRx, ellipseBRy, ellipsesCollide ? RED : GREEN);
+            DrawEllipse(static_cast<i32>(ellipseBCenter.x), static_cast<i32>(ellipseBCenter.y), ellipseBRx, ellipseBRy, ellipsesCollide ? RED : GREEN);
 
-            DrawEllipseLines(static_cast<int>(ellipseACenter.x), static_cast<int>(ellipseACenter.y), ellipseARx, ellipseARy, WHITE);
+            DrawEllipseLines(static_cast<i32>(ellipseACenter.x), static_cast<i32>(ellipseACenter.y), ellipseARx, ellipseARy, WHITE);
 
-            DrawEllipseLines(static_cast<int>(ellipseBCenter.x), static_cast<int>(ellipseBCenter.y), ellipseBRx, ellipseBRy, WHITE);
+            DrawEllipseLines(static_cast<i32>(ellipseBCenter.x), static_cast<i32>(ellipseBCenter.y), ellipseBRx, ellipseBRy, WHITE);
 
             DrawCircleV(ellipseACenter, 4, WHITE);
             DrawCircleV(ellipseBCenter, 4, WHITE);

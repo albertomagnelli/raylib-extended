@@ -19,21 +19,21 @@
 
 typedef struct {
     vec2 position;
-    float radius;
-    float alpha;
-    float speed;
+    f32 radius;
+    f32 alpha;
+    f32 speed;
     Color color;
 } CircleWave;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // NOTE: Try to enable MSAA 4X
 
@@ -47,23 +47,23 @@ int main()
     // Creates some circles for visual effect
     CircleWave circles[MAX_CIRCLES] = {};
 
-    for (int i = MAX_CIRCLES - 1; i >= 0; i--)
+    for (i32 i = MAX_CIRCLES - 1; i >= 0; i--)
     {
         circles[i].alpha = 0.0f;
-        circles[i].radius = static_cast<float>(GetRandomValue(10, 40));
-        circles[i].position.x = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenWidth - circles[i].radius)));
-        circles[i].position.y = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenHeight - circles[i].radius)));
-        circles[i].speed = static_cast<float>(GetRandomValue(1, 100))/2000.0f;
+        circles[i].radius = static_cast<f32>(GetRandomValue(10, 40));
+        circles[i].position.x = static_cast<f32>(GetRandomValue(static_cast<i32>(circles[i].radius), static_cast<i32>(screenWidth - circles[i].radius)));
+        circles[i].position.y = static_cast<f32>(GetRandomValue(static_cast<i32>(circles[i].radius), static_cast<i32>(screenHeight - circles[i].radius)));
+        circles[i].speed = static_cast<f32>(GetRandomValue(1, 100))/2000.0f;
         circles[i].color = colors[GetRandomValue(0, 13)];
     }
 
     Music music = LoadMusicStream("resources/mini1111.xm");
     music.looping = false;
-    float pitch = 1.0f;
+    f32 pitch = 1.0f;
 
     PlayMusicStream(music);
 
-    float timePlayed = 0.0f;
+    f32 timePlayed = 0.0f;
     bool pause = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -102,7 +102,7 @@ int main()
         timePlayed = GetMusicTimePlayed(music)/GetMusicTimeLength(music)*(screenWidth - 40);
 
         // Color circles animation
-        for (int i = MAX_CIRCLES - 1; (i >= 0) && !pause; i--)
+        for (i32 i = MAX_CIRCLES - 1; (i >= 0) && !pause; i--)
         {
             circles[i].alpha += circles[i].speed;
             circles[i].radius += circles[i].speed*10.0f;
@@ -112,11 +112,11 @@ int main()
             if (circles[i].alpha <= 0.0f)
             {
                 circles[i].alpha = 0.0f;
-                circles[i].radius = static_cast<float>(GetRandomValue(10, 40));
-                circles[i].position.x = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenWidth - circles[i].radius)));
-                circles[i].position.y = static_cast<float>(GetRandomValue(static_cast<int>(circles[i].radius), static_cast<int>(screenHeight - circles[i].radius)));
+                circles[i].radius = static_cast<f32>(GetRandomValue(10, 40));
+                circles[i].position.x = static_cast<f32>(GetRandomValue(static_cast<i32>(circles[i].radius), static_cast<i32>(screenWidth - circles[i].radius)));
+                circles[i].position.y = static_cast<f32>(GetRandomValue(static_cast<i32>(circles[i].radius), static_cast<i32>(screenHeight - circles[i].radius)));
                 circles[i].color = colors[GetRandomValue(0, 13)];
-                circles[i].speed = static_cast<float>(GetRandomValue(1, 100))/2000.0f;
+                circles[i].speed = static_cast<f32>(GetRandomValue(1, 100))/2000.0f;
             }
         }
         //----------------------------------------------------------------------------------
@@ -127,14 +127,14 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = MAX_CIRCLES - 1; i >= 0; i--)
+            for (i32 i = MAX_CIRCLES - 1; i >= 0; i--)
             {
                 DrawCircleV(circles[i].position, circles[i].radius, Fade(circles[i].color, circles[i].alpha));
             }
 
             // Draw time bar
             DrawRectangle(20, screenHeight - 20 - 12, screenWidth - 40, 12, LIGHTGRAY);
-            DrawRectangle(20, screenHeight - 20 - 12, static_cast<int>(timePlayed), 12, MAROON);
+            DrawRectangle(20, screenHeight - 20 - 12, static_cast<i32>(timePlayed), 12, MAROON);
             DrawRectangleLines(20, screenHeight - 20 - 12, screenWidth - 40, 12, GRAY);
 
             // Draw help instructions

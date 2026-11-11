@@ -23,82 +23,82 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static const char *GetKeyText(int key);
-static void GuiKeyboardKey(Rectangle bounds, int key);
+static const char *GetKeyText(i32 key);
+static void GuiKeyboardKey(Rectangle bounds, i32 key);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard testbed");
     SetExitKey(KEY_NULL); // Avoid exit on KEY_ESCAPE
 
     // Keyboard line 01
-    int line01KeyWidths[15] = {};
-    for (int i = 0; i < 15; i++) line01KeyWidths[i] = 45;
+    i32 line01KeyWidths[15] = {};
+    for (i32 i = 0; i < 15; i++) line01KeyWidths[i] = 45;
     line01KeyWidths[13] = 62;   // PRINTSCREEN
-    const int line01Keys[15] = {
+    const i32 line01Keys[15] = {
         KEY_ESCAPE, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,
         KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11,
         KEY_F12, KEY_PRINT_SCREEN, KEY_PAUSE
     };
 
     // Keyboard line 02
-    int line02KeyWidths[15] = {};
-    for (int i = 0; i < 15; i++) line02KeyWidths[i] = 45;
+    i32 line02KeyWidths[15] = {};
+    for (i32 i = 0; i < 15; i++) line02KeyWidths[i] = 45;
     line02KeyWidths[0] = 25;    // GRAVE
     line02KeyWidths[13] = 82;   // BACKSPACE
-    const int line02Keys[15] = {
+    const i32 line02Keys[15] = {
         KEY_GRAVE, KEY_ONE, KEY_TWO, KEY_THREE, KEY_FOUR,
         KEY_FIVE, KEY_SIX, KEY_SEVEN, KEY_EIGHT, KEY_NINE,
         KEY_ZERO, KEY_MINUS, KEY_EQUAL, KEY_BACKSPACE, KEY_DELETE };
 
     // Keyboard line 03
-    int line03KeyWidths[15] = {};
-    for (int i = 0; i < 15; i++) line03KeyWidths[i] = 45;
+    i32 line03KeyWidths[15] = {};
+    for (i32 i = 0; i < 15; i++) line03KeyWidths[i] = 45;
     line03KeyWidths[0] = 50;    // TAB
     line03KeyWidths[13] = 57;   // BACKSLASH
-    const int line03Keys[15] = {
+    const i32 line03Keys[15] = {
         KEY_TAB, KEY_Q, KEY_W, KEY_E, KEY_R, KEY_T, KEY_Y,
         KEY_U, KEY_I, KEY_O, KEY_P, KEY_LEFT_BRACKET,
         KEY_RIGHT_BRACKET, KEY_BACKSLASH, KEY_INSERT
     };
 
     // Keyboard line 04
-    int line04KeyWidths[14] = {};
-    for (int i = 0; i < 14; i++) line04KeyWidths[i] = 45;
+    i32 line04KeyWidths[14] = {};
+    for (i32 i = 0; i < 14; i++) line04KeyWidths[i] = 45;
     line04KeyWidths[0] = 68;    // CAPS
     line04KeyWidths[12] = 88;   // ENTER
-    const int line04Keys[14] = {
+    const i32 line04Keys[14] = {
         KEY_CAPS_LOCK, KEY_A, KEY_S, KEY_D, KEY_F, KEY_G,
         KEY_H, KEY_J, KEY_K, KEY_L, KEY_SEMICOLON,
         KEY_APOSTROPHE, KEY_ENTER, KEY_PAGE_UP
     };
 
     // Keyboard line 05
-    int line05KeyWidths[14] = {};
-    for (int i = 0; i < 14; i++) line05KeyWidths[i] = 45;
+    i32 line05KeyWidths[14] = {};
+    for (i32 i = 0; i < 14; i++) line05KeyWidths[i] = 45;
     line05KeyWidths[0] = 80;    // LSHIFT
     line05KeyWidths[11] = 76;   // RSHIFT
-    const int line05Keys[14] = {
+    const i32 line05Keys[14] = {
         KEY_LEFT_SHIFT, KEY_Z, KEY_X, KEY_C, KEY_V, KEY_B,
         KEY_N, KEY_M, KEY_COMMA, KEY_PERIOD, /*KEY_MINUS*/
         KEY_SLASH, KEY_RIGHT_SHIFT, KEY_UP, KEY_PAGE_DOWN
     };
 
     // Keyboard line 06
-    int line06KeyWidths[11] = {};
-    for (int i = 0; i < 11; i++) line06KeyWidths[i] = 45;
+    i32 line06KeyWidths[11] = {};
+    for (i32 i = 0; i < 11; i++) line06KeyWidths[i] = 45;
     line06KeyWidths[0] = 80;    // LCTRL
     line06KeyWidths[3] = 208;   // SPACE
     line06KeyWidths[7] = 60;    // RCTRL
-    const int line06Keys[11] = {
+    const i32 line06Keys[11] = {
         KEY_LEFT_CONTROL, KEY_LEFT_SUPER, KEY_LEFT_ALT,
         KEY_SPACE, KEY_RIGHT_ALT, 162, KEY_NULL,
         KEY_RIGHT_CONTROL, KEY_LEFT, KEY_DOWN, KEY_RIGHT
@@ -114,10 +114,10 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const int key = GetKeyPressed(); // Get pressed keycode
+        const i32 key = GetKeyPressed(); // Get pressed keycode
         if (key > 0) TraceLog(LOG_INFO, "KEYBOARD TESTBED: KEY PRESSED:    %d", key);
 
-        const int ch = GetCharPressed(); // Get pressed char for text input, using OS mapping
+        const i32 ch = GetCharPressed(); // Get pressed char for text input, using OS mapping
         if (ch > 0) TraceLog(LOG_INFO,  "KEYBOARD TESTBED: CHAR PRESSED:   %c (%d)", ch, ch);
         //----------------------------------------------------------------------------------
 
@@ -131,49 +131,49 @@ int main()
 
             // Keyboard line 01 - 15 keys
             // ESC, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, IMP, CLOSE
-            for (int i = 0, recOffsetX = 0; i < 15; i++)
+            for (i32 i = 0, recOffsetX = 0; i < 15; i++)
             {
-                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y, static_cast<float>(line01KeyWidths[i]), 30.0f }, line01Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y, static_cast<f32>(line01KeyWidths[i]), 30.0f }, line01Keys[i]);
                 recOffsetX += line01KeyWidths[i] + KEY_REC_SPACING;
             }
 
             // Keyboard line 02 - 15 keys
             // `, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, -, =, BACKSPACE, DEL
-            for (int i = 0, recOffsetX = 0; i < 15; i++)
+            for (i32 i = 0, recOffsetX = 0; i < 15; i++)
             {
-                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + KEY_REC_SPACING, static_cast<float>(line02KeyWidths[i]), 38.0f }, line02Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + KEY_REC_SPACING, static_cast<f32>(line02KeyWidths[i]), 38.0f }, line02Keys[i]);
                 recOffsetX += line02KeyWidths[i] + KEY_REC_SPACING;
             }
 
             // Keyboard line 03 - 15 keys
             // TAB, Q, W, E, R, T, Y, U, I, O, P, [, ], \, INS
-            for (int i = 0, recOffsetX = 0; i < 15; i++)
+            for (i32 i = 0, recOffsetX = 0; i < 15; i++)
             {
-                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38 + KEY_REC_SPACING*2, static_cast<float>(line03KeyWidths[i]), 38.0f }, line03Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38 + KEY_REC_SPACING*2, static_cast<f32>(line03KeyWidths[i]), 38.0f }, line03Keys[i]);
                 recOffsetX += line03KeyWidths[i] + KEY_REC_SPACING;
             }
 
             // Keyboard line 04 - 14 keys
             // MAYUS, A, S, D, F, G, H, J, K, L, ;, ', ENTER, REPAG
-            for (int i = 0, recOffsetX = 0; i < 14; i++)
+            for (i32 i = 0, recOffsetX = 0; i < 14; i++)
             {
-                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*2 + KEY_REC_SPACING*3, static_cast<float>(line04KeyWidths[i]), 38.0f }, line04Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*2 + KEY_REC_SPACING*3, static_cast<f32>(line04KeyWidths[i]), 38.0f }, line04Keys[i]);
                 recOffsetX += line04KeyWidths[i] + KEY_REC_SPACING;
             }
 
             // Keyboard line 05 - 14 keys
             // LSHIFT, Z, X, C, V, B, N, M, ,, ., /, RSHIFT, UP, AVPAG
-            for (int i = 0, recOffsetX = 0; i < 14; i++)
+            for (i32 i = 0, recOffsetX = 0; i < 14; i++)
             {
-                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*3 + KEY_REC_SPACING*4, static_cast<float>(line05KeyWidths[i]), 38.0f }, line05Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*3 + KEY_REC_SPACING*4, static_cast<f32>(line05KeyWidths[i]), 38.0f }, line05Keys[i]);
                 recOffsetX += line05KeyWidths[i] + KEY_REC_SPACING;
             }
 
             // Keyboard line 06 - 11 keys
             // LCTRL, WIN, LALT, SPACE, ALTGR, \, FN, RCTRL, LEFT, DOWN, RIGHT
-            for (int i = 0, recOffsetX = 0; i < 11; i++)
+            for (i32 i = 0, recOffsetX = 0; i < 11; i++)
             {
-                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*4 + KEY_REC_SPACING*5, static_cast<float>(line06KeyWidths[i]), 38.0f }, line06Keys[i]);
+                GuiKeyboardKey(Rectangle{ keyboardOffset.x + recOffsetX, keyboardOffset.y + 30 + 38*4 + KEY_REC_SPACING*5, static_cast<f32>(line06KeyWidths[i]), 38.0f }, line06Keys[i]);
                 recOffsetX += line06KeyWidths[i] + KEY_REC_SPACING;
             }
 
@@ -194,7 +194,7 @@ int main()
 //------------------------------------------------------------------------------------
 // Get keyboard keycode as text (US keyboard)
 // NOTE: Mapping for other keyboard layouts can be done here
-static const char *GetKeyText(int key)
+static const char *GetKeyText(i32 key)
 {
     switch (key)
     {
@@ -308,7 +308,7 @@ static const char *GetKeyText(int key)
 }
 
 // Draw keyboard key
-static void GuiKeyboardKey(Rectangle bounds, int key)
+static void GuiKeyboardKey(Rectangle bounds, i32 key)
 {
     if (key == KEY_NULL) DrawRectangleLinesEx(bounds, 2.0f, LIGHTGRAY);
     else
@@ -316,12 +316,12 @@ static void GuiKeyboardKey(Rectangle bounds, int key)
         if (IsKeyDown(key))
         {
             DrawRectangleLinesEx(bounds, 2.0f, MAROON);
-            DrawText(GetKeyText(key), static_cast<int>(bounds.x + 4), static_cast<int>(bounds.y + 4), 10, MAROON);
+            DrawText(GetKeyText(key), static_cast<i32>(bounds.x + 4), static_cast<i32>(bounds.y + 4), 10, MAROON);
         }
         else
         {
             DrawRectangleLinesEx(bounds, 2.0f, DARKGRAY);
-            DrawText(GetKeyText(key), static_cast<int>(bounds.x + 4), static_cast<int>(bounds.y + 4), 10, DARKGRAY);
+            DrawText(GetKeyText(key), static_cast<i32>(bounds.x + 4), static_cast<i32>(bounds.y + 4), 10, DARKGRAY);
         }
     }
 

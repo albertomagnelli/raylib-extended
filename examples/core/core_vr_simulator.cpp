@@ -24,12 +24,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     // NOTE: screenWidth/screenHeight should match VR device aspect ratio
     InitWindow(screenWidth, screenHeight, "raylib [core] example - vr simulator");
@@ -81,8 +81,8 @@ int main()
     const RenderTexture2D target = LoadRenderTexture(device.hResolution, device.vResolution);
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
-    const Rectangle destRec = { 0.0f, 0.0f, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) };
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<f32>(target.texture.width), -static_cast<f32>(target.texture.height) };
+    const Rectangle destRec = { 0.0f, 0.0f, static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) };
 
     // Define the camera to look into our 3d world
     Camera camera = {};

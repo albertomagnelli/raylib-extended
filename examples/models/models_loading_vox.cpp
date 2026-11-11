@@ -35,12 +35,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     const char *voxFileNames[] = {
         "resources/models/vox/chr_knight.vox",
@@ -62,12 +62,12 @@ int main()
     // Load MagicaVoxel files
     Model models[MAX_VOX_FILES] = {};
 
-    for (int i = 0; i < MAX_VOX_FILES; i++)
+    for (i32 i = 0; i < MAX_VOX_FILES; i++)
     {
         // Load VOX file and measure time
-        const double t0 = GetTime()*1000.0;
+        const f64 t0 = GetTime()*1000.0;
         models[i] = LoadModel(voxFileNames[i]);
-        const double t1 = GetTime()*1000.0;
+        const f64 t1 = GetTime()*1000.0;
 
         TraceLog(LOG_INFO, TextFormat("[%s] Model file loaded in %.3f ms", voxFileNames[i], t1 - t0));
 
@@ -81,7 +81,7 @@ int main()
         models[i].transform = matTranslate;
     }
 
-    int currentModel = 0;
+    i32 currentModel = 0;
     const vec3 modelpos = {};
     vec3 camerarot = {};
 
@@ -96,13 +96,13 @@ int main()
     //shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
 
     // Ambient light level (some basic lighting)
-    const int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.1f, 0.1f, 0.1f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
+    const i32 ambientLoc = GetShaderLocation(shader, "ambient");
+    SetShaderValue(shader, ambientLoc, std::initializer_list<f32>{ 0.1f, 0.1f, 0.1f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Assign out lighting shader to model
-    for (int i = 0; i < MAX_VOX_FILES; i++)
+    for (i32 i = 0; i < MAX_VOX_FILES; i++)
     {
-        for (int j = 0; j < models[i].materialCount; j++) models[i].materials[j].shader = shader;
+        for (i32 j = 0; j < models[i].materialCount; j++) models[i].materials[j].shader = shader;
     }
 
     // Create lights
@@ -144,11 +144,11 @@ int main()
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) currentModel = (currentModel + 1)%MAX_VOX_FILES;
 
         // Update the shader with the camera view vector (points towards { 0.0f, 0.0f, 0.0f })
-        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        f32 cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
         // Update light values (actually, only enable/disable them)
-        for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
+        for (i32 i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(shader, lights[i]);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -163,7 +163,7 @@ int main()
                 DrawGrid(10, 1.0);
 
                 // Draw spheres to show where the lights are
-                for (int i = 0; i < MAX_LIGHTS; i++)
+                for (i32 i = 0; i < MAX_LIGHTS; i++)
                 {
                     if (lights[i].enabled) DrawSphereEx(lights[i].position, 0.2f, 8, 8, lights[i].color);
                     else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lights[i].color, 0.3f));
@@ -185,7 +185,7 @@ int main()
     // De-Initialization
     //--------------------------------------------------------------------------------------
     // Unload models data (GPU VRAM)
-    for (int i = 0; i < MAX_VOX_FILES; i++) UnloadModel(models[i]);
+    for (i32 i = 0; i < MAX_VOX_FILES; i++) UnloadModel(models[i]);
 
     // Unload shader data
     UnloadShader(shader);

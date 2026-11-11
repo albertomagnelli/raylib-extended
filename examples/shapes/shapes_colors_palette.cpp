@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - colors palette");
 
@@ -42,15 +42,15 @@ int main()
     Rectangle colorsRecs[MAX_COLORS_COUNT] = {};     // Rectangles array
 
     // Fills colorsRecs data (for every rectangle)
-    for (int i = 0; i < MAX_COLORS_COUNT; i++)
+    for (i32 i = 0; i < MAX_COLORS_COUNT; i++)
     {
         colorsRecs[i].x = 20.0f + 100.0f *(i%7) + 10.0f *(i%7);
-        colorsRecs[i].y = 80.0f + 100.0f *(i/7) + 10.0f *(static_cast<float>(i)/7);
+        colorsRecs[i].y = 80.0f + 100.0f *(i/7) + 10.0f *(static_cast<f32>(i)/7);
         colorsRecs[i].width = 100.0f;
         colorsRecs[i].height = 100.0f;
     }
 
-    int colorState[MAX_COLORS_COUNT] = {};           // Color state: 0-DEFAULT, 1-MOUSE_HOVER
+    i32 colorState[MAX_COLORS_COUNT] = {};           // Color state: 0-DEFAULT, 1-MOUSE_HOVER
 
     vec2 mousePoint = { 0.0f, 0.0f };
 
@@ -64,7 +64,7 @@ int main()
         //----------------------------------------------------------------------------------
         mousePoint = GetMousePosition();
 
-        for (int i = 0; i < MAX_COLORS_COUNT; i++)
+        for (i32 i = 0; i < MAX_COLORS_COUNT; i++)
         {
             if (CheckCollisionPointRec(mousePoint, colorsRecs[i])) colorState[i] = 1;
             else colorState[i] = 0;
@@ -80,16 +80,16 @@ int main()
             DrawText("raylib colors palette", 28, 42, 20, BLACK);
             DrawText("press SPACE to see all colors", GetScreenWidth() - 180, GetScreenHeight() - 40, 10, GRAY);
 
-            for (int i = 0; i < MAX_COLORS_COUNT; i++)    // Draw all rectangles
+            for (i32 i = 0; i < MAX_COLORS_COUNT; i++)    // Draw all rectangles
             {
                 DrawRectangleRec(colorsRecs[i], Fade(colors[i], colorState[i]? 0.6f : 1.0f));
 
                 if (IsKeyDown(KEY_SPACE) || colorState[i])
                 {
-                    DrawRectangle(static_cast<int>(colorsRecs[i].x), static_cast<int>(colorsRecs[i].y + colorsRecs[i].height - 26), static_cast<int>(colorsRecs[i].width), 20, BLACK);
+                    DrawRectangle(static_cast<i32>(colorsRecs[i].x), static_cast<i32>(colorsRecs[i].y + colorsRecs[i].height - 26), static_cast<i32>(colorsRecs[i].width), 20, BLACK);
                     DrawRectangleLinesEx(colorsRecs[i], 6, Fade(BLACK, 0.3f));
-                    DrawText(colorNames[i], static_cast<int>(colorsRecs[i].x + colorsRecs[i].width - MeasureText(colorNames[i], 10) - 12),
-                        static_cast<int>(colorsRecs[i].y + colorsRecs[i].height - 20), 10, colors[i]);
+                    DrawText(colorNames[i], static_cast<i32>(colorsRecs[i].x + colorsRecs[i].width - MeasureText(colorNames[i], 10) - 12),
+                        static_cast<i32>(colorsRecs[i].y + colorsRecs[i].height - 20), 10, colors[i]);
                 }
             }
 

@@ -24,12 +24,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - text file loading");
 
@@ -47,19 +47,19 @@ int main()
 
     // Loading all the text lines
     std::vector<std::string> lines = LoadTextLines(text);
-    const int lineCount = static_cast<int>(lines.size());
+    const i32 lineCount = static_cast<i32>(lines.size());
 
     // Stylistic choises
-    constexpr int fontSize = 20;
-    const int textTop = 25 + fontSize; // Top of the screen from where the text is rendered
-    const int wrapWidth = screenWidth - 20;
+    constexpr i32 fontSize = 20;
+    const i32 textTop = 25 + fontSize; // Top of the screen from where the text is rendered
+    const i32 wrapWidth = screenWidth - 20;
 
     // Wrap the lines as needed
-    for (int i = 0; i < lineCount; i++)
+    for (i32 i = 0; i < lineCount; i++)
     {
-        int j = 0;
-        int lastSpace = 0;          // Keeping track of last valid space to insert '\n'
-        int lastWrapStart = 0;      // Keeping track of the start of this wrapped line.
+        i32 j = 0;
+        i32 lastSpace = 0;          // Keeping track of last valid space to insert '\n'
+        i32 lastWrapStart = 0;      // Keeping track of the start of this wrapped line.
 
         while (j <= strlen(lines[i].c_str()))
         {
@@ -87,17 +87,17 @@ int main()
     }
 
     // Calculating the total height so that we can show a scrollbar
-    int textHeight = 0;
+    i32 textHeight = 0;
 
-    for (int i = 0; i < lineCount; i++)
+    for (i32 i = 0; i < lineCount; i++)
     {
-        const vec2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
-        textHeight += static_cast<int>(size.y) + 10;
+        const vec2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<f32>(fontSize), 2);
+        textHeight += static_cast<i32>(size.y) + 10;
     }
 
     // A simple scrollbar on the side to show how far we have read into the file
     Rectangle scrollBar = {
-        static_cast<float>(screenWidth) - 5, 0, 5,
+        static_cast<f32>(screenWidth) - 5, 0, 5,
         screenHeight*100.0f/(textHeight - screenHeight) // Scrollbar height is just a percentage
     };
 
@@ -109,17 +109,17 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float scroll = GetMouseWheelMove();
+        const f32 scroll = GetMouseWheelMove();
         cam.target.y -= scroll*fontSize*1.5f;   // Choosing an arbitrary speed for scroll
 
         if (cam.target.y < 0) cam.target.y = 0;  // Snapping to 0 if we go too far back
 
         // Ensuring that the camera does not scroll past all text
         if (cam.target.y > textHeight - screenHeight + textTop)
-            cam.target.y = static_cast<float>(textHeight) - screenHeight + textTop;
+            cam.target.y = static_cast<f32>(textHeight) - screenHeight + textTop;
 
         // Computing the position of the scrollBar depending on the percentage of text covered
-        scrollBar.y = Lerp(static_cast<float>(textTop), static_cast<float>(screenHeight) - scrollBar.height, static_cast<float>(cam.target.y - textTop)/(textHeight - screenHeight));
+        scrollBar.y = Lerp(static_cast<f32>(textTop), static_cast<f32>(screenHeight) - scrollBar.height, static_cast<f32>(cam.target.y - textTop)/(textHeight - screenHeight));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -130,22 +130,22 @@ int main()
 
             BeginMode2D(cam);
                 // Going through all the read lines
-                for (int i = 0, t = textTop; i < lineCount; i++)
+                for (i32 i = 0, t = textTop; i < lineCount; i++)
                 {
                     // Each time we go through and calculate the height of the text to move the cursor appropriately
                     vec2 size;
                     if(strcmp(lines[i].c_str(), "")){
                         // Fix for empty line in the text file
-                        size = MeasureTextEx( GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
+                        size = MeasureTextEx( GetFontDefault(), lines[i], static_cast<f32>(fontSize), 2);
                     }else{
-                        size = MeasureTextEx( GetFontDefault(), " ", static_cast<float>(fontSize), 2);
+                        size = MeasureTextEx( GetFontDefault(), " ", static_cast<f32>(fontSize), 2);
                     }
 
                     DrawText(lines[i], 10, t, fontSize, RED);
 
                     // Inserting extra space for real newlines,
                     // wrapped lines are rendered closer together
-                    t += static_cast<int>(size.y) + 10;
+                    t += static_cast<i32>(size.y) + 10;
                 }
             EndMode2D();
 

@@ -27,32 +27,32 @@
 typedef struct {
     char str[MAX_TEXT_LENGTH]; // Text to animate
     vec2 position;             // Text position on screen
-    float delta;               // Intensity of the effect (does not apply for flashing)
-    float offset;              // Time offset (in frames) between each char
-    float duration;            // Time duration (in frames) of the animation
+    f32 delta;               // Intensity of the effect (does not apply for flashing)
+    f32 offset;              // Time offset (in frames) between each char
+    f32 duration;            // Time duration (in frames) of the animation
 } AnimatedText;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - animations");
 
     char animations[3][MAX_TEXT_LENGTH] = { "Waving", "Flashing", "Shaking" };
-    const int animationsSize = sizeof(animations)/sizeof(animations[0]);
-    int currentAnimation = 0;
+    const i32 animationsSize = sizeof(animations)/sizeof(animations[0]);
+    i32 currentAnimation = 0;
 
     AnimatedText text = { "This is an animated text!", { 200, 250 }, 24.0f, 6, 60 };
-    int frameCount = 0;
+    i32 frameCount = 0;
 
     vec2 glyphPosition[MAX_TEXT_LENGTH] = {};
-    unsigned char glyphAlpha[MAX_TEXT_LENGTH] = {};
+    u8 glyphAlpha[MAX_TEXT_LENGTH] = {};
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -66,14 +66,14 @@ int main()
 
         if (IsKeyPressed(KEY_S)) text.delta = Clamp(text.delta - 2.0f, 10.0f, 60.0f);
         else if (IsKeyPressed(KEY_W)) text.delta = Clamp(text.delta + 2.0f, 10.0f, 60.0f);
-        if (IsKeyPressed(KEY_A)) text.duration = static_cast<int>(Clamp(text.duration - 5.0f, 20.0f, 120.0f));
-        else if (IsKeyPressed(KEY_D)) text.duration = static_cast<int>(Clamp(text.duration + 5.0f, 20.0f, 120.0f));
+        if (IsKeyPressed(KEY_A)) text.duration = static_cast<i32>(Clamp(text.duration - 5.0f, 20.0f, 120.0f));
+        else if (IsKeyPressed(KEY_D)) text.duration = static_cast<i32>(Clamp(text.duration + 5.0f, 20.0f, 120.0f));
         if (IsKeyPressed(KEY_Z)) text.offset = Clamp(text.offset - 1.0f, 0.0f, 15.0f);
         else if (IsKeyPressed(KEY_X)) text.offset = Clamp(text.offset + 1.0f, 0.0f, 15.0f);
         if (IsKeyPressed(KEY_Q)) currentAnimation = currentAnimation? currentAnimation - 1 : animationsSize - 1;
         else if (IsKeyPressed(KEY_E)) currentAnimation = (currentAnimation + 1)%animationsSize;
 
-        for (unsigned int i = 0, offsetX = 0; i < TextLength(text.str); i++)
+        for (u32 i = 0, offsetX = 0; i < TextLength(text.str); i++)
         {
             // NOTE: Calculating every glyph position by its width
             glyphPosition[i] = vec2{ text.position.x + offsetX, text.position.y };
@@ -86,9 +86,9 @@ int main()
         {
             case 0: // Waving animation
             {
-                for (unsigned int i = 0; i < TextLength(text.str); i++)
+                for (u32 i = 0; i < TextLength(text.str); i++)
                 {
-                    const float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
+                    const f32 time = static_cast<i32>(frameCount + i*text.offset)%static_cast<i32>(text.duration);
 
                     if (time < text.duration/2) glyphPosition[i].y = EaseSineIn(time, text.position.y, text.delta, text.duration);
                     else glyphPosition[i].y = EaseSineOut(time, text.position.y + text.delta, -text.delta, text.duration);
@@ -96,19 +96,19 @@ int main()
             } break;
             case 1: // Flashing animation
             {
-                for (unsigned int i = 0; i < TextLength(text.str); i++)
+                for (u32 i = 0; i < TextLength(text.str); i++)
                 {
-                    const float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
-                    glyphAlpha[i] = static_cast<unsigned char>(EaseSineInOut(time, 255.0f, -255.0f, text.duration));
+                    const f32 time = static_cast<i32>(frameCount + i*text.offset)%static_cast<i32>(text.duration);
+                    glyphAlpha[i] = static_cast<u8>(EaseSineInOut(time, 255.0f, -255.0f, text.duration));
                 }
             } break;
             case 2: // Shaking animation
             {
-                for (unsigned int i = 0; i < TextLength(text.str); i++)
+                for (u32 i = 0; i < TextLength(text.str); i++)
                 {
-                    const float time = static_cast<int>(frameCount + i*text.offset)%static_cast<int>(text.duration);
-                    const float deltaX = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
-                    const float deltaY = static_cast<float>(GetRandomValue(-text.delta/10, text.delta/10));
+                    const f32 time = static_cast<i32>(frameCount + i*text.offset)%static_cast<i32>(text.duration);
+                    const f32 deltaX = static_cast<f32>(GetRandomValue(-text.delta/10, text.delta/10));
+                    const f32 deltaY = static_cast<f32>(GetRandomValue(-text.delta/10, text.delta/10));
 
                     if (time < (text.duration/2))
                     {
@@ -133,12 +133,12 @@ int main()
 
         ClearBackground(RAYWHITE);
 
-        DrawText(TextFormat("Duration (A | D): %d", static_cast<int>(text.duration)), 20, 20, 20, GRAY);
+        DrawText(TextFormat("Duration (A | D): %d", static_cast<i32>(text.duration)), 20, 20, 20, GRAY);
         DrawText(TextFormat("Delta (W | S): %.1f", text.delta), 20, 50, 20, GRAY);
         DrawText(TextFormat("Offset (Z | X): %.1f", text.offset), 20, 80, 20, GRAY);
         DrawText(TextFormat("Current Animation (Q | E): %s", animations[currentAnimation]), 20, 110, 20, GRAY);
 
-        for (unsigned int i = 0; i < TextLength(text.str); i++)
+        for (u32 i = 0; i < TextLength(text.str); i++)
         {
             // NOTE: Drawing text glyph by glyph, so, spacing is actually not used
             DrawTextEx(GetFontDefault(), TextSubtext(text.str, i, 1), glyphPosition[i],

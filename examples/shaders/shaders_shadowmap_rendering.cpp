@@ -28,19 +28,19 @@
 
 #define SHADOWMAP_RESOLUTION 1024
 
-static RenderTexture2D LoadShadowmapRenderTexture(int width, int height);
+static RenderTexture2D LoadShadowmapRenderTexture(i32 width, i32 height);
 static void UnloadShadowmapRenderTexture(RenderTexture2D target);
 static void DrawScene(Model cube, Model robot);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     // Shadows are a HUGE topic, and this example shows an extremely simple implementation of the shadowmapping algorithm,
     // which is the industry standard for shadows. This algorithm can be extended in a ridiculous number of ways to improve
@@ -63,24 +63,24 @@ int main()
     vec3 lightDir = glm::normalize(vec3{ 0.35f, -1.0f, -0.35f });
     const Color lightColor = WHITE;
     vec4 lightColorNormalized = ColorNormalize(lightColor);
-    const int lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
-    const int lightColLoc = GetShaderLocation(shadowShader, "lightColor");
+    const i32 lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
+    const i32 lightColLoc = GetShaderLocation(shadowShader, "lightColor");
     SetShaderValue(shadowShader, lightDirLoc, &lightDir, SHADER_UNIFORM_VEC3);
     SetShaderValue(shadowShader, lightColLoc, &lightColorNormalized, SHADER_UNIFORM_VEC4);
-    const int ambientLoc = GetShaderLocation(shadowShader, "ambient");
-    float ambient[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    const i32 ambientLoc = GetShaderLocation(shadowShader, "ambient");
+    f32 ambient[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     SetShaderValue(shadowShader, ambientLoc, ambient, SHADER_UNIFORM_VEC4);
-    const int lightVPLoc = GetShaderLocation(shadowShader, "lightVP");
-    const int shadowMapLoc = GetShaderLocation(shadowShader, "shadowMap");
-    int shadowMapResolution = SHADOWMAP_RESOLUTION;
+    const i32 lightVPLoc = GetShaderLocation(shadowShader, "lightVP");
+    const i32 shadowMapLoc = GetShaderLocation(shadowShader, "shadowMap");
+    i32 shadowMapResolution = SHADOWMAP_RESOLUTION;
     SetShaderValue(shadowShader, GetShaderLocation(shadowShader, "shadowMapResolution"), &shadowMapResolution, SHADER_UNIFORM_INT);
 
     const Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
     cube.materials[0].shader = shadowShader;
     const Model robot = LoadModel("resources/models/robot.glb");
-    for (int i = 0; i < robot.materialCount; i++) robot.materials[i].shader = shadowShader;
+    for (i32 i = 0; i < robot.materialCount; i++) robot.materials[i].shader = shadowShader;
 
-    int animCount = 0;
+    i32 animCount = 0;
     ModelAnimation* anims = LoadModelAnimations("resources/models/robot.glb", &animCount);
 
     const RenderTexture2D shadowMap = LoadShadowmapRenderTexture(SHADOWMAP_RESOLUTION, SHADOWMAP_RESOLUTION);
@@ -93,13 +93,13 @@ int main()
     lightCamera.up = vec3{ 0.0f, 1.0f, 0.0f };
     lightCamera.fovy = 20.0f;
 
-    int frameCounter = 0;
+    i32 frameCounter = 0;
 
     // Store the light matrices
     mat4 lightView = {};
     mat4 lightProj = {};
     mat4 lightViewProj = {};
-    int textureActiveSlot = 10; // Can be anything 0 to 15, but 0 will probably be taken up
+    i32 textureActiveSlot = 10; // Can be anything 0 to 15, but 0 will probably be taken up
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float deltaTime = GetFrameTime();
+        const f32 deltaTime = GetFrameTime();
 
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
@@ -119,10 +119,10 @@ int main()
 
         frameCounter++;
         frameCounter %= (anims[0].keyframeCount);
-        UpdateModelAnimation(robot, anims[0], static_cast<float>(frameCounter));
+        UpdateModelAnimation(robot, anims[0], static_cast<f32>(frameCounter));
 
         // Move light with arrow keys
-        constexpr float cameraSpeed = 0.05f;
+        constexpr f32 cameraSpeed = 0.05f;
         if (IsKeyDown(KEY_LEFT))
         {
             if (lightDir.x < 0.6f) lightDir.x += cameraSpeed*60.0f*deltaTime;
@@ -209,7 +209,7 @@ int main()
 // Load render texture for shadowmap projection
 // NOTE: Load framebuffer with only a texture depth attachment,
 // no color attachment required for shadowmap
-static RenderTexture2D LoadShadowmapRenderTexture(int width, int height)
+static RenderTexture2D LoadShadowmapRenderTexture(i32 width, i32 height)
 {
     RenderTexture2D target = {};
 

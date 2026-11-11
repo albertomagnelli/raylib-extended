@@ -29,7 +29,7 @@
 // Module Functions Declaration
 //--------------------------------------------------------------------------------------
 // Load custom render texture, create a writable depth texture buffer
-static RenderTexture2D LoadRenderTextureDepthTex(int width, int height);
+static RenderTexture2D LoadRenderTextureDepthTex(i32 width, i32 height);
 
 // Unload render texture from GPU memory (VRAM)
 static void UnloadRenderTextureDepthTex(RenderTexture2D target);
@@ -37,12 +37,12 @@ static void UnloadRenderTextureDepthTex(RenderTexture2D target);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - depth writing");
 
@@ -93,7 +93,7 @@ int main()
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, vec2{ 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<f32>(screenWidth), static_cast<f32>(-screenHeight) }, vec2{ 0, 0 }, WHITE);
 
             DrawFPS(10, 10);
         EndDrawing();
@@ -115,7 +115,7 @@ int main()
 // Module Functions Definition
 //--------------------------------------------------------------------------------------
 // Load custom render texture, create a writable depth texture buffer
-static RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
+static RenderTexture2D LoadRenderTextureDepthTex(i32 width, i32 height)
 {
     RenderTexture2D target = {};
 

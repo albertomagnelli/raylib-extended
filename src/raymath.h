@@ -58,43 +58,43 @@
 //----------------------------------------------------------------------------------
 // float3, 3 components, used to upload a vec3 to a shader uniform
 typedef struct float3 {
-    float v[3];
+    f32 v[3];
 } float3;
 
 // float16, 16 components, used to upload a mat4 to a shader uniform
 typedef struct float16 {
-    float v[16];
+    f32 v[16];
 } float16;
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition - Scalar helpers
 //----------------------------------------------------------------------------------
-inline float Clamp(float value, float min, float max)
+inline f32 Clamp(f32 value, f32 min, f32 max)
 {
     return (value < min)? min : ((value > max)? max : value);
 }
 
-inline float Lerp(float start, float end, float amount)
+inline f32 Lerp(f32 start, f32 end, f32 amount)
 {
     return start + amount*(end - start);
 }
 
-inline float Normalize(float value, float start, float end)
+inline f32 Normalize(f32 value, f32 start, f32 end)
 {
     return (value - start)/(end - start);
 }
 
-inline float Remap(float value, float inputStart, float inputEnd, float outputStart, float outputEnd)
+inline f32 Remap(f32 value, f32 inputStart, f32 inputEnd, f32 outputStart, f32 outputEnd)
 {
     return outputStart + ((outputEnd - outputStart)/(inputEnd - inputStart))*(value - inputStart);
 }
 
-inline float Wrap(float value, float min, float max)
+inline f32 Wrap(f32 value, f32 min, f32 max)
 {
     return value - (max - min)*std::floor((value - min)/(max - min));
 }
 
-inline bool FloatEquals(float x, float y)
+inline bool FloatEquals(f32 x, f32 y)
 {
     // Relative epsilon comparison, keeps the previous raymath behaviour
     return (std::fabs(x - y) <= EPSILON*std::fmax(1.0f, std::fmax(std::fabs(x), std::fabs(y))));
@@ -104,22 +104,22 @@ inline bool FloatEquals(float x, float y)
 // Module Functions Definition - vec2 helpers
 //----------------------------------------------------------------------------------
 // Calculate the 2d cross product of two vectors (scalar)
-inline float Vector2CrossProduct(vec2 v1, vec2 v2)
+inline f32 Vector2CrossProduct(vec2 v1, vec2 v2)
 {
     return (v1.x*v2.y - v1.y*v2.x);
 }
 
 // Calculate angle defined by a two vectors line (radians)
-inline float Vector2Angle(vec2 v1, vec2 v2)
+inline f32 Vector2Angle(vec2 v1, vec2 v2)
 {
-    const float dot = v1.x*v2.x + v1.y*v2.y;
-    const float det = v1.x*v2.y - v1.y*v2.x;
+    const f32 dot = v1.x*v2.x + v1.y*v2.y;
+    const f32 det = v1.x*v2.y - v1.y*v2.x;
 
     return std::atan2(det, dot);
 }
 
 // Calculate angle between two vectors, in radians, clockwise from the X axis
-inline float Vector2LineAngle(vec2 start, vec2 end)
+inline f32 Vector2LineAngle(vec2 start, vec2 end)
 {
     return -std::atan2(end.y - start.y, end.x - start.x);
 }
@@ -127,23 +127,23 @@ inline float Vector2LineAngle(vec2 start, vec2 end)
 // Move Vector towards target
 // Rotate vector by angle
 // NOTE: raylib-specific 2D helper, glm::rotate() works on 3D vectors only
-inline vec2 Vector2Rotate(vec2 v, float angle)
+inline vec2 Vector2Rotate(vec2 v, f32 angle)
 {
-    const float cosres = std::cos(angle);
-    const float sinres = std::sin(angle);
+    const f32 cosres = std::cos(angle);
+    const f32 sinres = std::sin(angle);
 
     return vec2{v.x*cosres - v.y*sinres, v.x*sinres + v.y*cosres};
 }
 
-inline vec2 Vector2MoveTowards(vec2 v, vec2 target, float maxDistance)
+inline vec2 Vector2MoveTowards(vec2 v, vec2 target, f32 maxDistance)
 {
-    const float dx = target.x - v.x;
-    const float dy = target.y - v.y;
-    const float value = (dx*dx) + (dy*dy);
+    const f32 dx = target.x - v.x;
+    const f32 dy = target.y - v.y;
+    const f32 value = (dx*dx) + (dy*dy);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
 
-    const float dist = std::sqrt(value);
+    const f32 dist = std::sqrt(value);
 
     return vec2{v.x + dx/dist*maxDistance, v.y + dy/dist*maxDistance};
 }
@@ -154,7 +154,7 @@ inline vec2 Vector2MoveTowards(vec2 v, vec2 target, float maxDistance)
 // Calculate the perpendicular vector to another
 inline vec3 Vector3Perpendicular(vec3 v)
 {
-    float min = std::fabs(v.x);
+    f32 min = std::fabs(v.x);
     vec3 cardinalAxis{1.0f, 0.0f, 0.0f};
 
     if (std::fabs(v.y) < min)
@@ -171,7 +171,7 @@ inline vec3 Vector3Perpendicular(vec3 v)
 }
 
 // Calculate angle between two vectors, returns degrees
-inline float Vector3Angle(vec3 v1, vec3 v2)
+inline f32 Vector3Angle(vec3 v1, vec3 v2)
 {
     const vec3 cross = glm::cross(v1, v2);
     return std::atan2(std::sqrt(glm::dot(cross, cross)), glm::dot(v1, v2));
@@ -180,7 +180,7 @@ inline float Vector3Angle(vec3 v1, vec3 v2)
 // Calculate the projection of the vector v1 on to v2
 inline vec3 Vector3Project(vec3 v1, vec3 v2)
 {
-    const float v2Length = glm::dot(v2, v2);
+    const f32 v2Length = glm::dot(v2, v2);
 
     if (v2Length > 0.0f) return v2*(glm::dot(v1, v2)/v2Length);
 
@@ -190,7 +190,7 @@ inline vec3 Vector3Project(vec3 v1, vec3 v2)
 // Calculate the rejection of the vector v1 on to v2
 inline vec3 Vector3Reject(vec3 v1, vec3 v2)
 {
-    const float v2Length = glm::dot(v2, v2);
+    const f32 v2Length = glm::dot(v2, v2);
 
     if (v2Length > 0.0f) return v1 - v2*(glm::dot(v1, v2)/v2Length);
 
@@ -209,12 +209,12 @@ inline void Vector3OrthoNormalize(vec3 *v1, vec3 *v2)
 }
 
 // Rotate vector by axis and angle using Euler-Rodrigues formula, angle in radians
-inline vec3 Vector3RotateByAxisAngle(vec3 v, vec3 axis, float angle)
+inline vec3 Vector3RotateByAxisAngle(vec3 v, vec3 axis, f32 angle)
 {
     axis = glm::normalize(axis);
 
     angle *= 0.5f;
-    float a = std::sin(angle);
+    f32 a = std::sin(angle);
     const vec3 w = axis*a;
     a = std::cos(angle);
 
@@ -225,10 +225,10 @@ inline vec3 Vector3RotateByAxisAngle(vec3 v, vec3 axis, float angle)
 }
 
 // Move Vector towards target
-inline vec3 Vector3MoveTowards(vec3 v, vec3 target, float maxDistance)
+inline vec3 Vector3MoveTowards(vec3 v, vec3 target, f32 maxDistance)
 {
     const vec3 dir = target - v;
-    const float value = glm::dot(dir, dir);
+    const f32 value = glm::dot(dir, dir);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
 
@@ -236,14 +236,14 @@ inline vec3 Vector3MoveTowards(vec3 v, vec3 target, float maxDistance)
 }
 
 // Calculate the cubic Hermite interpolation between two values
-inline vec3 Vector3CubicHermite(vec3 v1, vec3 tangent1, vec3 v2, vec3 tangent2, float amount)
+inline vec3 Vector3CubicHermite(vec3 v1, vec3 tangent1, vec3 v2, vec3 tangent2, f32 amount)
 {
-    const float t2 = amount*amount;
-    const float t3 = t2*amount;
-    const float h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
-    const float h10 = t3 - 2.0f*t2 + amount;
-    const float h01 = -2.0f*t3 + 3.0f*t2;
-    const float h11 = t3 - t2;
+    const f32 t2 = amount*amount;
+    const f32 t3 = t2*amount;
+    const f32 h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
+    const f32 h10 = t3 - 2.0f*t2 + amount;
+    const f32 h01 = -2.0f*t3 + 3.0f*t2;
+    const f32 h11 = t3 - t2;
 
     return v1*h00 + tangent1*h10 + v2*h01 + tangent2*h11;
 }
@@ -254,13 +254,13 @@ inline vec3 Vector3Barycenter(vec3 p, vec3 a, vec3 b, vec3 c)
     const vec3 v0 = b - a;
     const vec3 v1 = c - a;
     const vec3 v2 = p - a;
-    const float d00 = glm::dot(v0, v0);
-    const float d01 = glm::dot(v0, v1);
-    const float d11 = glm::dot(v1, v1);
-    const float d20 = glm::dot(v2, v0);
-    const float d21 = glm::dot(v2, v1);
+    const f32 d00 = glm::dot(v0, v0);
+    const f32 d01 = glm::dot(v0, v1);
+    const f32 d11 = glm::dot(v1, v1);
+    const f32 d20 = glm::dot(v2, v0);
+    const f32 d21 = glm::dot(v2, v1);
 
-    const float denom = d00*d11 - d01*d01;
+    const f32 denom = d00*d11 - d01*d01;
 
     vec3 result{};
     result.y = (d11*d20 - d01*d21)/denom;
@@ -297,10 +297,10 @@ inline float3 Vector3ToFloatV(vec3 v)
 // Module Functions Definition - vec4 helpers
 //----------------------------------------------------------------------------------
 // Move Vector towards target
-inline vec4 Vector4MoveTowards(vec4 v, vec4 target, float maxDistance)
+inline vec4 Vector4MoveTowards(vec4 v, vec4 target, f32 maxDistance)
 {
     const vec4 dir = target - v;
-    const float value = glm::dot(dir, dir);
+    const f32 value = glm::dot(dir, dir);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
 
@@ -317,7 +317,7 @@ inline quat QuaternionAdd(quat q1, quat q2)
     return quat{q1.w + q2.w, q1.x + q2.x, q1.y + q2.y, q1.z + q2.z};
 }
 
-inline quat QuaternionAddValue(quat q, float add)
+inline quat QuaternionAddValue(quat q, f32 add)
 {
     return quat{q.w + add, q.x + add, q.y + add, q.z + add};
 }
@@ -327,17 +327,17 @@ inline quat QuaternionSubtract(quat q1, quat q2)
     return quat{q1.w - q2.w, q1.x - q2.x, q1.y - q2.y, q1.z - q2.z};
 }
 
-inline quat QuaternionSubtractValue(quat q, float sub)
+inline quat QuaternionSubtractValue(quat q, f32 sub)
 {
     return quat{q.w - sub, q.x - sub, q.y - sub, q.z - sub};
 }
 
-inline quat QuaternionScale(quat q, float mul)
+inline quat QuaternionScale(quat q, f32 mul)
 {
     return quat{q.w*mul, q.x*mul, q.y*mul, q.z*mul};
 }
 
-inline quat QuaternionDivide(quat q, float div)
+inline quat QuaternionDivide(quat q, f32 div)
 {
     return quat{q.w/div, q.x/div, q.y/div, q.z/div};
 }
@@ -345,15 +345,15 @@ inline quat QuaternionDivide(quat q, float div)
 // Calculate quaternion based on the rotation from one vector to another
 inline quat QuaternionFromVector3ToVector3(vec3 from, vec3 to)
 {
-    const float cos2Theta = glm::dot(from, to);
+    const f32 cos2Theta = glm::dot(from, to);
     const vec3 cross = glm::cross(from, to);
 
-    const float lengths = std::sqrt(glm::dot(cross, cross) + cos2Theta*cos2Theta); // |from|*|to|
+    const f32 lengths = std::sqrt(glm::dot(cross, cross) + cos2Theta*cos2Theta); // |from|*|to|
 
-    float x = cross.x;
-    float y = cross.y;
-    float z = cross.z;
-    float w = lengths + cos2Theta;
+    f32 x = cross.x;
+    f32 y = cross.y;
+    f32 z = cross.z;
+    f32 w = lengths + cos2Theta;
 
     // Opposite vectors: cross product is zero, rotate 180 degrees around any axis perpendicular to 'from'
     if ((lengths > 0.0f) && (w <= lengths*EPSILON))
@@ -380,7 +380,7 @@ inline quat QuaternionFromVector3ToVector3(vec3 from, vec3 to)
 // Calculate slerp-optimized interpolation between two quaternions
 // NOTE: Takes the shorter path (negates q2 when the dot product is negative), which
 // glm does not expose as a single call.
-inline quat QuaternionNlerp(quat q1, quat q2, float amount)
+inline quat QuaternionNlerp(quat q1, quat q2, f32 amount)
 {
     if (glm::dot(q1, q2) < 0.0f) q2 = -q2;
 
@@ -389,28 +389,28 @@ inline quat QuaternionNlerp(quat q1, quat q2, float amount)
 
 // Calculate quaternion cubic spline interpolation using Cubic Hermite Spline algorithm
 // as described in the GLTF 2.0 specification: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#interpolation-cubic
-inline quat QuaternionCubicHermiteSpline(quat q1, quat outTangent1, quat q2, quat inTangent2, float t)
+inline quat QuaternionCubicHermiteSpline(quat q1, quat outTangent1, quat q2, quat inTangent2, f32 t)
 {
-    const float t2 = t*t;
-    const float t3 = t2*t;
-    const float h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
-    const float h10 = t3 - 2.0f*t2 + t;
-    const float h01 = -2.0f*t3 + 3.0f*t2;
-    const float h11 = t3 - t2;
+    const f32 t2 = t*t;
+    const f32 t3 = t2*t;
+    const f32 h00 = 2.0f*t3 - 3.0f*t2 + 1.0f;
+    const f32 h10 = t3 - 2.0f*t2 + t;
+    const f32 h01 = -2.0f*t3 + 3.0f*t2;
+    const f32 h11 = t3 - t2;
 
     return glm::normalize(QuaternionAdd(QuaternionAdd(QuaternionScale(q1, h00), QuaternionScale(outTangent1, h10)),
                                        QuaternionAdd(QuaternionScale(q2, h01), QuaternionScale(inTangent2, h11))));
 }
 
 // Calculate quaternion from Euler angles (pitch, yaw, roll), in radians
-inline quat QuaternionFromEuler(float pitch, float yaw, float roll)
+inline quat QuaternionFromEuler(f32 pitch, f32 yaw, f32 roll)
 {
-    const float x0 = std::cos(pitch*0.5f);
-    const float x1 = std::sin(pitch*0.5f);
-    const float y0 = std::cos(yaw*0.5f);
-    const float y1 = std::sin(yaw*0.5f);
-    const float z0 = std::cos(roll*0.5f);
-    const float z1 = std::sin(roll*0.5f);
+    const f32 x0 = std::cos(pitch*0.5f);
+    const f32 x1 = std::sin(pitch*0.5f);
+    const f32 y0 = std::cos(yaw*0.5f);
+    const f32 y1 = std::sin(yaw*0.5f);
+    const f32 z0 = std::cos(roll*0.5f);
+    const f32 z1 = std::sin(roll*0.5f);
 
     return quat{x0*y0*z0 + x1*y1*z1,         // w
                       x1*y0*z0 - x0*y1*z1,   // x
@@ -424,7 +424,7 @@ inline vec3 QuaternionToEuler(quat q)
     vec3 result{};
 
     // Pitch (y-axis rotation)
-    float y0 = 2.0f*(q.w*q.y - q.z*q.x);
+    f32 y0 = 2.0f*(q.w*q.y - q.z*q.x);
     y0 = y0 > 1.0f? 1.0f : y0;
     y0 = y0 < -1.0f? -1.0f : y0;
     result.y = std::asin(y0);
@@ -432,19 +432,19 @@ inline vec3 QuaternionToEuler(quat q)
     if (std::fabs(y0) >= 0.9999995f)
     {
         // Gimbal lock: roll and yaw turn about the same axis, keep the whole turn in roll
-        const float sign = (q.w < 0.0f)? -1.0f : 1.0f;
+        const f32 sign = (q.w < 0.0f)? -1.0f : 1.0f;
         result.x = 2.0f*std::atan2(sign*q.x, sign*q.w);
     }
     else
     {
         // Roll (x-axis rotation)
-        const float x0 = 2.0f*(q.w*q.x + q.y*q.z);
-        const float x1 = 1.0f - 2.0f*(q.x*q.x + q.y*q.y);
+        const f32 x0 = 2.0f*(q.w*q.x + q.y*q.z);
+        const f32 x1 = 1.0f - 2.0f*(q.x*q.x + q.y*q.y);
         result.x = std::atan2(x0, x1);
 
         // Yaw (z-axis rotation)
-        const float z0 = 2.0f*(q.w*q.z + q.x*q.y);
-        const float z1 = 1.0f - 2.0f*(q.y*q.y + q.z*q.z);
+        const f32 z0 = 2.0f*(q.w*q.z + q.x*q.y);
+        const f32 z1 = 1.0f - 2.0f*(q.y*q.y + q.z*q.z);
         result.z = std::atan2(z0, z1);
     }
 
@@ -452,19 +452,19 @@ inline vec3 QuaternionToEuler(quat q)
 }
 
 // Calculate quaternion from axis and angle, angle in radians
-inline quat QuaternionFromAxisAngle(vec3 axis, float angle)
+inline quat QuaternionFromAxisAngle(vec3 axis, f32 angle)
 {
     return glm::angleAxis(angle, glm::normalize(axis));
 }
 
 // Calculate quaternion axis and angle, returns angle in radians
-inline void QuaternionToAxisAngle(quat q, vec3 *outAxis, float *outAngle)
+inline void QuaternionToAxisAngle(quat q, vec3 *outAxis, f32 *outAngle)
 {
     if (std::fabs(q.w) > 1.0f) q = glm::normalize(q);
 
     vec3 resAxis{0.0f, 0.0f, 0.0f};
-    const float resAngle = 2.0f*std::acos(q.w);
-    const float den = std::sqrt(1.0f - q.w*q.w);
+    const f32 resAngle = 2.0f*std::acos(q.w);
+    const f32 den = std::sqrt(1.0f - q.w*q.w);
 
     if (den > EPSILON)
     {
@@ -491,12 +491,12 @@ inline mat4 MatrixRotateXYZ(vec3 angle)
 {
     auto result = mat4(1.0f);
 
-    const float cosz = std::cos(-angle.z);
-    const float sinz = std::sin(-angle.z);
-    const float cosy = std::cos(-angle.y);
-    const float siny = std::sin(-angle.y);
-    const float cosx = std::cos(-angle.x);
-    const float sinx = std::sin(-angle.x);
+    const f32 cosz = std::cos(-angle.z);
+    const f32 sinz = std::sin(-angle.z);
+    const f32 cosy = std::cos(-angle.y);
+    const f32 siny = std::sin(-angle.y);
+    const f32 cosx = std::cos(-angle.x);
+    const f32 sinx = std::sin(-angle.x);
 
     result[0][0] = cosz*cosy;
     result[0][1] = (cosz*siny*sinx) - (sinz*cosx);
@@ -518,12 +518,12 @@ inline mat4 MatrixRotateZYX(vec3 angle)
 {
     auto result = mat4(1.0f);
 
-    const float cz = std::cos(angle.z);
-    const float sz = std::sin(angle.z);
-    const float cy = std::cos(angle.y);
-    const float sy = std::sin(angle.y);
-    const float cx = std::cos(angle.x);
-    const float sx = std::sin(angle.x);
+    const f32 cz = std::cos(angle.z);
+    const f32 sz = std::sin(angle.z);
+    const f32 cy = std::cos(angle.y);
+    const f32 sy = std::sin(angle.y);
+    const f32 cx = std::cos(angle.x);
+    const f32 sx = std::sin(angle.x);
 
     result[0][0] = cz*cy;
     result[1][0] = cz*sy*sx - cx*sz;
@@ -556,7 +556,7 @@ inline mat4 MatrixCompose(vec3 translation, quat rotation, vec3 scale)
 // Decompose a transformation matrix into its rotational, translational and scaling components and remove shear
 inline void MatrixDecompose(mat4 mat, vec3 *translation, quat *rotation, vec3 *scale)
 {
-    constexpr auto eps = static_cast<float>(1e-9);
+    constexpr auto eps = static_cast<f32>(1e-9);
 
     // Extract Translation
     *translation = vec3{mat[3][0], mat[3][1], mat[3][2]};
@@ -567,10 +567,10 @@ inline void MatrixDecompose(mat4 mat, vec3 *translation, quat *rotation, vec3 *s
                              vec3{mat[2][0], mat[2][1], mat[2][2]}};
 
     // Shear Parameters XY, XZ, and YZ (extracted and ignored)
-    float shear[3] = {0};
+    f32 shear[3] = {0};
 
     // Max-Normalizing helps numerical stability
-    float stabilizer = eps;
+    f32 stabilizer = eps;
     for (const auto & matColumn : matColumns)
     {
         stabilizer = std::fmax(stabilizer, std::fabs(matColumn.x));
@@ -633,7 +633,7 @@ inline void MatrixDecompose(mat4 mat, vec3 *translation, quat *rotation, vec3 *s
 inline float16 MatrixToFloatV(mat4 mat)
 {
     float16 result{};
-    for (int i = 0; i < 16; i++) result.v[i] = mat[i/4][i%4];
+    for (i32 i = 0; i < 16; i++) result.v[i] = mat[i/4][i%4];
 
     return result;
 }

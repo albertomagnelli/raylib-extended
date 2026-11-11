@@ -23,17 +23,17 @@
 #define COLOR_SIZE       16       // Size of the color select buttons
 
 // Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest
-void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 origin, float rotation, float scale, Color tint);
+void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 origin, f32 rotation, f32 scale, Color tint);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE); // Make the window resizable
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - tiled drawing");
@@ -58,12 +58,12 @@ int main()
     Rectangle colorRec[MAX_COLORS] = {};
 
     // Calculate rectangle for each color
-    for (int i = 0, x = 0, y = 0; i < MAX_COLORS; i++)
+    for (i32 i = 0, x = 0, y = 0; i < MAX_COLORS; i++)
     {
         colorRec[i].x = 2.0f + MARGIN_SIZE + x;
         colorRec[i].y = 22.0f + 256.0f + MARGIN_SIZE + y;
         colorRec[i].width = COLOR_SIZE*2.0f;
-        colorRec[i].height = static_cast<float>(COLOR_SIZE);
+        colorRec[i].height = static_cast<f32>(COLOR_SIZE);
 
         if (i == (MAX_COLORS/2 - 1))
         {
@@ -73,8 +73,8 @@ int main()
         else x += (COLOR_SIZE*2 + MARGIN_SIZE);
     }
 
-    int activePattern = 0, activeCol = 0;
-    float scale = 1.0f, rotation = 0.0f;
+    i32 activePattern = 0, activeCol = 0;
+    f32 scale = 1.0f, rotation = 0.0f;
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ int main()
             const vec2 mouse = GetMousePosition();
 
             // Check which pattern was clicked and set it as the active pattern
-            for (int i = 0; i < SIZEOF(recPattern); i++)
+            for (i32 i = 0; i < SIZEOF(recPattern); i++)
             {
                 if (CheckCollisionPointRec(mouse, Rectangle{ 2 + MARGIN_SIZE + recPattern[i].x, 40 + MARGIN_SIZE + recPattern[i].y, recPattern[i].width, recPattern[i].height }))
                 {
@@ -100,7 +100,7 @@ int main()
             }
 
             // Check to see which color was clicked and set it as the active color
-            for (int i = 0; i < MAX_COLORS; i++)
+            for (i32 i = 0; i < MAX_COLORS; i++)
             {
                 if (CheckCollisionPointRec(mouse, colorRec[i]))
                 {
@@ -130,7 +130,7 @@ int main()
             ClearBackground(RAYWHITE);
 
             // Draw the tiled area
-            DrawTextureTiled(texPattern, recPattern[activePattern], Rectangle{static_cast<float>(OPT_WIDTH)+MARGIN_SIZE, static_cast<float>(MARGIN_SIZE), GetScreenWidth() - OPT_WIDTH - 2.0f*MARGIN_SIZE, GetScreenHeight() - 2.0f*MARGIN_SIZE},
+            DrawTextureTiled(texPattern, recPattern[activePattern], Rectangle{static_cast<f32>(OPT_WIDTH)+MARGIN_SIZE, static_cast<f32>(MARGIN_SIZE), GetScreenWidth() - OPT_WIDTH - 2.0f*MARGIN_SIZE, GetScreenHeight() - 2.0f*MARGIN_SIZE},
                 vec2{0.0f, 0.0f}, rotation, scale, colors[activeCol]);
 
             // Draw options
@@ -138,10 +138,10 @@ int main()
 
             DrawText("Select Pattern", 2 + MARGIN_SIZE, 30 + MARGIN_SIZE, 10, BLACK);
             DrawTexture(texPattern, 2 + MARGIN_SIZE, 40 + MARGIN_SIZE, BLACK);
-            DrawRectangle(2 + MARGIN_SIZE + static_cast<int>(recPattern[activePattern].x), 40 + MARGIN_SIZE + static_cast<int>(recPattern[activePattern].y), static_cast<int>(recPattern[activePattern].width), static_cast<int>(recPattern[activePattern].height), ColorAlpha(DARKBLUE, 0.3f));
+            DrawRectangle(2 + MARGIN_SIZE + static_cast<i32>(recPattern[activePattern].x), 40 + MARGIN_SIZE + static_cast<i32>(recPattern[activePattern].y), static_cast<i32>(recPattern[activePattern].width), static_cast<i32>(recPattern[activePattern].height), ColorAlpha(DARKBLUE, 0.3f));
 
             DrawText("Select Color", 2+MARGIN_SIZE, 10+256+MARGIN_SIZE, 10, BLACK);
-            for (int i = 0; i < MAX_COLORS; i++)
+            for (i32 i = 0; i < MAX_COLORS; i++)
             {
                 DrawRectangleRec(colorRec[i], colors[i]);
                 if (activeCol == i) DrawRectangleLinesEx(colorRec[i], 3, ColorAlpha(WHITE, 0.5f));
@@ -172,13 +172,13 @@ int main()
 }
 
 // Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest
-void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 origin, float rotation, float scale, Color tint)
+void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 origin, f32 rotation, f32 scale, Color tint)
 {
     if ((texture.id <= 0) || (scale <= 0.0f)) return;  // Wanna see a infinite loop?!...just delete this line!
     if ((source.width == 0) || (source.height == 0)) return;
 
-    const int tileWidth = static_cast<int>(source.width*scale);
-    const int tileHeight = static_cast<int>(source.height*scale);
+    const i32 tileWidth = static_cast<i32>(source.width*scale);
+    const i32 tileHeight = static_cast<i32>(source.height*scale);
     if ((dest.width < tileWidth) && (dest.height < tileHeight))
     {
         // Can fit only one tile
@@ -188,10 +188,10 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
     else if (dest.width <= tileWidth)
     {
         // Tiled vertically (one column)
-        int dy = 0;
+        i32 dy = 0;
         for (;dy+tileHeight < dest.height; dy += tileHeight)
         {
-            DrawTexturePro(texture, Rectangle{source.x, source.y, (dest.width/tileWidth)*source.width, source.height}, Rectangle{dest.x, dest.y + dy, dest.width, static_cast<float>(tileHeight)}, origin, rotation, tint);
+            DrawTexturePro(texture, Rectangle{source.x, source.y, (dest.width/tileWidth)*source.width, source.height}, Rectangle{dest.x, dest.y + dy, dest.width, static_cast<f32>(tileHeight)}, origin, rotation, tint);
         }
 
         // Fit last tile
@@ -204,10 +204,10 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
     else if (dest.height <= tileHeight)
     {
         // Tiled horizontally (one row)
-        int dx = 0;
+        i32 dx = 0;
         for (;dx+tileWidth < dest.width; dx += tileWidth)
         {
-            DrawTexturePro(texture, Rectangle{source.x, source.y, source.width, (dest.height/tileHeight)*source.height}, Rectangle{dest.x + dx, dest.y, static_cast<float>(tileWidth), dest.height}, origin, rotation, tint);
+            DrawTexturePro(texture, Rectangle{source.x, source.y, source.width, (dest.height/tileHeight)*source.height}, Rectangle{dest.x + dx, dest.y, static_cast<f32>(tileWidth), dest.height}, origin, rotation, tint);
         }
 
         // Fit last tile
@@ -220,30 +220,30 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
     else
     {
         // Tiled both horizontally and vertically (rows and columns)
-        int dx = 0;
+        i32 dx = 0;
         for (;dx+tileWidth < dest.width; dx += tileWidth)
         {
-            int dy = 0;
+            i32 dy = 0;
             for (;dy+tileHeight < dest.height; dy += tileHeight)
             {
-                DrawTexturePro(texture, source, Rectangle{dest.x + dx, dest.y + dy, static_cast<float>(tileWidth), static_cast<float>(tileHeight)}, origin, rotation, tint);
+                DrawTexturePro(texture, source, Rectangle{dest.x + dx, dest.y + dy, static_cast<f32>(tileWidth), static_cast<f32>(tileHeight)}, origin, rotation, tint);
             }
 
             if (dy < dest.height)
             {
                 DrawTexturePro(texture, Rectangle{source.x, source.y, source.width, ((dest.height - dy)/tileHeight)*source.height},
-                    Rectangle{dest.x + dx, dest.y + dy, static_cast<float>(tileWidth), dest.height - dy}, origin, rotation, tint);
+                    Rectangle{dest.x + dx, dest.y + dy, static_cast<f32>(tileWidth), dest.height - dy}, origin, rotation, tint);
             }
         }
 
         // Fit last column of tiles
         if (dx < dest.width)
         {
-            int dy = 0;
+            i32 dy = 0;
             for (;dy+tileHeight < dest.height; dy += tileHeight)
             {
                 DrawTexturePro(texture, Rectangle{source.x, source.y, ((dest.width - dx)/tileWidth)*source.width, source.height},
-                        Rectangle{dest.x + dx, dest.y + dy, dest.width - dx, static_cast<float>(tileHeight)}, origin, rotation, tint);
+                        Rectangle{dest.x + dx, dest.y + dy, dest.width - dx, static_cast<f32>(tileHeight)}, origin, rotation, tint);
             }
 
             // Draw final tile in the bottom right corner

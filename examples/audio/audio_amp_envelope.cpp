@@ -36,30 +36,30 @@ typedef enum {
 
 // Grouping all ADSR parameters and state into a struct
 typedef struct {
-    float attackTime;
-    float decayTime;
-    float sustainLevel;
-    float releaseTime;
-    float currentValue;
+    f32 attackTime;
+    f32 decayTime;
+    f32 sustainLevel;
+    f32 releaseTime;
+    f32 currentValue;
     ADSRState state;
 } Envelope;
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void FillAudioBuffer(int i, float *buffer, float envelopeValue, float *audioTime);
+static void FillAudioBuffer(i32 i, f32 *buffer, f32 envelopeValue, f32 *audioTime);
 static void UpdateEnvelope(Envelope *env);
 static void DrawADSRGraph(Envelope *env, Rectangle bounds);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - amp envelope");
 
@@ -67,13 +67,13 @@ int main()
 
     // Set the number of samples the stream will keep in memory at a time to BUFFER_SIZE
     SetAudioStreamBufferSizeDefault(BUFFER_SIZE);
-    float buffer[BUFFER_SIZE] = {};
+    f32 buffer[BUFFER_SIZE] = {};
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
     const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
 
     // Init Phase
-    float audioTime = 0.0f;
+    f32 audioTime = 0.0f;
 
     // Initialize the struct
     Envelope env = {
@@ -101,7 +101,7 @@ int main()
         {
             if ((env.state != IDLE) || (env.currentValue > 0.0f))
             {
-                for (int i = 0; i < BUFFER_SIZE; i++)
+                for (i32 i = 0; i < BUFFER_SIZE; i++)
                 {
                     UpdateEnvelope(&env);
                     FillAudioBuffer(i, buffer, env.currentValue, &audioTime);
@@ -110,7 +110,7 @@ int main()
             else
             {
                 // Clear buffer if silent to avoid looping noise
-                for (int i = 0; i < BUFFER_SIZE; i++) buffer[i] = 0;
+                for (i32 i = 0; i < BUFFER_SIZE; i++) buffer[i] = 0;
                 audioTime = 0.0f;
             }
 
@@ -156,9 +156,9 @@ int main()
 //------------------------------------------------------------------------------------
 // Module Functions Definition
 //------------------------------------------------------------------------------------
-static void FillAudioBuffer(int i, float *buffer, float envelopeValue, float *audioTime)
+static void FillAudioBuffer(i32 i, f32 *buffer, f32 envelopeValue, f32 *audioTime)
 {
-    constexpr int frequency = 440;
+    constexpr i32 frequency = 440;
     buffer[i] = envelopeValue*sinf(2.0f*PI*frequency*(*audioTime));
     *audioTime += (1.0f/SAMPLE_RATE);
 }
@@ -166,7 +166,7 @@ static void FillAudioBuffer(int i, float *buffer, float envelopeValue, float *au
 static void UpdateEnvelope(Envelope *env)
 {
     // Calculate the time delta for ONE sample (1/44100)
-    const float sampleTime = 1.0f/SAMPLE_RATE;
+    const f32 sampleTime = 1.0f/SAMPLE_RATE;
 
     switch(env->state)
     {
@@ -215,13 +215,13 @@ static void DrawADSRGraph(Envelope *env, Rectangle bounds)
     DrawRectangleLinesEx(bounds, 1, GRAY);
 
     // Fixed visual width for sustain stage since it's an amplitude not a time value
-    constexpr float sustainWidth = 1.0f;
+    constexpr f32 sustainWidth = 1.0f;
 
     // Total time to visualize (sum of A, D, R + a padding for Sustain)
-    const float totalTime = env->attackTime + env->decayTime + sustainWidth + env->releaseTime;
+    const f32 totalTime = env->attackTime + env->decayTime + sustainWidth + env->releaseTime;
 
-    const float scaleX = bounds.width/totalTime;
-    const float scaleY = bounds.height;
+    const f32 scaleX = bounds.width/totalTime;
+    const f32 scaleY = bounds.height;
 
     const vec2 start = { bounds.x, bounds.y + bounds.height };
     const vec2 peak = { start.x + (env->attackTime*scaleX), bounds.y };

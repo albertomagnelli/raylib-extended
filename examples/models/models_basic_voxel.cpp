@@ -24,12 +24,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - basic voxel");
 
@@ -50,11 +50,11 @@ int main()
 
     // Initialize voxel world - fill with voxels
     bool voxels[WORLD_SIZE][WORLD_SIZE][WORLD_SIZE] = { false };
-    for (int x = 0; x < WORLD_SIZE; x++)
+    for (i32 x = 0; x < WORLD_SIZE; x++)
     {
-        for (int y = 0; y < WORLD_SIZE; y++)
+        for (i32 y = 0; y < WORLD_SIZE; y++)
         {
-            for (int z = 0; z < WORLD_SIZE; z++)
+            for (i32 z = 0; z < WORLD_SIZE; z++)
             {
                 voxels[x][y][z] = true;
             }
@@ -80,19 +80,19 @@ int main()
             const Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
             // Check ray collision with all voxels
-            float closestDistance = 99999.0f;
+            f32 closestDistance = 99999.0f;
             vec3 closestVoxelPosition = { -1, -1, -1 };
             bool voxelFound = false;
-            for (int x = 0; x < WORLD_SIZE; x++)
+            for (i32 x = 0; x < WORLD_SIZE; x++)
             {
-                for (int y = 0; y < WORLD_SIZE; y++)
+                for (i32 y = 0; y < WORLD_SIZE; y++)
                 {
-                    for (int z = 0; z < WORLD_SIZE; z++)
+                    for (i32 z = 0; z < WORLD_SIZE; z++)
                     {
                         if (!voxels[x][y][z]) continue; // Skip empty voxels
 
                         // Build a bounding box for this voxel
-                        const vec3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                        const vec3 position = { static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) };
                         const BoundingBox box = {
                             vec3{ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
                             vec3{ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
@@ -103,7 +103,7 @@ int main()
                         if (collision.hit && (collision.distance < closestDistance))
                         {
                             closestDistance = collision.distance;
-                            closestVoxelPosition = vec3{ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                            closestVoxelPosition = vec3{ static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) };
                             voxelFound = true;
                         }
                     }
@@ -113,9 +113,9 @@ int main()
             // Remove the closest voxel if one was hit
             if (voxelFound)
             {
-                voxels[static_cast<int>(closestVoxelPosition.x)]
-                      [static_cast<int>(closestVoxelPosition.y)]
-                      [static_cast<int>(closestVoxelPosition.z)] = false;
+                voxels[static_cast<i32>(closestVoxelPosition.x)]
+                      [static_cast<i32>(closestVoxelPosition.y)]
+                      [static_cast<i32>(closestVoxelPosition.z)] = false;
             }
         }
         //----------------------------------------------------------------------------------
@@ -131,15 +131,15 @@ int main()
                 DrawGrid(10, 1.0f);
 
                 // Draw all voxels
-                for (int x = 0; x < WORLD_SIZE; x++)
+                for (i32 x = 0; x < WORLD_SIZE; x++)
                 {
-                    for (int y = 0; y < WORLD_SIZE; y++)
+                    for (i32 y = 0; y < WORLD_SIZE; y++)
                     {
-                        for (int z = 0; z < WORLD_SIZE; z++)
+                        for (i32 z = 0; z < WORLD_SIZE; z++)
                         {
                             if (!voxels[x][y][z]) continue;
 
-                            const vec3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                            const vec3 position = { static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) };
                             DrawModel(cubeModel, position, 1.0f, BEIGE);
                             DrawCubeWires(position, 1.0f, 1.0f, 1.0f, BLACK);
                         }

@@ -21,12 +21,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite explosion");
 
@@ -39,16 +39,16 @@ int main()
     const Texture2D explosion = LoadTexture("resources/explosion.png");
 
     // Init variables for animation
-    const float frameWidth = static_cast<float>(explosion.width)/NUM_FRAMES_PER_LINE;   // Sprite one frame rectangle width
-    const float frameHeight = static_cast<float>(explosion.height)/NUM_LINES;           // Sprite one frame rectangle height
-    int currentFrame = 0;
-    int currentLine = 0;
+    const f32 frameWidth = static_cast<f32>(explosion.width)/NUM_FRAMES_PER_LINE;   // Sprite one frame rectangle width
+    const f32 frameHeight = static_cast<f32>(explosion.height)/NUM_LINES;           // Sprite one frame rectangle height
+    i32 currentFrame = 0;
+    i32 currentLine = 0;
 
     Rectangle frameRec = { 0, 0, frameWidth, frameHeight };
     vec2 position = { 0.0f, 0.0f };
 
     bool active = false;
-    int framesCounter = 0;
+    i32 framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------

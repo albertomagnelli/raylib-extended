@@ -37,16 +37,16 @@ typedef struct Particle {
     ParticleType type;      // Particle type (WATER, SMOKE, FIRE)
     vec2 position;          // Particle position on screen
     vec2 velocity;          // Particle current speed and direction
-    float radius;           // Particle radius
+    f32 radius;           // Particle radius
     Color color;            // Particle color
 
-    float lifeTime;         // Particle life time
+    f32 lifeTime;         // Particle life time
     bool alive;             // Particle alive: inside screen and life time
 } Particle;
 
 typedef struct CircularBuffer {
-    int head;               // Index for the next write
-    int tail;               // Index for the next read
+    i32 head;               // Index for the next write
+    i32 tail;               // Index for the next read
     Particle *buffer;       // Particle buffer array
 } CircularBuffer;
 
@@ -55,19 +55,19 @@ typedef struct CircularBuffer {
 //----------------------------------------------------------------------------------
 static void EmitParticle(CircularBuffer *circularBuffer, vec2 emitterPosition, ParticleType type);
 static Particle *AddToCircularBuffer(CircularBuffer *circularBuffer);
-static void UpdateParticles(CircularBuffer *circularBuffer, int screenWidth, int screenHeight);
+static void UpdateParticles(CircularBuffer *circularBuffer, i32 screenWidth, i32 screenHeight);
 static void UpdateCircularBuffer(CircularBuffer *circularBuffer);
 static void DrawParticles(CircularBuffer *circularBuffer);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - simple particles");
 
@@ -76,7 +76,7 @@ int main()
     CircularBuffer circularBuffer = { 0, 0, particles };
 
     // Particle emitter parameters
-    int emissionRate = -2;          // Negative: on average every -X frames. Positive: particles per frame
+    i32 emissionRate = -2;          // Negative: on average every -X frames. Positive: particles per frame
     ParticleType currentType = WATER;
     vec2 emitterPosition = { screenWidth/2.0f, screenHeight/2.0f };
 
@@ -95,7 +95,7 @@ int main()
         }
         else
         {
-            for (int i = 0; i <= emissionRate; i++) EmitParticle(&circularBuffer, emitterPosition, currentType);
+            for (i32 i = 0; i <= emissionRate; i++) EmitParticle(&circularBuffer, emitterPosition, currentType);
         }
 
         // Update the parameters of each particle
@@ -174,7 +174,7 @@ static void EmitParticle(CircularBuffer *circularBuffer, vec2 emitterPosition, P
         newParticle->alive = true;
         newParticle->lifeTime = 0.0f;
         newParticle->type = type;
-        float speed = static_cast<float>(rand()%10)/5.0f;
+        f32 speed = static_cast<f32>(rand()%10)/5.0f;
         switch (type)
         {
             case WATER:
@@ -196,7 +196,7 @@ static void EmitParticle(CircularBuffer *circularBuffer, vec2 emitterPosition, P
             default: break;
         }
 
-        const float direction = static_cast<float>(rand()%360);
+        const f32 direction = static_cast<f32>(rand()%360);
         newParticle->velocity = vec2{ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
     }
 }
@@ -216,9 +216,9 @@ static Particle *AddToCircularBuffer(CircularBuffer *circularBuffer)
     return particle;
 }
 
-static void UpdateParticles(CircularBuffer *circularBuffer, int screenWidth, int screenHeight)
+static void UpdateParticles(CircularBuffer *circularBuffer, i32 screenWidth, i32 screenHeight)
 {
-    for (int i = circularBuffer->tail; i != circularBuffer->head; i = (i + 1)%MAX_PARTICLES)
+    for (i32 i = circularBuffer->tail; i != circularBuffer->head; i = (i + 1)%MAX_PARTICLES)
     {
         // Update particle life and positions
         circularBuffer->buffer[i].lifeTime += 1.0f/60.0f; // 60 FPS -> 1/60 seconds per frame
@@ -259,7 +259,7 @@ static void UpdateParticles(CircularBuffer *circularBuffer, int screenWidth, int
 
         // Disable particle when out of screen
         const vec2 center = circularBuffer->buffer[i].position;
-        const float radius = circularBuffer->buffer[i].radius;
+        const f32 radius = circularBuffer->buffer[i].radius;
 
         if ((center.x < -radius) || (center.x > (screenWidth + radius)) ||
             (center.y < -radius) || (center.y > (screenHeight + radius)))
@@ -280,7 +280,7 @@ static void UpdateCircularBuffer(CircularBuffer *circularBuffer)
 
 static void DrawParticles(CircularBuffer *circularBuffer)
 {
-    for (int i = circularBuffer->tail; i != circularBuffer->head; i = (i + 1)%MAX_PARTICLES)
+    for (i32 i = circularBuffer->tail; i != circularBuffer->head; i = (i + 1)%MAX_PARTICLES)
     {
         if (circularBuffer->buffer[i].alive)
         {

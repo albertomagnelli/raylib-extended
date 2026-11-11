@@ -31,12 +31,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - vertex displacement");
 
@@ -59,7 +59,7 @@ int main()
     UnloadImage(perlinNoiseImage);
 
     // Set shader uniform location
-    const int perlinNoiseMapLoc = GetShaderLocation(shader, "perlinNoiseMap");
+    const i32 perlinNoiseMapLoc = GetShaderLocation(shader, "perlinNoiseMap");
     rlEnableShader(shader.id);
     rlActiveTextureSlot(1);
     rlEnableTexture(perlinNoiseMap.id);
@@ -71,7 +71,7 @@ int main()
     // Set plane model material
     planeModel.materials[0].shader = shader;
 
-    float time = 0.0f;
+    f32 time = 0.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

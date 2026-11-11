@@ -34,12 +34,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - color correction");
 
@@ -52,17 +52,17 @@ int main()
 
     const Shader shdrColorCorrection = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_correction.fs", GLSL_VERSION));
 
-    int imageIndex = 0;
-    int resetButtonClicked = 0;
+    i32 imageIndex = 0;
+    i32 resetButtonClicked = 0;
 
-    float contrast = 0.0f;
-    float saturation = 0.0f;
-    float brightness = 0.0f;
+    f32 contrast = 0.0f;
+    f32 saturation = 0.0f;
+    f32 brightness = 0.0f;
 
     // Get shader locations
-    const int contrastLoc = GetShaderLocation(shdrColorCorrection, "contrast");
-    const int saturationLoc = GetShaderLocation(shdrColorCorrection, "saturation");
-    const int brightnessLoc = GetShaderLocation(shdrColorCorrection, "brightness");
+    const i32 contrastLoc = GetShaderLocation(shdrColorCorrection, "contrast");
+    const i32 saturationLoc = GetShaderLocation(shdrColorCorrection, "saturation");
+    const i32 brightnessLoc = GetShaderLocation(shdrColorCorrection, "brightness");
 
     // Set shader values (they can be changed later)
     SetShaderValue(shdrColorCorrection, contrastLoc, &contrast, SHADER_UNIFORM_FLOAT);
@@ -138,7 +138,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    for (int i = 0; i < MAX_TEXTURES; i++) UnloadTexture(texture[i]);
+    for (i32 i = 0; i < MAX_TEXTURES; i++) UnloadTexture(texture[i]);
     UnloadShader(shdrColorCorrection);
 
     CloseWindow();        // Close window and OpenGL context

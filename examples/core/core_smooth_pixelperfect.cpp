@@ -23,17 +23,17 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
-    constexpr int virtualScreenWidth = 160;
-    constexpr int virtualScreenHeight = 90;
+    constexpr i32 virtualScreenWidth = 160;
+    constexpr i32 virtualScreenHeight = 90;
 
-    const float virtualRatio = static_cast<float>(screenWidth)/static_cast<float>(virtualScreenWidth);
+    const f32 virtualRatio = static_cast<f32>(screenWidth)/static_cast<f32>(virtualScreenWidth);
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - smooth pixelperfect");
 
@@ -51,15 +51,15 @@ int main()
     const Rectangle rec03 = { 80.0f, 65.0f, 15.0f, 25.0f };
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<f32>(target.texture.width), -static_cast<f32>(target.texture.height) };
     Rectangle destRec = { (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
 
     const vec2 origin = { 0.0f, 0.0f };
 
-    float rotation = 0.0f;
+    f32 rotation = 0.0f;
 
-    float cameraX = 0.0f;
-    float cameraY = 0.0f;
+    f32 cameraX = 0.0f;
+    f32 cameraY = 0.0f;
 
     bool smoothOn = true;
     bool overscan = false;
@@ -75,8 +75,8 @@ int main()
         rotation += 60.0f*GetFrameTime();   // Rotate the rectangles, 60 degrees per second
 
         // Make the camera move to demonstrate the effect
-        cameraX = (sinf(static_cast<float>(GetTime()))*50.0f) - 10.0f;
-        cameraY = cosf(static_cast<float>(GetTime()))*30.0f;
+        cameraX = (sinf(static_cast<f32>(GetTime()))*50.0f) - 10.0f;
+        cameraY = cosf(static_cast<f32>(GetTime()))*30.0f;
 
         // Set the camera's target to the values computed above
         screenSpaceCamera.target = vec2{ cameraX, cameraY };

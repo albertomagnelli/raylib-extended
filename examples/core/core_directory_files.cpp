@@ -26,12 +26,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - directory files");
 
@@ -43,11 +43,11 @@ int main()
     //FilePathList files = LoadDirectoryFiles(directory);
     FilePathList files = LoadDirectoryFilesEx(directory, FILE_FILTER, false);
 
-    int btnBackPressed = false;
+    i32 btnBackPressed = false;
 
-    int listScrollIndex = 0;
-    int listItemActive = -1;
-    int listItemFocused = -1;
+    i32 listScrollIndex = 0;
+    i32 listItemActive = -1;
+    i32 listItemFocused = -1;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ int main()
             listItemFocused = -1;
         }
 
-        if ((listItemActive >= 0) && (listItemActive < static_cast<int>(files.paths.size())) && DirectoryExists(files.paths[listItemActive]))
+        if ((listItemActive >= 0) && (listItemActive < static_cast<i32>(files.paths.size())) && DirectoryExists(files.paths[listItemActive]))
         {
             directory = files.paths[listItemActive];
             files = LoadDirectoryFilesEx(directory, FILE_FILTER, false);
@@ -95,8 +95,8 @@ int main()
             filePathPtrs.reserve(files.paths.size());
             for (std::string &path : files.paths) filePathPtrs.push_back(path.data());
 
-            GuiListViewEx(Rectangle{ 0, 50, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) - 50 },
-                filePathPtrs.data(), static_cast<int>(filePathPtrs.size()), &listScrollIndex, &listItemActive, &listItemFocused);
+            GuiListViewEx(Rectangle{ 0, 50, static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) - 50 },
+                filePathPtrs.data(), static_cast<i32>(filePathPtrs.size()), &listScrollIndex, &listItemActive, &listItemFocused);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

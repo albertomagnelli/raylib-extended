@@ -33,30 +33,30 @@ typedef struct {
     vec4 cornerRadius; // Individual corner radius (top-left, top-right, bottom-left, bottom-right)
 
     // Shadow variables
-    float shadowRadius;
+    f32 shadowRadius;
     vec2 shadowOffset;
-    float shadowScale;
+    f32 shadowScale;
 
     // Border variables
-    float borderThickness; // Inner-border thickness
+    f32 borderThickness; // Inner-border thickness
 
     // Shader locations
-    int rectangleLoc;
-    int radiusLoc;
-    int colorLoc;
-    int shadowRadiusLoc;
-    int shadowOffsetLoc;
-    int shadowScaleLoc;
-    int shadowColorLoc;
-    int borderThicknessLoc;
-    int borderColorLoc;
+    i32 rectangleLoc;
+    i32 radiusLoc;
+    i32 colorLoc;
+    i32 shadowRadiusLoc;
+    i32 shadowOffsetLoc;
+    i32 shadowScaleLoc;
+    i32 shadowColorLoc;
+    i32 borderThicknessLoc;
+    i32 borderColorLoc;
 } RoundedRectangle;
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Create a rounded rectangle and set uniform locations
-static RoundedRectangle CreateRoundedRectangle(vec4 cornerRadius, float shadowRadius, vec2 shadowOffset, float shadowScale, float borderThickness, Shader shader);
+static RoundedRectangle CreateRoundedRectangle(vec4 cornerRadius, f32 shadowRadius, vec2 shadowOffset, f32 shadowScale, f32 borderThickness, Shader shader);
 
 // Update rounded rectangle uniforms
 static void UpdateRoundedRectangle(RoundedRectangle rec, Shader shader);
@@ -64,12 +64,12 @@ static void UpdateRoundedRectangle(RoundedRectangle rec, Shader shader);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - rounded rectangle");
 
@@ -108,17 +108,17 @@ int main()
 
             // Draw rectangle box with rounded corners using shader
             Rectangle rec = { 50, 70, 110, 60 };
-            DrawRectangleLines(static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 20, static_cast<int>(rec.width) + 40, static_cast<int>(rec.height) + 40, DARKGRAY);
-            DrawText("Rounded rectangle", static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 35, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 20, static_cast<i32>(rec.width) + 40, static_cast<i32>(rec.height) + 40, DARKGRAY);
+            DrawText("Rounded rectangle", static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 35, 10, DARKGRAY);
 
             // Flip Y axis to match shader coordinate system
             rec.y = screenHeight - rec.y - rec.height;
-            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<float>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<f32>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
 
             // Only rectangle color
-            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<float>{ rectangleColor.r/255.0f, rectangleColor.g/255.0f, rectangleColor.b/255.0f, rectangleColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<float>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<float>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<f32>{ rectangleColor.r/255.0f, rectangleColor.g/255.0f, rectangleColor.b/255.0f, rectangleColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<f32>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<f32>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
 
             BeginShaderMode(shader);
                 DrawRectangle(0, 0, screenWidth, screenHeight, WHITE);
@@ -126,16 +126,16 @@ int main()
 
             // Draw rectangle shadow using shader
             rec = Rectangle{ 50, 200, 110, 60 };
-            DrawRectangleLines(static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 20, static_cast<int>(rec.width) + 40, static_cast<int>(rec.height) + 40, DARKGRAY);
-            DrawText("Rounded rectangle shadow", static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 35, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 20, static_cast<i32>(rec.width) + 40, static_cast<i32>(rec.height) + 40, DARKGRAY);
+            DrawText("Rounded rectangle shadow", static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 35, 10, DARKGRAY);
 
             rec.y = screenHeight - rec.y - rec.height;
-            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<float>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<f32>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
 
             // Only shadow color
-            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<float>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<float>{ shadowColor.r/255.0f, shadowColor.g/255.0f, shadowColor.b/255.0f, shadowColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<float>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<f32>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<f32>{ shadowColor.r/255.0f, shadowColor.g/255.0f, shadowColor.b/255.0f, shadowColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<f32>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
 
             BeginShaderMode(shader);
                 DrawRectangle(0, 0, screenWidth, screenHeight, WHITE);
@@ -143,16 +143,16 @@ int main()
 
             // Draw rectangle's border using shader
             rec = Rectangle{ 50, 330, 110, 60 };
-            DrawRectangleLines(static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 20, static_cast<int>(rec.width) + 40, static_cast<int>(rec.height) + 40, DARKGRAY);
-            DrawText("Rounded rectangle border", static_cast<int>(rec.x) - 20, static_cast<int>(rec.y) - 35, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 20, static_cast<i32>(rec.width) + 40, static_cast<i32>(rec.height) + 40, DARKGRAY);
+            DrawText("Rounded rectangle border", static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 35, 10, DARKGRAY);
 
             rec.y = screenHeight - rec.y - rec.height;
-            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<float>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<f32>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
 
             // Only border color
-            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<float>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<float>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<float>{ borderColor.r/255.0f, borderColor.g/255.0f, borderColor.b/255.0f, borderColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<f32>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<f32>{ 0.0f, 0.0f, 0.0f, 0.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<f32>{ borderColor.r/255.0f, borderColor.g/255.0f, borderColor.b/255.0f, borderColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
 
             BeginShaderMode(shader);
                 DrawRectangle(0, 0, screenWidth, screenHeight, WHITE);
@@ -160,16 +160,16 @@ int main()
 
             // Draw one more rectangle with all three colors
             rec = Rectangle{ 240, 80, 500, 300 };
-            DrawRectangleLines(static_cast<int>(rec.x) - 30, static_cast<int>(rec.y) - 30, static_cast<int>(rec.width) + 60, static_cast<int>(rec.height) + 60, DARKGRAY);
-            DrawText("Rectangle with all three combined", static_cast<int>(rec.x) - 30, static_cast<int>(rec.y) - 45, 10, DARKGRAY);
+            DrawRectangleLines(static_cast<i32>(rec.x) - 30, static_cast<i32>(rec.y) - 30, static_cast<i32>(rec.width) + 60, static_cast<i32>(rec.height) + 60, DARKGRAY);
+            DrawText("Rectangle with all three combined", static_cast<i32>(rec.x) - 30, static_cast<i32>(rec.y) - 45, 10, DARKGRAY);
 
             rec.y = screenHeight - rec.y - rec.height;
-            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<float>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.rectangleLoc, std::initializer_list<f32>{ rec.x, rec.y, rec.width, rec.height }.begin(), SHADER_UNIFORM_VEC4);
 
             // All three colors
-            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<float>{ rectangleColor.r/255.0f, rectangleColor.g/255.0f, rectangleColor.b/255.0f, rectangleColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<float>{ shadowColor.r/255.0f, shadowColor.g/255.0f, shadowColor.b/255.0f, shadowColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
-            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<float>{ borderColor.r/255.0f, borderColor.g/255.0f, borderColor.b/255.0f, borderColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.colorLoc, std::initializer_list<f32>{ rectangleColor.r/255.0f, rectangleColor.g/255.0f, rectangleColor.b/255.0f, rectangleColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.shadowColorLoc, std::initializer_list<f32>{ shadowColor.r/255.0f, shadowColor.g/255.0f, shadowColor.b/255.0f, shadowColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
+            SetShaderValue(shader, roundedRectangle.borderColorLoc, std::initializer_list<f32>{ borderColor.r/255.0f, borderColor.g/255.0f, borderColor.b/255.0f, borderColor.a/255.0f }.begin(), SHADER_UNIFORM_VEC4);
 
             BeginShaderMode(shader);
                 DrawRectangle(0, 0, screenWidth, screenHeight, WHITE);
@@ -196,7 +196,7 @@ int main()
 //------------------------------------------------------------------------------------
 
 // Create a rounded rectangle and set uniform locations
-RoundedRectangle CreateRoundedRectangle(vec4 cornerRadius, float shadowRadius, vec2 shadowOffset, float shadowScale, float borderThickness, Shader shader)
+RoundedRectangle CreateRoundedRectangle(vec4 cornerRadius, f32 shadowRadius, vec2 shadowOffset, f32 shadowScale, f32 borderThickness, Shader shader)
 {
     RoundedRectangle rec;
     rec.cornerRadius = cornerRadius;
@@ -224,9 +224,9 @@ RoundedRectangle CreateRoundedRectangle(vec4 cornerRadius, float shadowRadius, v
 // Update rounded rectangle uniforms
 void UpdateRoundedRectangle(RoundedRectangle rec, Shader shader)
 {
-    SetShaderValue(shader, rec.radiusLoc, std::initializer_list<float>{ rec.cornerRadius.x, rec.cornerRadius.y, rec.cornerRadius.z, rec.cornerRadius.w }.begin(), SHADER_UNIFORM_VEC4);
+    SetShaderValue(shader, rec.radiusLoc, std::initializer_list<f32>{ rec.cornerRadius.x, rec.cornerRadius.y, rec.cornerRadius.z, rec.cornerRadius.w }.begin(), SHADER_UNIFORM_VEC4);
     SetShaderValue(shader, rec.shadowRadiusLoc, &rec.shadowRadius, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(shader, rec.shadowOffsetLoc, std::initializer_list<float>{ rec.shadowOffset.x, rec.shadowOffset.y }.begin(), SHADER_UNIFORM_VEC2);
+    SetShaderValue(shader, rec.shadowOffsetLoc, std::initializer_list<f32>{ rec.shadowOffset.x, rec.shadowOffset.y }.begin(), SHADER_UNIFORM_VEC2);
     SetShaderValue(shader, rec.shadowScaleLoc, &rec.shadowScale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, rec.borderThicknessLoc, &rec.borderThickness, SHADER_UNIFORM_FLOAT);
 }

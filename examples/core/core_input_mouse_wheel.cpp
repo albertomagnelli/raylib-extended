@@ -18,17 +18,17 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse wheel");
 
-    int boxPositionY = screenHeight/2 - 40;
-    constexpr int scrollSpeed = 4;            // Scrolling speed in pixels
+    i32 boxPositionY = screenHeight/2 - 40;
+    constexpr i32 scrollSpeed = 4;            // Scrolling speed in pixels
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        boxPositionY -= static_cast<int>(GetMouseWheelMove()*scrollSpeed);
+        boxPositionY -= static_cast<i32>(GetMouseWheelMove()*scrollSpeed);
         //----------------------------------------------------------------------------------
 
         // Draw

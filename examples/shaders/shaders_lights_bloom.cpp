@@ -43,12 +43,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lights bloom");
@@ -79,9 +79,9 @@ int main()
     cube.materials[0].shader = lightShader;
     floor.materials[0].shader = lightShader;
 
-    const int lightPosLoc = GetShaderLocation(lightShader, "lightPositions");
-    const int lightColLoc = GetShaderLocation(lightShader, "lightColors");
-    const int viewPosLoc = GetShaderLocation(lightShader, "viewPos");
+    const i32 lightPosLoc = GetShaderLocation(lightShader, "lightPositions");
+    const i32 lightColLoc = GetShaderLocation(lightShader, "lightColors");
+    const i32 viewPosLoc = GetShaderLocation(lightShader, "viewPos");
 
     vec3 lightPositions[MAX_LIGHTS] = {};
     vec3 lightColors[MAX_LIGHTS] = {
@@ -107,14 +107,14 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        const float time = static_cast<float>(GetTime());
+        const f32 time = static_cast<f32>(GetTime());
 
         // Orbital path for each point light, its own radius/height offset by index
-        for (int i = 0; i < MAX_LIGHTS; i++)
+        for (i32 i = 0; i < MAX_LIGHTS; i++)
         {
-            const float angle = (i/static_cast<float>(MAX_LIGHTS))*2.0f*PI + time*0.6f;
-            const float radius = 4.2f + sinf(time*1.2f + i)*0.4f;
-            const float height = 1.0f + sinf(time*1.8f + i)*0.6f;
+            const f32 angle = (i/static_cast<f32>(MAX_LIGHTS))*2.0f*PI + time*0.6f;
+            const f32 radius = 4.2f + sinf(time*1.2f + i)*0.4f;
+            const f32 height = 1.0f + sinf(time*1.8f + i)*0.6f;
 
             lightPositions[i] = vec3{ sinf(angle)*radius, height, cosf(angle)*radius };
         }
@@ -137,12 +137,12 @@ int main()
                 DrawGrid(10, 1.0f);
 
                 // Glowing bulbs mark each light's position
-                for (int i = 0; i < MAX_LIGHTS; i++)
+                for (i32 i = 0; i < MAX_LIGHTS; i++)
                 {
                     const Color bulbColor = Color{
-                        static_cast<unsigned char>(lightColors[i].x*255),
-                        static_cast<unsigned char>(lightColors[i].y*255),
-                        static_cast<unsigned char>(lightColors[i].z*255),
+                        static_cast<u8>(lightColors[i].x*255),
+                        static_cast<u8>(lightColors[i].y*255),
+                        static_cast<u8>(lightColors[i].z*255),
                         255 };
 
                     DrawSphere(lightPositions[i], 0.15f, bulbColor);
@@ -157,7 +157,7 @@ int main()
 
             ClearBackground(BLACK);
 
-            const Rectangle srcRec = { 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) };
+            const Rectangle srcRec = { 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) };
 
             BeginShaderMode(bloomShader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)

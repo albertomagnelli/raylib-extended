@@ -24,21 +24,21 @@
 typedef struct {
     vec2 position;
     Color color;
-    float alpha;
-    float size;
-    float rotation;
+    f32 alpha;
+    f32 size;
+    f32 rotation;
     bool active;        // NOTE: Use it to activate/deactive particle
 } Particle;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - particles blending");
 
@@ -46,21 +46,21 @@ int main()
     Particle mouseTail[MAX_PARTICLES] = {};
 
     // Initialize particles
-    for (int i = 0; i < MAX_PARTICLES; i++)
+    for (i32 i = 0; i < MAX_PARTICLES; i++)
     {
         mouseTail[i].position = vec2{ 0, 0 };
-        mouseTail[i].color = Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 };
+        mouseTail[i].color = Color{ static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), 255 };
         mouseTail[i].alpha = 1.0f;
-        mouseTail[i].size = static_cast<float>(GetRandomValue(1, 30))/20.0f;
-        mouseTail[i].rotation = static_cast<float>(GetRandomValue(0, 360));
+        mouseTail[i].size = static_cast<f32>(GetRandomValue(1, 30))/20.0f;
+        mouseTail[i].rotation = static_cast<f32>(GetRandomValue(0, 360));
         mouseTail[i].active = false;
     }
 
-    constexpr float gravity = 3.0f;
+    constexpr f32 gravity = 3.0f;
 
     const Texture2D smoke = LoadTexture("resources/spark_flame.png");
 
-    int blending = BLEND_ALPHA;
+    i32 blending = BLEND_ALPHA;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ int main()
         // NOTE: Particles initial position should be mouse position when activated
         // NOTE: Particles fall down with gravity and rotation... and disappear after 2 seconds (alpha = 0)
         // NOTE: When a particle disappears, active = false and it can be reused
-        for (int i = 0; i < MAX_PARTICLES; i++)
+        for (i32 i = 0; i < MAX_PARTICLES; i++)
         {
             if (!mouseTail[i].active)
             {
@@ -86,7 +86,7 @@ int main()
             }
         }
 
-        for (int i = 0; i < MAX_PARTICLES; i++)
+        for (i32 i = 0; i < MAX_PARTICLES; i++)
         {
             if (mouseTail[i].active)
             {
@@ -115,9 +115,9 @@ int main()
             BeginBlendMode(blending);
 
                 // Draw active particles
-                for (int i = 0; i < MAX_PARTICLES; i++)
+                for (i32 i = 0; i < MAX_PARTICLES; i++)
                 {
-                    if (mouseTail[i].active) DrawTexturePro(smoke, Rectangle{ 0.0f, 0.0f, static_cast<float>(smoke.width), static_cast<float>(smoke.height) },
+                    if (mouseTail[i].active) DrawTexturePro(smoke, Rectangle{ 0.0f, 0.0f, static_cast<f32>(smoke.width), static_cast<f32>(smoke.height) },
                                                            Rectangle{ mouseTail[i].position.x, mouseTail[i].position.y, smoke.width*mouseTail[i].size, smoke.height*mouseTail[i].size },
                                                            vec2{ (smoke.width*mouseTail[i].size/2.0f), (smoke.height*mouseTail[i].size/2.0f) }, mouseTail[i].rotation,
                                                            Fade(mouseTail[i].color, mouseTail[i].alpha));

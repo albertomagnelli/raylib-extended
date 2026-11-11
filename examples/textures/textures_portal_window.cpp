@@ -30,19 +30,19 @@
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Begin portal mode 3D view
-static void BeginPortalMode3D(vec3 eye, vec3 bottomLeft, vec3 bottomRight, vec3 topLeft, float nearPlane, float farPlane);
+static void BeginPortalMode3D(vec3 eye, vec3 bottomLeft, vec3 bottomRight, vec3 topLeft, f32 nearPlane, f32 farPlane);
 // End portal 3D mode and returns to default 2D orthographic mode
 static void EndPortalMode3D(void);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - portal window");
 
@@ -77,7 +77,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
-        const float time = static_cast<float>(GetTime());
+        const f32 time = static_cast<f32>(GetTime());
 
         // Eye and window corners, shifted into Dimension B so they match the player's
         // actual position and viewing angle relative to the archway
@@ -106,9 +106,9 @@ int main()
                 DrawSphereWires(corePos, 1.25f, 16, 16, MAGENTA);
 
                 // Orbiting cubes
-                for (int i = 0; i < 4; i++)
+                for (i32 i = 0; i < 4; i++)
                 {
-                    const float angle = time * 1.5f + i * (PI / 2.0f);
+                    const f32 angle = time * 1.5f + i * (PI / 2.0f);
                     const vec3 pos = ((portalB) + (vec3{
                         sinf(angle) * 2.5f,
                         2.0f + cosf(time * 3.0f + i) * 0.5f,
@@ -190,7 +190,7 @@ int main()
 // rendering) - the key difference from a normal Camera3D is that the frustum is allowed
 // to be asymmetric, so perspective lines through the window line up correctly from any
 // eye position, instead of behaving like a flat image pasted onto the window
-static void BeginPortalMode3D(vec3 eye, vec3 bottomLeft, vec3 bottomRight, vec3 topLeft, float nearPlane, float farPlane)
+static void BeginPortalMode3D(vec3 eye, vec3 bottomLeft, vec3 bottomRight, vec3 topLeft, f32 nearPlane, f32 farPlane)
 {
     const vec3 right = glm::normalize(((bottomRight) - (bottomLeft)));
     const vec3 up = glm::normalize(((topLeft) - (bottomLeft)));
@@ -202,10 +202,10 @@ static void BeginPortalMode3D(vec3 eye, vec3 bottomLeft, vec3 bottomRight, vec3 
     const vec3 toBR = ((bottomRight) - (eye));
     const vec3 toTL = ((topLeft) - (eye));
 
-    float dist = -glm::dot(toBL, normal);
+    f32 dist = -glm::dot(toBL, normal);
     if (dist < 0.01f) dist = 0.01f; // Keep the eye from crossing the window plane
 
-    const float scale = nearPlane/dist;
+    const f32 scale = nearPlane/dist;
 
     rlDrawRenderBatchActive();
 

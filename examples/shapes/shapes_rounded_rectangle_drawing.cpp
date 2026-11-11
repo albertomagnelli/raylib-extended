@@ -23,20 +23,20 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rounded rectangle drawing");
 
-    float roundness = 0.2f;
-    float width = 200.0f;
-    float height = 100.0f;
-    float segments = 0.0f;
-    float lineThick = 1.0f;
+    f32 roundness = 0.2f;
+    f32 width = 200.0f;
+    f32 height = 100.0f;
+    f32 segments = 0.0f;
+    f32 lineThick = 1.0f;
 
     bool drawRect = false;
     bool drawRoundedRect = true;
@@ -50,7 +50,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Rectangle rec = { (static_cast<float>(GetScreenWidth()) - width - 250)/2, (GetScreenHeight() - height)/2.0f, width, height };
+        const Rectangle rec = { (static_cast<f32>(GetScreenWidth()) - width - 250)/2, (GetScreenHeight() - height)/2.0f, width, height };
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -63,13 +63,13 @@ int main()
             DrawRectangle(560, 0, GetScreenWidth() - 500, GetScreenHeight(), Fade(LIGHTGRAY, 0.3f));
 
             if (drawRect) DrawRectangleRec(rec, Fade(GOLD, 0.6f));
-            if (drawRoundedRect) DrawRectangleRounded(rec, roundness, static_cast<int>(segments), Fade(MAROON, 0.2f));
-            if (drawRoundedLines) DrawRectangleRoundedLinesEx(rec, roundness, static_cast<int>(segments), lineThick, Fade(MAROON, 0.4f));
+            if (drawRoundedRect) DrawRectangleRounded(rec, roundness, static_cast<i32>(segments), Fade(MAROON, 0.2f));
+            if (drawRoundedLines) DrawRectangleRoundedLinesEx(rec, roundness, static_cast<i32>(segments), lineThick, Fade(MAROON, 0.4f));
 
             // Draw GUI controls
             //------------------------------------------------------------------------------
-            GuiSliderBar(Rectangle{ 640, 40, 105, 20 }, "Width", TextFormat("%.2f", width).c_str(), &width, 0, static_cast<float>(GetScreenWidth()) - 300);
-            GuiSliderBar(Rectangle{ 640, 70, 105, 20 }, "Height", TextFormat("%.2f", height).c_str(), &height, 0, static_cast<float>(GetScreenHeight()) - 50);
+            GuiSliderBar(Rectangle{ 640, 40, 105, 20 }, "Width", TextFormat("%.2f", width).c_str(), &width, 0, static_cast<f32>(GetScreenWidth()) - 300);
+            GuiSliderBar(Rectangle{ 640, 70, 105, 20 }, "Height", TextFormat("%.2f", height).c_str(), &height, 0, static_cast<f32>(GetScreenHeight()) - 50);
             GuiSliderBar(Rectangle{ 640, 140, 105, 20 }, "Roundness", TextFormat("%.2f", roundness).c_str(), &roundness, 0.0f, 1.0f);
             GuiSliderBar(Rectangle{ 640, 170, 105, 20 }, "Thickness", TextFormat("%.2f", lineThick).c_str(), &lineThick, 0, 20);
             GuiSliderBar(Rectangle{ 640, 240, 105, 20}, "Segments", TextFormat("%.2f", segments).c_str(), &segments, 0, 60);

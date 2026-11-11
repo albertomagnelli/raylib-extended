@@ -32,9 +32,9 @@ typedef struct Ball {
     vec2 position;
     vec2 speed;
     vec2 prevPosition;
-    float radius;
-    float friction;
-    float elasticity;
+    f32 radius;
+    f32 friction;
+    f32 elasticity;
     Color color;
     bool grabbed;
 } Ball;
@@ -42,12 +42,12 @@ typedef struct Ball {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ball physics");
 
@@ -65,11 +65,11 @@ int main()
         .grabbed = false
     };
 
-    int ballCount = 1;
+    i32 ballCount = 1;
     Ball *grabbedBall = nullptr;       // A pointer to the current ball that is grabbed
     vec2 pressOffset = {};             // Mouse press offset relative to the ball that grabbedd
 
-    float gravity = 100;            // World gravity
+    f32 gravity = 100;            // World gravity
     
     vec2 windowPosition = GetWindowPosition();
 
@@ -81,13 +81,13 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float delta = GetFrameTime();
+        const f32 delta = GetFrameTime();
         const vec2 mousePos = GetMousePosition();
 
         // Checks if a ball was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            for (int i = ballCount - 1; i >= 0; i--)
+            for (i32 i = ballCount - 1; i >= 0; i--)
             {
                 Ball *ball = &balls[i];
                 pressOffset.x = mousePos.x - ball->position.x;
@@ -121,12 +121,12 @@ int main()
             {
                 balls[ballCount++] = Ball{
                     .position = mousePos,
-                    .speed = { static_cast<float>(GetRandomValue(-300, 300)), static_cast<float>(GetRandomValue(-300, 300)) },
+                    .speed = { static_cast<f32>(GetRandomValue(-300, 300)), static_cast<f32>(GetRandomValue(-300, 300)) },
                     .prevPosition = {},
-                    .radius = 20.0f + static_cast<float>(GetRandomValue(0, 30)),
+                    .radius = 20.0f + static_cast<f32>(GetRandomValue(0, 30)),
                     .friction = 0.99f,
                     .elasticity = 0.9f,
-                    .color = { static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 },
+                    .color = { static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), 255 },
                     .grabbed = false
                 };
             }
@@ -137,7 +137,7 @@ int main()
         
         if (glm::length(windowPositionDelta) > 5.0f)
         {
-            for (int i = 0; i < ballCount; i++)
+            for (i32 i = 0; i < ballCount; i++)
             {
                 if (!balls[i].grabbed) balls[i].speed = ((balls[i].speed) + (((windowPositionDelta) * (10.0f))));
             }
@@ -146,9 +146,9 @@ int main()
         // Shake balls
         if (IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE))
         {
-            for (int i = 0; i < ballCount; i++)
+            for (i32 i = 0; i < ballCount; i++)
             {
-                if (!balls[i].grabbed) balls[i].speed = vec2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
+                if (!balls[i].grabbed) balls[i].speed = vec2{ static_cast<f32>(GetRandomValue(-2000, 2000)), static_cast<f32>(GetRandomValue(-2000, 2000)) };
             }
         }
 
@@ -156,7 +156,7 @@ int main()
         gravity += GetMouseWheelMove()*5;
 
         // Updates each ball state
-        for (int i = 0; i < ballCount; i++)
+        for (i32 i = 0; i < ballCount; i++)
         {
             Ball *ball = &balls[i];
 
@@ -219,7 +219,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < ballCount; i++)
+            for (i32 i = 0; i < ballCount; i++)
             {
                 DrawCircleV(balls[i].position, balls[i].radius, balls[i].color);
                 DrawCircleLinesV(balls[i].position, balls[i].radius, BLACK);

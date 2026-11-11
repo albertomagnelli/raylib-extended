@@ -83,10 +83,10 @@
 //----------------------------------------------------------------------------------
 // Color, 4 components, R8G8B8A8 (32bit)
 typedef struct Color {
-    unsigned char r;        // Color red value
-    unsigned char g;        // Color green value
-    unsigned char b;        // Color blue value
-    unsigned char a;        // Color alpha value
+    u8 r;        // Color red value
+    u8 g;        // Color green value
+    u8 b;        // Color blue value
+    u8 a;        // Color alpha value
 } Color;
 
 // Camera type, defines a camera position/orientation in 3d space
@@ -94,20 +94,20 @@ typedef struct Camera {
     vec3 position;          // Camera position
     vec3 target;            // Camera target it looks-at
     vec3 up;                // Camera up vector (rotation over its axis)
-    float fovy;             // Camera field-of-view apperture in Y (degrees) in perspective, used as near plane width in orthographic
-    int projection;         // Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
+    f32 fovy;             // Camera field-of-view apperture in Y (degrees) in perspective, used as near plane width in orthographic
+    i32 projection;         // Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
 } Camera;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static void ErrorCallback(int error, const char *description);
-static void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
+static void ErrorCallback(i32 error, const char *description);
+static void KeyCallback(GLFWwindow *window, i32 key, i32 scancode, i32 action, i32 mods);
 
 // Drawing functions (uses rlgl functionality)
-static void DrawGrid(int slices, float spacing);
-static void DrawCube(vec3 position, float width, float height, float length, Color color);
-static void DrawCubeWires(vec3 position, float width, float height, float length, Color color);
+static void DrawGrid(i32 slices, f32 spacing);
+static void DrawCube(vec3 position, f32 width, f32 height, f32 length, Color color);
+static void DrawCubeWires(vec3 position, f32 width, f32 height, f32 length, Color color);
 static void DrawRectangleV(vec2 position, vec2 size, Color color);
 
 // NOTE: We use raymath to get this functionality but it could be implemented in this module
@@ -119,12 +119,12 @@ static void DrawRectangleV(vec2 position, vec2 size, Color color);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     // GLFW3 Initialization + OpenGL 3.3 Context + Extensions
     //--------------------------------------------------------
@@ -207,7 +207,7 @@ int main()
             // Draw '3D' elements in the scene
             //-----------------------------------------------
             // Calculate projection matrix (from perspective) and view matrix from camera look at
-            mat4 matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<float>(screenWidth)/static_cast<float>(screenHeight), 0.01f, 1000.0f);
+            mat4 matProj = glm::perspective(camera.fovy*DEG2RAD, static_cast<f32>(screenWidth)/static_cast<f32>(screenHeight), 0.01f, 1000.0f);
             mat4 matView = glm::lookAt(camera.position, camera.target, camera.up);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
@@ -225,7 +225,7 @@ int main()
             //-----------------------------------------------
 #define RLGL_SET_MATRIX_MANUALLY
 #if defined(RLGL_SET_MATRIX_MANUALLY)
-            matProj = glm::ortho(0.0f, static_cast<float>(screenWidth), static_cast<float>(screenHeight), 0.0f, 0.0f, 1.0f);
+            matProj = glm::ortho(0.0f, static_cast<f32>(screenWidth), static_cast<f32>(screenHeight), 0.0f, 0.0f, 1.0f);
             matView = mat4(1.0f);
 
             rlSetMatrixModelview(matView);    // Set internal modelview matrix (default shader)
@@ -266,13 +266,13 @@ int main()
 //----------------------------------------------------------------------------------
 
 // GLFW3: Error callback
-static void ErrorCallback(int error, const char *description)
+static void ErrorCallback(i32 error, const char *description)
 {
     fprintf(stderr, "%s", description);
 }
 
 // GLFW3: Keyboard callback
-static void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+static void KeyCallback(GLFWwindow *window, i32 key, i32 scancode, i32 action, i32 mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     {
@@ -297,12 +297,12 @@ static void DrawRectangleV(vec2 position, vec2 size, Color color)
 }
 
 // Draw a grid centered at (0, 0, 0)
-static void DrawGrid(int slices, float spacing)
+static void DrawGrid(i32 slices, f32 spacing)
 {
-    const int halfSlices = slices/2;
+    const i32 halfSlices = slices/2;
 
     rlBegin(RL_LINES);
-        for (int i = -halfSlices; i <= halfSlices; i++)
+        for (i32 i = -halfSlices; i <= halfSlices; i++)
         {
             if (i == 0)
             {
@@ -319,22 +319,22 @@ static void DrawGrid(int slices, float spacing)
                 rlColor3f(0.75f, 0.75f, 0.75f);
             }
 
-            rlVertex3f(static_cast<float>(i)*spacing, 0.0f, static_cast<float>(-halfSlices)*spacing);
-            rlVertex3f(static_cast<float>(i)*spacing, 0.0f, static_cast<float>(halfSlices)*spacing);
+            rlVertex3f(static_cast<f32>(i)*spacing, 0.0f, static_cast<f32>(-halfSlices)*spacing);
+            rlVertex3f(static_cast<f32>(i)*spacing, 0.0f, static_cast<f32>(halfSlices)*spacing);
 
-            rlVertex3f(static_cast<float>(-halfSlices)*spacing, 0.0f, static_cast<float>(i)*spacing);
-            rlVertex3f(static_cast<float>(halfSlices)*spacing, 0.0f, static_cast<float>(i)*spacing);
+            rlVertex3f(static_cast<f32>(-halfSlices)*spacing, 0.0f, static_cast<f32>(i)*spacing);
+            rlVertex3f(static_cast<f32>(halfSlices)*spacing, 0.0f, static_cast<f32>(i)*spacing);
         }
     rlEnd();
 }
 
 // Draw cube
 // NOTE: Cube position is the center position
-static void DrawCube(vec3 position, float width, float height, float length, Color color)
+static void DrawCube(vec3 position, f32 width, f32 height, f32 length, Color color)
 {
-    constexpr float x = 0.0f;
-    constexpr float y = 0.0f;
-    constexpr float z = 0.0f;
+    constexpr f32 x = 0.0f;
+    constexpr f32 y = 0.0f;
+    constexpr f32 z = 0.0f;
 
     rlPushMatrix();
 
@@ -404,11 +404,11 @@ static void DrawCube(vec3 position, float width, float height, float length, Col
 }
 
 // Draw cube wires
-static void DrawCubeWires(vec3 position, float width, float height, float length, Color color)
+static void DrawCubeWires(vec3 position, f32 width, f32 height, f32 length, Color color)
 {
-    constexpr float x = 0.0f;
-    constexpr float y = 0.0f;
-    constexpr float z = 0.0f;
+    constexpr f32 x = 0.0f;
+    constexpr f32 y = 0.0f;
+    constexpr f32 z = 0.0f;
 
     rlPushMatrix();
 

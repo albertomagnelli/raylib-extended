@@ -24,12 +24,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh picking");
 
@@ -65,7 +65,7 @@ int main()
 
     // Test sphere
     const vec3 sp = vec3{ -30.0f, 5.0f, 5.0f };
-    constexpr float sr = 4.0f;
+    constexpr f32 sr = 4.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ int main()
 
             // Check ray collision against model meshes
             RayCollision meshHitInfo = {};
-            for (int m = 0; m < tower.meshCount; m++)
+            for (i32 m = 0; m < tower.meshCount; m++)
             {
                 // NOTE: We consider the model.transform for the collision check but
                 // it can be checked against any transform mat4, used when checking against same
@@ -209,7 +209,7 @@ int main()
 
             if (collision.hit)
             {
-                constexpr int ypos = 70;
+                constexpr i32 ypos = 70;
 
                 DrawText(TextFormat("Distance: %3.2f", collision.distance), 10, ypos, 10, BLACK);
 

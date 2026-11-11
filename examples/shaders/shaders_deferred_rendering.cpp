@@ -40,13 +40,13 @@
 //----------------------------------------------------------------------------------
 // GBuffer data
 typedef struct GBuffer {
-    unsigned int framebufferId;
+    u32 framebufferId;
 
-    unsigned int positionTextureId;
-    unsigned int normalTextureId;
-    unsigned int albedoSpecTextureId;
+    u32 positionTextureId;
+    u32 normalTextureId;
+    u32 albedoSpecTextureId;
 
-    unsigned int depthRenderbufferId;
+    u32 depthRenderbufferId;
 } GBuffer;
 
 // Deferred mode passes
@@ -60,12 +60,12 @@ typedef enum {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     // -------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - deferred rendering");
 
@@ -132,9 +132,9 @@ int main()
     // We do this by setting the uniform's values to the texture units that
     // we later bind our g-buffer textures to
     rlEnableShader(deferredShader.id);
-    int texUnitPosition = 0;
-    int texUnitNormal = 1;
-    int texUnitAlbedoSpec = 2;
+    i32 texUnitPosition = 0;
+    i32 texUnitNormal = 1;
+    i32 texUnitAlbedoSpec = 2;
     SetShaderValue(deferredShader, rlGetLocationUniform(deferredShader.id, "gPosition"), &texUnitPosition, RL_SHADER_UNIFORM_SAMPLER2D);
     SetShaderValue(deferredShader, rlGetLocationUniform(deferredShader.id, "gNormal"), &texUnitNormal, RL_SHADER_UNIFORM_SAMPLER2D);
     SetShaderValue(deferredShader, rlGetLocationUniform(deferredShader.id, "gAlbedoSpec"), &texUnitAlbedoSpec, RL_SHADER_UNIFORM_SAMPLER2D);
@@ -152,22 +152,22 @@ int main()
     lights[2] = CreateLight(LIGHT_POINT, vec3{ -2, 1, 2 }, vec3{}, GREEN, deferredShader);
     lights[3] = CreateLight(LIGHT_POINT, vec3{ 2, 1, -2 }, vec3{}, BLUE, deferredShader);
 
-    constexpr float CUBE_SCALE = 0.25;
+    constexpr f32 CUBE_SCALE = 0.25;
     vec3 cubePositions[MAX_CUBES] = {};
-    float cubeRotations[MAX_CUBES] = {};
+    f32 cubeRotations[MAX_CUBES] = {};
 
-    for (int i = 0; i < MAX_CUBES; i++)
+    for (i32 i = 0; i < MAX_CUBES; i++)
     {
         cubePositions[i] = vec3{
-            static_cast<float>(rand()%10) - 5,
-            static_cast<float>(rand()%5),
-            static_cast<float>(rand()%10) - 5,
+            static_cast<f32>(rand()%10) - 5,
+            static_cast<f32>(rand()%5),
+            static_cast<f32>(rand()%10) - 5,
         };
 
-        cubeRotations[i] = static_cast<float>(rand()%360);
+        cubeRotations[i] = static_cast<f32>(rand()%360);
     }
 
-    int mode = DEFERRED_SHADING;
+    i32 mode = DEFERRED_SHADING;
 
     rlEnableDepthTest();
 
@@ -182,7 +182,7 @@ int main()
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         // Update the shader with the camera view vector (points towards { 0.0f, 0.0f, 0.0f })
-        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        f32 cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         SetShaderValue(deferredShader, deferredShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
         // Check key inputs to enable/disable lights
@@ -198,7 +198,7 @@ int main()
         if (IsKeyPressed(KEY_FOUR)) mode = DEFERRED_SHADING;
 
         // Update light values (actually, only enable/disable them)
-        for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(deferredShader, lights[i]);
+        for (i32 i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(deferredShader, lights[i]);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -219,7 +219,7 @@ int main()
                     DrawModel(model, vec3{}, 1.0f, WHITE);
                     DrawModel(cube, vec3{ 0.0, 1.0f, 0.0 }, 1.0f, WHITE);
 
-                    for (int i = 0; i < MAX_CUBES; i++)
+                    for (i32 i = 0; i < MAX_CUBES; i++)
                     {
                         const vec3 position = cubePositions[i];
                         DrawModelEx(cube, position, vec3{ 1, 1, 1 }, cubeRotations[i], vec3{ CUBE_SCALE, CUBE_SCALE, CUBE_SCALE }, WHITE);
@@ -267,7 +267,7 @@ int main()
                     // that represent light positions in default forward rendering
                     BeginMode3D(camera);
                         rlEnableShader(rlGetShaderIdDefault());
-                            for (int i = 0; i < MAX_LIGHTS; i++)
+                            for (i32 i = 0; i < MAX_LIGHTS; i++)
                             {
                                 if (lights[i].enabled) DrawSphereEx(lights[i].position, 0.2f, 8, 8, lights[i].color);
                                 else DrawSphereWires(lights[i].position, 0.2f, 8, 8, ColorAlpha(lights[i].color, 0.3f));
@@ -283,7 +283,7 @@ int main()
                         .id = gBuffer.positionTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, vec2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<f32>(screenWidth), static_cast<f32>(-screenHeight) }, vec2{}, RAYWHITE);
 
                     DrawText("POSITION TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;
@@ -293,7 +293,7 @@ int main()
                         .id = gBuffer.normalTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, vec2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<f32>(screenWidth), static_cast<f32>(-screenHeight) }, vec2{}, RAYWHITE);
 
                     DrawText("NORMAL TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;
@@ -303,7 +303,7 @@ int main()
                         .id = gBuffer.albedoSpecTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, vec2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<f32>(screenWidth), static_cast<f32>(-screenHeight) }, vec2{}, RAYWHITE);
 
                     DrawText("ALBEDO TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;

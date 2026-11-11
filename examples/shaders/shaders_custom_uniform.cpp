@@ -31,12 +31,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
@@ -62,9 +62,9 @@ int main()
 
     // Get variable (uniform) location on the shader to connect with the program
     // NOTE: If uniform variable could not be found in the shader, function returns -1
-    const int swirlCenterLoc = GetShaderLocation(shader, "center");
+    const i32 swirlCenterLoc = GetShaderLocation(shader, "center");
 
-    float swirlCenter[2] = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
+    f32 swirlCenter[2] = { static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2 };
 
     // Create a RenderTexture2D to be used for render to texture
     const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
@@ -107,7 +107,7 @@ int main()
             // Enable shader using the custom uniform
             BeginShaderMode(shader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) }, vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw some 2d text over drawn texture

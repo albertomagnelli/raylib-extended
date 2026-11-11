@@ -19,17 +19,17 @@
 
 #define MAX_SOUNDS 10
 Sound soundArray[MAX_SOUNDS] = {};
-int currentSound;
+i32 currentSound;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - sound multi");
 
@@ -40,7 +40,7 @@ int main()
     soundArray[0] = LoadSound("resources/sound.wav");
 
     // Load an alias of the sound into slots 1-9. These do not own the sound data, but can be played
-    for (int i = 1; i < MAX_SOUNDS; i++) soundArray[i] = LoadSoundAlias(soundArray[0]);
+    for (i32 i = 1; i < MAX_SOUNDS; i++) soundArray[i] = LoadSoundAlias(soundArray[0]);
 
     currentSound = 0;               // Set the sound list to the start
 
@@ -79,7 +79,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    for (int i = 1; i < MAX_SOUNDS; i++) UnloadSoundAlias(soundArray[i]); // Unload sound aliases
+    for (i32 i = 1; i < MAX_SOUNDS; i++) UnloadSoundAlias(soundArray[i]); // Unload sound aliases
     UnloadSound(soundArray[0]); // Unload source sound data
 
     CloseAudioDevice();     // Close audio device

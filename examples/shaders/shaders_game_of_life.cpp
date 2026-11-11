@@ -53,27 +53,27 @@ void FreeImageToDraw(Image **imageToDraw);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - game of life");
 
-    constexpr int menuWidth = 100;
-    const int windowWidth = screenWidth - menuWidth;
-    const int windowHeight = screenHeight;
+    constexpr i32 menuWidth = 100;
+    const i32 windowWidth = screenWidth - menuWidth;
+    const i32 windowHeight = screenHeight;
 
-    constexpr int worldWidth = 2048;
-    constexpr int worldHeight = 2048;
+    constexpr i32 worldWidth = 2048;
+    constexpr i32 worldHeight = 2048;
 
-    constexpr int randomTiles = 8;      // Random preset: divide the world to compute random points in each tile
+    constexpr i32 randomTiles = 8;      // Random preset: divide the world to compute random points in each tile
 
-    const Rectangle worldRectSource = { 0, 0, static_cast<float>(worldWidth), static_cast<float>(-worldHeight) };
-    const Rectangle worldRectDest = { 0, 0, static_cast<float>(worldWidth), static_cast<float>(worldHeight) };
-    const Rectangle textureOnScreen = { 0, 0, static_cast<float>(windowWidth), static_cast<float>(windowHeight) };
+    const Rectangle worldRectSource = { 0, 0, static_cast<f32>(worldWidth), static_cast<f32>(-worldHeight) };
+    const Rectangle worldRectDest = { 0, 0, static_cast<f32>(worldWidth), static_cast<f32>(worldHeight) };
+    const Rectangle textureOnScreen = { 0, 0, static_cast<f32>(windowWidth), static_cast<f32>(windowHeight) };
 
     const PresetPattern presetPatterns[] = {
         { "Glider", { 0.5f, 0.5f } }, { "R-pentomino", { 0.5f, 0.5f } }, { "Acorn", { 0.5f,0.5f } },
@@ -82,16 +82,16 @@ int main()
         { "Random", { 0.5f, 0.5f } }
     };
 
-    const int numberOfPresets = sizeof(presetPatterns)/sizeof(presetPatterns[0]);
+    const i32 numberOfPresets = sizeof(presetPatterns)/sizeof(presetPatterns[0]);
 
-    int zoom = 1;
-    float offsetX = (worldWidth - windowWidth)/2.0f;    // Centered on window
-    float offsetY = (worldHeight - windowHeight)/2.0f;  // Centered on window
-    int framesPerStep = 1;
-    int frame = 0;
+    i32 zoom = 1;
+    f32 offsetX = (worldWidth - windowWidth)/2.0f;    // Centered on window
+    f32 offsetY = (worldHeight - windowHeight)/2.0f;  // Centered on window
+    i32 framesPerStep = 1;
+    i32 frame = 0;
 
-    int preset = -1;            // No button pressed for preset
-    int mode = MODE_RUN;        // Starting mode: running
+    i32 preset = -1;            // No button pressed for preset
+    i32 mode = MODE_RUN;        // Starting mode: running
     bool buttonZoomIn = false;  // Button states: false not pressed
     bool buttonZomOut = false;
     bool buttonFaster = false;
@@ -101,8 +101,8 @@ int main()
     const Shader shdrGameOfLife = LoadShader({}, TextFormat("resources/shaders/glsl%i/game_of_life.fs", GLSL_VERSION));
 
     // Set shader uniform size of the world
-    const int resolutionLoc = GetShaderLocation(shdrGameOfLife, "resolution");
-    const float resolution[2] = { static_cast<float>(worldWidth), static_cast<float>(worldHeight) };
+    const i32 resolutionLoc = GetShaderLocation(shdrGameOfLife, "resolution");
+    const f32 resolution[2] = { static_cast<f32>(worldWidth), static_cast<f32>(worldHeight) };
     SetShaderValue(shdrGameOfLife, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
     // Define two textures: the current world and the previous world
@@ -113,7 +113,7 @@ int main()
     EndTextureMode();
 
     const Image startPattern = LoadImage("resources/game_of_life/r_pentomino.png");
-    UpdateTextureRec(world2.texture, Rectangle{ worldWidth/2.0f, worldHeight/2.0f, static_cast<float>(startPattern.width), static_cast<float>(startPattern.height) }, startPattern.data);
+    UpdateTextureRec(world2.texture, Rectangle{ worldWidth/2.0f, worldHeight/2.0f, static_cast<f32>(startPattern.width), static_cast<f32>(startPattern.height) }, startPattern.data);
     UnloadImage(startPattern);
 
     // Pointers to the two textures, to be swapped
@@ -134,13 +134,13 @@ int main()
         frame++;
 
         // Change zoom: both by buttons or by mouse wheel
-        const float mouseWheelMove = GetMouseWheelMove();
+        const f32 mouseWheelMove = GetMouseWheelMove();
         if (buttonZoomIn || (buttonZomOut && (zoom > 1)) || (mouseWheelMove != 0.0f))
         {
             FreeImageToDraw(&imageToDraw);  // Zoom change: free the image to draw to be recreated again
 
-            const float centerX = offsetX + (windowWidth/2.0f)/zoom;
-            const float centerY = offsetY + (windowHeight/2.0f)/zoom;
+            const f32 centerX = offsetX + (windowWidth/2.0f)/zoom;
+            const f32 centerY = offsetY + (windowHeight/2.0f)/zoom;
             if (buttonZoomIn || (mouseWheelMove > 0.0f)) zoom *= 2;
             if ((buttonZomOut || (mouseWheelMove < 0.0f)) && (zoom > 1)) zoom /= 2;
             offsetX = centerX - (windowWidth/2.0f)/zoom;
@@ -168,20 +168,20 @@ int main()
         }
         else // MODE_DRAW
         {
-            const float offsetDecimalX = offsetX - floorf(offsetX);
-            const float offsetDecimalY = offsetY - floorf(offsetY);
-            int sizeInWorldX = static_cast<int>(ceilf((windowWidth + offsetDecimalX*zoom)/zoom));
-            int sizeInWorldY = static_cast<int>(ceilf((windowHeight + offsetDecimalY*zoom)/zoom));
-            if (offsetX + sizeInWorldX >= worldWidth) sizeInWorldX = worldWidth - static_cast<int>(floorf(offsetX));
-            if (offsetY + sizeInWorldY >= worldHeight) sizeInWorldY = worldHeight - static_cast<int>(floorf(offsetY));
+            const f32 offsetDecimalX = offsetX - floorf(offsetX);
+            const f32 offsetDecimalY = offsetY - floorf(offsetY);
+            i32 sizeInWorldX = static_cast<i32>(ceilf((windowWidth + offsetDecimalX*zoom)/zoom));
+            i32 sizeInWorldY = static_cast<i32>(ceilf((windowHeight + offsetDecimalY*zoom)/zoom));
+            if (offsetX + sizeInWorldX >= worldWidth) sizeInWorldX = worldWidth - static_cast<i32>(floorf(offsetX));
+            if (offsetY + sizeInWorldY >= worldHeight) sizeInWorldY = worldHeight - static_cast<i32>(floorf(offsetY));
 
             // Create image to draw if not created yet
             if (imageToDraw == nullptr)
             {
                 const RenderTexture2D worldOnScreen = LoadRenderTexture(sizeInWorldX, sizeInWorldY);
                 BeginTextureMode(worldOnScreen);
-                    DrawTexturePro(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<float>(sizeInWorldX), -static_cast<float>(sizeInWorldY) },
-                            Rectangle{ 0, 0, static_cast<float>(sizeInWorldX), static_cast<float>(sizeInWorldY) }, vec2{ 0, 0 }, 0.0f, WHITE);
+                    DrawTexturePro(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<f32>(sizeInWorldX), -static_cast<f32>(sizeInWorldY) },
+                            Rectangle{ 0, 0, static_cast<f32>(sizeInWorldX), static_cast<f32>(sizeInWorldY) }, vec2{ 0, 0 }, 0.0f, WHITE);
                 EndTextureMode();
                 imageToDraw = static_cast<Image *>(malloc(sizeof(Image)));
                 *imageToDraw = LoadImageFromTexture(worldOnScreen.texture);
@@ -190,19 +190,19 @@ int main()
             }
 
             const vec2 mousePosition = GetMousePosition();
-            static int firstColor = -1;
+            static i32 firstColor = -1;
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && (mousePosition.x < windowWidth))
             {
-                int mouseX = static_cast<int>(mousePosition.x + offsetDecimalX*zoom)/zoom;
-                int mouseY = static_cast<int>(mousePosition.y + offsetDecimalY*zoom)/zoom;
+                i32 mouseX = static_cast<i32>(mousePosition.x + offsetDecimalX*zoom)/zoom;
+                i32 mouseY = static_cast<i32>(mousePosition.y + offsetDecimalY*zoom)/zoom;
                 if (mouseX >= sizeInWorldX) mouseX = sizeInWorldX - 1;
                 if (mouseY >= sizeInWorldY) mouseY = sizeInWorldY - 1;
                 if (firstColor == -1) firstColor = (GetImageColor(*imageToDraw, mouseX, mouseY).r < 5)? 0 : 1;
-                const int prevColor = (GetImageColor(*imageToDraw, mouseX, mouseY).r < 5)? 0 : 1;
+                const i32 prevColor = (GetImageColor(*imageToDraw, mouseX, mouseY).r < 5)? 0 : 1;
 
                 ImageDrawPixel(imageToDraw, mouseX, mouseY, (firstColor) ? BLACK : RAYWHITE);
 
-                if (prevColor != firstColor) UpdateTextureRec(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<float>(sizeInWorldX), static_cast<float>(sizeInWorldY) }, imageToDraw->data);
+                if (prevColor != firstColor) UpdateTextureRec(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<f32>(sizeInWorldX), static_cast<f32>(sizeInWorldY) }, imageToDraw->data);
             }
             else firstColor = -1;
         }
@@ -231,26 +231,26 @@ int main()
 
                 UpdateTextureRec(currentWorld->texture, Rectangle{ worldWidth*presetPatterns[preset].position.x - pattern.width/2.0f,
                                                                      worldHeight*presetPatterns[preset].position.y - pattern.height/2.0f,
-                                                                     static_cast<float>(pattern.width), static_cast<float>(pattern.height) }, pattern.data);
+                                                                     static_cast<f32>(pattern.width), static_cast<f32>(pattern.height) }, pattern.data);
             }
             else    // Last preset: Random values
             {
                 pattern = GenImageColor(worldWidth/randomTiles, worldHeight/randomTiles, RAYWHITE);
-                for (int i = 0; i < randomTiles; i++)
+                for (i32 i = 0; i < randomTiles; i++)
                 {
-                    for (int j = 0; j < randomTiles; j++)
+                    for (i32 j = 0; j < randomTiles; j++)
                     {
                         ImageClearBackground(&pattern, RAYWHITE);
-                        for (int x = 0; x < pattern.width; x++)
+                        for (i32 x = 0; x < pattern.width; x++)
                         {
-                            for (int y = 0; y < pattern.height; y++)
+                            for (i32 y = 0; y < pattern.height; y++)
                             {
                                 if (GetRandomValue(0, 100) < 15) ImageDrawPixel(&pattern, x, y, BLACK);
                             }
                         }
                         UpdateTextureRec(currentWorld->texture,
-                                         Rectangle{ static_cast<float>(pattern.width*i), static_cast<float>(pattern.height*j),
-                                                      static_cast<float>(pattern.width), static_cast<float>(pattern.height) }, pattern.data);
+                                         Rectangle{ static_cast<f32>(pattern.width*i), static_cast<f32>(pattern.height*j),
+                                                      static_cast<f32>(pattern.width), static_cast<f32>(pattern.height) }, pattern.data);
                     }
                 }
             }
@@ -258,18 +258,18 @@ int main()
             UnloadImage(pattern);
 
             mode = MODE_PAUSE;
-            offsetX = worldWidth*presetPatterns[preset].position.x - static_cast<float>(windowWidth)/zoom/2.0f;
-            offsetY = worldHeight*presetPatterns[preset].position.y - static_cast<float>(windowHeight)/zoom/2.0f;
+            offsetX = worldWidth*presetPatterns[preset].position.x - static_cast<f32>(windowWidth)/zoom/2.0f;
+            offsetY = worldHeight*presetPatterns[preset].position.y - static_cast<f32>(windowHeight)/zoom/2.0f;
         }
 
         // Check window draw inside world limits
         if (offsetX < 0) offsetX = 0;
         if (offsetY < 0) offsetY = 0;
-        if (offsetX > worldWidth - static_cast<float>(windowWidth)/zoom) offsetX = worldWidth - static_cast<float>(windowWidth)/zoom;
-        if (offsetY > worldHeight - static_cast<float>(windowHeight)/zoom) offsetY = worldHeight - static_cast<float>(windowHeight)/zoom;
+        if (offsetX > worldWidth - static_cast<f32>(windowWidth)/zoom) offsetX = worldWidth - static_cast<f32>(windowWidth)/zoom;
+        if (offsetY > worldHeight - static_cast<f32>(windowHeight)/zoom) offsetY = worldHeight - static_cast<f32>(windowHeight)/zoom;
 
         // Rectangles for drawing texture portion to screen
-        const Rectangle textureSourceToScreen = { offsetX, offsetY, static_cast<float>(windowWidth)/zoom, static_cast<float>(windowHeight)/zoom };
+        const Rectangle textureSourceToScreen = { offsetX, offsetY, static_cast<f32>(windowWidth)/zoom, static_cast<f32>(windowHeight)/zoom };
         //----------------------------------------------------------------------------------
 
         // Draw to texture
@@ -306,7 +306,7 @@ int main()
 
             DrawText("Presets", 710, 58, 8, GRAY);
             preset = -1;
-            for (int i = 0; i < numberOfPresets; i++)
+            for (i32 i = 0; i < numberOfPresets; i++)
                 if (GuiButton(Rectangle{ 710.0f, 70.0f + 18*i, 80.0f, 16.0f }, presetPatterns[i].name)) preset = i;
 
             GuiToggleGroup(Rectangle{ 710, 258, 80, 16 }, "Run\nPause\nDraw", &mode);

@@ -27,17 +27,17 @@ typedef struct TextureCollection {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - clipboard image");
 
     TextureCollection collection[MAX_TEXTURE_COLLECTION] = {};
-    int currentCollectionIndex = 0;
+    i32 currentCollectionIndex = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ int main()
         if (IsKeyPressed(KEY_R))    // Reset image collection
         {
             // Unload textures to avoid memory leaks
-            for (int i = 0; i < currentCollectionIndex; i++) UnloadTexture(collection[i].texture);
+            for (i32 i = 0; i < currentCollectionIndex; i++) UnloadTexture(collection[i].texture);
 
             currentCollectionIndex = 0;
         }
@@ -77,13 +77,13 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < currentCollectionIndex; i++)
+            for (i32 i = 0; i < currentCollectionIndex; i++)
             {
                 if (IsTextureValid(collection[i].texture))
                 {
                     DrawTexturePro(collection[i].texture,
-                        Rectangle{0,0,static_cast<float>(collection[i].texture.width), static_cast<float>(collection[i].texture.height)},
-                        Rectangle{collection[i].position.x,collection[i].position.y, static_cast<float>(collection[i].texture.width), static_cast<float>(collection[i].texture.height)},
+                        Rectangle{0,0,static_cast<f32>(collection[i].texture.width), static_cast<f32>(collection[i].texture.height)},
+                        Rectangle{collection[i].position.x,collection[i].position.y, static_cast<f32>(collection[i].texture.width), static_cast<f32>(collection[i].texture.height)},
                         vec2{collection[i].texture.width*0.5f, collection[i].texture.height*0.5f},
                         0.0f, WHITE);
                 }
@@ -98,7 +98,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    for (int i = 0; i < currentCollectionIndex; i++)
+    for (i32 i = 0; i < currentCollectionIndex; i++)
     {
         UnloadTexture(collection[i].texture);
     }

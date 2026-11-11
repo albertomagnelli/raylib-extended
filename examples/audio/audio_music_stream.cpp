@@ -18,12 +18,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - music stream");
 
@@ -33,13 +33,13 @@ int main()
 
     PlayMusicStream(music);
 
-    float timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
+    f32 timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
     bool pause = false;             // Music playing paused
 
-    float pan = 0.0f;               // Default audio pan center [-1.0f..1.0f]
+    f32 pan = 0.0f;               // Default audio pan center [-1.0f..1.0f]
     SetMusicPan(music, pan);
 
-    float volume = 0.8f;            // Default audio volume [0.0f..1.0f]
+    f32 volume = 0.8f;            // Default audio volume [0.0f..1.0f]
     SetMusicVolume(music, volume);
 
     SetTargetFPS(30);               // Set our game to run at 30 frames-per-second
@@ -113,10 +113,10 @@ int main()
             DrawText("LEFT-RIGHT for PAN CONTROL", 320, 74, 10, DARKBLUE);
             DrawRectangle(300, 100, 200, 12, LIGHTGRAY);
             DrawRectangleLines(300, 100, 200, 12, GRAY);
-            DrawRectangle(static_cast<int>(300 + (pan + 1.0f)/2.0f*200 - 5), 92, 10, 28, DARKGRAY);
+            DrawRectangle(static_cast<i32>(300 + (pan + 1.0f)/2.0f*200 - 5), 92, 10, 28, DARKGRAY);
 
             DrawRectangle(200, 200, 400, 12, LIGHTGRAY);
-            DrawRectangle(200, 200, static_cast<int>(timePlayed*400.0f), 12, MAROON);
+            DrawRectangle(200, 200, static_cast<i32>(timePlayed*400.0f), 12, MAROON);
             DrawRectangleLines(200, 200, 400, 12, GRAY);
 
             DrawText("PRESS SPACE TO RESTART MUSIC", 215, 250, 20, LIGHTGRAY);
@@ -125,7 +125,7 @@ int main()
             DrawText("UP-DOWN for VOLUME CONTROL", 320, 334, 10, DARKGREEN);
             DrawRectangle(300, 360, 200, 12, LIGHTGRAY);
             DrawRectangleLines(300, 360, 200, 12, GRAY);
-            DrawRectangle(static_cast<int>(300 + volume*200 - 5), 352, 10, 28, DARKGRAY);
+            DrawRectangle(static_cast<i32>(300 + volume*200 - 5), 352, 10, 28, DARKGRAY);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

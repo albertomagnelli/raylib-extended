@@ -30,12 +30,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - hot reloading");
 
@@ -47,14 +47,14 @@ int main()
     Shader shader = LoadShader({}, TextFormat(fragShaderFileName, GLSL_VERSION));
 
     // Get shader locations for required uniforms
-    int resolutionLoc = GetShaderLocation(shader, "resolution");
-    int mouseLoc = GetShaderLocation(shader, "mouse");
-    int timeLoc = GetShaderLocation(shader, "time");
+    i32 resolutionLoc = GetShaderLocation(shader, "resolution");
+    i32 mouseLoc = GetShaderLocation(shader, "mouse");
+    i32 timeLoc = GetShaderLocation(shader, "time");
 
-    float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
+    f32 resolution[2] = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    float totalTime = 0.0f;
+    f32 totalTime = 0.0f;
     bool shaderAutoReloading = false;
 
     SetTargetFPS(60);                       // Set our game to run at 60 frames-per-second
@@ -67,7 +67,7 @@ int main()
         //----------------------------------------------------------------------------------
         totalTime += GetFrameTime();
         const vec2 mouse = GetMousePosition();
-        float mousePos[2] = { mouse.x, mouse.y };
+        f32 mousePos[2] = { mouse.x, mouse.y };
 
         // Set shader required uniform values
         SetShaderValue(shader, timeLoc, &totalTime, SHADER_UNIFORM_FLOAT);

@@ -21,12 +21,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera");
 
@@ -34,21 +34,21 @@ int main()
     Rectangle buildings[MAX_BUILDINGS] = {};
     Color buildColors[MAX_BUILDINGS] = {};
 
-    int spacing = 0;
+    i32 spacing = 0;
 
-    for (int i = 0; i < MAX_BUILDINGS; i++)
+    for (i32 i = 0; i < MAX_BUILDINGS; i++)
     {
-        buildings[i].width = static_cast<float>(GetRandomValue(50, 200));
-        buildings[i].height = static_cast<float>(GetRandomValue(100, 800));
+        buildings[i].width = static_cast<f32>(GetRandomValue(50, 200));
+        buildings[i].height = static_cast<f32>(GetRandomValue(100, 800));
         buildings[i].y = screenHeight - 130.0f - buildings[i].height;
         buildings[i].x = -6000.0f + spacing;
 
-        spacing += static_cast<int>(buildings[i].width);
+        spacing += static_cast<i32>(buildings[i].width);
 
         buildColors[i] = Color{
-            static_cast<unsigned char>(GetRandomValue(200, 240)),
-            static_cast<unsigned char>(GetRandomValue(200, 240)),
-            static_cast<unsigned char>(GetRandomValue(200, 250)),
+            static_cast<u8>(GetRandomValue(200, 240)),
+            static_cast<u8>(GetRandomValue(200, 240)),
+            static_cast<u8>(GetRandomValue(200, 250)),
             255};
     }
 
@@ -106,12 +106,12 @@ int main()
 
                 DrawRectangle(-6000, 320, 13000, 8000, DARKGRAY);
 
-                for (int i = 0; i < MAX_BUILDINGS; i++) DrawRectangleRec(buildings[i], buildColors[i]);
+                for (i32 i = 0; i < MAX_BUILDINGS; i++) DrawRectangleRec(buildings[i], buildColors[i]);
 
                 DrawRectangleRec(player, RED);
 
-                DrawLine(static_cast<int>(camera.target.x), -screenHeight*10, static_cast<int>(camera.target.x), screenHeight*10, GREEN);
-                DrawLine(-screenWidth*10, static_cast<int>(camera.target.y), screenWidth*10, static_cast<int>(camera.target.y), GREEN);
+                DrawLine(static_cast<i32>(camera.target.x), -screenHeight*10, static_cast<i32>(camera.target.x), screenHeight*10, GREEN);
+                DrawLine(-screenWidth*10, static_cast<i32>(camera.target.y), screenWidth*10, static_cast<i32>(camera.target.y), GREEN);
 
             EndMode2D();
 

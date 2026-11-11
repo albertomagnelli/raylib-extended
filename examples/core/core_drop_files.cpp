@@ -25,20 +25,20 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - drop files");
 
-    int filePathCounter = 0;
+    i32 filePathCounter = 0;
     char *filePaths[MAX_FILEPATH_RECORDED] = {}; // We will register a maximum of filepaths
 
     // Allocate space for the required file paths
-    for (int i = 0; i < MAX_FILEPATH_RECORDED; i++)
+    for (i32 i = 0; i < MAX_FILEPATH_RECORDED; i++)
     {
         filePaths[i] = static_cast<char *>(calloc(MAX_FILEPATH_SIZE, 1));
     }
@@ -55,7 +55,7 @@ int main()
         {
             FilePathList droppedFiles = LoadDroppedFiles();
 
-            for (int i = 0, offset = filePathCounter; i < static_cast<int>(droppedFiles.paths.size()); i++)
+            for (i32 i = 0, offset = filePathCounter; i < static_cast<i32>(droppedFiles.paths.size()); i++)
             {
                 if (filePathCounter < (MAX_FILEPATH_RECORDED - 1))
                 {
@@ -78,7 +78,7 @@ int main()
             {
                 DrawText("Dropped files:", 100, 40, 20, DARKGRAY);
 
-                for (int i = 0; i < filePathCounter; i++)
+                for (i32 i = 0; i < filePathCounter; i++)
                 {
                     if (i%2 == 0) DrawRectangle(0, 85 + 40*i, screenWidth, 40, Fade(LIGHTGRAY, 0.5f));
                     else DrawRectangle(0, 85 + 40*i, screenWidth, 40, Fade(LIGHTGRAY, 0.3f));
@@ -95,7 +95,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    for (int i = 0; i < MAX_FILEPATH_RECORDED; i++)
+    for (i32 i = 0; i < MAX_FILEPATH_RECORDED; i++)
     {
         free(filePaths[i]); // Free allocated memory for all filepaths
     }

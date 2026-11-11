@@ -20,18 +20,18 @@
 //------------------------------------------------------------------------------------
 // Custom Functions Declaration
 //------------------------------------------------------------------------------------
-void DrawCubeTexture(Texture2D texture, vec3 position, float width, float height, float length, Color color);                      // Draw cube textured
-void DrawCubeTextureRec(Texture2D texture, Rectangle source, vec3 position, float width, float height, float length, Color color); // Draw cube with a region of a texture
+void DrawCubeTexture(Texture2D texture, vec3 position, f32 width, f32 height, f32 length, Color color);                      // Draw cube textured
+void DrawCubeTextureRec(Texture2D texture, Rectangle source, vec3 position, f32 width, f32 height, f32 length, Color color); // Draw cube with a region of a texture
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - textured cube");
 
@@ -97,11 +97,11 @@ int main()
 //------------------------------------------------------------------------------------
 // Draw cube textured
 // NOTE: Cube position is the center position
-void DrawCubeTexture(Texture2D texture, vec3 position, float width, float height, float length, Color color)
+void DrawCubeTexture(Texture2D texture, vec3 position, f32 width, f32 height, f32 length, Color color)
 {
-    const float x = position.x;
-    const float y = position.y;
-    const float z = position.z;
+    const f32 x = position.x;
+    const f32 y = position.y;
+    const f32 z = position.z;
 
     // Set desired texture to be enabled while drawing following vertex data
     rlSetTexture(texture.id);
@@ -159,13 +159,13 @@ void DrawCubeTexture(Texture2D texture, vec3 position, float width, float height
 }
 
 // Draw cube with texture piece applied to all faces
-void DrawCubeTextureRec(Texture2D texture, Rectangle source, vec3 position, float width, float height, float length, Color color)
+void DrawCubeTextureRec(Texture2D texture, Rectangle source, vec3 position, f32 width, f32 height, f32 length, Color color)
 {
-    const float x = position.x;
-    const float y = position.y;
-    const float z = position.z;
-    const float texWidth = static_cast<float>(texture.width);
-    const float texHeight = static_cast<float>(texture.height);
+    const f32 x = position.x;
+    const f32 y = position.y;
+    const f32 z = position.z;
+    const f32 texWidth = static_cast<f32>(texture.width);
+    const f32 texHeight = static_cast<f32>(texture.height);
 
     // Set desired texture to be enabled while drawing following vertex data
     rlSetTexture(texture.id);

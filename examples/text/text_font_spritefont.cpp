@@ -28,12 +28,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font spritefont");
 
@@ -46,13 +46,13 @@ int main()
     const Font font2 = LoadFont("resources/custom_alagard.png");        // Font loading
     const Font font3 = LoadFont("resources/custom_jupiter_crash.png");  // Font loading
 
-    const vec2 fontPosition1 = { screenWidth/2.0f - MeasureTextEx(font1, msg1, static_cast<float>(font1.baseSize), -3).x/2,
+    const vec2 fontPosition1 = { screenWidth/2.0f - MeasureTextEx(font1, msg1, static_cast<f32>(font1.baseSize), -3).x/2,
                               screenHeight/2.0f - font1.baseSize/2.0f - 80.0f };
 
-    const vec2 fontPosition2 = { screenWidth/2.0f - MeasureTextEx(font2, msg2, static_cast<float>(font2.baseSize), -2.0f).x/2.0f,
+    const vec2 fontPosition2 = { screenWidth/2.0f - MeasureTextEx(font2, msg2, static_cast<f32>(font2.baseSize), -2.0f).x/2.0f,
                               screenHeight/2.0f - font2.baseSize/2.0f - 10.0f };
 
-    const vec2 fontPosition3 = { screenWidth/2.0f - MeasureTextEx(font3, msg3, static_cast<float>(font3.baseSize), 2.0f).x/2.0f,
+    const vec2 fontPosition3 = { screenWidth/2.0f - MeasureTextEx(font3, msg3, static_cast<f32>(font3.baseSize), 2.0f).x/2.0f,
                               screenHeight/2.0f - font3.baseSize/2.0f + 50.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -72,9 +72,9 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawTextEx(font1, msg1, fontPosition1, static_cast<float>(font1.baseSize), -3, WHITE);
-            DrawTextEx(font2, msg2, fontPosition2, static_cast<float>(font2.baseSize), -2, WHITE);
-            DrawTextEx(font3, msg3, fontPosition3, static_cast<float>(font3.baseSize), 2, WHITE);
+            DrawTextEx(font1, msg1, fontPosition1, static_cast<f32>(font1.baseSize), -3, WHITE);
+            DrawTextEx(font2, msg2, fontPosition2, static_cast<f32>(font2.baseSize), -2, WHITE);
+            DrawTextEx(font3, msg3, fontPosition3, static_cast<f32>(font3.baseSize), 2, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

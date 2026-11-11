@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image drawing");
 
@@ -39,9 +39,9 @@ int main()
     Image parrots = LoadImage("resources/parrots.png");     // Load image in CPU memory (RAM)
 
     // Draw one image over the other with a scaling of 1.5f
-    ImageDrawImagePro(&parrots, cat, Rectangle{ 0, 0, static_cast<float>(cat.width), static_cast<float>(cat.height) },
+    ImageDrawImagePro(&parrots, cat, Rectangle{ 0, 0, static_cast<f32>(cat.width), static_cast<f32>(cat.height) },
         Rectangle{ 30, 40, cat.width*1.5f, cat.height*1.5f }, vec2{}, 0.0f, WHITE);
-    ImageCrop(&parrots, Rectangle{ 0, 50, static_cast<float>(parrots.width), static_cast<float>(parrots.height) - 100 }); // Crop resulting image
+    ImageCrop(&parrots, Rectangle{ 0, 50, static_cast<f32>(parrots.width), static_cast<f32>(parrots.height) - 100 }); // Crop resulting image
 
     // Draw on the image with a few image draw methods
     ImageDrawPixel(&parrots, 10, 10, RAYWHITE);
@@ -54,7 +54,7 @@ int main()
     const Font font = LoadFont("resources/custom_jupiter_crash.png");
 
     // Draw over image using custom font
-    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", vec2{ 300, 230 }, static_cast<float>(font.baseSize), -2, WHITE);
+    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", vec2{ 300, 230 }, static_cast<f32>(font.baseSize), -2, WHITE);
 
     UnloadFont(font);       // Unload custom font (already drawn used on image)
 

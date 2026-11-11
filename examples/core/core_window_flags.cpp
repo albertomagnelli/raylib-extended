@@ -18,12 +18,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     // Possible window flags
     /*
@@ -48,9 +48,9 @@ int main()
 
     vec2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
     vec2 ballSpeed = { 5.0f, 4.0f };
-    constexpr float ballRadius = 20;
+    constexpr f32 ballRadius = 20;
 
-    int framesCounter = 0;
+    i32 framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------
@@ -153,7 +153,7 @@ int main()
         else ClearBackground(RAYWHITE);
 
         DrawCircleV(ballPosition, ballRadius, MAROON);
-        DrawRectangleLinesEx(Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) }, 4, RAYWHITE);
+        DrawRectangleLinesEx(Rectangle{ 0, 0, static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) }, 4, RAYWHITE);
 
         DrawCircleV(GetMousePosition(), 10, DARKBLUE);
 

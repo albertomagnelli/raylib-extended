@@ -23,17 +23,17 @@
 #define MAX_POINTS  11      // 10 points and back to the start
 
 // Draw textured polygon, defined by vertex and texture coordinates
-void DrawTexturePoly(Texture2D texture, vec2 center, vec2 *points, vec2 *texcoords, int pointCount, Color tint);
+void DrawTexturePoly(Texture2D texture, vec2 center, vec2 *points, vec2 *texcoords, i32 pointCount, Color tint);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - polygon drawing");
 
@@ -55,7 +55,7 @@ int main()
     // Define the base poly vertices from the UV's
     // NOTE: They can be specified in any other way
     vec2 points[MAX_POINTS] = {};
-    for (int i = 0; i < MAX_POINTS; i++)
+    for (i32 i = 0; i < MAX_POINTS; i++)
     {
         points[i].x = (texcoords[i].x - 0.5f)*256.0f;
         points[i].y = (texcoords[i].y - 0.5f)*256.0f;
@@ -64,12 +64,12 @@ int main()
     // Define the vertices drawing position
     // NOTE: Initially same as points but updated every frame
     vec2 positions[MAX_POINTS] = {};
-    for (int i = 0; i < MAX_POINTS; i++) positions[i] = points[i];
+    for (i32 i = 0; i < MAX_POINTS; i++) positions[i] = points[i];
 
     // Load texture to be mapped to poly
     const Texture texture = LoadTexture("resources/cat.png");
 
-    float angle = 0.0f;             // Rotation angle (in degrees)
+    f32 angle = 0.0f;             // Rotation angle (in degrees)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ int main()
         // Update points rotation with an angle transform
         // NOTE: Base points position are not modified
         angle++;
-        for (int i = 0; i < MAX_POINTS; i++) positions[i] = Vector2Rotate(points[i], angle*DEG2RAD);
+        for (i32 i = 0; i < MAX_POINTS; i++) positions[i] = Vector2Rotate(points[i], angle*DEG2RAD);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -113,7 +113,7 @@ int main()
 // Draw textured polygon, defined by vertex and texture coordinates
 // NOTE: Polygon center must have straight line path to all points
 // without crossing perimeter, points must be in anticlockwise order
-void DrawTexturePoly(Texture2D texture, vec2 center, vec2 *points, vec2 *texcoords, int pointCount, Color tint)
+void DrawTexturePoly(Texture2D texture, vec2 center, vec2 *points, vec2 *texcoords, i32 pointCount, Color tint)
 {
     rlSetTexture(texture.id);
     rlBegin(RL_TRIANGLES);
@@ -121,7 +121,7 @@ void DrawTexturePoly(Texture2D texture, vec2 center, vec2 *points, vec2 *texcoor
 
         rlColor4ub(tint.r, tint.g, tint.b, tint.a);
 
-        for (int i = 0; i < pointCount - 1; i++)
+        for (i32 i = 0; i < pointCount - 1; i++)
         {
             rlTexCoord2f(0.5f, 0.5f);
             rlVertex2f(center.x, center.y);

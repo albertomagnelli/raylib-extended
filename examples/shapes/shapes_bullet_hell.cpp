@@ -35,32 +35,32 @@ typedef struct Bullet {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bullet hell");
 
     // Bullets definition
     Bullet *bullets = static_cast<Bullet *>(calloc(MAX_BULLETS, sizeof(Bullet))); // Bullets array
-    int bulletCount = 0;
-    int bulletDisabledCount = 0; // Used to calculate how many bullets are on screen
-    constexpr int bulletRadius = 10;
-    float bulletSpeed = 3.0f;
-    int bulletRows = 6;
+    i32 bulletCount = 0;
+    i32 bulletDisabledCount = 0; // Used to calculate how many bullets are on screen
+    constexpr i32 bulletRadius = 10;
+    f32 bulletSpeed = 3.0f;
+    i32 bulletRows = 6;
     const Color bulletColor[2] = { RED, BLUE };
 
     // Spawner variables
-    float baseDirection = 0;
-    int angleIncrement = 5; // After spawn all bullet rows, increment this value on the baseDirection for next the frame
-    float spawnCooldown = 2;
-    float spawnCooldownTimer = spawnCooldown;
+    f32 baseDirection = 0;
+    i32 angleIncrement = 5; // After spawn all bullet rows, increment this value on the baseDirection for next the frame
+    f32 spawnCooldown = 2;
+    f32 spawnCooldownTimer = spawnCooldown;
 
     // Magic circle
-    float magicCircleRotation = 0;
+    f32 magicCircleRotation = 0;
 
     // Used on performance drawing
     const RenderTexture bulletTexture = LoadRenderTexture(24, 24);
@@ -68,8 +68,8 @@ int main()
     // Draw circle to bullet texture, then draw bullet using DrawTexture()
     // NOTE: This is done to improve the performance, since DrawCircle() is very slow
     BeginTextureMode(bulletTexture);
-        DrawCircle(12, 12, static_cast<float>(bulletRadius), WHITE);
-        DrawCircleLines(12, 12, static_cast<float>(bulletRadius), BLACK);
+        DrawCircle(12, 12, static_cast<f32>(bulletRadius), WHITE);
+        DrawCircleLines(12, 12, static_cast<f32>(bulletRadius), BLACK);
     EndTextureMode();
 
     bool drawInPerformanceMode = true; // Switch between DrawCircle() and DrawTexture()
@@ -96,16 +96,16 @@ int main()
             spawnCooldownTimer = spawnCooldown;
 
             // Spawn bullets
-            const float degreesPerRow = 360.0f/bulletRows;
-            for (int row = 0; row < bulletRows; row++)
+            const f32 degreesPerRow = 360.0f/bulletRows;
+            for (i32 row = 0; row < bulletRows; row++)
             {
                 if (bulletCount < MAX_BULLETS)
                 {
-                    bullets[bulletCount].position = vec2{static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2};
+                    bullets[bulletCount].position = vec2{static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2};
                     bullets[bulletCount].disabled = false;
                     bullets[bulletCount].color = bulletColor[row%2];
 
-                    const float bulletDirection = baseDirection + (degreesPerRow*row);
+                    const f32 bulletDirection = baseDirection + (degreesPerRow*row);
 
                     // Bullet speed*bullet direction, this will determine how much pixels will be incremented/decremented
                     // from the bullet position every frame. Since the bullets doesn't change its direction and speed,
@@ -125,7 +125,7 @@ int main()
         }
 
         // Update bullets position based on its acceleration
-        for (int i = 0; i < bulletCount; i++)
+        for (i32 i = 0; i < bulletCount; i++)
         {
             // Only update bullet if inside the screen
             if (!bullets[i].disabled)
@@ -174,9 +174,9 @@ int main()
 
             // Draw magic circle
             magicCircleRotation++;
-            DrawRectanglePro(Rectangle{ static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2, 120, 120 },
+            DrawRectanglePro(Rectangle{ static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2, 120, 120 },
                 vec2{ 60.0f, 60.0f }, magicCircleRotation, PURPLE);
-            DrawRectanglePro(Rectangle{ static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2, 120, 120 },
+            DrawRectanglePro(Rectangle{ static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2, 120, 120 },
                 vec2{ 60.0f, 60.0f }, magicCircleRotation + 45, PURPLE);
             DrawCircleLines(screenWidth/2, screenHeight/2, 70, BLACK);
             DrawCircleLines(screenWidth/2, screenHeight/2, 50, BLACK);
@@ -186,14 +186,14 @@ int main()
             if (drawInPerformanceMode)
             {
                 // Draw bullets using pre-rendered texture containing circle
-                for (int i = 0; i < bulletCount; i++)
+                for (i32 i = 0; i < bulletCount; i++)
                 {
                     // Do not draw disabled bullets (out of screen)
                     if (!bullets[i].disabled)
                     {
                         DrawTexture(bulletTexture.texture,
-                            static_cast<int>(bullets[i].position.x - bulletTexture.texture.width*0.5f),
-                            static_cast<int>(bullets[i].position.y - bulletTexture.texture.height*0.5f),
+                            static_cast<i32>(bullets[i].position.x - bulletTexture.texture.width*0.5f),
+                            static_cast<i32>(bullets[i].position.y - bulletTexture.texture.height*0.5f),
                             bullets[i].color);
                     }
                 }
@@ -201,13 +201,13 @@ int main()
             else
             {
                 // Draw bullets using DrawCircle(), less performant
-                for (int i = 0; i < bulletCount; i++)
+                for (i32 i = 0; i < bulletCount; i++)
                 {
                     // Do not draw disabled bullets (out of screen)
                     if (!bullets[i].disabled)
                     {
-                        DrawCircleV(bullets[i].position, static_cast<float>(bulletRadius), bullets[i].color);
-                        DrawCircleLinesV(bullets[i].position, static_cast<float>(bulletRadius), BLACK);
+                        DrawCircleV(bullets[i].position, static_cast<f32>(bulletRadius), bullets[i].color);
+                        DrawCircleLinesV(bullets[i].position, static_cast<f32>(bulletRadius), BLACK);
                     }
                 }
             }

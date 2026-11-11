@@ -24,12 +24,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - tesseract view");
 
@@ -53,9 +53,9 @@ int main()
         { -1, -1, -1, 1 }, { -1, -1, -1, -1 },
     };
 
-    float rotation = 0.0f;
+    f32 rotation = 0.0f;
     vec3 transformed[16] = {};
-    float wValues[16] = {};
+    f32 wValues[16] = {};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -65,9 +65,9 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        rotation = DEG2RAD*45.0f*static_cast<float>(GetTime());
+        rotation = DEG2RAD*45.0f*static_cast<f32>(GetTime());
 
-        for (int i = 0; i < 16; i++)
+        for (i32 i = 0; i < 16; i++)
         {
             vec4 p = tesseract[i];
 
@@ -78,7 +78,7 @@ int main()
 
             // Projection from XYZW to XYZ from perspective point (0, 0, 0, 3)
             // NOTE: Trace a ray from (0, 0, 0, 3) > p and continue until W = 0
-            const float c = 3.0f/(3.0f - p.w);
+            const f32 c = 3.0f/(3.0f - p.w);
             p.x = c*p.x;
             p.y = c*p.y;
             p.z = c*p.z;
@@ -96,18 +96,18 @@ int main()
             ClearBackground(RAYWHITE);
 
             BeginMode3D(camera);
-                for (int i = 0; i < 16; i++)
+                for (i32 i = 0; i < 16; i++)
                 {
                     // Draw spheres to indicate the W value
                     DrawSphere(transformed[i], fabsf(wValues[i]*0.1f), RED);
 
-                    for (int j = 0; j < 16; j++)
+                    for (i32 j = 0; j < 16; j++)
                     {
                         // Two lines are connected if they differ by 1 coordinate
                         // This way we dont have to keep an edge list
                         const vec4 v1 = tesseract[i];
                         const vec4 v2 = tesseract[j];
-                        const int diff = static_cast<int>(v1.x == v2.x) + static_cast<int>(v1.y == v2.y) + static_cast<int>(v1.z == v2.z) + static_cast<int>(v1.w == v2.w);
+                        const i32 diff = static_cast<i32>(v1.x == v2.x) + static_cast<i32>(v1.y == v2.y) + static_cast<i32>(v1.z == v2.z) + static_cast<i32>(v1.w == v2.w);
 
                         // Draw only differing by 1 coordinate and the lower index only (duplicate lines)
                         if (diff == 3 && i < j) DrawLine3D(transformed[i], transformed[j], MAROON);

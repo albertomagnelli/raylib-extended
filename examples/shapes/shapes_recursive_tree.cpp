@@ -27,28 +27,28 @@
 typedef struct {
     vec2 start;
     vec2 end;
-    float angle;
-    float length;
+    f32 angle;
+    f32 length;
 } Branch;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - recursive tree");
 
-    const vec2 start = { (screenWidth/2.0f) - 125.0f, static_cast<float>(screenHeight) };
-    float angle = 40.0f;
-    float thick = 1.0f;
-    float treeDepth = 10.0f;
-    float branchDecay = 0.66f;
-    float length = 120.0f;
+    const vec2 start = { (screenWidth/2.0f) - 125.0f, static_cast<f32>(screenHeight) };
+    f32 angle = 40.0f;
+    f32 thick = 1.0f;
+    f32 treeDepth = 10.0f;
+    f32 branchDecay = 0.66f;
+    f32 length = 120.0f;
     bool bezier = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -59,30 +59,30 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float theta = angle*DEG2RAD;
-        const int maxBranches = static_cast<int>(powf(2, floorf(treeDepth)));
+        const f32 theta = angle*DEG2RAD;
+        const i32 maxBranches = static_cast<i32>(powf(2, floorf(treeDepth)));
         Branch branches[1030] = {};
-        int count = 0;
+        i32 count = 0;
 
         const vec2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
         branches[count++] = Branch{start, initialEnd, 0.0f, length};
 
-        for (int i = 0; i < count; i++)
+        for (i32 i = 0; i < count; i++)
         {
             const Branch branch = branches[i];
             if (branch.length < 2) continue;
 
-            const float nextLength = branch.length*branchDecay;
+            const f32 nextLength = branch.length*branchDecay;
 
             if (count < maxBranches && nextLength >= 2)
             {
                 const vec2 branchStart = branch.end;
 
-                const float angle1 = branch.angle + theta;
+                const f32 angle1 = branch.angle + theta;
                 const vec2 branchEnd1 = { branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
                 branches[count++] = Branch{branchStart, branchEnd1, angle1, nextLength};
 
-                const float angle2 = branch.angle - theta;
+                const f32 angle2 = branch.angle - theta;
                 const vec2 branchEnd2 = { branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
                 branches[count++] = Branch{branchStart, branchEnd2, angle2, nextLength};
             }
@@ -94,7 +94,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < count; i++)
+            for (i32 i = 0; i < count; i++)
             {
                 const Branch branch = branches[i];
                 if (branch.length >= 2)

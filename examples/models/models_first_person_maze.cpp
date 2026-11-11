@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - first person maze");
 
@@ -68,10 +68,10 @@ int main()
 
         // Check player collision (we simplify to 2D collision detection)
         const vec2 playerPos = { camera.position.x, camera.position.z };
-        constexpr float playerRadius = 0.1f;  // Collision radius (player is modelled as a cilinder for collision)
+        constexpr f32 playerRadius = 0.1f;  // Collision radius (player is modelled as a cilinder for collision)
 
-        int playerCellX = static_cast<int>(playerPos.x - mapPosition.x + 0.5f);
-        int playerCellY = static_cast<int>(playerPos.y - mapPosition.z + 0.5f);
+        i32 playerCellX = static_cast<i32>(playerPos.x - mapPosition.x + 0.5f);
+        i32 playerCellY = static_cast<i32>(playerPos.y - mapPosition.z + 0.5f);
 
         // Out-of-limits security check
         if (playerCellX < 0) playerCellX = 0;
@@ -81,12 +81,12 @@ int main()
         else if (playerCellY >= cubicmap.height) playerCellY = cubicmap.height - 1;
 
         // Check map collisions using image data and player position against surrounding cells only
-        for (int y = playerCellY - 1; y <= playerCellY + 1; y++)
+        for (i32 y = playerCellY - 1; y <= playerCellY + 1; y++)
         {
             // Avoid map accessing out of bounds
             if ((y >= 0) && (y < cubicmap.height))
             {
-                for (int x = playerCellX - 1; x <= playerCellX + 1; x++)
+                for (i32 x = playerCellX - 1; x <= playerCellX + 1; x++)
                 {
                     // NOTE: Collision: Only checking R channel for white pixel
                     if (((x >= 0) && (x < cubicmap.width)) &&

@@ -78,14 +78,14 @@ static void EndScissorModeShape(void)
 
 // Two example mask shapes, drawn in WHITE (the color is irrelevant here,
 // only the stencil write from pass 1 matters)
-typedef struct { vec2 center; float radius; } CircleMask;
+typedef struct { vec2 center; f32 radius; } CircleMask;
 static void DrawCircleMask(void *userData)
 {
     CircleMask *m = static_cast<CircleMask *>(userData);
     DrawCircleV(m->center, m->radius, WHITE);
 }
 
-typedef struct { vec2 center; float radius; int sides; } PolyMask;
+typedef struct { vec2 center; f32 radius; i32 sides; } PolyMask;
 static void DrawPolyMask(void *userData)
 {
     PolyMask *m = static_cast<PolyMask *>(userData);
@@ -95,18 +95,18 @@ static void DrawPolyMask(void *userData)
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - scissor shapes");
 
     vec2 circleCenter = { screenWidth/2.0f - 120, screenHeight/2.0f };
     const vec2 hexCenter = { screenWidth/2.0f + 120, screenHeight/2.0f };
-    constexpr float maskRadius = 100.0f;
+    constexpr f32 maskRadius = 100.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        circleCenter.y = screenHeight/2.0f + sinf(static_cast<float>(GetTime()))*40.0f;
+        circleCenter.y = screenHeight/2.0f + sinf(static_cast<f32>(GetTime()))*40.0f;
         //----------------------------------------------------------------------------------
 
         // Draw

@@ -21,17 +21,17 @@
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static char *GetDataAsHexText(const unsigned int *data, int dataSize);
+static char *GetDataAsHexText(const u32 *data, i32 dataSize);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - compute hash");
 
@@ -41,14 +41,14 @@ int main()
     bool btnComputeHashes = false;
 
     // Data hash values
-    unsigned int hashCRC32 = 0;
-    unsigned int *hashMD5 = nullptr;
-    unsigned int *hashSHA1 = nullptr;
-    unsigned int *hashSHA256 = nullptr;
+    u32 hashCRC32 = 0;
+    u32 *hashMD5 = nullptr;
+    u32 *hashSHA1 = nullptr;
+    u32 *hashSHA256 = nullptr;
 
     // Base64 encoded data
     std::string base64Text;
-    int base64TextSize = 0;
+    i32 base64TextSize = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -60,15 +60,15 @@ int main()
         //----------------------------------------------------------------------------------
         if (btnComputeHashes)
         {
-            const int textInputLen = static_cast<int>(strlen(textInput));
+            const i32 textInputLen = static_cast<i32>(strlen(textInput));
 
             // Encode data to Base64 string (includes NULL terminator), memory must be MemFree()
-            base64Text = EncodeDataBase64(reinterpret_cast<unsigned char *>(textInput), textInputLen, &base64TextSize);
+            base64Text = EncodeDataBase64(reinterpret_cast<u8 *>(textInput), textInputLen, &base64TextSize);
 
-            hashCRC32 = ComputeCRC32(reinterpret_cast<unsigned char *>(textInput), textInputLen);     // Compute CRC32 hash code (4 bytes)
-            hashMD5 = ComputeMD5(reinterpret_cast<unsigned char *>(textInput), textInputLen);         // Compute MD5 hash code, returns static int[4] (16 bytes)
-            hashSHA1 = ComputeSHA1(reinterpret_cast<unsigned char *>(textInput), textInputLen);       // Compute SHA1 hash code, returns static int[5] (20 bytes)
-            hashSHA256 = ComputeSHA256(reinterpret_cast<unsigned char *>(textInput), textInputLen);   // Compute SHA256 hash code, returns static int[8] (32 bytes)
+            hashCRC32 = ComputeCRC32(reinterpret_cast<u8 *>(textInput), textInputLen);     // Compute CRC32 hash code (4 bytes)
+            hashMD5 = ComputeMD5(reinterpret_cast<u8 *>(textInput), textInputLen);         // Compute MD5 hash code, returns static int[4] (16 bytes)
+            hashSHA1 = ComputeSHA1(reinterpret_cast<u8 *>(textInput), textInputLen);       // Compute SHA1 hash code, returns static int[5] (20 bytes)
+            hashSHA256 = ComputeSHA256(reinterpret_cast<u8 *>(textInput), textInputLen);   // Compute SHA256 hash code, returns static int[8] (32 bytes)
         }
         //----------------------------------------------------------------------------------
 
@@ -127,14 +127,14 @@ int main()
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
-static char *GetDataAsHexText(const unsigned int *data, int dataSize)
+static char *GetDataAsHexText(const u32 *data, i32 dataSize)
 {
     static char text[128] = {};
     memset(text, 0, 128);
 
     if ((data != nullptr) && (dataSize > 0) && (dataSize < ((128/8) - 1)))
     {
-        for (int i = 0; i < dataSize; i++) snprintf(text + i*8, 128 - i*8, "%08X", data[i]);
+        for (i32 i = 0; i < dataSize; i++) snprintf(text + i*8, 128 - i*8, "%08X", data[i]);
     }
     else snprintf(text, 128, "00000000");
 

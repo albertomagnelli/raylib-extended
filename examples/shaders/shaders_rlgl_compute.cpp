@@ -36,51 +36,51 @@
 //----------------------------------------------------------------------------------
 // Game Of Life Update Command
 typedef struct GolUpdateCmd {
-    unsigned int x;         // x coordinate of the gol command
-    unsigned int y;         // y coordinate of the gol command
-    unsigned int w;         // width of the filled zone
-    unsigned int enabled;   // whether to enable or disable zone
+    u32 x;         // x coordinate of the gol command
+    u32 y;         // y coordinate of the gol command
+    u32 w;         // width of the filled zone
+    u32 enabled;   // whether to enable or disable zone
 } GolUpdateCmd;
 
 // Game Of Life Update Commands SSBO
 typedef struct GolUpdateSSBO {
-    unsigned int count;
+    u32 count;
     GolUpdateCmd commands[MAX_BUFFERED_TRANSFERTS];
 } GolUpdateSSBO;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = GOL_WIDTH;
-    const int screenHeight = GOL_WIDTH;
+    const i32 screenWidth = GOL_WIDTH;
+    const i32 screenHeight = GOL_WIDTH;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - rlgl compute");
 
-    const vec2 resolution = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
-    unsigned int brushSize = 8;
+    const vec2 resolution = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
+    u32 brushSize = 8;
 
     // Game of Life logic compute shader
     const std::string golLogicCode = LoadFileText("resources/shaders/glsl430/gol.glsl");
-    const unsigned int golLogicShader = rlLoadShader(golLogicCode, RL_COMPUTE_SHADER);
-    const unsigned int golLogicProgram = rlLoadShaderProgramCompute(golLogicShader);
+    const u32 golLogicShader = rlLoadShader(golLogicCode, RL_COMPUTE_SHADER);
+    const u32 golLogicProgram = rlLoadShaderProgramCompute(golLogicShader);
 
     // Game of Life logic render shader
     const Shader golRenderShader = LoadShader({}, "resources/shaders/glsl430/gol_render.glsl");
-    const int resUniformLoc = GetShaderLocation(golRenderShader, "resolution");
+    const i32 resUniformLoc = GetShaderLocation(golRenderShader, "resolution");
 
     // Game of Life transfert shader (CPU<->GPU download and upload)
     const std::string golTransfertCode = LoadFileText("resources/shaders/glsl430/gol_transfert.glsl");
-    const unsigned int golTransfertShader = rlLoadShader(golTransfertCode, RL_COMPUTE_SHADER);
-    const unsigned int golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
+    const u32 golTransfertShader = rlLoadShader(golTransfertCode, RL_COMPUTE_SHADER);
+    const u32 golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
 
     // Load shader storage buffer object (SSBO), id returned
-    unsigned int ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), nullptr, RL_DYNAMIC_COPY);
-    unsigned int ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(unsigned int), nullptr, RL_DYNAMIC_COPY);
-    const unsigned int ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), nullptr, RL_DYNAMIC_COPY);
+    u32 ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(u32), nullptr, RL_DYNAMIC_COPY);
+    u32 ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(u32), nullptr, RL_DYNAMIC_COPY);
+    const u32 ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), nullptr, RL_DYNAMIC_COPY);
 
     GolUpdateSSBO transfertBuffer = {};
 
@@ -98,7 +98,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        brushSize += static_cast<int>(GetMouseWheelMove());
+        brushSize += static_cast<i32>(GetMouseWheelMove());
 
         if ((IsMouseButtonDown(MOUSE_BUTTON_LEFT) || IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
             && (transfertBuffer.count < MAX_BUFFERED_TRANSFERTS))
@@ -134,7 +134,7 @@ int main()
             rlDisableShader();
 
             // ssboA <-> ssboB
-            const int temp = ssboA;
+            const i32 temp = ssboA;
             ssboA = ssboB;
             ssboB = temp;
         }

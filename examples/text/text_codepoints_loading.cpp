@@ -27,28 +27,28 @@ static const char *text = "いろはにほへと　ちりぬるを\nわかよた
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Remove codepoint duplicates if requested
-static int *CodepointRemoveDuplicates(int *codepoints, int codepointCount, int *codepointResultCount);
+static i32 *CodepointRemoveDuplicates(i32 *codepoints, i32 codepointCount, i32 *codepointResultCount);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - codepoints loading");
 
     // Convert each utf-8 character into its
     // corresponding codepoint in the font file
-    int codepointCount = 0;
-    int *codepoints = LoadCodepoints(text, &codepointCount);
+    i32 codepointCount = 0;
+    i32 *codepoints = LoadCodepoints(text, &codepointCount);
 
     // Removed duplicate codepoints to generate smaller font atlas
-    int codepointsNoDupsCount = 0;
-    int *codepointsNoDups = CodepointRemoveDuplicates(codepoints, codepointCount, &codepointsNoDupsCount);
+    i32 codepointsNoDupsCount = 0;
+    i32 *codepointsNoDups = CodepointRemoveDuplicates(codepoints, codepointCount, &codepointsNoDupsCount);
     UnloadCodepoints(codepoints);
 
     // Load font containing all the provided codepoint glyphs
@@ -65,7 +65,7 @@ int main()
 
     bool showFontAtlas = false;
 
-    int codepointSize = 0;
+    i32 codepointSize = 0;
     const char *ptr = text;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -136,20 +136,20 @@ int main()
 //------------------------------------------------------------------------------------
 // Remove codepoint duplicates if requested
 // WARNING: This process could be a bit slow if the text to process is very long
-static int *CodepointRemoveDuplicates(int *codepoints, int codepointCount, int *codepointsResultCount)
+static i32 *CodepointRemoveDuplicates(i32 *codepoints, i32 codepointCount, i32 *codepointsResultCount)
 {
-    int codepointsNoDupsCount = codepointCount;
-    int *codepointsNoDups = static_cast<int *>(calloc(codepointCount, sizeof(int)));
-    memcpy(codepointsNoDups, codepoints, codepointCount*sizeof(int));
+    i32 codepointsNoDupsCount = codepointCount;
+    i32 *codepointsNoDups = static_cast<i32 *>(calloc(codepointCount, sizeof(i32)));
+    memcpy(codepointsNoDups, codepoints, codepointCount*sizeof(i32));
 
     // Remove duplicates
-    for (int i = 0; i < codepointsNoDupsCount; i++)
+    for (i32 i = 0; i < codepointsNoDupsCount; i++)
     {
-        for (int j = i + 1; j < codepointsNoDupsCount; j++)
+        for (i32 j = i + 1; j < codepointsNoDupsCount; j++)
         {
             if (codepointsNoDups[i] == codepointsNoDups[j])
             {
-                for (int k = j; k < codepointsNoDupsCount - 1; k++) codepointsNoDups[k] = codepointsNoDups[k + 1];
+                for (i32 k = j; k < codepointsNoDupsCount - 1; k++) codepointsNoDups[k] = codepointsNoDups[k + 1];
 
                 codepointsNoDupsCount--;
                 j--;

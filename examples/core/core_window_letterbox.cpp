@@ -25,25 +25,25 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     // Enable config flags for resizable window and vertical synchro
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - window letterbox");
     SetWindowMinSize(320, 240);
 
-    constexpr int gameScreenWidth = 640;
-    constexpr int gameScreenHeight = 480;
+    constexpr i32 gameScreenWidth = 640;
+    constexpr i32 gameScreenHeight = 480;
 
     // Render texture initialization, used to hold the rendering result so we can easily resize it
     const RenderTexture2D target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);  // Texture scale filter to use
 
     Color colors[10] = {};
-    for (int i = 0; i < 10; i++) colors[i] = Color{ static_cast<unsigned char>(GetRandomValue(100, 250)), static_cast<unsigned char>(GetRandomValue(50, 150)), static_cast<unsigned char>(GetRandomValue(10, 100)), 255 };
+    for (i32 i = 0; i < 10; i++) colors[i] = Color{ static_cast<u8>(GetRandomValue(100, 250)), static_cast<u8>(GetRandomValue(50, 150)), static_cast<u8>(GetRandomValue(10, 100)), 255 };
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -54,12 +54,12 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Compute required framebuffer scaling
-        const float scale = MIN(static_cast<float>(GetScreenWidth())/gameScreenWidth, static_cast<float>(GetScreenHeight())/gameScreenHeight);
+        const f32 scale = MIN(static_cast<f32>(GetScreenWidth())/gameScreenWidth, static_cast<f32>(GetScreenHeight())/gameScreenHeight);
 
         if (IsKeyPressed(KEY_SPACE))
         {
             // Recalculate random colors for the bars
-            for (int i = 0; i < 10; i++) colors[i] = Color{ static_cast<unsigned char>(GetRandomValue(100, 250)), static_cast<unsigned char>(GetRandomValue(50, 150)), static_cast<unsigned char>(GetRandomValue(10, 100)), 255 };
+            for (i32 i = 0; i < 10; i++) colors[i] = Color{ static_cast<u8>(GetRandomValue(100, 250)), static_cast<u8>(GetRandomValue(50, 150)), static_cast<u8>(GetRandomValue(10, 100)), 255 };
         }
 
         // Update virtual mouse (clamped mouse value behind game screen)
@@ -67,7 +67,7 @@ int main()
         vec2 virtualMouse = {};
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.5f)/scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.5f)/scale;
-        virtualMouse = glm::clamp(virtualMouse, vec2{ 0, 0 }, vec2{ static_cast<float>(gameScreenWidth), static_cast<float>(gameScreenHeight) });
+        virtualMouse = glm::clamp(virtualMouse, vec2{ 0, 0 }, vec2{ static_cast<f32>(gameScreenWidth), static_cast<f32>(gameScreenHeight) });
 
         // Apply the same transformation as the virtual mouse to the real mouse (i.e. to work with raygui)
         //SetMouseOffset(-(GetScreenWidth() - (gameScreenWidth*scale))*0.5f, -(GetScreenHeight() - (gameScreenHeight*scale))*0.5f);
@@ -80,20 +80,20 @@ int main()
         BeginTextureMode(target);
             ClearBackground(RAYWHITE);  // Clear render texture background color
 
-            for (int i = 0; i < 10; i++) DrawRectangle(0, (gameScreenHeight/10)*i, gameScreenWidth, gameScreenHeight/10, colors[i]);
+            for (i32 i = 0; i < 10; i++) DrawRectangle(0, (gameScreenHeight/10)*i, gameScreenWidth, gameScreenHeight/10, colors[i]);
 
             DrawText("If executed inside a window,\nyou can resize the window,\nand see the screen scaling!", 10, 25, 20, WHITE);
-            DrawText(TextFormat("Default Mouse: [%i , %i]", static_cast<int>(mouse.x), static_cast<int>(mouse.y)), 350, 25, 20, GREEN);
-            DrawText(TextFormat("Virtual Mouse: [%i , %i]", static_cast<int>(virtualMouse.x), static_cast<int>(virtualMouse.y)), 350, 55, 20, YELLOW);
+            DrawText(TextFormat("Default Mouse: [%i , %i]", static_cast<i32>(mouse.x), static_cast<i32>(mouse.y)), 350, 25, 20, GREEN);
+            DrawText(TextFormat("Virtual Mouse: [%i , %i]", static_cast<i32>(virtualMouse.x), static_cast<i32>(virtualMouse.y)), 350, 55, 20, YELLOW);
         EndTextureMode();
 
         BeginDrawing();
             ClearBackground(BLACK);     // Clear screen background
 
             // Draw render texture to screen, properly scaled
-            DrawTexturePro(target.texture, Rectangle{ 0.0f, 0.0f, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
-                           Rectangle{ (GetScreenWidth() - (static_cast<float>(gameScreenWidth)*scale))*0.5f, (GetScreenHeight() - (static_cast<float>(gameScreenHeight)*scale))*0.5f,
-                           static_cast<float>(gameScreenWidth)*scale, static_cast<float>(gameScreenHeight)*scale }, vec2{ 0, 0 }, 0.0f, WHITE);
+            DrawTexturePro(target.texture, Rectangle{ 0.0f, 0.0f, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) },
+                           Rectangle{ (GetScreenWidth() - (static_cast<f32>(gameScreenWidth)*scale))*0.5f, (GetScreenHeight() - (static_cast<f32>(gameScreenHeight)*scale))*0.5f,
+                           static_cast<f32>(gameScreenWidth)*scale, static_cast<f32>(gameScreenHeight)*scale }, vec2{ 0, 0 }, 0.0f, WHITE);
         EndDrawing();
         //--------------------------------------------------------------------------------------
     }

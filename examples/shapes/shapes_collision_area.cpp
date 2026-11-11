@@ -18,25 +18,25 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - collision area");
 
     // Box A: Moving box
     Rectangle boxA = { 10, GetScreenHeight()/2.0f - 50, 200, 100 };
-    int boxASpeedX = 4;
+    i32 boxASpeedX = 4;
 
     // Box B: Mouse moved box
     Rectangle boxB = { GetScreenWidth()/2.0f - 30, GetScreenHeight()/2.0f - 30, 60, 60 };
 
     Rectangle boxCollision = {}; // Collision rectangle
 
-    constexpr int screenUpperLimit = 40;      // Top menu limits
+    constexpr i32 screenUpperLimit = 40;      // Top menu limits
 
     bool pause = false;             // Movement pause
     bool collision = false;         // Collision detection
@@ -64,7 +64,7 @@ int main()
         else if (boxB.x <= 0) boxB.x = 0;
 
         if ((boxB.y + boxB.height) >= GetScreenHeight()) boxB.y = GetScreenHeight() - boxB.height;
-        else if (boxB.y <= screenUpperLimit) boxB.y = static_cast<float>(screenUpperLimit);
+        else if (boxB.y <= screenUpperLimit) boxB.y = static_cast<f32>(screenUpperLimit);
 
         // Check boxes collision
         collision = CheckCollisionRecs(boxA, boxB);
@@ -96,7 +96,7 @@ int main()
                 DrawText("COLLISION!", GetScreenWidth()/2 - MeasureText("COLLISION!", 20)/2, screenUpperLimit/2 - 10, 20, BLACK);
 
                 // Draw collision area
-                DrawText(TextFormat("Collision Area: %i", static_cast<int>(boxCollision.width)*static_cast<int>(boxCollision.height)), GetScreenWidth()/2 - 100, screenUpperLimit + 10, 20, BLACK);
+                DrawText(TextFormat("Collision Area: %i", static_cast<i32>(boxCollision.width)*static_cast<i32>(boxCollision.height)), GetScreenWidth()/2 - 100, screenUpperLimit + 10, 20, BLACK);
             }
 
             // Draw help instructions

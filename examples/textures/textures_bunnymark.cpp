@@ -35,12 +35,12 @@ typedef struct Bunny {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - bunnymark");
 
@@ -49,7 +49,7 @@ int main()
 
     Bunny *bunnies = static_cast<Bunny *>(malloc(MAX_BUNNIES*sizeof(Bunny)));    // Bunnies array
 
-    int bunniesCount = 0;           // Bunnies counter
+    i32 bunniesCount = 0;           // Bunnies counter
 
     bool paused = false;
 
@@ -64,16 +64,16 @@ int main()
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             // Create more bunnies
-            for (int i = 0; i < 100; i++)
+            for (i32 i = 0; i < 100; i++)
             {
                 if (bunniesCount < MAX_BUNNIES)
                 {
                     bunnies[bunniesCount].position = GetMousePosition();
-                    bunnies[bunniesCount].speed.x = static_cast<float>(GetRandomValue(-250, 250));
-                    bunnies[bunniesCount].speed.y = static_cast<float>(GetRandomValue(-250, 250));
-                    bunnies[bunniesCount].color = Color{ static_cast<unsigned char>(GetRandomValue(50, 240)),
-                                                       static_cast<unsigned char>(GetRandomValue(80, 240)),
-                                                       static_cast<unsigned char>(GetRandomValue(100, 240)), 255 };
+                    bunnies[bunniesCount].speed.x = static_cast<f32>(GetRandomValue(-250, 250));
+                    bunnies[bunniesCount].speed.y = static_cast<f32>(GetRandomValue(-250, 250));
+                    bunnies[bunniesCount].color = Color{ static_cast<u8>(GetRandomValue(50, 240)),
+                                                       static_cast<u8>(GetRandomValue(80, 240)),
+                                                       static_cast<u8>(GetRandomValue(100, 240)), 255 };
                     bunniesCount++;
                 }
             }
@@ -84,15 +84,15 @@ int main()
         if (!paused)
         {
             // Update bunnies
-            for (int i = 0; i < bunniesCount; i++)
+            for (i32 i = 0; i < bunniesCount; i++)
             {
                 bunnies[i].position.x += bunnies[i].speed.x*GetFrameTime();
                 bunnies[i].position.y += bunnies[i].speed.y*GetFrameTime();
 
-                if (((bunnies[i].position.x + static_cast<float>(texBunny.width)/2) > GetScreenWidth()) ||
-                    ((bunnies[i].position.x + static_cast<float>(texBunny.width)/2) < 0)) bunnies[i].speed.x *= -1;
-                if (((bunnies[i].position.y + static_cast<float>(texBunny.height)/2) > GetScreenHeight()) ||
-                    ((bunnies[i].position.y + static_cast<float>(texBunny.height)/2 - 40) < 0)) bunnies[i].speed.y *= -1;
+                if (((bunnies[i].position.x + static_cast<f32>(texBunny.width)/2) > GetScreenWidth()) ||
+                    ((bunnies[i].position.x + static_cast<f32>(texBunny.width)/2) < 0)) bunnies[i].speed.x *= -1;
+                if (((bunnies[i].position.y + static_cast<f32>(texBunny.height)/2) > GetScreenHeight()) ||
+                    ((bunnies[i].position.y + static_cast<f32>(texBunny.height)/2 - 40) < 0)) bunnies[i].speed.y *= -1;
             }
         }
         //----------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < bunniesCount; i++)
+            for (i32 i = 0; i < bunniesCount; i++)
             {
                 // NOTE: When internal batch buffer limit is reached (MAX_BATCH_ELEMENTS),
                 // a draw call is launched and buffer starts being filled again;
@@ -111,7 +111,7 @@ int main()
                 // Process of sending data is costly and it could happen that GPU data has not been completely
                 // processed for drawing while new data is tried to be sent (updating current in-use buffers)
                 // it could generates a stall and consequently a frame drop, limiting the number of drawn bunnies
-                DrawTexture(texBunny, static_cast<int>(bunnies[i].position.x), static_cast<int>(bunnies[i].position.y), bunnies[i].color);
+                DrawTexture(texBunny, static_cast<i32>(bunnies[i].position.x), static_cast<i32>(bunnies[i].position.y), bunnies[i].color);
             }
 
             DrawRectangle(0, 0, screenWidth, 40, BLACK);

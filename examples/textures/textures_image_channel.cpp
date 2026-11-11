@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image channel");
 
@@ -61,7 +61,7 @@ int main()
     UnloadImage(imageBlue);
     UnloadImage(backgroundImage);
 
-    const Rectangle fudesumiRec = {0, 0, static_cast<float>(fudesumiImage.width), static_cast<float>(fudesumiImage.height)};
+    const Rectangle fudesumiRec = {0, 0, static_cast<f32>(fudesumiImage.width), static_cast<f32>(fudesumiImage.height)};
 
     const Rectangle fudesumiPos = {50, 10, fudesumiImage.width*0.8f, fudesumiImage.height*0.8f};
     const Rectangle redPos = { 410, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };

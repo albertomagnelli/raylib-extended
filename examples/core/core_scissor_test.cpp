@@ -20,12 +20,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - scissor test");
 
@@ -53,7 +53,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            if (scissorMode) BeginScissorMode(static_cast<int>(scissorArea.x), static_cast<int>(scissorArea.y), static_cast<int>(scissorArea.width), static_cast<int>(scissorArea.height));
+            if (scissorMode) BeginScissorMode(static_cast<i32>(scissorArea.x), static_cast<i32>(scissorArea.y), static_cast<i32>(scissorArea.width), static_cast<i32>(scissorArea.height));
 
             // Draw full screen rectangle and some text
             // NOTE: Only part defined by scissor area will be rendered

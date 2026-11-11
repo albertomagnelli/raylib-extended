@@ -44,11 +44,11 @@ typedef struct LightInfo {
 
     vec2 position;              // Light position
     RenderTexture mask;         // Alpha mask for the light
-    float outerRadius;          // The distance the light touches
+    f32 outerRadius;          // The distance the light touches
     Rectangle bounds;           // A cached rectangle of the light bounds to help with culling
 
     ShadowGeometry shadows[MAX_SHADOWS];
-    int shadowCount;
+    i32 shadowCount;
 } LightInfo;
 
 //------------------------------------------------------------------------------------
@@ -60,32 +60,32 @@ static LightInfo lights[MAX_LIGHTS] = {};
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Move a light and mark it as dirty so that we update it's mask next frame
-static void MoveLight(int slot, float x, float y);
+static void MoveLight(i32 slot, f32 x, f32 y);
 // Compute a shadow volume for the edge
-static void ComputeShadowVolumeForEdge(int slot, vec2 sp, vec2 ep);
+static void ComputeShadowVolumeForEdge(i32 slot, vec2 sp, vec2 ep);
 // Draw the light and shadows to the mask for a light
-static void DrawLightMask(int slot);
+static void DrawLightMask(i32 slot);
 // Setup a light
-static void SetupLight(int slot, float x, float y, float radius);
+static void SetupLight(i32 slot, f32 x, f32 y, f32 radius);
 // See if a light needs to update it's mask
-static bool UpdateLight(int slot, Rectangle* boxes, int count);
+static bool UpdateLight(i32 slot, Rectangle* boxes, i32 count);
 // Set up some boxes
-static void SetupBoxes(Rectangle *boxes, int *count);
+static void SetupBoxes(Rectangle *boxes, i32 *count);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - top down lights");
 
     // Initialize our 'world' of boxes
-    int boxCount = 0;
+    i32 boxCount = 0;
     Rectangle boxes[MAX_BOXES] = {};
     SetupBoxes(boxes, &boxCount);
 
@@ -99,7 +99,7 @@ int main()
 
     // Setup initial light
     SetupLight(0, 600, 400, 300);
-    int nextLight = 1;
+    i32 nextLight = 1;
 
     bool showLines = false;
 
@@ -126,7 +126,7 @@ int main()
 
         // Update the lights and keep track if any were dirty so we know if we need to update the master light mask
         bool dirtyLights = false;
-        for (int i = 0; i < MAX_LIGHTS; i++)
+        for (i32 i = 0; i < MAX_LIGHTS; i++)
         {
             if (UpdateLight(i, boxes, boxCount)) dirtyLights = true;
         }
@@ -144,9 +144,9 @@ int main()
                 rlSetBlendMode(BLEND_CUSTOM);
 
                 // Merge in all the light masks
-                for (int i = 0; i < MAX_LIGHTS; i++)
+                for (i32 i = 0; i < MAX_LIGHTS; i++)
                 {
-                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, vec2{}, WHITE);
+                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, Rectangle{ 0, 0, static_cast<f32>(GetScreenWidth()), -static_cast<f32>(GetScreenHeight()) }, vec2{}, WHITE);
                 }
 
                 rlDrawRenderBatchActive();
@@ -164,29 +164,29 @@ int main()
             ClearBackground(BLACK);
 
             // Draw the tile background
-            DrawTextureRec(backgroundTexture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) }, vec2{}, WHITE);
+            DrawTextureRec(backgroundTexture, Rectangle{ 0, 0, static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) }, vec2{}, WHITE);
 
             // Overlay the shadows from all the lights
-            DrawTextureRec(lightMask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, vec2{}, ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
+            DrawTextureRec(lightMask.texture, Rectangle{ 0, 0, static_cast<f32>(GetScreenWidth()), -static_cast<f32>(GetScreenHeight()) }, vec2{}, ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
 
             // Draw the lights
-            for (int i = 0; i < MAX_LIGHTS; i++)
+            for (i32 i = 0; i < MAX_LIGHTS; i++)
             {
-                if (lights[i].active) DrawCircle(static_cast<int>(lights[i].position.x), static_cast<int>(lights[i].position.y), 10, (i == 0)? YELLOW : WHITE);
+                if (lights[i].active) DrawCircle(static_cast<i32>(lights[i].position.x), static_cast<i32>(lights[i].position.y), 10, (i == 0)? YELLOW : WHITE);
             }
 
             if (showLines)
             {
-                for (int s = 0; s < lights[0].shadowCount; s++)
+                for (i32 s = 0; s < lights[0].shadowCount; s++)
                 {
                     DrawTriangleFan(lights[0].shadows[s].vertices, 4, DARKPURPLE);
                 }
 
-                for (int b = 0; b < boxCount; b++)
+                for (i32 b = 0; b < boxCount; b++)
                 {
                     if (CheckCollisionRecs(boxes[b],lights[0].bounds)) DrawRectangleRec(boxes[b], PURPLE);
 
-                    DrawRectangleLines(static_cast<int>(boxes[b].x), static_cast<int>(boxes[b].y), static_cast<int>(boxes[b].width), static_cast<int>(boxes[b].height), DARKBLUE);
+                    DrawRectangleLines(static_cast<i32>(boxes[b].x), static_cast<i32>(boxes[b].y), static_cast<i32>(boxes[b].width), static_cast<i32>(boxes[b].height), DARKBLUE);
                 }
 
                 DrawText("(F1) Hide Shadow Volumes", 10, 50, 10, GREEN);
@@ -208,7 +208,7 @@ int main()
     //--------------------------------------------------------------------------------------
     UnloadTexture(backgroundTexture);
     UnloadRenderTexture(lightMask);
-    for (int i = 0; i < MAX_LIGHTS; i++)
+    for (i32 i = 0; i < MAX_LIGHTS; i++)
     {
         if (lights[i].active) UnloadRenderTexture(lights[i].mask);
     }
@@ -223,7 +223,7 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Move a light and mark it as dirty so that we update it's mask next frame
-static void MoveLight(int slot, float x, float y)
+static void MoveLight(i32 slot, f32 x, f32 y)
 {
     lights[slot].dirty = true;
     lights[slot].position.x = x;
@@ -236,11 +236,11 @@ static void MoveLight(int slot, float x, float y)
 
 // Compute a shadow volume for the edge
 // It takes the edge and projects it back by the light radius and turns it into a quad
-static void ComputeShadowVolumeForEdge(int slot, vec2 sp, vec2 ep)
+static void ComputeShadowVolumeForEdge(i32 slot, vec2 sp, vec2 ep)
 {
     if (lights[slot].shadowCount >= MAX_SHADOWS) return;
 
-    const float extension = lights[slot].outerRadius*2;
+    const f32 extension = lights[slot].outerRadius*2;
 
     const vec2 spVector = glm::normalize(((sp) - (lights[slot].position)));
     const vec2 spProjection = ((sp) + (((spVector) * (extension))));
@@ -257,7 +257,7 @@ static void ComputeShadowVolumeForEdge(int slot, vec2 sp, vec2 ep)
 }
 
 // Setup a light
-static void SetupLight(int slot, float x, float y, float radius)
+static void SetupLight(i32 slot, f32 x, f32 y, f32 radius)
 {
     lights[slot].active = true;
     lights[slot].valid = false;  // The light must prove it is valid
@@ -274,7 +274,7 @@ static void SetupLight(int slot, float x, float y, float radius)
 }
 
 // See if a light needs to update it's mask
-static bool UpdateLight(int slot, Rectangle* boxes, int count)
+static bool UpdateLight(i32 slot, Rectangle* boxes, i32 count)
 {
     if (!lights[slot].active || !lights[slot].dirty) return false;
 
@@ -282,7 +282,7 @@ static bool UpdateLight(int slot, Rectangle* boxes, int count)
     lights[slot].shadowCount = 0;
     lights[slot].valid = false;
 
-    for (int i = 0; i < count; i++)
+    for (i32 i = 0; i < count; i++)
     {
         // Are we in a box? if so we are not valid
         if (CheckCollisionPointRec(lights[slot].position, boxes[i])) return false;
@@ -329,7 +329,7 @@ static bool UpdateLight(int slot, Rectangle* boxes, int count)
 }
 
 // Draw the light and shadows to the mask for a light
-static void DrawLightMask(int slot)
+static void DrawLightMask(i32 slot)
 {
     // Use the light mask
     BeginTextureMode(lights[slot].mask);
@@ -351,7 +351,7 @@ static void DrawLightMask(int slot)
         rlSetBlendMode(BLEND_CUSTOM);
 
         // Draw the shadows to the alpha mask
-        for (int i = 0; i < lights[slot].shadowCount; i++)
+        for (i32 i = 0; i < lights[slot].shadowCount; i++)
         {
             DrawTriangleFan(lights[slot].shadows[i].vertices, 4, WHITE);
         }
@@ -365,7 +365,7 @@ static void DrawLightMask(int slot)
 }
 
 // Set up some boxes
-static void SetupBoxes(Rectangle *boxes, int *count)
+static void SetupBoxes(Rectangle *boxes, i32 *count)
 {
     boxes[0] = Rectangle{ 150,80, 40, 40 };
     boxes[1] = Rectangle{ 1200, 700, 40, 40 };
@@ -373,9 +373,9 @@ static void SetupBoxes(Rectangle *boxes, int *count)
     boxes[3] = Rectangle{ 1000, 50, 40, 40 };
     boxes[4] = Rectangle{ 500, 350, 40, 40 };
 
-    for (int i = 5; i < MAX_BOXES; i++)
+    for (i32 i = 5; i < MAX_BOXES; i++)
     {
-        boxes[i] = Rectangle{static_cast<float>(GetRandomValue(0,GetScreenWidth())), static_cast<float>(GetRandomValue(0,GetScreenHeight())), static_cast<float>(GetRandomValue(10,100)), static_cast<float>(GetRandomValue(10,100)) };
+        boxes[i] = Rectangle{static_cast<f32>(GetRandomValue(0,GetScreenWidth())), static_cast<f32>(GetRandomValue(0,GetScreenHeight())), static_cast<f32>(GetRandomValue(10,100)), static_cast<f32>(GetRandomValue(10,100)) };
     }
 
     *count = MAX_BOXES;

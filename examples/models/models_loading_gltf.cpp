@@ -25,12 +25,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading gltf");
 
@@ -47,12 +47,12 @@ int main()
     const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
 
     // Load model animations
-    int animCount = 0;
+    i32 animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/robot.glb", &animCount);
 
     // Animation playing variables
-    unsigned int animIndex = 0;         // Current animation playing
-    unsigned int animCurrentFrame = 0;  // Current animation frame
+    u32 animIndex = 0;         // Current animation playing
+    u32 animCurrentFrame = 0;  // Current animation frame
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ int main()
 
         // Update model animation
         animCurrentFrame = (animCurrentFrame + 1)%anims[animIndex].keyframeCount;
-        UpdateModelAnimation(model, anims[animIndex], static_cast<float>(animCurrentFrame));
+        UpdateModelAnimation(model, anims[animIndex], static_cast<f32>(animCurrentFrame));
         //----------------------------------------------------------------------------------
 
         // Draw

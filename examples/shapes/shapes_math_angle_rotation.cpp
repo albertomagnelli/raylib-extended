@@ -21,24 +21,24 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 720;
-    constexpr int screenHeight = 400;
+    constexpr i32 screenWidth = 720;
+    constexpr i32 screenHeight = 400;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - math angle rotation");
     SetTargetFPS(60);
 
     const vec2 center = { screenWidth/2.0f, screenHeight/2.0f };
-    constexpr float lineLength = 150.0f;
+    constexpr f32 lineLength = 150.0f;
 
     // Predefined angles for fixed lines
-    const int angles[] = { 0, 30, 60, 90 };
-    const int numAngles = sizeof(angles)/sizeof(angles[0]);
+    const i32 angles[] = { 0, 30, 60, 90 };
+    const i32 numAngles = sizeof(angles)/sizeof(angles[0]);
 
-    float totalAngle = 0.0f; // Animated rotation angle
+    f32 totalAngle = 0.0f; // Animated rotation angle
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -58,9 +58,9 @@ int main()
             DrawText("Fixed angles + rotating line", 10, 10, 20, LIGHTGRAY);
 
             // Draw fixed-angle lines with colorful gradient
-            for (int i = 0; i < numAngles; i++)
+            for (i32 i = 0; i < numAngles; i++)
             {
-                const float rad = angles[i]*DEG2RAD;
+                const f32 rad = angles[i]*DEG2RAD;
                 const vec2 end = { center.x + cosf(rad)*lineLength,
                                 center.y + sinf(rad)*lineLength };
 
@@ -80,11 +80,11 @@ int main()
                 // Draw angle label slightly offset along the line
                 const vec2 textPos = { center.x + cosf(rad)*(lineLength + 20),
                                     center.y + sinf(rad)*(lineLength + 20) };
-                DrawText(TextFormat("%d°", angles[i]), static_cast<int>(textPos.x), static_cast<int>(textPos.y), 20, col);
+                DrawText(TextFormat("%d°", angles[i]), static_cast<i32>(textPos.x), static_cast<i32>(textPos.y), 20, col);
             }
 
             // Draw animated rotating line with changing color
-            const float animRad = totalAngle*DEG2RAD;
+            const f32 animRad = totalAngle*DEG2RAD;
             const vec2 animEnd = { center.x + cosf(animRad)*lineLength,
                                 center.y + sinf(animRad)*lineLength };
 

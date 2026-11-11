@@ -32,17 +32,17 @@ typedef enum {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input virtual controls");
 
     vec2 padPosition = { 100, 350 };
-    constexpr float buttonRadius = 30;
+    constexpr f32 buttonRadius = 30;
 
     vec2 buttonPositions[BUTTON_MAX] = {
         { padPosition.x,padPosition.y - buttonRadius*1.5f },  // Up
@@ -85,11 +85,11 @@ int main()
         GREEN   // Down
     };
 
-    int pressedButton = BUTTON_NONE;
+    i32 pressedButton = BUTTON_NONE;
     vec2 inputPosition = { 0, 0 };
 
-    vec2 playerPosition = { static_cast<float>(screenWidth)/2, static_cast<float>(screenHeight)/2 };
-    constexpr float playerSpeed = 75;
+    vec2 playerPosition = { static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2 };
+    constexpr f32 playerSpeed = 75;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -110,10 +110,10 @@ int main()
             ((GetTouchPointCount() == 0) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)))
         {
             // Find nearest D-Pad button to the input position
-            for (int i = 0; i < BUTTON_MAX; i++)
+            for (i32 i = 0; i < BUTTON_MAX; i++)
             {
-                const float distX = fabsf(buttonPositions[i].x - inputPosition.x);
-                const float distY = fabsf(buttonPositions[i].y - inputPosition.y);
+                const f32 distX = fabsf(buttonPositions[i].x - inputPosition.x);
+                const f32 distY = fabsf(buttonPositions[i].y - inputPosition.y);
 
                 if ((distX + distY < buttonRadius))
                 {
@@ -144,7 +144,7 @@ int main()
             DrawCircleV(playerPosition, 50, MAROON);
 
             // Draw GUI
-            for (int i = 0; i < BUTTON_MAX; i++)
+            for (i32 i = 0; i < BUTTON_MAX; i++)
             {
                 DrawCircleV(buttonPositions[i], buttonRadius, (i == pressedButton)? DARKGRAY : BLACK);
 

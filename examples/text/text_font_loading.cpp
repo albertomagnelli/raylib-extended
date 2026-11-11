@@ -27,12 +27,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font loading");
 
@@ -75,12 +75,12 @@ int main()
 
             if (!useTtf)
             {
-                DrawTextEx(fontBm, msg, vec2{ 20.0f, 100.0f }, static_cast<float>(fontBm.baseSize), 2, MAROON);
+                DrawTextEx(fontBm, msg, vec2{ 20.0f, 100.0f }, static_cast<f32>(fontBm.baseSize), 2, MAROON);
                 DrawText("Using BMFont (Angelcode) imported", 20, GetScreenHeight() - 30, 20, GRAY);
             }
             else
             {
-                DrawTextEx(fontTtf, msg, vec2{ 20.0f, 100.0f }, static_cast<float>(fontTtf.baseSize), 2, LIME);
+                DrawTextEx(fontTtf, msg, vec2{ 20.0f, 100.0f }, static_cast<f32>(fontTtf.baseSize), 2, LIME);
                 DrawText("Using TTF font generated", 20, GetScreenHeight() - 30, 20, GRAY);
             }
 

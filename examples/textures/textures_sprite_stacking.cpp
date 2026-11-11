@@ -23,23 +23,23 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite stacking");
 
     const Texture2D booth = LoadTexture("resources/booth.png");
 
-    constexpr float stackScale = 3.0f;       // Overall scale of the stacked sprite
-    float stackSpacing = 2.0f;               // Vertical spacing between each layer
-    constexpr unsigned int stackCount = 122; // Number of layers, used for calculating the size of a single slice
-    float rotationSpeed = 30.0f;             // Stacked sprites rotation speed
-    float rotation = 0.0f;                   // Current rotation of the stacked sprite
-    constexpr float speedChange = 0.25f;     // Amount speed will change by when the user presses A/D
+    constexpr f32 stackScale = 3.0f;       // Overall scale of the stacked sprite
+    f32 stackSpacing = 2.0f;               // Vertical spacing between each layer
+    constexpr u32 stackCount = 122; // Number of layers, used for calculating the size of a single slice
+    f32 rotationSpeed = 30.0f;             // Stacked sprites rotation speed
+    f32 rotation = 0.0f;                   // Current rotation of the stacked sprite
+    constexpr f32 speedChange = 0.25f;     // Amount speed will change by when the user presses A/D
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -67,18 +67,18 @@ int main()
             ClearBackground(RAYWHITE);
 
             // Get the size of a single slice
-            const float frameWidth = static_cast<float>(booth.width);
-            const float frameHeight = static_cast<float>(booth.height)/static_cast<float>(stackCount);
+            const f32 frameWidth = static_cast<f32>(booth.width);
+            const f32 frameHeight = static_cast<f32>(booth.height)/static_cast<f32>(stackCount);
 
             // Get the scaled resolution to draw at
-            const float scaledWidth = frameWidth*stackScale;
-            const float scaledHeight = frameHeight*stackScale;
+            const f32 scaledWidth = frameWidth*stackScale;
+            const f32 scaledHeight = frameHeight*stackScale;
 
             // Draw the stacked sprite, rotated to the correct angle, with an vertical offset applied based on its y location
-            for (int i = stackCount - 1; i >= 0; i--)
+            for (i32 i = stackCount - 1; i >= 0; i--)
             {
                 // Center vertically
-                const Rectangle source = { 0.0f, static_cast<float>(i)*frameHeight, frameWidth, frameHeight };
+                const Rectangle source = { 0.0f, static_cast<f32>(i)*frameHeight, frameWidth, frameHeight };
                 const Rectangle dest = { screenWidth/2.0f, (screenHeight/2.0f) + (i*stackSpacing) - (stackSpacing*stackCount/2.0f), scaledWidth, scaledHeight };
                 const vec2 origin = { scaledWidth/2.0f, scaledHeight/2.0f };
 

@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - magnifying glass");
 
@@ -112,9 +112,9 @@ int main()
             DrawRing(mPos, 126, 130, 0, 360, 64, BLACK);
 
             // Draw floating specular highlight on the glass
-            const float rx = mPos.x/800;
-            const float ry = mPos.y/800;
-            DrawCircle(static_cast<int>(mPos.x - 64*rx) - 32, static_cast<int>(mPos.y - 64*ry) - 32, 4, ColorAlpha(WHITE, 0.5));
+            const f32 rx = mPos.x/800;
+            const f32 ry = mPos.y/800;
+            DrawCircle(static_cast<i32>(mPos.x - 64*rx) - 32, static_cast<i32>(mPos.y - 64*ry) - 32, 4, ColorAlpha(WHITE, 0.5));
 
         EndDrawing();
         //----------------------------------------------------------------------------------

@@ -22,24 +22,24 @@
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static void DrawTextStyled(Font font, std::string_view text, vec2 position, float fontSize, float spacing, Color color);
-static vec2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing);
+static void DrawTextStyled(Font font, std::string_view text, vec2 position, f32 fontSize, f32 spacing, Color color);
+static vec2 MeasureTextStyled(Font font, std::string_view text, f32 fontSize, f32 spacing);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - inline styling");
 
     vec2 textSize = {};         // Measure text box for provided font and text
     Color colRandom = RED;      // Random color used on text
-    int frameCounter = 0;       // Used to generate a new random color every certain frames
+    i32 frameCounter = 0;       // Used to generate a new random color every certain frames
 
     SetTargetFPS(60);           // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -53,9 +53,9 @@ int main()
 
         if ((frameCounter%20) == 0)
         {
-            colRandom.r = static_cast<unsigned char>(GetRandomValue(0, 255));
-            colRandom.g = static_cast<unsigned char>(GetRandomValue(0, 255));
-            colRandom.b = static_cast<unsigned char>(GetRandomValue(0, 255));
+            colRandom.r = static_cast<u8>(GetRandomValue(0, 255));
+            colRandom.g = static_cast<u8>(GetRandomValue(0, 255));
+            colRandom.b = static_cast<u8>(GetRandomValue(0, 255));
             colRandom.a = 255;
         }
         //----------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ int main()
             DrawTextStyled(GetFontDefault(), text, vec2{ 100, 240 }, 40.0f, 2.0f, BLACK);
 
             textSize = MeasureTextStyled(GetFontDefault(), text, 40.0f, 2.0f);
-            DrawRectangleLines(100, 240, static_cast<int>(textSize.x), static_cast<int>(textSize.y), GREEN);
+            DrawRectangleLines(100, 240, static_cast<i32>(textSize.x), static_cast<i32>(textSize.y), GREEN);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ int main()
 // Draw text using inline styling
 // PARAM: color is the default text color, background color is BLANK by default
 // NOTE: Using input color as the base alpha multiplied to inline styles
-static void DrawTextStyled(Font font, std::string_view text, vec2 position, float fontSize, float spacing, Color color)
+static void DrawTextStyled(Font font, std::string_view text, vec2 position, f32 fontSize, f32 spacing, Color color)
 {
     // Text inline styling strategy used: [ ] delimiters for format
     // - Define foreground color:      [cRRGGBBAA]
@@ -121,21 +121,21 @@ static void DrawTextStyled(Font font, std::string_view text, vec2 position, floa
 
     if (font.texture.id == 0) font = GetFontDefault();
 
-    const int textLen = TextLength(text);
+    const i32 textLen = TextLength(text);
 
     Color colFront = color;
     Color colBack = BLANK;
-    constexpr int backRecPadding = 4; // Background rectangle padding
+    constexpr i32 backRecPadding = 4; // Background rectangle padding
 
-    float textOffsetY = 0.0f;
-    float textOffsetX = 0.0f;
-    constexpr float textLineSpacing = 0.0f;
-    const float scaleFactor = fontSize/font.baseSize;
+    f32 textOffsetY = 0.0f;
+    f32 textOffsetX = 0.0f;
+    constexpr f32 textLineSpacing = 0.0f;
+    const f32 scaleFactor = fontSize/font.baseSize;
 
-    for (int i = 0; i < textLen;)
+    for (i32 i = 0; i < textLen;)
     {
-        int codepointByteCount = 0;
-        const int codepoint = GetCodepointNext(&text[i], &codepointByteCount);
+        i32 codepointByteCount = 0;
+        const i32 codepoint = GetCodepointNext(&text[i], &codepointByteCount);
 
         if (codepoint == '\n')
         {
@@ -162,8 +162,8 @@ static void DrawTextStyled(Font font, std::string_view text, vec2 position, floa
                     char colHexText[9] = {};
                     const std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
-                    int colHexCount = 0;
-                    while ((colHexCount < static_cast<int>(textPtr.size())) && (textPtr[colHexCount] != ']'))
+                    i32 colHexCount = 0;
+                    while ((colHexCount < static_cast<i32>(textPtr.size())) && (textPtr[colHexCount] != ']'))
                     {
                         if (((textPtr[colHexCount] >= '0') && (textPtr[colHexCount] <= '9')) ||
                             ((textPtr[colHexCount] >= 'A') && (textPtr[colHexCount] <= 'F')) ||
@@ -176,7 +176,7 @@ static void DrawTextStyled(Font font, std::string_view text, vec2 position, floa
                     }
 
                     // Convert hex color text into actual Color
-                    const unsigned int colHexValue = strtoul(colHexText, nullptr, 16);
+                    const u32 colHexValue = strtoul(colHexText, nullptr, 16);
                     if (text[i - 1] == 'c')
                     {
 						colFront = GetColor(colHexValue);
@@ -193,11 +193,11 @@ static void DrawTextStyled(Font font, std::string_view text, vec2 position, floa
                 }
             }
 
-            const int index = GetGlyphIndex(font, codepoint);
-            float increaseX = 0.0f;
+            const i32 index = GetGlyphIndex(font, codepoint);
+            f32 increaseX = 0.0f;
 
             if (font.glyphs[index].advanceX == 0) increaseX = (font.recs[index].width*scaleFactor + spacing);
-            else increaseX += (static_cast<float>(font.glyphs[index].advanceX)*scaleFactor + spacing);
+            else increaseX += (static_cast<f32>(font.glyphs[index].advanceX)*scaleFactor + spacing);
 
             // Draw background rectangle color (if required)
             if (colBack.a > 0) DrawRectangleRec(Rectangle{ position.x + textOffsetX, position.y + textOffsetY - backRecPadding, increaseX, fontSize + 2*backRecPadding }, colBack);
@@ -217,26 +217,26 @@ static void DrawTextStyled(Font font, std::string_view text, vec2 position, floa
 // Measure inline styled text
 // NOTE: Measuring styled text requires skipping styling data
 // WARNING: Not considering line breaks
-static vec2 MeasureTextStyled(Font font, std::string_view text, float fontSize, float spacing)
+static vec2 MeasureTextStyled(Font font, std::string_view text, f32 fontSize, f32 spacing)
 {
     vec2 textSize = {};
 
     if ((font.texture.id == 0) || text.empty()) return textSize; // Security check
 
-    const int textLen = TextLength(text); // Get size in bytes of text
+    const i32 textLen = TextLength(text); // Get size in bytes of text
     //float textLineSpacing = fontSize*1.5f; // Not used...
 
-    float textWidth = 0.0f;
-    const float textHeight = fontSize;
-    const float scaleFactor = fontSize/static_cast<float>(font.baseSize);
+    f32 textWidth = 0.0f;
+    const f32 textHeight = fontSize;
+    const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);
 
-    int codepoint = 0;              // Current character
-    int index = 0;                  // Index position in sprite font
-    int validCodepointCounter = 0;
+    i32 codepoint = 0;              // Current character
+    i32 index = 0;                  // Index position in sprite font
+    i32 validCodepointCounter = 0;
 
-    for (int i = 0; i < textLen;)
+    for (i32 i = 0; i < textLen;)
     {
-        int codepointByteCount = 0;
+        i32 codepointByteCount = 0;
         codepoint = GetCodepointNext(&text[i], &codepointByteCount);
 
         if (codepoint == '[') // Ignore pipe inline styling
@@ -252,8 +252,8 @@ static vec2 MeasureTextStyled(Font font, std::string_view text, float fontSize, 
 
                 const std::string_view textPtr = text.substr(i); // Color should start here, let's see...
 
-                int colHexCount = 0;
-                while ((colHexCount < static_cast<int>(textPtr.size())) && (textPtr[colHexCount] != ']'))
+                i32 colHexCount = 0;
+                while ((colHexCount < static_cast<i32>(textPtr.size())) && (textPtr[colHexCount] != ']'))
                 {
                     if (((textPtr[colHexCount] >= '0') && (textPtr[colHexCount] <= '9')) ||
                         ((textPtr[colHexCount] >= 'A') && (textPtr[colHexCount] <= 'F')) ||

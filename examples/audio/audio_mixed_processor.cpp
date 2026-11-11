@@ -17,20 +17,20 @@
 #include "raylib.h"
 #include <math.h>
 
-static float exponent = 1.0f;                 // Audio exponentiation value
-static float averageVolume[400] = {};   // Average volume history
+static f32 exponent = 1.0f;                 // Audio exponentiation value
+static f32 averageVolume[400] = {};   // Average volume history
 
 //------------------------------------------------------------------------------------
 // Audio processing function
 //------------------------------------------------------------------------------------
-void ProcessAudio(void *buffer, unsigned int frames)
+void ProcessAudio(void *buffer, u32 frames)
 {
-    float *samples = static_cast<float *>(buffer);   // Samples internally stored as <float>s
-    float average = 0.0f;               // Temporary average volume
+    f32 *samples = static_cast<f32 *>(buffer);   // Samples internally stored as <float>s
+    f32 average = 0.0f;               // Temporary average volume
 
-    for (unsigned int frame = 0; frame < frames; frame++)
+    for (u32 frame = 0; frame < frames; frame++)
     {
-        float *left = &samples[frame*2 + 0], *right = &samples[frame*2 + 1];
+        f32 *left = &samples[frame*2 + 0], *right = &samples[frame*2 + 1];
 
         *left = powf(fabsf(*left), exponent)*( (*left < 0.0f)? -1.0f : 1.0f );
         *right = powf(fabsf(*right), exponent)*( (*right < 0.0f)? -1.0f : 1.0f );
@@ -40,7 +40,7 @@ void ProcessAudio(void *buffer, unsigned int frames)
     }
 
     // Moving history to the left
-    for (int i = 0; i < 399; i++) averageVolume[i] = averageVolume[i + 1];
+    for (i32 i = 0; i < 399; i++) averageVolume[i] = averageVolume[i + 1];
 
     averageVolume[399] = average;         // Adding last average value
 }
@@ -48,12 +48,12 @@ void ProcessAudio(void *buffer, unsigned int frames)
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - mixed processor");
 
@@ -97,9 +97,9 @@ int main()
             DrawText(TextFormat("EXPONENT = %.2f", exponent), 215, 180, 20, LIGHTGRAY);
 
             DrawRectangle(199, 199, 402, 34, LIGHTGRAY);
-            for (int i = 0; i < 400; i++)
+            for (i32 i = 0; i < 400; i++)
             {
-                DrawLine(201 + i, 232 - static_cast<int>(averageVolume[i]*32), 201 + i, 232, MAROON);
+                DrawLine(201 + i, 232 - static_cast<i32>(averageVolume[i]*32), 201 + i, 232, MAROON);
             }
             DrawRectangleLines(199, 199, 402, 34, GRAY);
 

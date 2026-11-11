@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - lines drawing");
 
@@ -41,9 +41,9 @@ int main()
     const RenderTexture canvas = LoadRenderTexture(screenWidth, screenHeight);
 
     // The line's thickness
-    float lineThickness = 8.0f;
+    f32 lineThickness = 8.0f;
     // The lines hue (in HSV, from 0-360)
-    float lineHue = 0.0f;
+    f32 lineHue = 0.0f;
 
     // Clear the canvas to the background color
     BeginTextureMode(canvas);
@@ -114,7 +114,7 @@ int main()
         BeginDrawing();
 
             // Draw the render texture to the screen, flipped vertically to make it appear top-side up
-            DrawTextureRec(canvas.texture, Rectangle{ 0.0f, 0.0f, static_cast<float>(canvas.texture.width),static_cast<float>(-canvas.texture.height) }, vec2{}, WHITE);
+            DrawTextureRec(canvas.texture, Rectangle{ 0.0f, 0.0f, static_cast<f32>(canvas.texture.width),static_cast<f32>(-canvas.texture.height) }, vec2{}, WHITE);
 
             // Draw the preview circle
             if (!leftButtonDown) DrawCircleLinesV(GetMousePosition(), lineThickness/2.0f, Color{ 127, 127, 127, 127 });

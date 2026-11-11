@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - waving cubes");
 
@@ -40,7 +40,7 @@ int main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Specify the amount of blocks in each direction
-    constexpr int numBlocks = 15;
+    constexpr i32 numBlocks = 15;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -50,15 +50,15 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const double time = GetTime();
+        const f64 time = GetTime();
 
         // Calculate time scale for cube position and size
-        const float scale = (2.0f + static_cast<float>(sin(time)))*0.7f;
+        const f32 scale = (2.0f + static_cast<f32>(sin(time)))*0.7f;
 
         // Move camera around the scene
-        const double cameraTime = time*0.3;
-        camera.position.x = static_cast<float>(cos(cameraTime))*40.0f;
-        camera.position.z = static_cast<float>(sin(cameraTime))*40.0f;
+        const f64 cameraTime = time*0.3;
+        camera.position.x = static_cast<f32>(cos(cameraTime))*40.0f;
+        camera.position.z = static_cast<f32>(sin(cameraTime))*40.0f;
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -71,32 +71,32 @@ int main()
 
                 DrawGrid(10, 5.0f);
 
-                for (int x = 0; x < numBlocks; x++)
+                for (i32 x = 0; x < numBlocks; x++)
                 {
-                    for (int y = 0; y < numBlocks; y++)
+                    for (i32 y = 0; y < numBlocks; y++)
                     {
-                        for (int z = 0; z < numBlocks; z++)
+                        for (i32 z = 0; z < numBlocks; z++)
                         {
                             // Scale of the blocks depends on x/y/z positions
-                            const float blockScale = (x + y + z)/30.0f;
+                            const f32 blockScale = (x + y + z)/30.0f;
 
                             // Scatter makes the waving effect by adding blockScale over time
-                            const float scatter = sinf(blockScale*20.0f + static_cast<float>(time*4.0f));
+                            const f32 scatter = sinf(blockScale*20.0f + static_cast<f32>(time*4.0f));
 
                             // Calculate the cube position
                             const vec3 cubePos = {
-                                (x - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter,
-                                (y - static_cast<float>(numBlocks)/2)*(scale*2.0f) + scatter,
-                                (z - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter
+                                (x - static_cast<f32>(numBlocks)/2)*(scale*3.0f) + scatter,
+                                (y - static_cast<f32>(numBlocks)/2)*(scale*2.0f) + scatter,
+                                (z - static_cast<f32>(numBlocks)/2)*(scale*3.0f) + scatter
                             };
 
                             // Pick a color with a hue depending on cube position for the rainbow color effect
                             // NOTE: This function is quite costly to be done per cube and frame,
                             // pre-catching the results into a separate array could improve performance
-                            const Color cubeColor = ColorFromHSV(static_cast<float>(((x + y + z)*18)%360), 0.75f, 0.9f);
+                            const Color cubeColor = ColorFromHSV(static_cast<f32>(((x + y + z)*18)%360), 0.75f, 0.9f);
 
                             // Calculate cube size
-                            const float cubeSize = (2.4f - scale)*blockScale;
+                            const f32 cubeSize = (2.4f - scale)*blockScale;
 
                             // And finally, draw the cube!
                             DrawCube(cubePos, cubeSize, cubeSize, cubeSize, cubeColor);

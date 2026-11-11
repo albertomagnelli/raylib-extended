@@ -23,28 +23,28 @@
 typedef struct MonitorInfo {
     vec2 position;
     std::string name;
-    int width;
-    int height;
-    int physicalWidth;
-    int physicalHeight;
-    int refreshRate;
+    i32 width;
+    i32 height;
+    i32 physicalWidth;
+    i32 physicalHeight;
+    i32 refreshRate;
 } MonitorInfo;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - monitor detector");
 
     MonitorInfo monitors[MAX_MONITORS] = {};
-    int currentMonitorIndex = GetCurrentMonitor();
-    int monitorCount = 0;
+    i32 currentMonitorIndex = GetCurrentMonitor();
+    i32 monitorCount = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -55,15 +55,15 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Variables to find the max x and Y to calculate the scale
-        int maxWidth = 1;
-        int maxHeight = 1;
+        i32 maxWidth = 1;
+        i32 maxHeight = 1;
 
         // Monitor offset is to fix when monitor position x is negative
-        int monitorOffsetX = 0;
+        i32 monitorOffsetX = 0;
 
         // Rebuild monitors array every frame
         monitorCount = GetMonitorCount();
-        for (int i = 0; i < monitorCount; i++)
+        for (i32 i = 0; i < monitorCount; i++)
         {
             monitors[i] = MonitorInfo{
                 GetMonitorPosition(i),
@@ -75,10 +75,10 @@ int main()
                 GetMonitorRefreshRate(i)
             };
 
-            if (monitors[i].position.x < monitorOffsetX) monitorOffsetX = -static_cast<int>(monitors[i].position.x);
+            if (monitors[i].position.x < monitorOffsetX) monitorOffsetX = -static_cast<i32>(monitors[i].position.x);
 
-            const int width = static_cast<int>(monitors[i].position.x) + monitors[i].width;
-            const int height = static_cast<int>(monitors[i].position.y) + monitors[i].height;
+            const i32 width = static_cast<i32>(monitors[i].position.x) + monitors[i].width;
+            const i32 height = static_cast<i32>(monitors[i].position.y) + monitors[i].height;
 
             if (maxWidth < width) maxWidth = width;
             if (maxHeight < height) maxHeight = height;
@@ -95,10 +95,10 @@ int main()
         }
         else currentMonitorIndex = GetCurrentMonitor(); // Get currentMonitorIndex if manually moved
 
-        float monitorScale = 0.6f;
+        f32 monitorScale = 0.6f;
 
-        if (maxHeight > (maxWidth + monitorOffsetX)) monitorScale *= (static_cast<float>(screenHeight)/static_cast<float>(maxHeight));
-        else monitorScale *= (static_cast<float>(screenWidth)/static_cast<float>(maxWidth + monitorOffsetX));
+        if (maxHeight > (maxWidth + monitorOffsetX)) monitorScale *= (static_cast<f32>(screenHeight)/static_cast<f32>(maxHeight));
+        else monitorScale *= (static_cast<f32>(screenWidth)/static_cast<f32>(maxWidth + monitorOffsetX));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -112,7 +112,7 @@ int main()
             DrawRectangleLines(20, 60, screenWidth - 40, screenHeight - 100, DARKGRAY);
 
             // Draw Monitor Rectangles with information inside
-            for (int i = 0; i < monitorCount; i++)
+            for (i32 i = 0; i < monitorCount; i++)
             {
                 // Calculate retangle position and size using monitorScale
                 const Rectangle rec = Rectangle{
@@ -123,7 +123,7 @@ int main()
                 };
 
                 // Draw monitor name and information inside the rectangle
-                DrawText(TextFormat("[%i] %s", i, monitors[i].name.c_str()), static_cast<int>(rec.x) + 10, static_cast<int>(rec.y) + static_cast<int>(100*monitorScale), static_cast<int>(120*monitorScale), BLUE);
+                DrawText(TextFormat("[%i] %s", i, monitors[i].name.c_str()), static_cast<i32>(rec.x) + 10, static_cast<i32>(rec.y) + static_cast<i32>(100*monitorScale), static_cast<i32>(120*monitorScale), BLUE);
                 DrawText(
                     TextFormat("Resolution: [%ipx x %ipx]\nRefreshRate: [%ihz]\nPhysical Size: [%imm x %imm]\nPosition: %3.0f x %3.0f",
                         monitors[i].width,
@@ -133,7 +133,7 @@ int main()
                         monitors[i].physicalHeight,
                         monitors[i].position.x,
                         monitors[i].position.y
-                    ), static_cast<int>(rec.x) + 10, static_cast<int>(rec.y) + static_cast<int>(200*monitorScale), static_cast<int>(120*monitorScale), DARKGRAY);
+                    ), static_cast<i32>(rec.x) + 10, static_cast<i32>(rec.y) + static_cast<i32>(200*monitorScale), static_cast<i32>(120*monitorScale), DARKGRAY);
 
                 // Highlight current monitor
                 if (i == currentMonitorIndex)

@@ -24,12 +24,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - raw stream");
 
@@ -37,18 +37,18 @@ int main()
 
     // Set the number of samples the stream will keep in memory at a time to BUFFER_SIZE
     SetAudioStreamBufferSizeDefault(BUFFER_SIZE);
-    float buffer[BUFFER_SIZE] = {};
+    f32 buffer[BUFFER_SIZE] = {};
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
     const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
-    float pan = 0.0f;
+    f32 pan = 0.0f;
     SetAudioStreamPan(stream, pan);
     PlayAudioStream(stream);
 
-    int sineFrequency = 440;
-    int newSineFrequency = 440;
-    int sineIndex = 0;
-    double sineStartTime = 0.0;
+    i32 sineFrequency = 440;
+    i32 newSineFrequency = 440;
+    i32 sineIndex = 0;
+    f64 sineStartTime = 0.0;
 
     SetTargetFPS(30);
     //--------------------------------------------------------------------------------------
@@ -87,9 +87,9 @@ int main()
 
         if (IsAudioStreamProcessed(stream))
         {
-            for (int i = 0; i < BUFFER_SIZE; i++)
+            for (i32 i = 0; i < BUFFER_SIZE; i++)
             {
-                const int wavelength = SAMPLE_RATE/sineFrequency;
+                const i32 wavelength = SAMPLE_RATE/sineFrequency;
                 buffer[i] = sinf(2*PI*sineIndex/wavelength);
                 sineIndex++;
 
@@ -116,17 +116,17 @@ int main()
             DrawText("Up/down to change frequency", 10, 10, 20, DARKGRAY);
             DrawText("Left/right to pan", 10, 30, 20, DARKGRAY);
 
-            const int windowStart = static_cast<int>((GetTime() - sineStartTime)*SAMPLE_RATE);
-            const int windowSize = SAMPLE_RATE/10;
-            const int wavelength = SAMPLE_RATE/sineFrequency;
+            const i32 windowStart = static_cast<i32>((GetTime() - sineStartTime)*SAMPLE_RATE);
+            const i32 windowSize = SAMPLE_RATE/10;
+            const i32 wavelength = SAMPLE_RATE/sineFrequency;
 
             // Draw a sine wave with the same frequency as the one being sent to the audio stream
-            for (int i = 0; i < screenWidth; i++)
+            for (i32 i = 0; i < screenWidth; i++)
             {
-                const int t0 = windowStart + i*windowSize/screenWidth;
-                const int t1 = windowStart + (i + 1)*windowSize/screenWidth;
-                const vec2 startPos = { static_cast<float>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
-                const vec2 endPos = { static_cast<float>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
+                const i32 t0 = windowStart + i*windowSize/screenWidth;
+                const i32 t1 = windowStart + (i + 1)*windowSize/screenWidth;
+                const vec2 startPos = { static_cast<f32>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
+                const vec2 endPos = { static_cast<f32>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
                 DrawLineV(startPos, endPos, RED);
             }
 

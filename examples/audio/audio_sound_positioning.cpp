@@ -22,17 +22,17 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void SetSoundPosition(Camera listener, Sound sound, vec3 position, float maxDist);
+static void SetSoundPosition(Camera listener, Sound sound, vec3 position, f32 maxDist);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - sound positioning");
 
@@ -60,7 +60,7 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
 
-        const float th = static_cast<float>(GetTime());
+        const f32 th = static_cast<f32>(GetTime());
 
         const vec3 spherePos = { 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
 
@@ -99,14 +99,14 @@ int main()
 // Module Functions Definition
 //------------------------------------------------------------------------------------
 // Set sound 3d position
-static void SetSoundPosition(Camera listener, Sound sound, vec3 position, float maxDist)
+static void SetSoundPosition(Camera listener, Sound sound, vec3 position, f32 maxDist)
 {
     // Calculate direction vector and distance between listener and sound source
     const vec3 direction = ((position) - (listener.position));
-    const float distance = glm::length(direction);
+    const f32 distance = glm::length(direction);
 
     // Apply logarithmic distance attenuation and clamp between 0-1
-    float attenuation = 1.0f/(1.0f + (distance/maxDist));
+    f32 attenuation = 1.0f/(1.0f + (distance/maxDist));
     attenuation = Clamp(attenuation, 0.0f, 1.0f);
 
     // Calculate normalized vectors for spatial positioning
@@ -115,11 +115,11 @@ static void SetSoundPosition(Camera listener, Sound sound, vec3 position, float 
     const vec3 right = glm::normalize(glm::cross(forward, listener.up));
 
     // Reduce volume for sounds behind the listener
-    const float dotProduct = glm::dot(forward, normalizedDirection);
+    const f32 dotProduct = glm::dot(forward, normalizedDirection);
     if (dotProduct < 0.0f) attenuation *= (1.0f + dotProduct*0.5f);
 
     // Set stereo panning based on sound position relative to listener
-    const float pan = glm::dot(normalizedDirection, right);
+    const f32 pan = glm::dot(normalizedDirection, right);
 
     // Apply final sound properties
     SetSoundVolume(sound, attenuation);

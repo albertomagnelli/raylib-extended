@@ -19,35 +19,35 @@
 
 // Initialization constants
 //--------------------------------------------------------------------------------------
-constexpr int screenWidth = 800;
-constexpr int screenHeight = 450;
-constexpr int imageWidth = 800;
-const int imageHeight = 800/2;
+constexpr i32 screenWidth = 800;
+constexpr i32 screenHeight = 450;
+constexpr i32 imageWidth = 800;
+const i32 imageHeight = 800/2;
 
 // Rule button sizes and positions
-constexpr int drawRuleStartX = 585;
-constexpr int drawRuleStartY = 10;
-constexpr int drawRuleSpacing = 15;
-constexpr int drawRuleGroupSpacing = 50;
-constexpr int drawRuleSize = 14;
-constexpr int drawRuleInnerSize = 10;
+constexpr i32 drawRuleStartX = 585;
+constexpr i32 drawRuleStartY = 10;
+constexpr i32 drawRuleSpacing = 15;
+constexpr i32 drawRuleGroupSpacing = 50;
+constexpr i32 drawRuleSize = 14;
+constexpr i32 drawRuleInnerSize = 10;
 
 // Preset button sizes
-constexpr int presetsSizeX = 42;
-constexpr int presetsSizeY = 22;
+constexpr i32 presetsSizeX = 42;
+constexpr i32 presetsSizeY = 22;
 
-constexpr int linesUpdatedPerFrame = 4;
+constexpr i32 linesUpdatedPerFrame = 4;
 
 //----------------------------------------------------------------------------------
 // Functions
 //----------------------------------------------------------------------------------
-void ComputeLine(Image *image, int line, int rule)
+void ComputeLine(Image *image, i32 line, i32 rule)
 {
     // Compute next line pixels. Boundaries are not computed, always 0
-    for (int i = 1; i < imageWidth - 1; i++)
+    for (i32 i = 1; i < imageWidth - 1; i++)
     {
         // Get, from the previous line, the 3 pixels states as a binary value
-        const int prevValue = ((GetImageColor(*image, i - 1, line - 1).r < 5)? 4 : 0) +     // Left pixel
+        const i32 prevValue = ((GetImageColor(*image, i - 1, line - 1).r < 5)? 4 : 0) +     // Left pixel
                               ((GetImageColor(*image, i,     line - 1).r < 5)? 2 : 0) +     // Center pixel
                               ((GetImageColor(*image, i + 1, line - 1).r < 5)? 1 : 0);      // Right pixel
         // Get next value from rule bitmask
@@ -60,7 +60,7 @@ void ComputeLine(Image *image, int line, int rule)
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -74,12 +74,12 @@ int main()
     const Texture2D texture = LoadTextureFromImage(image);
 
     // Some interesting rules
-    const int presetValues[] = { 18, 30, 60, 86, 102, 124, 126, 150, 182, 225 };
-    const int presetsCount = sizeof(presetValues)/sizeof(presetValues[0]);
+    const i32 presetValues[] = { 18, 30, 60, 86, 102, 124, 126, 150, 182, 225 };
+    const i32 presetsCount = sizeof(presetValues)/sizeof(presetValues[0]);
 
     // Variables
-    int rule = 30;  // Starting rule
-    int line = 1;   // Line to compute, starting from line 1. One point in line 0 is already set
+    i32 rule = 30;  // Starting rule
+    i32 line = 1;   // Line to compute, starting from line 1. One point in line 0 is already set
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------
@@ -91,13 +91,13 @@ int main()
         //----------------------------------------------------------------------------------
         // Handle mouse
         const vec2 mouse = GetMousePosition();
-        int mouseInCell = -1;   // -1: outside any button; 0-7: rule cells; 8+: preset cells
+        i32 mouseInCell = -1;   // -1: outside any button; 0-7: rule cells; 8+: preset cells
 
         // Check mouse on rule cells
-        for (int i = 0; i < 8; i++)
+        for (i32 i = 0; i < 8; i++)
         {
-            const int cellX = drawRuleStartX - drawRuleGroupSpacing*i + drawRuleSpacing;
-            const int cellY = drawRuleStartY + drawRuleSpacing;
+            const i32 cellX = drawRuleStartX - drawRuleGroupSpacing*i + drawRuleSpacing;
+            const i32 cellY = drawRuleStartY + drawRuleSpacing;
             if ((mouse.x >= cellX) && (mouse.x <= cellX + drawRuleSize) &&
                 (mouse.y >= cellY) && (mouse.y <= cellY + drawRuleSize))
             {
@@ -109,10 +109,10 @@ int main()
         // Check mouse on preset cells
         if (mouseInCell < 0)
         {
-            for (int i = 0; i < presetsCount; i++)
+            for (i32 i = 0; i < presetsCount; i++)
             {
-                const int cellX = 4 + (presetsSizeX + 2)*(i/2);
-                const int cellY = 2 + (presetsSizeY + 2)*(i%2);
+                const i32 cellX = 4 + (presetsSizeX + 2)*(i/2);
+                const i32 cellY = 2 + (presetsSizeY + 2)*(i%2);
                 if ((mouse.x >= cellX) && (mouse.x <= cellX + presetsSizeX) &&
                     (mouse.y >= cellY) && (mouse.y <= cellY + presetsSizeY))
                 {
@@ -140,7 +140,7 @@ int main()
         //----------------------------------------------------------------------------------
         if (line < imageHeight)
         {
-            for (int i = 0; (i < linesUpdatedPerFrame) && (line + i < imageHeight); i++)
+            for (i32 i = 0; (i < linesUpdatedPerFrame) && (line + i < imageHeight); i++)
                 ComputeLine(&image, line + i, rule);
             line += linesUpdatedPerFrame;
 
@@ -158,7 +158,7 @@ int main()
             DrawTexture(texture, 0, screenHeight - imageHeight, WHITE);
 
             // Draw preset values
-            for (int i = 0; i < presetsCount; i++)
+            for (i32 i = 0; i < presetsCount; i++)
             {
                 DrawText(TextFormat("%i", presetValues[i]), 8 + (presetsSizeX + 2)*(i/2), 4 + (presetsSizeY + 2)*(i%2), 20, GRAY);
                 DrawRectangleLines(4 + (presetsSizeX + 2)*(i/2), 2 + (presetsSizeY + 2)*(i%2), presetsSizeX, presetsSizeY, BLUE);
@@ -171,10 +171,10 @@ int main()
             }
 
             // Draw rule bits
-            for (int i = 0; i < 8; i++)
+            for (i32 i = 0; i < 8; i++)
             {
                 // The three input bits
-                for (int j = 0; j < 3; j++)
+                for (i32 j = 0; j < 3; j++)
                 {
                     DrawRectangleLines(drawRuleStartX - drawRuleGroupSpacing*i + drawRuleSpacing*j, drawRuleStartY, drawRuleSize, drawRuleSize, GRAY);
                     if (i & (4 >> j))

@@ -20,22 +20,22 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - highdpi testbed");
 
     vec2 scaleDpi = GetWindowScaleDPI();
     vec2 mousePos = GetMousePosition();
-    int currentMonitor = GetCurrentMonitor();
+    i32 currentMonitor = GetCurrentMonitor();
     vec2 windowPos = GetWindowPosition();
 
-    constexpr int gridSpacing = 40;   // Grid spacing in pixels
+    constexpr i32 gridSpacing = 40;   // Grid spacing in pixels
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -61,12 +61,12 @@ int main()
             ClearBackground(RAYWHITE);
 
             // Draw grid
-            for (int h = 0; h < GetScreenHeight()/gridSpacing + 1; h++)
+            for (i32 h = 0; h < GetScreenHeight()/gridSpacing + 1; h++)
             {
                 DrawText(TextFormat("%02i", h*gridSpacing), 4, h*gridSpacing - 4, 10, GRAY);
                 DrawLine(24, h*gridSpacing, GetScreenWidth(), h*gridSpacing, LIGHTGRAY);
             }
-            for (int v = 0; v < GetScreenWidth()/gridSpacing + 1; v++)
+            for (i32 v = 0; v < GetScreenWidth()/gridSpacing + 1; v++)
             {
                 DrawText(TextFormat("%02i", v*gridSpacing), v*gridSpacing - 10, 4, 10, GRAY);
                 DrawLine(v*gridSpacing, 20, v*gridSpacing, GetScreenHeight(), LIGHTGRAY);
@@ -75,7 +75,7 @@ int main()
             // Draw UI info
             DrawText(TextFormat("CURRENT MONITOR: %i/%i (%ix%i)", currentMonitor + 1, GetMonitorCount(),
                 GetMonitorWidth(currentMonitor), GetMonitorHeight(currentMonitor)), 50, 50, 20, DARKGRAY);
-            DrawText(TextFormat("WINDOW POSITION: %ix%i", static_cast<int>(windowPos.x), static_cast<int>(windowPos.y)), 50, 90, 20, DARKGRAY);
+            DrawText(TextFormat("WINDOW POSITION: %ix%i", static_cast<i32>(windowPos.x), static_cast<i32>(windowPos.y)), 50, 90, 20, DARKGRAY);
             DrawText(TextFormat("SCREEN SIZE: %ix%i", GetScreenWidth(), GetScreenHeight()), 50, 130, 20, DARKGRAY);
             DrawText(TextFormat("RENDER SIZE: %ix%i", GetRenderWidth(), GetRenderHeight()), 50, 170, 20, DARKGRAY);
             DrawText(TextFormat("SCALE FACTOR: %.2fx%.2f", scaleDpi.x, scaleDpi.y), 50, 210, 20, GRAY);
@@ -88,8 +88,8 @@ int main()
             DrawCircleV(GetMousePosition(), 20, MAROON);
             DrawRectangleRec(Rectangle{ mousePos.x - 25, mousePos.y, 50, 2 }, BLACK);
             DrawRectangleRec(Rectangle{ mousePos.x, mousePos.y - 25, 2, 50 }, BLACK);
-            DrawText(TextFormat("[%i,%i]", GetMouseX(), GetMouseY()), static_cast<int>(mousePos.x) - 44,
-                (mousePos.y > GetScreenHeight() - 60)? static_cast<int>(mousePos.y) - 46 : static_cast<int>(mousePos.y) + 30, 20, BLACK);
+            DrawText(TextFormat("[%i,%i]", GetMouseX(), GetMouseY()), static_cast<i32>(mousePos.x) - 44,
+                (mousePos.y > GetScreenHeight() - 60)? static_cast<i32>(mousePos.y) - 46 : static_cast<i32>(mousePos.y) + 30, 20, BLACK);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

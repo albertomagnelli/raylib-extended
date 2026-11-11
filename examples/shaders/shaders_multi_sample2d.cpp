@@ -31,12 +31,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - multi sample2d");
 
@@ -51,11 +51,11 @@ int main()
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_mix.fs", GLSL_VERSION));
 
     // Get an additional sampler2D location to be enabled on drawing
-    const int texBlueLoc = GetShaderLocation(shader, "texture1");
+    const i32 texBlueLoc = GetShaderLocation(shader, "texture1");
 
     // Get shader uniform for divider
-    const int dividerLoc = GetShaderLocation(shader, "divider");
-    float dividerValue = 0.5f;
+    const i32 dividerLoc = GetShaderLocation(shader, "divider");
+    f32 dividerValue = 0.5f;
 
     SetTargetFPS(60);                           // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -25,40 +25,40 @@
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static const char *GetGestureName(int gesture); // Get text string for gesture value
-static Color GetGestureColor(int gesture);      // Get color for gesture value
+static const char *GetGestureName(i32 gesture); // Get text string for gesture value
+static Color GetGestureColor(i32 gesture);      // Get color for gesture value
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures testbed");
 
     const vec2 messagePosition = { 160, 7 };
 
     // Last gesture variables definitions
-    int lastGesture = 0;
+    i32 lastGesture = 0;
     const vec2 lastGesturePosition = { 165, 130 };
 
     // Gesture log variables definitions
     // NOTE: The gesture log uses an array (as an inverted circular queue) to store the performed gestures
     std::string gestureLog[GESTURE_LOG_SIZE];
     // NOTE: The index for the inverted circular queue (moving from last to first direction, then looping around)
-    int gestureLogIndex = 0;
-    int previousGesture = 0;
+    i32 gestureLogIndex = 0;
+    i32 previousGesture = 0;
 
     // Log mode values:
     // - 0 shows repeated events
     // - 1 hides repeated events
     // - 2 shows repeated events but hide hold events
     // - 3 hides repeated events and hide hold events
-    int logMode = 1;
+    i32 logMode = 1;
 
     Color gestureColor = { 0, 0, 0, 255 };
     const Rectangle logButton1 = { 53, 7, 48, 26 };
@@ -66,8 +66,8 @@ int main()
     const vec2 gestureLogPosition = { 10, 10 };
 
     // Protractor variables definitions
-    constexpr float angleLength = 90.0f;
-    float currentAngleDegrees = 0.0f;
+    constexpr f32 angleLength = 90.0f;
+    f32 currentAngleDegrees = 0.0f;
     vec2 finalVector = { 0.0f, 0.0f };
     const vec2 protractorPosition = { 266.0f, 315.0f };
 
@@ -80,11 +80,11 @@ int main()
         // Update
         //--------------------------------------------------------------------------------------
         // Handle common gestures data
-        int i, ii; // Iterators that will be reused by all for loops
-        const int currentGesture = GetGestureDetected();
-        const float currentDragDegrees = GetGestureDragAngle();
-        const float currentPitchDegrees = GetGesturePinchAngle();
-        const int touchCount = GetTouchPointCount();
+        i32 i, ii; // Iterators that will be reused by all for loops
+        const i32 currentGesture = GetGestureDetected();
+        const f32 currentDragDegrees = GetGestureDragAngle();
+        const f32 currentPitchDegrees = GetGesturePinchAngle();
+        const i32 touchCount = GetTouchPointCount();
 
         // Handle last gesture
         if ((currentGesture != 0) && (currentGesture != 4) && (currentGesture != previousGesture))
@@ -115,7 +115,7 @@ int main()
             }
         }
 
-        int fillLog = 0; // Gate variable to be used to allow or not the gesture log to be filled
+        i32 fillLog = 0; // Gate variable to be used to allow or not the gesture log to be filled
         if (currentGesture !=0)
         {
             if (logMode == 3) // 3 hides repeated events and hide hold events
@@ -152,7 +152,7 @@ int main()
         else if (currentGesture > 15) currentAngleDegrees = currentDragDegrees; // Swipe Right, Swipe Left, Swipe Up and Swipe Down
         else if (currentGesture > 0) currentAngleDegrees = 0.0f;                // Tap, Doubletap, Hold and Grab
 
-        const float currentAngleRadians = ((currentAngleDegrees + 90.0f)*PI/180); // Convert the current angle to Radians
+        const f32 currentAngleRadians = ((currentAngleDegrees + 90.0f)*PI/180); // Convert the current angle to Radians
         // Calculate the final vector for display
         finalVector = vec2{ (angleLength*sinf(currentAngleRadians)) + protractorPosition.x,
             (angleLength*cosf(currentAngleRadians)) + protractorPosition.y };
@@ -176,33 +176,33 @@ int main()
             ClearBackground(RAYWHITE);
 
             // Draw common elements
-            DrawText("*", static_cast<int>(messagePosition.x) + 5, static_cast<int>(messagePosition.y) + 5, 10, BLACK);
-            DrawText("Example optimized for Web/HTML5\non Smartphones with Touch Screen.", static_cast<int>(messagePosition.x) + 15, static_cast<int>(messagePosition.y) + 5, 10, BLACK);
-            DrawText("*", static_cast<int>(messagePosition.x) + 5, static_cast<int>(messagePosition.y) + 35, 10, BLACK);
-            DrawText("While running on Desktop Web Browsers,\ninspect and turn on Touch Emulation.", static_cast<int>(messagePosition.x) + 15, static_cast<int>(messagePosition.y) + 35, 10, BLACK);
+            DrawText("*", static_cast<i32>(messagePosition.x) + 5, static_cast<i32>(messagePosition.y) + 5, 10, BLACK);
+            DrawText("Example optimized for Web/HTML5\non Smartphones with Touch Screen.", static_cast<i32>(messagePosition.x) + 15, static_cast<i32>(messagePosition.y) + 5, 10, BLACK);
+            DrawText("*", static_cast<i32>(messagePosition.x) + 5, static_cast<i32>(messagePosition.y) + 35, 10, BLACK);
+            DrawText("While running on Desktop Web Browsers,\ninspect and turn on Touch Emulation.", static_cast<i32>(messagePosition.x) + 15, static_cast<i32>(messagePosition.y) + 35, 10, BLACK);
 
             // Draw last gesture
-            DrawText("Last gesture", static_cast<int>(lastGesturePosition.x) + 33, static_cast<int>(lastGesturePosition.y) - 47, 20, BLACK);
-            DrawText("Swipe         Tap       Pinch  Touch", static_cast<int>(lastGesturePosition.x) + 17, static_cast<int>(lastGesturePosition.y) - 18, 10, BLACK);
-            DrawRectangle(static_cast<int>(lastGesturePosition.x) + 20, static_cast<int>(lastGesturePosition.y), 20, 20, lastGesture == GESTURE_SWIPE_UP ? RED : LIGHTGRAY);
-            DrawRectangle(static_cast<int>(lastGesturePosition.x), static_cast<int>(lastGesturePosition.y) + 20, 20, 20, lastGesture == GESTURE_SWIPE_LEFT ? RED : LIGHTGRAY);
-            DrawRectangle(static_cast<int>(lastGesturePosition.x) + 40, static_cast<int>(lastGesturePosition.y) + 20, 20, 20, lastGesture == GESTURE_SWIPE_RIGHT ? RED : LIGHTGRAY);
-            DrawRectangle(static_cast<int>(lastGesturePosition.x) + 20, static_cast<int>(lastGesturePosition.y) + 40, 20, 20, lastGesture == GESTURE_SWIPE_DOWN ? RED : LIGHTGRAY);
-            DrawCircle(static_cast<int>(lastGesturePosition.x) + 80, static_cast<int>(lastGesturePosition.y) + 16, 10, lastGesture == GESTURE_TAP ? BLUE : LIGHTGRAY);
+            DrawText("Last gesture", static_cast<i32>(lastGesturePosition.x) + 33, static_cast<i32>(lastGesturePosition.y) - 47, 20, BLACK);
+            DrawText("Swipe         Tap       Pinch  Touch", static_cast<i32>(lastGesturePosition.x) + 17, static_cast<i32>(lastGesturePosition.y) - 18, 10, BLACK);
+            DrawRectangle(static_cast<i32>(lastGesturePosition.x) + 20, static_cast<i32>(lastGesturePosition.y), 20, 20, lastGesture == GESTURE_SWIPE_UP ? RED : LIGHTGRAY);
+            DrawRectangle(static_cast<i32>(lastGesturePosition.x), static_cast<i32>(lastGesturePosition.y) + 20, 20, 20, lastGesture == GESTURE_SWIPE_LEFT ? RED : LIGHTGRAY);
+            DrawRectangle(static_cast<i32>(lastGesturePosition.x) + 40, static_cast<i32>(lastGesturePosition.y) + 20, 20, 20, lastGesture == GESTURE_SWIPE_RIGHT ? RED : LIGHTGRAY);
+            DrawRectangle(static_cast<i32>(lastGesturePosition.x) + 20, static_cast<i32>(lastGesturePosition.y) + 40, 20, 20, lastGesture == GESTURE_SWIPE_DOWN ? RED : LIGHTGRAY);
+            DrawCircle(static_cast<i32>(lastGesturePosition.x) + 80, static_cast<i32>(lastGesturePosition.y) + 16, 10, lastGesture == GESTURE_TAP ? BLUE : LIGHTGRAY);
             DrawRing( vec2{lastGesturePosition.x + 103, lastGesturePosition.y + 16}, 6.0f, 11.0f, 0.0f, 360.0f, 0, lastGesture == GESTURE_DRAG ? LIME : LIGHTGRAY);
-            DrawCircle(static_cast<int>(lastGesturePosition.x) + 80, static_cast<int>(lastGesturePosition.y) + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
-            DrawCircle(static_cast<int>(lastGesturePosition.x) + 103, static_cast<int>(lastGesturePosition.y) + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
+            DrawCircle(static_cast<i32>(lastGesturePosition.x) + 80, static_cast<i32>(lastGesturePosition.y) + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
+            DrawCircle(static_cast<i32>(lastGesturePosition.x) + 103, static_cast<i32>(lastGesturePosition.y) + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
             DrawTriangle(vec2{ lastGesturePosition.x + 122, lastGesturePosition.y + 16 }, vec2{ lastGesturePosition.x + 137, lastGesturePosition.y + 26 }, vec2{lastGesturePosition.x + 137, lastGesturePosition.y + 6 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
             DrawTriangle(vec2{ lastGesturePosition.x + 147, lastGesturePosition.y + 6 }, vec2{ lastGesturePosition.x + 147, lastGesturePosition.y + 26 }, vec2{ lastGesturePosition.x + 162, lastGesturePosition.y + 16 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
             DrawTriangle(vec2{ lastGesturePosition.x + 125, lastGesturePosition.y + 33 }, vec2{ lastGesturePosition.x + 125, lastGesturePosition.y + 53 }, vec2{ lastGesturePosition.x + 140, lastGesturePosition.y + 43 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
             DrawTriangle(vec2{ lastGesturePosition.x + 144, lastGesturePosition.y + 43 }, vec2{ lastGesturePosition.x + 159, lastGesturePosition.y + 53 }, vec2{ lastGesturePosition.x + 159, lastGesturePosition.y + 33 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
-            for (i = 0; i < 4; i++) DrawCircle(static_cast<int>(lastGesturePosition.x) + 180, static_cast<int>(lastGesturePosition.y) + 7 + i*15, 5, touchCount <= i? LIGHTGRAY : gestureColor);
+            for (i = 0; i < 4; i++) DrawCircle(static_cast<i32>(lastGesturePosition.x) + 180, static_cast<i32>(lastGesturePosition.y) + 7 + i*15, 5, touchCount <= i? LIGHTGRAY : gestureColor);
 
             // Draw gesture log
-            DrawText("Log", static_cast<int>(gestureLogPosition.x), static_cast<int>(gestureLogPosition.y), 20, BLACK);
+            DrawText("Log", static_cast<i32>(gestureLogPosition.x), static_cast<i32>(gestureLogPosition.y), 20, BLACK);
 
             // Loop in both directions to print the gesture log array in the inverted order (and looping around if the index started somewhere in the middle)
-            for (i = 0, ii = gestureLogIndex; i < GESTURE_LOG_SIZE; i++, ii = (ii + 1)%GESTURE_LOG_SIZE) DrawText(gestureLog[ii], static_cast<int>(gestureLogPosition.x), static_cast<int>(gestureLogPosition.y) + 410 - i*20, 20, (i == 0 ? gestureColor : LIGHTGRAY));
+            for (i = 0, ii = gestureLogIndex; i < GESTURE_LOG_SIZE; i++, ii = (ii + 1)%GESTURE_LOG_SIZE) DrawText(gestureLog[ii], static_cast<i32>(gestureLogPosition.x), static_cast<i32>(gestureLogPosition.y) + 410 - i*20, 20, (i == 0 ? gestureColor : LIGHTGRAY));
             Color logButton1Color, logButton2Color;
             switch (logMode)
             {
@@ -212,31 +212,31 @@ int main()
                 default: logButton1Color=GRAY;   logButton2Color=GRAY;   break;
             }
             DrawRectangleRec(logButton1, logButton1Color);
-            DrawText("Hide", static_cast<int>(logButton1.x) + 7, static_cast<int>(logButton1.y) + 3, 10, WHITE);
-            DrawText("Repeat", static_cast<int>(logButton1.x) + 7, static_cast<int>(logButton1.y) + 13, 10, WHITE);
+            DrawText("Hide", static_cast<i32>(logButton1.x) + 7, static_cast<i32>(logButton1.y) + 3, 10, WHITE);
+            DrawText("Repeat", static_cast<i32>(logButton1.x) + 7, static_cast<i32>(logButton1.y) + 13, 10, WHITE);
             DrawRectangleRec(logButton2, logButton2Color);
-            DrawText("Hide", static_cast<int>(logButton1.x) + 62, static_cast<int>(logButton1.y) + 3, 10, WHITE);
-            DrawText("Hold", static_cast<int>(logButton1.x) + 62, static_cast<int>(logButton1.y) + 13, 10, WHITE);
+            DrawText("Hide", static_cast<i32>(logButton1.x) + 62, static_cast<i32>(logButton1.y) + 3, 10, WHITE);
+            DrawText("Hold", static_cast<i32>(logButton1.x) + 62, static_cast<i32>(logButton1.y) + 13, 10, WHITE);
 
             // Draw protractor
-            DrawText("Angle", static_cast<int>(protractorPosition.x) + 55, static_cast<int>(protractorPosition.y) + 76, 10, BLACK);
+            DrawText("Angle", static_cast<i32>(protractorPosition.x) + 55, static_cast<i32>(protractorPosition.y) + 76, 10, BLACK);
             const std::string angleString = TextFormat("%f", currentAngleDegrees);
-            const int angleStringDot = TextFindIndex(angleString, ".");
+            const i32 angleStringDot = TextFindIndex(angleString, ".");
             const std::string angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
-            DrawText( angleStringTrim, static_cast<int>(protractorPosition.x) + 55, static_cast<int>(protractorPosition.y) + 92, 20, gestureColor);
+            DrawText( angleStringTrim, static_cast<i32>(protractorPosition.x) + 55, static_cast<i32>(protractorPosition.y) + 92, 20, gestureColor);
             DrawCircleV(protractorPosition, 80.0f, WHITE);
             DrawLineEx(vec2{ protractorPosition.x - 90, protractorPosition.y }, vec2{ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);
             DrawLineEx(vec2{ protractorPosition.x, protractorPosition.y - 90 }, vec2{ protractorPosition.x, protractorPosition.y + 90 }, 3.0f, LIGHTGRAY);
             DrawLineEx(vec2{ protractorPosition.x - 80, protractorPosition.y - 45 }, vec2{ protractorPosition.x + 80, protractorPosition.y + 45 }, 3.0f, GREEN);
             DrawLineEx(vec2{ protractorPosition.x - 80, protractorPosition.y + 45 }, vec2{ protractorPosition.x + 80, protractorPosition.y - 45 }, 3.0f, GREEN);
-            DrawText("0", static_cast<int>(protractorPosition.x) + 96, static_cast<int>(protractorPosition.y) - 9, 20, BLACK);
-            DrawText("30", static_cast<int>(protractorPosition.x) + 74, static_cast<int>(protractorPosition.y) - 68, 20, BLACK);
-            DrawText("90", static_cast<int>(protractorPosition.x) - 11, static_cast<int>(protractorPosition.y) - 110, 20, BLACK);
-            DrawText("150", static_cast<int>(protractorPosition.x) - 100, static_cast<int>(protractorPosition.y) - 68, 20, BLACK);
-            DrawText("180", static_cast<int>(protractorPosition.x) - 124, static_cast<int>(protractorPosition.y) - 9, 20, BLACK);
-            DrawText("210", static_cast<int>(protractorPosition.x) - 100, static_cast<int>(protractorPosition.y) + 50, 20, BLACK);
-            DrawText("270", static_cast<int>(protractorPosition.x) - 18, static_cast<int>(protractorPosition.y) + 92, 20, BLACK);
-            DrawText("330", static_cast<int>(protractorPosition.x) + 72, static_cast<int>(protractorPosition.y) + 50, 20, BLACK);
+            DrawText("0", static_cast<i32>(protractorPosition.x) + 96, static_cast<i32>(protractorPosition.y) - 9, 20, BLACK);
+            DrawText("30", static_cast<i32>(protractorPosition.x) + 74, static_cast<i32>(protractorPosition.y) - 68, 20, BLACK);
+            DrawText("90", static_cast<i32>(protractorPosition.x) - 11, static_cast<i32>(protractorPosition.y) - 110, 20, BLACK);
+            DrawText("150", static_cast<i32>(protractorPosition.x) - 100, static_cast<i32>(protractorPosition.y) - 68, 20, BLACK);
+            DrawText("180", static_cast<i32>(protractorPosition.x) - 124, static_cast<i32>(protractorPosition.y) - 9, 20, BLACK);
+            DrawText("210", static_cast<i32>(protractorPosition.x) - 100, static_cast<i32>(protractorPosition.y) + 50, 20, BLACK);
+            DrawText("270", static_cast<i32>(protractorPosition.x) - 18, static_cast<i32>(protractorPosition.y) + 92, 20, BLACK);
+            DrawText("330", static_cast<i32>(protractorPosition.x) + 72, static_cast<i32>(protractorPosition.y) + 50, 20, BLACK);
             if (currentAngleDegrees != 0.0f) DrawLineEx(protractorPosition, finalVector, 3.0f, gestureColor);
 
             // Draw touch and mouse pointer points
@@ -275,7 +275,7 @@ int main()
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Get text string for gesture value
-static const char *GetGestureName(int gesture)
+static const char *GetGestureName(i32 gesture)
 {
     switch (gesture)
     {
@@ -295,7 +295,7 @@ static const char *GetGestureName(int gesture)
 }
 
 // Get color for gesture value
-static Color GetGestureColor(int gesture)
+static Color GetGestureColor(i32 gesture)
 {
     switch (gesture)
     {

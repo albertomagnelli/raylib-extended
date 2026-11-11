@@ -23,12 +23,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - sprite fonts");
 
@@ -53,13 +53,13 @@ int main()
                                 "ALPHA_BETA FONT designed by Brian Kent (AEnigma)",
                                 "JUPITER_CRASH FONT designed by Brian Kent (AEnigma)" };
 
-    const int spacings[MAX_FONTS] = { 2, 4, 8, 4, 3, 4, 4, 1 };
+    const i32 spacings[MAX_FONTS] = { 2, 4, 8, 4, 3, 4, 4, 1 };
 
     vec2 positions[MAX_FONTS] = {};
 
-    for (int i = 0; i < MAX_FONTS; i++)
+    for (i32 i = 0; i < MAX_FONTS; i++)
     {
-        positions[i].x = screenWidth/2.0f - MeasureTextEx(fonts[i], messages[i], fonts[i].baseSize*2.0f, static_cast<float>(spacings[i])).x/2.0f;
+        positions[i].x = screenWidth/2.0f - MeasureTextEx(fonts[i], messages[i], fonts[i].baseSize*2.0f, static_cast<f32>(spacings[i])).x/2.0f;
         positions[i].y = 60.0f + fonts[i].baseSize + 45.0f*i;
     }
 
@@ -90,9 +90,9 @@ int main()
             DrawText("free sprite fonts included with raylib", 220, 20, 20, DARKGRAY);
             DrawLine(220, 50, 600, 50, DARKGRAY);
 
-            for (int i = 0; i < MAX_FONTS; i++)
+            for (i32 i = 0; i < MAX_FONTS; i++)
             {
-                DrawTextEx(fonts[i], messages[i], positions[i], fonts[i].baseSize*2.0f, static_cast<float>(spacings[i]), colors[i]);
+                DrawTextEx(fonts[i], messages[i], positions[i], fonts[i].baseSize*2.0f, static_cast<f32>(spacings[i]), colors[i]);
             }
 
         EndDrawing();
@@ -103,7 +103,7 @@ int main()
     //--------------------------------------------------------------------------------------
 
     // Fonts unloading
-    for (int i = 0; i < MAX_FONTS; i++) UnloadFont(fonts[i]);
+    for (i32 i = 0; i < MAX_FONTS; i++) UnloadFont(fonts[i]);
 
     CloseWindow();                 // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

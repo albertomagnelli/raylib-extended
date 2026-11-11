@@ -32,12 +32,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blending");
 
@@ -64,43 +64,43 @@ int main()
 
     // Skinning shader could be required to be assigned to all materials shaders, just to make
     // sure required uniforms are being updated for the mesh using that material (and shader)
-    for (int i = 0; i < model.materialCount; i++) model.materials[i].shader = skinningShader;
+    for (i32 i = 0; i < model.materialCount; i++) model.materials[i].shader = skinningShader;
 #endif
 
     // Load model animations
-    int animCount = 0;
+    i32 animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/robot.glb", &animCount);
 
     // Animation playing variables
     // NOTE: Two animations are played with a smooth transition between them
-    int currentAnimPlaying = 0;         // Current animation playing (0 o 1)
-    int nextAnimToPlay = 1;             // Next animation to play (to transition)
+    i32 currentAnimPlaying = 0;         // Current animation playing (0 o 1)
+    i32 nextAnimToPlay = 1;             // Next animation to play (to transition)
     bool animTransition = false;        // Flag to register anim transition state
 
-    int animIndex0 = 10;                // Current animation playing (walking)
-    float animCurrentFrame0 = 0.0f;     // Current animation frame (supporting interpolated frames)
-    float animFrameSpeed0 = 0.5f;       // Current animation play speed
-    int animIndex1 = 6;                 // Next animation to play (running)
-    float animCurrentFrame1 = 0.0f;     // Next animation frame (supporting interpolated frames)
-    float animFrameSpeed1 = 0.5f;       // Next animation play speed
+    i32 animIndex0 = 10;                // Current animation playing (walking)
+    f32 animCurrentFrame0 = 0.0f;     // Current animation frame (supporting interpolated frames)
+    f32 animFrameSpeed0 = 0.5f;       // Current animation play speed
+    i32 animIndex1 = 6;                 // Next animation to play (running)
+    f32 animCurrentFrame1 = 0.0f;     // Next animation frame (supporting interpolated frames)
+    f32 animFrameSpeed1 = 0.5f;       // Next animation play speed
 
-    float animBlendFactor = 0.0f;       // Blend factor from anim0[frame0] --> anim1[frame1], [0.0f..1.0f]
+    f32 animBlendFactor = 0.0f;       // Blend factor from anim0[frame0] --> anim1[frame1], [0.0f..1.0f]
                                         // NOTE: 0.0f results in full anim0[] and 1.0f in full anim1[]
 
-    constexpr float animBlendTime = 2.0f;         // Time to blend from one playing animation to another (in seconds)
-    float animBlendTimeCounter = 0.0f;            // Time counter (delta time)
+    constexpr f32 animBlendTime = 2.0f;         // Time to blend from one playing animation to another (in seconds)
+    f32 animBlendTimeCounter = 0.0f;            // Time counter (delta time)
 
     bool animPause = false;             // Pause animation
 
     // UI required variables
     std::vector<std::string> animNames;        // Pointers to animation names for dropdown box
-    for (int i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
+    for (i32 i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
 
     bool dropdownEditMode0 = false;
     bool dropdownEditMode1 = false;
-    float animFrameProgress0 = 0.0f;
-    float animFrameProgress1 = 0.0f;
-    float animBlendProgress = 0.0f;
+    f32 animFrameProgress0 = 0.0f;
+    f32 animFrameProgress1 = 0.0f;
+    f32 animBlendProgress = 0.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -252,7 +252,7 @@ int main()
 
             GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_CENTER);
             GuiSetStyle(DEFAULT, TEXT_SIZE, GuiGetFont().baseSize*2);
-            GuiLabel(Rectangle{ 0, GetScreenHeight() - 100.0f, static_cast<float>(GetScreenWidth()), 40 }, "PRESS SPACE to START BLENDING");
+            GuiLabel(Rectangle{ 0, GetScreenHeight() - 100.0f, static_cast<f32>(GetScreenWidth()), 40 }, "PRESS SPACE to START BLENDING");
             GuiSetStyle(DEFAULT, TEXT_SIZE, GuiGetFont().baseSize);
             GuiSetStyle(LABEL, TEXT_ALIGNMENT, TEXT_ALIGN_LEFT);
 
@@ -261,17 +261,17 @@ int main()
                 // Draw playing timeline with keyframes for anim0[]
                 GuiProgressBar(Rectangle{ 60, GetScreenHeight() - 60.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 0",
                     TextFormat("FRAME: %.2f / %i", animFrameProgress0, anims[animIndex0].keyframeCount).c_str(),
-                    &animFrameProgress0, 0.0f, static_cast<float>(anims[animIndex0].keyframeCount));
-                for (int i = 0; i < anims[animIndex0].keyframeCount; i++)
-                    DrawRectangle(60 + static_cast<int>((static_cast<float>(GetScreenWidth() - 180)/static_cast<float>(anims[animIndex0].keyframeCount))*static_cast<float>(i)),
+                    &animFrameProgress0, 0.0f, static_cast<f32>(anims[animIndex0].keyframeCount));
+                for (i32 i = 0; i < anims[animIndex0].keyframeCount; i++)
+                    DrawRectangle(60 + static_cast<i32>((static_cast<f32>(GetScreenWidth() - 180)/static_cast<f32>(anims[animIndex0].keyframeCount))*static_cast<f32>(i)),
                         GetScreenHeight() - 60, 1, 20, BLUE);
 
                 // Draw playing timeline with keyframes for anim1[]
                 GuiProgressBar(Rectangle{ 60, GetScreenHeight() - 30.0f, GetScreenWidth() - 180.0f, 20 }, "ANIM 1",
                     TextFormat("FRAME: %.2f / %i", animFrameProgress1, anims[animIndex1].keyframeCount).c_str(),
-                    &animFrameProgress1, 0.0f, static_cast<float>(anims[animIndex1].keyframeCount));
-                for (int i = 0; i < anims[animIndex1].keyframeCount; i++)
-                    DrawRectangle(60 + static_cast<int>((static_cast<float>(GetScreenWidth() - 180)/static_cast<float>(anims[animIndex1].keyframeCount))*static_cast<float>(i)),
+                    &animFrameProgress1, 0.0f, static_cast<f32>(anims[animIndex1].keyframeCount));
+                for (i32 i = 0; i < anims[animIndex1].keyframeCount; i++)
+                    DrawRectangle(60 + static_cast<i32>((static_cast<f32>(GetScreenWidth() - 180)/static_cast<f32>(anims[animIndex1].keyframeCount))*static_cast<f32>(i)),
                         GetScreenHeight() - 30, 1, 20, BLUE);
             }
             //---------------------------------------------------------------------------------------------

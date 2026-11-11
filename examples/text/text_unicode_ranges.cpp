@@ -23,17 +23,17 @@
 // Module Functions Declaration
 //--------------------------------------------------------------------------------------
 // Add codepoint range to existing font
-static void AddCodepointRange(Font *font, const char *fontPath, int start, int stop);
+static void AddCodepointRange(Font *font, const char *fontPath, i32 start, i32 stop);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - unicode ranges");
 
@@ -41,8 +41,8 @@ int main()
     Font font = LoadFont("resources/NotoSansTC-Regular.ttf");
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
 
-    int unicodeRange = 0;           // Track the ranges of codepoints added to font
-    int prevUnicodeRange = 0;       // Previous Unicode range to avoid reloading every frame
+    i32 unicodeRange = 0;           // Track the ranges of codepoints added to font
+    i32 prevUnicodeRange = 0;       // Previous Unicode range to avoid reloading every frame
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -143,9 +143,9 @@ int main()
             //DrawTextEx(font, "देवनागरी: होला मुंडो!", vec2{ 50, 350 }, 32, 1, DARKGRAY);     // Devanagari (glyphs not available in font)
 
             // Draw font texture scaled to screen
-            const float atlasScale = 380.0f/font.texture.width;
+            const f32 atlasScale = 380.0f/font.texture.width;
             DrawRectangleRec(Rectangle{ 400.0f, 16.0f, font.texture.width* atlasScale, font.texture.height* atlasScale }, BLACK);
-            DrawTexturePro(font.texture, Rectangle{ 0, 0, static_cast<float>(font.texture.width), static_cast<float>(font.texture.height) },
+            DrawTexturePro(font.texture, Rectangle{ 0, 0, static_cast<f32>(font.texture.width), static_cast<f32>(font.texture.height) },
                 Rectangle{ 400.0f, 16.0f, font.texture.width*atlasScale, font.texture.height*atlasScale }, vec2{ 0, 0 }, 0.0f, WHITE);
             DrawRectangleLines(400, 16, 380, 380, RED);
 
@@ -180,22 +180,22 @@ int main()
 // Module Functions Definition
 //--------------------------------------------------------------------------------------
 // Add codepoint range to existing font
-static void AddCodepointRange(Font *font, const char *fontPath, int start, int stop)
+static void AddCodepointRange(Font *font, const char *fontPath, i32 start, i32 stop)
 {
-    const int rangeSize = stop - start + 1;
-    const int currentRangeSize = font->glyphCount;
+    const i32 rangeSize = stop - start + 1;
+    const i32 currentRangeSize = font->glyphCount;
 
     // TODO: Load glyphs from provided vector font (if available),
     // add them to existing font, regenerating font image and texture
 
-    const int updatedCodepointCount = currentRangeSize + rangeSize;
-    int *updatedCodepoints = static_cast<int *>(calloc(updatedCodepointCount, sizeof(int)));
+    const i32 updatedCodepointCount = currentRangeSize + rangeSize;
+    i32 *updatedCodepoints = static_cast<i32 *>(calloc(updatedCodepointCount, sizeof(i32)));
 
     // Get current codepoint list
-    for (int i = 0; i < currentRangeSize; i++) updatedCodepoints[i] = font->glyphs[i].value;
+    for (i32 i = 0; i < currentRangeSize; i++) updatedCodepoints[i] = font->glyphs[i].value;
 
     // Add new codepoints to list (provided range)
-    for (int i = currentRangeSize; i < updatedCodepointCount; i++)
+    for (i32 i = currentRangeSize; i < updatedCodepointCount; i++)
         updatedCodepoints[i] = start + (i - currentRangeSize);
 
     UnloadFont(*font);

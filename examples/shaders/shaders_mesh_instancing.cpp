@@ -36,12 +36,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - mesh instancing");
 
@@ -60,11 +60,11 @@ int main()
     mat4 *transforms = static_cast<mat4 *>(calloc(MAX_INSTANCES, sizeof(mat4)));   // Pre-multiplied transformations passed to rlgl
 
     // Translate and rotate cubes randomly
-    for (int i = 0; i < MAX_INSTANCES; i++)
+    for (i32 i = 0; i < MAX_INSTANCES; i++)
     {
-        const mat4 translation = glm::translate(mat4(1.0f), vec3{static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50))});
-        const vec3 axis = glm::normalize(vec3{ static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)) });
-        const float angle = static_cast<float>(GetRandomValue(0, 180))*DEG2RAD;
+        const mat4 translation = glm::translate(mat4(1.0f), vec3{static_cast<f32>(GetRandomValue(-50, 50)), static_cast<f32>(GetRandomValue(-50, 50)), static_cast<f32>(GetRandomValue(-50, 50))});
+        const vec3 axis = glm::normalize(vec3{ static_cast<f32>(GetRandomValue(0, 360)), static_cast<f32>(GetRandomValue(0, 360)), static_cast<f32>(GetRandomValue(0, 360)) });
+        const f32 angle = static_cast<f32>(GetRandomValue(0, 180))*DEG2RAD;
         const mat4 rotation = glm::rotate(mat4(1.0f), angle, axis);
 
         transforms[i] = ((translation) * (rotation));
@@ -78,8 +78,8 @@ int main()
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
     // Set shader value: ambient light level
-    const int ambientLoc = GetShaderLocation(shader, "ambient");
-    SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.2f, 0.2f, 0.2f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
+    const i32 ambientLoc = GetShaderLocation(shader, "ambient");
+    SetShaderValue(shader, ambientLoc, std::initializer_list<f32>{ 0.2f, 0.2f, 0.2f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Create one light
     CreateLight(LIGHT_DIRECTIONAL, vec3{ 50.0f, 50.0f, 0.0f }, vec3{}, WHITE, shader);
@@ -107,7 +107,7 @@ int main()
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         // Update the light shader with the camera view position
-        float cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
+        f32 cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         SetShaderValue(shader, shader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
         //----------------------------------------------------------------------------------
 

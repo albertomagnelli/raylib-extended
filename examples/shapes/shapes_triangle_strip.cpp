@@ -24,20 +24,20 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - triangle strip");
 
     vec2 points[122] = {};
     const vec2 center = { (screenWidth/2.0f) - 125.0f, screenHeight/2.0f };
-    float segments = 6.0f;
-    constexpr float insideRadius = 100.0f;
-    constexpr float outsideRadius = 150.0f;
+    f32 segments = 6.0f;
+    constexpr f32 insideRadius = 100.0f;
+    constexpr f32 outsideRadius = 150.0f;
     bool outline = true;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -48,14 +48,14 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const int pointCount = static_cast<int>(segments);
-        const float angleStep = (360.0f/pointCount)*DEG2RAD;
+        const i32 pointCount = static_cast<i32>(segments);
+        const f32 angleStep = (360.0f/pointCount)*DEG2RAD;
 
-        for (int i = 0, i2 = 0; i < pointCount; i++, i2 += 2)
+        for (i32 i = 0, i2 = 0; i < pointCount; i++, i2 += 2)
         {
-            const float angle1 = i*angleStep;
+            const f32 angle1 = i*angleStep;
             points[i2] = vec2{ center.x + cosf(angle1)*insideRadius, center.y + sinf(angle1)*insideRadius };
-            const float angle2 = angle1 + angleStep/2.0f;
+            const f32 angle2 = angle1 + angleStep/2.0f;
             points[i2 + 1] = vec2{ center.x + cosf(angle2)*outsideRadius, center.y + sinf(angle2)*outsideRadius };
         }
 
@@ -69,14 +69,14 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < pointCount; i++)
+            for (i32 i = 0; i < pointCount; i++)
             {
                 const vec2 a = points[i*2];
                 const vec2 b = points[i*2 + 1];
                 const vec2 c = points[i*2 + 2];
                 const vec2 d = points[i*2 + 3];
 
-                const float angle1 = i*angleStep;
+                const f32 angle1 = i*angleStep;
                 DrawTriangle(c, b, a, ColorFromHSV(angle1*RAD2DEG, 1.0f, 1.0f));
                 DrawTriangle(d, b, c, ColorFromHSV((angle1 + angleStep/2)*RAD2DEG, 1.0f, 1.0f));
 

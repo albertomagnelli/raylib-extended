@@ -25,12 +25,12 @@ static Mesh GenMeshCustom(void);    // Generate a simple triangle mesh from code
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh generation");
 
@@ -54,7 +54,7 @@ int main()
     // NOTE: Generated meshes could be exported using ExportMesh()
 
     // Set checked texture as default diffuse component for all models material
-    for (int i = 0; i < NUM_MODELS; i++) models[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
+    for (i32 i = 0; i < NUM_MODELS; i++) models[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
     // Define the camera to look into our 3d world
     Camera camera = { { 5.0f, 5.0f, 5.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
@@ -62,7 +62,7 @@ int main()
     // Model drawing position
     const vec3 position = { 0.0f, 0.0f, 0.0f };
 
-    int currentModel = 0;
+    i32 currentModel = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ int main()
     UnloadTexture(texture); // Unload texture
 
     // Unload models data (GPU VRAM)
-    for (int i = 0; i < NUM_MODELS; i++) UnloadModel(models[i]);
+    for (i32 i = 0; i < NUM_MODELS; i++) UnloadModel(models[i]);
 
     CloseWindow();          // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
@@ -148,9 +148,9 @@ static Mesh GenMeshCustom(void)
     Mesh mesh = {};
     mesh.triangleCount = 1;
     mesh.vertexCount = mesh.triangleCount*3;
-    mesh.vertices = static_cast<float *>(MemAlloc(mesh.vertexCount*3*sizeof(float)));    // 3 vertices, 3 coordinates each (x, y, z)
-    mesh.texcoords = static_cast<float *>(MemAlloc(mesh.vertexCount*2*sizeof(float)));   // 3 vertices, 2 coordinates each (x, y)
-    mesh.normals = static_cast<float *>(MemAlloc(mesh.vertexCount*3*sizeof(float)));     // 3 vertices, 3 coordinates each (x, y, z)
+    mesh.vertices = static_cast<f32 *>(MemAlloc(mesh.vertexCount*3*sizeof(f32)));    // 3 vertices, 3 coordinates each (x, y, z)
+    mesh.texcoords = static_cast<f32 *>(MemAlloc(mesh.vertexCount*2*sizeof(f32)));   // 3 vertices, 2 coordinates each (x, y)
+    mesh.normals = static_cast<f32 *>(MemAlloc(mesh.vertexCount*3*sizeof(f32)));     // 3 vertices, 3 coordinates each (x, y, z)
 
     // Vertex at (0, 0, 0)
     mesh.vertices[0] = 0;

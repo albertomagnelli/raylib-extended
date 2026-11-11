@@ -44,20 +44,20 @@
 
 // Light data
 typedef struct {   
-    int type;
+    i32 type;
     bool enabled;
     vec3 position;
     vec3 target;
     Color color;
-    float attenuation;
+    f32 attenuation;
     
     // Shader locations
-    int enabledLoc;
-    int typeLoc;
-    int positionLoc;
-    int targetLoc;
-    int colorLoc;
-    int attenuationLoc;
+    i32 enabledLoc;
+    i32 typeLoc;
+    i32 positionLoc;
+    i32 targetLoc;
+    i32 colorLoc;
+    i32 attenuationLoc;
 } Light;
 
 // Light type
@@ -73,7 +73,7 @@ extern "C" {            // Prevents name mangling of functions
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-Light CreateLight(int type, vec3 position, vec3 target, Color color, Shader shader); // Create a light and get shader locations
+Light CreateLight(i32 type, vec3 position, vec3 target, Color color, Shader shader); // Create a light and get shader locations
 void UpdateLightValues(Shader shader, Light light);                                  // Send light properties to shader
 
 #ifdef __cplusplus
@@ -106,7 +106,7 @@ void UpdateLightValues(Shader shader, Light light);                             
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static int lightsCount = 0;    // Current amount of created lights
+static i32 lightsCount = 0;    // Current amount of created lights
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
@@ -118,7 +118,7 @@ static int lightsCount = 0;    // Current amount of created lights
 //----------------------------------------------------------------------------------
 
 // Create a light and get shader locations
-Light CreateLight(int type, vec3 position, vec3 target, Color color, Shader shader)
+Light CreateLight(i32 type, vec3 position, vec3 target, Color color, Shader shader)
 {
     Light light = { 0 };
 
@@ -154,16 +154,16 @@ void UpdateLightValues(Shader shader, Light light)
     SetShaderValue(shader, light.typeLoc, &light.type, SHADER_UNIFORM_INT);
 
     // Send to shader light position values
-    float position[3] = { light.position.x, light.position.y, light.position.z };
+    f32 position[3] = { light.position.x, light.position.y, light.position.z };
     SetShaderValue(shader, light.positionLoc, position, SHADER_UNIFORM_VEC3);
 
     // Send to shader light target position values
-    float target[3] = { light.target.x, light.target.y, light.target.z };
+    f32 target[3] = { light.target.x, light.target.y, light.target.z };
     SetShaderValue(shader, light.targetLoc, target, SHADER_UNIFORM_VEC3);
 
     // Send to shader light color values
-    float color[4] = { (float)light.color.r/(float)255, (float)light.color.g/(float)255, 
-                       (float)light.color.b/(float)255, (float)light.color.a/(float)255 };
+    f32 color[4] = { (f32)light.color.r/(f32)255, (f32)light.color.g/(f32)255, 
+                       (f32)light.color.b/(f32)255, (f32)light.color.a/(f32)255 };
     SetShaderValue(shader, light.colorLoc, color, SHADER_UNIFORM_VEC4);
 }
 

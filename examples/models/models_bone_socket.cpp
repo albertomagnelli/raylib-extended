@@ -27,12 +27,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - bone socket");
 
@@ -55,16 +55,16 @@ int main()
     bool showEquip[3] = { true, true, true };   // Toggle on/off equip
 
     // Load gltf model animations
-    int animsCount = 0;
-    unsigned int animIndex = 0;
-    unsigned int animCurrentFrame = 0;
+    i32 animsCount = 0;
+    u32 animIndex = 0;
+    u32 animCurrentFrame = 0;
     ModelAnimation *modelAnimations = LoadModelAnimations("resources/models/gltf/greenman.glb", &animsCount);
 
     // Indices of bones for sockets
-    int boneSocketIndex[BONE_SOCKETS] = { -1, -1, -1 };
+    i32 boneSocketIndex[BONE_SOCKETS] = { -1, -1, -1 };
 
     // Search bones for sockets
-    for (unsigned int i = 0; i < characterModel.skeleton.boneCount; i++)
+    for (u32 i = 0; i < characterModel.skeleton.boneCount; i++)
     {
         if (TextIsEqual(characterModel.skeleton.bones[i].name, "socket_hat"))
         {
@@ -86,7 +86,7 @@ int main()
     }
 
     const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
-    unsigned short angle = 0;                   // Set angle for rotate character
+    u16 angle = 0;                   // Set angle for rotate character
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
 
@@ -116,7 +116,7 @@ int main()
         // Update model animation
         const ModelAnimation anim = modelAnimations[animIndex];
         animCurrentFrame = (animCurrentFrame + 1)%anim.keyframeCount;
-        UpdateModelAnimation(characterModel, anim, static_cast<float>(animCurrentFrame));
+        UpdateModelAnimation(characterModel, anim, static_cast<f32>(animCurrentFrame));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -129,11 +129,11 @@ int main()
                 // Draw character
                 const quat characterRotate = glm::angleAxis(angle*DEG2RAD, glm::normalize(vec3{ 0.0f, 1.0f, 0.0f }));
                 characterModel.transform = ((glm::translate(mat4(1.0f), vec3{position.x, position.y, position.z})) * (glm::mat4_cast(characterRotate)));
-                UpdateModelAnimation(characterModel, anim, static_cast<float>(animCurrentFrame));
+                UpdateModelAnimation(characterModel, anim, static_cast<f32>(animCurrentFrame));
                 DrawMesh(characterModel.meshes[0], characterModel.materials[1], characterModel.transform);
 
                 // Draw equipments (hat, sword, shield)
-                for (int i = 0; i < BONE_SOCKETS; i++)
+                for (i32 i = 0; i < BONE_SOCKETS; i++)
                 {
                     if (!showEquip[i]) continue;
 
@@ -170,7 +170,7 @@ int main()
     UnloadModel(characterModel);         // Unload character model and meshes/material
 
     // Unload equipment model and meshes/material
-    for (int i = 0; i < BONE_SOCKETS; i++) UnloadModel(equipModel[i]);
+    for (i32 i = 0; i < BONE_SOCKETS; i++) UnloadModel(equipModel[i]);
 
     CloseWindow();              // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

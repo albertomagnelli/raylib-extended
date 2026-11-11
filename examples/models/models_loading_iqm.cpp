@@ -26,12 +26,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading iqm");
 
@@ -49,13 +49,13 @@ int main()
     const vec3 position = { 0.0f, 0.0f, 0.0f };                                       // Set model position
 
     // Load animation data
-    int animCount = 0;
+    i32 animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/iqm/guyanim.iqm", &animCount);
 
     // Animation playing variables
-    unsigned int animIndex = 0;         // Current animation playing
-    float animCurrentFrame = 0.0f;      // Current animation frame (supporting interpolated frames)
-    float animSpeed = 1.0f;             // How fast the animation plays
+    u32 animIndex = 0;         // Current animation playing
+    f32 animCurrentFrame = 0.0f;      // Current animation frame (supporting interpolated frames)
+    f32 animSpeed = 1.0f;             // How fast the animation plays
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

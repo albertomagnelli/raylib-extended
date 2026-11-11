@@ -20,24 +20,24 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - dashed line");
 
     // Line Properties
     const vec2 lineStartPosition = { 20.0f, 50.0f };
     vec2 lineEndPosition = { 780.0f, 400.0f };
-    float dashLength = 25.0f;
-    float blankLength = 15.0f;
+    f32 dashLength = 25.0f;
+    f32 blankLength = 15.0f;
 
     // Color selection
     const Color lineColors[] = { RED, ORANGE, GOLD, GREEN, BLUE, VIOLET, PINK, BLACK };
-    int colorIndex = 0;
+    i32 colorIndex = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ int main()
             ClearBackground(RAYWHITE);
 
             // Draw the dashed line with the current properties
-            DrawLineDashed(lineStartPosition, lineEndPosition, static_cast<int>(dashLength), static_cast<int>(blankLength), lineColors[colorIndex]);
+            DrawLineDashed(lineStartPosition, lineEndPosition, static_cast<i32>(dashLength), static_cast<i32>(blankLength), lineColors[colorIndex]);
 
             // Draw UI and Instructions
             DrawRectangle(5, 5, 265, 95, Fade(SKYBLUE, 0.5f));

@@ -27,26 +27,26 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     // The minimum/maximum points the circle can have
-    constexpr unsigned int pointsMin = 3;
-    constexpr unsigned int pointsMax = 256;
+    constexpr u32 pointsMin = 3;
+    constexpr u32 pointsMax = 256;
 
     // The current number of points and the radius of the circle
-    unsigned int triangleCount = 64;
-    float pointScale = 150.0f;
+    u32 triangleCount = 64;
+    f32 pointScale = 150.0f;
 
     // Slider value, literally maps to value in HSV
-    float value = 1.0f;
+    f32 value = 1.0f;
 
     // The center of the screen
-    const vec2 center = { static_cast<float>(screenWidth)/2.0f, static_cast<float>(screenHeight)/2.0f };
+    const vec2 center = { static_cast<f32>(screenWidth)/2.0f, static_cast<f32>(screenHeight)/2.0f };
     // The location of the color wheel
     vec2 circlePosition = center;
 
@@ -60,7 +60,7 @@ int main()
     bool settingColor = false;
 
     // How the color wheel will be rendered
-    unsigned int renderType = RL_TRIANGLES;
+    u32 renderType = RL_TRIANGLES;
 
     // Enable anti-aliasing
     SetConfigFlags(FLAG_MSAA_4X_HINT);
@@ -74,8 +74,8 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float wheel = roundf(GetMouseWheelMove());
-        triangleCount = static_cast<unsigned int>(Clamp(static_cast<float>(triangleCount) + wheel, static_cast<float>(pointsMin), static_cast<float>(pointsMax)));
+        const f32 wheel = roundf(GetMouseWheelMove());
+        triangleCount = static_cast<u32>(Clamp(static_cast<f32>(triangleCount) + wheel, static_cast<f32>(pointsMin), static_cast<f32>(pointsMax)));
 
         const Rectangle sliderRectangle = { 42.0f, 16.0f + 64.0f + 45.0f, 64.0f, 16.0f };
         const vec2 mousePosition = GetMousePosition();
@@ -97,9 +97,9 @@ int main()
         {
             pointScale *= 1.025f;
 
-            if (pointScale > static_cast<float>(screenHeight)/2.0f)
+            if (pointScale > static_cast<f32>(screenHeight)/2.0f)
             {
-                pointScale = static_cast<float>(screenHeight)/2.0f;
+                pointScale = static_cast<f32>(screenHeight)/2.0f;
             }
             else
             {
@@ -121,8 +121,8 @@ int main()
                 circlePosition = ((((((circlePosition) - (center))) * (vec2{ 0.975f, 0.975f }))) + (center));
             }
 
-            const float distance = glm::distance(center, circlePosition)/pointScale;
-            const float angle = ((Vector2Angle(vec2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
+            const f32 distance = glm::distance(center, circlePosition)/pointScale;
+            const f32 angle = ((Vector2Angle(vec2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
 
             if (distance > 1.0f)
             {
@@ -154,14 +154,14 @@ int main()
         {
             if (settingColor) circlePosition = GetMousePosition();
 
-            const float distance = glm::distance(center, circlePosition)/pointScale;
+            const f32 distance = glm::distance(center, circlePosition)/pointScale;
 
-            const float angle = ((Vector2Angle(vec2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
+            const f32 angle = ((Vector2Angle(vec2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
             if (settingColor && distance > 1.0f) circlePosition = ((vec2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI* 2.0f))*pointScale }) + (center));
 
-            const float angle360 = angle*360.0f;
-            const float valueActual = Clamp(distance, 0.0f, 1.0f);
-            color = ColorLerp(Color{ static_cast<unsigned char>(value*255.0f), static_cast<unsigned char>(value*255.0f), static_cast<unsigned char>(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
+            const f32 angle360 = angle*360.0f;
+            const f32 valueActual = Clamp(distance, 0.0f, 1.0f);
+            color = ColorLerp(Color{ static_cast<u8>(value*255.0f), static_cast<u8>(value*255.0f), static_cast<u8>(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
         }
         //----------------------------------------------------------------------------------
 
@@ -173,11 +173,11 @@ int main()
 
         // Begin rendering color wheel
         rlBegin(renderType);
-        for (unsigned int i = 0; i < triangleCount; i++)
+        for (u32 i = 0; i < triangleCount; i++)
         {
-            const float angleOffset = ((PI*2.0f)/static_cast<float>(triangleCount));
-            const float angle = angleOffset*static_cast<float>(i);
-            const float angleOffsetCalculated = (static_cast<float>(i) + 1)*angleOffset;
+            const f32 angleOffset = ((PI*2.0f)/static_cast<f32>(triangleCount));
+            const f32 angle = angleOffset*static_cast<f32>(i);
+            const f32 angleOffsetCalculated = (static_cast<f32>(i) + 1)*angleOffset;
             const vec2 scale = vec2{ pointScale, pointScale };
 
             const vec2 offset = ((vec2{ sinf(angle), -cosf(angle) }) * (scale));
@@ -186,8 +186,8 @@ int main()
             const vec2 position = ((center) + (offset));
             const vec2 position2 = ((center) + (offset2));
 
-            const float angleNonRadian = (angle/(2.0f*PI))*360.0f;
-            const float angleNonRadianOffset = (angleOffset/(2.0f*PI))*360.0f;
+            const f32 angleNonRadian = (angle/(2.0f*PI))*360.0f;
+            const f32 angleNonRadianOffset = (angleOffset/(2.0f*PI))*360.0f;
 
             const Color currentColor = ColorFromHSV(angleNonRadian, 1.0f, 1.0f);
             const Color offsetColor = ColorFromHSV(angleNonRadian + angleNonRadianOffset, 1.0f, 1.0f);
@@ -242,7 +242,7 @@ int main()
 
         // Update the visuals for the copying text
         Color copyColor = DARKGRAY;
-        unsigned int offset = 0;
+        u32 offset = 0;
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyDown(KEY_C))
         {
             copyColor = DARKGREEN;

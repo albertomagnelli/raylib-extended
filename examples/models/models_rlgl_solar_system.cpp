@@ -28,18 +28,18 @@ void DrawSphereBasic(Color color);      // Draw sphere without any matrix transf
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
-    constexpr float sunRadius = 4.0f;
-    constexpr float earthRadius = 0.6f;
-    constexpr float earthOrbitRadius = 8.0f;
-    constexpr float moonRadius = 0.16f;
-    constexpr float moonOrbitRadius = 1.5f;
+    constexpr f32 sunRadius = 4.0f;
+    constexpr f32 earthRadius = 0.6f;
+    constexpr f32 earthOrbitRadius = 8.0f;
+    constexpr f32 moonRadius = 0.16f;
+    constexpr f32 moonOrbitRadius = 1.5f;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - rlgl solar system");
 
@@ -51,12 +51,12 @@ int main()
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    constexpr float rotationSpeed = 0.2f;         // General system rotation speed
+    constexpr f32 rotationSpeed = 0.2f;         // General system rotation speed
 
-    float earthRotation = 0.0f;         // Rotation of earth around itself (days) in degrees
-    float earthOrbitRotation = 0.0f;    // Rotation of earth around the Sun (years) in degrees
-    float moonRotation = 0.0f;          // Rotation of moon around itself
-    float moonOrbitRotation = 0.0f;     // Rotation of moon around earth in degrees
+    f32 earthRotation = 0.0f;         // Rotation of earth around itself (days) in degrees
+    f32 earthOrbitRotation = 0.0f;    // Rotation of earth around the Sun (years) in degrees
+    f32 moonRotation = 0.0f;          // Rotation of moon around itself
+    f32 moonOrbitRotation = 0.0f;     // Rotation of moon around earth in degrees
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -132,8 +132,8 @@ int main()
 // NOTE: Sphere is drawn in world position ( 0, 0, 0 ) with radius 1.0f
 void DrawSphereBasic(Color color)
 {
-    constexpr int rings = 16;
-    constexpr int slices = 16;
+    constexpr i32 rings = 16;
+    constexpr i32 slices = 16;
 
     // Make sure there is enough space in the internal render batch
     // buffer to store all required vertex, batch is reseted if required
@@ -142,9 +142,9 @@ void DrawSphereBasic(Color color)
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
 
-        for (int i = 0; i < (rings + 2); i++)
+        for (i32 i = 0; i < (rings + 2); i++)
         {
-            for (int j = 0; j < slices; j++)
+            for (i32 j = 0; j < slices; j++)
             {
                 rlVertex3f(cosf(DEG2RAD*(270+(180.0f/(rings + 1))*i))*sinf(DEG2RAD*(j*360.0f/slices)),
                            sinf(DEG2RAD*(270+(180.0f/(rings + 1))*i)),

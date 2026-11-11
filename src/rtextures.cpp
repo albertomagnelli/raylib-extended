@@ -262,8 +262,8 @@ extern void LoadFontDefault(void);          // [Module: text] Loads default font
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static float HalfToFloat(unsigned short x);
-static unsigned short FloatToHalf(float x);
+static f32 HalfToFloat(u16 x);
+static u16 FloatToHalf(f32 x);
 static vec4 *LoadImageDataNormalized(Image image);     // Load pixel data from image as vec4 array (float normalized)
 
 //----------------------------------------------------------------------------------
@@ -291,8 +291,8 @@ Image LoadImage(std::string_view fileNameView)
 #endif
 
     // Loading file to memory
-    int dataSize = 0;
-    unsigned char *fileData = LoadFileData(fileName, &dataSize);
+    i32 dataSize = 0;
+    u8 *fileData = LoadFileData(fileName, &dataSize);
 
     // Loading image from memory data
     if (fileData != nullptr)
@@ -306,20 +306,20 @@ Image LoadImage(std::string_view fileNameView)
 }
 
 // Load an image from RAW file data
-Image LoadImageRaw(std::string_view fileNameView, int width, int height, int format, int headerSize)
+Image LoadImageRaw(std::string_view fileNameView, i32 width, i32 height, i32 format, i32 headerSize)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
     Image image = { nullptr };
 
-    int dataSize = 0;
-    unsigned char *fileData = LoadFileData(fileName, &dataSize);
+    i32 dataSize = 0;
+    u8 *fileData = LoadFileData(fileName, &dataSize);
 
     if (fileData != nullptr)
     {
-        unsigned char *dataPtr = fileData;
-        const int size = GetPixelDataSize(width, height, format);
+        u8 *dataPtr = fileData;
+        const i32 size = GetPixelDataSize(width, height, format);
 
         if (size <= dataSize) // Security check
         {
@@ -345,24 +345,24 @@ Image LoadImageRaw(std::string_view fileNameView, int width, int height, int for
 //  - Number of frames is returned through 'frames' parameter
 //  - All frames are returned in RGBA format
 //  - Frames delay data is discarded
-Image LoadImageAnim(std::string_view fileNameView, int *frames)
+Image LoadImageAnim(std::string_view fileNameView, i32 *frames)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
     Image image = { nullptr };
-    int frameCount = 0;
+    i32 frameCount = 0;
 
 #if SUPPORT_FILEFORMAT_GIF
     if (IsFileExtension(fileName, ".gif"))
     {
-        int dataSize = 0;
-        unsigned char *fileData = LoadFileData(fileName, &dataSize);
+        i32 dataSize = 0;
+        u8 *fileData = LoadFileData(fileName, &dataSize);
 
         if (fileData != nullptr)
         {
-            int comp = 0;
-            int *delays = nullptr;
+            i32 comp = 0;
+            i32 *delays = nullptr;
             image.data = stbi_load_gif_from_memory(fileData, dataSize, &delays, &image.width, &image.height, &frameCount, &comp, 4);
 
             image.mipmaps = 1;
@@ -390,13 +390,13 @@ Image LoadImageAnim(std::string_view fileNameView, int *frames)
 //  - Number of frames is returned through 'frames' parameter
 //  - All frames are returned in RGBA format
 //  - Frames delay data is discarded
-Image LoadImageAnimFromMemory(std::string_view fileTypeView, const unsigned char *fileData, int dataSize, int *frames)
+Image LoadImageAnimFromMemory(std::string_view fileTypeView, const u8 *fileData, i32 dataSize, i32 *frames)
 {
     const std::string fileTypeStr(fileTypeView);
     const char *fileType = fileTypeStr.c_str();
 
     Image image = { nullptr };
-    int frameCount = 0;
+    i32 frameCount = 0;
 
     if (fileTypeView.empty() || (fileData == nullptr) || (dataSize == 0)) return image; // Security check
 
@@ -405,8 +405,8 @@ Image LoadImageAnimFromMemory(std::string_view fileTypeView, const unsigned char
     {
         if (fileData != nullptr)
         {
-            int comp = 0;
-            int *delays = nullptr;
+            i32 comp = 0;
+            i32 *delays = nullptr;
             image.data = stbi_load_gif_from_memory(fileData, dataSize, &delays, &image.width, &image.height, &frameCount, &comp, 4);
 
             image.mipmaps = 1;
@@ -430,7 +430,7 @@ Image LoadImageAnimFromMemory(std::string_view fileTypeView, const unsigned char
 
 // Load image from memory buffer, fileType refers to extension: i.e. ".png"
 // WARNING: File extension must be provided in lower-case
-Image LoadImageFromMemory(std::string_view fileTypeView, const unsigned char *fileData, int dataSize)
+Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, i32 dataSize)
 {
     const std::string fileTypeStr(fileTypeView);
     const char *fileType = fileTypeStr.c_str();
@@ -475,7 +475,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const unsigned char *fi
 
         if (fileData != nullptr)
         {
-            int comp = 0;
+            i32 comp = 0;
             image.data = stbi_load_from_memory(fileData, dataSize, &image.width, &image.height, &comp, 0);
 
             if (image.data != nullptr)
@@ -496,7 +496,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const unsigned char *fi
 #if defined(STBI_REQUIRED)
         if (fileData != nullptr)
         {
-            int comp = 0;
+            i32 comp = 0;
             image.data = stbi_loadf_from_memory(fileData, dataSize, &image.width, &image.height, &comp, 0);
 
             image.mipmaps = 1;
@@ -540,7 +540,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const unsigned char *fi
             // Decompression options:
             //  - First color transparent, 3rd parameter: 1
             //  - Premultiply alpha on loading, 4th parameter: 1
-            unsigned int *pepData = pep_decompress(&p, pep_rgba, 1, 1);
+            u32 *pepData = pep_decompress(&p, pep_rgba, 1, 1);
 
             image.data = pepData;
             image.width = p.width;
@@ -666,14 +666,14 @@ bool ExportImage(Image image, std::string_view fileNameView)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    int result = 0;
+    i32 result = 0;
 
     if ((image.width == 0) || (image.height == 0) || (image.data == nullptr)) return result; // Security check
 
 #if SUPPORT_IMAGE_EXPORT
-    int channels = 4;
+    i32 channels = 4;
     bool allocatedData = false;
-    unsigned char *imgData = static_cast<unsigned char *>(image.data);
+    u8 *imgData = static_cast<u8 *>(image.data);
 
     if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) channels = 1;
     else if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA) channels = 2;
@@ -682,7 +682,7 @@ bool ExportImage(Image image, std::string_view fileNameView)
     else
     {
         // NOTE: Getting Color array as RGBA unsigned char values
-        imgData = reinterpret_cast<unsigned char *>(LoadImageColors(image));
+        imgData = reinterpret_cast<u8 *>(LoadImageColors(image));
         allocatedData = true;
     }
 
@@ -690,8 +690,8 @@ bool ExportImage(Image image, std::string_view fileNameView)
 #if SUPPORT_FILEFORMAT_PNG
     else if (IsFileExtension(fileName, ".png"))
     {
-        int dataSize = 0;
-        unsigned char *fileData = stbi_write_png_to_mem(static_cast<const unsigned char *>(imgData), image.width*channels, image.width, image.height, channels, &dataSize);
+        i32 dataSize = 0;
+        u8 *fileData = stbi_write_png_to_mem(static_cast<const u8 *>(imgData), image.width*channels, image.width, image.height, channels, &dataSize);
         result = SaveFileData(fileName, fileData, dataSize);
         free(fileData);
     }
@@ -734,8 +734,8 @@ bool ExportImage(Image image, std::string_view fileNameView)
             // NOTE: Only RGBA 32bit (8bit per channel) image format supported
             pep p = pep_compress(image.data, image.width, image.height, pep_rgba, pep_8bit);
 
-            unsigned int pepDataSize = 0;
-            unsigned char *pepData = pep_serialize(&p, &pepDataSize);
+            u32 pepDataSize = 0;
+            u8 *pepData = pep_serialize(&p, &pepDataSize);
 
             result = SaveFileData(fileName, pepData, pepDataSize);
 
@@ -769,14 +769,14 @@ bool ExportImage(Image image, std::string_view fileNameView)
 }
 
 // Export image to memory buffer
-unsigned char *ExportImageToMemory(Image image, std::string_view fileType, int *dataSize)
+u8 *ExportImageToMemory(Image image, std::string_view fileType, i32 *dataSize)
 {
-    unsigned char *fileData = nullptr;
+    u8 *fileData = nullptr;
     *dataSize = 0;
 
     if ((image.width == 0) || (image.height == 0) || (image.data == nullptr)) return fileData; // Security check
 
-    int channels = 4;
+    i32 channels = 4;
 
     if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) channels = 1;
     else if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA) channels = 2;
@@ -786,7 +786,7 @@ unsigned char *ExportImageToMemory(Image image, std::string_view fileType, int *
 #if SUPPORT_IMAGE_EXPORT
     if ((fileType == ".png") || (fileType == ".PNG"))
     {
-        fileData = stbi_write_png_to_mem(static_cast<const unsigned char *>(image.data), image.width*channels, image.width, image.height, channels, dataSize);
+        fileData = stbi_write_png_to_mem(static_cast<const u8 *>(image.data), image.width*channels, image.width, image.height, channels, dataSize);
     }
 #else
     TRACELOG(LOG_WARNING, "IMAGE: To export image, enable flag SUPPORT_IMAGE_EXPORT");
@@ -807,13 +807,13 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
     #define TEXT_BYTES_PER_LINE     20
 #endif
 
-    const int dataSize = GetPixelDataSize(image.width, image.height, image.format);
+    const i32 dataSize = GetPixelDataSize(image.width, image.height, image.format);
 
     // NOTE: Text data buffer size is estimated considering image data size in bytes
     // and requiring 6 char bytes for every byte: "0x00, "
     char *txtData = static_cast<char *>(calloc(dataSize*6 + 2000, sizeof(char)));
 
-    int byteCount = 0;
+    i32 byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
     byteCount += sprintf(txtData + byteCount, "//                                                                                    //\n");
     byteCount += sprintf(txtData + byteCount, "// ImageAsCode exporter v1.0 - Image pixel data exported as an array of bytes         //\n");
@@ -828,7 +828,7 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
     // Get file name from path and convert variable name to uppercase
     char varFileName[256] = { 0 };
     snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str()); // NOTE: Using function provided by [rcore] module
-    for (int i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
+    for (i32 i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
 
     // Add image information
     byteCount += sprintf(txtData + byteCount, "// Image data information\n");
@@ -837,8 +837,8 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
     byteCount += sprintf(txtData + byteCount, "#define %s_FORMAT   %i          // raylib internal pixel format\n\n", varFileName, image.format);
 
     byteCount += sprintf(txtData + byteCount, "static unsigned char %s_DATA[%i] = { ", varFileName, dataSize);
-    for (int i = 0; i < dataSize - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%x,\n" : "0x%x, "), (static_cast<unsigned char *>(image.data))[i]);
-    byteCount += sprintf(txtData + byteCount, "0x%x };\n", (static_cast<unsigned char *>(image.data))[dataSize - 1]);
+    for (i32 i = 0; i < dataSize - 1; i++) byteCount += sprintf(txtData + byteCount, ((i%TEXT_BYTES_PER_LINE == 0)? "0x%x,\n" : "0x%x, "), (static_cast<u8 *>(image.data))[i]);
+    byteCount += sprintf(txtData + byteCount, "0x%x };\n", (static_cast<u8 *>(image.data))[dataSize - 1]);
 
     // NOTE: Text data size exported is determined by '\0' (NULL) character
     result = SaveFileText(fileName, txtData);
@@ -855,12 +855,12 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
 // Image generation functions
 //------------------------------------------------------------------------------------
 // Generate image: plain color
-Image GenImageColor(int width, int height, Color color)
+Image GenImageColor(i32 width, i32 height, Color color)
 {
-    const int dataSize = GetPixelDataSize(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+    const i32 dataSize = GetPixelDataSize(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
     Color *pixels = static_cast<Color *>(calloc(dataSize, 1));
 
-    for (int i = 0; (pixels != nullptr) && (i < width*height); i++) pixels[i] = color;
+    for (i32 i = 0; (pixels != nullptr) && (i < width*height); i++) pixels[i] = color;
 
     Image image = {
         .data = pixels,
@@ -878,39 +878,39 @@ Image GenImageColor(int width, int height, Color color)
 // The direction value specifies the direction of the gradient (in degrees)
 // with 0 being vertical (from top to bottom), 90 being horizontal (from left to right)
 // The gradient effectively rotates counter-clockwise by the specified amount
-Image GenImageGradientLinear(int width, int height, int direction, Color start, Color end)
+Image GenImageGradientLinear(i32 width, i32 height, i32 direction, Color start, Color end)
 {
     Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
-    const float radianDirection = static_cast<float>(90 - direction)/180.f*3.14159f;
-    const float cosDir = cosf(radianDirection);
-    const float sinDir = sinf(radianDirection);
+    const f32 radianDirection = static_cast<f32>(90 - direction)/180.f*3.14159f;
+    const f32 cosDir = cosf(radianDirection);
+    const f32 sinDir = sinf(radianDirection);
 
     // Calculate how far the top-left pixel is along the gradient direction from the center of said gradient
-    const float startingPos = 0.5f - (cosDir*width/2) - (sinDir*height/2);
+    const f32 startingPos = 0.5f - (cosDir*width/2) - (sinDir*height/2);
 
     // With directions that lie in the first or third quadrant (i.e. from top-left to
     // bottom-right or vice-versa), pixel (0, 0) is the farthest point on the gradient
     // (i.e. the pixel which should become one of the gradient's ends color); while for
     // directions that lie in the second or fourth quadrant, that point is pixel (width, 0)
-    const float maxPosValue = ((signbit(sinDir) != 0) == (signbit(cosDir) != 0))? fabsf(startingPos) : fabsf(startingPos + width*cosDir);
-    for (int i = 0; i < width; i++)
+    const f32 maxPosValue = ((signbit(sinDir) != 0) == (signbit(cosDir) != 0))? fabsf(startingPos) : fabsf(startingPos + width*cosDir);
+    for (i32 i = 0; i < width; i++)
     {
-        for (int j = 0; j < height; j++)
+        for (i32 j = 0; j < height; j++)
         {
             // Calculate the relative position of the pixel along the gradient direction
-            const float pos = (startingPos + (i*cosDir + j*sinDir))/maxPosValue;
+            const f32 pos = (startingPos + (i*cosDir + j*sinDir))/maxPosValue;
 
-            float factor = pos;
+            f32 factor = pos;
             factor = (factor > 1.0f)? 1.0f : factor;    // Clamp to [-1,1]
             factor = (factor < -1.0f)? -1.0f : factor;  // Clamp to [-1,1]
             factor = factor/2.0f + 0.5f;
 
             // Generate the color for this pixel
-            pixels[j*width + i].r = static_cast<int>(static_cast<float>(end.r)*factor + static_cast<float>(start.r)*(1.0f - factor));
-            pixels[j*width + i].g = static_cast<int>(static_cast<float>(end.g)*factor + static_cast<float>(start.g)*(1.0f - factor));
-            pixels[j*width + i].b = static_cast<int>(static_cast<float>(end.b)*factor + static_cast<float>(start.b)*(1.0f - factor));
-            pixels[j*width + i].a = static_cast<int>(static_cast<float>(end.a)*factor + static_cast<float>(start.a)*(1.0f - factor));
+            pixels[j*width + i].r = static_cast<i32>(static_cast<f32>(end.r)*factor + static_cast<f32>(start.r)*(1.0f - factor));
+            pixels[j*width + i].g = static_cast<i32>(static_cast<f32>(end.g)*factor + static_cast<f32>(start.g)*(1.0f - factor));
+            pixels[j*width + i].b = static_cast<i32>(static_cast<f32>(end.b)*factor + static_cast<f32>(start.b)*(1.0f - factor));
+            pixels[j*width + i].a = static_cast<i32>(static_cast<f32>(end.a)*factor + static_cast<f32>(start.a)*(1.0f - factor));
         }
     }
 
@@ -926,28 +926,28 @@ Image GenImageGradientLinear(int width, int height, int direction, Color start, 
 }
 
 // Generate image: radial gradient
-Image GenImageGradientRadial(int width, int height, float density, Color inner, Color outer)
+Image GenImageGradientRadial(i32 width, i32 height, f32 density, Color inner, Color outer)
 {
     Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
-    const float radius = (width < height)? static_cast<float>(width)/2.0f : static_cast<float>(height)/2.0f;
+    const f32 radius = (width < height)? static_cast<f32>(width)/2.0f : static_cast<f32>(height)/2.0f;
 
-    const float centerX = static_cast<float>(width)/2.0f;
-    const float centerY = static_cast<float>(height)/2.0f;
+    const f32 centerX = static_cast<f32>(width)/2.0f;
+    const f32 centerY = static_cast<f32>(height)/2.0f;
 
-    for (int y = 0; y < height; y++)
+    for (i32 y = 0; y < height; y++)
     {
-        for (int x = 0; x < width; x++)
+        for (i32 x = 0; x < width; x++)
         {
-            const float dist = hypotf(static_cast<float>(x) - centerX, static_cast<float>(y) - centerY);
-            float factor = (dist - radius*density)/(radius*(1.0f - density));
+            const f32 dist = hypotf(static_cast<f32>(x) - centerX, static_cast<f32>(y) - centerY);
+            f32 factor = (dist - radius*density)/(radius*(1.0f - density));
 
             factor = fmax(factor, 0.0f);
             factor = fmin(factor, 1.f); // Distance can be bigger than radius, so it needs to be checked
 
-            pixels[y*width + x].r = static_cast<int>(static_cast<float>(outer.r)*factor + static_cast<float>(inner.r)*(1.0f - factor));
-            pixels[y*width + x].g = static_cast<int>(static_cast<float>(outer.g)*factor + static_cast<float>(inner.g)*(1.0f - factor));
-            pixels[y*width + x].b = static_cast<int>(static_cast<float>(outer.b)*factor + static_cast<float>(inner.b)*(1.0f - factor));
-            pixels[y*width + x].a = static_cast<int>(static_cast<float>(outer.a)*factor + static_cast<float>(inner.a)*(1.0f - factor));
+            pixels[y*width + x].r = static_cast<i32>(static_cast<f32>(outer.r)*factor + static_cast<f32>(inner.r)*(1.0f - factor));
+            pixels[y*width + x].g = static_cast<i32>(static_cast<f32>(outer.g)*factor + static_cast<f32>(inner.g)*(1.0f - factor));
+            pixels[y*width + x].b = static_cast<i32>(static_cast<f32>(outer.b)*factor + static_cast<f32>(inner.b)*(1.0f - factor));
+            pixels[y*width + x].a = static_cast<i32>(static_cast<f32>(outer.a)*factor + static_cast<f32>(inner.a)*(1.0f - factor));
         }
     }
 
@@ -963,40 +963,40 @@ Image GenImageGradientRadial(int width, int height, float density, Color inner, 
 }
 
 // Generate image: square gradient
-Image GenImageGradientSquare(int width, int height, float density, Color inner, Color outer)
+Image GenImageGradientSquare(i32 width, i32 height, f32 density, Color inner, Color outer)
 {
     Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
-    const float centerX = static_cast<float>(width)/2.0f;
-    const float centerY = static_cast<float>(height)/2.0f;
+    const f32 centerX = static_cast<f32>(width)/2.0f;
+    const f32 centerY = static_cast<f32>(height)/2.0f;
 
-    for (int y = 0; y < height; y++)
+    for (i32 y = 0; y < height; y++)
     {
-        for (int x = 0; x < width; x++)
+        for (i32 x = 0; x < width; x++)
         {
             // Calculate the Manhattan distance from the center
-            const float distX = fabsf(x - centerX);
-            const float distY = fabsf(y - centerY);
+            const f32 distX = fabsf(x - centerX);
+            const f32 distY = fabsf(y - centerY);
 
             // Normalize the distances by the dimensions of the gradient rectangle
-            const float normalizedDistX = distX/centerX;
-            const float normalizedDistY = distY/centerY;
+            const f32 normalizedDistX = distX/centerX;
+            const f32 normalizedDistY = distY/centerY;
 
             // Calculate the total normalized Manhattan distance
-            const float manhattanDist = fmaxf(normalizedDistX, normalizedDistY);
+            const f32 manhattanDist = fmaxf(normalizedDistX, normalizedDistY);
 
             // Subtract the density from the manhattanDist, then divide by (1 - density)
             // This makes the gradient start from the center when density is 0, and from the edge when density is 1
-            float factor = (manhattanDist - density)/(1.0f - density);
+            f32 factor = (manhattanDist - density)/(1.0f - density);
 
             // Clamp the factor between 0 and 1
             factor = fminf(fmaxf(factor, 0.0f), 1.0f);
 
             // Blend the colors based on the calculated factor
-            pixels[y*width + x].r = static_cast<int>(static_cast<float>(outer.r)*factor + static_cast<float>(inner.r)*(1.0f - factor));
-            pixels[y*width + x].g = static_cast<int>(static_cast<float>(outer.g)*factor + static_cast<float>(inner.g)*(1.0f - factor));
-            pixels[y*width + x].b = static_cast<int>(static_cast<float>(outer.b)*factor + static_cast<float>(inner.b)*(1.0f - factor));
-            pixels[y*width + x].a = static_cast<int>(static_cast<float>(outer.a)*factor + static_cast<float>(inner.a)*(1.0f - factor));
+            pixels[y*width + x].r = static_cast<i32>(static_cast<f32>(outer.r)*factor + static_cast<f32>(inner.r)*(1.0f - factor));
+            pixels[y*width + x].g = static_cast<i32>(static_cast<f32>(outer.g)*factor + static_cast<f32>(inner.g)*(1.0f - factor));
+            pixels[y*width + x].b = static_cast<i32>(static_cast<f32>(outer.b)*factor + static_cast<f32>(inner.b)*(1.0f - factor));
+            pixels[y*width + x].a = static_cast<i32>(static_cast<f32>(outer.a)*factor + static_cast<f32>(inner.a)*(1.0f - factor));
         }
     }
 
@@ -1012,13 +1012,13 @@ Image GenImageGradientSquare(int width, int height, float density, Color inner, 
 }
 
 // Generate image: checked
-Image GenImageChecked(int width, int height, int checksX, int checksY, Color col1, Color col2)
+Image GenImageChecked(i32 width, i32 height, i32 checksX, i32 checksY, Color col1, Color col2)
 {
     Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
-    for (int y = 0; y < height; y++)
+    for (i32 y = 0; y < height; y++)
     {
-        for (int x = 0; x < width; x++)
+        for (i32 x = 0; x < width; x++)
         {
             if ((x/checksX + y/checksY)%2 == 0) pixels[y*width + x] = col1;
             else pixels[y*width + x] = col2;
@@ -1038,13 +1038,13 @@ Image GenImageChecked(int width, int height, int checksX, int checksY, Color col
 
 // Generate image: white noise
 // NOTE: It requires GetRandomValue(), defined in [rcore]
-Image GenImageWhiteNoise(int width, int height, float factor)
+Image GenImageWhiteNoise(i32 width, i32 height, f32 factor)
 {
     Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
-    for (int i = 0; i < width*height; i++)
+    for (i32 i = 0; i < width*height; i++)
     {
-        if (GetRandomValue(0, 99) < static_cast<int>(factor*100.0f)) pixels[i] = WHITE;
+        if (GetRandomValue(0, 99) < static_cast<i32>(factor*100.0f)) pixels[i] = WHITE;
         else pixels[i] = BLACK;
     }
 
@@ -1060,18 +1060,18 @@ Image GenImageWhiteNoise(int width, int height, float factor)
 }
 
 // Generate image: perlin noise
-Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale)
+Image GenImagePerlinNoise(i32 width, i32 height, i32 offsetX, i32 offsetY, f32 scale)
 {
     Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
-    const float aspectRatio = static_cast<float>(width)/static_cast<float>(height);
+    const f32 aspectRatio = static_cast<f32>(width)/static_cast<f32>(height);
 
-    for (int y = 0; y < height; y++)
+    for (i32 y = 0; y < height; y++)
     {
-        for (int x = 0; x < width; x++)
+        for (i32 x = 0; x < width; x++)
         {
-            float nx = static_cast<float>(x + offsetX)*(scale/static_cast<float>(width));
-            float ny = static_cast<float>(y + offsetY)*(scale/static_cast<float>(height));
+            f32 nx = static_cast<f32>(x + offsetX)*(scale/static_cast<f32>(width));
+            f32 ny = static_cast<f32>(y + offsetY)*(scale/static_cast<f32>(height));
 
             // Apply aspect ratio compensation to wider side
             if (width > height) nx *= aspectRatio;
@@ -1085,16 +1085,16 @@ Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float
             //   lacunarity = ~2.0   -- spacing between successive octaves (use exactly 2.0 for wrapping output)
             //   gain       =  0.5   -- relative weighting applied to each successive octave
             //   octaves    =  6     -- number of "octaves" of noise3() to sum
-            float p = stb_perlin_fbm_noise3(nx, ny, 1.0f, 2.0f, 0.5f, 6);
+            f32 p = stb_perlin_fbm_noise3(nx, ny, 1.0f, 2.0f, 0.5f, 6);
 
             // Clamp between -1.0f and 1.0f
             if (p < -1.0f) p = -1.0f;
             if (p > 1.0f) p = 1.0f;
 
             // Data needs to be normalized from [-1..1] to [0..1]
-            const float np = (p + 1.0f)/2.0f;
+            const f32 np = (p + 1.0f)/2.0f;
 
-            const unsigned char intensity = static_cast<unsigned char>(np*255.0f);
+            const u8 intensity = static_cast<u8>(np*255.0f);
             pixels[y*width + x] = Color{ intensity, intensity, intensity, 255 };
         }
     }
@@ -1111,54 +1111,54 @@ Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float
 }
 
 // Generate image: cellular algorithm. Bigger tileSize means bigger cells
-Image GenImageCellular(int width, int height, int tileSize)
+Image GenImageCellular(i32 width, i32 height, i32 tileSize)
 {
     Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
-    const int seedsPerRow = width/tileSize;
-    const int seedsPerCol = height/tileSize;
-    const int seedCount = seedsPerRow*seedsPerCol;
+    const i32 seedsPerRow = width/tileSize;
+    const i32 seedsPerCol = height/tileSize;
+    const i32 seedCount = seedsPerRow*seedsPerCol;
 
     vec2 *seeds = static_cast<vec2 *>(calloc(seedCount, sizeof(vec2)));
 
-    for (int i = 0; i < seedCount; i++)
+    for (i32 i = 0; i < seedCount; i++)
     {
-        const int y = (i/seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
-        const int x = (i%seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
-        seeds[i] = vec2{ static_cast<float>(x), static_cast<float>(y) };
+        const i32 y = (i/seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
+        const i32 x = (i%seedsPerRow)*tileSize + GetRandomValue(0, tileSize - 1);
+        seeds[i] = vec2{ static_cast<f32>(x), static_cast<f32>(y) };
     }
 
-    for (int y = 0; y < height; y++)
+    for (i32 y = 0; y < height; y++)
     {
-        const int tileY = y/tileSize;
+        const i32 tileY = y/tileSize;
 
-        for (int x = 0; x < width; x++)
+        for (i32 x = 0; x < width; x++)
         {
-            const int tileX = x/tileSize;
+            const i32 tileX = x/tileSize;
 
-            float minDistance = 65536.0f; //(float)strtod("Inf", NULL);
+            f32 minDistance = 65536.0f; //(float)strtod("Inf", NULL);
 
             // Check all adjacent tiles
-            for (int i = -1; i < 2; i++)
+            for (i32 i = -1; i < 2; i++)
             {
                 if ((tileX + i < 0) || (tileX + i >= seedsPerRow)) continue;
 
-                for (int j = -1; j < 2; j++)
+                for (i32 j = -1; j < 2; j++)
                 {
                     if ((tileY + j < 0) || (tileY + j >= seedsPerCol)) continue;
 
                     const vec2 neighborSeed = seeds[(tileY + j)*seedsPerRow + tileX + i];
 
-                    const float dist = static_cast<float>(hypot(x - static_cast<int>(neighborSeed.x), y - static_cast<int>(neighborSeed.y)));
+                    const f32 dist = static_cast<f32>(hypot(x - static_cast<i32>(neighborSeed.x), y - static_cast<i32>(neighborSeed.y)));
                     minDistance = fmin(minDistance, dist);
                 }
             }
 
             // This approach seems to give good results at all tile sizes
-            int intensity = static_cast<int>(minDistance*256.0f/tileSize);
+            i32 intensity = static_cast<i32>(minDistance*256.0f/tileSize);
             if (intensity > 255) intensity = 255;
 
-            const unsigned char intensityUC = static_cast<unsigned char>(intensity);
+            const u8 intensityUC = static_cast<u8>(intensity);
             pixels[y*width + x] = Color{ intensityUC, intensityUC, intensityUC, 255 };
         }
     }
@@ -1177,14 +1177,14 @@ Image GenImageCellular(int width, int height, int tileSize)
 }
 
 // Generate image: grayscale image from text data
-Image GenImageText(int width, int height, std::string_view textView)
+Image GenImageText(i32 width, i32 height, std::string_view textView)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
     Image image = { nullptr };
 
-    const int imageSize = width*height;
+    const i32 imageSize = width*height;
     image.width = width;
     image.height = height;
     image.format = PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
@@ -1193,7 +1193,7 @@ Image GenImageText(int width, int height, std::string_view textView)
 
     if (text != nullptr)
     {
-        const int textLength = static_cast<int>(strlen(text));
+        const i32 textLength = static_cast<i32>(strlen(text));
         memcpy(image.data, text, (textLength > imageSize)? imageSize : textLength);
     }
 
@@ -1209,11 +1209,11 @@ Image ImageCopy(Image image)
 {
     Image newImage = { nullptr };
 
-    int width = image.width;
-    int height = image.height;
-    int size = 0;
+    i32 width = image.width;
+    i32 height = image.height;
+    i32 size = 0;
 
-    for (int i = 0; i < image.mipmaps; i++)
+    for (i32 i = 0; i < image.mipmaps; i++)
     {
         size += GetPixelDataSize(width, height, image.format);
 
@@ -1253,22 +1253,22 @@ Image ImageFromImage(Image image, Rectangle rec)
     {
         // Basic rectangle validation: size smaller than image size
         if ((rec.x >= 0) && (rec.y >= 0) && (rec.width > 0) && (rec.height > 0) &&
-            ((static_cast<int>(rec.x) + static_cast<int>(rec.width)) <= image.width) &&
-            ((static_cast<int>(rec.y) + static_cast<int>(rec.height)) <= image.height))
+            ((static_cast<i32>(rec.x) + static_cast<i32>(rec.width)) <= image.width) &&
+            ((static_cast<i32>(rec.y) + static_cast<i32>(rec.height)) <= image.height))
         {
-            const int bytesPerPixel = GetPixelDataSize(1, 1, image.format);
+            const i32 bytesPerPixel = GetPixelDataSize(1, 1, image.format);
 
-            result.width = static_cast<int>(rec.width);
-            result.height = static_cast<int>(rec.height);
-            result.data = calloc(static_cast<int>(rec.width)*static_cast<int>(rec.height)*bytesPerPixel, 1);
+            result.width = static_cast<i32>(rec.width);
+            result.height = static_cast<i32>(rec.height);
+            result.data = calloc(static_cast<i32>(rec.width)*static_cast<i32>(rec.height)*bytesPerPixel, 1);
             result.format = image.format;
             result.mipmaps = 1;
 
-            for (int y = 0; y < static_cast<int>(rec.height); y++)
+            for (i32 y = 0; y < static_cast<i32>(rec.height); y++)
             {
-                memcpy((static_cast<unsigned char *>(result.data)) + y*static_cast<int>(rec.width)*bytesPerPixel,
-                    (static_cast<unsigned char *>(image.data)) + ((y + static_cast<int>(rec.y))*image.width + static_cast<int>(rec.x))*bytesPerPixel,
-                    static_cast<int>(rec.width)*bytesPerPixel);
+                memcpy((static_cast<u8 *>(result.data)) + y*static_cast<i32>(rec.width)*bytesPerPixel,
+                    (static_cast<u8 *>(image.data)) + ((y + static_cast<i32>(rec.y))*image.width + static_cast<i32>(rec.x))*bytesPerPixel,
+                    static_cast<i32>(rec.width)*bytesPerPixel);
             }
         }
         else TRACELOG(LOG_WARNING, "IMAGE: ImageFromImage(), rectangle provided not valid");
@@ -1301,23 +1301,23 @@ void ImageCrop(Image *image, Rectangle crop)
         return;
     }
 
-    const int cropX = static_cast<int>(crop.x);
-    const int cropY = static_cast<int>(crop.y);
-    const int cropWidth = static_cast<int>(crop.width);
-    const int cropHeight = static_cast<int>(crop.height);
+    const i32 cropX = static_cast<i32>(crop.x);
+    const i32 cropY = static_cast<i32>(crop.y);
+    const i32 cropWidth = static_cast<i32>(crop.width);
+    const i32 cropHeight = static_cast<i32>(crop.height);
 
     if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
 
-        unsigned char *croppedData = static_cast<unsigned char *>(calloc(cropWidth*cropHeight*bytesPerPixel, 1));
+        u8 *croppedData = static_cast<u8 *>(calloc(cropWidth*cropHeight*bytesPerPixel, 1));
 
         // OPTION 1: Move cropped data line-by-line
-        for (int y = cropY, offsetSize = 0; y < cropY + cropHeight; y++)
+        for (i32 y = cropY, offsetSize = 0; y < cropY + cropHeight; y++)
         {
-            memcpy(croppedData + offsetSize, (static_cast<unsigned char *>(image->data)) + (y*image->width + cropX)*bytesPerPixel, cropWidth*bytesPerPixel);
+            memcpy(croppedData + offsetSize, (static_cast<u8 *>(image->data)) + (y*image->width + cropX)*bytesPerPixel, cropWidth*bytesPerPixel);
             offsetSize += (cropWidth*bytesPerPixel);
         }
 
@@ -1341,7 +1341,7 @@ void ImageCrop(Image *image, Rectangle crop)
 }
 
 // Convert image data to desired format
-void ImageFormat(Image *image, int newFormat)
+void ImageFormat(Image *image, i32 newFormat)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1360,172 +1360,172 @@ void ImageFormat(Image *image, int newFormat)
             {
                 case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
                 {
-                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height, sizeof(unsigned char)));
+                    image->data = static_cast<u8 *>(calloc(image->width*image->height, sizeof(u8)));
 
-                    for (int i = 0; i < image->width*image->height; i++)
+                    for (i32 i = 0; i < image->width*image->height; i++)
                     {
-                        (static_cast<unsigned char *>(image->data))[i] = static_cast<unsigned char>((pixels[i].x*0.299f + pixels[i].y*0.587f + pixels[i].z*0.114f)*255.0f);
+                        (static_cast<u8 *>(image->data))[i] = static_cast<u8>((pixels[i].x*0.299f + pixels[i].y*0.587f + pixels[i].z*0.114f)*255.0f);
                     }
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
                 {
-                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height*2, sizeof(unsigned char)));
+                    image->data = static_cast<u8 *>(calloc(image->width*image->height*2, sizeof(u8)));
 
-                    for (int i = 0, k = 0; i < image->width*image->height*2; i += 2, k++)
+                    for (i32 i = 0, k = 0; i < image->width*image->height*2; i += 2, k++)
                     {
-                        (static_cast<unsigned char *>(image->data))[i] = static_cast<unsigned char>((pixels[k].x*0.299f + pixels[k].y*0.587f + pixels[k].z*0.114f)*255.0f);
-                        (static_cast<unsigned char *>(image->data))[i + 1] = static_cast<unsigned char>(pixels[k].w*255.0f);
+                        (static_cast<u8 *>(image->data))[i] = static_cast<u8>((pixels[k].x*0.299f + pixels[k].y*0.587f + pixels[k].z*0.114f)*255.0f);
+                        (static_cast<u8 *>(image->data))[i + 1] = static_cast<u8>(pixels[k].w*255.0f);
                     }
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
                 {
-                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<u16 *>(calloc(image->width*image->height, sizeof(u16)));
 
-                    unsigned char r = 0;
-                    unsigned char g = 0;
-                    unsigned char b = 0;
+                    u8 r = 0;
+                    u8 g = 0;
+                    u8 b = 0;
 
-                    for (int i = 0; i < image->width*image->height; i++)
+                    for (i32 i = 0; i < image->width*image->height; i++)
                     {
-                        r = static_cast<unsigned char>(round(pixels[i].x*31.0f));
-                        g = static_cast<unsigned char>(round(pixels[i].y*63.0f));
-                        b = static_cast<unsigned char>(round(pixels[i].z*31.0f));
+                        r = static_cast<u8>(round(pixels[i].x*31.0f));
+                        g = static_cast<u8>(round(pixels[i].y*63.0f));
+                        b = static_cast<u8>(round(pixels[i].z*31.0f));
 
-                        (static_cast<unsigned short *>(image->data))[i] = static_cast<unsigned short>(r) << 11 | static_cast<unsigned short>(g) << 5 | static_cast<unsigned short>(b);
+                        (static_cast<u16 *>(image->data))[i] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 5 | static_cast<u16>(b);
                     }
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
                 {
-                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height*3, sizeof(unsigned char)));
+                    image->data = static_cast<u8 *>(calloc(image->width*image->height*3, sizeof(u8)));
 
-                    for (int i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
+                    for (i32 i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
                     {
-                        (static_cast<unsigned char *>(image->data))[i] = static_cast<unsigned char>(pixels[k].x*255.0f);
-                        (static_cast<unsigned char *>(image->data))[i + 1] = static_cast<unsigned char>(pixels[k].y*255.0f);
-                        (static_cast<unsigned char *>(image->data))[i + 2] = static_cast<unsigned char>(pixels[k].z*255.0f);
+                        (static_cast<u8 *>(image->data))[i] = static_cast<u8>(pixels[k].x*255.0f);
+                        (static_cast<u8 *>(image->data))[i + 1] = static_cast<u8>(pixels[k].y*255.0f);
+                        (static_cast<u8 *>(image->data))[i + 2] = static_cast<u8>(pixels[k].z*255.0f);
                     }
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
                 {
-                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<u16 *>(calloc(image->width*image->height, sizeof(u16)));
 
-                    unsigned char r = 0;
-                    unsigned char g = 0;
-                    unsigned char b = 0;
-                    unsigned char a = 0;
+                    u8 r = 0;
+                    u8 g = 0;
+                    u8 b = 0;
+                    u8 a = 0;
 
-                    for (int i = 0; i < image->width*image->height; i++)
+                    for (i32 i = 0; i < image->width*image->height; i++)
                     {
-                        r = static_cast<unsigned char>(round(pixels[i].x*31.0f));
-                        g = static_cast<unsigned char>(round(pixels[i].y*31.0f));
-                        b = static_cast<unsigned char>(round(pixels[i].z*31.0f));
-                        a = (pixels[i].w > (static_cast<float>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
+                        r = static_cast<u8>(round(pixels[i].x*31.0f));
+                        g = static_cast<u8>(round(pixels[i].y*31.0f));
+                        b = static_cast<u8>(round(pixels[i].z*31.0f));
+                        a = (pixels[i].w > (static_cast<f32>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
 
-                        (static_cast<unsigned short *>(image->data))[i] = static_cast<unsigned short>(r) << 11 | static_cast<unsigned short>(g) << 6 | static_cast<unsigned short>(b) << 1 | static_cast<unsigned short>(a);
+                        (static_cast<u16 *>(image->data))[i] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 6 | static_cast<u16>(b) << 1 | static_cast<u16>(a);
                     }
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
                 {
-                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<u16 *>(calloc(image->width*image->height, sizeof(u16)));
 
-                    unsigned char r = 0;
-                    unsigned char g = 0;
-                    unsigned char b = 0;
-                    unsigned char a = 0;
+                    u8 r = 0;
+                    u8 g = 0;
+                    u8 b = 0;
+                    u8 a = 0;
 
-                    for (int i = 0; i < image->width*image->height; i++)
+                    for (i32 i = 0; i < image->width*image->height; i++)
                     {
-                        r = static_cast<unsigned char>(round(pixels[i].x*15.0f));
-                        g = static_cast<unsigned char>(round(pixels[i].y*15.0f));
-                        b = static_cast<unsigned char>(round(pixels[i].z*15.0f));
-                        a = static_cast<unsigned char>(round(pixels[i].w*15.0f));
+                        r = static_cast<u8>(round(pixels[i].x*15.0f));
+                        g = static_cast<u8>(round(pixels[i].y*15.0f));
+                        b = static_cast<u8>(round(pixels[i].z*15.0f));
+                        a = static_cast<u8>(round(pixels[i].w*15.0f));
 
-                        (static_cast<unsigned short *>(image->data))[i] = static_cast<unsigned short>(r) << 12 | static_cast<unsigned short>(g) << 8 | static_cast<unsigned short>(b) << 4 | static_cast<unsigned short>(a);
+                        (static_cast<u16 *>(image->data))[i] = static_cast<u16>(r) << 12 | static_cast<u16>(g) << 8 | static_cast<u16>(b) << 4 | static_cast<u16>(a);
                     }
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
                 {
-                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height*4, sizeof(unsigned char)));
+                    image->data = static_cast<u8 *>(calloc(image->width*image->height*4, sizeof(u8)));
 
-                    for (int i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
+                    for (i32 i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
                     {
-                        (static_cast<unsigned char *>(image->data))[i] = static_cast<unsigned char>(pixels[k].x*255.0f);
-                        (static_cast<unsigned char *>(image->data))[i + 1] = static_cast<unsigned char>(pixels[k].y*255.0f);
-                        (static_cast<unsigned char *>(image->data))[i + 2] = static_cast<unsigned char>(pixels[k].z*255.0f);
-                        (static_cast<unsigned char *>(image->data))[i + 3] = static_cast<unsigned char>(pixels[k].w*255.0f);
+                        (static_cast<u8 *>(image->data))[i] = static_cast<u8>(pixels[k].x*255.0f);
+                        (static_cast<u8 *>(image->data))[i + 1] = static_cast<u8>(pixels[k].y*255.0f);
+                        (static_cast<u8 *>(image->data))[i + 2] = static_cast<u8>(pixels[k].z*255.0f);
+                        (static_cast<u8 *>(image->data))[i + 3] = static_cast<u8>(pixels[k].w*255.0f);
                     }
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32:
                 {
                     // WARNING: Image is converted to GRAYSCALE equivalent 32bit
 
-                    image->data = static_cast<float *>(calloc(image->width*image->height, sizeof(float)));
+                    image->data = static_cast<f32 *>(calloc(image->width*image->height, sizeof(f32)));
 
-                    for (int i = 0; i < image->width*image->height; i++)
+                    for (i32 i = 0; i < image->width*image->height; i++)
                     {
-                        (static_cast<float *>(image->data))[i] = (pixels[i].x*0.299f + pixels[i].y*0.587f + pixels[i].z*0.114f);
+                        (static_cast<f32 *>(image->data))[i] = (pixels[i].x*0.299f + pixels[i].y*0.587f + pixels[i].z*0.114f);
                     }
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
                 {
-                    image->data = static_cast<float *>(calloc(image->width*image->height*3, sizeof(float)));
+                    image->data = static_cast<f32 *>(calloc(image->width*image->height*3, sizeof(f32)));
 
-                    for (int i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
+                    for (i32 i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
                     {
-                        (static_cast<float *>(image->data))[i] = pixels[k].x;
-                        (static_cast<float *>(image->data))[i + 1] = pixels[k].y;
-                        (static_cast<float *>(image->data))[i + 2] = pixels[k].z;
+                        (static_cast<f32 *>(image->data))[i] = pixels[k].x;
+                        (static_cast<f32 *>(image->data))[i + 1] = pixels[k].y;
+                        (static_cast<f32 *>(image->data))[i + 2] = pixels[k].z;
                     }
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
                 {
-                    image->data = static_cast<float *>(calloc(image->width*image->height*4, sizeof(float)));
+                    image->data = static_cast<f32 *>(calloc(image->width*image->height*4, sizeof(f32)));
 
-                    for (int i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
+                    for (i32 i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
                     {
-                        (static_cast<float *>(image->data))[i] = pixels[k].x;
-                        (static_cast<float *>(image->data))[i + 1] = pixels[k].y;
-                        (static_cast<float *>(image->data))[i + 2] = pixels[k].z;
-                        (static_cast<float *>(image->data))[i + 3] = pixels[k].w;
+                        (static_cast<f32 *>(image->data))[i] = pixels[k].x;
+                        (static_cast<f32 *>(image->data))[i + 1] = pixels[k].y;
+                        (static_cast<f32 *>(image->data))[i + 2] = pixels[k].z;
+                        (static_cast<f32 *>(image->data))[i + 3] = pixels[k].w;
                     }
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16:
                 {
                     // WARNING: Image is converted to GRAYSCALE equivalent 16bit
 
-                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<u16 *>(calloc(image->width*image->height, sizeof(u16)));
 
-                    for (int i = 0; i < image->width*image->height; i++)
+                    for (i32 i = 0; i < image->width*image->height; i++)
                     {
-                        (static_cast<unsigned short *>(image->data))[i] = FloatToHalf((pixels[i].x*0.299f + pixels[i].y*0.587f + pixels[i].z*0.114f));
+                        (static_cast<u16 *>(image->data))[i] = FloatToHalf((pixels[i].x*0.299f + pixels[i].y*0.587f + pixels[i].z*0.114f));
                     }
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
                 {
-                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height*3, sizeof(unsigned short)));
+                    image->data = static_cast<u16 *>(calloc(image->width*image->height*3, sizeof(u16)));
 
-                    for (int i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
+                    for (i32 i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
                     {
-                        (static_cast<unsigned short *>(image->data))[i] = FloatToHalf(pixels[k].x);
-                        (static_cast<unsigned short *>(image->data))[i + 1] = FloatToHalf(pixels[k].y);
-                        (static_cast<unsigned short *>(image->data))[i + 2] = FloatToHalf(pixels[k].z);
+                        (static_cast<u16 *>(image->data))[i] = FloatToHalf(pixels[k].x);
+                        (static_cast<u16 *>(image->data))[i + 1] = FloatToHalf(pixels[k].y);
+                        (static_cast<u16 *>(image->data))[i + 2] = FloatToHalf(pixels[k].z);
                     }
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
                 {
-                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height*4, sizeof(unsigned short)));
+                    image->data = static_cast<u16 *>(calloc(image->width*image->height*4, sizeof(u16)));
 
-                    for (int i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
+                    for (i32 i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
                     {
-                        (static_cast<unsigned short *>(image->data))[i] = FloatToHalf(pixels[k].x);
-                        (static_cast<unsigned short *>(image->data))[i + 1] = FloatToHalf(pixels[k].y);
-                        (static_cast<unsigned short *>(image->data))[i + 2] = FloatToHalf(pixels[k].z);
-                        (static_cast<unsigned short *>(image->data))[i + 3] = FloatToHalf(pixels[k].w);
+                        (static_cast<u16 *>(image->data))[i] = FloatToHalf(pixels[k].x);
+                        (static_cast<u16 *>(image->data))[i + 1] = FloatToHalf(pixels[k].y);
+                        (static_cast<u16 *>(image->data))[i + 2] = FloatToHalf(pixels[k].z);
+                        (static_cast<u16 *>(image->data))[i + 3] = FloatToHalf(pixels[k].w);
                     }
                 } break;
                 default: break;
@@ -1547,17 +1547,17 @@ void ImageFormat(Image *image, int newFormat)
 }
 
 // Create an image from text (default font)
-Image ImageText(std::string_view textView, int fontSize, Color color)
+Image ImageText(std::string_view textView, i32 fontSize, Color color)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
     Image imText = { nullptr };
 #if SUPPORT_MODULE_RTEXT
-    constexpr int defaultFontSize = 10;   // Default Font chars height in pixel
+    constexpr i32 defaultFontSize = 10;   // Default Font chars height in pixel
     if (fontSize < defaultFontSize) fontSize = defaultFontSize;
-    const int spacing = fontSize/defaultFontSize;
-    imText = ImageTextEx(GetFontDefault(), text, static_cast<float>(fontSize), static_cast<float>(spacing), color);   // WARNING: Module required: rtext
+    const i32 spacing = fontSize/defaultFontSize;
+    imText = ImageTextEx(GetFontDefault(), text, static_cast<f32>(fontSize), static_cast<f32>(spacing), color);   // WARNING: Module required: rtext
 #else
     imText = GenImageColor(200, 60, BLACK);     // Generating placeholder black image rectangle
     TRACELOG(LOG_WARNING, "IMAGE: ImageTextEx() requires module: rtext");
@@ -1567,7 +1567,7 @@ Image ImageText(std::string_view textView, int fontSize, Color color)
 
 // Create an image from text (custom sprite font)
 // WARNING: Module required: rtext
-Image ImageTextEx(Font font, std::string_view textView, float fontSize, float spacing, Color tint)
+Image ImageTextEx(Font font, std::string_view textView, f32 fontSize, f32 spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -1576,68 +1576,68 @@ Image ImageTextEx(Font font, std::string_view textView, float fontSize, float sp
 #if SUPPORT_MODULE_RTEXT
     if (text == nullptr) return imText;
 
-    const int textLength = static_cast<int>(strlen(text)); // Get length of text in bytes
-    int textOffsetX = 0;                                   // Image drawing position X
-    int textOffsetY = 0;                                   // Offset between lines (on linebreak '\n')
-    int lineIndex = 0;                                     // Current line index (on linebreak '\n')
+    const i32 textLength = static_cast<i32>(strlen(text)); // Get length of text in bytes
+    i32 textOffsetX = 0;                                   // Image drawing position X
+    i32 textOffsetY = 0;                                   // Offset between lines (on linebreak '\n')
+    i32 lineIndex = 0;                                     // Current line index (on linebreak '\n')
 
     // NOTE: Text image is generated at font base size, later scaled to desired font size
-    const vec2 imSize = MeasureTextEx(font, text, static_cast<float>(font.baseSize), spacing);// WARNING: Module required: rtext
+    const vec2 imSize = MeasureTextEx(font, text, static_cast<f32>(font.baseSize), spacing);// WARNING: Module required: rtext
     const vec2 textSize = MeasureTextEx(font, text, fontSize, spacing);
 
-    int lineBreakCount = 0;         // Number of line breaks ('\n') in text
-    for (int i = 0; i < textLength; i++)
+    i32 lineBreakCount = 0;         // Number of line breaks ('\n') in text
+    for (i32 i = 0; i < textLength; i++)
     {
         if (text[i] == '\n') lineBreakCount++;
     }
 
-    float lineSpacing = 0.0f;       // Line spacing, as used by MeasureTextEx()
+    f32 lineSpacing = 0.0f;       // Line spacing, as used by MeasureTextEx()
     if (lineBreakCount > 0) lineSpacing = (textSize.y - fontSize)/lineBreakCount - fontSize;
 
-    const float lineStep = static_cast<float>(font.baseSize) + lineSpacing*static_cast<float>(font.baseSize)/fontSize;   // Line advance at base size
+    const f32 lineStep = static_cast<f32>(font.baseSize) + lineSpacing*static_cast<f32>(font.baseSize)/fontSize;   // Line advance at base size
 
     // Create image to store text
-    imText = GenImageColor(static_cast<int>(imSize.x), font.baseSize + static_cast<int>(lineBreakCount*lineStep), BLANK);
+    imText = GenImageColor(static_cast<i32>(imSize.x), font.baseSize + static_cast<i32>(lineBreakCount*lineStep), BLANK);
 
-    for (int i = 0; i < textLength;)
+    for (i32 i = 0; i < textLength;)
     {
         // Get next codepoint from byte string and glyph index in font
-        int codepointByteCount = 0;
-        const int codepoint = GetCodepointNext(&text[i], &codepointByteCount);    // WARNING: Module required: rtext
-        const int index = GetGlyphIndex(font, codepoint);                         // WARNING: Module required: rtext
+        i32 codepointByteCount = 0;
+        const i32 codepoint = GetCodepointNext(&text[i], &codepointByteCount);    // WARNING: Module required: rtext
+        const i32 index = GetGlyphIndex(font, codepoint);                         // WARNING: Module required: rtext
 
         if (codepoint == '\n')
         {
             lineIndex++;
-            textOffsetY = static_cast<int>(lineIndex*lineStep);
+            textOffsetY = static_cast<i32>(lineIndex*lineStep);
             textOffsetX = 0;
         }
         else
         {
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                const Rectangle rec = { static_cast<float>(textOffsetX + font.glyphs[index].offsetX), static_cast<float>(textOffsetY + font.glyphs[index].offsetY), font.recs[index].width, font.recs[index].height };
-                ImageDrawImagePro(&imText, font.glyphs[index].image, Rectangle{ 0, 0, static_cast<float>(font.glyphs[index].image.width), static_cast<float>(font.glyphs[index].image.height) },
+                const Rectangle rec = { static_cast<f32>(textOffsetX + font.glyphs[index].offsetX), static_cast<f32>(textOffsetY + font.glyphs[index].offsetY), font.recs[index].width, font.recs[index].height };
+                ImageDrawImagePro(&imText, font.glyphs[index].image, Rectangle{ 0, 0, static_cast<f32>(font.glyphs[index].image.width), static_cast<f32>(font.glyphs[index].image.height) },
                     rec, vec2{ 0 }, 0.0f, tint);
             }
 
-            if (font.glyphs[index].advanceX == 0) textOffsetX += static_cast<int>(font.recs[index].width + spacing);
-            else textOffsetX += font.glyphs[index].advanceX + static_cast<int>(spacing);
+            if (font.glyphs[index].advanceX == 0) textOffsetX += static_cast<i32>(font.recs[index].width + spacing);
+            else textOffsetX += font.glyphs[index].advanceX + static_cast<i32>(spacing);
         }
 
         i += codepointByteCount;   // Move text bytes counter to next codepoint
     }
 
     // Scale image depending on text size
-    if (fontSize != static_cast<float>(font.baseSize))
+    if (fontSize != static_cast<f32>(font.baseSize))
     {
-        const float scaleFactor = fontSize/static_cast<float>(font.baseSize);
+        const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);
         TRACELOG(LOG_INFO, "IMAGE: Text scaled by factor: %f", scaleFactor);
 
         // Using nearest-neighbor scaling algorithm for default font
         // TODO: Support other scaling mechanism, use flag?
-        if (font.texture.id == GetFontDefault().texture.id) ImageResizeNN(&imText, static_cast<int>(imText.width*scaleFactor), static_cast<int>(imText.height*scaleFactor));
-        else ImageResize(&imText, static_cast<int>(imText.width*scaleFactor), static_cast<int>(imText.height*scaleFactor));
+        if (font.texture.id == GetFontDefault().texture.id) ImageResizeNN(&imText, static_cast<i32>(imText.width*scaleFactor), static_cast<i32>(imText.height*scaleFactor));
+        else ImageResize(&imText, static_cast<i32>(imText.width*scaleFactor), static_cast<i32>(imText.height*scaleFactor));
     }
 #else
     imText = GenImageColor(200, 60, BLACK);     // Generating placeholder black image rectangle
@@ -1647,7 +1647,7 @@ Image ImageTextEx(Font font, std::string_view textView, float fontSize, float sp
 }
 
 // Create an image from a selected channel of another image
-Image ImageFromChannel(Image image, int selectedChannel)
+Image ImageFromChannel(Image image, i32 selectedChannel)
 {
     Image result = { nullptr };
 
@@ -1703,108 +1703,108 @@ Image ImageFromChannel(Image image, int selectedChannel)
     result.width = image.width;
     result.mipmaps = 1;
 
-    unsigned char *pixels = static_cast<unsigned char *>(calloc(image.width*image.height, sizeof(unsigned char))); // Values from 0 to 255
+    u8 *pixels = static_cast<u8 *>(calloc(image.width*image.height, sizeof(u8))); // Values from 0 to 255
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
     {
-        for (int i = 0, k = 0; i < image.width*image.height; i++)
+        for (i32 i = 0, k = 0; i < image.width*image.height; i++)
         {
-            float pixelValue = -1;
+            f32 pixelValue = -1;
             switch (image.format)
             {
                 case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
                 {
-                    pixelValue = static_cast<float>((static_cast<unsigned char *>(image.data))[i + selectedChannel])/255.0f;
+                    pixelValue = static_cast<f32>((static_cast<u8 *>(image.data))[i + selectedChannel])/255.0f;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
                 {
-                    pixelValue = static_cast<float>((static_cast<unsigned char *>(image.data))[k + selectedChannel])/255.0f;
+                    pixelValue = static_cast<f32>((static_cast<u8 *>(image.data))[k + selectedChannel])/255.0f;
                     k += 2;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    if (selectedChannel == 0) pixelValue = static_cast<float>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
-                    else if (selectedChannel == 1) pixelValue = static_cast<float>((pixel & 0b0000011111000000) >> 6)*(1.0f/31);
-                    else if (selectedChannel == 2) pixelValue = static_cast<float>((pixel & 0b0000000000111110) >> 1)*(1.0f/31);
+                    if (selectedChannel == 0) pixelValue = static_cast<f32>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
+                    else if (selectedChannel == 1) pixelValue = static_cast<f32>((pixel & 0b0000011111000000) >> 6)*(1.0f/31);
+                    else if (selectedChannel == 2) pixelValue = static_cast<f32>((pixel & 0b0000000000111110) >> 1)*(1.0f/31);
                     else if (selectedChannel == 3) pixelValue = ((pixel & 0b0000000000000001) == 0)? 0.0f : 1.0f;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    if (selectedChannel == 0) pixelValue = static_cast<float>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
-                    else if (selectedChannel == 1) pixelValue = static_cast<float>((pixel & 0b0000011111100000) >> 5)*(1.0f/63);
-                    else if (selectedChannel == 2) pixelValue = static_cast<float>(pixel & 0b0000000000011111)*(1.0f/31);
+                    if (selectedChannel == 0) pixelValue = static_cast<f32>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
+                    else if (selectedChannel == 1) pixelValue = static_cast<f32>((pixel & 0b0000011111100000) >> 5)*(1.0f/63);
+                    else if (selectedChannel == 2) pixelValue = static_cast<f32>(pixel & 0b0000000000011111)*(1.0f/31);
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    if (selectedChannel == 0) pixelValue = static_cast<float>((pixel & 0b1111000000000000) >> 12)*(1.0f/15);
-                    else if (selectedChannel == 1) pixelValue = static_cast<float>((pixel & 0b0000111100000000) >> 8)*(1.0f/15);
-                    else if (selectedChannel == 2) pixelValue = static_cast<float>((pixel & 0b0000000011110000) >> 4)*(1.0f/15);
-                    else if (selectedChannel == 3) pixelValue = static_cast<float>(pixel & 0b0000000000001111)*(1.0f/15);
+                    if (selectedChannel == 0) pixelValue = static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(1.0f/15);
+                    else if (selectedChannel == 1) pixelValue = static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(1.0f/15);
+                    else if (selectedChannel == 2) pixelValue = static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(1.0f/15);
+                    else if (selectedChannel == 3) pixelValue = static_cast<f32>(pixel & 0b0000000000001111)*(1.0f/15);
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
                 {
-                    pixelValue = static_cast<float>((static_cast<unsigned char *>(image.data))[k + selectedChannel])/255.0f;
+                    pixelValue = static_cast<f32>((static_cast<u8 *>(image.data))[k + selectedChannel])/255.0f;
                     k += 4;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
                 {
-                    pixelValue = static_cast<float>((static_cast<unsigned char *>(image.data))[k + selectedChannel])/255.0f;
+                    pixelValue = static_cast<f32>((static_cast<u8 *>(image.data))[k + selectedChannel])/255.0f;
                     k += 3;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32:
                 {
-                    pixelValue = (static_cast<float *>(image.data))[k];
+                    pixelValue = (static_cast<f32 *>(image.data))[k];
                     k += 1;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
                 {
-                    pixelValue = (static_cast<float *>(image.data))[k + selectedChannel];
+                    pixelValue = (static_cast<f32 *>(image.data))[k + selectedChannel];
                     k += 3;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
                 {
-                    pixelValue = (static_cast<float *>(image.data))[k + selectedChannel];
+                    pixelValue = (static_cast<f32 *>(image.data))[k + selectedChannel];
                     k += 4;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16:
                 {
-                    pixelValue = HalfToFloat((static_cast<unsigned short *>(image.data))[k]);
+                    pixelValue = HalfToFloat((static_cast<u16 *>(image.data))[k]);
                     k += 1;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
                 {
-                    pixelValue = HalfToFloat((static_cast<unsigned short *>(image.data))[k+selectedChannel]);
+                    pixelValue = HalfToFloat((static_cast<u16 *>(image.data))[k+selectedChannel]);
                     k += 3;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
                 {
-                    pixelValue = HalfToFloat((static_cast<unsigned short *>(image.data))[k + selectedChannel]);
+                    pixelValue = HalfToFloat((static_cast<u16 *>(image.data))[k + selectedChannel]);
                     k += 4;
 
                 } break;
                 default: break;
             }
 
-            pixels[i] = static_cast<unsigned char>(pixelValue*255);
+            pixels[i] = static_cast<u8>(pixelValue*255);
         }
     }
 
@@ -1814,7 +1814,7 @@ Image ImageFromChannel(Image image, int selectedChannel)
 }
 
 // Resize and image to new size using Nearest-Neighbor scaling algorithm
-void ImageResizeNN(Image *image, int newWidth, int newHeight)
+void ImageResizeNN(Image *image, i32 newWidth, i32 newHeight)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1823,14 +1823,14 @@ void ImageResizeNN(Image *image, int newWidth, int newHeight)
     Color *output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
 
     // EDIT: added +1 to account for an early rounding problem
-    const int xRatio = ((image->width << 16)/newWidth) + 1;
-    const int yRatio = ((image->height << 16)/newHeight) + 1;
+    const i32 xRatio = ((image->width << 16)/newWidth) + 1;
+    const i32 yRatio = ((image->height << 16)/newHeight) + 1;
 
-    int x2 = 0;
-    int y2 = 0;
-    for (int y = 0; y < newHeight; y++)
+    i32 x2 = 0;
+    i32 y2 = 0;
+    for (i32 y = 0; y < newHeight; y++)
     {
-        for (int x = 0; x < newWidth; x++)
+        for (i32 x = 0; x < newWidth; x++)
         {
             x2 = ((x*xRatio) >> 16);
             y2 = ((y*yRatio) >> 16);
@@ -1839,7 +1839,7 @@ void ImageResizeNN(Image *image, int newWidth, int newHeight)
         }
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
 
     free(image->data);
 
@@ -1857,7 +1857,7 @@ void ImageResizeNN(Image *image, int newWidth, int newHeight)
 // NOTE: Uses stb default scaling filters (both bicubic):
 // STBIR_DEFAULT_FILTER_UPSAMPLE    STBIR_FILTER_CATMULLROM
 // STBIR_DEFAULT_FILTER_DOWNSAMPLE  STBIR_FILTER_MITCHELL   (high-quality Catmull-Rom)
-void ImageResize(Image *image, int newWidth, int newHeight)
+void ImageResize(Image *image, i32 newWidth, i32 newHeight)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1869,15 +1869,15 @@ void ImageResize(Image *image, int newWidth, int newHeight)
         (image->format == PIXELFORMAT_UNCOMPRESSED_R8G8B8) ||
         (image->format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8))
     {
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *output = static_cast<unsigned char *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        u8 *output = static_cast<u8 *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
 
         switch (image->format)
         {
-            case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: stbir_resize_uint8_linear(static_cast<unsigned char *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(1)); break;
-            case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: stbir_resize_uint8_linear(static_cast<unsigned char *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(2)); break;
-            case PIXELFORMAT_UNCOMPRESSED_R8G8B8: stbir_resize_uint8_linear(static_cast<unsigned char *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(3)); break;
-            case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: stbir_resize_uint8_linear(static_cast<unsigned char *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(4)); break;
+            case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: stbir_resize_uint8_linear(static_cast<u8 *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(1)); break;
+            case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: stbir_resize_uint8_linear(static_cast<u8 *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(2)); break;
+            case PIXELFORMAT_UNCOMPRESSED_R8G8B8: stbir_resize_uint8_linear(static_cast<u8 *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(3)); break;
+            case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: stbir_resize_uint8_linear(static_cast<u8 *>(image->data), image->width, image->height, 0, output, newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(4)); break;
             default: break;
         }
 
@@ -1893,9 +1893,9 @@ void ImageResize(Image *image, int newWidth, int newHeight)
         Color *output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
 
         // NOTE: Color data is cast to (unsigned char *), there shouldn't been any problem...
-        stbir_resize_uint8_linear(reinterpret_cast<unsigned char *>(pixels), image->width, image->height, 0, reinterpret_cast<unsigned char *>(output), newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(4));
+        stbir_resize_uint8_linear(reinterpret_cast<u8 *>(pixels), image->width, image->height, 0, reinterpret_cast<u8 *>(output), newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(4));
 
-        const int format = image->format;
+        const i32 format = image->format;
 
         UnloadImageColors(pixels);
         free(image->data);
@@ -1911,7 +1911,7 @@ void ImageResize(Image *image, int newWidth, int newHeight)
 
 // Resize canvas and fill with color
 // NOTE: Resize offset is relative to the top-left corner of the original image
-void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, int offsetY, Color fill)
+void ImageResizeCanvas(Image *image, i32 newWidth, i32 newHeight, i32 offsetX, i32 offsetY, Color fill)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1920,52 +1920,52 @@ void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, i
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else if ((newWidth != image->width) || (newHeight != image->height))
     {
-        Rectangle srcRec = { 0, 0, static_cast<float>(image->width), static_cast<float>(image->height) };
-        vec2 dstPos = { static_cast<float>(offsetX), static_cast<float>(offsetY) };
+        Rectangle srcRec = { 0, 0, static_cast<f32>(image->width), static_cast<f32>(image->height) };
+        vec2 dstPos = { static_cast<f32>(offsetX), static_cast<f32>(offsetY) };
 
         if (offsetX < 0)
         {
-            srcRec.x = static_cast<float>(-offsetX);
-            srcRec.width += static_cast<float>(offsetX);
+            srcRec.x = static_cast<f32>(-offsetX);
+            srcRec.width += static_cast<f32>(offsetX);
             dstPos.x = 0;
         }
-        else if ((offsetX + image->width) > newWidth) srcRec.width = static_cast<float>(newWidth - offsetX);
+        else if ((offsetX + image->width) > newWidth) srcRec.width = static_cast<f32>(newWidth - offsetX);
 
         if (offsetY < 0)
         {
-            srcRec.y = static_cast<float>(-offsetY);
-            srcRec.height += static_cast<float>(offsetY);
+            srcRec.y = static_cast<f32>(-offsetY);
+            srcRec.height += static_cast<f32>(offsetY);
             dstPos.y = 0;
         }
-        else if ((offsetY + image->height) > newHeight) srcRec.height = static_cast<float>(newHeight - offsetY);
+        else if ((offsetY + image->height) > newHeight) srcRec.height = static_cast<f32>(newHeight - offsetY);
 
-        if (newWidth < srcRec.width) srcRec.width = static_cast<float>(newWidth);
-        if (newHeight < srcRec.height) srcRec.height = static_cast<float>(newHeight);
+        if (newWidth < srcRec.width) srcRec.width = static_cast<f32>(newWidth);
+        if (newHeight < srcRec.height) srcRec.height = static_cast<f32>(newHeight);
 
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *resizedData = static_cast<unsigned char *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        u8 *resizedData = static_cast<u8 *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
 
         // Fill resized canvas with fill color
         // Set first pixel with image->format
         SetPixelColor(resizedData, fill, image->format);
 
         // Fill remaining bytes of first row
-        for (int x = 1; x < newWidth; x++)
+        for (i32 x = 1; x < newWidth; x++)
         {
             memcpy(resizedData + x*bytesPerPixel, resizedData, bytesPerPixel);
         }
         // Copy the first row into the other rows
-        for (int y = 1; y < newHeight; y++)
+        for (i32 y = 1; y < newHeight; y++)
         {
             memcpy(resizedData + y*newWidth*bytesPerPixel, resizedData, newWidth*bytesPerPixel);
         }
 
         // Copy old image to resized canvas
-        int dstOffsetSize = (static_cast<int>(dstPos.y)*newWidth + static_cast<int>(dstPos.x))*bytesPerPixel;
+        i32 dstOffsetSize = (static_cast<i32>(dstPos.y)*newWidth + static_cast<i32>(dstPos.x))*bytesPerPixel;
 
-        for (int y = 0; y < static_cast<int>(srcRec.height); y++)
+        for (i32 y = 0; y < static_cast<i32>(srcRec.height); y++)
         {
-            memcpy(resizedData + dstOffsetSize, (static_cast<unsigned char *>(image->data)) + ((y + static_cast<int>(srcRec.y))*image->width + static_cast<int>(srcRec.x))*bytesPerPixel, static_cast<int>(srcRec.width)*bytesPerPixel);
+            memcpy(resizedData + dstOffsetSize, (static_cast<u8 *>(image->data)) + ((y + static_cast<i32>(srcRec.y))*image->width + static_cast<i32>(srcRec.x))*bytesPerPixel, static_cast<i32>(srcRec.width)*bytesPerPixel);
             dstOffsetSize += (newWidth*bytesPerPixel);
         }
 
@@ -1985,8 +1985,8 @@ void ImageToPOT(Image *image, Color fill)
 
     // Calculate next power-of-two values
     // NOTE: Add the required amount of pixels at the right and bottom sides of image...
-    const int potWidth = static_cast<int>(powf(2, ceilf(logf(static_cast<float>(image->width))/logf(2))));
-    const int potHeight = static_cast<int>(powf(2, ceilf(logf(static_cast<float>(image->height))/logf(2))));
+    const i32 potWidth = static_cast<i32>(powf(2, ceilf(logf(static_cast<f32>(image->width))/logf(2))));
+    const i32 potHeight = static_cast<i32>(powf(2, ceilf(logf(static_cast<f32>(image->height))/logf(2))));
 
     // Check if POT texture generation is required (if texture is not already POT)
     if ((potWidth != image->width) || (potHeight != image->height)) ImageResizeCanvas(image, potWidth, potHeight, 0, 0, fill);
@@ -1994,7 +1994,7 @@ void ImageToPOT(Image *image, Color fill)
 
 // Crop image depending on alpha value
 // NOTE: Threshold is defined as a percentage: 0.0f -> 1.0f
-void ImageAlphaCrop(Image *image, float threshold)
+void ImageAlphaCrop(Image *image, f32 threshold)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2002,12 +2002,12 @@ void ImageAlphaCrop(Image *image, float threshold)
     const Rectangle crop = GetImageAlphaBorder(*image, threshold);
 
     // Crop if rectangle is valid
-    if ((static_cast<int>(crop.width) != 0) && (static_cast<int>(crop.height) != 0)) ImageCrop(image, crop);
+    if ((static_cast<i32>(crop.width) != 0) && (static_cast<i32>(crop.height) != 0)) ImageCrop(image, crop);
 }
 
 // Clear alpha channel to desired color
 // NOTE: Threshold defines the alpha limit, 0.0f to 1.0f
-void ImageAlphaClear(Image *image, Color color, float threshold)
+void ImageAlphaClear(Image *image, Color color, f32 threshold)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2020,87 +2020,87 @@ void ImageAlphaClear(Image *image, Color color, float threshold)
         {
             case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
             {
-                const unsigned char thresholdValue = static_cast<unsigned char>(threshold*255.0f);
-                for (int i = 1; i < image->width*image->height*2; i += 2)
+                const u8 thresholdValue = static_cast<u8>(threshold*255.0f);
+                for (i32 i = 1; i < image->width*image->height*2; i += 2)
                 {
-                    if ((static_cast<unsigned char *>(image->data))[i] <= thresholdValue)
+                    if ((static_cast<u8 *>(image->data))[i] <= thresholdValue)
                     {
-                        (static_cast<unsigned char *>(image->data))[i - 1] = color.r;
-                        (static_cast<unsigned char *>(image->data))[i] = color.a;
+                        (static_cast<u8 *>(image->data))[i - 1] = color.r;
+                        (static_cast<u8 *>(image->data))[i] = color.a;
                     }
                 }
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
             {
-                const unsigned char thresholdValue = ((threshold < 0.5f)? 0 : 1);
+                const u8 thresholdValue = ((threshold < 0.5f)? 0 : 1);
 
-                const unsigned char r = static_cast<unsigned char>(round(static_cast<float>(color.r)/255.0*31.0f));
-                const unsigned char g = static_cast<unsigned char>(round(static_cast<float>(color.g)/255.0*31.0f));
-                const unsigned char b = static_cast<unsigned char>(round(static_cast<float>(color.b)/255.0*31.0f));
-                const unsigned char a = (color.a < 128)? 0 : 1;
+                const u8 r = static_cast<u8>(round(static_cast<f32>(color.r)/255.0*31.0f));
+                const u8 g = static_cast<u8>(round(static_cast<f32>(color.g)/255.0*31.0f));
+                const u8 b = static_cast<u8>(round(static_cast<f32>(color.b)/255.0*31.0f));
+                const u8 a = (color.a < 128)? 0 : 1;
 
-                for (int i = 0; i < image->width*image->height; i++)
+                for (i32 i = 0; i < image->width*image->height; i++)
                 {
-                    if (((static_cast<unsigned short *>(image->data))[i] & 0b0000000000000001) <= thresholdValue)
+                    if (((static_cast<u16 *>(image->data))[i] & 0b0000000000000001) <= thresholdValue)
                     {
-                        (static_cast<unsigned short *>(image->data))[i] = static_cast<unsigned short>(r) << 11 | static_cast<unsigned short>(g) << 6 | static_cast<unsigned short>(b) << 1 | static_cast<unsigned short>(a);
+                        (static_cast<u16 *>(image->data))[i] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 6 | static_cast<u16>(b) << 1 | static_cast<u16>(a);
                     }
                 }
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
             {
-                const unsigned char thresholdValue = static_cast<unsigned char>(threshold*15.0f);
+                const u8 thresholdValue = static_cast<u8>(threshold*15.0f);
 
-                const unsigned char r = static_cast<unsigned char>(round(static_cast<float>(color.r)/255.0*15.0f));
-                const unsigned char g = static_cast<unsigned char>(round(static_cast<float>(color.g)/255.0*15.0f));
-                const unsigned char b = static_cast<unsigned char>(round(static_cast<float>(color.b)/255.0*15.0f));
-                const unsigned char a = static_cast<unsigned char>(round(static_cast<float>(color.a)/255.0*15.0f));
+                const u8 r = static_cast<u8>(round(static_cast<f32>(color.r)/255.0*15.0f));
+                const u8 g = static_cast<u8>(round(static_cast<f32>(color.g)/255.0*15.0f));
+                const u8 b = static_cast<u8>(round(static_cast<f32>(color.b)/255.0*15.0f));
+                const u8 a = static_cast<u8>(round(static_cast<f32>(color.a)/255.0*15.0f));
 
-                for (int i = 0; i < image->width*image->height; i++)
+                for (i32 i = 0; i < image->width*image->height; i++)
                 {
-                    if (((static_cast<unsigned short *>(image->data))[i] & 0x000f) <= thresholdValue)
+                    if (((static_cast<u16 *>(image->data))[i] & 0x000f) <= thresholdValue)
                     {
-                        (static_cast<unsigned short *>(image->data))[i] = static_cast<unsigned short>(r) << 12 | static_cast<unsigned short>(g) << 8 | static_cast<unsigned short>(b) << 4 | static_cast<unsigned short>(a);
+                        (static_cast<u16 *>(image->data))[i] = static_cast<u16>(r) << 12 | static_cast<u16>(g) << 8 | static_cast<u16>(b) << 4 | static_cast<u16>(a);
                     }
                 }
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
             {
-                const unsigned char thresholdValue = static_cast<unsigned char>(threshold*255.0f);
-                for (int i = 3; i < image->width*image->height*4; i += 4)
+                const u8 thresholdValue = static_cast<u8>(threshold*255.0f);
+                for (i32 i = 3; i < image->width*image->height*4; i += 4)
                 {
-                    if ((static_cast<unsigned char *>(image->data))[i] <= thresholdValue)
+                    if ((static_cast<u8 *>(image->data))[i] <= thresholdValue)
                     {
-                        (static_cast<unsigned char *>(image->data))[i - 3] = color.r;
-                        (static_cast<unsigned char *>(image->data))[i - 2] = color.g;
-                        (static_cast<unsigned char *>(image->data))[i - 1] = color.b;
-                        (static_cast<unsigned char *>(image->data))[i] = color.a;
+                        (static_cast<u8 *>(image->data))[i - 3] = color.r;
+                        (static_cast<u8 *>(image->data))[i - 2] = color.g;
+                        (static_cast<u8 *>(image->data))[i - 1] = color.b;
+                        (static_cast<u8 *>(image->data))[i] = color.a;
                     }
                 }
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
             {
-                for (int i = 3; i < image->width*image->height*4; i += 4)
+                for (i32 i = 3; i < image->width*image->height*4; i += 4)
                 {
-                    if ((static_cast<float *>(image->data))[i] <= threshold)
+                    if ((static_cast<f32 *>(image->data))[i] <= threshold)
                     {
-                        (static_cast<float *>(image->data))[i - 3] = static_cast<float>(color.r)/255.0f;
-                        (static_cast<float *>(image->data))[i - 2] = static_cast<float>(color.g)/255.0f;
-                        (static_cast<float *>(image->data))[i - 1] = static_cast<float>(color.b)/255.0f;
-                        (static_cast<float *>(image->data))[i] = static_cast<float>(color.a)/255.0f;
+                        (static_cast<f32 *>(image->data))[i - 3] = static_cast<f32>(color.r)/255.0f;
+                        (static_cast<f32 *>(image->data))[i - 2] = static_cast<f32>(color.g)/255.0f;
+                        (static_cast<f32 *>(image->data))[i - 1] = static_cast<f32>(color.b)/255.0f;
+                        (static_cast<f32 *>(image->data))[i] = static_cast<f32>(color.a)/255.0f;
                     }
                 }
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
             {
-                for (int i = 3; i < image->width*image->height*4; i += 4)
+                for (i32 i = 3; i < image->width*image->height*4; i += 4)
                 {
-                    if (HalfToFloat((static_cast<unsigned short *>(image->data))[i]) <= threshold)
+                    if (HalfToFloat((static_cast<u16 *>(image->data))[i]) <= threshold)
                     {
-                        (static_cast<unsigned short *>(image->data))[i - 3] = FloatToHalf(static_cast<float>(color.r)/255.0f);
-                        (static_cast<unsigned short *>(image->data))[i - 2] = FloatToHalf(static_cast<float>(color.g)/255.0f);
-                        (static_cast<unsigned short *>(image->data))[i - 1] = FloatToHalf(static_cast<float>(color.b)/255.0f);
-                        (static_cast<unsigned short *>(image->data))[i] = FloatToHalf(static_cast<float>(color.a)/255.0f);
+                        (static_cast<u16 *>(image->data))[i - 3] = FloatToHalf(static_cast<f32>(color.r)/255.0f);
+                        (static_cast<u16 *>(image->data))[i - 2] = FloatToHalf(static_cast<f32>(color.g)/255.0f);
+                        (static_cast<u16 *>(image->data))[i - 1] = FloatToHalf(static_cast<f32>(color.b)/255.0f);
+                        (static_cast<u16 *>(image->data))[i] = FloatToHalf(static_cast<f32>(color.a)/255.0f);
                     }
                 }
             } break;
@@ -2131,13 +2131,13 @@ void ImageAlphaMask(Image *image, Image alphaMask)
         // In case image is only grayscale, add alpha channel
         if (image->format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE)
         {
-            unsigned char *data = static_cast<unsigned char *>(calloc(image->width*image->height*2, 1));
+            u8 *data = static_cast<u8 *>(calloc(image->width*image->height*2, 1));
 
             // Apply alpha mask to alpha channel
-            for (int i = 0, k = 0; (i < mask.width*mask.height) || (i < image->width*image->height); i++, k += 2)
+            for (i32 i = 0, k = 0; (i < mask.width*mask.height) || (i < image->width*image->height); i++, k += 2)
             {
-                data[k] = (static_cast<unsigned char *>(image->data))[i];
-                data[k + 1] = (static_cast<unsigned char *>(mask.data))[i];
+                data[k] = (static_cast<u8 *>(image->data))[i];
+                data[k + 1] = (static_cast<u8 *>(mask.data))[i];
             }
 
             free(image->data);
@@ -2150,9 +2150,9 @@ void ImageAlphaMask(Image *image, Image alphaMask)
             if (image->format != PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) ImageFormat(image, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
 
             // Apply alpha mask to alpha channel
-            for (int i = 0, k = 3; (i < mask.width*mask.height) || (i < image->width*image->height); i++, k += 4)
+            for (i32 i = 0, k = 3; (i < mask.width*mask.height) || (i < image->width*image->height); i++, k += 4)
             {
-                (static_cast<unsigned char *>(image->data))[k] = (static_cast<unsigned char *>(mask.data))[i];
+                (static_cast<u8 *>(image->data))[k] = (static_cast<u8 *>(mask.data))[i];
             }
         }
 
@@ -2166,10 +2166,10 @@ void ImageAlphaPremultiply(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    float alpha = 0.0f;
+    f32 alpha = 0.0f;
     Color *pixels = LoadImageColors(*image);
 
-    for (int i = 0; i < image->width*image->height; i++)
+    for (i32 i = 0; i < image->width*image->height; i++)
     {
         if (pixels[i].a == 0)
         {
@@ -2179,16 +2179,16 @@ void ImageAlphaPremultiply(Image *image)
         }
         else if (pixels[i].a < 255)
         {
-            alpha = static_cast<float>(pixels[i].a)/255.0f;
-            pixels[i].r = static_cast<unsigned char>(static_cast<float>(pixels[i].r)*alpha);
-            pixels[i].g = static_cast<unsigned char>(static_cast<float>(pixels[i].g)*alpha);
-            pixels[i].b = static_cast<unsigned char>(static_cast<float>(pixels[i].b)*alpha);
+            alpha = static_cast<f32>(pixels[i].a)/255.0f;
+            pixels[i].r = static_cast<u8>(static_cast<f32>(pixels[i].r)*alpha);
+            pixels[i].g = static_cast<u8>(static_cast<f32>(pixels[i].g)*alpha);
+            pixels[i].b = static_cast<u8>(static_cast<f32>(pixels[i].b)*alpha);
         }
     }
 
     free(image->data);
 
-    const int format = image->format;
+    const i32 format = image->format;
     image->data = pixels;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
 
@@ -2196,7 +2196,7 @@ void ImageAlphaPremultiply(Image *image)
 }
 
 // Apply box blur to image
-void ImageBlurGaussian(Image *image, int blurSize)
+void ImageBlurGaussian(Image *image, i32 blurSize)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2209,7 +2209,7 @@ void ImageBlurGaussian(Image *image, int blurSize)
     vec4 *pixelsCopy1 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
     vec4 *pixelsCopy2 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
 
-    for (int i = 0; i < (image->height*image->width); i++)
+    for (i32 i = 0; i < (image->height*image->width); i++)
     {
         pixelsCopy1[i].x = pixels[i].r;
         pixelsCopy1[i].y = pixels[i].g;
@@ -2218,18 +2218,18 @@ void ImageBlurGaussian(Image *image, int blurSize)
     }
 
     // Repeated convolution of rectangular window signal by itself converges to a gaussian distribution
-    for (int j = 0; j < GAUSSIAN_BLUR_ITERATIONS; j++)
+    for (i32 j = 0; j < GAUSSIAN_BLUR_ITERATIONS; j++)
     {
         // Horizontal motion blur
-        for (int row = 0; row < image->height; row++)
+        for (i32 row = 0; row < image->height; row++)
         {
-            float avgR = 0.0f;
-            float avgG = 0.0f;
-            float avgB = 0.0f;
-            float avgAlpha = 0.0f;
-            int convolutionSize = blurSize;
+            f32 avgR = 0.0f;
+            f32 avgG = 0.0f;
+            f32 avgB = 0.0f;
+            f32 avgAlpha = 0.0f;
+            i32 convolutionSize = blurSize;
 
-            for (int i = 0; i < blurSize; i++)
+            for (i32 i = 0; i < blurSize; i++)
             {
                 avgR += pixelsCopy1[row*image->width + i].x;
                 avgG += pixelsCopy1[row*image->width + i].y;
@@ -2237,7 +2237,7 @@ void ImageBlurGaussian(Image *image, int blurSize)
                 avgAlpha += pixelsCopy1[row*image->width + i].w;
             }
 
-            for (int x = 0; x < image->width; x++)
+            for (i32 x = 0; x < image->width; x++)
             {
                 if (x-blurSize-1 >= 0)
                 {
@@ -2265,15 +2265,15 @@ void ImageBlurGaussian(Image *image, int blurSize)
         }
 
         // Vertical motion blur
-        for (int col = 0; col < image->width; col++)
+        for (i32 col = 0; col < image->width; col++)
         {
-            float avgR = 0.0f;
-            float avgG = 0.0f;
-            float avgB = 0.0f;
-            float avgAlpha = 0.0f;
-            int convolutionSize = blurSize;
+            f32 avgR = 0.0f;
+            f32 avgG = 0.0f;
+            f32 avgB = 0.0f;
+            f32 avgAlpha = 0.0f;
+            i32 convolutionSize = blurSize;
 
-            for (int i = 0; i < blurSize; i++)
+            for (i32 i = 0; i < blurSize; i++)
             {
                 avgR += pixelsCopy2[i*image->width + col].x;
                 avgG += pixelsCopy2[i*image->width + col].y;
@@ -2281,7 +2281,7 @@ void ImageBlurGaussian(Image *image, int blurSize)
                 avgAlpha += pixelsCopy2[i*image->width + col].w;
             }
 
-            for (int y = 0; y < image->height; y++)
+            for (i32 y = 0; y < image->height; y++)
             {
                 if (y-blurSize-1 >= 0)
                 {
@@ -2300,16 +2300,16 @@ void ImageBlurGaussian(Image *image, int blurSize)
                     convolutionSize++;
                 }
 
-                pixelsCopy1[y*image->width + col].x = static_cast<unsigned char>(avgR/convolutionSize);
-                pixelsCopy1[y*image->width + col].y = static_cast<unsigned char>(avgG/convolutionSize);
-                pixelsCopy1[y*image->width + col].z = static_cast<unsigned char>(avgB/convolutionSize);
-                pixelsCopy1[y*image->width + col].w = static_cast<unsigned char>(avgAlpha/convolutionSize);
+                pixelsCopy1[y*image->width + col].x = static_cast<u8>(avgR/convolutionSize);
+                pixelsCopy1[y*image->width + col].y = static_cast<u8>(avgG/convolutionSize);
+                pixelsCopy1[y*image->width + col].z = static_cast<u8>(avgB/convolutionSize);
+                pixelsCopy1[y*image->width + col].w = static_cast<u8>(avgAlpha/convolutionSize);
             }
         }
     }
 
     // Reverse premultiply
-    for (int i = 0; i < (image->width)*(image->height); i++)
+    for (i32 i = 0; i < (image->width)*(image->height); i++)
     {
         if (pixelsCopy1[i].w == 0.0f)
         {
@@ -2320,15 +2320,15 @@ void ImageBlurGaussian(Image *image, int blurSize)
         }
         else if (pixelsCopy1[i].w <= 255.0f)
         {
-            const float alpha = pixelsCopy1[i].w/255.0f;
-            pixels[i].r = static_cast<unsigned char>(fminf(pixelsCopy1[i].x/alpha, 255.0));
-            pixels[i].g = static_cast<unsigned char>(fminf(pixelsCopy1[i].y/alpha, 255.0));
-            pixels[i].b = static_cast<unsigned char>(fminf(pixelsCopy1[i].z/alpha, 255.0));
-            pixels[i].a = static_cast<unsigned char>(pixelsCopy1[i].w);
+            const f32 alpha = pixelsCopy1[i].w/255.0f;
+            pixels[i].r = static_cast<u8>(fminf(pixelsCopy1[i].x/alpha, 255.0));
+            pixels[i].g = static_cast<u8>(fminf(pixelsCopy1[i].y/alpha, 255.0));
+            pixels[i].b = static_cast<u8>(fminf(pixelsCopy1[i].z/alpha, 255.0));
+            pixels[i].a = static_cast<u8>(pixelsCopy1[i].w);
         }
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
     free(image->data);
     free(pixelsCopy1);
     free(pixelsCopy2);
@@ -2341,11 +2341,11 @@ void ImageBlurGaussian(Image *image, int blurSize)
 
 // Apply custom square convolution kernel to image
 // NOTE: The convolution kernel matrix is expected to be square
-void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize)
+void ImageKernelConvolution(Image *image, const f32 *kernel, i32 kernelSize)
 {
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0) || kernel == nullptr) return;
 
-    const int kernelWidth = static_cast<int>(sqrtf(static_cast<float>(kernelSize)));
+    const i32 kernelWidth = static_cast<i32>(sqrtf(static_cast<f32>(kernelSize)));
 
     if (kernelWidth*kernelWidth != kernelSize)
     {
@@ -2356,7 +2356,7 @@ void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize)
     Color *pixels = LoadImageColors(*image);
     Color *result = static_cast<Color *>(calloc((image->height)*(image->width), sizeof(Color)));
 
-    int startRange = 0, endRange = 0;
+    i32 startRange = 0, endRange = 0;
 
     if (kernelWidth%2 == 0)
     {
@@ -2369,36 +2369,36 @@ void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize)
         endRange = kernelWidth/2 + 1;
     }
 
-    for (int x = 0; x < image->height; x++)
+    for (i32 x = 0; x < image->height; x++)
     {
-        for (int y = 0; y < image->width; y++)
+        for (i32 y = 0; y < image->width; y++)
         {
-            float rRes = 0.0f;
-            float gRes = 0.0f;
-            float bRes = 0.0f;
-            float aRes = 0.0f;
+            f32 rRes = 0.0f;
+            f32 gRes = 0.0f;
+            f32 bRes = 0.0f;
+            f32 aRes = 0.0f;
 
-            for (int xk = startRange; xk < endRange; xk++)
+            for (i32 xk = startRange; xk < endRange; xk++)
             {
                 // Clamp neighbour row and column to image bounds, edge pixels are repeated
-                int row = x + xk;
+                i32 row = x + xk;
                 if (row < 0) row = 0;
                 if (row > (image->height - 1)) row = image->height - 1;
 
-                for (int yk = startRange; yk < endRange; yk++)
+                for (i32 yk = startRange; yk < endRange; yk++)
                 {
-                    int col = y + yk;
+                    i32 col = y + yk;
                     if (col < 0) col = 0;
                     if (col > (image->width - 1)) col = image->width - 1;
 
-                    const int xkabs = xk + kernelWidth/2;
-                    const int ykabs = yk + kernelWidth/2;
-                    const int imgindex = image->width*row + col;
+                    const i32 xkabs = xk + kernelWidth/2;
+                    const i32 ykabs = yk + kernelWidth/2;
+                    const i32 imgindex = image->width*row + col;
 
-                    rRes += (static_cast<float>(pixels[imgindex].r))/255.0f*kernel[kernelWidth*xkabs + ykabs];
-                    gRes += (static_cast<float>(pixels[imgindex].g))/255.0f*kernel[kernelWidth*xkabs + ykabs];
-                    bRes += (static_cast<float>(pixels[imgindex].b))/255.0f*kernel[kernelWidth*xkabs + ykabs];
-                    aRes += (static_cast<float>(pixels[imgindex].a))/255.0f*kernel[kernelWidth*xkabs + ykabs];
+                    rRes += (static_cast<f32>(pixels[imgindex].r))/255.0f*kernel[kernelWidth*xkabs + ykabs];
+                    gRes += (static_cast<f32>(pixels[imgindex].g))/255.0f*kernel[kernelWidth*xkabs + ykabs];
+                    bRes += (static_cast<f32>(pixels[imgindex].b))/255.0f*kernel[kernelWidth*xkabs + ykabs];
+                    aRes += (static_cast<f32>(pixels[imgindex].a))/255.0f*kernel[kernelWidth*xkabs + ykabs];
                 }
             }
 
@@ -2412,14 +2412,14 @@ void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize)
             if (bRes > 1.0f) bRes = 1.0f;
             if (aRes > 1.0f) aRes = 1.0f;
 
-            result[image->width*x + y].r = static_cast<unsigned char>(rRes*255.0f);
-            result[image->width*x + y].g = static_cast<unsigned char>(gRes*255.0f);
-            result[image->width*x + y].b = static_cast<unsigned char>(bRes*255.0f);
-            result[image->width*x + y].a = static_cast<unsigned char>(aRes*255.0f);
+            result[image->width*x + y].r = static_cast<u8>(rRes*255.0f);
+            result[image->width*x + y].g = static_cast<u8>(gRes*255.0f);
+            result[image->width*x + y].b = static_cast<u8>(bRes*255.0f);
+            result[image->width*x + y].a = static_cast<u8>(aRes*255.0f);
         }
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
     free(image->data);
     free(pixels);
 
@@ -2437,10 +2437,10 @@ void ImageMipmaps(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    int mipCount = 1;                                                    // Required mipmap levels count (including base level)
-    int mipWidth = image->width;                                         // Base image width
-    int mipHeight = image->height;                                       // Base image height
-    int mipSize = GetPixelDataSize(mipWidth, mipHeight, image->format);  // Image data size (in bytes)
+    i32 mipCount = 1;                                                    // Required mipmap levels count (including base level)
+    i32 mipWidth = image->width;                                         // Base image width
+    i32 mipHeight = image->height;                                       // Base image height
+    i32 mipSize = GetPixelDataSize(mipWidth, mipHeight, image->format);  // Image data size (in bytes)
 
     // Count mipmap levels required
     while ((mipWidth != 1) || (mipHeight != 1))
@@ -2467,14 +2467,14 @@ void ImageMipmaps(Image *image)
         image->data = temp;
 
         // Pointer to allocated memory point where store next mipmap level data
-        unsigned char *nextmip = static_cast<unsigned char *>(image->data);
+        u8 *nextmip = static_cast<u8 *>(image->data);
 
         mipWidth = image->width;
         mipHeight = image->height;
         mipSize = GetPixelDataSize(mipWidth, mipHeight, image->format);
         Image imCopy = ImageCopy(*image);
 
-        for (int i = 1; i < mipCount; i++)
+        for (i32 i = 1; i < mipCount; i++)
         {
             nextmip += mipSize;
 
@@ -2504,7 +2504,7 @@ void ImageMipmaps(Image *image)
 // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
 // NOTE: In case selected bpp do not represent a known 16bit format,
 // dithered data is stored in the LSB part of the unsigned short
-void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp)
+void ImageDither(Image *image, i32 rBpp, i32 gBpp, i32 bBpp, i32 aBpp)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2541,24 +2541,24 @@ void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp)
         }
 
         // NOTE: Storing the dithered data as unsigned short (16bpp)
-        image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
+        image->data = static_cast<u16 *>(calloc(image->width*image->height, sizeof(u16)));
 
         Color oldPixel = WHITE;
         Color newPixel = WHITE;
 
-        int rError = 0;
-        int gError = 0;
-        int bError = 0;
-        unsigned short rPixel = 0;   // Used for 16bit pixel composition
-        unsigned short gPixel = 0;
-        unsigned short bPixel = 0;
-        unsigned short aPixel = 0;
+        i32 rError = 0;
+        i32 gError = 0;
+        i32 bError = 0;
+        u16 rPixel = 0;   // Used for 16bit pixel composition
+        u16 gPixel = 0;
+        u16 bPixel = 0;
+        u16 aPixel = 0;
 
         #define MIN(a,b) (((a)<(b))?(a):(b))
 
-        for (int y = 0; y < image->height; y++)
+        for (i32 y = 0; y < image->height; y++)
         {
-            for (int x = 0; x < image->width; x++)
+            for (i32 x = 0; x < image->width; x++)
             {
                 oldPixel = pixels[y*image->width + x];
 
@@ -2570,47 +2570,47 @@ void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp)
 
                 // NOTE: Error must be computed between new and old pixel but using same number of bits,
                 // to know how much color precision has been lost
-                rError = static_cast<int>(oldPixel.r) - (newPixel.r << (8 - rBpp));
-                gError = static_cast<int>(oldPixel.g) - (newPixel.g << (8 - gBpp));
-                bError = static_cast<int>(oldPixel.b) - (newPixel.b << (8 - bBpp));
+                rError = static_cast<i32>(oldPixel.r) - (newPixel.r << (8 - rBpp));
+                gError = static_cast<i32>(oldPixel.g) - (newPixel.g << (8 - gBpp));
+                bError = static_cast<i32>(oldPixel.b) - (newPixel.b << (8 - bBpp));
 
                 pixels[y*image->width + x] = newPixel;
 
                 // NOTE: Some cases are out of the array and should be ignored
                 if (x < (image->width - 1))
                 {
-                    pixels[y*image->width + x+1].r = MIN(static_cast<int>(pixels[y*image->width + x+1].r) + static_cast<int>((static_cast<float>(rError)*7.0f/16)), 0xff);
-                    pixels[y*image->width + x+1].g = MIN(static_cast<int>(pixels[y*image->width + x+1].g) + static_cast<int>((static_cast<float>(gError)*7.0f/16)), 0xff);
-                    pixels[y*image->width + x+1].b = MIN(static_cast<int>(pixels[y*image->width + x+1].b) + static_cast<int>((static_cast<float>(bError)*7.0f/16)), 0xff);
+                    pixels[y*image->width + x+1].r = MIN(static_cast<i32>(pixels[y*image->width + x+1].r) + static_cast<i32>((static_cast<f32>(rError)*7.0f/16)), 0xff);
+                    pixels[y*image->width + x+1].g = MIN(static_cast<i32>(pixels[y*image->width + x+1].g) + static_cast<i32>((static_cast<f32>(gError)*7.0f/16)), 0xff);
+                    pixels[y*image->width + x+1].b = MIN(static_cast<i32>(pixels[y*image->width + x+1].b) + static_cast<i32>((static_cast<f32>(bError)*7.0f/16)), 0xff);
                 }
 
                 if ((x > 0) && (y < (image->height - 1)))
                 {
-                    pixels[(y+1)*image->width + x-1].r = MIN(static_cast<int>(pixels[(y+1)*image->width + x-1].r) + static_cast<int>((static_cast<float>(rError)*3.0f/16)), 0xff);
-                    pixels[(y+1)*image->width + x-1].g = MIN(static_cast<int>(pixels[(y+1)*image->width + x-1].g) + static_cast<int>((static_cast<float>(gError)*3.0f/16)), 0xff);
-                    pixels[(y+1)*image->width + x-1].b = MIN(static_cast<int>(pixels[(y+1)*image->width + x-1].b) + static_cast<int>((static_cast<float>(bError)*3.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x-1].r = MIN(static_cast<i32>(pixels[(y+1)*image->width + x-1].r) + static_cast<i32>((static_cast<f32>(rError)*3.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x-1].g = MIN(static_cast<i32>(pixels[(y+1)*image->width + x-1].g) + static_cast<i32>((static_cast<f32>(gError)*3.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x-1].b = MIN(static_cast<i32>(pixels[(y+1)*image->width + x-1].b) + static_cast<i32>((static_cast<f32>(bError)*3.0f/16)), 0xff);
                 }
 
                 if (y < (image->height - 1))
                 {
-                    pixels[(y+1)*image->width + x].r = MIN(static_cast<int>(pixels[(y+1)*image->width + x].r) + static_cast<int>((static_cast<float>(rError)*5.0f/16)), 0xff);
-                    pixels[(y+1)*image->width + x].g = MIN(static_cast<int>(pixels[(y+1)*image->width + x].g) + static_cast<int>((static_cast<float>(gError)*5.0f/16)), 0xff);
-                    pixels[(y+1)*image->width + x].b = MIN(static_cast<int>(pixels[(y+1)*image->width + x].b) + static_cast<int>((static_cast<float>(bError)*5.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x].r = MIN(static_cast<i32>(pixels[(y+1)*image->width + x].r) + static_cast<i32>((static_cast<f32>(rError)*5.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x].g = MIN(static_cast<i32>(pixels[(y+1)*image->width + x].g) + static_cast<i32>((static_cast<f32>(gError)*5.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x].b = MIN(static_cast<i32>(pixels[(y+1)*image->width + x].b) + static_cast<i32>((static_cast<f32>(bError)*5.0f/16)), 0xff);
                 }
 
                 if ((x < (image->width - 1)) && (y < (image->height - 1)))
                 {
-                    pixels[(y+1)*image->width + x+1].r = MIN(static_cast<int>(pixels[(y+1)*image->width + x+1].r) + static_cast<int>((static_cast<float>(rError)*1.0f/16)), 0xff);
-                    pixels[(y+1)*image->width + x+1].g = MIN(static_cast<int>(pixels[(y+1)*image->width + x+1].g) + static_cast<int>((static_cast<float>(gError)*1.0f/16)), 0xff);
-                    pixels[(y+1)*image->width + x+1].b = MIN(static_cast<int>(pixels[(y+1)*image->width + x+1].b) + static_cast<int>((static_cast<float>(bError)*1.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x+1].r = MIN(static_cast<i32>(pixels[(y+1)*image->width + x+1].r) + static_cast<i32>((static_cast<f32>(rError)*1.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x+1].g = MIN(static_cast<i32>(pixels[(y+1)*image->width + x+1].g) + static_cast<i32>((static_cast<f32>(gError)*1.0f/16)), 0xff);
+                    pixels[(y+1)*image->width + x+1].b = MIN(static_cast<i32>(pixels[(y+1)*image->width + x+1].b) + static_cast<i32>((static_cast<f32>(bError)*1.0f/16)), 0xff);
                 }
 
-                rPixel = static_cast<unsigned short>(newPixel.r);
-                gPixel = static_cast<unsigned short>(newPixel.g);
-                bPixel = static_cast<unsigned short>(newPixel.b);
-                aPixel = static_cast<unsigned short>(newPixel.a);
+                rPixel = static_cast<u16>(newPixel.r);
+                gPixel = static_cast<u16>(newPixel.g);
+                bPixel = static_cast<u16>(newPixel.b);
+                aPixel = static_cast<u16>(newPixel.a);
 
-                (static_cast<unsigned short *>(image->data))[y*image->width + x] = (rPixel << (gBpp + bBpp + aBpp)) | (gPixel << (bBpp + aBpp)) | (bPixel << aBpp) | aPixel;
+                (static_cast<u16 *>(image->data))[y*image->width + x] = (rPixel << (gBpp + bBpp + aBpp)) | (gPixel << (bBpp + aBpp)) | (bPixel << aBpp) | aPixel;
             }
         }
 
@@ -2628,12 +2628,12 @@ void ImageFlipVertical(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *flippedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        u8 *flippedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
-        for (int i = (image->height - 1), offsetSize = 0; i >= 0; i--)
+        for (i32 i = (image->height - 1), offsetSize = 0; i >= 0; i--)
         {
-            memcpy(flippedData + offsetSize, (static_cast<unsigned char *>(image->data)) + i*image->width*bytesPerPixel, image->width*bytesPerPixel);
+            memcpy(flippedData + offsetSize, (static_cast<u8 *>(image->data)) + i*image->width*bytesPerPixel, image->width*bytesPerPixel);
             offsetSize += image->width*bytesPerPixel;
         }
 
@@ -2652,18 +2652,18 @@ void ImageFlipHorizontal(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *flippedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        u8 *flippedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
-        for (int y = 0; y < image->height; y++)
+        for (i32 y = 0; y < image->height; y++)
         {
-            for (int x = 0; x < image->width; x++)
+            for (i32 x = 0; x < image->width; x++)
             {
                 // OPTION 1: Move pixels with memcpy()
                 //memcpy(flippedData + (y*image->width + x)*bytesPerPixel, ((unsigned char *)image->data) + (y*image->width + (image->width - 1 - x))*bytesPerPixel, bytesPerPixel);
 
                 // OPTION 2: Copy data pixel by pixel
-                for (int i = 0; i < bytesPerPixel; i++) flippedData[(y*image->width + x)*bytesPerPixel + i] = (static_cast<unsigned char *>(image->data))[(y*image->width + (image->width - 1 - x))*bytesPerPixel + i];
+                for (i32 i = 0; i < bytesPerPixel; i++) flippedData[(y*image->width + x)*bytesPerPixel + i] = (static_cast<u8 *>(image->data))[(y*image->width + (image->width - 1 - x))*bytesPerPixel + i];
             }
         }
 
@@ -2688,7 +2688,7 @@ void ImageFlipHorizontal(Image *image)
 }
 
 // Rotate image in degrees
-void ImageRotate(Image *image, int degrees)
+void ImageRotate(Image *image, i32 degrees)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2697,48 +2697,48 @@ void ImageRotate(Image *image, int degrees)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const float rad = degrees*PI/180.0f;
-        const float sinRadius = sinf(rad);
-        const float cosRadius = cosf(rad);
+        const f32 rad = degrees*PI/180.0f;
+        const f32 sinRadius = sinf(rad);
+        const f32 cosRadius = cosf(rad);
 
-        const int width = static_cast<int>(fabsf(image->width*cosRadius) + fabsf(image->height*sinRadius));
-        const int height = static_cast<int>(fabsf(image->height*cosRadius) + fabsf(image->width*sinRadius));
+        const i32 width = static_cast<i32>(fabsf(image->width*cosRadius) + fabsf(image->height*sinRadius));
+        const i32 height = static_cast<i32>(fabsf(image->height*cosRadius) + fabsf(image->width*sinRadius));
 
-        const int dataSize = GetPixelDataSize(width, height, image->format);
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *rotatedData = static_cast<unsigned char *>(calloc(dataSize, 1));
+        const i32 dataSize = GetPixelDataSize(width, height, image->format);
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        u8 *rotatedData = static_cast<u8 *>(calloc(dataSize, 1));
 
         if (rotatedData != nullptr)
         {
-            for (int y = 0; y < height; y++)
+            for (i32 y = 0; y < height; y++)
             {
-                for (int x = 0; x < width; x++)
+                for (i32 x = 0; x < width; x++)
                 {
-                    const float oldX = ((x + 0.5f - width/2.0f)*cosRadius + (y + 0.5f - height/2.0f)*sinRadius) + image->width/2.0f - 0.5f;
-                    const float oldY = ((y + 0.5f - height/2.0f)*cosRadius - (x + 0.5f - width/2.0f)*sinRadius) + image->height/2.0f - 0.5f;
+                    const f32 oldX = ((x + 0.5f - width/2.0f)*cosRadius + (y + 0.5f - height/2.0f)*sinRadius) + image->width/2.0f - 0.5f;
+                    const f32 oldY = ((y + 0.5f - height/2.0f)*cosRadius - (x + 0.5f - width/2.0f)*sinRadius) + image->height/2.0f - 0.5f;
 
                     if ((oldX >= -0.5f) && (oldX < image->width - 0.5f) && (oldY >= -0.5f) && (oldY < image->height - 0.5f))
                     {
-                        const float sampleX = (oldX < 0)? 0 : oldX;
-                        const float sampleY = (oldY < 0)? 0 : oldY;
-                        const int x1 = static_cast<int>(floorf(sampleX));
-                        const int y1 = static_cast<int>(floorf(sampleY));
-                        const int x2 = MIN(x1 + 1, image->width - 1);
-                        const int y2 = MIN(y1 + 1, image->height - 1);
+                        const f32 sampleX = (oldX < 0)? 0 : oldX;
+                        const f32 sampleY = (oldY < 0)? 0 : oldY;
+                        const i32 x1 = static_cast<i32>(floorf(sampleX));
+                        const i32 y1 = static_cast<i32>(floorf(sampleY));
+                        const i32 x2 = MIN(x1 + 1, image->width - 1);
+                        const i32 y2 = MIN(y1 + 1, image->height - 1);
 
-                        const float px = sampleX - x1;
-                        const float py = sampleY - y1;
+                        const f32 px = sampleX - x1;
+                        const f32 py = sampleY - y1;
 
-                        for (int i = 0; i < bytesPerPixel; i++)
+                        for (i32 i = 0; i < bytesPerPixel; i++)
                         {
-                            const float f1 = (static_cast<unsigned char *>(image->data))[(y1*image->width + x1)*bytesPerPixel + i];
-                            const float f2 = (static_cast<unsigned char *>(image->data))[(y1*image->width + x2)*bytesPerPixel + i];
-                            const float f3 = (static_cast<unsigned char *>(image->data))[(y2*image->width + x1)*bytesPerPixel + i];
-                            const float f4 = (static_cast<unsigned char *>(image->data))[(y2*image->width + x2)*bytesPerPixel + i];
+                            const f32 f1 = (static_cast<u8 *>(image->data))[(y1*image->width + x1)*bytesPerPixel + i];
+                            const f32 f2 = (static_cast<u8 *>(image->data))[(y1*image->width + x2)*bytesPerPixel + i];
+                            const f32 f3 = (static_cast<u8 *>(image->data))[(y2*image->width + x1)*bytesPerPixel + i];
+                            const f32 f4 = (static_cast<u8 *>(image->data))[(y2*image->width + x2)*bytesPerPixel + i];
 
-                            const float val = f1*(1 - px)*(1 - py) + f2*px*(1 - py) + f3*(1 - px)*py + f4*px*py;
+                            const f32 val = f1*(1 - px)*(1 - py) + f2*px*(1 - py) + f3*(1 - px)*py + f4*px*py;
 
-                            rotatedData[(y*width + x)*bytesPerPixel + i] = static_cast<unsigned char>(val + 0.5f);
+                            rotatedData[(y*width + x)*bytesPerPixel + i] = static_cast<u8>(val + 0.5f);
                         }
                     }
                 }
@@ -2762,22 +2762,22 @@ void ImageRotateCW(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *rotatedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        u8 *rotatedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
-        for (int y = 0; y < image->height; y++)
+        for (i32 y = 0; y < image->height; y++)
         {
-            for (int x = 0; x < image->width; x++)
+            for (i32 x = 0; x < image->width; x++)
             {
                 //memcpy(rotatedData + (x*image->height + (image->height - y - 1))*bytesPerPixel, ((unsigned char *)image->data) + (y*image->width + x)*bytesPerPixel, bytesPerPixel);
-                for (int i = 0; i < bytesPerPixel; i++) rotatedData[(x*image->height + (image->height - y - 1))*bytesPerPixel + i] = (static_cast<unsigned char *>(image->data))[(y*image->width + x)*bytesPerPixel + i];
+                for (i32 i = 0; i < bytesPerPixel; i++) rotatedData[(x*image->height + (image->height - y - 1))*bytesPerPixel + i] = (static_cast<u8 *>(image->data))[(y*image->width + x)*bytesPerPixel + i];
             }
         }
 
         free(image->data);
         image->data = rotatedData;
-        const int width = image->width;
-        const int height = image-> height;
+        const i32 width = image->width;
+        const i32 height = image-> height;
 
         image->width = height;
         image->height = width;
@@ -2794,22 +2794,22 @@ void ImageRotateCCW(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *rotatedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        u8 *rotatedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
-        for (int y = 0; y < image->height; y++)
+        for (i32 y = 0; y < image->height; y++)
         {
-            for (int x = 0; x < image->width; x++)
+            for (i32 x = 0; x < image->width; x++)
             {
                 //memcpy(rotatedData + (x*image->height + y))*bytesPerPixel, ((unsigned char *)image->data) + (y*image->width + (image->width - x - 1))*bytesPerPixel, bytesPerPixel);
-                for (int i = 0; i < bytesPerPixel; i++) rotatedData[(x*image->height + y)*bytesPerPixel + i] = (static_cast<unsigned char *>(image->data))[(y*image->width + (image->width - x - 1))*bytesPerPixel + i];
+                for (i32 i = 0; i < bytesPerPixel; i++) rotatedData[(x*image->height + y)*bytesPerPixel + i] = (static_cast<u8 *>(image->data))[(y*image->width + (image->width - x - 1))*bytesPerPixel + i];
             }
         }
 
         free(image->data);
         image->data = rotatedData;
-        const int width = image->width;
-        const int height = image-> height;
+        const i32 width = image->width;
+        const i32 height = image-> height;
 
         image->width = height;
         image->height = width;
@@ -2824,12 +2824,12 @@ void ImageColorTint(Image *image, Color color)
 
     Color *pixels = LoadImageColors(*image);
 
-    for (int i = 0; i < image->width*image->height; i++)
+    for (i32 i = 0; i < image->width*image->height; i++)
     {
-        const unsigned char r = static_cast<unsigned char>((static_cast<int>(pixels[i].r)*static_cast<int>(color.r))/255);
-        const unsigned char g = static_cast<unsigned char>((static_cast<int>(pixels[i].g)*static_cast<int>(color.g))/255);
-        const unsigned char b = static_cast<unsigned char>((static_cast<int>(pixels[i].b)*static_cast<int>(color.b))/255);
-        const unsigned char a = static_cast<unsigned char>((static_cast<int>(pixels[i].a)*static_cast<int>(color.a))/255);
+        const u8 r = static_cast<u8>((static_cast<i32>(pixels[i].r)*static_cast<i32>(color.r))/255);
+        const u8 g = static_cast<u8>((static_cast<i32>(pixels[i].g)*static_cast<i32>(color.g))/255);
+        const u8 b = static_cast<u8>((static_cast<i32>(pixels[i].b)*static_cast<i32>(color.b))/255);
+        const u8 a = static_cast<u8>((static_cast<i32>(pixels[i].a)*static_cast<i32>(color.a))/255);
 
         pixels[i].r = r;
         pixels[i].g = g;
@@ -2837,7 +2837,7 @@ void ImageColorTint(Image *image, Color color)
         pixels[i].a = a;
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
     free(image->data);
 
     image->data = pixels;
@@ -2854,14 +2854,14 @@ void ImageColorInvert(Image *image)
 
     Color *pixels = LoadImageColors(*image);
 
-    for (int i = 0; i < image->width*image->height; i++)
+    for (i32 i = 0; i < image->width*image->height; i++)
     {
         pixels[i].r = 255 - pixels[i].r;
         pixels[i].g = 255 - pixels[i].g;
         pixels[i].b = 255 - pixels[i].b;
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
     free(image->data);
 
     image->data = pixels;
@@ -2878,7 +2878,7 @@ void ImageColorGrayscale(Image *image)
 
 // Modify image color: contrast
 // NOTE: Contrast values between -100 and 100
-void ImageColorContrast(Image *image, int contrast)
+void ImageColorContrast(Image *image, i32 contrast)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2886,14 +2886,14 @@ void ImageColorContrast(Image *image, int contrast)
     if (contrast < -100) contrast = -100;
     if (contrast > 100) contrast = 100;
 
-    float factor = (100.0f + contrast)/100.0f;
+    f32 factor = (100.0f + contrast)/100.0f;
     factor *= factor;
 
     Color *pixels = LoadImageColors(*image);
 
-    for (int i = 0; i < image->width*image->height; i++)
+    for (i32 i = 0; i < image->width*image->height; i++)
     {
-        float pR = static_cast<float>(pixels[i].r)/255.0f;
+        f32 pR = static_cast<f32>(pixels[i].r)/255.0f;
         pR -= 0.5f;
         pR *= factor;
         pR += 0.5f;
@@ -2901,7 +2901,7 @@ void ImageColorContrast(Image *image, int contrast)
         if (pR < 0) pR = 0;
         if (pR > 255) pR = 255;
 
-        float pG = static_cast<float>(pixels[i].g)/255.0f;
+        f32 pG = static_cast<f32>(pixels[i].g)/255.0f;
         pG -= 0.5f;
         pG *= factor;
         pG += 0.5f;
@@ -2909,7 +2909,7 @@ void ImageColorContrast(Image *image, int contrast)
         if (pG < 0) pG = 0;
         if (pG > 255) pG = 255;
 
-        float pB = static_cast<float>(pixels[i].b)/255.0f;
+        f32 pB = static_cast<f32>(pixels[i].b)/255.0f;
         pB -= 0.5f;
         pB *= factor;
         pB += 0.5f;
@@ -2917,12 +2917,12 @@ void ImageColorContrast(Image *image, int contrast)
         if (pB < 0) pB = 0;
         if (pB > 255) pB = 255;
 
-        pixels[i].r = static_cast<unsigned char>(pR);
-        pixels[i].g = static_cast<unsigned char>(pG);
-        pixels[i].b = static_cast<unsigned char>(pB);
+        pixels[i].r = static_cast<u8>(pR);
+        pixels[i].g = static_cast<u8>(pG);
+        pixels[i].b = static_cast<u8>(pB);
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
     free(image->data);
 
     image->data = pixels;
@@ -2933,7 +2933,7 @@ void ImageColorContrast(Image *image, int contrast)
 
 // Modify image color: brightness
 // NOTE: Brightness values between -255 and 255
-void ImageColorBrightness(Image *image, int brightness)
+void ImageColorBrightness(Image *image, i32 brightness)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2943,11 +2943,11 @@ void ImageColorBrightness(Image *image, int brightness)
 
     Color *pixels = LoadImageColors(*image);
 
-    for (int i = 0; i < image->width*image->height; i++)
+    for (i32 i = 0; i < image->width*image->height; i++)
     {
-        int cR = pixels[i].r + brightness;
-        int cG = pixels[i].g + brightness;
-        int cB = pixels[i].b + brightness;
+        i32 cR = pixels[i].r + brightness;
+        i32 cG = pixels[i].g + brightness;
+        i32 cB = pixels[i].b + brightness;
 
         if (cR < 0) cR = 0;
         if (cR > 255) cR = 255;
@@ -2958,12 +2958,12 @@ void ImageColorBrightness(Image *image, int brightness)
         if (cB < 0) cB = 0;
         if (cB > 255) cB = 255;
 
-        pixels[i].r = static_cast<unsigned char>(cR);
-        pixels[i].g = static_cast<unsigned char>(cG);
-        pixels[i].b = static_cast<unsigned char>(cB);
+        pixels[i].r = static_cast<u8>(cR);
+        pixels[i].g = static_cast<u8>(cG);
+        pixels[i].b = static_cast<u8>(cB);
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
     free(image->data);
 
     image->data = pixels;
@@ -2980,7 +2980,7 @@ void ImageColorReplace(Image *image, Color color, Color replace)
 
     Color *pixels = LoadImageColors(*image);
 
-    for (int i = 0; i < image->width*image->height; i++)
+    for (i32 i = 0; i < image->width*image->height; i++)
     {
         if ((pixels[i].r == color.r) &&
             (pixels[i].g == color.g) &&
@@ -2994,7 +2994,7 @@ void ImageColorReplace(Image *image, Color color, Color replace)
         }
     }
 
-    const int format = image->format;
+    const i32 format = image->format;
     free(image->data);
 
     image->data = pixels;
@@ -3031,78 +3031,78 @@ Color *LoadImageColors(Image image)
             (image.format == PIXELFORMAT_UNCOMPRESSED_R16G16B16) ||
             (image.format == PIXELFORMAT_UNCOMPRESSED_R16G16B16A16)) TRACELOG(LOG_WARNING, "IMAGE: Pixel format converted from 16bit to 8bit per channel");
 
-        for (int i = 0, k = 0; i < image.width*image.height; i++)
+        for (i32 i = 0, k = 0; i < image.width*image.height; i++)
         {
             switch (image.format)
             {
                 case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
                 {
-                    pixels[i].r = (static_cast<unsigned char *>(image.data))[i];
-                    pixels[i].g = (static_cast<unsigned char *>(image.data))[i];
-                    pixels[i].b = (static_cast<unsigned char *>(image.data))[i];
+                    pixels[i].r = (static_cast<u8 *>(image.data))[i];
+                    pixels[i].g = (static_cast<u8 *>(image.data))[i];
+                    pixels[i].b = (static_cast<u8 *>(image.data))[i];
                     pixels[i].a = 255;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
                 {
-                    pixels[i].r = (static_cast<unsigned char *>(image.data))[k];
-                    pixels[i].g = (static_cast<unsigned char *>(image.data))[k];
-                    pixels[i].b = (static_cast<unsigned char *>(image.data))[k];
-                    pixels[i].a = (static_cast<unsigned char *>(image.data))[k + 1];
+                    pixels[i].r = (static_cast<u8 *>(image.data))[k];
+                    pixels[i].g = (static_cast<u8 *>(image.data))[k];
+                    pixels[i].b = (static_cast<u8 *>(image.data))[k];
+                    pixels[i].a = (static_cast<u8 *>(image.data))[k + 1];
 
                     k += 2;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    pixels[i].r = static_cast<unsigned char>(static_cast<float>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
-                    pixels[i].g = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000011111000000) >> 6)*255.0f/31);
-                    pixels[i].b = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000000000111110) >> 1)*255.0f/31);
-                    pixels[i].a = static_cast<unsigned char>((pixel & 0b0000000000000001)*255);
+                    pixels[i].r = static_cast<u8>(static_cast<f32>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
+                    pixels[i].g = static_cast<u8>(static_cast<f32>((pixel & 0b0000011111000000) >> 6)*255.0f/31);
+                    pixels[i].b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000000111110) >> 1)*255.0f/31);
+                    pixels[i].a = static_cast<u8>((pixel & 0b0000000000000001)*255);
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    pixels[i].r = static_cast<unsigned char>(static_cast<float>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
-                    pixels[i].g = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000011111100000) >> 5)*255.0f/63);
-                    pixels[i].b = static_cast<unsigned char>(static_cast<float>(pixel & 0b0000000000011111)*255.0f/31);
+                    pixels[i].r = static_cast<u8>(static_cast<f32>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
+                    pixels[i].g = static_cast<u8>(static_cast<f32>((pixel & 0b0000011111100000) >> 5)*255.0f/63);
+                    pixels[i].b = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000011111)*255.0f/31);
                     pixels[i].a = 255;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    pixels[i].r = static_cast<unsigned char>(static_cast<float>((pixel & 0b1111000000000000) >> 12)*(255/15));
-                    pixels[i].g = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000111100000000) >> 8)*(255/15));
-                    pixels[i].b = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000000011110000) >> 4)*(255/15));
-                    pixels[i].a = static_cast<unsigned char>(static_cast<float>(pixel & 0b0000000000001111)*(255/15));
+                    pixels[i].r = static_cast<u8>(static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(255/15));
+                    pixels[i].g = static_cast<u8>(static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(255/15));
+                    pixels[i].b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(255/15));
+                    pixels[i].a = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000001111)*(255/15));
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
                 {
-                    pixels[i].r = (static_cast<unsigned char *>(image.data))[k];
-                    pixels[i].g = (static_cast<unsigned char *>(image.data))[k + 1];
-                    pixels[i].b = (static_cast<unsigned char *>(image.data))[k + 2];
-                    pixels[i].a = (static_cast<unsigned char *>(image.data))[k + 3];
+                    pixels[i].r = (static_cast<u8 *>(image.data))[k];
+                    pixels[i].g = (static_cast<u8 *>(image.data))[k + 1];
+                    pixels[i].b = (static_cast<u8 *>(image.data))[k + 2];
+                    pixels[i].a = (static_cast<u8 *>(image.data))[k + 3];
 
                     k += 4;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
                 {
-                    pixels[i].r = (static_cast<unsigned char *>(image.data))[k];
-                    pixels[i].g = (static_cast<unsigned char *>(image.data))[k + 1];
-                    pixels[i].b = (static_cast<unsigned char *>(image.data))[k + 2];
+                    pixels[i].r = (static_cast<u8 *>(image.data))[k];
+                    pixels[i].g = (static_cast<u8 *>(image.data))[k + 1];
+                    pixels[i].b = (static_cast<u8 *>(image.data))[k + 2];
                     pixels[i].a = 255;
 
                     k += 3;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32:
                 {
-                    pixels[i].r = static_cast<unsigned char>((static_cast<float *>(image.data))[k]*255.0f);
+                    pixels[i].r = static_cast<u8>((static_cast<f32 *>(image.data))[k]*255.0f);
                     pixels[i].g = 0;
                     pixels[i].b = 0;
                     pixels[i].a = 255;
@@ -3111,25 +3111,25 @@ Color *LoadImageColors(Image image)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
                 {
-                    pixels[i].r = static_cast<unsigned char>((static_cast<float *>(image.data))[k]*255.0f);
-                    pixels[i].g = static_cast<unsigned char>((static_cast<float *>(image.data))[k + 1]*255.0f);
-                    pixels[i].b = static_cast<unsigned char>((static_cast<float *>(image.data))[k + 2]*255.0f);
+                    pixels[i].r = static_cast<u8>((static_cast<f32 *>(image.data))[k]*255.0f);
+                    pixels[i].g = static_cast<u8>((static_cast<f32 *>(image.data))[k + 1]*255.0f);
+                    pixels[i].b = static_cast<u8>((static_cast<f32 *>(image.data))[k + 2]*255.0f);
                     pixels[i].a = 255;
 
                     k += 3;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
                 {
-                    pixels[i].r = static_cast<unsigned char>((static_cast<float *>(image.data))[k]*255.0f);
-                    pixels[i].g = static_cast<unsigned char>((static_cast<float *>(image.data))[k + 1]*255.0f);
-                    pixels[i].b = static_cast<unsigned char>((static_cast<float *>(image.data))[k + 2]*255.0f);
-                    pixels[i].a = static_cast<unsigned char>((static_cast<float *>(image.data))[k + 3]*255.0f);
+                    pixels[i].r = static_cast<u8>((static_cast<f32 *>(image.data))[k]*255.0f);
+                    pixels[i].g = static_cast<u8>((static_cast<f32 *>(image.data))[k + 1]*255.0f);
+                    pixels[i].b = static_cast<u8>((static_cast<f32 *>(image.data))[k + 2]*255.0f);
+                    pixels[i].a = static_cast<u8>((static_cast<f32 *>(image.data))[k + 3]*255.0f);
 
                     k += 4;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16:
                 {
-                    pixels[i].r = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k])*255.0f);
+                    pixels[i].r = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k])*255.0f);
                     pixels[i].g = 0;
                     pixels[i].b = 0;
                     pixels[i].a = 255;
@@ -3138,19 +3138,19 @@ Color *LoadImageColors(Image image)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
                 {
-                    pixels[i].r = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k])*255.0f);
-                    pixels[i].g = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k + 1])*255.0f);
-                    pixels[i].b = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k + 2])*255.0f);
+                    pixels[i].r = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k])*255.0f);
+                    pixels[i].g = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k + 1])*255.0f);
+                    pixels[i].b = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k + 2])*255.0f);
                     pixels[i].a = 255;
 
                     k += 3;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
                 {
-                    pixels[i].r = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k])*255.0f);
-                    pixels[i].g = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k + 1])*255.0f);
-                    pixels[i].b = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k + 2])*255.0f);
-                    pixels[i].a = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[k + 3])*255.0f);
+                    pixels[i].r = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k])*255.0f);
+                    pixels[i].g = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k + 1])*255.0f);
+                    pixels[i].b = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k + 2])*255.0f);
+                    pixels[i].a = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[k + 3])*255.0f);
 
                     k += 4;
                 } break;
@@ -3164,11 +3164,11 @@ Color *LoadImageColors(Image image)
 
 // Load colors palette from image as a Color array (RGBA - 32bit)
 // NOTE: Memory allocated should be freed using UnloadImagePalette()
-Color *LoadImagePalette(Image image, int maxPaletteSize, int *colorCount)
+Color *LoadImagePalette(Image image, i32 maxPaletteSize, i32 *colorCount)
 {
     #define COLOR_EQUAL(col1, col2) ((col1.r == col2.r)&&(col1.g == col2.g)&&(col1.b == col2.b)&&(col1.a == col2.a))
 
-    int palCount = 0;
+    i32 palCount = 0;
     Color *palette = nullptr;
     Color *pixels = LoadImageColors(image);
 
@@ -3176,16 +3176,16 @@ Color *LoadImagePalette(Image image, int maxPaletteSize, int *colorCount)
     {
         palette = static_cast<Color *>(calloc(maxPaletteSize, sizeof(Color)));
 
-        for (int i = 0; i < maxPaletteSize; i++) palette[i] = BLANK;   // Set all colors to BLANK
+        for (i32 i = 0; i < maxPaletteSize; i++) palette[i] = BLANK;   // Set all colors to BLANK
 
-        for (int i = 0; i < image.width*image.height; i++)
+        for (i32 i = 0; i < image.width*image.height; i++)
         {
             if (pixels[i].a > 0)
             {
                 bool colorInPalette = false;
 
                 // Check if the color is already on palette
-                for (int j = 0; j < maxPaletteSize; j++)
+                for (i32 j = 0; j < maxPaletteSize; j++)
                 {
                     if (COLOR_EQUAL(pixels[i], palette[j]))
                     {
@@ -3232,7 +3232,7 @@ void UnloadImagePalette(Color *colors)
 
 // Get image alpha border rectangle
 // NOTE: Threshold is defined as a percentage: 0.0f -> 1.0f
-Rectangle GetImageAlphaBorder(Image image, float threshold)
+Rectangle GetImageAlphaBorder(Image image, f32 threshold)
 {
     Rectangle crop = { 0 };
 
@@ -3240,16 +3240,16 @@ Rectangle GetImageAlphaBorder(Image image, float threshold)
 
     if (pixels != nullptr)
     {
-        int xMin = 65536;   // Define a big enough number
-        int xMax = 0;
-        int yMin = 65536;
-        int yMax = 0;
+        i32 xMin = 65536;   // Define a big enough number
+        i32 xMax = 0;
+        i32 yMin = 65536;
+        i32 yMax = 0;
 
-        for (int y = 0; y < image.height; y++)
+        for (i32 y = 0; y < image.height; y++)
         {
-            for (int x = 0; x < image.width; x++)
+            for (i32 x = 0; x < image.width; x++)
             {
-                if (pixels[y*image.width + x].a > static_cast<unsigned char>(threshold*255.0f))
+                if (pixels[y*image.width + x].a > static_cast<u8>(threshold*255.0f))
                 {
                     if (x < xMin) xMin = x;
                     if (x > xMax) xMax = x;
@@ -3262,7 +3262,7 @@ Rectangle GetImageAlphaBorder(Image image, float threshold)
         // Check for empty blank image
         if ((xMin != 65536) && (xMax != 65536))
         {
-            crop = Rectangle{ static_cast<float>(xMin), static_cast<float>(yMin), static_cast<float>((xMax + 1) - xMin), static_cast<float>((yMax + 1) - yMin) };
+            crop = Rectangle{ static_cast<f32>(xMin), static_cast<f32>(yMin), static_cast<f32>((xMax + 1) - xMin), static_cast<f32>((yMax + 1) - yMin) };
         }
 
         UnloadImageColors(pixels);
@@ -3272,7 +3272,7 @@ Rectangle GetImageAlphaBorder(Image image, float threshold)
 }
 
 // Get image pixel color at (x, y) position
-Color GetImageColor(Image image, int x, int y)
+Color GetImageColor(Image image, i32 x, i32 y)
 {
     Color color = { 0 };
 
@@ -3282,69 +3282,69 @@ Color GetImageColor(Image image, int x, int y)
         {
             case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
             {
-                color.r = (static_cast<unsigned char *>(image.data))[y*image.width + x];
-                color.g = (static_cast<unsigned char *>(image.data))[y*image.width + x];
-                color.b = (static_cast<unsigned char *>(image.data))[y*image.width + x];
+                color.r = (static_cast<u8 *>(image.data))[y*image.width + x];
+                color.g = (static_cast<u8 *>(image.data))[y*image.width + x];
+                color.b = (static_cast<u8 *>(image.data))[y*image.width + x];
                 color.a = 255;
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
             {
-                color.r = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*2];
-                color.g = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*2];
-                color.b = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*2];
-                color.a = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*2 + 1];
+                color.r = (static_cast<u8 *>(image.data))[(y*image.width + x)*2];
+                color.g = (static_cast<u8 *>(image.data))[(y*image.width + x)*2];
+                color.b = (static_cast<u8 *>(image.data))[(y*image.width + x)*2];
+                color.a = (static_cast<u8 *>(image.data))[(y*image.width + x)*2 + 1];
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
             {
-                const unsigned short pixel = (static_cast<unsigned short *>(image.data))[y*image.width + x];
+                const u16 pixel = (static_cast<u16 *>(image.data))[y*image.width + x];
 
-                color.r = static_cast<unsigned char>(static_cast<float>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
-                color.g = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000011111000000) >> 6)*255.0f/31);
-                color.b = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000000000111110) >> 1)*255.0f/31);
-                color.a = static_cast<unsigned char>((pixel & 0b0000000000000001)*255);
+                color.r = static_cast<u8>(static_cast<f32>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
+                color.g = static_cast<u8>(static_cast<f32>((pixel & 0b0000011111000000) >> 6)*255.0f/31);
+                color.b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000000111110) >> 1)*255.0f/31);
+                color.a = static_cast<u8>((pixel & 0b0000000000000001)*255);
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
             {
-                const unsigned short pixel = (static_cast<unsigned short *>(image.data))[y*image.width + x];
+                const u16 pixel = (static_cast<u16 *>(image.data))[y*image.width + x];
 
-                color.r = static_cast<unsigned char>(static_cast<float>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
-                color.g = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000011111100000) >> 5)*255.0f/63);
-                color.b = static_cast<unsigned char>(static_cast<float>(pixel & 0b0000000000011111)*255.0f/31);
+                color.r = static_cast<u8>(static_cast<f32>((pixel & 0b1111100000000000) >> 11)*255.0f/31);
+                color.g = static_cast<u8>(static_cast<f32>((pixel & 0b0000011111100000) >> 5)*255.0f/63);
+                color.b = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000011111)*255.0f/31);
                 color.a = 255;
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
             {
-                const unsigned short pixel = (static_cast<unsigned short *>(image.data))[y*image.width + x];
+                const u16 pixel = (static_cast<u16 *>(image.data))[y*image.width + x];
 
-                color.r = static_cast<unsigned char>(static_cast<float>((pixel & 0b1111000000000000) >> 12)*(255/15));
-                color.g = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000111100000000) >> 8)*(255/15));
-                color.b = static_cast<unsigned char>(static_cast<float>((pixel & 0b0000000011110000) >> 4)*(255/15));
-                color.a = static_cast<unsigned char>(static_cast<float>(pixel & 0b0000000000001111)*(255/15));
+                color.r = static_cast<u8>(static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(255/15));
+                color.g = static_cast<u8>(static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(255/15));
+                color.b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(255/15));
+                color.a = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000001111)*(255/15));
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
             {
-                color.r = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*4];
-                color.g = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*4 + 1];
-                color.b = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*4 + 2];
-                color.a = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*4 + 3];
+                color.r = (static_cast<u8 *>(image.data))[(y*image.width + x)*4];
+                color.g = (static_cast<u8 *>(image.data))[(y*image.width + x)*4 + 1];
+                color.b = (static_cast<u8 *>(image.data))[(y*image.width + x)*4 + 2];
+                color.a = (static_cast<u8 *>(image.data))[(y*image.width + x)*4 + 3];
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
             {
-                color.r = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*3];
-                color.g = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*3 + 1];
-                color.b = (static_cast<unsigned char *>(image.data))[(y*image.width + x)*3 + 2];
+                color.r = (static_cast<u8 *>(image.data))[(y*image.width + x)*3];
+                color.g = (static_cast<u8 *>(image.data))[(y*image.width + x)*3 + 1];
+                color.b = (static_cast<u8 *>(image.data))[(y*image.width + x)*3 + 2];
                 color.a = 255;
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R32:
             {
-                color.r = static_cast<unsigned char>((static_cast<float *>(image.data))[y*image.width + x]*255.0f);
+                color.r = static_cast<u8>((static_cast<f32 *>(image.data))[y*image.width + x]*255.0f);
                 color.g = 0;
                 color.b = 0;
                 color.a = 255;
@@ -3352,23 +3352,23 @@ Color GetImageColor(Image image, int x, int y)
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
             {
-                color.r = static_cast<unsigned char>((static_cast<float *>(image.data))[(y*image.width + x)*3]*255.0f);
-                color.g = static_cast<unsigned char>((static_cast<float *>(image.data))[(y*image.width + x)*3 + 1]*255.0f);
-                color.b = static_cast<unsigned char>((static_cast<float *>(image.data))[(y*image.width + x)*3 + 2]*255.0f);
+                color.r = static_cast<u8>((static_cast<f32 *>(image.data))[(y*image.width + x)*3]*255.0f);
+                color.g = static_cast<u8>((static_cast<f32 *>(image.data))[(y*image.width + x)*3 + 1]*255.0f);
+                color.b = static_cast<u8>((static_cast<f32 *>(image.data))[(y*image.width + x)*3 + 2]*255.0f);
                 color.a = 255;
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
             {
-                color.r = static_cast<unsigned char>((static_cast<float *>(image.data))[(y*image.width + x)*4]*255.0f);
-                color.g = static_cast<unsigned char>((static_cast<float *>(image.data))[(y*image.width + x)*4 + 1]*255.0f);
-                color.b = static_cast<unsigned char>((static_cast<float *>(image.data))[(y*image.width + x)*4 + 2]*255.0f);
-                color.a = static_cast<unsigned char>((static_cast<float *>(image.data))[(y*image.width + x)*4 + 3]*255.0f);
+                color.r = static_cast<u8>((static_cast<f32 *>(image.data))[(y*image.width + x)*4]*255.0f);
+                color.g = static_cast<u8>((static_cast<f32 *>(image.data))[(y*image.width + x)*4 + 1]*255.0f);
+                color.b = static_cast<u8>((static_cast<f32 *>(image.data))[(y*image.width + x)*4 + 2]*255.0f);
+                color.a = static_cast<u8>((static_cast<f32 *>(image.data))[(y*image.width + x)*4 + 3]*255.0f);
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R16:
             {
-                color.r = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[y*image.width + x])*255.0f);
+                color.r = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[y*image.width + x])*255.0f);
                 color.g = 0;
                 color.b = 0;
                 color.a = 255;
@@ -3376,18 +3376,18 @@ Color GetImageColor(Image image, int x, int y)
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
             {
-                color.r = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[(y*image.width + x)*3])*255.0f);
-                color.g = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[(y*image.width + x)*3 + 1])*255.0f);
-                color.b = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[(y*image.width + x)*3 + 2])*255.0f);
+                color.r = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*3])*255.0f);
+                color.g = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*3 + 1])*255.0f);
+                color.b = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*3 + 2])*255.0f);
                 color.a = 255;
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
             {
-                color.r = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[(y*image.width + x)*4])*255.0f);
-                color.g = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[(y*image.width + x)*4 + 1])*255.0f);
-                color.b = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[(y*image.width + x)*4 + 2])*255.0f);
-                color.a = static_cast<unsigned char>(HalfToFloat((static_cast<unsigned short *>(image.data))[(y*image.width + x)*4 + 3])*255.0f);
+                color.r = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*4])*255.0f);
+                color.g = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*4 + 1])*255.0f);
+                color.b = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*4 + 2])*255.0f);
+                color.a = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*4 + 3])*255.0f);
 
             } break;
             default: TRACELOG(LOG_WARNING, "Compressed image format does not support color reading"); break;
@@ -3410,22 +3410,22 @@ void ImageClearBackground(Image *dst, Color color)
     // Fill in first pixel based on image format
     ImageDrawPixel(dst, 0, 0, color);
 
-    unsigned char *pSrcPixel = static_cast<unsigned char *>(dst->data);
-    const int bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
-    const int totalPixels = dst->width*dst->height;
+    u8 *pSrcPixel = static_cast<u8 *>(dst->data);
+    const i32 bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
+    const i32 totalPixels = dst->width*dst->height;
 
     // Repeat the first pixel data throughout the image,
     // doubling the pixels copied on each iteration
-    for (int i = 1; i < totalPixels; i *= 2)
+    for (i32 i = 1; i < totalPixels; i *= 2)
     {
-        const int pixelsToCopy = MIN(i, totalPixels - i);
+        const i32 pixelsToCopy = MIN(i, totalPixels - i);
         memcpy(pSrcPixel + i*bytesPerPixel, pSrcPixel, pixelsToCopy*bytesPerPixel);
     }
 }
 
 // Draw pixel within an image
 // NOTE: Compressed image formats not supported
-void ImageDrawPixel(Image *dst, int x, int y, Color color)
+void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
 {
     // Security check to avoid program crash
     if ((dst->data == nullptr) || (x < 0) || (x >= dst->width) || (y < 0) || (y >= dst->height)) return;
@@ -3435,129 +3435,129 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
-            const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
-            (static_cast<unsigned char *>(dst->data))[y*dst->width + x] = gray;
+            (static_cast<u8 *>(dst->data))[y*dst->width + x] = gray;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
-            const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*2] = gray;
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*2 + 1] = color.a;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*2] = gray;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*2 + 1] = color.a;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
             // NOTE: Calculate R5G6B5 equivalent color
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
-            const unsigned char g = static_cast<unsigned char>(round(coln.y*63.0f));
-            const unsigned char b = static_cast<unsigned char>(round(coln.z*31.0f));
+            const u8 r = static_cast<u8>(round(coln.x*31.0f));
+            const u8 g = static_cast<u8>(round(coln.y*63.0f));
+            const u8 b = static_cast<u8>(round(coln.z*31.0f));
 
-            (static_cast<unsigned short *>(dst->data))[y*dst->width + x] = static_cast<unsigned short>(r) << 11 | static_cast<unsigned short>(g) << 5 | static_cast<unsigned short>(b);
+            (static_cast<u16 *>(dst->data))[y*dst->width + x] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 5 | static_cast<u16>(b);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
-            const unsigned char g = static_cast<unsigned char>(round(coln.y*31.0f));
-            const unsigned char b = static_cast<unsigned char>(round(coln.z*31.0f));
-            const unsigned char a = (coln.w > (static_cast<float>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
+            const u8 r = static_cast<u8>(round(coln.x*31.0f));
+            const u8 g = static_cast<u8>(round(coln.y*31.0f));
+            const u8 b = static_cast<u8>(round(coln.z*31.0f));
+            const u8 a = (coln.w > (static_cast<f32>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
 
-            (static_cast<unsigned short *>(dst->data))[y*dst->width + x] = static_cast<unsigned short>(r) << 11 | static_cast<unsigned short>(g) << 6 | static_cast<unsigned short>(b) << 1 | static_cast<unsigned short>(a);
+            (static_cast<u16 *>(dst->data))[y*dst->width + x] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 6 | static_cast<u16>(b) << 1 | static_cast<u16>(a);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const unsigned char r = static_cast<unsigned char>(round(coln.x*15.0f));
-            const unsigned char g = static_cast<unsigned char>(round(coln.y*15.0f));
-            const unsigned char b = static_cast<unsigned char>(round(coln.z*15.0f));
-            const unsigned char a = static_cast<unsigned char>(round(coln.w*15.0f));
+            const u8 r = static_cast<u8>(round(coln.x*15.0f));
+            const u8 g = static_cast<u8>(round(coln.y*15.0f));
+            const u8 b = static_cast<u8>(round(coln.z*15.0f));
+            const u8 a = static_cast<u8>(round(coln.w*15.0f));
 
-            (static_cast<unsigned short *>(dst->data))[y*dst->width + x] = static_cast<unsigned short>(r) << 12 | static_cast<unsigned short>(g) << 8 | static_cast<unsigned short>(b) << 4 | static_cast<unsigned short>(a);
+            (static_cast<u16 *>(dst->data))[y*dst->width + x] = static_cast<u16>(r) << 12 | static_cast<u16>(g) << 8 | static_cast<u16>(b) << 4 | static_cast<u16>(a);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
         {
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*3] = color.r;
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*3 + 1] = color.g;
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*3 + 2] = color.b;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*3] = color.r;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*3 + 1] = color.g;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*3 + 2] = color.b;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
         {
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*4] = color.r;
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*4 + 1] = color.g;
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*4 + 2] = color.b;
-            (static_cast<unsigned char *>(dst->data))[(y*dst->width + x)*4 + 3] = color.a;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*4] = color.r;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*4 + 1] = color.g;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*4 + 2] = color.b;
+            (static_cast<u8 *>(dst->data))[(y*dst->width + x)*4 + 3] = color.a;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R32:
         {
             // NOTE: Calculate grayscale equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            (static_cast<float *>(dst->data))[y*dst->width + x] = coln.x*0.299f + coln.y*0.587f + coln.z*0.114f;
+            (static_cast<f32 *>(dst->data))[y*dst->width + x] = coln.x*0.299f + coln.y*0.587f + coln.z*0.114f;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
         {
             // NOTE: Calculate R32G32B32 equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            (static_cast<float *>(dst->data))[(y*dst->width + x)*3] = coln.x;
-            (static_cast<float *>(dst->data))[(y*dst->width + x)*3 + 1] = coln.y;
-            (static_cast<float *>(dst->data))[(y*dst->width + x)*3 + 2] = coln.z;
+            (static_cast<f32 *>(dst->data))[(y*dst->width + x)*3] = coln.x;
+            (static_cast<f32 *>(dst->data))[(y*dst->width + x)*3 + 1] = coln.y;
+            (static_cast<f32 *>(dst->data))[(y*dst->width + x)*3 + 2] = coln.z;
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
         {
             // NOTE: Calculate R32G32B32A32 equivalent color (normalized to 32bit)
-            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            (static_cast<float *>(dst->data))[(y*dst->width + x)*4] = coln.x;
-            (static_cast<float *>(dst->data))[(y*dst->width + x)*4 + 1] = coln.y;
-            (static_cast<float *>(dst->data))[(y*dst->width + x)*4 + 2] = coln.z;
-            (static_cast<float *>(dst->data))[(y*dst->width + x)*4 + 3] = coln.w;
+            (static_cast<f32 *>(dst->data))[(y*dst->width + x)*4] = coln.x;
+            (static_cast<f32 *>(dst->data))[(y*dst->width + x)*4 + 1] = coln.y;
+            (static_cast<f32 *>(dst->data))[(y*dst->width + x)*4 + 2] = coln.z;
+            (static_cast<f32 *>(dst->data))[(y*dst->width + x)*4 + 3] = coln.w;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16:
         {
             // NOTE: Calculate grayscale equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            (static_cast<unsigned short *>(dst->data))[y*dst->width + x] = FloatToHalf(coln.x*0.299f + coln.y*0.587f + coln.z*0.114f);
+            (static_cast<u16 *>(dst->data))[y*dst->width + x] = FloatToHalf(coln.x*0.299f + coln.y*0.587f + coln.z*0.114f);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
         {
             // NOTE: Calculate R32G32B32 equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*3] = FloatToHalf(coln.x);
-            (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*3 + 1] = FloatToHalf(coln.y);
-            (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*3 + 2] = FloatToHalf(coln.z);
+            (static_cast<u16 *>(dst->data))[(y*dst->width + x)*3] = FloatToHalf(coln.x);
+            (static_cast<u16 *>(dst->data))[(y*dst->width + x)*3 + 1] = FloatToHalf(coln.y);
+            (static_cast<u16 *>(dst->data))[(y*dst->width + x)*3 + 2] = FloatToHalf(coln.z);
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
         {
             // NOTE: Calculate R32G32B32A32 equivalent color (normalized to 32bit)
-            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*4] = FloatToHalf(coln.x);
-            (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*4 + 1] = FloatToHalf(coln.y);
-            (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*4 + 2] = FloatToHalf(coln.z);
-            (static_cast<unsigned short *>(dst->data))[(y*dst->width + x)*4 + 3] = FloatToHalf(coln.w);
+            (static_cast<u16 *>(dst->data))[(y*dst->width + x)*4] = FloatToHalf(coln.x);
+            (static_cast<u16 *>(dst->data))[(y*dst->width + x)*4 + 1] = FloatToHalf(coln.y);
+            (static_cast<u16 *>(dst->data))[(y*dst->width + x)*4 + 2] = FloatToHalf(coln.z);
+            (static_cast<u16 *>(dst->data))[(y*dst->width + x)*4 + 3] = FloatToHalf(coln.w);
 
         } break;
         default: break;
@@ -3567,30 +3567,30 @@ void ImageDrawPixel(Image *dst, int x, int y, Color color)
 // Draw pixel within an image (Vector version)
 void ImageDrawPixelV(Image *dst, vec2 position, Color color)
 {
-    ImageDrawPixel(dst, static_cast<int>(position.x), static_cast<int>(position.y), color);
+    ImageDrawPixel(dst, static_cast<i32>(position.x), static_cast<i32>(position.y), color);
 }
 
 // Draw line within an image
-void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int endPosY, Color color)
+void ImageDrawLine(Image *dst, i32 startPosX, i32 startPosY, i32 endPosX, i32 endPosY, Color color)
 {
     // Calculate differences in coordinates
-    int shortLen = endPosY - startPosY;
-    int longLen = endPosX - startPosX;
+    i32 shortLen = endPosY - startPosY;
+    i32 longLen = endPosX - startPosX;
     bool yLonger = false;
 
     // Determine if the line is more vertical than horizontal
     if (abs(shortLen) > abs(longLen))
     {
         // Swap the lengths if the line is more vertical
-        const int temp = shortLen;
+        const i32 temp = shortLen;
         shortLen = longLen;
         longLen = temp;
         yLonger = true;
     }
 
     // Initialize variables for drawing loop
-    int endVal = longLen + 1;
-    int sgnInc = 1;
+    i32 endVal = longLen + 1;
+    i32 sgnInc = 1;
 
     // Adjust direction increment based on longLen sign
     if (longLen < 0)
@@ -3601,14 +3601,14 @@ void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int en
     }
 
     // Calculate fixed-point increment for shorter length
-    const int decInc = (longLen == 0)? 0 : (shortLen << 16)/longLen;
+    const i32 decInc = (longLen == 0)? 0 : (shortLen << 16)/longLen;
 
     // Draw the line pixel by pixel
     if (yLonger)
     {
         // If line is more vertical, iterate over y-axis
 		// Init j with 0.5 in 16-bit fixed point (1 << 15) for better rounding.
-        for (int i = 0, j = (1 << 15); i != endVal; i += sgnInc, j += decInc)
+        for (i32 i = 0, j = (1 << 15); i != endVal; i += sgnInc, j += decInc)
         {
             // Calculate pixel position and draw it
             ImageDrawPixel(dst, startPosX + (j >> 16), startPosY + i, color);
@@ -3617,7 +3617,7 @@ void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int en
     else
     {
         // If line is more horizontal, iterate over x-axis
-        for (int i = 0, j = (1 << 15); i != endVal; i += sgnInc, j += decInc)
+        for (i32 i = 0, j = (1 << 15); i != endVal; i += sgnInc, j += decInc)
         {
             // Calculate pixel position and draw it
             ImageDrawPixel(dst, startPosX + i, startPosY + (j >> 16), color);
@@ -3629,27 +3629,27 @@ void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int en
 void ImageDrawLineV(Image *dst, vec2 start, vec2 end, Color color)
 {
     // Round start and end positions to nearest integer coordinates
-    const int x1 = static_cast<int>(start.x + 0.5f);
-    const int y1 = static_cast<int>(start.y + 0.5f);
-    const int x2 = static_cast<int>(end.x + 0.5f);
-    const int y2 = static_cast<int>(end.y + 0.5f);
+    const i32 x1 = static_cast<i32>(start.x + 0.5f);
+    const i32 y1 = static_cast<i32>(start.y + 0.5f);
+    const i32 x2 = static_cast<i32>(end.x + 0.5f);
+    const i32 y2 = static_cast<i32>(end.y + 0.5f);
 
     // Draw a vertical line using ImageDrawLine function
     ImageDrawLine(dst, x1, y1, x2, y2, color);
 }
 
 // Draw a line defining thickness within an image
-void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, int thick, Color color)
+void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, i32 thick, Color color)
 {
     // Round start and end positions to nearest integer coordinates
-    const int x1 = static_cast<int>(start.x + 0.5f);
-    const int y1 = static_cast<int>(start.y + 0.5f);
-    const int x2 = static_cast<int>(end.x + 0.5f);
-    const int y2 = static_cast<int>(end.y + 0.5f);
+    const i32 x1 = static_cast<i32>(start.x + 0.5f);
+    const i32 y1 = static_cast<i32>(start.y + 0.5f);
+    const i32 x2 = static_cast<i32>(end.x + 0.5f);
+    const i32 y2 = static_cast<i32>(end.y + 0.5f);
 
     // Calculate differences in x and y coordinates
-    const int dx = x2 - x1;
-    const int dy = y2 - y1;
+    const i32 dx = x2 - x1;
+    const i32 dy = y2 - y1;
 
     // Determine if the line is more horizontal or vertical
     if ((dx != 0) && (abs(dy/dx) < 1))
@@ -3657,16 +3657,16 @@ void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, int thick, Color color)
         // Line is more horizontal
 
         // How many additional lines to draw
-        const int wy = thick - 1;
+        const i32 wy = thick - 1;
 
         // Draw the main line and lower half
-        for (int i = 0; i <= ((wy+1)/2); i++)
+        for (i32 i = 0; i <= ((wy+1)/2); i++)
         {
             ImageDrawLine(dst, x1, y1 + i, x2, y2 + i, color);
         }
 
         // Draw the upper half
-        for (int i = 1; i <= (wy/2); i++)
+        for (i32 i = 1; i <= (wy/2); i++)
         {
             ImageDrawLine(dst, x1, y1 - i, x2, y2 - i, color);
         }
@@ -3676,16 +3676,16 @@ void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, int thick, Color color)
         // Line is more vertical or perfectly horizontal
 
         // How many additional lines to draw
-        const int wx = thick - 1;
+        const i32 wx = thick - 1;
 
         //Draw the main line and right half
-        for (int i = 0; i <= ((wx+1)/2); i++)
+        for (i32 i = 0; i <= ((wx+1)/2); i++)
         {
             ImageDrawLine(dst, x1 + i, y1, x2 + i, y2, color);
         }
 
         // Draw the left half
-        for (int i = 1; i <= (wx/2); i++)
+        for (i32 i = 1; i <= (wx/2); i++)
         {
             ImageDrawLine(dst, x1 - i, y1, x2 - i, y2, color);
         }
@@ -3693,9 +3693,9 @@ void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, int thick, Color color)
 }
 
 // Draw a lines sequence within an image
-void ImageDrawLineStrip(Image *dst, const vec2 *points, int pointCount, Color color)
+void ImageDrawLineStrip(Image *dst, const vec2 *points, i32 pointCount, Color color)
 {
-    for (int i = 0; i < pointCount - 1; i++)
+    for (i32 i = 0; i < pointCount - 1; i++)
     {
         ImageDrawLineV(dst, points[i], points[i + 1], color);
     }
@@ -3706,10 +3706,10 @@ void ImageDrawTriangle(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
 {
     // Calculate the 2D bounding box of the triangle
     // Determine the minimum and maximum x and y coordinates of the triangle vertices
-    int xMin = static_cast<int>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
-    int yMin = static_cast<int>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
-    int xMax = static_cast<int>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
-    int yMax = static_cast<int>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
+    i32 xMin = static_cast<i32>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
+    i32 yMin = static_cast<i32>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
+    i32 xMax = static_cast<i32>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
+    i32 yMax = static_cast<i32>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
 
     // Clamp the bounding box to the image dimensions
     if (xMin < 0) xMin = 0;
@@ -3719,14 +3719,14 @@ void ImageDrawTriangle(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
 
     // Check the order of the vertices to determine if it's a front or back face
     // NOTE: if signedArea is equal to 0, the face is degenerate
-    const float signedArea = (v2.x - v1.x)*(v3.y - v1.y) - (v3.x - v1.x)*(v2.y - v1.y);
+    const f32 signedArea = (v2.x - v1.x)*(v3.y - v1.y) - (v3.x - v1.x)*(v2.y - v1.y);
     const bool isBackFace = (signedArea > 0);
 
     // Barycentric interpolation setup
     // Calculate the step increments for the barycentric coordinates
-    int w1XStep = static_cast<int>(v3.y - v2.y), w1YStep = static_cast<int>(v2.x - v3.x);
-    int w2XStep = static_cast<int>(v1.y - v3.y), w2YStep = static_cast<int>(v3.x - v1.x);
-    int w3XStep = static_cast<int>(v2.y - v1.y), w3YStep = static_cast<int>(v1.x - v2.x);
+    i32 w1XStep = static_cast<i32>(v3.y - v2.y), w1YStep = static_cast<i32>(v2.x - v3.x);
+    i32 w2XStep = static_cast<i32>(v1.y - v3.y), w2YStep = static_cast<i32>(v3.x - v1.x);
+    i32 w3XStep = static_cast<i32>(v2.y - v1.y), w3YStep = static_cast<i32>(v1.x - v2.x);
 
     // If the triangle is a back face, invert the steps
     if (isBackFace)
@@ -3737,19 +3737,19 @@ void ImageDrawTriangle(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
     }
 
     // Calculate the initial barycentric coordinates for the top-left point of the bounding box
-    int w1Row = static_cast<int>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
-    int w2Row = static_cast<int>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
-    int w3Row = static_cast<int>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
+    i32 w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
+    i32 w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
+    i32 w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
 
     // Rasterization loop
     // Iterate through each pixel in the bounding box
-    for (int y = yMin; y <= yMax; y++)
+    for (i32 y = yMin; y <= yMax; y++)
     {
-        int w1 = w1Row;
-        int w2 = w2Row;
-        int w3 = w3Row;
+        i32 w1 = w1Row;
+        i32 w2 = w2Row;
+        i32 w3 = w3Row;
 
-        for (int x = xMin; x <= xMax; x++)
+        for (i32 x = xMin; x <= xMax; x++)
         {
             // Check if the pixel is inside the triangle using barycentric coordinates
             // If it is, the pixel can be drawn with the given color
@@ -3773,10 +3773,10 @@ void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, 
 {
     // Calculate the 2D bounding box of the triangle
     // Determine the minimum and maximum x and y coordinates of the triangle vertices
-    int xMin = static_cast<int>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
-    int yMin = static_cast<int>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
-    int xMax = static_cast<int>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
-    int yMax = static_cast<int>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
+    i32 xMin = static_cast<i32>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
+    i32 yMin = static_cast<i32>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
+    i32 xMax = static_cast<i32>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
+    i32 yMax = static_cast<i32>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
 
     // Clamp the bounding box to the image dimensions
     if (xMin < 0) xMin = 0;
@@ -3786,14 +3786,14 @@ void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, 
 
     // Check the order of the vertices to determine if it's a front or back face
     // NOTE: if signedArea is equal to 0, the face is degenerate
-    const float signedArea = (v2.x - v1.x)*(v3.y - v1.y) - (v3.x - v1.x)*(v2.y - v1.y);
+    const f32 signedArea = (v2.x - v1.x)*(v3.y - v1.y) - (v3.x - v1.x)*(v2.y - v1.y);
     const bool isBackFace = (signedArea > 0);
 
     // Barycentric interpolation setup
     // Calculate the step increments for the barycentric coordinates
-    int w1XStep = static_cast<int>(v3.y - v2.y), w1YStep = static_cast<int>(v2.x - v3.x);
-    int w2XStep = static_cast<int>(v1.y - v3.y), w2YStep = static_cast<int>(v3.x - v1.x);
-    int w3XStep = static_cast<int>(v2.y - v1.y), w3YStep = static_cast<int>(v1.x - v2.x);
+    i32 w1XStep = static_cast<i32>(v3.y - v2.y), w1YStep = static_cast<i32>(v2.x - v3.x);
+    i32 w2XStep = static_cast<i32>(v1.y - v3.y), w2YStep = static_cast<i32>(v3.x - v1.x);
+    i32 w3XStep = static_cast<i32>(v2.y - v1.y), w3YStep = static_cast<i32>(v1.x - v2.x);
 
     // If the triangle is a back face, invert the steps
     if (isBackFace)
@@ -3804,30 +3804,30 @@ void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, 
     }
 
     // Calculate the initial barycentric coordinates for the top-left point of the bounding box
-    int w1Row = static_cast<int>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
-    int w2Row = static_cast<int>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
-    int w3Row = static_cast<int>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
+    i32 w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
+    i32 w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
+    i32 w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
 
     // Calculate the inverse of the sum of the barycentric coordinates for normalization
-    const float wInvSum = 255.0f/(w1Row + w2Row + w3Row);
+    const f32 wInvSum = 255.0f/(w1Row + w2Row + w3Row);
 
     // Rasterization loop
     // Iterate through each pixel in the bounding box
-    for (int y = yMin; y <= yMax; y++)
+    for (i32 y = yMin; y <= yMax; y++)
     {
-        int w1 = w1Row;
-        int w2 = w2Row;
-        int w3 = w3Row;
+        i32 w1 = w1Row;
+        i32 w2 = w2Row;
+        i32 w3 = w3Row;
 
-        for (int x = xMin; x <= xMax; x++)
+        for (i32 x = xMin; x <= xMax; x++)
         {
             // Check if the pixel is inside the triangle using barycentric coordinates
             if ((w1 | w2 | w3) >= 0)
             {
                 // Compute the normalized barycentric coordinates
-                const unsigned char aW1 = static_cast<unsigned char>(static_cast<float>(w1)*wInvSum);
-                const unsigned char aW2 = static_cast<unsigned char>(static_cast<float>(w2)*wInvSum);
-                const unsigned char aW3 = static_cast<unsigned char>(static_cast<float>(w3)*wInvSum);
+                const u8 aW1 = static_cast<u8>(static_cast<f32>(w1)*wInvSum);
+                const u8 aW2 = static_cast<u8>(static_cast<f32>(w2)*wInvSum);
+                const u8 aW3 = static_cast<u8>(static_cast<f32>(w3)*wInvSum);
 
                 // Interpolate the color using the barycentric coordinates
                 Color finalColor = { 0 };
@@ -3856,17 +3856,17 @@ void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, 
 // Draw triangle outline within an image
 void ImageDrawTriangleLines(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
 {
-    ImageDrawLine(dst, static_cast<int>(v1.x), static_cast<int>(v1.y), static_cast<int>(v2.x), static_cast<int>(v2.y), color);
-    ImageDrawLine(dst, static_cast<int>(v2.x), static_cast<int>(v2.y), static_cast<int>(v3.x), static_cast<int>(v3.y), color);
-    ImageDrawLine(dst, static_cast<int>(v3.x), static_cast<int>(v3.y), static_cast<int>(v1.x), static_cast<int>(v1.y), color);
+    ImageDrawLine(dst, static_cast<i32>(v1.x), static_cast<i32>(v1.y), static_cast<i32>(v2.x), static_cast<i32>(v2.y), color);
+    ImageDrawLine(dst, static_cast<i32>(v2.x), static_cast<i32>(v2.y), static_cast<i32>(v3.x), static_cast<i32>(v3.y), color);
+    ImageDrawLine(dst, static_cast<i32>(v3.x), static_cast<i32>(v3.y), static_cast<i32>(v1.x), static_cast<i32>(v1.y), color);
 }
 
 // Draw a triangle fan defined by points within an image (first vertex is the center)
-void ImageDrawTriangleFan(Image *dst, const vec2 *points, int pointCount, Color color)
+void ImageDrawTriangleFan(Image *dst, const vec2 *points, i32 pointCount, Color color)
 {
     if (pointCount >= 3)
     {
-        for (int i = 1; i < pointCount - 1; i++)
+        for (i32 i = 1; i < pointCount - 1; i++)
         {
             ImageDrawTriangle(dst, points[0], points[i], points[i + 1], color);
         }
@@ -3874,11 +3874,11 @@ void ImageDrawTriangleFan(Image *dst, const vec2 *points, int pointCount, Color 
 }
 
 // Draw a triangle strip defined by points within an image
-void ImageDrawTriangleStrip(Image *dst, const vec2 *points, int pointCount, Color color)
+void ImageDrawTriangleStrip(Image *dst, const vec2 *points, i32 pointCount, Color color)
 {
     if (pointCount >= 3)
     {
-        for (int i = 2; i < pointCount; i++)
+        for (i32 i = 2; i < pointCount; i++)
         {
             if ((i%2) == 0) ImageDrawTriangle(dst, points[i], points[i - 2], points[i - 1], color);
             else ImageDrawTriangle(dst, points[i], points[i - 1], points[i - 2], color);
@@ -3887,15 +3887,15 @@ void ImageDrawTriangleStrip(Image *dst, const vec2 *points, int pointCount, Colo
 }
 
 // Draw rectangle within an image
-void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, Color color)
+void ImageDrawRectangle(Image *dst, i32 posX, i32 posY, i32 width, i32 height, Color color)
 {
-    ImageDrawRectangleRec(dst, Rectangle{ static_cast<float>(posX), static_cast<float>(posY), static_cast<float>(width), static_cast<float>(height) }, color);
+    ImageDrawRectangleRec(dst, Rectangle{ static_cast<f32>(posX), static_cast<f32>(posY), static_cast<f32>(width), static_cast<f32>(height) }, color);
 }
 
 // Draw rectangle within an image (Vector version)
 void ImageDrawRectangleV(Image *dst, vec2 position, vec2 size, Color color)
 {
-    ImageDrawRectangle(dst, static_cast<int>(position.x), static_cast<int>(position.y), static_cast<int>(size.x), static_cast<int>(size.y), color);
+    ImageDrawRectangle(dst, static_cast<i32>(position.x), static_cast<i32>(position.y), static_cast<i32>(size.x), static_cast<i32>(size.y), color);
 }
 
 // Draw rectangle within an image
@@ -3918,65 +3918,65 @@ void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color)
     if ((rec.x >= dst->width) || (rec.y >= dst->height)) return;
     if (((rec.x + rec.width) <= 0) || (rec.y + rec.height <= 0)) return;
 
-    const int sy = static_cast<int>(rec.y);
-    const int sx = static_cast<int>(rec.x);
+    const i32 sy = static_cast<i32>(rec.y);
+    const i32 sx = static_cast<i32>(rec.x);
 
-    const int bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
+    const i32 bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
 
     // Fill in the first pixel of the first row based on image format
     ImageDrawPixel(dst, sx, sy, color);
 
-    const int bytesOffset = ((sy*dst->width) + sx)*bytesPerPixel;
-    unsigned char *pSrcPixel = static_cast<unsigned char *>(dst->data) + bytesOffset;
+    const i32 bytesOffset = ((sy*dst->width) + sx)*bytesPerPixel;
+    u8 *pSrcPixel = static_cast<u8 *>(dst->data) + bytesOffset;
 
     // Repeat the first pixel data throughout the row
-    for (int x = 1; x < static_cast<int>(rec.width); x *= 2)
+    for (i32 x = 1; x < static_cast<i32>(rec.width); x *= 2)
     {
-        const int pixelsToCopy = MIN(x, static_cast<int>(rec.width) - x);
+        const i32 pixelsToCopy = MIN(x, static_cast<i32>(rec.width) - x);
         memcpy(pSrcPixel + x*bytesPerPixel, pSrcPixel, pixelsToCopy*bytesPerPixel);
     }
 
     // Repeat the first row data for all other rows
-    const int bytesPerRow = bytesPerPixel*static_cast<int>(rec.width);
-    for (int y = 1; y < static_cast<int>(rec.height); y++)
+    const i32 bytesPerRow = bytesPerPixel*static_cast<i32>(rec.width);
+    for (i32 y = 1; y < static_cast<i32>(rec.height); y++)
     {
         memcpy(pSrcPixel + (y*dst->width)*bytesPerPixel, pSrcPixel, bytesPerRow);
     }
 }
 
 // Draw a color-filled rectangle with pro parameters within and image
-void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, float rotation, Color color)
+void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, f32 rotation, Color color)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (rec.width <= 0) || (rec.height <= 0)) return;
 
-    const float cosAngle = cosf(rotation*DEG2RAD);
-    const float sinAngle = sinf(rotation*DEG2RAD);
+    const f32 cosAngle = cosf(rotation*DEG2RAD);
+    const f32 sinAngle = sinf(rotation*DEG2RAD);
 
     // Rotation origin in world/image coordinates
-    const float ox = rec.x + origin.x;
-    const float oy = rec.y + origin.y;
+    const f32 ox = rec.x + origin.x;
+    const f32 oy = rec.y + origin.y;
 
     // Rectangle corners relative to rotation origin
-    const float x1 = -origin.x;
-    const float y1 = -origin.y;
+    const f32 x1 = -origin.x;
+    const f32 y1 = -origin.y;
 
-    const float x2 = rec.width - origin.x;
-    const float y2 = rec.height - origin.y;
+    const f32 x2 = rec.width - origin.x;
+    const f32 y2 = rec.height - origin.y;
 
     // Rotate the four corners to calculate the bounding box
-    const float cornersX[4] = { x1, x2, x2, x1 };
-    const float cornersY[4] = { y1, y1, y2, y2 };
+    const f32 cornersX[4] = { x1, x2, x2, x1 };
+    const f32 cornersY[4] = { y1, y1, y2, y2 };
 
-    float minX = 65536;
-    float minY = 65536;
-    float maxX = -65536;
-    float maxY = -65536;
+    f32 minX = 65536;
+    f32 minY = 65536;
+    f32 maxX = -65536;
+    f32 maxY = -65536;
 
-    for (int i = 0; i < 4; i++)
+    for (i32 i = 0; i < 4; i++)
     {
-        float rx = cornersX[i]*cosAngle - cornersY[i]*sinAngle;
-        float ry = cornersX[i]*sinAngle + cornersY[i]*cosAngle;
+        f32 rx = cornersX[i]*cosAngle - cornersY[i]*sinAngle;
+        f32 ry = cornersX[i]*sinAngle + cornersY[i]*cosAngle;
 
         rx += ox;
         ry += oy;
@@ -3988,10 +3988,10 @@ void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, float rotatio
     }
 
     // Convert bounding box to integer pixel bounds
-    int x0 = static_cast<int>(floorf(minX));
-    int y0 = static_cast<int>(floorf(minY));
-    int xEnd = static_cast<int>(ceilf(maxX));
-    int yEnd = static_cast<int>(ceilf(maxY));
+    i32 x0 = static_cast<i32>(floorf(minX));
+    i32 y0 = static_cast<i32>(floorf(minY));
+    i32 xEnd = static_cast<i32>(ceilf(maxX));
+    i32 yEnd = static_cast<i32>(ceilf(maxY));
 
     // Limit drawing to image bounds
     if (x0 < 0) x0 = 0;
@@ -4002,17 +4002,17 @@ void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, float rotatio
     // Safety check
     if ((x0 >= xEnd) || (y0 >= yEnd)) return;
 
-    for (int y = y0; y < yEnd; y++)
+    for (i32 y = y0; y < yEnd; y++)
     {
-        for (int x = x0; x < xEnd; x++)
+        for (i32 x = x0; x < xEnd; x++)
         {
             // Pixel center in world coordinates
-            const float px = x + 0.5f - ox;
-            const float py = y + 0.5f - oy;
+            const f32 px = x + 0.5f - ox;
+            const f32 py = y + 0.5f - oy;
 
             // Inverse-rotate pixel into rectangle local space
-            const float localX = px*cosAngle + py*sinAngle;
-            const float localY = -px*sinAngle + py*cosAngle;
+            const f32 localX = px*cosAngle + py*sinAngle;
+            const f32 localY = -px*sinAngle + py*cosAngle;
 
             // Check whether pixel lies inside the rectangle
             if ((localX >= -origin.x) && (localX < (rec.width - origin.x)) &&
@@ -4026,19 +4026,19 @@ void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, float rotatio
 }
 
 // Draw rectangle lines within an image
-void ImageDrawRectangleLines(Image *dst, int posX, int posY, int width, int height, Color color)
+void ImageDrawRectangleLines(Image *dst, i32 posX, i32 posY, i32 width, i32 height, Color color)
 {
-    const Rectangle rec = { static_cast<float>(posX), static_cast<float>(posY), static_cast<float>(width), static_cast<float>(height) };
+    const Rectangle rec = { static_cast<f32>(posX), static_cast<f32>(posY), static_cast<f32>(width), static_cast<f32>(height) };
     ImageDrawRectangleLinesEx(dst, rec, 1, color);
 }
 
 // Draw rectangle lines within an image with line thickness
-void ImageDrawRectangleLinesEx(Image *dst, Rectangle rec, int thick, Color color)
+void ImageDrawRectangleLinesEx(Image *dst, Rectangle rec, i32 thick, Color color)
 {
-    ImageDrawRectangle(dst, static_cast<int>(rec.x), static_cast<int>(rec.y), static_cast<int>(rec.width), thick, color);
-    ImageDrawRectangle(dst, static_cast<int>(rec.x), static_cast<int>(rec.y + thick), thick, static_cast<int>(rec.height - thick*2), color);
-    ImageDrawRectangle(dst, static_cast<int>(rec.x + rec.width - thick), static_cast<int>(rec.y + thick), thick, static_cast<int>(rec.height - thick*2), color);
-    ImageDrawRectangle(dst, static_cast<int>(rec.x), static_cast<int>(rec.y + rec.height - thick), static_cast<int>(rec.width), thick, color);
+    ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y), static_cast<i32>(rec.width), thick, color);
+    ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y + thick), thick, static_cast<i32>(rec.height - thick*2), color);
+    ImageDrawRectangle(dst, static_cast<i32>(rec.x + rec.width - thick), static_cast<i32>(rec.y + thick), thick, static_cast<i32>(rec.height - thick*2), color);
+    ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y + rec.height - thick), static_cast<i32>(rec.width), thick, color);
 }
 
 // Draw rectangle with gradient colors within an image, counter-clockwise color order
@@ -4047,10 +4047,10 @@ void ImageDrawRectangleGradientEx(Image *dst, Rectangle rec, Color col1, Color c
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (rec.width <= 0) || (rec.height <= 0)) return;
 
-    int x0 = static_cast<int>(floorf(rec.x));
-    int y0 = static_cast<int>(floorf(rec.y));
-    int x1 = static_cast<int>(ceilf(rec.x + rec.width));
-    int y1 = static_cast<int>(ceilf(rec.y + rec.height));
+    i32 x0 = static_cast<i32>(floorf(rec.x));
+    i32 y0 = static_cast<i32>(floorf(rec.y));
+    i32 x1 = static_cast<i32>(ceilf(rec.x + rec.width));
+    i32 y1 = static_cast<i32>(ceilf(rec.y + rec.height));
 
     // Limit draw to image bounds
     if (x0 < 0) x0 = 0;
@@ -4061,29 +4061,29 @@ void ImageDrawRectangleGradientEx(Image *dst, Rectangle rec, Color col1, Color c
     // Safety check
     if ((x0 >= x1) || (y0 >= y1)) return;
 
-    for (int y = y0; y < y1; y++)
+    for (i32 y = y0; y < y1; y++)
     {
-        float ty = (y - rec.y)/rec.height;
+        f32 ty = (y - rec.y)/rec.height;
         if (ty < 0.0f) ty = 0.0f;
         if (ty > 1.0f) ty = 1.0f;
 
-        for (int x = x0; x < x1; x++)
+        for (i32 x = x0; x < x1; x++)
         {
-            float tx = (x - rec.x)/rec.width;
+            f32 tx = (x - rec.x)/rec.width;
             if (tx < 0.0f) tx = 0.0f;
             if (tx > 1.0f) tx = 1.0f;
 
             // Bilinear interpolation weights
-            const float w1 = (1.0f - tx)*(1.0f - ty);
-            const float w2 = (1.0f - tx)*ty;
-            const float w3 = tx*ty;
-            const float w4 = tx*(1.0f - ty);
+            const f32 w1 = (1.0f - tx)*(1.0f - ty);
+            const f32 w2 = (1.0f - tx)*ty;
+            const f32 w3 = tx*ty;
+            const f32 w4 = tx*(1.0f - ty);
 
             const Color color = {
-                static_cast<unsigned char>(col1.r*w1 + col2.r*w2 + col3.r*w3 + col4.r*w4),
-                static_cast<unsigned char>(col1.g*w1 + col2.g*w2 + col3.g*w3 + col4.g*w4),
-                static_cast<unsigned char>(col1.b*w1 + col2.b*w2 + col3.b*w3 + col4.b*w4),
-                static_cast<unsigned char>(col1.a*w1 + col2.a*w2 + col3.a*w3 + col4.a*w4)
+                static_cast<u8>(col1.r*w1 + col2.r*w2 + col3.r*w3 + col4.r*w4),
+                static_cast<u8>(col1.g*w1 + col2.g*w2 + col3.g*w3 + col4.g*w4),
+                static_cast<u8>(col1.b*w1 + col2.b*w2 + col3.b*w3 + col4.b*w4),
+                static_cast<u8>(col1.a*w1 + col2.a*w2 + col3.a*w3 + col4.a*w4)
             };
 
             // Using ImageDrawPixel() to let it manage color format conversion
@@ -4093,11 +4093,11 @@ void ImageDrawRectangleGradientEx(Image *dst, Rectangle rec, Color col1, Color c
 }
 
 // Draw circle within an image
-void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color color)
+void ImageDrawCircle(Image *dst, i32 centerX, i32 centerY, i32 radius, Color color)
 {
-    int x = 0;
-    int y = radius;
-    int decesionParameter = 3 - 2*radius;
+    i32 x = 0;
+    i32 y = radius;
+    i32 decesionParameter = 3 - 2*radius;
 
     while (y >= x)
     {
@@ -4117,17 +4117,17 @@ void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color col
 }
 
 // Draw circle within an image (Vector version)
-void ImageDrawCircleV(Image *dst, vec2 center, int radius, Color color)
+void ImageDrawCircleV(Image *dst, vec2 center, i32 radius, Color color)
 {
-    ImageDrawCircle(dst, static_cast<int>(center.x), static_cast<int>(center.y), radius, color);
+    ImageDrawCircle(dst, static_cast<i32>(center.x), static_cast<i32>(center.y), radius, color);
 }
 
 // Draw circle outline within an image
-void ImageDrawCircleLines(Image *dst, int centerX, int centerY, int radius, Color color)
+void ImageDrawCircleLines(Image *dst, i32 centerX, i32 centerY, i32 radius, Color color)
 {
-    int x = 0;
-    int y = radius;
-    int decesionParameter = 3 - 2*radius;
+    i32 x = 0;
+    i32 y = radius;
+    i32 decesionParameter = 3 - 2*radius;
 
     while (y >= x)
     {
@@ -4151,21 +4151,21 @@ void ImageDrawCircleLines(Image *dst, int centerX, int centerY, int radius, Colo
 }
 
 // Draw circle outline within an image (Vector version)
-void ImageDrawCircleLinesV(Image *dst, vec2 center, int radius, Color color)
+void ImageDrawCircleLinesV(Image *dst, vec2 center, i32 radius, Color color)
 {
-    ImageDrawCircleLines(dst, static_cast<int>(center.x), static_cast<int>(center.y), radius, color);
+    ImageDrawCircleLines(dst, static_cast<i32>(center.x), static_cast<i32>(center.y), radius, color);
 }
 
 // Draw a gradient-filled circle within an image
-void ImageDrawCircleGradient(Image *dst, vec2 center, float radius, Color inner, Color outer)
+void ImageDrawCircleGradient(Image *dst, vec2 center, f32 radius, Color inner, Color outer)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (radius <= 0.0f)) return;
 
-    int x0 = static_cast<int>(floorf(center.x - radius));
-    int y0 = static_cast<int>(floorf(center.y - radius));
-    int x1 = static_cast<int>(ceilf(center.x + radius));
-    int y1 = static_cast<int>(ceilf(center.y + radius));
+    i32 x0 = static_cast<i32>(floorf(center.x - radius));
+    i32 y0 = static_cast<i32>(floorf(center.y - radius));
+    i32 x1 = static_cast<i32>(ceilf(center.x + radius));
+    i32 y1 = static_cast<i32>(ceilf(center.y + radius));
 
     // Limit drawing to image bounds
     if (x0 < 0) x0 = 0;
@@ -4175,29 +4175,29 @@ void ImageDrawCircleGradient(Image *dst, vec2 center, float radius, Color inner,
 
     if ((x0 >= x1) || (y0 >= y1)) return;
 
-    const float radiusSq = radius*radius;
+    const f32 radiusSq = radius*radius;
 
-    for (int y = y0; y < y1; y++)
+    for (i32 y = y0; y < y1; y++)
     {
-        for (int x = x0; x < x1; x++)
+        for (i32 x = x0; x < x1; x++)
         {
             // Center relative to circle center
-            const float dx = (x + 0.5f) - center.x;
-            const float dy = (y + 0.5f) - center.y;
+            const f32 dx = (x + 0.5f) - center.x;
+            const f32 dy = (y + 0.5f) - center.y;
 
-            const float distSq = dx*dx + dy*dy;
+            const f32 distSq = dx*dx + dy*dy;
 
             // Skip pixels outside the circle
             if (distSq > radiusSq) continue;
 
             // Linear interpolation from inner to outer color
             // TODO: Consider other types of interpolation for better results?
-            const float t = sqrtf(distSq)/radius;
+            const f32 t = sqrtf(distSq)/radius;
             const Color color = {
-                static_cast<unsigned char>(inner.r + (outer.r - inner.r)*t),
-                static_cast<unsigned char>(inner.g + (outer.g - inner.g)*t),
-                static_cast<unsigned char>(inner.b + (outer.b - inner.b)*t),
-                static_cast<unsigned char>(inner.a + (outer.a - inner.a)*t)
+                static_cast<u8>(inner.r + (outer.r - inner.r)*t),
+                static_cast<u8>(inner.g + (outer.g - inner.g)*t),
+                static_cast<u8>(inner.b + (outer.b - inner.b)*t),
+                static_cast<u8>(inner.a + (outer.a - inner.a)*t)
             };
 
             // NOTE: Pixel format conversion managed by function
@@ -4207,37 +4207,37 @@ void ImageDrawCircleGradient(Image *dst, vec2 center, float radius, Color inner,
 }
 
 // Draw an image within an image
-void ImageDrawImage(Image *dst, Image src, int posX, int posY, Color tint)
+void ImageDrawImage(Image *dst, Image src, i32 posX, i32 posY, Color tint)
 {
-    const Rectangle srcRec = { 0.0f, 0.0f, static_cast<float>(src.width), static_cast<float>(src.height) };
-    const Rectangle dstRec = { static_cast<float>(posX), static_cast<float>(posY), srcRec.width, srcRec.height };
+    const Rectangle srcRec = { 0.0f, 0.0f, static_cast<f32>(src.width), static_cast<f32>(src.height) };
+    const Rectangle dstRec = { static_cast<f32>(posX), static_cast<f32>(posY), srcRec.width, srcRec.height };
     ImageDrawImagePro(dst, src, srcRec, dstRec, vec2{ 0 }, 0.0f, tint);
 }
 
 // Draw an image with scaling and rotation within an image
 // NOTE: Rotation applied from top-left corner origin
-void ImageDrawImageEx(Image *dst, Image src, vec2 position, float rotation, float scale, Color tint)
+void ImageDrawImageEx(Image *dst, Image src, vec2 position, f32 rotation, f32 scale, Color tint)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (dst->width <= 0) || (dst->height <= 0) || (src.width <= 0) || (src.height <= 0)) return;
 
-    const float cosA = cosf(rotation*DEG2RAD);
-    const float sinA = sinf(rotation*DEG2RAD);
+    const f32 cosA = cosf(rotation*DEG2RAD);
+    const f32 sinA = sinf(rotation*DEG2RAD);
 
     // Rotate around the source image top-left corner
-    const float cornersX[4] = { 0.0f, src.width*scale, src.width*scale, 0.0f };
-    const float cornersY[4] = { 0.0f, 0.0f, src.height*scale, src.height*scale };
+    const f32 cornersX[4] = { 0.0f, src.width*scale, src.width*scale, 0.0f };
+    const f32 cornersY[4] = { 0.0f, 0.0f, src.height*scale, src.height*scale };
 
-    float minX = 65536;
-    float minY = 65536;
-    float maxX = -65536;
-    float maxY = -65536;
+    f32 minX = 65536;
+    f32 minY = 65536;
+    f32 maxX = -65536;
+    f32 maxY = -65536;
 
     // Calculate the rotated bounding box
-    for (int i = 0; i < 4; i++)
+    for (i32 i = 0; i < 4; i++)
     {
-        float rx = cornersX[i]*cosA - cornersY[i]*sinA;
-        float ry = cornersX[i]*sinA + cornersY[i]*cosA;
+        f32 rx = cornersX[i]*cosA - cornersY[i]*sinA;
+        f32 ry = cornersX[i]*sinA + cornersY[i]*cosA;
 
         rx += position.x;
         ry += position.y;
@@ -4248,10 +4248,10 @@ void ImageDrawImageEx(Image *dst, Image src, vec2 position, float rotation, floa
         if (ry > maxY) maxY = ry;
     }
 
-    int x0 = static_cast<int>(floorf(minX));
-    int y0 = static_cast<int>(floorf(minY));
-    int x1 = static_cast<int>(ceilf(maxX));
-    int y1 = static_cast<int>(ceilf(maxY));
+    i32 x0 = static_cast<i32>(floorf(minX));
+    i32 y0 = static_cast<i32>(floorf(minY));
+    i32 x1 = static_cast<i32>(ceilf(maxX));
+    i32 y1 = static_cast<i32>(ceilf(maxY));
 
     // Limit drawing to destination bounds
     if (x0 < 0) x0 = 0;
@@ -4262,17 +4262,17 @@ void ImageDrawImageEx(Image *dst, Image src, vec2 position, float rotation, floa
     // Safety check
     if ((x0 >= x1) || (y0 >= y1)) return;
 
-    for (int y = y0; y < y1; y++)
+    for (i32 y = y0; y < y1; y++)
     {
-        for (int x = x0; x < x1; x++)
+        for (i32 x = x0; x < x1; x++)
         {
             // Destination pixel center relative to image position
-            const float dx = (x + 0.5f) - position.x;
-            const float dy = (y + 0.5f) - position.y;
+            const f32 dx = (x + 0.5f) - position.x;
+            const f32 dy = (y + 0.5f) - position.y;
 
             // Inverse-rotate into the scaled source space
-            float sx = dx*cosA + dy*sinA;
-            float sy = -dx*sinA + dy*cosA;
+            f32 sx = dx*cosA + dy*sinA;
+            f32 sy = -dx*sinA + dy*cosA;
 
             // Revert scaling
             sx /= scale;
@@ -4282,8 +4282,8 @@ void ImageDrawImageEx(Image *dst, Image src, vec2 position, float rotation, floa
             if ((sx < 0.0f) || (sy < 0.0f) || (sx >= src.width) || (sy >= src.height)) continue;
 
             // Nearest-neighbor source sampling
-            const int srcX = static_cast<int>(sx);
-            const int srcY = static_cast<int>(sy);
+            const i32 srcX = static_cast<i32>(sx);
+            const i32 srcY = static_cast<i32>(sy);
 
             const Color srcColor = GetImageColor(src, srcX, srcY);
 
@@ -4309,7 +4309,7 @@ void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, vec2 position, C
 
 // Draw a part of an image defined by a rectangle into destination rectangle, with scaling and rotation, within an image
 // TODO: REVIEW: ImageDrawImagePro(), implement origin and rotation for image drawing
-void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, vec2 origin, float rotation, Color tint)
+void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, vec2 origin, f32 rotation, Color tint)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (dst->width == 0) || (dst->height == 0) ||
@@ -4330,11 +4330,11 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
 
         // Check if source rectangle needs to be resized to destination rectangle
         // In that case, make a copy of source, and apply all required transform
-        if ((static_cast<int>(srcRec.width) != static_cast<int>(dstRec.width)) || (static_cast<int>(srcRec.height) != static_cast<int>(dstRec.height)))
+        if ((static_cast<i32>(srcRec.width) != static_cast<i32>(dstRec.width)) || (static_cast<i32>(srcRec.height) != static_cast<i32>(dstRec.height)))
         {
             srcMod = ImageFromImage(src, srcRec);                                                  // Create image from another image
-            ImageResize(&srcMod, static_cast<int>(dstRec.width), static_cast<int>(dstRec.height)); // Resize to destination rectangle
-            srcRec = Rectangle{ 0, 0, static_cast<float>(srcMod.width), static_cast<float>(srcMod.height) };
+            ImageResize(&srcMod, static_cast<i32>(dstRec.width), static_cast<i32>(dstRec.height)); // Resize to destination rectangle
+            srcRec = Rectangle{ 0, 0, static_cast<f32>(srcMod.width), static_cast<f32>(srcMod.height) };
 
             srcPtr = &srcMod;
             useSrcMod = true;
@@ -4357,8 +4357,8 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
         }
         else if ((dstRec.y + srcRec.height) > dst->height) srcRec.height = dst->height - dstRec.y;
 
-        if (dst->width < srcRec.width) srcRec.width = static_cast<float>(dst->width);
-        if (dst->height < srcRec.height) srcRec.height = static_cast<float>(dst->height);
+        if (dst->width < srcRec.width) srcRec.width = static_cast<f32>(dst->width);
+        if (dst->height < srcRec.height) srcRec.height = static_cast<f32>(dst->height);
 
         // This blitting method is quite fast! The process followed is:
         // for every pixel -> [get_src_format/get_dst_format -> blend -> format_to_dst]
@@ -4388,25 +4388,25 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
             (srcPtr->format == PIXELFORMAT_UNCOMPRESSED_R16G16B16)))
             blendRequired = false;
 
-        const int strideDst = GetPixelDataSize(dst->width, 1, dst->format);
-        const int bytesPerPixelDst = strideDst/(dst->width);
+        const i32 strideDst = GetPixelDataSize(dst->width, 1, dst->format);
+        const i32 bytesPerPixelDst = strideDst/(dst->width);
 
-        const int strideSrc = GetPixelDataSize(srcPtr->width, 1, srcPtr->format);
-        const int bytesPerPixelSrc = strideSrc/(srcPtr->width);
+        const i32 strideSrc = GetPixelDataSize(srcPtr->width, 1, srcPtr->format);
+        const i32 bytesPerPixelSrc = strideSrc/(srcPtr->width);
 
-        unsigned char *pSrcBase = static_cast<unsigned char *>(srcPtr->data) + (static_cast<int>(srcRec.y)*srcPtr->width + static_cast<int>(srcRec.x))*bytesPerPixelSrc;
-        unsigned char *pDstBase = static_cast<unsigned char *>(dst->data) + (static_cast<int>(dstRec.y)*dst->width + static_cast<int>(dstRec.x))*bytesPerPixelDst;
+        u8 *pSrcBase = static_cast<u8 *>(srcPtr->data) + (static_cast<i32>(srcRec.y)*srcPtr->width + static_cast<i32>(srcRec.x))*bytesPerPixelSrc;
+        u8 *pDstBase = static_cast<u8 *>(dst->data) + (static_cast<i32>(dstRec.y)*dst->width + static_cast<i32>(dstRec.x))*bytesPerPixelDst;
 
-        for (int y = 0; y < static_cast<int>(srcRec.height); y++)
+        for (i32 y = 0; y < static_cast<i32>(srcRec.height); y++)
         {
-            unsigned char *pSrc = pSrcBase;
-            unsigned char *pDst = pDstBase;
+            u8 *pSrc = pSrcBase;
+            u8 *pDst = pDstBase;
 
             // Fast path: Avoid moving pixel by pixel if no blend required and same format
-            if (!blendRequired && (srcPtr->format == dst->format)) memcpy(pDst, pSrc, static_cast<int>(srcRec.width)*bytesPerPixelSrc);
+            if (!blendRequired && (srcPtr->format == dst->format)) memcpy(pDst, pSrc, static_cast<i32>(srcRec.width)*bytesPerPixelSrc);
             else
             {
-                for (int x = 0; x < static_cast<int>(srcRec.width); x++)
+                for (i32 x = 0; x < static_cast<i32>(srcRec.width); x++)
                 {
                     colSrc = GetPixelColor(pSrc, srcPtr->format);
                     colDst = GetPixelColor(pDst, dst->format);
@@ -4460,7 +4460,7 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
 }
 
 // Draw text (default font) within an image (destination)
-void ImageDrawText(Image *dst, std::string_view textView, int posX, int posY, int fontSize, Color color)
+void ImageDrawText(Image *dst, std::string_view textView, i32 posX, i32 posY, i32 fontSize, Color color)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -4469,23 +4469,23 @@ void ImageDrawText(Image *dst, std::string_view textView, int posX, int posY, in
     // Make sure default font is loaded to be used on image text drawing
     if (GetFontDefault().texture.id == 0) LoadFontDefault();
 
-    const vec2 position = { static_cast<float>(posX), static_cast<float>(posY) };
-    ImageDrawTextEx(dst, GetFontDefault(), text, position, static_cast<float>(fontSize), 1.0f, color);   // WARNING: Module required: rtext
+    const vec2 position = { static_cast<f32>(posX), static_cast<f32>(posY) };
+    ImageDrawTextEx(dst, GetFontDefault(), text, position, static_cast<f32>(fontSize), 1.0f, color);   // WARNING: Module required: rtext
 #else
     TRACELOG(LOG_WARNING, "IMAGE: ImageDrawText() requires module: rtext");
 #endif
 }
 
 // Draw text (custom sprite font) within an image (destination)
-void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, vec2 position, float fontSize, float spacing, Color tint)
+void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, vec2 position, f32 fontSize, f32 spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
     const Image imText = ImageTextEx(font, text, fontSize, spacing, tint);
 
-    const Rectangle srcRec = { 0.0f, 0.0f, static_cast<float>(imText.width), static_cast<float>(imText.height) };
-    const Rectangle dstRec = { position.x, position.y, static_cast<float>(imText.width), static_cast<float>(imText.height) };
+    const Rectangle srcRec = { 0.0f, 0.0f, static_cast<f32>(imText.width), static_cast<f32>(imText.height) };
+    const Rectangle dstRec = { position.x, position.y, static_cast<f32>(imText.width), static_cast<f32>(imText.height) };
 
     ImageDrawImagePro(dst, imText, srcRec, dstRec, vec2{ 0 }, 0.0f, WHITE);
 
@@ -4493,7 +4493,7 @@ void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, vec2 posi
 }
 
 // Draw text using Font and pro parameters (rotation)
-void ImageDrawTextPro(Image *dst, Font font, std::string_view textView, vec2 position, vec2 origin, float rotation, float fontSize, float spacing, Color tint)
+void ImageDrawTextPro(Image *dst, Font font, std::string_view textView, vec2 position, vec2 origin, f32 rotation, f32 fontSize, f32 spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -4544,7 +4544,7 @@ Texture2D LoadTextureFromImage(Image image)
 }
 
 // Load cubemap from image, multiple image cubemap layouts supported
-TextureCubemap LoadTextureCubemap(Image image, int layout)
+TextureCubemap LoadTextureCubemap(Image image, i32 layout)
 {
     TextureCubemap cubemap = { 0 };
 
@@ -4575,12 +4575,12 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
     // Layout provided or already auto-detected
     if (layout != CUBEMAP_LAYOUT_AUTO_DETECT)
     {
-        const int size = cubemap.width;
+        const i32 size = cubemap.width;
 
         Image faces = { nullptr };                // Vertical column image
         Rectangle faceRecs[6] = { 0 };            // Face source rectangles
 
-        for (int i = 0; i < 6; i++) faceRecs[i] = Rectangle{ 0, 0, static_cast<float>(size), static_cast<float>(size) };
+        for (i32 i = 0; i < 6; i++) faceRecs[i] = Rectangle{ 0, 0, static_cast<f32>(size), static_cast<f32>(size) };
 
         if (layout == CUBEMAP_LAYOUT_LINE_VERTICAL)
         {
@@ -4593,24 +4593,24 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
         } */
         else
         {
-            if (layout == CUBEMAP_LAYOUT_LINE_HORIZONTAL) for (int i = 0; i < 6; i++) faceRecs[i].x = static_cast<float>(size)*i;
+            if (layout == CUBEMAP_LAYOUT_LINE_HORIZONTAL) for (i32 i = 0; i < 6; i++) faceRecs[i].x = static_cast<f32>(size)*i;
             else if (layout == CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR)
             {
-                faceRecs[0].x = static_cast<float>(size); faceRecs[0].y = static_cast<float>(size);
-                faceRecs[1].x = static_cast<float>(size); faceRecs[1].y = static_cast<float>(size)*3;
-                faceRecs[2].x = static_cast<float>(size); faceRecs[2].y = 0;
-                faceRecs[3].x = static_cast<float>(size); faceRecs[3].y = static_cast<float>(size)*2;
-                faceRecs[4].x = 0; faceRecs[4].y = static_cast<float>(size);
-                faceRecs[5].x = static_cast<float>(size)*2; faceRecs[5].y = static_cast<float>(size);
+                faceRecs[0].x = static_cast<f32>(size); faceRecs[0].y = static_cast<f32>(size);
+                faceRecs[1].x = static_cast<f32>(size); faceRecs[1].y = static_cast<f32>(size)*3;
+                faceRecs[2].x = static_cast<f32>(size); faceRecs[2].y = 0;
+                faceRecs[3].x = static_cast<f32>(size); faceRecs[3].y = static_cast<f32>(size)*2;
+                faceRecs[4].x = 0; faceRecs[4].y = static_cast<f32>(size);
+                faceRecs[5].x = static_cast<f32>(size)*2; faceRecs[5].y = static_cast<f32>(size);
             }
             else if (layout == CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE)
             {
-                faceRecs[0].x = static_cast<float>(size)*2; faceRecs[0].y = static_cast<float>(size);
-                faceRecs[1].x = 0; faceRecs[1].y = static_cast<float>(size);
-                faceRecs[2].x = static_cast<float>(size); faceRecs[2].y = 0;
-                faceRecs[3].x = static_cast<float>(size); faceRecs[3].y = static_cast<float>(size)*2;
-                faceRecs[4].x = static_cast<float>(size); faceRecs[4].y = static_cast<float>(size);
-                faceRecs[5].x = static_cast<float>(size)*3; faceRecs[5].y = static_cast<float>(size);
+                faceRecs[0].x = static_cast<f32>(size)*2; faceRecs[0].y = static_cast<f32>(size);
+                faceRecs[1].x = 0; faceRecs[1].y = static_cast<f32>(size);
+                faceRecs[2].x = static_cast<f32>(size); faceRecs[2].y = 0;
+                faceRecs[3].x = static_cast<f32>(size); faceRecs[3].y = static_cast<f32>(size)*2;
+                faceRecs[4].x = static_cast<f32>(size); faceRecs[4].y = static_cast<f32>(size);
+                faceRecs[5].x = static_cast<f32>(size)*3; faceRecs[5].y = static_cast<f32>(size);
             }
 
             // Convert image data to 6 faces in a vertical column, that's the optimum layout for loading
@@ -4625,7 +4625,7 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
                 ImageMipmaps(&faces);
             }
 
-            for (int i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], Rectangle{ 0, static_cast<float>(size)*i, static_cast<float>(size), static_cast<float>(size) }, vec2{ 0 }, 0.0f, WHITE);
+            for (i32 i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], Rectangle{ 0, static_cast<f32>(size)*i, static_cast<f32>(size), static_cast<f32>(size) }, vec2{ 0 }, 0.0f, WHITE);
 
             UnloadImage(mipmapped);
         }
@@ -4649,14 +4649,14 @@ TextureCubemap LoadTextureCubemap(Image image, int layout)
 }
 
 // Load RGBA texture for rendering (framebuffer)
-RenderTexture2D LoadRenderTexture(int width, int height)
+RenderTexture2D LoadRenderTexture(i32 width, i32 height)
 {
     return LoadRenderTextureEx(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
 }
 
 // Load texture for rendering (framebuffer), with specific format
 // NOTE: Render texture is loaded by default with RGBA color attachment and depth RenderBuffer
-RLAPI RenderTexture2D LoadRenderTextureEx(int width, int height, int format)
+RLAPI RenderTexture2D LoadRenderTextureEx(i32 width, i32 height, i32 format)
 {
     RenderTexture2D target = { 0 };
 
@@ -4768,7 +4768,7 @@ void UpdateTexture(Texture2D texture, const void *pixels)
 // NOTE 3: rec must fit completely within texture's width and height
 void UpdateTextureRec(Texture2D texture, Rectangle rec, const void *pixels)
 {
-    rlUpdateTexture(texture.id, static_cast<int>(rec.x), static_cast<int>(rec.y), static_cast<int>(rec.width), static_cast<int>(rec.height), texture.format, pixels);
+    rlUpdateTexture(texture.id, static_cast<i32>(rec.x), static_cast<i32>(rec.y), static_cast<i32>(rec.width), static_cast<i32>(rec.height), texture.format, pixels);
 }
 
 //------------------------------------------------------------------------------------
@@ -4783,7 +4783,7 @@ void GenTextureMipmaps(Texture2D *texture)
 }
 
 // Set texture scaling filter mode
-void SetTextureFilter(Texture2D texture, int filter)
+void SetTextureFilter(Texture2D texture, i32 filter)
 {
     switch (filter)
     {
@@ -4849,7 +4849,7 @@ void SetTextureFilter(Texture2D texture, int filter)
 }
 
 // Set texture wrapping mode
-void SetTextureWrap(Texture2D texture, int wrap)
+void SetTextureWrap(Texture2D texture, i32 wrap)
 {
     switch (wrap)
     {
@@ -4882,9 +4882,9 @@ void SetTextureWrap(Texture2D texture, int wrap)
 // Texture drawing functions
 //------------------------------------------------------------------------------------
 // Draw a texture
-void DrawTexture(Texture2D texture, int posX, int posY, Color tint)
+void DrawTexture(Texture2D texture, i32 posX, i32 posY, Color tint)
 {
-    DrawTextureEx(texture, vec2{ static_cast<float>(posX), static_cast<float>(posY) }, 0.0f, 1.0f, tint);
+    DrawTextureEx(texture, vec2{ static_cast<f32>(posX), static_cast<f32>(posY) }, 0.0f, 1.0f, tint);
 }
 
 // Draw a texture with position defined as vec2
@@ -4895,10 +4895,10 @@ void DrawTextureV(Texture2D texture, vec2 position, Color tint)
 
 // Draw a texture with rotation and scale
 // NOTE: Rotation applied from top-left corner origin
-void DrawTextureEx(Texture2D texture, vec2 position, float rotation, float scale, Color tint)
+void DrawTextureEx(Texture2D texture, vec2 position, f32 rotation, f32 scale, Color tint)
 {
-    const Rectangle srcrec = { 0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height) };
-    const Rectangle dstrec = { position.x, position.y, static_cast<float>(texture.width)*scale, static_cast<float>(texture.height)*scale };
+    const Rectangle srcrec = { 0.0f, 0.0f, static_cast<f32>(texture.width), static_cast<f32>(texture.height) };
+    const Rectangle dstrec = { position.x, position.y, static_cast<f32>(texture.width)*scale, static_cast<f32>(texture.height)*scale };
     const vec2 origin = { 0.0f, 0.0f };
 
     DrawTexturePro(texture, srcrec, dstrec, origin, rotation, tint);
@@ -4915,13 +4915,13 @@ void DrawTextureRec(Texture2D texture, Rectangle rec, vec2 position, Color tint)
 
 // Draw a part of a texture (defined by a rectangle) with 'pro' parameters
 // NOTE: origin is relative to destination rectangle size
-void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 origin, float rotation, Color tint)
+void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 origin, f32 rotation, Color tint)
 {
     // Check if texture is valid
     if (texture.id > 0)
     {
-        const float width = static_cast<float>(texture.width);
-        const float height = static_cast<float>(texture.height);
+        const f32 width = static_cast<f32>(texture.width);
+        const f32 height = static_cast<f32>(texture.height);
 
         bool flipX = false;
 
@@ -4939,8 +4939,8 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 
         // Only calculate rotation if needed
         if (rotation == 0.0f)
         {
-            const float x = dstrec.x - origin.x;
-            const float y = dstrec.y - origin.y;
+            const f32 x = dstrec.x - origin.x;
+            const f32 y = dstrec.y - origin.y;
             topLeft = vec2{ x, y };
             topRight = vec2{ x + dstrec.width, y };
             bottomLeft = vec2{ x, y + dstrec.height };
@@ -4948,12 +4948,12 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 
         }
         else
         {
-            const float sinRotation = sinf(rotation*DEG2RAD);
-            const float cosRotation = cosf(rotation*DEG2RAD);
-            const float x = dstrec.x;
-            const float y = dstrec.y;
-            const float dx = -origin.x;
-            const float dy = -origin.y;
+            const f32 sinRotation = sinf(rotation*DEG2RAD);
+            const f32 cosRotation = cosf(rotation*DEG2RAD);
+            const f32 x = dstrec.x;
+            const f32 y = dstrec.y;
+            const f32 dx = -origin.x;
+            const f32 dy = -origin.y;
 
             topLeft.x = x + dx*cosRotation - dy*sinRotation;
             topLeft.y = y + dx*sinRotation + dy*cosRotation;
@@ -5040,15 +5040,15 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 
 }
 
 // Draw a texture (or part of it) that stretches or shrinks nicely using n-patch info
-void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstrec, vec2 origin, float rotation, Color tint)
+void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstrec, vec2 origin, f32 rotation, Color tint)
 {
     if (texture.id > 0)
     {
-        const float width = static_cast<float>(texture.width);
-        const float height = static_cast<float>(texture.height);
+        const f32 width = static_cast<f32>(texture.width);
+        const f32 height = static_cast<f32>(texture.height);
 
-        float patchWidth = (static_cast<int>(dstrec.width) <= 0)? 0.0f : dstrec.width;
-        float patchHeight = (static_cast<int>(dstrec.height) <= 0)? 0.0f : dstrec.height;
+        f32 patchWidth = (static_cast<i32>(dstrec.width) <= 0)? 0.0f : dstrec.width;
+        f32 patchHeight = (static_cast<i32>(dstrec.height) <= 0)? 0.0f : dstrec.height;
 
         if (nPatchInfo.source.width < 0) nPatchInfo.source.x -= nPatchInfo.source.width;
         if (nPatchInfo.source.height < 0) nPatchInfo.source.y -= nPatchInfo.source.height;
@@ -5057,10 +5057,10 @@ void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstre
 
         bool drawCenter = true;
         bool drawMiddle = true;
-        float leftBorder = static_cast<float>(nPatchInfo.left);
-        float topBorder = static_cast<float>(nPatchInfo.top);
-        float rightBorder = static_cast<float>(nPatchInfo.right);
-        float bottomBorder = static_cast<float>(nPatchInfo.bottom);
+        f32 leftBorder = static_cast<f32>(nPatchInfo.left);
+        f32 topBorder = static_cast<f32>(nPatchInfo.top);
+        f32 rightBorder = static_cast<f32>(nPatchInfo.right);
+        f32 bottomBorder = static_cast<f32>(nPatchInfo.bottom);
 
         // Adjust the lateral (left and right) border widths in case patchWidth < texture.width
         if (patchWidth <= (leftBorder + rightBorder) && nPatchInfo.layout != NPATCH_THREE_PATCH_VERTICAL)
@@ -5253,27 +5253,27 @@ bool ColorIsEqual(Color col1, Color col2)
 }
 
 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
-Color Fade(Color color, float alpha)
+Color Fade(Color color, f32 alpha)
 {
     Color result = color;
 
     if (alpha < 0.0f) alpha = 0.0f;
     else if (alpha > 1.0f) alpha = 1.0f;
 
-    result.a = static_cast<unsigned char>(255.0f*alpha);
+    result.a = static_cast<u8>(255.0f*alpha);
 
     return result;
 }
 
 // Get hexadecimal value for a Color
-int ColorToInt(Color color)
+i32 ColorToInt(Color color)
 {
-    int result = 0;
+    i32 result = 0;
 
-    result = static_cast<int>((static_cast<unsigned int>(color.r) << 24) |
-                   (static_cast<unsigned int>(color.g) << 16) |
-                   (static_cast<unsigned int>(color.b) << 8) |
-                    static_cast<unsigned int>(color.a));
+    result = static_cast<i32>((static_cast<u32>(color.r) << 24) |
+                   (static_cast<u32>(color.g) << 16) |
+                   (static_cast<u32>(color.b) << 8) |
+                    static_cast<u32>(color.a));
 
     return result;
 }
@@ -5283,10 +5283,10 @@ vec4 ColorNormalize(Color color)
 {
     vec4 result;
 
-    result.x = static_cast<float>(color.r)/255.0f;
-    result.y = static_cast<float>(color.g)/255.0f;
-    result.z = static_cast<float>(color.b)/255.0f;
-    result.w = static_cast<float>(color.a)/255.0f;
+    result.x = static_cast<f32>(color.r)/255.0f;
+    result.y = static_cast<f32>(color.g)/255.0f;
+    result.z = static_cast<f32>(color.b)/255.0f;
+    result.w = static_cast<f32>(color.a)/255.0f;
 
     return result;
 }
@@ -5296,10 +5296,10 @@ Color ColorFromNormalized(vec4 normalized)
 {
     Color result;
 
-    result.r = static_cast<unsigned char>(normalized.x*255.0f);
-    result.g = static_cast<unsigned char>(normalized.y*255.0f);
-    result.b = static_cast<unsigned char>(normalized.z*255.0f);
-    result.a = static_cast<unsigned char>(normalized.w*255.0f);
+    result.r = static_cast<u8>(normalized.x*255.0f);
+    result.g = static_cast<u8>(normalized.y*255.0f);
+    result.b = static_cast<u8>(normalized.z*255.0f);
+    result.a = static_cast<u8>(normalized.w*255.0f);
 
     return result;
 }
@@ -5309,10 +5309,10 @@ Color ColorFromNormalized(vec4 normalized)
 vec3 ColorToHSV(Color color)
 {
     vec3 hsv{};
-    const vec3 rgb = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
-    float min = 0.0f;
-    float max = 0.0f;
-    float delta = 0.0f;
+    const vec3 rgb = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+    f32 min = 0.0f;
+    f32 max = 0.0f;
+    f32 delta = 0.0f;
 
     min = (rgb.x < rgb.y)? rgb.x : rgb.y;
     min = (min < rgb.z)? min : rgb.z;
@@ -5363,17 +5363,17 @@ vec3 ColorToHSV(Color color)
 // NOTE: Color->HSV->Color conversion will not yield exactly the same color due to rounding errors
 // Hue is provided in degrees: [0..360]
 // Saturation/Value are provided normalized: [0.0f..1.0f]
-Color ColorFromHSV(float hue, float saturation, float value)
+Color ColorFromHSV(f32 hue, f32 saturation, f32 value)
 {
     Color color = { 0, 0, 0, 255 };
 
     // Red channel
-    float k = fmodf((5.0f + hue/60.0f), 6);
-    float t = 4.0f - k;
+    f32 k = fmodf((5.0f + hue/60.0f), 6);
+    f32 t = 4.0f - k;
     k = (t < k)? t : k;
     k = (k < 1)? k : 1;
     k = (k > 0)? k : 0;
-    color.r = static_cast<unsigned char>((value - value*saturation*k)*255.0f);
+    color.r = static_cast<u8>((value - value*saturation*k)*255.0f);
 
     // Green channel
     k = fmodf((3.0f + hue/60.0f), 6);
@@ -5381,7 +5381,7 @@ Color ColorFromHSV(float hue, float saturation, float value)
     k = (t < k)? t : k;
     k = (k < 1)? k : 1;
     k = (k > 0)? k : 0;
-    color.g = static_cast<unsigned char>((value - value*saturation*k)*255.0f);
+    color.g = static_cast<u8>((value - value*saturation*k)*255.0f);
 
     // Blue channel
     k = fmodf((1.0f + hue/60.0f), 6);
@@ -5389,7 +5389,7 @@ Color ColorFromHSV(float hue, float saturation, float value)
     k = (t < k)? t : k;
     k = (k < 1)? k : 1;
     k = (k > 0)? k : 0;
-    color.b = static_cast<unsigned char>((value - value*saturation*k)*255.0f);
+    color.b = static_cast<u8>((value - value*saturation*k)*255.0f);
 
     return color;
 }
@@ -5399,10 +5399,10 @@ Color ColorTint(Color color, Color tint)
 {
     Color result = color;
 
-    const unsigned char r = static_cast<unsigned char>((static_cast<int>(color.r)*static_cast<int>(tint.r))/255);
-    const unsigned char g = static_cast<unsigned char>((static_cast<int>(color.g)*static_cast<int>(tint.g))/255);
-    const unsigned char b = static_cast<unsigned char>((static_cast<int>(color.b)*static_cast<int>(tint.b))/255);
-    const unsigned char a = static_cast<unsigned char>((static_cast<int>(color.a)*static_cast<int>(tint.a))/255);
+    const u8 r = static_cast<u8>((static_cast<i32>(color.r)*static_cast<i32>(tint.r))/255);
+    const u8 g = static_cast<u8>((static_cast<i32>(color.g)*static_cast<i32>(tint.g))/255);
+    const u8 b = static_cast<u8>((static_cast<i32>(color.b)*static_cast<i32>(tint.b))/255);
+    const u8 a = static_cast<u8>((static_cast<i32>(color.a)*static_cast<i32>(tint.a))/255);
 
     result.r = r;
     result.g = g;
@@ -5413,16 +5413,16 @@ Color ColorTint(Color color, Color tint)
 }
 
 // Get color with brightness correction, brightness factor goes from -1.0f to 1.0f
-Color ColorBrightness(Color color, float factor)
+Color ColorBrightness(Color color, f32 factor)
 {
     Color result = color;
 
     if (factor > 1.0f) factor = 1.0f;
     else if (factor < -1.0f) factor = -1.0f;
 
-    float red = static_cast<float>(color.r);
-    float green = static_cast<float>(color.g);
-    float blue = static_cast<float>(color.b);
+    f32 red = static_cast<f32>(color.r);
+    f32 green = static_cast<f32>(color.g);
+    f32 blue = static_cast<f32>(color.b);
 
     if (factor < 0.0f)
     {
@@ -5438,16 +5438,16 @@ Color ColorBrightness(Color color, float factor)
         blue = (255 - blue)*factor + blue;
     }
 
-    result.r = static_cast<unsigned char>(red);
-    result.g = static_cast<unsigned char>(green);
-    result.b = static_cast<unsigned char>(blue);
+    result.r = static_cast<u8>(red);
+    result.g = static_cast<u8>(green);
+    result.b = static_cast<u8>(blue);
 
     return result;
 }
 
 // Get color with contrast correction
 // NOTE: Contrast values between -1.0f and 1.0f
-Color ColorContrast(Color color, float contrast)
+Color ColorContrast(Color color, f32 contrast)
 {
     Color result = color;
 
@@ -5457,7 +5457,7 @@ Color ColorContrast(Color color, float contrast)
     contrast = (1.0f + contrast);
     contrast *= contrast;
 
-    float pR = static_cast<float>(color.r)/255.0f;
+    f32 pR = static_cast<f32>(color.r)/255.0f;
     pR -= 0.5f;
     pR *= contrast;
     pR += 0.5f;
@@ -5465,7 +5465,7 @@ Color ColorContrast(Color color, float contrast)
     if (pR < 0) pR = 0;
     else if (pR > 255) pR = 255;
 
-    float pG = static_cast<float>(color.g)/255.0f;
+    f32 pG = static_cast<f32>(color.g)/255.0f;
     pG -= 0.5f;
     pG *= contrast;
     pG += 0.5f;
@@ -5473,7 +5473,7 @@ Color ColorContrast(Color color, float contrast)
     if (pG < 0) pG = 0;
     else if (pG > 255) pG = 255;
 
-    float pB = static_cast<float>(color.b)/255.0f;
+    f32 pB = static_cast<f32>(color.b)/255.0f;
     pB -= 0.5f;
     pB *= contrast;
     pB += 0.5f;
@@ -5481,22 +5481,22 @@ Color ColorContrast(Color color, float contrast)
     if (pB < 0) pB = 0;
     else if (pB > 255) pB = 255;
 
-    result.r = static_cast<unsigned char>(pR);
-    result.g = static_cast<unsigned char>(pG);
-    result.b = static_cast<unsigned char>(pB);
+    result.r = static_cast<u8>(pR);
+    result.g = static_cast<u8>(pG);
+    result.b = static_cast<u8>(pB);
 
     return result;
 }
 
 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
-Color ColorAlpha(Color color, float alpha)
+Color ColorAlpha(Color color, f32 alpha)
 {
     Color result = color;
 
     if (alpha < 0.0f) alpha = 0.0f;
     else if (alpha > 1.0f) alpha = 1.0f;
 
-    result.a = static_cast<unsigned char>(255.0f*alpha);
+    result.a = static_cast<u8>(255.0f*alpha);
 
     return result;
 }
@@ -5507,10 +5507,10 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
     Color result = WHITE;
 
     // Apply color tint to source color
-    src.r = static_cast<unsigned char>((static_cast<unsigned int>(src.r)*(static_cast<unsigned int>(tint.r)+1)) >> 8);
-    src.g = static_cast<unsigned char>((static_cast<unsigned int>(src.g)*(static_cast<unsigned int>(tint.g)+1)) >> 8);
-    src.b = static_cast<unsigned char>((static_cast<unsigned int>(src.b)*(static_cast<unsigned int>(tint.b)+1)) >> 8);
-    src.a = static_cast<unsigned char>((static_cast<unsigned int>(src.a)*(static_cast<unsigned int>(tint.a)+1)) >> 8);
+    src.r = static_cast<u8>((static_cast<u32>(src.r)*(static_cast<u32>(tint.r)+1)) >> 8);
+    src.g = static_cast<u8>((static_cast<u32>(src.g)*(static_cast<u32>(tint.g)+1)) >> 8);
+    src.b = static_cast<u8>((static_cast<u32>(src.b)*(static_cast<u32>(tint.b)+1)) >> 8);
+    src.a = static_cast<u8>((static_cast<u32>(src.a)*(static_cast<u32>(tint.a)+1)) >> 8);
 
 //#define COLORALPHABLEND_FLOAT
 #define COLORALPHABLEND_INTEGERS
@@ -5519,14 +5519,14 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
     else if (src.a == 255) result = src;
     else
     {
-        const unsigned int alpha = static_cast<unsigned int>(src.a) + 1; // Shifting by 8 (dividing by 256), so need to take that excess into account
-        result.a = static_cast<unsigned char>((alpha*256 + static_cast<unsigned int>(dst.a)*(256 - alpha)) >> 8);
+        const u32 alpha = static_cast<u32>(src.a) + 1; // Shifting by 8 (dividing by 256), so need to take that excess into account
+        result.a = static_cast<u8>((alpha*256 + static_cast<u32>(dst.a)*(256 - alpha)) >> 8);
 
         if (result.a > 0)
         {
-            result.r = static_cast<unsigned char>(((static_cast<unsigned int>(src.r)*alpha*256 + static_cast<unsigned int>(dst.r)*static_cast<unsigned int>(dst.a)*(256 - alpha))/result.a) >> 8);
-            result.g = static_cast<unsigned char>(((static_cast<unsigned int>(src.g)*alpha*256 + static_cast<unsigned int>(dst.g)*static_cast<unsigned int>(dst.a)*(256 - alpha))/result.a) >> 8);
-            result.b = static_cast<unsigned char>(((static_cast<unsigned int>(src.b)*alpha*256 + static_cast<unsigned int>(dst.b)*static_cast<unsigned int>(dst.a)*(256 - alpha))/result.a) >> 8);
+            result.r = static_cast<u8>(((static_cast<u32>(src.r)*alpha*256 + static_cast<u32>(dst.r)*static_cast<u32>(dst.a)*(256 - alpha))/result.a) >> 8);
+            result.g = static_cast<u8>(((static_cast<u32>(src.g)*alpha*256 + static_cast<u32>(dst.g)*static_cast<u32>(dst.a)*(256 - alpha))/result.a) >> 8);
+            result.b = static_cast<u8>(((static_cast<u32>(src.b)*alpha*256 + static_cast<u32>(dst.b)*static_cast<u32>(dst.a)*(256 - alpha))/result.a) >> 8);
         }
     }
 #endif
@@ -5549,7 +5549,7 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
             fout.z = (fsrc.z*fsrc.w + fdst.z*fdst.w*(1 - fsrc.w))/fout.w;
         }
 
-        result = Color{ static_cast<unsigned char>((fout.x*255.0f)), static_cast<unsigned char>((fout.y*255.0f)), static_cast<unsigned char>((fout.z*255.0f)), static_cast<unsigned char>((fout.w*255.0f)) };
+        result = Color{ static_cast<u8>((fout.x*255.0f)), static_cast<u8>((fout.y*255.0f)), static_cast<u8>((fout.z*255.0f)), static_cast<u8>((fout.w*255.0f)) };
     }
 #endif
 
@@ -5557,121 +5557,121 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
 }
 
 // Get color lerp interpolation between two colors, factor [0.0f..1.0f]
-Color ColorLerp(Color color1, Color color2, float factor)
+Color ColorLerp(Color color1, Color color2, f32 factor)
 {
     Color color = { 0 };
 
     if (factor < 0.0f) factor = 0.0f;
     else if (factor > 1.0f) factor = 1.0f;
 
-    color.r = static_cast<unsigned char>((1.0f - factor)*color1.r + factor*color2.r);
-    color.g = static_cast<unsigned char>((1.0f - factor)*color1.g + factor*color2.g);
-    color.b = static_cast<unsigned char>((1.0f - factor)*color1.b + factor*color2.b);
-    color.a = static_cast<unsigned char>((1.0f - factor)*color1.a + factor*color2.a);
+    color.r = static_cast<u8>((1.0f - factor)*color1.r + factor*color2.r);
+    color.g = static_cast<u8>((1.0f - factor)*color1.g + factor*color2.g);
+    color.b = static_cast<u8>((1.0f - factor)*color1.b + factor*color2.b);
+    color.a = static_cast<u8>((1.0f - factor)*color1.a + factor*color2.a);
 
     return color;
 }
 
 // Get a Color struct from hexadecimal value
-Color GetColor(unsigned int hexValue)
+Color GetColor(u32 hexValue)
 {
     Color color;
 
-    color.r = static_cast<unsigned char>(hexValue >> 24) & 0xff;
-    color.g = static_cast<unsigned char>(hexValue >> 16) & 0xff;
-    color.b = static_cast<unsigned char>(hexValue >> 8) & 0xff;
-    color.a = static_cast<unsigned char>(hexValue) & 0xff;
+    color.r = static_cast<u8>(hexValue >> 24) & 0xff;
+    color.g = static_cast<u8>(hexValue >> 16) & 0xff;
+    color.b = static_cast<u8>(hexValue >> 8) & 0xff;
+    color.a = static_cast<u8>(hexValue) & 0xff;
 
     return color;
 }
 
 // Get color from a pixel from certain format
-Color GetPixelColor(const void *srcPtr, int format)
+Color GetPixelColor(const void *srcPtr, i32 format)
 {
     Color color = { 0 };
 
     switch (format)
     {
-        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], 255 }; break;
-        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[1] }; break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE: color = Color{ (static_cast<const u8 *>(srcPtr))[0], (static_cast<const u8 *>(srcPtr))[0], (static_cast<const u8 *>(srcPtr))[0], 255 }; break;
+        case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA: color = Color{ (static_cast<const u8 *>(srcPtr))[0], (static_cast<const u8 *>(srcPtr))[0], (static_cast<const u8 *>(srcPtr))[0], (static_cast<const u8 *>(srcPtr))[1] }; break;
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
-            color.r = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] >> 11)*255/31);
-            color.g = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 5) & 0b0000000000111111)*255/63);
-            color.b = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] & 0b0000000000011111)*255/31);
+            color.r = static_cast<u8>(((static_cast<const u16 *>(srcPtr))[0] >> 11)*255/31);
+            color.g = static_cast<u8>((((static_cast<const u16 *>(srcPtr))[0] >> 5) & 0b0000000000111111)*255/63);
+            color.b = static_cast<u8>(((static_cast<const u16 *>(srcPtr))[0] & 0b0000000000011111)*255/31);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
-            color.r = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] >> 11)*255/31);
-            color.g = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 6) & 0b0000000000011111)*255/31);
-            color.b = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 1) & 0b0000000000011111)*255/31);
-            color.a = ((static_cast<const unsigned short *>(srcPtr))[0] & 0b0000000000000001)? 255 : 0;
+            color.r = static_cast<u8>(((static_cast<const u16 *>(srcPtr))[0] >> 11)*255/31);
+            color.g = static_cast<u8>((((static_cast<const u16 *>(srcPtr))[0] >> 6) & 0b0000000000011111)*255/31);
+            color.b = static_cast<u8>((((static_cast<const u16 *>(srcPtr))[0] >> 1) & 0b0000000000011111)*255/31);
+            color.a = ((static_cast<const u16 *>(srcPtr))[0] & 0b0000000000000001)? 255 : 0;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
-            color.r = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] >> 12)*255/15);
-            color.g = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 8) & 0b0000000000001111)*255/15);
-            color.b = static_cast<unsigned char>((((static_cast<const unsigned short *>(srcPtr))[0] >> 4) & 0b0000000000001111)*255/15);
-            color.a = static_cast<unsigned char>(((static_cast<const unsigned short *>(srcPtr))[0] & 0b0000000000001111)*255/15);
+            color.r = static_cast<u8>(((static_cast<const u16 *>(srcPtr))[0] >> 12)*255/15);
+            color.g = static_cast<u8>((((static_cast<const u16 *>(srcPtr))[0] >> 8) & 0b0000000000001111)*255/15);
+            color.b = static_cast<u8>((((static_cast<const u16 *>(srcPtr))[0] >> 4) & 0b0000000000001111)*255/15);
+            color.a = static_cast<u8>(((static_cast<const u16 *>(srcPtr))[0] & 0b0000000000001111)*255/15);
 
         } break;
-        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[1], (static_cast<const unsigned char *>(srcPtr))[2], (static_cast<const unsigned char *>(srcPtr))[3] }; break;
-        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: color = Color{ (static_cast<const unsigned char *>(srcPtr))[0], (static_cast<const unsigned char *>(srcPtr))[1], (static_cast<const unsigned char *>(srcPtr))[2], 255 }; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8: color = Color{ (static_cast<const u8 *>(srcPtr))[0], (static_cast<const u8 *>(srcPtr))[1], (static_cast<const u8 *>(srcPtr))[2], (static_cast<const u8 *>(srcPtr))[3] }; break;
+        case PIXELFORMAT_UNCOMPRESSED_R8G8B8: color = Color{ (static_cast<const u8 *>(srcPtr))[0], (static_cast<const u8 *>(srcPtr))[1], (static_cast<const u8 *>(srcPtr))[2], 255 }; break;
         case PIXELFORMAT_UNCOMPRESSED_R32:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
-            color.g = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
-            color.b = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
+            color.r = static_cast<u8>((static_cast<const f32 *>(srcPtr))[0]*255.0f);
+            color.g = static_cast<u8>((static_cast<const f32 *>(srcPtr))[0]*255.0f);
+            color.b = static_cast<u8>((static_cast<const f32 *>(srcPtr))[0]*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
-            color.g = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[1]*255.0f);
-            color.b = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[2]*255.0f);
+            color.r = static_cast<u8>((static_cast<const f32 *>(srcPtr))[0]*255.0f);
+            color.g = static_cast<u8>((static_cast<const f32 *>(srcPtr))[1]*255.0f);
+            color.b = static_cast<u8>((static_cast<const f32 *>(srcPtr))[2]*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[0]*255.0f);
-            color.g = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[1]*255.0f);
-            color.b = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[2]*255.0f);
-            color.a = static_cast<unsigned char>((static_cast<const float *>(srcPtr))[3]*255.0f);
+            color.r = static_cast<u8>((static_cast<const f32 *>(srcPtr))[0]*255.0f);
+            color.g = static_cast<u8>((static_cast<const f32 *>(srcPtr))[1]*255.0f);
+            color.b = static_cast<u8>((static_cast<const f32 *>(srcPtr))[2]*255.0f);
+            color.a = static_cast<u8>((static_cast<const f32 *>(srcPtr))[3]*255.0f);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
-            color.g = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
-            color.b = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
+            color.r = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[0])*255.0f);
+            color.g = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[0])*255.0f);
+            color.b = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[0])*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
-            color.g = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[1])*255.0f);
-            color.b = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[2])*255.0f);
+            color.r = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[0])*255.0f);
+            color.g = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[1])*255.0f);
+            color.b = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[2])*255.0f);
             color.a = 255;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
         {
             // NOTE: Pixel normalized float value is converted to [0..255]
-            color.r = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[0])*255.0f);
-            color.g = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[1])*255.0f);
-            color.b = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[2])*255.0f);
-            color.a = static_cast<unsigned char>(HalfToFloat((static_cast<const unsigned short *>(srcPtr))[3])*255.0f);
+            color.r = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[0])*255.0f);
+            color.g = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[1])*255.0f);
+            color.b = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[2])*255.0f);
+            color.a = static_cast<u8>(HalfToFloat((static_cast<const u16 *>(srcPtr))[3])*255.0f);
 
         } break;
         default: break;
@@ -5681,80 +5681,80 @@ Color GetPixelColor(const void *srcPtr, int format)
 }
 
 // Set pixel color formatted into destination pointer
-void SetPixelColor(void *dstPtr, Color color, int format)
+void SetPixelColor(void *dstPtr, Color color, i32 format)
 {
     switch (format)
     {
         case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
-            const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
-            (static_cast<unsigned char *>(dstPtr))[0] = gray;
+            (static_cast<u8 *>(dstPtr))[0] = gray;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
-            const unsigned char gray = static_cast<unsigned char>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
-            (static_cast<unsigned char *>(dstPtr))[0] = gray;
-            (static_cast<unsigned char *>(dstPtr))[1] = color.a;
+            (static_cast<u8 *>(dstPtr))[0] = gray;
+            (static_cast<u8 *>(dstPtr))[1] = color.a;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
             // NOTE: Calculate R5G6B5 equivalent color
-            const vec3 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f };
+            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
-            const unsigned char g = static_cast<unsigned char>(round(coln.y*63.0f));
-            const unsigned char b = static_cast<unsigned char>(round(coln.z*31.0f));
+            const u8 r = static_cast<u8>(round(coln.x*31.0f));
+            const u8 g = static_cast<u8>(round(coln.y*63.0f));
+            const u8 b = static_cast<u8>(round(coln.z*31.0f));
 
-            (static_cast<unsigned short *>(dstPtr))[0] = static_cast<unsigned short>(r) << 11 | static_cast<unsigned short>(g) << 5 | static_cast<unsigned short>(b);
+            (static_cast<u16 *>(dstPtr))[0] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 5 | static_cast<u16>(b);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const unsigned char r = static_cast<unsigned char>(round(coln.x*31.0f));
-            const unsigned char g = static_cast<unsigned char>(round(coln.y*31.0f));
-            const unsigned char b = static_cast<unsigned char>(round(coln.z*31.0f));
-            const unsigned char a = (coln.w > (static_cast<float>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
+            const u8 r = static_cast<u8>(round(coln.x*31.0f));
+            const u8 g = static_cast<u8>(round(coln.y*31.0f));
+            const u8 b = static_cast<u8>(round(coln.z*31.0f));
+            const u8 a = (coln.w > (static_cast<f32>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
 
-            (static_cast<unsigned short *>(dstPtr))[0] = static_cast<unsigned short>(r) << 11 | static_cast<unsigned short>(g) << 6 | static_cast<unsigned short>(b) << 1 | static_cast<unsigned short>(a);
+            (static_cast<u16 *>(dstPtr))[0] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 6 | static_cast<u16>(b) << 1 | static_cast<u16>(a);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<float>(color.r)/255.0f, static_cast<float>(color.g)/255.0f, static_cast<float>(color.b)/255.0f, static_cast<float>(color.a)/255.0f };
+            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const unsigned char r = static_cast<unsigned char>(round(coln.x*15.0f));
-            const unsigned char g = static_cast<unsigned char>(round(coln.y*15.0f));
-            const unsigned char b = static_cast<unsigned char>(round(coln.z*15.0f));
-            const unsigned char a = static_cast<unsigned char>(round(coln.w*15.0f));
+            const u8 r = static_cast<u8>(round(coln.x*15.0f));
+            const u8 g = static_cast<u8>(round(coln.y*15.0f));
+            const u8 b = static_cast<u8>(round(coln.z*15.0f));
+            const u8 a = static_cast<u8>(round(coln.w*15.0f));
 
-            (static_cast<unsigned short *>(dstPtr))[0] = static_cast<unsigned short>(r) << 12 | static_cast<unsigned short>(g) << 8 | static_cast<unsigned short>(b) << 4 | static_cast<unsigned short>(a);
+            (static_cast<u16 *>(dstPtr))[0] = static_cast<u16>(r) << 12 | static_cast<u16>(g) << 8 | static_cast<u16>(b) << 4 | static_cast<u16>(a);
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
         {
-            (static_cast<unsigned char *>(dstPtr))[0] = color.r;
-            (static_cast<unsigned char *>(dstPtr))[1] = color.g;
-            (static_cast<unsigned char *>(dstPtr))[2] = color.b;
+            (static_cast<u8 *>(dstPtr))[0] = color.r;
+            (static_cast<u8 *>(dstPtr))[1] = color.g;
+            (static_cast<u8 *>(dstPtr))[2] = color.b;
 
         } break;
         case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
         {
-            (static_cast<unsigned char *>(dstPtr))[0] = color.r;
-            (static_cast<unsigned char *>(dstPtr))[1] = color.g;
-            (static_cast<unsigned char *>(dstPtr))[2] = color.b;
-            (static_cast<unsigned char *>(dstPtr))[3] = color.a;
+            (static_cast<u8 *>(dstPtr))[0] = color.r;
+            (static_cast<u8 *>(dstPtr))[1] = color.g;
+            (static_cast<u8 *>(dstPtr))[2] = color.b;
+            (static_cast<u8 *>(dstPtr))[3] = color.a;
 
         } break;
         default: break;
@@ -5763,10 +5763,10 @@ void SetPixelColor(void *dstPtr, Color color, int format)
 
 // Get pixel data size in bytes for certain format
 // NOTE: Size can be requested for Image or Texture data
-int GetPixelDataSize(int width, int height, int format)
+i32 GetPixelDataSize(i32 width, i32 height, i32 format)
 {
-    int dataSize = 0;       // Size in bytes
-    int bpp = 0;            // Bits per pixel
+    i32 dataSize = 0;       // Size in bytes
+    i32 bpp = 0;            // Bits per pixel
     
     if ((width <= 0) || (height <= 0)) return dataSize;
     
@@ -5807,7 +5807,7 @@ int GetPixelDataSize(int width, int height, int format)
 
     if (dataSizeBytes < INT_MAX)
     {
-        dataSize = static_cast<int>(dataSizeBytes);
+        dataSize = static_cast<i32>(dataSizeBytes);
 
         // Most compressed formats works on 4x4 blocks,
         // if texture is smaller, minimum dataSize is 8 or 16
@@ -5831,19 +5831,19 @@ int GetPixelDataSize(int width, int height, int format)
 //----------------------------------------------------------------------------------
 // Convert half-float (stored as unsigned short) to float
 // REF: https://stackoverflow.com/questions/1659440/32-bit-to-16-bit-floating-point-conversion/60047308#60047308
-static float HalfToFloat(unsigned short x)
+static f32 HalfToFloat(u16 x)
 {
-    float result = 0.0f;
+    f32 result = 0.0f;
 
     union {
-        float fm;
-        unsigned int ui;
+        f32 fm;
+        u32 ui;
     } uni;
 
-    const unsigned int e = (x & 0x7c00) >> 10; // Exponent
-    const unsigned int m = (x & 0x03ff) << 13; // Mantissa
-    uni.fm = static_cast<float>(m);
-    const unsigned int v = uni.ui >> 23;                                                                                                   // Evil log2 bit hack to count leading zeros in denormalized format
+    const u32 e = (x & 0x7c00) >> 10; // Exponent
+    const u32 m = (x & 0x03ff) << 13; // Mantissa
+    uni.fm = static_cast<f32>(m);
+    const u32 v = uni.ui >> 23;                                                                                                   // Evil log2 bit hack to count leading zeros in denormalized format
     uni.ui = (x & 0x8000) << 16 | (e != 0)*((e + 112) << 23 | m) | ((e == 0)&(m != 0))*((v - 37) << 23 | ((m << (150 - v)) & 0x007fe000)); // sign : normalized : denormalized
 
     result = uni.fm;
@@ -5852,19 +5852,19 @@ static float HalfToFloat(unsigned short x)
 }
 
 // Convert float to half-float (stored as unsigned short)
-static unsigned short FloatToHalf(float x)
+static u16 FloatToHalf(f32 x)
 {
-    unsigned short result = 0;
+    u16 result = 0;
 
     union {
-        float fm;
-        unsigned int ui;
+        f32 fm;
+        u32 ui;
     } uni;
     uni.fm = x;
 
-    const unsigned int b = uni.ui + 0x00001000;    // Round-to-nearest-even: add last bit after truncated mantissa
-    const unsigned int e = (b & 0x7f800000) >> 23; // Exponent
-    const unsigned int m = b & 0x007fffff;         // Mantissa; in line below: 0x007ff000 = 0x00800000-0x00001000 = decimal indicator flag - initial rounding
+    const u32 b = uni.ui + 0x00001000;    // Round-to-nearest-even: add last bit after truncated mantissa
+    const u32 e = (b & 0x7f800000) >> 23; // Exponent
+    const u32 m = b & 0x007fffff;         // Mantissa; in line below: 0x007ff000 = 0x00800000-0x00001000 = decimal indicator flag - initial rounding
 
     result = (b & 0x80000000) >> 16 | (e > 112)*((((e - 112) << 10) & 0x7c00) | m >> 13) | ((e < 113) & (e > 101))*((((0x007ff000 + m) >> (125 - e)) + 1) >> 1) | (e > 143)*0x7fff; // sign : normalized : denormalized : saturate
 
@@ -5879,78 +5879,78 @@ static vec4 *LoadImageDataNormalized(Image image)
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
     {
-        for (int i = 0, k = 0; i < image.width*image.height; i++)
+        for (i32 i = 0, k = 0; i < image.width*image.height; i++)
         {
             switch (image.format)
             {
                 case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
                 {
-                    pixels[i].x = static_cast<float>((static_cast<unsigned char *>(image.data))[i])/255.0f;
-                    pixels[i].y = static_cast<float>((static_cast<unsigned char *>(image.data))[i])/255.0f;
-                    pixels[i].z = static_cast<float>((static_cast<unsigned char *>(image.data))[i])/255.0f;
+                    pixels[i].x = static_cast<f32>((static_cast<u8 *>(image.data))[i])/255.0f;
+                    pixels[i].y = static_cast<f32>((static_cast<u8 *>(image.data))[i])/255.0f;
+                    pixels[i].z = static_cast<f32>((static_cast<u8 *>(image.data))[i])/255.0f;
                     pixels[i].w = 1.0f;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
                 {
-                    pixels[i].x = static_cast<float>((static_cast<unsigned char *>(image.data))[k])/255.0f;
-                    pixels[i].y = static_cast<float>((static_cast<unsigned char *>(image.data))[k])/255.0f;
-                    pixels[i].z = static_cast<float>((static_cast<unsigned char *>(image.data))[k])/255.0f;
-                    pixels[i].w = static_cast<float>((static_cast<unsigned char *>(image.data))[k + 1])/255.0f;
+                    pixels[i].x = static_cast<f32>((static_cast<u8 *>(image.data))[k])/255.0f;
+                    pixels[i].y = static_cast<f32>((static_cast<u8 *>(image.data))[k])/255.0f;
+                    pixels[i].z = static_cast<f32>((static_cast<u8 *>(image.data))[k])/255.0f;
+                    pixels[i].w = static_cast<f32>((static_cast<u8 *>(image.data))[k + 1])/255.0f;
 
                     k += 2;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    pixels[i].x = static_cast<float>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
-                    pixels[i].y = static_cast<float>((pixel & 0b0000011111000000) >> 6)*(1.0f/31);
-                    pixels[i].z = static_cast<float>((pixel & 0b0000000000111110) >> 1)*(1.0f/31);
+                    pixels[i].x = static_cast<f32>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
+                    pixels[i].y = static_cast<f32>((pixel & 0b0000011111000000) >> 6)*(1.0f/31);
+                    pixels[i].z = static_cast<f32>((pixel & 0b0000000000111110) >> 1)*(1.0f/31);
                     pixels[i].w = ((pixel & 0b0000000000000001) == 0)? 0.0f : 1.0f;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    pixels[i].x = static_cast<float>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
-                    pixels[i].y = static_cast<float>((pixel & 0b0000011111100000) >> 5)*(1.0f/63);
-                    pixels[i].z = static_cast<float>(pixel & 0b0000000000011111)*(1.0f/31);
+                    pixels[i].x = static_cast<f32>((pixel & 0b1111100000000000) >> 11)*(1.0f/31);
+                    pixels[i].y = static_cast<f32>((pixel & 0b0000011111100000) >> 5)*(1.0f/63);
+                    pixels[i].z = static_cast<f32>(pixel & 0b0000000000011111)*(1.0f/31);
                     pixels[i].w = 1.0f;
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
                 {
-                    const unsigned short pixel = (static_cast<unsigned short *>(image.data))[i];
+                    const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    pixels[i].x = static_cast<float>((pixel & 0b1111000000000000) >> 12)*(1.0f/15);
-                    pixels[i].y = static_cast<float>((pixel & 0b0000111100000000) >> 8)*(1.0f/15);
-                    pixels[i].z = static_cast<float>((pixel & 0b0000000011110000) >> 4)*(1.0f/15);
-                    pixels[i].w = static_cast<float>(pixel & 0b0000000000001111)*(1.0f/15);
+                    pixels[i].x = static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(1.0f/15);
+                    pixels[i].y = static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(1.0f/15);
+                    pixels[i].z = static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(1.0f/15);
+                    pixels[i].w = static_cast<f32>(pixel & 0b0000000000001111)*(1.0f/15);
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
                 {
-                    pixels[i].x = static_cast<float>((static_cast<unsigned char *>(image.data))[k])/255.0f;
-                    pixels[i].y = static_cast<float>((static_cast<unsigned char *>(image.data))[k + 1])/255.0f;
-                    pixels[i].z = static_cast<float>((static_cast<unsigned char *>(image.data))[k + 2])/255.0f;
-                    pixels[i].w = static_cast<float>((static_cast<unsigned char *>(image.data))[k + 3])/255.0f;
+                    pixels[i].x = static_cast<f32>((static_cast<u8 *>(image.data))[k])/255.0f;
+                    pixels[i].y = static_cast<f32>((static_cast<u8 *>(image.data))[k + 1])/255.0f;
+                    pixels[i].z = static_cast<f32>((static_cast<u8 *>(image.data))[k + 2])/255.0f;
+                    pixels[i].w = static_cast<f32>((static_cast<u8 *>(image.data))[k + 3])/255.0f;
 
                     k += 4;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
                 {
-                    pixels[i].x = static_cast<float>((static_cast<unsigned char *>(image.data))[k])/255.0f;
-                    pixels[i].y = static_cast<float>((static_cast<unsigned char *>(image.data))[k + 1])/255.0f;
-                    pixels[i].z = static_cast<float>((static_cast<unsigned char *>(image.data))[k + 2])/255.0f;
+                    pixels[i].x = static_cast<f32>((static_cast<u8 *>(image.data))[k])/255.0f;
+                    pixels[i].y = static_cast<f32>((static_cast<u8 *>(image.data))[k + 1])/255.0f;
+                    pixels[i].z = static_cast<f32>((static_cast<u8 *>(image.data))[k + 2])/255.0f;
                     pixels[i].w = 1.0f;
 
                     k += 3;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32:
                 {
-                    pixels[i].x = (static_cast<float *>(image.data))[k];
+                    pixels[i].x = (static_cast<f32 *>(image.data))[k];
                     pixels[i].y = 0.0f;
                     pixels[i].z = 0.0f;
                     pixels[i].w = 1.0f;
@@ -5959,25 +5959,25 @@ static vec4 *LoadImageDataNormalized(Image image)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
                 {
-                    pixels[i].x = (static_cast<float *>(image.data))[k];
-                    pixels[i].y = (static_cast<float *>(image.data))[k + 1];
-                    pixels[i].z = (static_cast<float *>(image.data))[k + 2];
+                    pixels[i].x = (static_cast<f32 *>(image.data))[k];
+                    pixels[i].y = (static_cast<f32 *>(image.data))[k + 1];
+                    pixels[i].z = (static_cast<f32 *>(image.data))[k + 2];
                     pixels[i].w = 1.0f;
 
                     k += 3;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
                 {
-                    pixels[i].x = (static_cast<float *>(image.data))[k];
-                    pixels[i].y = (static_cast<float *>(image.data))[k + 1];
-                    pixels[i].z = (static_cast<float *>(image.data))[k + 2];
-                    pixels[i].w = (static_cast<float *>(image.data))[k + 3];
+                    pixels[i].x = (static_cast<f32 *>(image.data))[k];
+                    pixels[i].y = (static_cast<f32 *>(image.data))[k + 1];
+                    pixels[i].z = (static_cast<f32 *>(image.data))[k + 2];
+                    pixels[i].w = (static_cast<f32 *>(image.data))[k + 3];
 
                     k += 4;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16:
                 {
-                    pixels[i].x = HalfToFloat((static_cast<unsigned short *>(image.data))[k]);
+                    pixels[i].x = HalfToFloat((static_cast<u16 *>(image.data))[k]);
                     pixels[i].y = 0.0f;
                     pixels[i].z = 0.0f;
                     pixels[i].w = 1.0f;
@@ -5986,19 +5986,19 @@ static vec4 *LoadImageDataNormalized(Image image)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
                 {
-                    pixels[i].x = HalfToFloat((static_cast<unsigned short *>(image.data))[k]);
-                    pixels[i].y = HalfToFloat((static_cast<unsigned short *>(image.data))[k + 1]);
-                    pixels[i].z = HalfToFloat((static_cast<unsigned short *>(image.data))[k + 2]);
+                    pixels[i].x = HalfToFloat((static_cast<u16 *>(image.data))[k]);
+                    pixels[i].y = HalfToFloat((static_cast<u16 *>(image.data))[k + 1]);
+                    pixels[i].z = HalfToFloat((static_cast<u16 *>(image.data))[k + 2]);
                     pixels[i].w = 1.0f;
 
                     k += 3;
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
                 {
-                    pixels[i].x = HalfToFloat((static_cast<unsigned short *>(image.data))[k]);
-                    pixels[i].y = HalfToFloat((static_cast<unsigned short *>(image.data))[k + 1]);
-                    pixels[i].z = HalfToFloat((static_cast<unsigned short *>(image.data))[k + 2]);
-                    pixels[i].w = HalfToFloat((static_cast<unsigned short *>(image.data))[k + 3]);
+                    pixels[i].x = HalfToFloat((static_cast<u16 *>(image.data))[k]);
+                    pixels[i].y = HalfToFloat((static_cast<u16 *>(image.data))[k + 1]);
+                    pixels[i].z = HalfToFloat((static_cast<u16 *>(image.data))[k + 2]);
+                    pixels[i].w = HalfToFloat((static_cast<u16 *>(image.data))[k + 3]);
 
                     k += 4;
                 } break;

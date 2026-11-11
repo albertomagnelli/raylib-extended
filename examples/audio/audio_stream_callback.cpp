@@ -39,30 +39,30 @@ typedef enum {
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static void SineCallback(void *framesOut, unsigned int frameCount);
-static void SquareCallback(void *framesOut, unsigned int frameCount);
-static void TriangleCallback(void *framesOut, unsigned int frameCount);
-static void SawtoothCallback(void *framesOut, unsigned int frameCount);
+static void SineCallback(void *framesOut, u32 frameCount);
+static void SquareCallback(void *framesOut, u32 frameCount);
+static void TriangleCallback(void *framesOut, u32 frameCount);
+static void SawtoothCallback(void *framesOut, u32 frameCount);
 
-static int waveFrequency = 440;
-static int newWaveFrequency = 440;
-static int waveIndex = 0;
+static i32 waveFrequency = 440;
+static i32 newWaveFrequency = 440;
+static i32 waveIndex = 0;
 
 // Buffer to keep the last second of uploaded audio,
 // part of which will be drawn on the screen
-static float buffer[SAMPLE_RATE] = {};
+static f32 buffer[SAMPLE_RATE] = {};
 static AudioCallback waveCallbacks[] = { SineCallback, SquareCallback, TriangleCallback, SawtoothCallback };
 static const char *waveTypesAsString[] = { "sine", "square", "triangle", "sawtooth" };
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - stream callback");
 
@@ -131,10 +131,10 @@ int main()
             DrawText("Left/right to change wave type", 10, 30, 20, DARKGRAY);
 
             // Draw the last 10 ms of uploaded audio
-            for (int i = 0; i < screenWidth - 1; i++)
+            for (i32 i = 0; i < screenWidth - 1; i++)
             {
-                const vec2 startPos = {static_cast<float>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
-                const vec2 endPos = { static_cast<float>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
+                const vec2 startPos = {static_cast<f32>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
+                const vec2 endPos = { static_cast<f32>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
                 DrawLineV(startPos, endPos, RED);
             }
 
@@ -156,14 +156,14 @@ int main()
 //------------------------------------------------------------------------------------
 // Module Functions Definition
 //------------------------------------------------------------------------------------
-static void SineCallback(void *framesOut, unsigned int frameCount)
+static void SineCallback(void *framesOut, u32 frameCount)
 {
-    const int wavelength = SAMPLE_RATE/waveFrequency;
+    const i32 wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the sine wave
-    for (unsigned int i = 0; i < frameCount; i++)
+    for (u32 i = 0; i < frameCount; i++)
     {
-        (static_cast<float *>(framesOut))[i] = sinf(2*PI*waveIndex/wavelength);
+        (static_cast<f32 *>(framesOut))[i] = sinf(2*PI*waveIndex/wavelength);
 
         waveIndex++;
 
@@ -175,18 +175,18 @@ static void SineCallback(void *framesOut, unsigned int frameCount)
     }
 
     // Save the synthesized samples for later drawing
-    for (unsigned int i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
-    for (unsigned int i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<float *>(framesOut))[i];
+    for (u32 i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
+    for (u32 i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<f32 *>(framesOut))[i];
 }
 
-static void SquareCallback(void *framesOut, unsigned int frameCount)
+static void SquareCallback(void *framesOut, u32 frameCount)
 {
-    const int wavelength = SAMPLE_RATE/waveFrequency;
+    const i32 wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the square wave
-    for (unsigned int i = 0; i < frameCount; i++)
+    for (u32 i = 0; i < frameCount; i++)
     {
-        (static_cast<float *>(framesOut))[i] = (waveIndex < wavelength/2)? 1.0f : -1.0f;
+        (static_cast<f32 *>(framesOut))[i] = (waveIndex < wavelength/2)? 1.0f : -1.0f;
         waveIndex++;
 
         if (waveIndex >= wavelength)
@@ -197,18 +197,18 @@ static void SquareCallback(void *framesOut, unsigned int frameCount)
     }
 
     // Save the synthesized samples for later drawing
-    for (unsigned int i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
-    for (unsigned int i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<float *>(framesOut))[i];
+    for (u32 i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
+    for (u32 i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<f32 *>(framesOut))[i];
 }
 
-static void TriangleCallback(void *framesOut, unsigned int frameCount)
+static void TriangleCallback(void *framesOut, u32 frameCount)
 {
-    const int wavelength = SAMPLE_RATE/waveFrequency;
+    const i32 wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the triangle wave
-    for (unsigned int i = 0; i < frameCount; i++)
+    for (u32 i = 0; i < frameCount; i++)
     {
-        (static_cast<float *>(framesOut))[i] = (waveIndex < wavelength/2)? (-1 + 2.0f*waveIndex/(wavelength/2)) : (1 - 2.0f*(waveIndex - wavelength/2)/(wavelength/2));
+        (static_cast<f32 *>(framesOut))[i] = (waveIndex < wavelength/2)? (-1 + 2.0f*waveIndex/(wavelength/2)) : (1 - 2.0f*(waveIndex - wavelength/2)/(wavelength/2));
         waveIndex++;
 
         if (waveIndex >= wavelength)
@@ -219,18 +219,18 @@ static void TriangleCallback(void *framesOut, unsigned int frameCount)
     }
 
     // Save the synthesized samples for later drawing
-    for (unsigned int i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
-    for (unsigned int i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<float *>(framesOut))[i];
+    for (u32 i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
+    for (u32 i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<f32 *>(framesOut))[i];
 }
 
-static void SawtoothCallback(void *framesOut, unsigned int frameCount)
+static void SawtoothCallback(void *framesOut, u32 frameCount)
 {
-    const int wavelength = SAMPLE_RATE/waveFrequency;
+    const i32 wavelength = SAMPLE_RATE/waveFrequency;
 
     // Synthesize the sawtooth wave
-    for (unsigned int i = 0; i < frameCount; i++)
+    for (u32 i = 0; i < frameCount; i++)
     {
-        (static_cast<float *>(framesOut))[i] = -1 + 2.0f*waveIndex/wavelength;
+        (static_cast<f32 *>(framesOut))[i] = -1 + 2.0f*waveIndex/wavelength;
         waveIndex++;
 
         if (waveIndex >= wavelength)
@@ -241,6 +241,6 @@ static void SawtoothCallback(void *framesOut, unsigned int frameCount)
     }
 
     // Save the synthesized samples for later drawing
-    for (unsigned int i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
-    for (unsigned int i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<float *>(framesOut))[i];
+    for (u32 i = 0; i < SAMPLE_RATE - frameCount; i++) buffer[i] = buffer[i + frameCount];
+    for (u32 i = 0; i < frameCount; i++) buffer[SAMPLE_RATE - frameCount + i] = (static_cast<f32 *>(framesOut))[i];
 }

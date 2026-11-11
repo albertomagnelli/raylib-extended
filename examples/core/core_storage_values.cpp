@@ -28,24 +28,24 @@ typedef enum {
 //------------------------------------------------------------------------------------
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
-static bool SaveStorageValue(unsigned int position, int value);
-static int LoadStorageValue(unsigned int position);
+static bool SaveStorageValue(u32 position, i32 value);
+static i32 LoadStorageValue(u32 position);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - storage values");
 
-    int score = 0;
-    int hiscore = 0;
-    int framesCounter = 0;
+    i32 score = 0;
+    i32 hiscore = 0;
+    i32 framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -108,32 +108,32 @@ int main()
 //------------------------------------------------------------------------------------
 // Save integer value to storage file (to defined position)
 // NOTE: Storage positions is directly related to file memory layout (4 bytes each integer)
-bool SaveStorageValue(unsigned int position, int value)
+bool SaveStorageValue(u32 position, i32 value)
 {
     bool success = false;
-    int dataSize = 0;
-    unsigned int newDataSize = 0;
-    unsigned char *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
-    unsigned char *newFileData = nullptr;
+    i32 dataSize = 0;
+    u32 newDataSize = 0;
+    u8 *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
+    u8 *newFileData = nullptr;
 
     if (fileData != nullptr)
     {
-        if (dataSize <= (position*sizeof(int)))
+        if (dataSize <= (position*sizeof(i32)))
         {
             // Increase data size up to position and store value
-            newDataSize = (position + 1)*sizeof(int);
-            newFileData = static_cast<unsigned char *>(realloc(fileData, newDataSize));
+            newDataSize = (position + 1)*sizeof(i32);
+            newFileData = static_cast<u8 *>(realloc(fileData, newDataSize));
 
             if (newFileData != nullptr)
             {
                 // realloc succeded
-                int *dataPtr = reinterpret_cast<int *>(newFileData);
+                i32 *dataPtr = reinterpret_cast<i32 *>(newFileData);
                 dataPtr[position] = value;
             }
             else
             {
                 // realloc failed
-                TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to realloc data (%u), position in bytes (%u) bigger than actual file size", STORAGE_DATA_FILE, dataSize, position*sizeof(int));
+                TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to realloc data (%u), position in bytes (%u) bigger than actual file size", STORAGE_DATA_FILE, dataSize, position*sizeof(i32));
 
                 // We store the old size of the file
                 newFileData = fileData;
@@ -147,7 +147,7 @@ bool SaveStorageValue(unsigned int position, int value)
             newDataSize = dataSize;
 
             // Replace value on selected position
-            int *dataPtr = reinterpret_cast<int *>(newFileData);
+            i32 *dataPtr = reinterpret_cast<i32 *>(newFileData);
             dataPtr[position] = value;
         }
 
@@ -160,9 +160,9 @@ bool SaveStorageValue(unsigned int position, int value)
     {
         TraceLog(LOG_INFO, "FILEIO: [%s] File created successfully", STORAGE_DATA_FILE);
 
-        dataSize = (position + 1)*sizeof(int);
-        fileData = static_cast<unsigned char *>(malloc(dataSize));
-        int *dataPtr = reinterpret_cast<int *>(fileData);
+        dataSize = (position + 1)*sizeof(i32);
+        fileData = static_cast<u8 *>(malloc(dataSize));
+        i32 *dataPtr = reinterpret_cast<i32 *>(fileData);
         dataPtr[position] = value;
 
         success = SaveFileData(STORAGE_DATA_FILE, fileData, dataSize);
@@ -176,18 +176,18 @@ bool SaveStorageValue(unsigned int position, int value)
 
 // Load integer value from storage file (from defined position)
 // NOTE: If requested position could not be found, value 0 is returned
-int LoadStorageValue(unsigned int position)
+i32 LoadStorageValue(u32 position)
 {
-    int value = 0;
-    int dataSize = 0;
-    unsigned char *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
+    i32 value = 0;
+    i32 dataSize = 0;
+    u8 *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
 
     if (fileData != nullptr)
     {
-        if (dataSize < (static_cast<int>(position*4))) TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to find storage position: %i", STORAGE_DATA_FILE, position);
+        if (dataSize < (static_cast<i32>(position*4))) TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to find storage position: %i", STORAGE_DATA_FILE, position);
         else
         {
-            int *dataPtr = reinterpret_cast<int *>(fileData);
+            i32 *dataPtr = reinterpret_cast<i32 *>(fileData);
             value = dataPtr[position];
         }
 

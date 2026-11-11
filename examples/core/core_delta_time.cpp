@@ -20,24 +20,24 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - delta time");
 
-    int currentFps = 60;
+    i32 currentFps = 60;
 
     // Store the position for the both of the circles
-    vec2 deltaCircle = { 0, static_cast<float>(screenHeight)/3.0f };
-    vec2 frameCircle = { 0, static_cast<float>(screenHeight)*(2.0f/3.0f) };
+    vec2 deltaCircle = { 0, static_cast<f32>(screenHeight)/3.0f };
+    vec2 frameCircle = { 0, static_cast<f32>(screenHeight)*(2.0f/3.0f) };
 
     // The speed applied to both circles
-    constexpr float speed = 10.0f;
-    constexpr float circleRadius = 32.0f;
+    constexpr f32 speed = 10.0f;
+    constexpr f32 circleRadius = 32.0f;
 
     SetTargetFPS(currentFps);
     //--------------------------------------------------------------------------------------
@@ -48,10 +48,10 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Adjust the FPS target based on the mouse wheel
-        const float mouseWheel = GetMouseWheelMove();
+        const f32 mouseWheel = GetMouseWheelMove();
         if (mouseWheel != 0)
         {
-            currentFps += static_cast<int>(mouseWheel);
+            currentFps += static_cast<i32>(mouseWheel);
             if (currentFps < 0) currentFps = 0;
             SetTargetFPS(currentFps);
         }

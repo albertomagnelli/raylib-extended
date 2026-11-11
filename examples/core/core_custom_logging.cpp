@@ -21,7 +21,7 @@
 
 // Custom logging function
 // NOTE: 'text' is the fully formatted log line, timestamp and level included
-void CustomTraceLog(int msgType, std::string_view text)
+void CustomTraceLog(i32 msgType, std::string_view text)
 {
     switch (msgType)
     {
@@ -32,19 +32,19 @@ void CustomTraceLog(int msgType, std::string_view text)
         default: break;
     }
 
-    printf("[CUSTOM] %.*s\x1b[0m\n", static_cast<int>(text.size()), text.data());
+    printf("[CUSTOM] %.*s\x1b[0m\n", static_cast<i32>(text.size()), text.data());
     fflush(stdout);
 }
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     // Set custom logger
     SetTraceLogCallback(CustomTraceLog);

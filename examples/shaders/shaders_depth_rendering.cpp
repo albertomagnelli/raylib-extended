@@ -31,7 +31,7 @@
 // Module Functions Declaration
 //--------------------------------------------------------------------------------------
 // Load custom render texture with depth texture attached
-static RenderTexture2D LoadRenderTextureDepthTex(int width, int height);
+static RenderTexture2D LoadRenderTextureDepthTex(i32 width, i32 height);
 
 // Unload render texture from GPU memory (VRAM)
 static void UnloadRenderTextureDepthTex(RenderTexture2D target);
@@ -39,12 +39,12 @@ static void UnloadRenderTextureDepthTex(RenderTexture2D target);
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - depth rendering");
 
@@ -61,9 +61,9 @@ int main()
 
     // Load depth shader and get depth texture shader location
     const Shader depthShader = LoadShader({}, TextFormat("resources/shaders/glsl%i/depth_render.fs", GLSL_VERSION));
-    const int depthLoc = GetShaderLocation(depthShader, "depthTexture");
-    const int flipTextureLoc = GetShaderLocation(depthShader, "flipY");
-    SetShaderValue(depthShader, flipTextureLoc, std::initializer_list<int>{ 1 }.begin(), SHADER_UNIFORM_INT); // Flip Y texture
+    const i32 depthLoc = GetShaderLocation(depthShader, "depthTexture");
+    const i32 flipTextureLoc = GetShaderLocation(depthShader, "flipY");
+    SetShaderValue(depthShader, flipTextureLoc, std::initializer_list<i32>{ 1 }.begin(), SHADER_UNIFORM_INT); // Flip Y texture
 
     // Load scene models
     const Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
@@ -131,7 +131,7 @@ int main()
 // Module Functions Definition
 //--------------------------------------------------------------------------------------
 // Load custom render texture, create a writable depth texture buffer
-static RenderTexture2D LoadRenderTextureDepthTex(int width, int height)
+static RenderTexture2D LoadRenderTextureDepthTex(i32 width, i32 height)
 {
     RenderTexture2D target = {};
 

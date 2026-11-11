@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - blend modes");
 
@@ -42,7 +42,7 @@ int main()
     UnloadImage(bgImage);
     UnloadImage(fgImage);
 
-    constexpr int blendCountMax = 4;
+    constexpr i32 blendCountMax = 4;
     BlendMode blendMode = BLEND_ALPHA;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

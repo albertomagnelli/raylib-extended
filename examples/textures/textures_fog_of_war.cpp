@@ -26,21 +26,21 @@
 //----------------------------------------------------------------------------------
 // Map data type
 typedef struct Map {
-    unsigned int tilesX;            // Number of tiles in X axis
-    unsigned int tilesY;            // Number of tiles in Y axis
-    unsigned char *tileIds;         // Tile ids (tilesX*tilesY), defines type of tile to draw
-    unsigned char *tileFog;         // Tile fog state (tilesX*tilesY), defines if a tile has fog or half-fog
+    u32 tilesX;            // Number of tiles in X axis
+    u32 tilesY;            // Number of tiles in Y axis
+    u8 *tileIds;         // Tile ids (tilesX*tilesY), defines type of tile to draw
+    u8 *tileFog;         // Tile fog state (tilesX*tilesY), defines if a tile has fog or half-fog
 } Map;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - fog of war");
 
@@ -51,17 +51,17 @@ int main()
     // NOTE: We can have up to 256 values for tile ids and for tile fog state,
     // probably we don't need that many values for fog state, it can be optimized
     // to use only 2 bits per fog state (reducing size by 4) but logic will be a bit more complex
-    map.tileIds = static_cast<unsigned char *>(calloc(map.tilesX*map.tilesY, sizeof(unsigned char)));
-    map.tileFog = static_cast<unsigned char *>(calloc(map.tilesX*map.tilesY, sizeof(unsigned char)));
+    map.tileIds = static_cast<u8 *>(calloc(map.tilesX*map.tilesY, sizeof(u8)));
+    map.tileFog = static_cast<u8 *>(calloc(map.tilesX*map.tilesY, sizeof(u8)));
 
     // Load map tiles (generating 2 random tile ids for testing)
     // NOTE: Map tile ids should be probably loaded from an external map file
-    for (unsigned int i = 0; i < map.tilesY*map.tilesX; i++) map.tileIds[i] = GetRandomValue(0, 1);
+    for (u32 i = 0; i < map.tilesY*map.tilesX; i++) map.tileIds[i] = GetRandomValue(0, 1);
 
     // Player position on the screen (pixel coordinates, not tile coordinates)
     vec2 playerPosition = { 180, 130 };
-    int playerTileX = 0;
-    int playerTileY = 0;
+    i32 playerTileX = 0;
+    i32 playerTileY = 0;
 
     // Render texture to render fog of war
     // NOTE: To get an automatic smooth-fog effect we use a render texture to render fog
@@ -86,22 +86,22 @@ int main()
 
         // Check player position to avoid moving outside tilemap limits
         if (playerPosition.x < 0) playerPosition.x = 0;
-        else if ((playerPosition.x + PLAYER_SIZE) > (map.tilesX*MAP_TILE_SIZE)) playerPosition.x = static_cast<float>(map.tilesX)*MAP_TILE_SIZE - PLAYER_SIZE;
+        else if ((playerPosition.x + PLAYER_SIZE) > (map.tilesX*MAP_TILE_SIZE)) playerPosition.x = static_cast<f32>(map.tilesX)*MAP_TILE_SIZE - PLAYER_SIZE;
         if (playerPosition.y < 0) playerPosition.y = 0;
-        else if ((playerPosition.y + PLAYER_SIZE) > (map.tilesY*MAP_TILE_SIZE)) playerPosition.y = static_cast<float>(map.tilesY)*MAP_TILE_SIZE - PLAYER_SIZE;
+        else if ((playerPosition.y + PLAYER_SIZE) > (map.tilesY*MAP_TILE_SIZE)) playerPosition.y = static_cast<f32>(map.tilesY)*MAP_TILE_SIZE - PLAYER_SIZE;
 
         // Previous visited tiles are set to partial fog
-        for (unsigned int i = 0; i < map.tilesX*map.tilesY; i++) if (map.tileFog[i] == 1) map.tileFog[i] = 2;
+        for (u32 i = 0; i < map.tilesX*map.tilesY; i++) if (map.tileFog[i] == 1) map.tileFog[i] = 2;
 
         // Get current tile position from player pixel position
-        playerTileX = static_cast<int>((playerPosition.x + static_cast<float>(MAP_TILE_SIZE)/2)/MAP_TILE_SIZE);
-        playerTileY = static_cast<int>((playerPosition.y + static_cast<float>(MAP_TILE_SIZE)/2)/MAP_TILE_SIZE);
+        playerTileX = static_cast<i32>((playerPosition.x + static_cast<f32>(MAP_TILE_SIZE)/2)/MAP_TILE_SIZE);
+        playerTileY = static_cast<i32>((playerPosition.y + static_cast<f32>(MAP_TILE_SIZE)/2)/MAP_TILE_SIZE);
 
         // Check visibility and update fog
         // NOTE: We check tilemap limits to avoid processing tiles out-of-array-bounds (it could crash program)
-        for (int y = (playerTileY - PLAYER_TILE_VISIBILITY); y < (playerTileY + PLAYER_TILE_VISIBILITY); y++)
-            for (int x = (playerTileX - PLAYER_TILE_VISIBILITY); x < (playerTileX + PLAYER_TILE_VISIBILITY); x++)
-                if ((x >= 0) && (x < static_cast<int>(map.tilesX)) && (y >= 0) && (y < static_cast<int>(map.tilesY))) map.tileFog[y*map.tilesX + x] = 1;
+        for (i32 y = (playerTileY - PLAYER_TILE_VISIBILITY); y < (playerTileY + PLAYER_TILE_VISIBILITY); y++)
+            for (i32 x = (playerTileX - PLAYER_TILE_VISIBILITY); x < (playerTileX + PLAYER_TILE_VISIBILITY); x++)
+                if ((x >= 0) && (x < static_cast<i32>(map.tilesX)) && (y >= 0) && (y < static_cast<i32>(map.tilesY))) map.tileFog[y*map.tilesX + x] = 1;
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -109,8 +109,8 @@ int main()
         // Draw fog of war to a small render texture for automatic smoothing on scaling
         BeginTextureMode(fogOfWar);
             ClearBackground(BLANK);
-            for (unsigned int y = 0; y < map.tilesY; y++)
-                for (unsigned int x = 0; x < map.tilesX; x++)
+            for (u32 y = 0; y < map.tilesY; y++)
+                for (u32 x = 0; x < map.tilesX; x++)
                     if (map.tileFog[y*map.tilesX + x] == 0) DrawRectangle(x, y, 1, 1, BLACK);
                     else if (map.tileFog[y*map.tilesX + x] == 2) DrawRectangle(x, y, 1, 1, Fade(BLACK, 0.8f));
         EndTextureMode();
@@ -119,9 +119,9 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (unsigned int y = 0; y < map.tilesY; y++)
+            for (u32 y = 0; y < map.tilesY; y++)
             {
-                for (unsigned int x = 0; x < map.tilesX; x++)
+                for (u32 x = 0; x < map.tilesX; x++)
                 {
                     // Draw tiles from id (and tile borders)
                     DrawRectangle(x*MAP_TILE_SIZE, y*MAP_TILE_SIZE, MAP_TILE_SIZE, MAP_TILE_SIZE,
@@ -135,8 +135,8 @@ int main()
 
 
             // Draw fog of war (scaled to full map, bilinear filtering)
-            DrawTexturePro(fogOfWar.texture, Rectangle{ 0, 0, static_cast<float>(fogOfWar.texture.width), static_cast<float>(-fogOfWar.texture.height) },
-                           Rectangle{ 0, 0, static_cast<float>(map.tilesX)*MAP_TILE_SIZE, static_cast<float>(map.tilesY)*MAP_TILE_SIZE },
+            DrawTexturePro(fogOfWar.texture, Rectangle{ 0, 0, static_cast<f32>(fogOfWar.texture.width), static_cast<f32>(-fogOfWar.texture.height) },
+                           Rectangle{ 0, 0, static_cast<f32>(map.tilesX)*MAP_TILE_SIZE, static_cast<f32>(map.tilesY)*MAP_TILE_SIZE },
                            vec2{ 0, 0 }, 0.0f, WHITE);
 
             // Draw player current tile

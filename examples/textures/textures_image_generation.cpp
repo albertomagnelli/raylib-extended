@@ -22,12 +22,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image generation");
 
@@ -64,7 +64,7 @@ int main()
     UnloadImage(perlinNoise);
     UnloadImage(cellular);
 
-    int currentTexture = 0;
+    i32 currentTexture = 0;
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ int main()
     //--------------------------------------------------------------------------------------
 
     // Unload textures data (GPU VRAM)
-    for (int i = 0; i < NUM_TEXTURES; i++) UnloadTexture(textures[i]);
+    for (i32 i = 0; i < NUM_TEXTURES; i++) UnloadTexture(textures[i]);
 
     CloseWindow();                // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

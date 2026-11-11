@@ -37,7 +37,7 @@
 //------------------------------------------------------------------------------------
 // Global Variables Definition
 //------------------------------------------------------------------------------------
-static const int palettes[MAX_PALETTES][COLORS_PER_PALETTE*VALUES_PER_COLOR] = {
+static const i32 palettes[MAX_PALETTES][COLORS_PER_PALETTE*VALUES_PER_COLOR] = {
     {   // 3-BIT RGB
         0, 0, 0,
         255, 0, 0,
@@ -79,12 +79,12 @@ static const char *paletteText[] = {
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - palette switch");
 
@@ -95,10 +95,10 @@ int main()
 
     // Get variable (uniform) location on the shader to connect with the program
     // NOTE: If uniform variable could not be found in the shader, function returns -1
-    const int paletteLoc = GetShaderLocation(shader, "palette");
+    const i32 paletteLoc = GetShaderLocation(shader, "palette");
 
-    int currentPalette = 0;
-    const int lineHeight = screenHeight/COLORS_PER_PALETTE;
+    i32 currentPalette = 0;
+    const i32 lineHeight = screenHeight/COLORS_PER_PALETTE;
 
     SetTargetFPS(60);                       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -127,11 +127,11 @@ int main()
 
             BeginShaderMode(shader);
 
-                for (int i = 0; i < COLORS_PER_PALETTE; i++)
+                for (i32 i = 0; i < COLORS_PER_PALETTE; i++)
                 {
                     // Draw horizontal screen-wide rectangles with increasing "palette index"
                     // The used palette index is encoded in the RGB components of the pixel
-                    DrawRectangle(0, lineHeight*i, GetScreenWidth(), lineHeight, Color{ static_cast<unsigned char>(i), static_cast<unsigned char>(i), static_cast<unsigned char>(i), 255 });
+                    DrawRectangle(0, lineHeight*i, GetScreenWidth(), lineHeight, Color{ static_cast<u8>(i), static_cast<u8>(i), static_cast<u8>(i), 255 });
                 }
 
             EndShaderMode();

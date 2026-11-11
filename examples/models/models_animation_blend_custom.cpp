@@ -43,18 +43,18 @@
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 static bool IsUpperBodyBone(const char *boneName);
-static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim1, int frame1,
-    ModelAnimation *anim2, int frame2, float blend, bool upperBodyBlend);
+static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim1, i32 frame1,
+    ModelAnimation *anim2, i32 frame2, f32 blend, bool upperBodyBlend);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blend custom");
 
@@ -78,14 +78,14 @@ int main()
     model.materials[1].shader = skinningShader;
 
     // Load gltf model animations
-    int animCount = 0;
+    i32 animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/greenman.glb", &animCount);
 
     // Use specific animation indices: 2-walk/move, 3-attack
-    int animIndex0 = 2; // Walk/Move animation (index 2)
-    int animIndex1 = 3; // Attack animation (index 3)
-    int animCurrentFrame0 = 0;
-    int animCurrentFrame1 = 0;
+    i32 animIndex0 = 2; // Walk/Move animation (index 2)
+    i32 animIndex1 = 3; // Attack animation (index 3)
+    i32 animCurrentFrame0 = 0;
+    i32 animCurrentFrame1 = 0;
 
     // Validate indices
     if (animIndex0 >= animCount) animIndex0 = 0;
@@ -116,7 +116,7 @@ int main()
         // Blend the two animations
         // When upperBodyBlend is ON: upper body = attack (1.0), lower body = walk (0.0)
         // When upperBodyBlend is OFF: uniform blend at 0.5 (50% walk, 50% attack)
-        const float blendFactor = (upperBodyBlend? 1.0f : 0.5f);
+        const f32 blendFactor = (upperBodyBlend? 1.0f : 0.5f);
         UpdateModelAnimationBoneCustom(&model, &anim0, animCurrentFrame0,
             &anim1, animCurrentFrame1, blendFactor, upperBodyBlend);
 
@@ -194,8 +194,8 @@ static bool IsUpperBodyBone(const char *boneName)
 }
 
 // Blend two animations per-bone with selective upper/lower body blending
-static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, int frame0,
-    ModelAnimation *anim1, int frame1, float blend, bool upperBodyBlend)
+static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, i32 frame0,
+    ModelAnimation *anim1, i32 frame1, f32 blend, bool upperBodyBlend)
 {
     // Validate inputs
     if ((anim0->boneCount != 0) && (anim0->keyframePoses != nullptr) &&
@@ -212,15 +212,15 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
         if (frame1 < 0) frame1 = 0;
 
         // Get bone count (use minimum of all to be safe)
-        unsigned int boneCount = model->skeleton.boneCount;
+        u32 boneCount = model->skeleton.boneCount;
         if (anim0->boneCount < boneCount) boneCount = anim0->boneCount;
         if (anim1->boneCount < boneCount) boneCount = anim1->boneCount;
 
         // Blend each bone
-        for (unsigned int boneIndex = 0; boneIndex < boneCount; boneIndex++)
+        for (u32 boneIndex = 0; boneIndex < boneCount; boneIndex++)
         {
             // Determine blend factor for this bone
-            float boneBlendFactor = blend;
+            f32 boneBlendFactor = blend;
 
             // If upper body blending is enabled, use different blend factors for upper vs lower body
             if (upperBodyBlend)
@@ -257,23 +257,23 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
 
         // CPU skinning, updates CPU buffers and uploads them to GPU (if available)
         // NOTE: Fallback in case GPU skinning is not supported or enabled
-        for (int m = 0; m < model->meshCount; m++)
+        for (i32 m = 0; m < model->meshCount; m++)
         {
             const Mesh mesh = model->meshes[m];
             vec3 animVertex = {};
             vec3 animNormal = {};
-            const int vertexValuesCount = mesh.vertexCount*3;
+            const i32 vertexValuesCount = mesh.vertexCount*3;
 
-            int boneIndex = 0;
-            int boneCounter = 0;
-            float boneWeight = 0.0f;
+            i32 boneIndex = 0;
+            i32 boneCounter = 0;
+            f32 boneWeight = 0.0f;
             bool bufferUpdateRequired = false; // Flag to check when anim vertex information is updated
 
             // Skip if missing bone data or missing anim buffers initialization
             if ((mesh.boneWeights == nullptr) || (mesh.boneIndices == nullptr) ||
                 (mesh.animVertices == nullptr) || (mesh.animNormals == nullptr)) continue;
 
-            for (int vCounter = 0; vCounter < vertexValuesCount; vCounter += 3)
+            for (i32 vCounter = 0; vCounter < vertexValuesCount; vCounter += 3)
             {
                 mesh.animVertices[vCounter] = 0;
                 mesh.animVertices[vCounter + 1] = 0;
@@ -286,7 +286,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
                 }
 
                 // Iterates over 4 bones per vertex
-                for (int j = 0; j < 4; j++, boneCounter++)
+                for (i32 j = 0; j < 4; j++, boneCounter++)
                 {
                     boneWeight = mesh.boneWeights[boneCounter];
                     boneIndex = mesh.boneIndices[boneCounter];
@@ -316,8 +316,8 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             if (bufferUpdateRequired)
             {
                 // Update GPU vertex buffers with updated data (position + normals)
-                rlUpdateVertexBuffer(mesh.vboId[SHADER_LOC_VERTEX_POSITION], mesh.animVertices, mesh.vertexCount*3*sizeof(float), 0);
-                if (mesh.normals != nullptr) rlUpdateVertexBuffer(mesh.vboId[SHADER_LOC_VERTEX_NORMAL], mesh.animNormals, mesh.vertexCount*3*sizeof(float), 0);
+                rlUpdateVertexBuffer(mesh.vboId[SHADER_LOC_VERTEX_POSITION], mesh.animVertices, mesh.vertexCount*3*sizeof(f32), 0);
+                if (mesh.normals != nullptr) rlUpdateVertexBuffer(mesh.vboId[SHADER_LOC_VERTEX_NORMAL], mesh.animNormals, mesh.vertexCount*3*sizeof(f32), 0);
             }
         }
     }

@@ -18,12 +18,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - srcrec dstrec");
 
@@ -31,19 +31,19 @@ int main()
 
     const Texture2D scarfy = LoadTexture("resources/scarfy.png");        // Texture loading
 
-    const int frameWidth = scarfy.width/6;
-    const int frameHeight = scarfy.height;
+    const i32 frameWidth = scarfy.width/6;
+    const i32 frameHeight = scarfy.height;
 
     // Source rectangle (part of the texture to use for drawing)
-    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<f32>(frameWidth), static_cast<f32>(frameHeight) };
 
     // Destination rectangle (screen rectangle where drawing part of texture)
     const Rectangle destRec = { screenWidth/2.0f, screenHeight/2.0f, frameWidth*2.0f, frameHeight*2.0f };
 
     // Origin of the texture (rotation/scale point), it's relative to destination rectangle size
-    const vec2 origin = { static_cast<float>(frameWidth), static_cast<float>(frameHeight) };
+    const vec2 origin = { static_cast<f32>(frameWidth), static_cast<f32>(frameHeight) };
 
-    int rotation = 0;
+    i32 rotation = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -67,10 +67,10 @@ int main()
             // destRec defines the rectangle where our texture part will fit (scaling it to fit)
             // origin defines the point of the texture used as reference for rotation and scaling
             // rotation defines the texture rotation (using origin as rotation point)
-            DrawTexturePro(scarfy, sourceRec, destRec, origin, static_cast<float>(rotation), WHITE);
+            DrawTexturePro(scarfy, sourceRec, destRec, origin, static_cast<f32>(rotation), WHITE);
 
-            DrawLine(static_cast<int>(destRec.x), 0, static_cast<int>(destRec.x), screenHeight, GRAY);
-            DrawLine(0, static_cast<int>(destRec.y), screenWidth, static_cast<int>(destRec.y), GRAY);
+            DrawLine(static_cast<i32>(destRec.x), 0, static_cast<i32>(destRec.x), screenHeight, GRAY);
+            DrawLine(0, static_cast<i32>(destRec.y), screenWidth, static_cast<i32>(destRec.y), GRAY);
 
             DrawText("(c) Scarfy sprite by Eiden Marsal", screenWidth - 200, screenHeight - 20, 10, GRAY);
 

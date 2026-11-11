@@ -28,28 +28,28 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - screen recording");
 
     bool gifRecording = false;           // GIF recording state
-    unsigned int gifFrameCounter = 0;    // GIF frames counter
+    u32 gifFrameCounter = 0;    // GIF frames counter
     MsfGifState gifState = {};           // MSGIF context state
 
     vec2 circlePosition = { 0.0f, screenHeight/2.0f };
-    float timeCounter = 0.0f;
+    f32 timeCounter = 0.0f;
 
     // Get sine wave points for line drawing
     vec2 sinePoints[MAX_SINEWAVE_POINTS] = {};
-    for (int i = 0; i < MAX_SINEWAVE_POINTS; i++)
+    for (i32 i = 0; i < MAX_SINEWAVE_POINTS; i++)
     {
         sinePoints[i].x = i*GetScreenWidth()/180.0f;
-        sinePoints[i].y = screenHeight/2.0f + 150*sinf((2*PI/1.5f)*(1.0f/60.0f)*static_cast<float>(i)); // Calculate for 60 fps
+        sinePoints[i].y = screenHeight/2.0f + 150*sinf((2*PI/1.5f)*(1.0f/60.0f)*static_cast<f32>(i)); // Calculate for 60 fps
     }
 
     SetTargetFPS(60);
@@ -79,7 +79,7 @@ int main()
                 // Stop current recording and save file
                 gifRecording = false;
                 const MsfGifResult result = msf_gif_end(&gifState);
-                SaveFileData(TextFormat("%s/screenrecording.gif", GetApplicationDirectory().c_str()), result.data, static_cast<unsigned int>(result.dataSize));
+                SaveFileData(TextFormat("%s/screenrecording.gif", GetApplicationDirectory().c_str()), result.data, static_cast<u32>(result.dataSize));
                 msf_gif_free(result);
 
                 TraceLog(LOG_INFO, "Finish animated GIF recording");
@@ -107,7 +107,7 @@ int main()
                 const Image imScreen = LoadImageFromScreen();
 
                 // Add the frame to the gif recording, providing and "estimated" time for display in centiseconds
-                msf_gif_frame(&gifState, static_cast<u8 *>(imScreen.data), static_cast<int>((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);
+                msf_gif_frame(&gifState, static_cast<u8 *>(imScreen.data), static_cast<i32>((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);
                 gifFrameCounter = 0;
 
                 UnloadImage(imScreen);    // Free image data
@@ -121,7 +121,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            for (int i = 0; i < (MAX_SINEWAVE_POINTS - 1); i++)
+            for (i32 i = 0; i < (MAX_SINEWAVE_POINTS - 1); i++)
             {
                 DrawLineV(sinePoints[i], sinePoints[i + 1], MAROON);
                 DrawCircleV(sinePoints[i], 3, MAROON);

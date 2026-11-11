@@ -21,12 +21,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite animation");
 
@@ -34,11 +34,11 @@ int main()
     const Texture2D scarfy = LoadTexture("resources/scarfy.png");        // Texture loading
 
     const vec2 position = { 350.0f, 280.0f };
-    Rectangle frameRec = { 0.0f, 0.0f, static_cast<float>(scarfy.width)/6, static_cast<float>(scarfy.height) };
-    int currentFrame = 0;
+    Rectangle frameRec = { 0.0f, 0.0f, static_cast<f32>(scarfy.width)/6, static_cast<f32>(scarfy.height) };
+    i32 currentFrame = 0;
 
-    int framesCounter = 0;
-    int framesSpeed = 8;            // Number of spritesheet frames shown by second
+    i32 framesCounter = 0;
+    i32 framesSpeed = 8;            // Number of spritesheet frames shown by second
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ int main()
 
             if (currentFrame > 5) currentFrame = 0;
 
-            frameRec.x = static_cast<float>(currentFrame)*static_cast<float>(scarfy.width)/6;
+            frameRec.x = static_cast<f32>(currentFrame)*static_cast<f32>(scarfy.width)/6;
         }
 
         // Control frames speed
@@ -76,13 +76,13 @@ int main()
 
             DrawTexture(scarfy, 15, 40, WHITE);
             DrawRectangleLines(15, 40, scarfy.width, scarfy.height, LIME);
-            DrawRectangleLines(15 + static_cast<int>(frameRec.x), 40 + static_cast<int>(frameRec.y), static_cast<int>(frameRec.width), static_cast<int>(frameRec.height), RED);
+            DrawRectangleLines(15 + static_cast<i32>(frameRec.x), 40 + static_cast<i32>(frameRec.y), static_cast<i32>(frameRec.width), static_cast<i32>(frameRec.height), RED);
 
             DrawText("FRAME SPEED: ", 165, 210, 10, DARKGRAY);
             DrawText(TextFormat("%02i FPS", framesSpeed), 575, 210, 10, DARKGRAY);
             DrawText("PRESS RIGHT/LEFT KEYS to CHANGE SPEED!", 290, 240, 10, DARKGRAY);
 
-            for (int i = 0; i < MAX_FRAME_SPEED; i++)
+            for (i32 i = 0; i < MAX_FRAME_SPEED; i++)
             {
                 if (i < framesSpeed) DrawRectangle(250 + 21*i, 205, 20, 20, RED);
                 DrawRectangleLines(250 + 21*i, 205, 20, 20, MAROON);

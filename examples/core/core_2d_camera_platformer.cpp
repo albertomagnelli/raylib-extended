@@ -27,35 +27,35 @@
 //----------------------------------------------------------------------------------
 typedef struct Player {
     vec2 position;
-    float speed;
+    f32 speed;
     bool canJump;
 } Player;
 
 typedef struct EnvItem {
     Rectangle rect;
-    int blocking;
+    i32 blocking;
     Color color;
 } EnvItem;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta);
-void UpdateCameraCenter(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
-void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
-void UpdateCameraCenterSmoothFollow(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
-void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
-void UpdateCameraPlayerBoundsPush(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height);
+void UpdatePlayer(Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta);
+void UpdateCameraCenter(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height);
+void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height);
+void UpdateCameraCenterSmoothFollow(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height);
+void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height);
+void UpdateCameraPlayerBoundsPush(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera platformer");
 
@@ -71,7 +71,7 @@ int main()
         {{ 650, 300, 100, 10 }, 1, GRAY }
     };
 
-    const int envItemsLength = sizeof(envItems)/sizeof(envItems[0]);
+    const i32 envItemsLength = sizeof(envItems)/sizeof(envItems[0]);
 
     Camera2D camera = {};
     camera.target = player.position;
@@ -80,7 +80,7 @@ int main()
     camera.zoom = 1.0f;
 
     // Store pointers to the multiple update camera functions
-    void (*cameraUpdaters[])(Camera2D*, Player*, EnvItem*, int, float, int, int) = {
+    void (*cameraUpdaters[])(Camera2D*, Player*, EnvItem*, i32, f32, i32, i32) = {
         UpdateCameraCenter,
         UpdateCameraCenterInsideMap,
         UpdateCameraCenterSmoothFollow,
@@ -88,8 +88,8 @@ int main()
         UpdateCameraPlayerBoundsPush
     };
 
-    int cameraOption = 0;
-    const int cameraUpdatersLength = sizeof(cameraUpdaters)/sizeof(cameraUpdaters[0]);
+    i32 cameraOption = 0;
+    const i32 cameraUpdatersLength = sizeof(cameraUpdaters)/sizeof(cameraUpdaters[0]);
 
     const char *cameraDescriptions[] = {
         "Follow player center",
@@ -107,7 +107,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const float deltaTime = GetFrameTime();
+        const f32 deltaTime = GetFrameTime();
 
         UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
 
@@ -136,7 +136,7 @@ int main()
 
             BeginMode2D(camera);
 
-                for (int i = 0; i < envItemsLength; i++) DrawRectangleRec(envItems[i].rect, envItems[i].color);
+                for (i32 i = 0; i < envItemsLength; i++) DrawRectangleRec(envItems[i].rect, envItems[i].color);
 
                 const Rectangle playerRect = { player.position.x - 20, player.position.y - 40, 40.0f, 40.0f };
                 DrawRectangleRec(playerRect, RED);
@@ -166,7 +166,7 @@ int main()
     return 0;
 }
 
-void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float delta)
+void UpdatePlayer(Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta)
 {
     if (IsKeyDown(KEY_LEFT)) player->position.x -= PLAYER_HOR_SPD*delta;
     if (IsKeyDown(KEY_RIGHT)) player->position.x += PLAYER_HOR_SPD*delta;
@@ -177,7 +177,7 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
     }
 
     bool hitObstacle = false;
-    for (int i = 0; i < envItemsLength; i++)
+    for (i32 i = 0; i < envItemsLength; i++)
     {
         EnvItem *ei = envItems + i;
         vec2 *p = &(player->position);
@@ -203,19 +203,19 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
     else player->canJump = true;
 }
 
-void UpdateCameraCenter(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
+void UpdateCameraCenter(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height)
 {
     camera->offset = vec2{ width/2.0f, height/2.0f };
     camera->target = player->position;
 }
 
-void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
+void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height)
 {
     camera->target = player->position;
     camera->offset = vec2{ width/2.0f, height/2.0f };
-    float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
+    f32 minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
 
-    for (int i = 0; i < envItemsLength; i++)
+    for (i32 i = 0; i < envItemsLength; i++)
     {
         EnvItem *ei = envItems + i;
         minX = fminf(ei->rect.x, minX);
@@ -227,34 +227,34 @@ void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envI
     const vec2 max = GetWorldToScreen2D(vec2{ maxX, maxY }, *camera);
     const vec2 min = GetWorldToScreen2D(vec2{ minX, minY }, *camera);
 
-    if (max.x < width) camera->offset.x = width - (max.x - static_cast<float>(width)/2);
-    if (max.y < height) camera->offset.y = height - (max.y - static_cast<float>(height)/2);
-    if (min.x > 0) camera->offset.x = static_cast<float>(width)/2 - min.x;
-    if (min.y > 0) camera->offset.y = static_cast<float>(height)/2 - min.y;
+    if (max.x < width) camera->offset.x = width - (max.x - static_cast<f32>(width)/2);
+    if (max.y < height) camera->offset.y = height - (max.y - static_cast<f32>(height)/2);
+    if (min.x > 0) camera->offset.x = static_cast<f32>(width)/2 - min.x;
+    if (min.y > 0) camera->offset.y = static_cast<f32>(height)/2 - min.y;
 }
 
-void UpdateCameraCenterSmoothFollow(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
+void UpdateCameraCenterSmoothFollow(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height)
 {
-    static constexpr float minSpeed = 30;
-    static constexpr float minEffectLength = 10;
-    static constexpr float fractionSpeed = 0.8f;
+    static constexpr f32 minSpeed = 30;
+    static constexpr f32 minEffectLength = 10;
+    static constexpr f32 fractionSpeed = 0.8f;
 
     camera->offset = vec2{ width/2.0f, height/2.0f };
     const vec2 diff = ((player->position) - (camera->target));
-    const float length = glm::length(diff);
+    const f32 length = glm::length(diff);
 
     if (length > minEffectLength)
     {
-        const float speed = fmaxf(fractionSpeed*length, minSpeed);
+        const f32 speed = fmaxf(fractionSpeed*length, minSpeed);
         camera->target = ((camera->target) + (((diff) * (speed*delta/length))));
     }
 }
 
-void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
+void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height)
 {
-    static constexpr float evenOutSpeed = 700;
-    static int eveningOut = false;
-    static float evenOutTarget;
+    static constexpr f32 evenOutSpeed = 700;
+    static i32 eveningOut = false;
+    static f32 evenOutTarget;
 
     camera->offset = vec2{ width/2.0f, height/2.0f };
     camera->target.x = player->position.x;
@@ -292,7 +292,7 @@ void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *env
     }
 }
 
-void UpdateCameraPlayerBoundsPush(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
+void UpdateCameraPlayerBoundsPush(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height)
 {
     static const vec2 bbox = { 0.2f, 0.2f };
 

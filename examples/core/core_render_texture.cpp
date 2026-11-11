@@ -18,25 +18,25 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - render texture");
 
     // Define a render texture to render
-    constexpr int renderTextureWidth = 300;
-    constexpr int renderTextureHeight = 300;
+    constexpr i32 renderTextureWidth = 300;
+    constexpr i32 renderTextureHeight = 300;
     const RenderTexture2D target = LoadRenderTexture(renderTextureWidth, renderTextureHeight);
 
     vec2 ballPosition = { renderTextureWidth/2.0f, renderTextureHeight/2.0f };
     vec2 ballSpeed = { 5.0f, 4.0f };
-    constexpr int ballRadius = 20;
+    constexpr i32 ballRadius = 20;
 
-    float rotation = 0.0f;
+    f32 rotation = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------
@@ -66,7 +66,7 @@ int main()
             ClearBackground(SKYBLUE);
 
             DrawRectangle(0, 0, 20, 20, RED);
-            DrawCircleV(ballPosition, static_cast<float>(ballRadius), MAROON);
+            DrawCircleV(ballPosition, static_cast<f32>(ballRadius), MAROON);
 
         EndTextureMode();
 
@@ -79,8 +79,8 @@ int main()
             // NOTE 1: We set the origin of the texture to the center of the render texture
             // NOTE 2: We flip vertically the texture setting negative source rectangle height
             DrawTexturePro(target.texture,
-                Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
-                Rectangle{ screenWidth/2.0f, screenHeight/2.0f, static_cast<float>(target.texture.width), static_cast<float>(target.texture.height) },
+                Rectangle{ 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) },
+                Rectangle{ screenWidth/2.0f, screenHeight/2.0f, static_cast<f32>(target.texture.width), static_cast<f32>(target.texture.height) },
                 vec2{ target.texture.width/2.0f, target.texture.height/2.0f }, rotation, WHITE);
 
             DrawText("DRAWING BOUNCING BALL INSIDE RENDER TEXTURE!", 10, screenHeight - 40, 20, BLACK);

@@ -21,12 +21,12 @@
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main()
+i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr int screenWidth = 800;
-    constexpr int screenHeight = 450;
+    constexpr i32 screenWidth = 800;
+    constexpr i32 screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation timing");
 
@@ -43,21 +43,21 @@ int main()
     const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
 
     // Load model animations
-    int animCount = 0;
+    i32 animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/robot.glb", &animCount);
 
     // Animation playing variables
-    int animIndex = 10;                  // Current animation playing
-    float animCurrentFrame = 0.0f;       // Current animation frame (supporting interpolated frames)
-    float animFrameSpeed = 0.5f;         // Animation play speed
+    i32 animIndex = 10;                  // Current animation playing
+    f32 animCurrentFrame = 0.0f;       // Current animation frame (supporting interpolated frames)
+    f32 animFrameSpeed = 0.5f;         // Animation play speed
     bool animPause = false;              // Pause animation
 
     // UI required variables
     std::vector<std::string> animNames;
-    for (int i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
+    for (i32 i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
 
     bool dropdownEditMode = false;
-    float animFrameProgress = 0.0f;
+    f32 animFrameProgress = 0.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -111,9 +111,9 @@ int main()
             GuiLabel(Rectangle{ 10, GetScreenHeight() - 64.0f, GetScreenWidth() - 20.0f, 24 },
                 TextFormat("CURRENT FRAME: %.2f / %i", animFrameProgress, anims[animIndex].keyframeCount).c_str());
             GuiProgressBar(Rectangle{ 10, GetScreenHeight() - 40.0f, GetScreenWidth() - 20.0f, 24 }, nullptr, nullptr,
-                &animFrameProgress, 0.0f, static_cast<float>(anims[animIndex].keyframeCount));
-            for (int i = 0; i < anims[animIndex].keyframeCount; i++)
-                DrawRectangle(10 + static_cast<int>((static_cast<float>(GetScreenWidth() - 20)/static_cast<float>(anims[animIndex].keyframeCount))*static_cast<float>(i)),
+                &animFrameProgress, 0.0f, static_cast<f32>(anims[animIndex].keyframeCount));
+            for (i32 i = 0; i < anims[animIndex].keyframeCount; i++)
+                DrawRectangle(10 + static_cast<i32>((static_cast<f32>(GetScreenWidth() - 20)/static_cast<f32>(anims[animIndex].keyframeCount))*static_cast<f32>(i)),
                     GetScreenHeight() - 40, 1, 24, BLUE);
 
         EndDrawing();
