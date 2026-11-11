@@ -212,7 +212,7 @@ typedef struct Color {
 
     Color() : r(0), g(0), b(0), a(0) {}
     // NOTE: Defaulted components preserve partial-init semantics: Color c = { 255 } -> { 255, 0, 0, 0 }
-    explicit constexpr Color(u8 r, u8 g = 0, u8 b = 0, u8 a = 0) : r(r), g(g), b(b), a(a) {}
+    explicit constexpr Color(const u8 r, const u8 g = 0, const u8 b = 0, const u8 a = 0) : r(r), g(g), b(b), a(a) {}
 
     constexpr bool operator==(const Color &c) const { return (r == c.r) && (g == c.g) && (b == c.b) && (a == c.a); }
     constexpr bool operator!=(const Color &c) const { return !(*this == c); }
@@ -226,7 +226,7 @@ typedef struct Rectangle {
     f32 height;           // Rectangle height
 
     Rectangle() : x(0.0f), y(0.0f), width(0.0f), height(0.0f) {}
-    constexpr Rectangle(f32 x, f32 y = 0.0f, f32 width = 0.0f, f32 height = 0.0f) : x(x), y(y), width(width), height(height) {}
+    explicit constexpr Rectangle(const f32 x, const f32 y = 0.0f, const f32 width = 0.0f, const f32 height = 0.0f) : x(x), y(y), width(width), height(height) {}
 
     constexpr bool operator==(const Rectangle &r) const { return (x == r.x) && (y == r.y) && (width == r.width) && (height == r.height); }
     constexpr bool operator!=(const Rectangle &r) const { return !(*this == r); }
