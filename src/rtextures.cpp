@@ -133,9 +133,9 @@
         #pragma GCC diagnostic ignored "-Wunused-function"
     #endif
 
-    #define STBI_MALLOC RL_MALLOC
-    #define STBI_FREE RL_FREE
-    #define STBI_REALLOC RL_REALLOC
+    #define STBI_MALLOC malloc
+    #define STBI_FREE free
+    #define STBI_REALLOC realloc
 
     #define STBI_NO_THREAD_LOCALS
 
@@ -163,8 +163,8 @@
         #pragma GCC diagnostic ignored "-Wunused-function"
     #endif
 
-    #define RLTEXGPU_MALLOC RL_MALLOC
-    #define RLTEXGPU_FREE RL_FREE
+    #define RLTEXGPU_MALLOC malloc
+    #define RLTEXGPU_FREE free
     #define RLTEXGPU_LOG(...) TRACELOG(LOG_WARNING, "IMAGE: " __VA_ARGS__)
     #define RLTEXGPU_SHOW_LOG_INFO
     #define RLTEXGPU_IMPLEMENTATION
@@ -176,8 +176,8 @@
 #endif
 
 #if SUPPORT_FILEFORMAT_QOI
-    #define QOI_MALLOC RL_MALLOC
-    #define QOI_FREE RL_FREE
+    #define QOI_MALLOC malloc
+    #define QOI_FREE free
 
     #if defined(_MSC_VER)               // Disable some MSVC warning
         #pragma warning(push)
@@ -193,18 +193,18 @@
 #endif
 
 #if SUPPORT_FILEFORMAT_PEP
-	#define PEP_MALLOC RL_MALLOC
-	#define PEP_REALLOC RL_REALLOC
-	#define PEP_FREE RL_FREE
+	#define PEP_MALLOC malloc
+	#define PEP_REALLOC realloc
+	#define PEP_FREE free
 
     #define PEP_IMPLEMENTATION
     #include "external/pep.h"
 #endif
 
 #if SUPPORT_IMAGE_EXPORT
-    #define STBIW_MALLOC RL_MALLOC
-    #define STBIW_FREE RL_FREE
-    #define STBIW_REALLOC RL_REALLOC
+    #define STBIW_MALLOC malloc
+    #define STBIW_FREE free
+    #define STBIW_REALLOC realloc
 
     #define STB_IMAGE_WRITE_IMPLEMENTATION
     #include "external/stb_image_write.h"   // Required for: stbi_write_*()
@@ -215,8 +215,8 @@
     #include "external/stb_perlin.h"        // Required for: stb_perlin_fbm_noise3
 #endif
 
-#define STBIR_MALLOC(size,c) ((void)(c), RL_MALLOC(size))
-#define STBIR_FREE(ptr,c) ((void)(c), RL_FREE(ptr))
+#define STBIR_MALLOC(size,c) ((void)(c), malloc(size))
+#define STBIR_FREE(ptr,c) ((void)(c), free(ptr))
 
 #if defined(__GNUC__) // GCC and Clang
     #pragma GCC diagnostic push
@@ -326,7 +326,7 @@ Image LoadImageRaw(std::string_view fileNameView, int width, int height, int for
             // Offset file data to expected raw image by header size
             if ((headerSize > 0) && ((headerSize + size) <= dataSize)) dataPtr += headerSize;
 
-            image.data = RL_CALLOC(size, 1);   // Allocate required memory in bytes
+            image.data = calloc(size, 1);   // Allocate required memory in bytes
             memcpy(image.data, dataPtr, size); // Copy required data to image
             image.width = width;
             image.height = height;
@@ -369,7 +369,7 @@ Image LoadImageAnim(std::string_view fileNameView, int *frames)
             image.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
 
             UnloadFileData(fileData);
-            RL_FREE(delays);        // NOTE: Frames delays are discarded
+            free(delays);        // NOTE: Frames delays are discarded
         }
     }
 #else
@@ -412,7 +412,7 @@ Image LoadImageAnimFromMemory(std::string_view fileTypeView, const unsigned char
             image.mipmaps = 1;
             image.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
 
-            RL_FREE(delays);        // NOTE: Frames delays are discarded
+            free(delays);        // NOTE: Frames delays are discarded
         }
     }
 #else
@@ -656,7 +656,7 @@ bool IsImageValid(Image image)
 // Unload image from CPU memory (RAM)
 void UnloadImage(Image image)
 {
-    RL_FREE(image.data);
+    free(image.data);
 }
 
 // Export image data to file
@@ -693,7 +693,7 @@ bool ExportImage(Image image, std::string_view fileNameView)
         int dataSize = 0;
         unsigned char *fileData = stbi_write_png_to_mem(static_cast<const unsigned char *>(imgData), image.width*channels, image.width, image.height, channels, &dataSize);
         result = SaveFileData(fileName, fileData, dataSize);
-        RL_FREE(fileData);
+        free(fileData);
     }
 #endif
 #if SUPPORT_FILEFORMAT_BMP
@@ -759,7 +759,7 @@ bool ExportImage(Image image, std::string_view fileNameView)
     }
     else TRACELOG(LOG_WARNING, "IMAGE: Export image format requested not supported");
 
-    if (allocatedData) RL_FREE(imgData);
+    if (allocatedData) free(imgData);
 #endif // SUPPORT_IMAGE_EXPORT
 
     if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Image exported successfully", fileName);
@@ -811,7 +811,7 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
 
     // NOTE: Text data buffer size is estimated considering image data size in bytes
     // and requiring 6 char bytes for every byte: "0x00, "
-    char *txtData = static_cast<char *>(RL_CALLOC(dataSize*6 + 2000, sizeof(char)));
+    char *txtData = static_cast<char *>(calloc(dataSize*6 + 2000, sizeof(char)));
 
     int byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
@@ -843,7 +843,7 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
     // NOTE: Text data size exported is determined by '\0' (NULL) character
     result = SaveFileText(fileName, txtData);
 
-    RL_FREE(txtData);
+    free(txtData);
 
     if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Image as code exported successfully", fileName);
     else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export image as code", fileName);
@@ -858,7 +858,7 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
 Image GenImageColor(int width, int height, Color color)
 {
     const int dataSize = GetPixelDataSize(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-    Color *pixels = static_cast<Color *>(RL_CALLOC(dataSize, 1));
+    Color *pixels = static_cast<Color *>(calloc(dataSize, 1));
 
     for (int i = 0; (pixels != nullptr) && (i < width*height); i++) pixels[i] = color;
 
@@ -880,7 +880,7 @@ Image GenImageColor(int width, int height, Color color)
 // The gradient effectively rotates counter-clockwise by the specified amount
 Image GenImageGradientLinear(int width, int height, int direction, Color start, Color end)
 {
-    Color *pixels = static_cast<Color *>(RL_CALLOC(width*height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const float radianDirection = static_cast<float>(90 - direction)/180.f*3.14159f;
     const float cosDir = cosf(radianDirection);
@@ -928,7 +928,7 @@ Image GenImageGradientLinear(int width, int height, int direction, Color start, 
 // Generate image: radial gradient
 Image GenImageGradientRadial(int width, int height, float density, Color inner, Color outer)
 {
-    Color *pixels = static_cast<Color *>(RL_CALLOC(width*height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
     const float radius = (width < height)? static_cast<float>(width)/2.0f : static_cast<float>(height)/2.0f;
 
     const float centerX = static_cast<float>(width)/2.0f;
@@ -965,7 +965,7 @@ Image GenImageGradientRadial(int width, int height, float density, Color inner, 
 // Generate image: square gradient
 Image GenImageGradientSquare(int width, int height, float density, Color inner, Color outer)
 {
-    Color *pixels = static_cast<Color *>(RL_CALLOC(width*height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const float centerX = static_cast<float>(width)/2.0f;
     const float centerY = static_cast<float>(height)/2.0f;
@@ -1014,7 +1014,7 @@ Image GenImageGradientSquare(int width, int height, float density, Color inner, 
 // Generate image: checked
 Image GenImageChecked(int width, int height, int checksX, int checksY, Color col1, Color col2)
 {
-    Color *pixels = static_cast<Color *>(RL_CALLOC(width*height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     for (int y = 0; y < height; y++)
     {
@@ -1040,7 +1040,7 @@ Image GenImageChecked(int width, int height, int checksX, int checksY, Color col
 // NOTE: It requires GetRandomValue(), defined in [rcore]
 Image GenImageWhiteNoise(int width, int height, float factor)
 {
-    Color *pixels = static_cast<Color *>(RL_CALLOC(width*height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     for (int i = 0; i < width*height; i++)
     {
@@ -1062,7 +1062,7 @@ Image GenImageWhiteNoise(int width, int height, float factor)
 // Generate image: perlin noise
 Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float scale)
 {
-    Color *pixels = static_cast<Color *>(RL_CALLOC(width*height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const float aspectRatio = static_cast<float>(width)/static_cast<float>(height);
 
@@ -1113,13 +1113,13 @@ Image GenImagePerlinNoise(int width, int height, int offsetX, int offsetY, float
 // Generate image: cellular algorithm. Bigger tileSize means bigger cells
 Image GenImageCellular(int width, int height, int tileSize)
 {
-    Color *pixels = static_cast<Color *>(RL_CALLOC(width*height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const int seedsPerRow = width/tileSize;
     const int seedsPerCol = height/tileSize;
     const int seedCount = seedsPerRow*seedsPerCol;
 
-    vec2 *seeds = static_cast<vec2 *>(RL_CALLOC(seedCount, sizeof(vec2)));
+    vec2 *seeds = static_cast<vec2 *>(calloc(seedCount, sizeof(vec2)));
 
     for (int i = 0; i < seedCount; i++)
     {
@@ -1163,7 +1163,7 @@ Image GenImageCellular(int width, int height, int tileSize)
         }
     }
 
-    RL_FREE(seeds);
+    free(seeds);
 
     Image image = {
         .data = pixels,
@@ -1188,7 +1188,7 @@ Image GenImageText(int width, int height, std::string_view textView)
     image.width = width;
     image.height = height;
     image.format = PIXELFORMAT_UNCOMPRESSED_GRAYSCALE;
-    image.data = RL_CALLOC(imageSize, 1);
+    image.data = calloc(imageSize, 1);
     image.mipmaps = 1;
 
     if (text != nullptr)
@@ -1225,7 +1225,7 @@ Image ImageCopy(Image image)
         if (height < 1) height = 1;
     }
 
-    newImage.data = RL_CALLOC(size, 1);
+    newImage.data = calloc(size, 1);
 
     if (newImage.data != nullptr)
     {
@@ -1260,7 +1260,7 @@ Image ImageFromImage(Image image, Rectangle rec)
 
             result.width = static_cast<int>(rec.width);
             result.height = static_cast<int>(rec.height);
-            result.data = RL_CALLOC(static_cast<int>(rec.width)*static_cast<int>(rec.height)*bytesPerPixel, 1);
+            result.data = calloc(static_cast<int>(rec.width)*static_cast<int>(rec.height)*bytesPerPixel, 1);
             result.format = image.format;
             result.mipmaps = 1;
 
@@ -1312,7 +1312,7 @@ void ImageCrop(Image *image, Rectangle crop)
     {
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
 
-        unsigned char *croppedData = static_cast<unsigned char *>(RL_CALLOC(cropWidth*cropHeight*bytesPerPixel, 1));
+        unsigned char *croppedData = static_cast<unsigned char *>(calloc(cropWidth*cropHeight*bytesPerPixel, 1));
 
         // OPTION 1: Move cropped data line-by-line
         for (int y = cropY, offsetSize = 0; y < cropY + cropHeight; y++)
@@ -1333,7 +1333,7 @@ void ImageCrop(Image *image, Rectangle crop)
         }
         */
 
-        RL_FREE(image->data);
+        free(image->data);
         image->data = croppedData;
         image->width = cropWidth;
         image->height = cropHeight;
@@ -1352,7 +1352,7 @@ void ImageFormat(Image *image, int newFormat)
         {
             vec4 *pixels = LoadImageDataNormalized(*image);   // Supports 8 to 32 bit per channel
 
-            RL_FREE(image->data);      // WARNING! Loosing mipmaps data --> Regenerated at the end
+            free(image->data);      // WARNING! Loosing mipmaps data --> Regenerated at the end
             image->data = nullptr;
             image->format = newFormat;
 
@@ -1360,7 +1360,7 @@ void ImageFormat(Image *image, int newFormat)
             {
                 case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
                 {
-                    image->data = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height, sizeof(unsigned char)));
+                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height, sizeof(unsigned char)));
 
                     for (int i = 0; i < image->width*image->height; i++)
                     {
@@ -1370,7 +1370,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
                 {
-                    image->data = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*2, sizeof(unsigned char)));
+                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height*2, sizeof(unsigned char)));
 
                     for (int i = 0, k = 0; i < image->width*image->height*2; i += 2, k++)
                     {
@@ -1381,7 +1381,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
                 {
-                    image->data = static_cast<unsigned short *>(RL_CALLOC(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
 
                     unsigned char r = 0;
                     unsigned char g = 0;
@@ -1399,7 +1399,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8:
                 {
-                    image->data = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*3, sizeof(unsigned char)));
+                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height*3, sizeof(unsigned char)));
 
                     for (int i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
                     {
@@ -1410,7 +1410,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
                 {
-                    image->data = static_cast<unsigned short *>(RL_CALLOC(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
 
                     unsigned char r = 0;
                     unsigned char g = 0;
@@ -1430,7 +1430,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
                 {
-                    image->data = static_cast<unsigned short *>(RL_CALLOC(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
 
                     unsigned char r = 0;
                     unsigned char g = 0;
@@ -1450,7 +1450,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
                 {
-                    image->data = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*4, sizeof(unsigned char)));
+                    image->data = static_cast<unsigned char *>(calloc(image->width*image->height*4, sizeof(unsigned char)));
 
                     for (int i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
                     {
@@ -1464,7 +1464,7 @@ void ImageFormat(Image *image, int newFormat)
                 {
                     // WARNING: Image is converted to GRAYSCALE equivalent 32bit
 
-                    image->data = static_cast<float *>(RL_CALLOC(image->width*image->height, sizeof(float)));
+                    image->data = static_cast<float *>(calloc(image->width*image->height, sizeof(float)));
 
                     for (int i = 0; i < image->width*image->height; i++)
                     {
@@ -1473,7 +1473,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
                 {
-                    image->data = static_cast<float *>(RL_CALLOC(image->width*image->height*3, sizeof(float)));
+                    image->data = static_cast<float *>(calloc(image->width*image->height*3, sizeof(float)));
 
                     for (int i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
                     {
@@ -1484,7 +1484,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
                 {
-                    image->data = static_cast<float *>(RL_CALLOC(image->width*image->height*4, sizeof(float)));
+                    image->data = static_cast<float *>(calloc(image->width*image->height*4, sizeof(float)));
 
                     for (int i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
                     {
@@ -1498,7 +1498,7 @@ void ImageFormat(Image *image, int newFormat)
                 {
                     // WARNING: Image is converted to GRAYSCALE equivalent 16bit
 
-                    image->data = static_cast<unsigned short *>(RL_CALLOC(image->width*image->height, sizeof(unsigned short)));
+                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
 
                     for (int i = 0; i < image->width*image->height; i++)
                     {
@@ -1507,7 +1507,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
                 {
-                    image->data = static_cast<unsigned short *>(RL_CALLOC(image->width*image->height*3, sizeof(unsigned short)));
+                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height*3, sizeof(unsigned short)));
 
                     for (int i = 0, k = 0; i < image->width*image->height*3; i += 3, k++)
                     {
@@ -1518,7 +1518,7 @@ void ImageFormat(Image *image, int newFormat)
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
                 {
-                    image->data = static_cast<unsigned short *>(RL_CALLOC(image->width*image->height*4, sizeof(unsigned short)));
+                    image->data = static_cast<unsigned short *>(calloc(image->width*image->height*4, sizeof(unsigned short)));
 
                     for (int i = 0, k = 0; i < image->width*image->height*4; i += 4, k++)
                     {
@@ -1531,7 +1531,7 @@ void ImageFormat(Image *image, int newFormat)
                 default: break;
             }
 
-            RL_FREE(pixels);
+            free(pixels);
             pixels = nullptr;
 
             // In case original image had mipmaps, generate mipmaps for formatted image
@@ -1703,7 +1703,7 @@ Image ImageFromChannel(Image image, int selectedChannel)
     result.width = image.width;
     result.mipmaps = 1;
 
-    unsigned char *pixels = static_cast<unsigned char *>(RL_CALLOC(image.width*image.height, sizeof(unsigned char))); // Values from 0 to 255
+    unsigned char *pixels = static_cast<unsigned char *>(calloc(image.width*image.height, sizeof(unsigned char))); // Values from 0 to 255
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
@@ -1820,7 +1820,7 @@ void ImageResizeNN(Image *image, int newWidth, int newHeight)
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
     Color *pixels = LoadImageColors(*image);
-    Color *output = static_cast<Color *>(RL_CALLOC(newWidth*newHeight, sizeof(Color)));
+    Color *output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
 
     // EDIT: added +1 to account for an early rounding problem
     const int xRatio = ((image->width << 16)/newWidth) + 1;
@@ -1841,7 +1841,7 @@ void ImageResizeNN(Image *image, int newWidth, int newHeight)
 
     const int format = image->format;
 
-    RL_FREE(image->data);
+    free(image->data);
 
     image->data = output;
     image->width = newWidth;
@@ -1870,7 +1870,7 @@ void ImageResize(Image *image, int newWidth, int newHeight)
         (image->format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8))
     {
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *output = static_cast<unsigned char *>(RL_CALLOC(newWidth*newHeight*bytesPerPixel, 1));
+        unsigned char *output = static_cast<unsigned char *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
 
         switch (image->format)
         {
@@ -1881,7 +1881,7 @@ void ImageResize(Image *image, int newWidth, int newHeight)
             default: break;
         }
 
-        RL_FREE(image->data);
+        free(image->data);
         image->data = output;
         image->width = newWidth;
         image->height = newHeight;
@@ -1890,7 +1890,7 @@ void ImageResize(Image *image, int newWidth, int newHeight)
     {
         // Get data as Color pixels array to work with it
         Color *pixels = LoadImageColors(*image);
-        Color *output = static_cast<Color *>(RL_CALLOC(newWidth*newHeight, sizeof(Color)));
+        Color *output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
 
         // NOTE: Color data is cast to (unsigned char *), there shouldn't been any problem...
         stbir_resize_uint8_linear(reinterpret_cast<unsigned char *>(pixels), image->width, image->height, 0, reinterpret_cast<unsigned char *>(output), newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(4));
@@ -1898,7 +1898,7 @@ void ImageResize(Image *image, int newWidth, int newHeight)
         const int format = image->format;
 
         UnloadImageColors(pixels);
-        RL_FREE(image->data);
+        free(image->data);
 
         image->data = output;
         image->width = newWidth;
@@ -1943,7 +1943,7 @@ void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, i
         if (newHeight < srcRec.height) srcRec.height = static_cast<float>(newHeight);
 
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *resizedData = static_cast<unsigned char *>(RL_CALLOC(newWidth*newHeight*bytesPerPixel, 1));
+        unsigned char *resizedData = static_cast<unsigned char *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
 
         // Fill resized canvas with fill color
         // Set first pixel with image->format
@@ -1969,7 +1969,7 @@ void ImageResizeCanvas(Image *image, int newWidth, int newHeight, int offsetX, i
             dstOffsetSize += (newWidth*bytesPerPixel);
         }
 
-        RL_FREE(image->data);
+        free(image->data);
         image->data = resizedData;
         image->width = newWidth;
         image->height = newHeight;
@@ -2131,7 +2131,7 @@ void ImageAlphaMask(Image *image, Image alphaMask)
         // In case image is only grayscale, add alpha channel
         if (image->format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE)
         {
-            unsigned char *data = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*2, 1));
+            unsigned char *data = static_cast<unsigned char *>(calloc(image->width*image->height*2, 1));
 
             // Apply alpha mask to alpha channel
             for (int i = 0, k = 0; (i < mask.width*mask.height) || (i < image->width*image->height); i++, k += 2)
@@ -2140,7 +2140,7 @@ void ImageAlphaMask(Image *image, Image alphaMask)
                 data[k + 1] = (static_cast<unsigned char *>(mask.data))[i];
             }
 
-            RL_FREE(image->data);
+            free(image->data);
             image->data = data;
             image->format = PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA;
         }
@@ -2186,7 +2186,7 @@ void ImageAlphaPremultiply(Image *image)
         }
     }
 
-    RL_FREE(image->data);
+    free(image->data);
 
     const int format = image->format;
     image->data = pixels;
@@ -2206,8 +2206,8 @@ void ImageBlurGaussian(Image *image, int blurSize)
     Color *pixels = LoadImageColors(*image);
 
     // Loop switches between pixelsCopy1 and pixelsCopy2
-    vec4 *pixelsCopy1 = static_cast<vec4 *>(RL_CALLOC(image->height*image->width, sizeof(vec4)));
-    vec4 *pixelsCopy2 = static_cast<vec4 *>(RL_CALLOC(image->height*image->width, sizeof(vec4)));
+    vec4 *pixelsCopy1 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
+    vec4 *pixelsCopy2 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
 
     for (int i = 0; i < (image->height*image->width); i++)
     {
@@ -2329,9 +2329,9 @@ void ImageBlurGaussian(Image *image, int blurSize)
     }
 
     const int format = image->format;
-    RL_FREE(image->data);
-    RL_FREE(pixelsCopy1);
-    RL_FREE(pixelsCopy2);
+    free(image->data);
+    free(pixelsCopy1);
+    free(pixelsCopy2);
 
     image->data = pixels;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
@@ -2354,7 +2354,7 @@ void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize)
     }
 
     Color *pixels = LoadImageColors(*image);
-    Color *result = static_cast<Color *>(RL_CALLOC((image->height)*(image->width), sizeof(Color)));
+    Color *result = static_cast<Color *>(calloc((image->height)*(image->width), sizeof(Color)));
 
     int startRange = 0, endRange = 0;
 
@@ -2420,8 +2420,8 @@ void ImageKernelConvolution(Image *image, const float *kernel, int kernelSize)
     }
 
     const int format = image->format;
-    RL_FREE(image->data);
-    RL_FREE(pixels);
+    free(image->data);
+    free(pixels);
 
     image->data = result;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
@@ -2461,9 +2461,9 @@ void ImageMipmaps(Image *image)
     if (image->mipmaps < mipCount)
     {
         // Create second buffer and copy data manually to it
-        void *temp = RL_CALLOC(mipSize, 1);
+        void *temp = calloc(mipSize, 1);
         memcpy(temp, image->data, GetPixelDataSize(image->width, image->height, image->format));
-        RL_FREE(image->data);
+        free(image->data);
         image->data = temp;
 
         // Pointer to allocated memory point where store next mipmap level data
@@ -2523,7 +2523,7 @@ void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp)
     {
         Color *pixels = LoadImageColors(*image);
 
-        RL_FREE(image->data);      // free old image data
+        free(image->data);      // free old image data
 
         if ((image->format != PIXELFORMAT_UNCOMPRESSED_R8G8B8) && (image->format != PIXELFORMAT_UNCOMPRESSED_R8G8B8A8))
         {
@@ -2541,7 +2541,7 @@ void ImageDither(Image *image, int rBpp, int gBpp, int bBpp, int aBpp)
         }
 
         // NOTE: Storing the dithered data as unsigned short (16bpp)
-        image->data = static_cast<unsigned short *>(RL_CALLOC(image->width*image->height, sizeof(unsigned short)));
+        image->data = static_cast<unsigned short *>(calloc(image->width*image->height, sizeof(unsigned short)));
 
         Color oldPixel = WHITE;
         Color newPixel = WHITE;
@@ -2629,7 +2629,7 @@ void ImageFlipVertical(Image *image)
     else
     {
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *flippedData = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*bytesPerPixel, 1));
+        unsigned char *flippedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (int i = (image->height - 1), offsetSize = 0; i >= 0; i--)
         {
@@ -2637,7 +2637,7 @@ void ImageFlipVertical(Image *image)
             offsetSize += image->width*bytesPerPixel;
         }
 
-        RL_FREE(image->data);
+        free(image->data);
         image->data = flippedData;
     }
 }
@@ -2653,7 +2653,7 @@ void ImageFlipHorizontal(Image *image)
     else
     {
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *flippedData = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*bytesPerPixel, 1));
+        unsigned char *flippedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (int y = 0; y < image->height; y++)
         {
@@ -2667,7 +2667,7 @@ void ImageFlipHorizontal(Image *image)
             }
         }
 
-        RL_FREE(image->data);
+        free(image->data);
         image->data = flippedData;
 
         /*
@@ -2706,7 +2706,7 @@ void ImageRotate(Image *image, int degrees)
 
         const int dataSize = GetPixelDataSize(width, height, image->format);
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *rotatedData = static_cast<unsigned char *>(RL_CALLOC(dataSize, 1));
+        unsigned char *rotatedData = static_cast<unsigned char *>(calloc(dataSize, 1));
 
         if (rotatedData != nullptr)
         {
@@ -2744,7 +2744,7 @@ void ImageRotate(Image *image, int degrees)
                 }
             }
 
-            RL_FREE(image->data);
+            free(image->data);
             image->data = rotatedData;
             image->width = width;
             image->height = height;
@@ -2763,7 +2763,7 @@ void ImageRotateCW(Image *image)
     else
     {
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *rotatedData = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*bytesPerPixel, 1));
+        unsigned char *rotatedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (int y = 0; y < image->height; y++)
         {
@@ -2774,7 +2774,7 @@ void ImageRotateCW(Image *image)
             }
         }
 
-        RL_FREE(image->data);
+        free(image->data);
         image->data = rotatedData;
         const int width = image->width;
         const int height = image-> height;
@@ -2795,7 +2795,7 @@ void ImageRotateCCW(Image *image)
     else
     {
         const int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *rotatedData = static_cast<unsigned char *>(RL_CALLOC(image->width*image->height*bytesPerPixel, 1));
+        unsigned char *rotatedData = static_cast<unsigned char *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (int y = 0; y < image->height; y++)
         {
@@ -2806,7 +2806,7 @@ void ImageRotateCCW(Image *image)
             }
         }
 
-        RL_FREE(image->data);
+        free(image->data);
         image->data = rotatedData;
         const int width = image->width;
         const int height = image-> height;
@@ -2838,7 +2838,7 @@ void ImageColorTint(Image *image, Color color)
     }
 
     const int format = image->format;
-    RL_FREE(image->data);
+    free(image->data);
 
     image->data = pixels;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
@@ -2862,7 +2862,7 @@ void ImageColorInvert(Image *image)
     }
 
     const int format = image->format;
-    RL_FREE(image->data);
+    free(image->data);
 
     image->data = pixels;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
@@ -2923,7 +2923,7 @@ void ImageColorContrast(Image *image, int contrast)
     }
 
     const int format = image->format;
-    RL_FREE(image->data);
+    free(image->data);
 
     image->data = pixels;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
@@ -2964,7 +2964,7 @@ void ImageColorBrightness(Image *image, int brightness)
     }
 
     const int format = image->format;
-    RL_FREE(image->data);
+    free(image->data);
 
     image->data = pixels;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
@@ -2995,7 +2995,7 @@ void ImageColorReplace(Image *image, Color color, Color replace)
     }
 
     const int format = image->format;
-    RL_FREE(image->data);
+    free(image->data);
 
     image->data = pixels;
     image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
@@ -3018,7 +3018,7 @@ Color *LoadImageColors(Image image)
 {
     if ((image.width == 0) || (image.height == 0)) return nullptr; // Security check
 
-    Color *pixels = static_cast<Color *>(RL_CALLOC(image.width*image.height, sizeof(Color)));
+    Color *pixels = static_cast<Color *>(calloc(image.width*image.height, sizeof(Color)));
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
@@ -3174,7 +3174,7 @@ Color *LoadImagePalette(Image image, int maxPaletteSize, int *colorCount)
 
     if (pixels != nullptr)
     {
-        palette = static_cast<Color *>(RL_CALLOC(maxPaletteSize, sizeof(Color)));
+        palette = static_cast<Color *>(calloc(maxPaletteSize, sizeof(Color)));
 
         for (int i = 0; i < maxPaletteSize; i++) palette[i] = BLANK;   // Set all colors to BLANK
 
@@ -3221,13 +3221,13 @@ Color *LoadImagePalette(Image image, int maxPaletteSize, int *colorCount)
 // Unload color data loaded with LoadImageColors()
 void UnloadImageColors(Color *colors)
 {
-    RL_FREE(colors);
+    free(colors);
 }
 
 // Unload colors palette loaded with LoadImagePalette()
 void UnloadImagePalette(Color *colors)
 {
-    RL_FREE(colors);
+    free(colors);
 }
 
 // Get image alpha border rectangle
@@ -5874,7 +5874,7 @@ static unsigned short FloatToHalf(float x)
 // Get pixel data from image as vec4 array (float normalized)
 static vec4 *LoadImageDataNormalized(Image image)
 {
-    vec4 *pixels = static_cast<vec4 *>(RL_CALLOC(image.width*image.height, sizeof(vec4)));
+    vec4 *pixels = static_cast<vec4 *>(calloc(image.width*image.height, sizeof(vec4)));
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else

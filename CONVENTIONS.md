@@ -73,7 +73,7 @@ void SomeFunction()
 ```c
 if (dataPtr != NULL)
 {
-    RL_FREE(dataPtr);
+    free(dataPtr);
     dataPtr = NULL;
 }
 ```

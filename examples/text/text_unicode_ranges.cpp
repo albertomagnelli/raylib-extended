@@ -189,7 +189,7 @@ static void AddCodepointRange(Font *font, const char *fontPath, int start, int s
     // add them to existing font, regenerating font image and texture
 
     const int updatedCodepointCount = currentRangeSize + rangeSize;
-    int *updatedCodepoints = static_cast<int *>(RL_CALLOC(updatedCodepointCount, sizeof(int)));
+    int *updatedCodepoints = static_cast<int *>(calloc(updatedCodepointCount, sizeof(int)));
 
     // Get current codepoint list
     for (int i = 0; i < currentRangeSize; i++) updatedCodepoints[i] = font->glyphs[i].value;
@@ -200,6 +200,6 @@ static void AddCodepointRange(Font *font, const char *fontPath, int start, int s
 
     UnloadFont(*font);
     *font = LoadFontEx(fontPath, 32, updatedCodepoints, updatedCodepointCount);
-    RL_FREE(updatedCodepoints);
+    free(updatedCodepoints);
 }
 

@@ -174,7 +174,7 @@ static PenroseLSystem LoadPenroseLSystem(float drawLength)
         .theta = 36.0f // Degrees
     };
 
-    ls.production = static_cast<char *>(RL_MALLOC(sizeof(char)*STR_MAX_SIZE));
+    ls.production = static_cast<char *>(malloc(sizeof(char)*STR_MAX_SIZE));
     ls.production[0] = '\0';
     strncpy(ls.production, "[X]++[X]++[X]++[X]++[X]", STR_MAX_SIZE);
 
@@ -184,13 +184,13 @@ static PenroseLSystem LoadPenroseLSystem(float drawLength)
 // Unload penrose tile structure
 static void UnloadPenroseLSystem(PenroseLSystem ls)
 {
-    RL_FREE(ls.production);
+    free(ls.production);
 }
 
 // Build next penrose step
 static void BuildProductionStep(PenroseLSystem *ls)
 {
-    char *newProduction = static_cast<char *>(RL_MALLOC(sizeof(char)*STR_MAX_SIZE));
+    char *newProduction = static_cast<char *>(malloc(sizeof(char)*STR_MAX_SIZE));
     newProduction[0] = '\0';
 
     const int productionLength = static_cast<int>(strnlen(ls->production, STR_MAX_SIZE));
@@ -220,7 +220,7 @@ static void BuildProductionStep(PenroseLSystem *ls)
     ls->drawLength *= 0.5f;
     strncpy(ls->production, newProduction, STR_MAX_SIZE);
 
-    RL_FREE(newProduction);
+    free(newProduction);
 }
 
 // Draw penrose tile lines

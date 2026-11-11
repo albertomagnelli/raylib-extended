@@ -192,8 +192,8 @@
 #endif
 
 #if defined(_WIN32) && (defined(_MSC_VER) || defined(__TINYC__))
-    #define DIRENT_MALLOC RL_MALLOC
-    #define DIRENT_FREE RL_FREE
+    #define DIRENT_MALLOC malloc
+    #define DIRENT_FREE free
 
     #include "external/dirent.h"    // Required for: DIR, opendir(), closedir() [Used in LoadDirectoryFiles()]
 #else
@@ -1343,7 +1343,7 @@ Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCode
     {
         // Shader could not be loaded but still loading the location points to avoid potential crashes
         // NOTE: All locations set to -1 (no location found)
-        shader.locs = static_cast<int *>(RL_CALLOC(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
+        shader.locs = static_cast<int *>(calloc(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
         for (int i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
     }
     else if (shader.id == rlGetShaderIdDefault()) shader.locs = rlGetShaderLocsDefault();
@@ -1364,7 +1364,7 @@ Shader LoadShaderFromMemory(std::string_view vsCodeView, std::string_view fsCode
 
         // Load shader locations array
         // NOTE: All locations set to -1 (no location)
-        shader.locs = static_cast<int *>(RL_CALLOC(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
+        shader.locs = static_cast<int *>(calloc(RL_MAX_SHADER_LOCATIONS, sizeof(int)));
         for (int i = 0; i < RL_MAX_SHADER_LOCATIONS; i++) shader.locs[i] = -1;
 
         // Get handles to GLSL input attribute locations
@@ -1436,7 +1436,7 @@ void UnloadShader(Shader shader)
         rlUnloadShaderProgram(shader.id);
 
         // NOTE: If shader loading failed, it should be 0
-        RL_FREE(shader.locs);
+        free(shader.locs);
     }
 }
 
@@ -1876,7 +1876,7 @@ int *LoadRandomSequence(unsigned int count, int min, int max)
 #else
     if (count > (static_cast<unsigned int>(abs(max - min)) + 1)) return values;  // Security check
 
-    values = static_cast<int *>(RL_CALLOC(count, sizeof(int)));
+    values = static_cast<int *>(calloc(count, sizeof(int)));
 
     int value = 0;
     bool dupValue = false;
@@ -1912,7 +1912,7 @@ void UnloadRandomSequence(int *sequence)
 #if SUPPORT_RPRAND_GENERATOR
     rprand_unload_sequence(sequence);
 #else
-    RL_FREE(sequence);
+    free(sequence);
 #endif
 }
 
@@ -1938,7 +1938,7 @@ void TakeScreenshot(std::string_view fileNameView)
     else snprintf(path, MAX_FILEPATH_LENGTH, "%s", fileName);
 
     ExportImage(image, path); // WARNING: Module required: rtextures
-    RL_FREE(imgData);
+    free(imgData);
 
     if (FileExists(path)) TRACELOG(LOG_INFO, "SYSTEM: [%s] Screenshot taken successfully", path);
     else TRACELOG(LOG_WARNING, "SYSTEM: [%s] Screenshot could not be saved", path);
@@ -2037,21 +2037,21 @@ void SetTraceLogCallback(TraceLogCallback callback)
 // NOTE: Initializes to zero by default
 void *MemAlloc(unsigned int size)
 {
-    void *ptr = RL_CALLOC(size, 1);
+    void *ptr = calloc(size, 1);
     return ptr;
 }
 
 // Internal memory reallocator
 void *MemRealloc(void *ptr, unsigned int size)
 {
-    void *ret = RL_REALLOC(ptr, size);
+    void *ret = realloc(ptr, size);
     return ret;
 }
 
 // Internal memory free
 void MemFree(void *ptr)
 {
-    RL_FREE(ptr);
+    free(ptr);
 }
 
 //----------------------------------------------------------------------------------
@@ -2082,7 +2082,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
 
             if (size > 0)
             {
-                data = static_cast<unsigned char *>(RL_CALLOC(size, sizeof(unsigned char)));
+                data = static_cast<unsigned char *>(calloc(size, sizeof(unsigned char)));
 
                 if (data != nullptr)
                 {
@@ -2095,7 +2095,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                     {
                         TRACELOG(LOG_WARNING, "FILEIO: [%s] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName);
 
-                        RL_FREE(data);
+                        free(data);
                         data = nullptr;
                     }
                     else
@@ -2122,7 +2122,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
 // Unload file data allocated by LoadFileData()
 void UnloadFileData(unsigned char *data)
 {
-    RL_FREE(data);
+    free(data);
 }
 
 // Save data to file from buffer
@@ -2173,7 +2173,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
 
     // NOTE: Text data buffer size is estimated considering raw data size in bytes
     // and requiring 6 char bytes for every byte: "0x00, "
-    char *txtData = static_cast<char *>(RL_CALLOC(dataSize*6 + 2000, sizeof(char)));
+    char *txtData = static_cast<char *>(calloc(dataSize*6 + 2000, sizeof(char)));
 
     int byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
@@ -2207,7 +2207,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
     // NOTE: Text data size exported is determined by '\0' (NULL) character
     result = SaveFileText(fileName, txtData);
 
-    RL_FREE(txtData);
+    free(txtData);
 
     if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Data as code exported successfully", fileName);
     else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export data as code", fileName);
@@ -2241,7 +2241,7 @@ std::string LoadFileText(std::string_view fileNameView)
 
             if (size > 0)
             {
-                text = static_cast<char *>(RL_CALLOC(size + 1, sizeof(char)));
+                text = static_cast<char *>(calloc(size + 1, sizeof(char)));
 
                 if (text != nullptr)
                 {
@@ -2249,7 +2249,7 @@ std::string LoadFileText(std::string_view fileNameView)
 
                     // WARNING: \r\n is converted to \n on reading, so,
                     // read bytes count gets reduced by the number of lines
-                    if (count < size) text = static_cast<char *>(RL_REALLOC(text, count + 1));
+                    if (count < size) text = static_cast<char *>(realloc(text, count + 1));
 
                     // Zero-terminate the string
                     text[count] = '\0';
@@ -2269,7 +2269,7 @@ std::string LoadFileText(std::string_view fileNameView)
 
     std::string fileText;
     if (text != nullptr) fileText.assign(text, textLength);
-    RL_FREE(text);
+    free(text);
 
     return fileText;
 }
@@ -2277,7 +2277,7 @@ std::string LoadFileText(std::string_view fileNameView)
 // Unload file text data allocated by LoadFileText()
 void UnloadFileText(char *text)
 {
-    RL_FREE(text);
+    free(text);
 }
 
 // Save text data to file (write), string must be '\0' terminated
@@ -2539,7 +2539,7 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
 
         int extCount = 1;
         const int extLength = static_cast<int>(strlen(ext));
-        char *extList = static_cast<char *>(RL_CALLOC(extLength + 1, 1));
+        char *extList = static_cast<char *>(calloc(extLength + 1, 1));
         char *extListPtrs[MAX_FILE_EXTENSIONS] = { nullptr };
         memcpy(extList, ext, extLength);
         extListPtrs[0] = extList;
@@ -2576,7 +2576,7 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
             }
         }
 
-        RL_FREE(extList);
+        free(extList);
     }
 
     return result;
@@ -3010,7 +3010,7 @@ int MakeDirectory(std::string_view dirPathView)
 
     // Copy path string to avoid modifying original
     const int dirPathLength = static_cast<int>(strlen(dirPath)) + 1;
-    char *pathcpy = static_cast<char *>(RL_CALLOC(dirPathLength, 1));
+    char *pathcpy = static_cast<char *>(calloc(dirPathLength, 1));
     memcpy(pathcpy, dirPath, dirPathLength);
 
     // Iterate over pathcpy, create each subdirectory as needed
@@ -3030,7 +3030,7 @@ int MakeDirectory(std::string_view dirPathView)
 
     // Create final directory
     if (!DirectoryExists(pathcpy)) MKDIR(pathcpy);
-    RL_FREE(pathcpy);
+    free(pathcpy);
 
     // In case something failed and requested directory
     // was not successfully created, return -1
@@ -3265,12 +3265,12 @@ unsigned char *CompressData(const unsigned char *data, int dataSize, int *compDa
 
 #if SUPPORT_COMPRESSION_API
     // Compress data and generate a valid DEFLATE stream
-    struct sdefl *sdefl = static_cast<struct sdefl *>(RL_CALLOC(1, sizeof(struct sdefl)));   // WARNING: Possible stack overflow, struct sdefl is almost 1MB
+    struct sdefl *sdefl = static_cast<struct sdefl *>(calloc(1, sizeof(struct sdefl)));   // WARNING: Possible stack overflow, struct sdefl is almost 1MB
     const int bounds = sdefl_bound(dataSize);
-    compData = static_cast<unsigned char *>(RL_CALLOC(bounds, 1));
+    compData = static_cast<unsigned char *>(calloc(bounds, 1));
 
     *compDataSize = sdeflate(sdefl, compData, data, dataSize, COMPRESSION_QUALITY_DEFLATE);   // Compression level 8, same as stbiw
-    RL_FREE(sdefl);
+    free(sdefl);
 
     TRACELOG(LOG_INFO, "SYSTEM: Compress data: Original size: %i -> Comp. size: %i", dataSize, *compDataSize);
 #endif
@@ -3285,16 +3285,16 @@ unsigned char *DecompressData(const unsigned char *compData, int compDataSize, i
 
 #if SUPPORT_COMPRESSION_API
     // Decompress data from a valid DEFLATE stream
-    unsigned char *data0 = static_cast<unsigned char *>(RL_CALLOC(MAX_DECOMPRESSION_SIZE*1024*1024, 1));
+    unsigned char *data0 = static_cast<unsigned char *>(calloc(MAX_DECOMPRESSION_SIZE*1024*1024, 1));
     const int size = sinflate(data0, MAX_DECOMPRESSION_SIZE*1024*1024, compData, compDataSize);
 
-    // WARNING: RL_REALLOC can make (and leave) data copies in memory,
+    // WARNING: realloc can make (and leave) data copies in memory,
     // that can be a security concern in case of compression of sensitive data
     // So, using a second buffer to copy data manually, wiping original buffer memory
-    data = static_cast<unsigned char *>(RL_CALLOC(size, 1));
+    data = static_cast<unsigned char *>(calloc(size, 1));
     memcpy(data, data0, size);
     memset(data0, 0, MAX_DECOMPRESSION_SIZE*1024*1024); // Wipe memory, is memset() safe?
-    RL_FREE(data0);
+    free(data0);
 
     TRACELOG(LOG_INFO, "SYSTEM: Decompress data: Comp. size: %i -> Original size: %i", compDataSize, size);
 
@@ -3322,7 +3322,7 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
     estimatedOutputSize += 1;
 
     // Load some memory to store encoded string
-    char *encodedData = static_cast<char *>(RL_CALLOC(estimatedOutputSize, 1));
+    char *encodedData = static_cast<char *>(calloc(estimatedOutputSize, 1));
 
     int outputCount = 0;
     for (int i = 0; i < dataSize;)
@@ -3358,7 +3358,7 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
     *outputSize = estimatedOutputSize;
 
     std::string encoded = GetStringOrEmpty(encodedData);
-    RL_FREE(encodedData);
+    free(encodedData);
 
     return encoded;
 }
@@ -3397,7 +3397,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
 
     // Load some memory to store decoded data
     // NOTE: Allocated enough size to include padding
-    unsigned char *decodedData = static_cast<unsigned char *>(RL_CALLOC(maxOutputSize, 1));
+    unsigned char *decodedData = static_cast<unsigned char *>(calloc(maxOutputSize, 1));
 
     int outputCount = 0;
     for (int i = 0; i < dataSize;)
@@ -3534,7 +3534,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
 
     const int newDataSize = ((((dataSize + 8)/64) + 1)*64) - 8;
 
-    unsigned char *msg = static_cast<unsigned char *>(RL_CALLOC(newDataSize + 64, 1)); // Initialize with '0' bits, allocating 64 extra bytes
+    unsigned char *msg = static_cast<unsigned char *>(calloc(newDataSize + 64, 1)); // Initialize with '0' bits, allocating 64 extra bytes
     memcpy(msg, data, dataSize);
     msg[dataSize] = 128; // Write the '1' bit
 
@@ -3593,7 +3593,7 @@ unsigned int *ComputeMD5(const unsigned char *data, int dataSize)
         hash[3] += d;
     }
 
-    RL_FREE(msg);
+    free(msg);
 
     return hash;
 }
@@ -3624,7 +3624,7 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
 
     const int newDataSize = ((((dataSize + 8)/64) + 1)*64);
 
-    unsigned char *msg = static_cast<unsigned char *>(RL_CALLOC(newDataSize, 1)); // Initialize with '0' bits
+    unsigned char *msg = static_cast<unsigned char *>(calloc(newDataSize, 1)); // Initialize with '0' bits
     memcpy(msg, data, dataSize);
     msg[dataSize] = 128; // Write the '1' bit
 
@@ -3703,7 +3703,7 @@ unsigned int *ComputeSHA1(const unsigned char *data, int dataSize)
         hash[4] += e;
     }
 
-    RL_FREE(msg);
+    free(msg);
 
     return hash;
 }
@@ -3748,7 +3748,7 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
     const unsigned long long bitLen = 8ULL*dataSize;
     unsigned long long paddedSize = dataSize + sizeof(bitLen); // Reserve room for the 64 bit message length appended at the end
     paddedSize += (64 - (paddedSize%64));
-    unsigned char *buffer = static_cast<unsigned char *>(RL_CALLOC(paddedSize, sizeof(unsigned char)));
+    unsigned char *buffer = static_cast<unsigned char *>(calloc(paddedSize, sizeof(unsigned char)));
 
     memcpy(buffer, data, dataSize);
     buffer[dataSize] = 0x80;
@@ -3808,7 +3808,7 @@ unsigned int *ComputeSHA256(const unsigned char *data, int dataSize)
         hash[7] += h;
     }
 
-    RL_FREE(buffer);
+    free(buffer);
 
     return hash;
 }
@@ -3827,7 +3827,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 
 #if SUPPORT_AUTOMATION_EVENTS
     // Allocate and empty automation event list, ready to record new events
-    list.events = static_cast<AutomationEvent *>(RL_CALLOC(MAX_AUTOMATION_EVENTS, sizeof(AutomationEvent)));
+    list.events = static_cast<AutomationEvent *>(calloc(MAX_AUTOMATION_EVENTS, sizeof(AutomationEvent)));
     list.capacity = MAX_AUTOMATION_EVENTS;
 
     if (fileNameView.empty()) TRACELOG(LOG_INFO, "AUTOMATION: New empty events list loaded successfully");
@@ -3910,7 +3910,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 void UnloadAutomationEventList(AutomationEventList list)
 {
 #if SUPPORT_AUTOMATION_EVENTS
-    RL_FREE(list.events);
+    free(list.events);
 #endif
 }
 
@@ -3929,7 +3929,7 @@ bool ExportAutomationEventList(AutomationEventList list, std::string_view fileNa
     if (list.count > 0)
     {
         int binarySize = 4 + sizeof(int) + sizeof(AutomationEvent)*list.count;
-        unsigned char *binBuffer = (unsigned char *)RL_CALLOC(binarySize, 1);
+        unsigned char *binBuffer = (unsigned char *)calloc(binarySize, 1);
         int offset = 0;
         memcpy(binBuffer + offset, "rAE ", 4);
         offset += 4;
@@ -3939,13 +3939,13 @@ bool ExportAutomationEventList(AutomationEventList list, std::string_view fileNa
         offset += sizeof(AutomationEvent)*list.count;
 
         result = SaveFileData(TextFormat("%s.rae",fileName), binBuffer, binarySize);
-        RL_FREE(binBuffer);
+        free(binBuffer);
     }
     */
 
     // Export events as text
     // NOTE: Save to memory buffer and SaveFileText()
-    char *txtData = static_cast<char *>(RL_CALLOC(256*list.count + 2048, sizeof(char))); // 256 characters per line plus some header
+    char *txtData = static_cast<char *>(calloc(256*list.count + 2048, sizeof(char))); // 256 characters per line plus some header
 
     int byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "#\n");
@@ -3973,7 +3973,7 @@ bool ExportAutomationEventList(AutomationEventList list, std::string_view fileNa
     // NOTE: Text data size exported is determined by '\0' (NULL) character
     result = SaveFileText(fileName, txtData);
 
-    RL_FREE(txtData);
+    free(txtData);
 #endif
 
     return result;

@@ -1340,7 +1340,7 @@ int InitPlatform(void)
         });
 
         // Load memory framebuffer with desired screen size
-        platform.pixels = static_cast<unsigned int *>(RL_CALLOC(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(unsigned int)));
+        platform.pixels = static_cast<unsigned int *>(calloc(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(unsigned int)));
     }
     else if (rlGetVersion() == RL_OPENGL_ES_20) // Request OpenGL ES 2.0 context --> WebGL 1.0
     {
@@ -1461,7 +1461,7 @@ int InitPlatform(void)
 // implementing some logic behaviour
 void ClosePlatform(void)
 {
-    if (platform.pixels != nullptr) RL_FREE(platform.pixels);
+    if (platform.pixels != nullptr) free(platform.pixels);
 
     if (platform.glContext != 0) emscripten_webgl_destroy_context(platform.glContext);
 }
@@ -1589,9 +1589,9 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
         // In case previous dropped filepaths have not been freed, free them
         if (CORE.Window.dropFileCount > 0)
         {
-            for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++) RL_FREE(CORE.Window.dropFilepaths[i]);
+            for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++) free(CORE.Window.dropFilepaths[i]);
 
-            RL_FREE(CORE.Window.dropFilepaths);
+            free(CORE.Window.dropFilepaths);
 
             CORE.Window.dropFileCount = 0;
             CORE.Window.dropFilepaths = NULL;
@@ -1599,11 +1599,11 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
 
         // WARNING: Paths are freed by GLFW when the callback returns, an internal copy should be kept
         CORE.Window.dropFileCount = count;
-        CORE.Window.dropFilepaths = static_cast<char **>(RL_CALLOC(CORE.Window.dropFileCount, sizeof(char *));
+        CORE.Window.dropFilepaths = static_cast<char **>(calloc(CORE.Window.dropFileCount, sizeof(char *));
 
         for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++)
         {
-            CORE.Window.dropFilepaths[i] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char));
+            CORE.Window.dropFilepaths[i] = static_cast<char *>(calloc(MAX_FILEPATH_LENGTH, sizeof(char));
             snprintf(CORE.Window.dropFilepaths[i], MAX_FILEPATH_LENGTH, "%s", paths[i]);
         }
     }

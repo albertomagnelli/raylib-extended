@@ -61,7 +61,7 @@ int main()
     SetTextLineSpacing(20);         // Set line spacing for multiline text (when line breaks are included '\n')
 
     // Free codepoints, atlas has already been generated
-    RL_FREE(codepointsNoDups);
+    free(codepointsNoDups);
 
     bool showFontAtlas = false;
 
@@ -139,7 +139,7 @@ int main()
 static int *CodepointRemoveDuplicates(int *codepoints, int codepointCount, int *codepointsResultCount)
 {
     int codepointsNoDupsCount = codepointCount;
-    int *codepointsNoDups = static_cast<int *>(RL_CALLOC(codepointCount, sizeof(int)));
+    int *codepointsNoDups = static_cast<int *>(calloc(codepointCount, sizeof(int)));
     memcpy(codepointsNoDups, codepoints, codepointCount*sizeof(int));
 
     // Remove duplicates

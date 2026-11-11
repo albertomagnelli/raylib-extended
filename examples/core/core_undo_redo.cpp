@@ -81,7 +81,7 @@ int main()
     player.color = RED;
 
     // Init undo buffer to store MAX_UNDO_STATES states
-    PlayerState *states = static_cast<PlayerState *>(RL_CALLOC(MAX_UNDO_STATES, sizeof(PlayerState)));
+    PlayerState *states = static_cast<PlayerState *>(calloc(MAX_UNDO_STATES, sizeof(PlayerState)));
     // Init all undo states to current state
     for (int i = 0; i < MAX_UNDO_STATES; i++) memcpy(&states[i], &player, sizeof(PlayerState));
 
@@ -231,7 +231,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    RL_FREE(states);        // Free undo states array
+    free(states);        // Free undo states array
 
     CloseWindow();          // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

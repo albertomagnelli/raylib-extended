@@ -1368,7 +1368,7 @@ int SetGamepadMappings(std::string_view mappingsView)
     const char *mappings = mappingsStr.c_str();
 
     const int mappingsLength = strlen(mappings);
-    char *buffer = static_cast<char *>(RL_CALLOC(mappingsLength + 1, sizeof(char)));
+    char *buffer = static_cast<char *>(calloc(mappingsLength + 1, sizeof(char)));
     memcpy(buffer, mappings, mappingsLength);
     char *p = strtok(buffer, "\n");
     bool succeed = true;
@@ -1382,7 +1382,7 @@ int SetGamepadMappings(std::string_view mappingsView)
         p = strtok(nullptr, "\n");
     }
 
-    RL_FREE(buffer);
+    free(buffer);
 
     // To make return value is consistent with the GLFW version.
     return (succeed)? 1 : 0;
@@ -1514,14 +1514,14 @@ void PollInputEvents(void)
                 int newCount = CORE.Window.dropFileCount + 1;
 
                 // Reallocate array to fit the new file path pointer
-                char **tempPaths = static_cast<char **>(RL_REALLOC(CORE.Window.dropFilepaths, newCount*sizeof(char *)));
+                char **tempPaths = static_cast<char **>(realloc(CORE.Window.dropFilepaths, newCount*sizeof(char *)));
 
                 if (tempPaths != nullptr)
                 {
                     CORE.Window.dropFilepaths = tempPaths;
 
                     // Allocate memory for the file path string itself
-                    CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
+                    CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(calloc(MAX_FILEPATH_LENGTH, sizeof(char)));
 
                     if (CORE.Window.dropFilepaths[CORE.Window.dropFileCount] != nullptr)
                     {

@@ -43,7 +43,8 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
   `CLITERAL(Color){ ... }` still expands to `Color{ ... }` for the color macros.
 
 ## Memory & resources
-- Internal buffers: `std::vector` / `std::array` instead of `RL_MALLOC/RL_CALLOC/RL_FREE`.
+- Internal buffers: `std::vector` / `std::array`; C-level allocations use `malloc`/`calloc`/`realloc`/`free`
+  directly (the old `RL_MALLOC`/`RL_CALLOC`/`RL_REALLOC`/`RL_FREE` indirection is gone).
 - RAII handles (move-only, deleted copies) for `Image`, `Texture2D`, `RenderTexture2D`, `Shader`,
   `Mesh`, `Model`, `Font`, `Wave`, `Sound`, `Music`, `AudioStream` — **next phase**, after style review.
   `Model` owns its `Mesh` list; copies deleted, moves transfer ownership.

@@ -155,9 +155,9 @@ static void CursorEnterCallback(GLFWwindow *window, int entered);               
 static void JoystickCallback(int jid, int event);                                         // GLFW3 Joystick Connected/Disconnected Callback
 
 // Memory allocator wrappers [used by glfwInitAllocator()]
-static void *AllocateWrapper(size_t size, void *user);                                  // GLFW3 GLFWallocatefun, wrapps around RL_CALLOC macro
-static void *ReallocateWrapper(void *block, size_t size, void *user);                   // GLFW3 GLFWreallocatefun, wrapps around RL_REALLOC macro
-static void DeallocateWrapper(void *block, void *user);                                 // GLFW3 GLFWdeallocatefun, wraps around RL_FREE macro
+static void *AllocateWrapper(size_t size, void *user);                                  // GLFW3 GLFWallocatefun, wrapps around calloc macro
+static void *ReallocateWrapper(void *block, size_t size, void *user);                   // GLFW3 GLFWreallocatefun, wrapps around realloc macro
+static void DeallocateWrapper(void *block, void *user);                                 // GLFW3 GLFWdeallocatefun, wraps around free macro
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -641,7 +641,7 @@ void SetWindowIcons(Image *images, int count)
     else
     {
         int valid = 0;
-        GLFWimage *icons = static_cast<GLFWimage *>(RL_CALLOC(count, sizeof(GLFWimage)));
+        GLFWimage *icons = static_cast<GLFWimage *>(calloc(count, sizeof(GLFWimage)));
 
         for (int i = 0; i < count; i++)
         {
@@ -658,7 +658,7 @@ void SetWindowIcons(Image *images, int count)
         // NOTE: Images data is copied internally before this function returns
         glfwSetWindowIcon(platform.handle, valid, icons);
 
-        RL_FREE(icons);
+        free(icons);
     }
 }
 
@@ -1116,7 +1116,7 @@ Image GetClipboardImage(void)
     {
         image = LoadImageFromMemory(".bmp", static_cast<const unsigned char *>(bmpData), static_cast<int>(dataSize));
 
-        RL_FREE(bmpData);
+        free(bmpData);
     }
 
 #elif defined(__linux__) && defined(_GLFW_X11)
@@ -1254,7 +1254,7 @@ void OpenURL(std::string_view urlView)
     }
     else
     {
-        char *cmd = static_cast<char *>(RL_CALLOC(strlen(url) + 16, sizeof(char)));
+        char *cmd = static_cast<char *>(calloc(strlen(url) + 16, sizeof(char)));
 #if defined(_WIN32)
         sprintf(cmd, "explorer \"%s\"", url);
 #endif
@@ -1267,7 +1267,7 @@ void OpenURL(std::string_view urlView)
         const int result = system(cmd);
 
         if (result == -1) TRACELOG(LOG_WARNING, "OpenURL() child process could not be created");
-        RL_FREE(cmd);
+        free(cmd);
     }
 }
 
@@ -1487,17 +1487,17 @@ void PollInputEvents(void)
 static void *AllocateWrapper(size_t size, void *user)
 {
     (void)user;
-    return RL_CALLOC(size, 1);
+    return calloc(size, 1);
 }
 static void *ReallocateWrapper(void *block, size_t size, void *user)
 {
     (void)user;
-    return RL_REALLOC(block, size);
+    return realloc(block, size);
 }
 static void DeallocateWrapper(void *block, void *user)
 {
     (void)user;
-    RL_FREE(block);
+    free(block);
 }
 
 // Initialize platform: graphics, inputs and more
@@ -2131,9 +2131,9 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
         // In case previous dropped filepaths have not been freed, free them
         if (CORE.Window.dropFileCount > 0)
         {
-            for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++) RL_FREE(CORE.Window.dropFilepaths[i]);
+            for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++) free(CORE.Window.dropFilepaths[i]);
 
-            RL_FREE(CORE.Window.dropFilepaths);
+            free(CORE.Window.dropFilepaths);
 
             CORE.Window.dropFileCount = 0;
             CORE.Window.dropFilepaths = nullptr;
@@ -2141,11 +2141,11 @@ static void WindowDropCallback(GLFWwindow *window, int count, const char **paths
 
         // WARNING: Paths are freed by GLFW when the callback returns, keeping an internal copy
         CORE.Window.dropFileCount = count;
-        CORE.Window.dropFilepaths = static_cast<char **>(RL_CALLOC(CORE.Window.dropFileCount, sizeof(char *)));
+        CORE.Window.dropFilepaths = static_cast<char **>(calloc(CORE.Window.dropFileCount, sizeof(char *)));
 
         for (unsigned int i = 0; i < CORE.Window.dropFileCount; i++)
         {
-            CORE.Window.dropFilepaths[i] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
+            CORE.Window.dropFilepaths[i] = static_cast<char *>(calloc(MAX_FILEPATH_LENGTH, sizeof(char)));
             snprintf(CORE.Window.dropFilepaths[i], MAX_FILEPATH_LENGTH, "%s", paths[i]);
         }
     }

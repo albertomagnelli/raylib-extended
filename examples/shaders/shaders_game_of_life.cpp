@@ -183,7 +183,7 @@ int main()
                     DrawTexturePro(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<float>(sizeInWorldX), -static_cast<float>(sizeInWorldY) },
                             Rectangle{ 0, 0, static_cast<float>(sizeInWorldX), static_cast<float>(sizeInWorldY) }, vec2{ 0, 0 }, 0.0f, WHITE);
                 EndTextureMode();
-                imageToDraw = static_cast<Image *>(RL_MALLOC(sizeof(Image)));
+                imageToDraw = static_cast<Image *>(malloc(sizeof(Image)));
                 *imageToDraw = LoadImageFromTexture(worldOnScreen.texture);
 
                 UnloadRenderTexture(worldOnScreen);
@@ -347,7 +347,7 @@ void FreeImageToDraw(Image **imageToDraw)
     if (*imageToDraw != nullptr)
     {
         UnloadImage(**imageToDraw);
-        RL_FREE(*imageToDraw);
+        free(*imageToDraw);
         *imageToDraw = nullptr;
     }
 }

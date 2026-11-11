@@ -66,7 +66,7 @@ int main()
         {
             rectCount++;
             rectSize = static_cast<float>(screenWidth)/rectCount;
-            RL_FREE(rectangles);
+            free(rectangles);
 
             // Re-generate random sequence with new count
             rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
@@ -78,7 +78,7 @@ int main()
             {
                 rectCount--;
                 rectSize = static_cast<float>(screenWidth)/rectCount;
-                RL_FREE(rectangles);
+                free(rectangles);
 
                 // Re-generate random sequence with new count
                 rectangles = GenerateRandomColorRectSequence(static_cast<float>(rectCount), rectSize, static_cast<float>(screenWidth), 0.75f*screenHeight);
@@ -111,7 +111,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    RL_FREE(rectangles);
+    free(rectangles);
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
@@ -135,7 +135,7 @@ static Color GenerateRandomColor(void)
 
 static ColorRect *GenerateRandomColorRectSequence(float rectCount, float rectWidth, float screenWidth, float screenHeight)
 {
-    ColorRect *rectangles = static_cast<ColorRect *>(RL_CALLOC(static_cast<int>(rectCount), sizeof(ColorRect)));
+    ColorRect *rectangles = static_cast<ColorRect *>(calloc(static_cast<int>(rectCount), sizeof(ColorRect)));
 
     int *seq = LoadRandomSequence(static_cast<unsigned int>(rectCount), 0, static_cast<unsigned int>(rectCount) - 1);
     const float rectSeqWidth = rectCount*rectWidth;

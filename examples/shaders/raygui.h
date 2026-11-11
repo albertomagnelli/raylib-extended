@@ -5235,7 +5235,7 @@ char **GuiLoadIcons(const char *fileName, bool loadIconsName)
 
         if (size > 0)
         {
-            fileData = (unsigned char *)RL_CALLOC(size, sizeof(unsigned char));
+            fileData = (unsigned char *)calloc(size, sizeof(unsigned char));
             // WARNING: File can be partially loaded but ignoring it for simplicity
             dataSize = (int)fread(fileData, sizeof(unsigned char), size, rgiFile);
 
@@ -6054,9 +6054,9 @@ static int GuiFontIconBaking(Image *imFont, Font font, Rectangle *whiteRec)
         int newImHeight = 1;
         while (newImHeight < (maxGlyphRecY + reqHeight)) newImHeight <<= 1; // Round to next POT
 
-        char *newImData = (char *)RL_CALLOC(imFont->width*newImHeight*2, sizeof(char));
+        char *newImData = (char *)calloc(imFont->width*newImHeight*2, sizeof(char));
         memcpy(newImData, imFont->data, imFont->width*imFont->height*2);
-        RL_FREE(imFont->data);
+        free(imFont->data);
 
         // Clear imFont bottom-right corner rec
         for (int y = 0; y < 4; y++)

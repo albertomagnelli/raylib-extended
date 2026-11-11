@@ -132,7 +132,7 @@ static vec2 *LoadHilbertPath(int order, float size, int *strokeCount)
     const float len = size/N;
     *strokeCount = N*N;
 
-    vec2 *hilbertPath = static_cast<vec2 *>(RL_CALLOC(*strokeCount, sizeof(vec2)));
+    vec2 *hilbertPath = static_cast<vec2 *>(calloc(*strokeCount, sizeof(vec2)));
 
     for (int i = 0; i < *strokeCount; i++)
     {
@@ -147,7 +147,7 @@ static vec2 *LoadHilbertPath(int order, float size, int *strokeCount)
 // Unload Hilbert path data
 static void UnloadHilbertPath(vec2 *hilbertPath)
 {
-    RL_FREE(hilbertPath);
+    free(hilbertPath);
 }
 
 // Compute Hilbert path U positions

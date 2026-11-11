@@ -105,10 +105,10 @@ int main()
     const int fftHistoryLen = static_cast<int>(ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME)) + 1;
 
     FFTData fft = {
-        .spectrum = static_cast<FFTComplex *>(RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
-        .workBuffer = static_cast<FFTComplex *>(RL_CALLOC(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
-        .prevMagnitudes = static_cast<float *>(RL_CALLOC(BUFFER_SIZE, sizeof(float))),
-        .fftHistory = static_cast<float (*)[BUFFER_SIZE]>(RL_CALLOC(fftHistoryLen, sizeof(float[BUFFER_SIZE]))),
+        .spectrum = static_cast<FFTComplex *>(calloc(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
+        .workBuffer = static_cast<FFTComplex *>(calloc(sizeof(FFTComplex), FFT_WINDOW_SIZE)),
+        .prevMagnitudes = static_cast<float *>(calloc(BUFFER_SIZE, sizeof(float))),
+        .fftHistory = static_cast<float (*)[BUFFER_SIZE]>(calloc(fftHistoryLen, sizeof(float[BUFFER_SIZE]))),
         .fftHistoryLen = fftHistoryLen,
         .historyPos = 0,
         .lastFftTime = 0.0,
@@ -177,10 +177,10 @@ int main()
     UnloadWave(wav);
     CloseAudioDevice();
 
-    RL_FREE(fft.spectrum);
-    RL_FREE(fft.workBuffer);
-    RL_FREE(fft.prevMagnitudes);
-    RL_FREE(fft.fftHistory);
+    free(fft.spectrum);
+    free(fft.workBuffer);
+    free(fft.prevMagnitudes);
+    free(fft.fftHistory);
 
     CloseWindow();        // Close window and OpenGL context
     //----------------------------------------------------------------------------------

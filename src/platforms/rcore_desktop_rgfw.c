@@ -144,9 +144,9 @@ extern "C" {
 #define MG_IMPLEMENTATION
 #include "../external/RGFW/deps/minigamepad.h"
 
-#define RGFW_ALLOC RL_MALLOC
-#define RGFW_FREE RL_FREE
-#define RGFW_CALLOC RL_CALLOC
+#define RGFW_ALLOC malloc
+#define RGFW_FREE free
+#define RGFW_CALLOC calloc
 #define RGFW_INT_DEFINED 1 // to avoid issues with minigamepad+RGFW definitions
 
 #include "../external/RGFW/RGFW.h"
@@ -483,16 +483,16 @@ static void RGFW_cb_dropfunc(const RGFW_event *e)
 
     if (CORE.Window.dropFileCount == 0)
     {
-        CORE.Window.dropFilepaths = static_cast<char **>(RL_CALLOC(1024, sizeof(char *)));
+        CORE.Window.dropFilepaths = static_cast<char **>(calloc(1024, sizeof(char *)));
 
-        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
+        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(calloc(MAX_FILEPATH_LENGTH, sizeof(char)));
         snprintf(CORE.Window.dropFilepaths[CORE.Window.dropFileCount], MAX_FILEPATH_LENGTH, "%s", e->drop.value->data);
 
         CORE.Window.dropFileCount++;
     }
     else if (CORE.Window.dropFileCount < 1024)
     {
-        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_LENGTH, sizeof(char)));
+        CORE.Window.dropFilepaths[CORE.Window.dropFileCount] = static_cast<char *>(calloc(MAX_FILEPATH_LENGTH, sizeof(char)));
         snprintf(CORE.Window.dropFilepaths[CORE.Window.dropFileCount], MAX_FILEPATH_LENGTH, "%s", e->drop.value->data);
 
         CORE.Window.dropFileCount++;
@@ -575,8 +575,8 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
 
         if (platform.surfacePixels != nullptr)
         {
-            RL_FREE(platform.surfacePixels);
-            platform.surfacePixels = RL_CALLOC(platform.surfaceWidth*platform.surfaceHeight*4, 1);
+            free(platform.surfacePixels);
+            platform.surfacePixels = calloc(platform.surfaceWidth*platform.surfaceHeight*4, 1);
         }
 
         if (platform.surface != nullptr)
@@ -1339,7 +1339,7 @@ Image GetClipboardImage(void)
     {
         image = LoadImageFromMemory(".bmp", static_cast<const unsigned char *>(fileData), static_cast<int>(dataSize));
 
-        RL_FREE(fileData);
+        free(fileData);
     }
 
 #elif defined(__linux__) && defined(DRGFW_X11)
@@ -1503,7 +1503,7 @@ void OpenURL(std::string_view urlView)
     }
     else
     {
-        char *cmd = static_cast<char *>(RL_CALLOC(strlen(url) + 16, sizeof(char)));
+        char *cmd = static_cast<char *>(calloc(strlen(url) + 16, sizeof(char)));
 #if defined(_WIN32)
         sprintf(cmd, "explorer \"%s\"", url);
 #endif
@@ -1515,7 +1515,7 @@ void OpenURL(std::string_view urlView)
 #endif
         int result = system(cmd);
         if (result == -1) TRACELOG(LOG_WARNING, "OpenURL() child process could not be created");
-        RL_FREE(cmd);
+        free(cmd);
     }
 }
 
@@ -1904,13 +1904,13 @@ int InitPlatform(void)
 
         platform.surfaceWidth = CORE.Window.currentFbo.width;
         platform.surfaceHeight = CORE.Window.currentFbo.height;
-        platform.surfacePixels = RL_CALLOC(platform.surfaceWidth*platform.surfaceHeight*4, 1);
+        platform.surfacePixels = calloc(platform.surfaceWidth*platform.surfaceHeight*4, 1);
 
         platform.surface = RGFW_window_createSurface(platform.window, platform.surfacePixels, platform.surfaceWidth, platform.surfaceHeight, RGFW_formatBGRA8);
 
         if (platform.surface == nullptr)
         {
-            RL_FREE(platform.surfacePixels);
+            free(platform.surfacePixels);
 
             TRACELOG(LOG_FATAL, "PLATFORM: Failed to initialize software surface");
             return -1;
@@ -2037,7 +2037,7 @@ void ClosePlatform(void)
     RGFW_window_close(platform.window);
 
 #if defined(GRAPHICS_API_OPENGL_SOFTWARE)
-    if (platform.surfacePixels != nullptr) RL_FREE(platform.surfacePixels);
+    if (platform.surfacePixels != nullptr) free(platform.surfacePixels);
     if (platform.surface != nullptr) RGFW_surface_free(platform.surface);
 #endif
 }

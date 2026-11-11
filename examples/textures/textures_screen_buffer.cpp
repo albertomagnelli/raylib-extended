@@ -39,8 +39,8 @@ int main()
     const int flameWidth = screenWidth/SCALE_FACTOR;
 
     Color palette[MAX_COLORS] = {};
-    unsigned char *indexBuffer = static_cast<unsigned char *>(RL_CALLOC(imageWidth*imageWidth, sizeof(unsigned char)));
-    unsigned char *flameRootBuffer = static_cast<unsigned char *>(RL_CALLOC(flameWidth, sizeof(unsigned char)));
+    unsigned char *indexBuffer = static_cast<unsigned char *>(calloc(imageWidth*imageWidth, sizeof(unsigned char)));
+    unsigned char *flameRootBuffer = static_cast<unsigned char *>(calloc(flameWidth, sizeof(unsigned char)));
 
     Image screenImage = GenImageColor(imageWidth, imageHeight, BLACK);
     const Texture screenTexture = LoadTextureFromImage(screenImage);
@@ -141,8 +141,8 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    RL_FREE(indexBuffer);
-    RL_FREE(flameRootBuffer);
+    free(indexBuffer);
+    free(flameRootBuffer);
     UnloadTexture(screenTexture);
     UnloadImage(screenImage);
 

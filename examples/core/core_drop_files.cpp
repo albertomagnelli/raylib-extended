@@ -40,7 +40,7 @@ int main()
     // Allocate space for the required file paths
     for (int i = 0; i < MAX_FILEPATH_RECORDED; i++)
     {
-        filePaths[i] = static_cast<char *>(RL_CALLOC(MAX_FILEPATH_SIZE, 1));
+        filePaths[i] = static_cast<char *>(calloc(MAX_FILEPATH_SIZE, 1));
     }
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -97,7 +97,7 @@ int main()
     //--------------------------------------------------------------------------------------
     for (int i = 0; i < MAX_FILEPATH_RECORDED; i++)
     {
-        RL_FREE(filePaths[i]); // Free allocated memory for all filepaths
+        free(filePaths[i]); // Free allocated memory for all filepaths
     }
 
     CloseWindow();          // Close window and OpenGL context

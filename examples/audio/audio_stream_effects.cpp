@@ -49,7 +49,7 @@ int main()
 
     // Allocate buffer for the delay effect
     delayBufferSize = 48000*2;      // 1 second delay (device sampleRate*channels)
-    delayBuffer = static_cast<float *>(RL_CALLOC(delayBufferSize, sizeof(float)));
+    delayBuffer = static_cast<float *>(calloc(delayBufferSize, sizeof(float)));
 
     PlayMusicStream(music);
 
@@ -135,7 +135,7 @@ int main()
 
     CloseAudioDevice();         // Close audio device (music streaming is automatically stopped)
 
-    RL_FREE(delayBuffer);       // Free delay buffer
+    free(delayBuffer);       // Free delay buffer
 
     CloseWindow();              // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

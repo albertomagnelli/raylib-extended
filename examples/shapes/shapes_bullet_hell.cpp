@@ -45,7 +45,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bullet hell");
 
     // Bullets definition
-    Bullet *bullets = static_cast<Bullet *>(RL_CALLOC(MAX_BULLETS, sizeof(Bullet))); // Bullets array
+    Bullet *bullets = static_cast<Bullet *>(calloc(MAX_BULLETS, sizeof(Bullet))); // Bullets array
     int bulletCount = 0;
     int bulletDisabledCount = 0; // Used to calculate how many bullets are on screen
     constexpr int bulletRadius = 10;
@@ -239,7 +239,7 @@ int main()
     //--------------------------------------------------------------------------------------
     UnloadRenderTexture(bulletTexture); // Unload bullet texture
 
-    RL_FREE(bullets);     // Free bullets array data
+    free(bullets);     // Free bullets array data
 
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

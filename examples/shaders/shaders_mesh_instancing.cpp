@@ -57,7 +57,7 @@ int main()
     const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
 
     // Define transforms to be uploaded to GPU for instances
-    mat4 *transforms = static_cast<mat4 *>(RL_CALLOC(MAX_INSTANCES, sizeof(mat4)));   // Pre-multiplied transformations passed to rlgl
+    mat4 *transforms = static_cast<mat4 *>(calloc(MAX_INSTANCES, sizeof(mat4)));   // Pre-multiplied transformations passed to rlgl
 
     // Translate and rotate cubes randomly
     for (int i = 0; i < MAX_INSTANCES; i++)
@@ -140,7 +140,7 @@ int main()
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    RL_FREE(transforms);             // Free transforms
+    free(transforms);             // Free transforms
     UnloadMaterial(matInstances);    // Also unloads the instancing shader
     UnloadMaterial(matDefault);      // Unload default material
     UnloadMesh(cube);                // Unload cube mesh

@@ -59,7 +59,7 @@ int main()
     Mesh mesh = GenMeshPlane(static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE), 1, 1);
 
     // GenMeshPlane doesn't generate texcoords2 so we will upload them separately
-    mesh.texcoords2 = static_cast<float *>(RL_MALLOC(mesh.vertexCount*2*sizeof(float)));
+    mesh.texcoords2 = static_cast<float *>(malloc(mesh.vertexCount*2*sizeof(float)));
 
     // X                          // Y
     mesh.texcoords2[0] = 0.0f;    mesh.texcoords2[1] = 0.0f;

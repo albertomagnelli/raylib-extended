@@ -1484,7 +1484,7 @@ int InitPlatform(void)
 
     TRACELOG(LOG_TRACE, "DISPLAY: EGL configs available: %d", numConfigs);
 
-    EGLConfig *configs = static_cast<EGLConfig *>(RL_CALLOC(numConfigs, sizeof(*configs)));
+    EGLConfig *configs = static_cast<EGLConfig *>(calloc(numConfigs, sizeof(*configs)));
     if (!configs)
     {
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to get memory for EGL configs");
@@ -1495,7 +1495,7 @@ int InitPlatform(void)
     if (!eglChooseConfig(platform.device, framebufferAttribs, configs, numConfigs, &matchingNumConfigs))
     {
         TRACELOG(LOG_WARNING, "DISPLAY: Failed to choose EGL config: 0x%x", eglGetError());
-        RL_FREE(configs);
+        free(configs);
         return -1;
     }
 
@@ -1521,7 +1521,7 @@ int InitPlatform(void)
         }
     }
 
-    RL_FREE(configs);
+    free(configs);
 
     if (!found)
     {

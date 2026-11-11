@@ -400,11 +400,11 @@ void OpenURL(std::string_view urlView)
     if (strchr(url, '\'') != nullptr) TRACELOG(LOG_WARNING, "SYSTEM: Provided URL could be potentially malicious, avoid [\'] character");
     else
     {
-        char *cmd = static_cast<char *>(RL_CALLOC(strlen(url) + 32, sizeof(char)));
+        char *cmd = static_cast<char *>(calloc(strlen(url) + 32, sizeof(char)));
         sprintf(cmd, "explorer \"%s\"", url);
         int result = system(cmd);
         if (result == -1) TRACELOG(LOG_WARNING, "OpenURL() child process could not be created");
-        RL_FREE(cmd);
+        free(cmd);
     }
 }
 
@@ -510,7 +510,7 @@ int InitPlatform(void)
     else
     {
         // Load memory framebuffer with desired screen size
-        platform.pixels = static_cast<unsigned int *>(RL_CALLOC(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(int)));
+        platform.pixels = static_cast<unsigned int *>(calloc(CORE.Window.screen.width*CORE.Window.screen.height, sizeof(int)));
     }
     //----------------------------------------------------------------------------
 
@@ -566,7 +566,7 @@ int InitPlatform(void)
 // Close platform
 void ClosePlatform(void)
 {
-    RL_FREE(platform.pixels); // Free pixels buffer
+    free(platform.pixels); // Free pixels buffer
 }
 
 //----------------------------------------------------------------------------------

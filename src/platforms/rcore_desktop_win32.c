@@ -1385,7 +1385,7 @@ std::string GetClipboardText(void)
 {
     if (platform.clipboardText != nullptr)
     {
-        RL_FREE(platform.clipboardText);
+        free(platform.clipboardText);
         platform.clipboardText = nullptr;
     }
 
@@ -1402,7 +1402,7 @@ std::string GetClipboardText(void)
                 int length = static_cast<int>(wcsnlen(clipboardText, maxLength));
 
                 int size = WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, nullptr, 0, nullptr, nullptr);
-                char *utf8Text = static_cast<char *>(RL_CALLOC(size + 1, 1));
+                char *utf8Text = static_cast<char *>(calloc(size + 1, 1));
 
                 if ((size > 0) && (WideCharToMultiByte(CP_UTF8, 0, clipboardText, length, utf8Text, size, nullptr, nullptr) == 0)) size = 0;
                 utf8Text[size] = '\0';
@@ -1448,7 +1448,7 @@ Image GetClipboardImage(void)
     else
     {
         image = LoadImageFromMemory(".bmp", static_cast<const unsigned char *>(fileData), static_cast<int>(dataSize));
-        RL_FREE(fileData);
+        free(fileData);
     }
 #else
     TRACELOG(LOG_WARNING, "Clipboard image: SUPPORT_CLIPBOARD_IMAGE requires SUPPORT_MODULE_RTEXTURES to work properly");
@@ -1587,12 +1587,12 @@ void OpenURL(std::string_view urlView)
     else
     {
         int len = strlen(url) + 16;
-        char *cmd = static_cast<char *>(RL_CALLOC(len, sizeof(char)));
+        char *cmd = static_cast<char *>(calloc(len, sizeof(char)));
         snprintf(cmd, len, "explorer \"%s\"", url);
 
         int result = system(cmd);
         if (result == -1) TRACELOG(LOG_WARNING, "OpenURL() child process could not be created");
-        RL_FREE(cmd);
+        free(cmd);
     }
 }
 
@@ -2170,7 +2170,7 @@ void ClosePlatform(void)
     // Clear clipboard
     if (platform.clipboardText != nullptr)
     {
-        RL_FREE(platform.clipboardText);
+        free(platform.clipboardText);
         platform.clipboardText = nullptr;
     }
 

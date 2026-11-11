@@ -54,7 +54,7 @@
 
 #include <math.h>       // Required for: sinf(), asinf(), cosf(), acosf(), sqrtf(), fabsf()
 #include <float.h>      // Required for: FLT_EPSILON
-#include <stdlib.h>     // Required for: RL_FREE
+#include <stdlib.h>     // Required for: free
 
 //----------------------------------------------------------------------------------
 // Defines and Macros

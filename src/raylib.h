@@ -126,21 +126,6 @@
     #define RAD2DEG (180.0f/PI)
 #endif
 
-// Allow custom memory allocators
-// NOTE: Require recompiling raylib sources
-#ifndef RL_MALLOC
-    #define RL_MALLOC(sz)       malloc(sz)
-#endif
-#ifndef RL_CALLOC
-    #define RL_CALLOC(n,sz)     calloc(n,sz)
-#endif
-#ifndef RL_REALLOC
-    #define RL_REALLOC(ptr,sz)  realloc(ptr,sz)
-#endif
-#ifndef RL_FREE
-    #define RL_FREE(ptr)        free(ptr)
-#endif
-
 // NOTE: raylib is a C++ library. Plain structures are initialized with { }
 // (aggregate initialization). CLITERAL() is kept so the color macros below read
 // the same in every caller.

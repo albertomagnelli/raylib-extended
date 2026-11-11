@@ -122,17 +122,17 @@ bool SaveStorageValue(unsigned int position, int value)
         {
             // Increase data size up to position and store value
             newDataSize = (position + 1)*sizeof(int);
-            newFileData = static_cast<unsigned char *>(RL_REALLOC(fileData, newDataSize));
+            newFileData = static_cast<unsigned char *>(realloc(fileData, newDataSize));
 
             if (newFileData != nullptr)
             {
-                // RL_REALLOC succeded
+                // realloc succeded
                 int *dataPtr = reinterpret_cast<int *>(newFileData);
                 dataPtr[position] = value;
             }
             else
             {
-                // RL_REALLOC failed
+                // realloc failed
                 TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to realloc data (%u), position in bytes (%u) bigger than actual file size", STORAGE_DATA_FILE, dataSize, position*sizeof(int));
 
                 // We store the old size of the file
@@ -152,7 +152,7 @@ bool SaveStorageValue(unsigned int position, int value)
         }
 
         success = SaveFileData(STORAGE_DATA_FILE, newFileData, newDataSize);
-        RL_FREE(newFileData);
+        free(newFileData);
 
         TraceLog(LOG_INFO, "FILEIO: [%s] Saved storage value: %i", STORAGE_DATA_FILE, value);
     }
@@ -161,7 +161,7 @@ bool SaveStorageValue(unsigned int position, int value)
         TraceLog(LOG_INFO, "FILEIO: [%s] File created successfully", STORAGE_DATA_FILE);
 
         dataSize = (position + 1)*sizeof(int);
-        fileData = static_cast<unsigned char *>(RL_MALLOC(dataSize));
+        fileData = static_cast<unsigned char *>(malloc(dataSize));
         int *dataPtr = reinterpret_cast<int *>(fileData);
         dataPtr[position] = value;
 
