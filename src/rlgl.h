@@ -4662,7 +4662,7 @@ u32 rlGetShaderBufferSize(const u32 id)
 }
 
 // Read SSBO buffer data (GPU->CPU)
-void rlReadShaderBuffer(const u32 id, const void *dest, const u32 count, const u32 offset)
+void rlReadShaderBuffer(const u32 id, void *dest, const u32 count, const u32 offset)
 {
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
