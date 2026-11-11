@@ -67,7 +67,7 @@
 #include "rlgl.h"               // OpenGL abstraction layer to multiple versions
 
 #include <stdlib.h>             // Required for: malloc(), calloc(), free()
-#include <string.h>             // Required for: strlen() [Used in ImageTextEx()], strcmp() [Used in LoadImageFromMemory()/LoadImageAnimFromMemory()/ExportImageToMemory()]
+#include <string.h>             // Required for: strlen() [Used in ImageTextEx()], strcmp() [Used in LoadImageFromMemory()/LoadImageAnimFromMemory()]
 #include <math.h>               // Required for: fabsf() [Used in DrawTextureRec()]
 #include <stdio.h>              // Required for: sprintf() [Used in ExportImageAsCode()]
 #include <limits.h>             // Required for: INT_MAX
@@ -769,7 +769,7 @@ bool ExportImage(Image image, std::string_view fileNameView)
 }
 
 // Export image to memory buffer
-unsigned char *ExportImageToMemory(Image image, const char *fileType, int *dataSize)
+unsigned char *ExportImageToMemory(Image image, std::string_view fileType, int *dataSize)
 {
     unsigned char *fileData = nullptr;
     *dataSize = 0;
@@ -784,7 +784,7 @@ unsigned char *ExportImageToMemory(Image image, const char *fileType, int *dataS
     else if (image.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) channels = 4;
 
 #if SUPPORT_IMAGE_EXPORT
-    if ((strcmp(fileType, ".png") == 0) || (strcmp(fileType, ".PNG") == 0))
+    if ((fileType == ".png") || (fileType == ".PNG"))
     {
         fileData = stbi_write_png_to_mem(static_cast<const unsigned char *>(image.data), image.width*channels, image.width, image.height, channels, dataSize);
     }
