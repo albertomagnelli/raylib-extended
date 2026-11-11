@@ -2458,20 +2458,27 @@ i32 FileTextReplace(std::string_view fileNameView, std::string_view searchView, 
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
-    const std::string searchStr(searchView);
-    const char *search = searchStr.c_str();
-    const std::string replacementStr(replacementView);
-    const char *replacement = replacementStr.c_str();
 
     auto result = -1;
 
 #if SUPPORT_MODULE_RTEXT
-    if (FileExists(fileName))
+    if (FileExists(fileName) && !searchView.empty())
     {
         const auto fileText = LoadFileText(fileName);
-        const auto fileTextUpdated = TextReplace(fileText, search, replacement);
-        if (!fileTextUpdated.empty())
+
+        if (!fileText.empty())
         {
+            // Replace every occurrence directly in a std::string: TextReplace() uses a
+            // fixed-size static buffer, which silently fails for larger files
+            std::string fileTextUpdated = fileText;
+            std::size_t position = 0;
+
+            while ((position = fileTextUpdated.find(searchView, position)) != std::string::npos)
+            {
+                fileTextUpdated.replace(position, searchView.size(), replacementView);
+                position += replacementView.size();
+            }
+
             const auto saved = SaveFileText(fileName, fileTextUpdated);
             if (saved) result = 0;
         }
