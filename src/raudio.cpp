@@ -835,7 +835,7 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const u8 *fileData, const
             wave.data = static_cast<short *>(calloc((wave.frameCount*wave.channels > 0) ? wave.frameCount*wave.channels : 1, sizeof(short)));
 
             // NOTE: Get the number of samples to process (be careful! asking for number of shorts, not bytes!)
-            stb_vorbis_get_samples_short_interleaved(oggData, info.channels, static_cast<short *>(wave.data), wave.frameCount*wave.channels);
+            stb_vorbis_get_samples_short_interleaved(oggData, info.channels, static_cast<short *>(wave.data), static_cast<i32>(wave.frameCount*wave.channels));
             stb_vorbis_close(oggData);
         }
         else log(LogLevel::warn, "WAVE: Failed to load OGG data");
@@ -1083,7 +1083,7 @@ bool ExportWave(const Wave& wave, std::string_view fileNameView)
         drwav_write_pcm_frames(&wav, wave.frameCount, wave.data);
         drwav_uninit(&wav);
 
-        result = SaveFileData(fileName, static_cast<u8 *>(fileData), static_cast<u32>(fileDataSize));
+        result = SaveFileData(fileName, static_cast<u8 *>(fileData), static_cast<i32>(fileDataSize));
 
         drwav_free(fileData, nullptr);
     }
@@ -1108,7 +1108,7 @@ bool ExportWave(const Wave& wave, std::string_view fileNameView)
     {
         // Export raw sample data (without header)
         // NOTE: It's up to the user to track wave parameters
-        result = SaveFileData(fileName, wave.data, wave.frameCount*wave.channels*wave.sampleSize/8);
+        result = SaveFileData(fileName, wave.data, static_cast<i32>(wave.frameCount*wave.channels*wave.sampleSize/8));
     }
 
     if (result) log(LogLevel::info, "FILEIO: [{}] Wave data exported successfully", fileName);
@@ -1129,7 +1129,7 @@ bool ExportWaveAsCode(const Wave& wave, std::string_view fileNameView)
     #define TEXT_BYTES_PER_LINE     20
 #endif
 
-    const i32 waveDataSize = wave.frameCount*wave.channels*wave.sampleSize/8;
+    const i32 waveDataSize = static_cast<i32>(wave.frameCount*wave.channels*wave.sampleSize/8);
 
     // NOTE: Text data buffer size is estimated considering wave data size in bytes
     // and requiring 12 char bytes for every byte; the actual size varies, but
@@ -1151,7 +1151,7 @@ bool ExportWaveAsCode(const Wave& wave, std::string_view fileNameView)
     // Get file name from path and convert variable name to uppercase
     char varFileName[256] = { 0 };
     snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str()); // NOTE: Using function provided by [rcore] module
-    for (i32 i = 0; varFileName[i] != '\0'; i++) if (varFileName[i] >= 'a' && varFileName[i] <= 'z') { varFileName[i] = varFileName[i] - 32; }
+    for (i32 i = 0; varFileName[i] != '\0'; i++) if (varFileName[i] >= 'a' && varFileName[i] <= 'z') { varFileName[i] = static_cast<char>(varFileName[i] - 32); }
 
     // Add wave information
     byteCount += sprintf(txtData + byteCount, "// Wave data information\n");
@@ -1401,7 +1401,7 @@ Music LoadMusicStream(std::string_view fileNameView)
     else if (IsFileExtension(fileName, ".mp3"))
     {
         auto ctxMp3 = static_cast<drmp3 *>(calloc(1, sizeof(drmp3)));
-        const i32 result = drmp3_init_file(ctxMp3, fileName, nullptr);
+        const i32 result = static_cast<i32>(drmp3_init_file(ctxMp3, fileName, nullptr));
 
         if (result > 0)
         {
@@ -1493,7 +1493,7 @@ Music LoadMusicStream(std::string_view fileNameView)
     {
         auto ctxMod = static_cast<jar_mod_context_t *>(calloc(1, sizeof(jar_mod_context_t)));
         jar_mod_init(ctxMod);
-        const i32 result = jar_mod_load_file(ctxMod, fileName);
+        const i32 result = static_cast<i32>(jar_mod_load_file(ctxMod, fileName));
 
         if (result > 0)
         {
@@ -1601,7 +1601,7 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const u8 *data, c
     else if ((strcmp(fileType, ".mp3") == 0) || (strcmp(fileType, ".MP3") == 0))
     {
         auto ctxMp3 = static_cast<drmp3 *>(calloc(1, sizeof(drmp3)));
-        const i32 success = drmp3_init_memory(ctxMp3, static_cast<const void *>(data), dataSize, nullptr);
+        const i32 success = static_cast<i32>(drmp3_init_memory(ctxMp3, static_cast<const void *>(data), dataSize, nullptr));
 
         if (success)
         {
@@ -1851,7 +1851,7 @@ void SeekMusicStream(const Music music, const f32 position)
     // Seeking is not supported in module formats
     if ((music.ctxType == MUSIC_MODULE_XM) || (music.ctxType == MUSIC_MODULE_MOD)) return;
 
-    auto positionInFrames = static_cast<u32>(position*music.stream.sampleRate);
+    auto positionInFrames = static_cast<u32>(position*static_cast<f32>(music.stream.sampleRate));
 
     switch (music.ctxType)
     {
@@ -1867,7 +1867,7 @@ void SeekMusicStream(const Music music, const f32 position)
 #if SUPPORT_FILEFORMAT_QOA
         case MUSIC_AUDIO_QOA:
         {
-            const i32 qoaFrame = positionInFrames/QOA_FRAME_LEN;
+            const i32 qoaFrame = static_cast<i32>(positionInFrames)/QOA_FRAME_LEN;
             qoaplay_seek_frame(static_cast<qoaplay_desc *>(music.ctxData), qoaFrame); // Seeks to QOA frame, not PCM frame
 
             // Compute QOA frame number and update positionInFrames
@@ -1898,7 +1898,7 @@ void UpdateMusicStream(const Music music)
     const u32 subBufferSizeInFrames = music.stream.buffer->sizeInFrames/2;
 
     // On first call of this function, lazily pre-allocated a temp buffer to read audio files/memory data in
-    const i32 frameSize = music.stream.channels*music.stream.sampleSize/8;
+    const i32 frameSize = static_cast<i32>(music.stream.channels*music.stream.sampleSize/8);
     const u32 pcmSize = subBufferSizeInFrames*frameSize;
 
     if (AUDIO.System.pcmBufferSize < pcmSize)
@@ -1933,7 +1933,7 @@ void UpdateMusicStream(const Music music)
 
         if (!music.stream.buffer->isSubBufferProcessed[i]) continue; // No refilling required, move to next sub-buffer
 
-        i32 frameCountStillNeeded = framesToStream;
+        i32 frameCountStillNeeded = static_cast<i32>(framesToStream);
         auto frameCountReadTotal = 0;
 
         switch (music.ctxType)
@@ -1970,7 +1970,7 @@ void UpdateMusicStream(const Music music)
             {
                 while (true)
                 {
-                    const i32 frameCountRead = stb_vorbis_get_samples_short_interleaved(static_cast<stb_vorbis *>(music.ctxData), music.stream.channels, reinterpret_cast<short *>(static_cast<char *>(AUDIO.System.pcmBuffer) + frameCountReadTotal*frameSize), frameCountStillNeeded*music.stream.channels);
+                    const i32 frameCountRead = stb_vorbis_get_samples_short_interleaved(static_cast<stb_vorbis *>(music.ctxData), static_cast<i32>(music.stream.channels), reinterpret_cast<short *>(static_cast<char *>(AUDIO.System.pcmBuffer) + frameCountReadTotal*frameSize), static_cast<i32>(frameCountStillNeeded*music.stream.channels));
                     frameCountReadTotal += frameCountRead;
                     frameCountStillNeeded -= frameCountRead;
                     if (frameCountStillNeeded == 0) break;
@@ -1994,8 +1994,8 @@ void UpdateMusicStream(const Music music)
         #if SUPPORT_FILEFORMAT_QOA
             case MUSIC_AUDIO_QOA:
             {
-                const u32 frameCountRead = qoaplay_decode(static_cast<qoaplay_desc *>(music.ctxData), static_cast<f32 *>(AUDIO.System.pcmBuffer), framesToStream);
-                frameCountReadTotal += frameCountRead;
+                const u32 frameCountRead = qoaplay_decode(static_cast<qoaplay_desc *>(music.ctxData), static_cast<f32 *>(AUDIO.System.pcmBuffer), static_cast<i32>(framesToStream));
+                frameCountReadTotal += static_cast<i32>(frameCountRead);
                 /*
                 while (true)
                 {
@@ -2044,7 +2044,7 @@ void UpdateMusicStream(const Music music)
             default: break;
         }
 
-        UpdateAudioStreamInLockedState(music.stream, AUDIO.System.pcmBuffer, framesToStream);
+        UpdateAudioStreamInLockedState(music.stream, AUDIO.System.pcmBuffer, static_cast<i32>(framesToStream));
     }
 
     ma_mutex_unlock(&AUDIO.System.lock);
@@ -2079,7 +2079,7 @@ f32 GetMusicTimeLength(const Music& music)
 {
     auto totalSeconds = 0.0f;
 
-    totalSeconds = static_cast<f32>(music.frameCount)/music.stream.sampleRate;
+    totalSeconds = static_cast<f32>(music.frameCount)/static_cast<f32>(music.stream.sampleRate);
 
     return totalSeconds;
 }
@@ -2096,11 +2096,11 @@ f32 GetMusicTimePlayed(const Music& music)
         const i32 framesInFirstBuffer = music.stream.buffer->isSubBufferProcessed[0]? 0 : subBufferSize;
         const i32 framesInSecondBuffer = music.stream.buffer->isSubBufferProcessed[1]? 0 : subBufferSize;
         i32 framesInBuffers = framesInFirstBuffer + framesInSecondBuffer;
-        if ((static_cast<u32>(framesInBuffers) > music.frameCount) && !music.looping) framesInBuffers = music.frameCount;
-        const i32 framesSentToMix = music.stream.buffer->frameCursorPos%subBufferSize;
+        if ((static_cast<u32>(framesInBuffers) > music.frameCount) && !music.looping) framesInBuffers = static_cast<i32>(music.frameCount);
+        const i32 framesSentToMix = static_cast<i32>(music.stream.buffer->frameCursorPos)%subBufferSize;
         i32 framesPlayed = (framesProcessed - framesInBuffers + framesSentToMix)%static_cast<i32>(music.frameCount);
-        if (framesPlayed < 0) framesPlayed += music.frameCount;
-        secondsPlayed = static_cast<f32>(framesPlayed)/music.stream.sampleRate;
+        if (framesPlayed < 0) framesPlayed += static_cast<i32>(music.frameCount);
+        secondsPlayed = static_cast<f32>(framesPlayed)/static_cast<f32>(music.stream.sampleRate);
         ma_mutex_unlock(&AUDIO.System.lock);
     }
 
@@ -2124,7 +2124,7 @@ AudioStream LoadAudioStream(u32 sampleRate, u32 sampleSize, u32 channels)
     // If the buffer is not set, compute one that would give us a buffer good enough for a decent frame rate at the device bit size/rate
     i32 deviceBitsPerSample = AUDIO.System.device.playback.format;
     if (deviceBitsPerSample > 4)  deviceBitsPerSample = 4;
-    deviceBitsPerSample *= AUDIO.System.device.playback.channels;
+    deviceBitsPerSample *= static_cast<i32>(AUDIO.System.device.playback.channels);
 
     u32 subBufferSize = (AUDIO.Buffer.defaultSize == 0)? (AUDIO.System.device.sampleRate/30*deviceBitsPerSample) : AUDIO.Buffer.defaultSize;
 
@@ -2502,7 +2502,7 @@ static ma_uint32 ReadAudioBufferFramesInMixingFormat(AudioBuffer *audioBuffer, f
             //
             // When the guess is overestimated, that's when it gets more complicated
             // In this case, any overflow needs to be stored in a buffer for later processing by the next read
-            ma_uint32 estimatedInputFrameCount = static_cast<ma_uint32>((static_cast<f32>(audioBuffer->converter.resampler.sampleRateIn) / audioBuffer->converter.resampler.sampleRateOut)*outputFramesToProcessThisIteration);
+            ma_uint32 estimatedInputFrameCount = static_cast<ma_uint32>((static_cast<f32>(audioBuffer->converter.resampler.sampleRateIn) / static_cast<f32>(audioBuffer->converter.resampler.sampleRateOut))*static_cast<f32>(outputFramesToProcessThisIteration));
             if (estimatedInputFrameCount == 0) estimatedInputFrameCount = 1; // Make sure at least one input frame is read
             if (estimatedInputFrameCount > inputBufferFrameCap) estimatedInputFrameCount = inputBufferFrameCap;
 

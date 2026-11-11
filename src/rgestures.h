@@ -433,7 +433,7 @@ void UpdateGestures()
 i32 GetGestureDetected()
 {
     // Get current gesture only if enabled
-    return (GESTURES.enabledFlags & GESTURES.current);
+    return static_cast<i32>((GESTURES.enabledFlags & GESTURES.current));
 }
 
 // Hold time measured in seconds

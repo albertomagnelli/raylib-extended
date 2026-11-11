@@ -524,8 +524,8 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, con
         {
             auto desc = qoi_desc{ 0 };
             image.data = qoi_decode(fileData, dataSize, &desc, 0);   // NOTE: Using channels from file data
-            image.width = desc.width;
-            image.height = desc.height;
+            image.width = static_cast<i32>(desc.width);
+            image.height = static_cast<i32>(desc.height);
             image.format = (desc.channels == 4)? PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 : PIXELFORMAT_UNCOMPRESSED_R8G8B8;
             image.mipmaps = 1;
         }
@@ -831,7 +831,7 @@ bool ExportImageAsCode(const Image image, std::string_view fileNameView)
     // Get file name from path and convert variable name to uppercase
     char varFileName[256] = { 0 };
     snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str()); // NOTE: Using function provided by [rcore] module
-    for (i32 i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
+    for (i32 i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = static_cast<char>(varFileName[i] - 32); }
 
     // Add image information
     byteCount += sprintf(txtData + byteCount, "// Image data information\n");
@@ -891,19 +891,19 @@ Image GenImageGradientLinear(i32 width, i32 height, const i32 direction, const C
     const f32 sinDir = sinf(radianDirection);
 
     // Calculate how far the top-left pixel is along the gradient direction from the center of said gradient
-    const f32 startingPos = 0.5f - (cosDir*width/2) - (sinDir*height/2);
+    const f32 startingPos = 0.5f - (cosDir*static_cast<f32>(width)/2) - (sinDir*static_cast<f32>(height)/2);
 
     // With directions that lie in the first or third quadrant (i.e. from top-left to
     // bottom-right or vice-versa), pixel (0, 0) is the farthest point on the gradient
     // (i.e. the pixel which should become one of the gradient's ends color); while for
     // directions that lie in the second or fourth quadrant, that point is pixel (width, 0)
-    const f32 maxPosValue = ((signbit(sinDir) != 0) == (signbit(cosDir) != 0))? fabsf(startingPos) : fabsf(startingPos + width*cosDir);
+    const f32 maxPosValue = ((signbit(sinDir) != 0) == (signbit(cosDir) != 0))? fabsf(startingPos) : fabsf(startingPos + static_cast<f32>(width)*cosDir);
     for (i32 i = 0; i < width; i++)
     {
         for (i32 j = 0; j < height; j++)
         {
             // Calculate the relative position of the pixel along the gradient direction
-            const f32 pos = (startingPos + (i*cosDir + j*sinDir))/maxPosValue;
+            const f32 pos = (startingPos + (static_cast<f32>(i)*cosDir + static_cast<f32>(j)*sinDir))/maxPosValue;
 
             f32 factor = pos;
             factor = (factor > 1.0f)? 1.0f : factor;    // Clamp to [-1,1]
@@ -979,8 +979,8 @@ Image GenImageGradientSquare(i32 width, i32 height, const f32 density, const Col
         for (i32 x = 0; x < width; x++)
         {
             // Calculate the Manhattan distance from the center
-            const f32 distX = fabsf(x - centerX);
-            const f32 distY = fabsf(y - centerY);
+            const f32 distX = fabsf(static_cast<f32>(x) - centerX);
+            const f32 distY = fabsf(static_cast<f32>(y) - centerY);
 
             // Normalize the distances by the dimensions of the gradient rectangle
             const f32 normalizedDistX = distX/centerX;
@@ -1159,7 +1159,7 @@ Image GenImageCellular(i32 width, i32 height, const i32 tileSize)
             }
 
             // This approach seems to give good results at all tile sizes
-            auto intensity = static_cast<i32>(minDistance*256.0f/tileSize);
+            auto intensity = static_cast<i32>(minDistance*256.0f/static_cast<f32>(tileSize));
             if (intensity > 255) intensity = 255;
 
             const auto intensityUC = static_cast<u8>(intensity);
@@ -1298,9 +1298,9 @@ void ImageCrop(Image *image, Rectangle crop)
     // Security checks to validate crop rectangle
     if (crop.x < 0) { crop.width += crop.x; crop.x = 0; }
     if (crop.y < 0) { crop.height += crop.y; crop.y = 0; }
-    if ((crop.x + crop.width) > image->width) crop.width = image->width - crop.x;
-    if ((crop.y + crop.height) > image->height) crop.height = image->height - crop.y;
-    if ((crop.x > image->width) || (crop.y > image->height) || (crop.width < 1) || (crop.height < 1))
+    if ((crop.x + crop.width) > static_cast<f32>(image->width)) crop.width = static_cast<f32>(image->width) - crop.x;
+    if ((crop.y + crop.height) > static_cast<f32>(image->height)) crop.height = static_cast<f32>(image->height) - crop.y;
+    if ((crop.x > static_cast<f32>(image->width)) || (crop.y > static_cast<f32>(image->height)) || (crop.width < 1) || (crop.height < 1))
     {
         log(LogLevel::warn, "IMAGE: Failed to crop, rectangle out of bounds");
         return;
@@ -1597,12 +1597,12 @@ Image ImageTextEx(const Font font, std::string_view textView, const f32 fontSize
     }
 
     auto lineSpacing = 0.0f;       // Line spacing, as used by MeasureTextEx()
-    if (lineBreakCount > 0) lineSpacing = (textSize.y - fontSize)/lineBreakCount - fontSize;
+    if (lineBreakCount > 0) lineSpacing = (textSize.y - fontSize)/static_cast<f32>(lineBreakCount) - fontSize;
 
     const f32 lineStep = static_cast<f32>(font.baseSize) + lineSpacing*static_cast<f32>(font.baseSize)/fontSize;   // Line advance at base size
 
     // Create image to store text
-    imText = GenImageColor(static_cast<i32>(imSize.x), font.baseSize + static_cast<i32>(lineBreakCount*lineStep), BLANK);
+    imText = GenImageColor(static_cast<i32>(imSize.x), font.baseSize + static_cast<i32>(static_cast<f32>(lineBreakCount)*lineStep), BLANK);
 
     for (i32 i = 0; i < textLength;)
     {
@@ -1614,7 +1614,7 @@ Image ImageTextEx(const Font font, std::string_view textView, const f32 fontSize
         if (codepoint == '\n')
         {
             lineIndex++;
-            textOffsetY = static_cast<i32>(lineIndex*lineStep);
+            textOffsetY = static_cast<i32>(static_cast<f32>(lineIndex)*lineStep);
             textOffsetX = 0;
         }
         else
@@ -1641,8 +1641,8 @@ Image ImageTextEx(const Font font, std::string_view textView, const f32 fontSize
 
         // Using nearest-neighbor scaling algorithm for default font
         // TODO: Support other scaling mechanism, use flag?
-        if (font.texture.id == GetFontDefault().texture.id) ImageResizeNN(&imText, static_cast<i32>(imText.width*scaleFactor), static_cast<i32>(imText.height*scaleFactor));
-        else ImageResize(&imText, static_cast<i32>(imText.width*scaleFactor), static_cast<i32>(imText.height*scaleFactor));
+        if (font.texture.id == GetFontDefault().texture.id) ImageResizeNN(&imText, static_cast<i32>(static_cast<f32>(imText.width)*scaleFactor), static_cast<i32>(static_cast<f32>(imText.height)*scaleFactor));
+        else ImageResize(&imText, static_cast<i32>(static_cast<f32>(imText.width)*scaleFactor), static_cast<i32>(static_cast<f32>(imText.height)*scaleFactor));
     }
 #else
     imText = GenImageColor(200, 60, BLACK);     // Generating placeholder black image rectangle
@@ -1944,8 +1944,8 @@ void ImageResizeCanvas(Image *image, const i32 newWidth, const i32 newHeight, co
         }
         else if ((offsetY + image->height) > newHeight) srcRec.height = static_cast<f32>(newHeight - offsetY);
 
-        if (newWidth < srcRec.width) srcRec.width = static_cast<f32>(newWidth);
-        if (newHeight < srcRec.height) srcRec.height = static_cast<f32>(newHeight);
+        if (static_cast<f32>(newWidth) < srcRec.width) srcRec.width = static_cast<f32>(newWidth);
+        if (static_cast<f32>(newHeight) < srcRec.height) srcRec.height = static_cast<f32>(newHeight);
 
         const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
         auto resizedData = static_cast<u8 *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
@@ -2262,10 +2262,10 @@ void ImageBlurGaussian(Image *image, const i32 blurSize)
                     convolutionSize++;
                 }
 
-                pixelsCopy2[row*image->width + x].x = avgR/convolutionSize;
-                pixelsCopy2[row*image->width + x].y = avgG/convolutionSize;
-                pixelsCopy2[row*image->width + x].z = avgB/convolutionSize;
-                pixelsCopy2[row*image->width + x].w = avgAlpha/convolutionSize;
+                pixelsCopy2[row*image->width + x].x = avgR/static_cast<f32>(convolutionSize);
+                pixelsCopy2[row*image->width + x].y = avgG/static_cast<f32>(convolutionSize);
+                pixelsCopy2[row*image->width + x].z = avgB/static_cast<f32>(convolutionSize);
+                pixelsCopy2[row*image->width + x].w = avgAlpha/static_cast<f32>(convolutionSize);
             }
         }
 
@@ -2305,10 +2305,10 @@ void ImageBlurGaussian(Image *image, const i32 blurSize)
                     convolutionSize++;
                 }
 
-                pixelsCopy1[y*image->width + col].x = static_cast<u8>(avgR/convolutionSize);
-                pixelsCopy1[y*image->width + col].y = static_cast<u8>(avgG/convolutionSize);
-                pixelsCopy1[y*image->width + col].z = static_cast<u8>(avgB/convolutionSize);
-                pixelsCopy1[y*image->width + col].w = static_cast<u8>(avgAlpha/convolutionSize);
+                pixelsCopy1[y*image->width + col].x = static_cast<u8>(avgR/static_cast<f32>(convolutionSize));
+                pixelsCopy1[y*image->width + col].y = static_cast<u8>(avgG/static_cast<f32>(convolutionSize));
+                pixelsCopy1[y*image->width + col].z = static_cast<u8>(avgB/static_cast<f32>(convolutionSize));
+                pixelsCopy1[y*image->width + col].w = static_cast<u8>(avgAlpha/static_cast<f32>(convolutionSize));
             }
         }
     }
@@ -2702,12 +2702,12 @@ void ImageRotate(Image *image, const i32 degrees)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
-        const f32 rad = degrees*PI/180.0f;
+        const f32 rad = static_cast<f32>(degrees)*PI/180.0f;
         const f32 sinRadius = sinf(rad);
         const f32 cosRadius = cosf(rad);
 
-        const auto width = static_cast<i32>(fabsf(image->width*cosRadius) + fabsf(image->height*sinRadius));
-        const auto height = static_cast<i32>(fabsf(image->height*cosRadius) + fabsf(image->width*sinRadius));
+        const auto width = static_cast<i32>(fabsf(static_cast<f32>(image->width)*cosRadius) + fabsf(static_cast<f32>(image->height)*sinRadius));
+        const auto height = static_cast<i32>(fabsf(static_cast<f32>(image->height)*cosRadius) + fabsf(static_cast<f32>(image->width)*sinRadius));
 
         const auto dataSize = GetPixelDataSize(width, height, image->format);
         const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
@@ -2719,10 +2719,10 @@ void ImageRotate(Image *image, const i32 degrees)
             {
                 for (i32 x = 0; x < width; x++)
                 {
-                    const f32 oldX = ((x + 0.5f - width/2.0f)*cosRadius + (y + 0.5f - height/2.0f)*sinRadius) + image->width/2.0f - 0.5f;
-                    const f32 oldY = ((y + 0.5f - height/2.0f)*cosRadius - (x + 0.5f - width/2.0f)*sinRadius) + image->height/2.0f - 0.5f;
+                    const f32 oldX = ((static_cast<f32>(x) + 0.5f - static_cast<f32>(width)/2.0f)*cosRadius + (static_cast<f32>(y) + 0.5f - static_cast<f32>(height)/2.0f)*sinRadius) + static_cast<f32>(image->width)/2.0f - 0.5f;
+                    const f32 oldY = ((static_cast<f32>(y) + 0.5f - static_cast<f32>(height)/2.0f)*cosRadius - (static_cast<f32>(x) + 0.5f - static_cast<f32>(width)/2.0f)*sinRadius) + static_cast<f32>(image->height)/2.0f - 0.5f;
 
-                    if ((oldX >= -0.5f) && (oldX < image->width - 0.5f) && (oldY >= -0.5f) && (oldY < image->height - 0.5f))
+                    if ((oldX >= -0.5f) && (oldX < static_cast<f32>(image->width) - 0.5f) && (oldY >= -0.5f) && (oldY < static_cast<f32>(image->height) - 0.5f))
                     {
                         const f32 sampleX = (oldX < 0)? 0 : oldX;
                         const f32 sampleY = (oldY < 0)? 0 : oldY;
@@ -2731,8 +2731,8 @@ void ImageRotate(Image *image, const i32 degrees)
                         const i32 x2 = MIN(x1 + 1, image->width - 1);
                         const i32 y2 = MIN(y1 + 1, image->height - 1);
 
-                        const f32 px = sampleX - x1;
-                        const f32 py = sampleY - y1;
+                        const f32 px = sampleX - static_cast<f32>(x1);
+                        const f32 py = sampleY - static_cast<f32>(y1);
 
                         for (i32 i = 0; i < bytesPerPixel; i++)
                         {
@@ -2891,7 +2891,7 @@ void ImageColorContrast(Image *image, i32 contrast)
     if (contrast < -100) contrast = -100;
     if (contrast > 100) contrast = 100;
 
-    f32 factor = (100.0f + contrast)/100.0f;
+    f32 factor = (100.0f + static_cast<f32>(contrast))/100.0f;
     factor *= factor;
 
     auto pixels = LoadImageColors(*image);
@@ -3746,9 +3746,9 @@ void ImageDrawTriangle(const Image *dst, const vec2 v1, const vec2 v2, const vec
     }
 
     // Calculate the initial barycentric coordinates for the top-left point of the bounding box
-    auto w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
-    auto w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
-    auto w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
+    auto w1Row = static_cast<i32>((static_cast<f32>(xMin) - v2.x)*static_cast<f32>(w1XStep) + static_cast<f32>(w1YStep)*(static_cast<f32>(yMin) - v2.y));
+    auto w2Row = static_cast<i32>((static_cast<f32>(xMin) - v3.x)*static_cast<f32>(w2XStep) + static_cast<f32>(w2YStep)*(static_cast<f32>(yMin) - v3.y));
+    auto w3Row = static_cast<i32>((static_cast<f32>(xMin) - v1.x)*static_cast<f32>(w3XStep) + static_cast<f32>(w3YStep)*(static_cast<f32>(yMin) - v1.y));
 
     // Rasterization loop
     // Iterate through each pixel in the bounding box
@@ -3813,12 +3813,12 @@ void ImageDrawTriangleGradient(const Image *dst, const vec2 v1, const vec2 v2, c
     }
 
     // Calculate the initial barycentric coordinates for the top-left point of the bounding box
-    auto w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
-    auto w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
-    auto w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
+    auto w1Row = static_cast<i32>((static_cast<f32>(xMin) - v2.x)*static_cast<f32>(w1XStep) + static_cast<f32>(w1YStep)*(static_cast<f32>(yMin) - v2.y));
+    auto w2Row = static_cast<i32>((static_cast<f32>(xMin) - v3.x)*static_cast<f32>(w2XStep) + static_cast<f32>(w2YStep)*(static_cast<f32>(yMin) - v3.y));
+    auto w3Row = static_cast<i32>((static_cast<f32>(xMin) - v1.x)*static_cast<f32>(w3XStep) + static_cast<f32>(w3YStep)*(static_cast<f32>(yMin) - v1.y));
 
     // Calculate the inverse of the sum of the barycentric coordinates for normalization
-    const f32 wInvSum = 255.0f/(w1Row + w2Row + w3Row);
+    const f32 wInvSum = 255.0f/static_cast<f32>((w1Row + w2Row + w3Row));
 
     // Rasterization loop
     // Iterate through each pixel in the bounding box
@@ -3920,11 +3920,11 @@ void ImageDrawRectangleRec(const Image *dst, Rectangle rec, const Color color)
     if (rec.height < 0) rec.height = 0;
 
     // Clamp the size the the image bounds
-    if ((rec.x + rec.width) >= dst->width) rec.width = dst->width - rec.x;
-    if ((rec.y + rec.height) >= dst->height) rec.height = dst->height - rec.y;
+    if ((rec.x + rec.width) >= static_cast<f32>(dst->width)) rec.width = static_cast<f32>(dst->width) - rec.x;
+    if ((rec.y + rec.height) >= static_cast<f32>(dst->height)) rec.height = static_cast<f32>(dst->height) - rec.y;
 
     // Check if the rect is even inside the image
-    if ((rec.x >= dst->width) || (rec.y >= dst->height)) return;
+    if ((rec.x >= static_cast<f32>(dst->width)) || (rec.y >= static_cast<f32>(dst->height))) return;
     if (((rec.x + rec.width) <= 0) || (rec.y + rec.height <= 0)) return;
 
     const auto sy = static_cast<i32>(rec.y);
@@ -4016,8 +4016,8 @@ void ImageDrawRectanglePro(const Image *dst, const Rectangle rec, const vec2 ori
         for (i32 x = x0; x < xEnd; x++)
         {
             // Pixel center in world coordinates
-            const f32 px = x + 0.5f - ox;
-            const f32 py = y + 0.5f - oy;
+            const f32 px = static_cast<f32>(x) + 0.5f - ox;
+            const f32 py = static_cast<f32>(y) + 0.5f - oy;
 
             // Inverse-rotate pixel into rectangle local space
             const f32 localX = px*cosAngle + py*sinAngle;
@@ -4045,9 +4045,9 @@ void ImageDrawRectangleLines(const Image *dst, const i32 posX, const i32 posY, c
 void ImageDrawRectangleLinesEx(const Image *dst, const Rectangle rec, const i32 thick, const Color color)
 {
     ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y), static_cast<i32>(rec.width), thick, color);
-    ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y + thick), thick, static_cast<i32>(rec.height - thick*2), color);
-    ImageDrawRectangle(dst, static_cast<i32>(rec.x + rec.width - thick), static_cast<i32>(rec.y + thick), thick, static_cast<i32>(rec.height - thick*2), color);
-    ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y + rec.height - thick), static_cast<i32>(rec.width), thick, color);
+    ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y + static_cast<f32>(thick)), thick, static_cast<i32>(rec.height - static_cast<f32>(thick)*2), color);
+    ImageDrawRectangle(dst, static_cast<i32>(rec.x + rec.width - static_cast<f32>(thick)), static_cast<i32>(rec.y + static_cast<f32>(thick)), thick, static_cast<i32>(rec.height - static_cast<f32>(thick)*2), color);
+    ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y + rec.height - static_cast<f32>(thick)), static_cast<i32>(rec.width), thick, color);
 }
 
 // Draw rectangle with gradient colors within an image, counter-clockwise color order
@@ -4072,13 +4072,13 @@ void ImageDrawRectangleGradientEx(const Image *dst, const Rectangle rec, const C
 
     for (i32 y = y0; y < y1; y++)
     {
-        f32 ty = (y - rec.y)/rec.height;
+        f32 ty = (static_cast<f32>(y) - rec.y)/rec.height;
         if (ty < 0.0f) ty = 0.0f;
         if (ty > 1.0f) ty = 1.0f;
 
         for (i32 x = x0; x < x1; x++)
         {
-            f32 tx = (x - rec.x)/rec.width;
+            f32 tx = (static_cast<f32>(x) - rec.x)/rec.width;
             if (tx < 0.0f) tx = 0.0f;
             if (tx > 1.0f) tx = 1.0f;
 
@@ -4089,10 +4089,10 @@ void ImageDrawRectangleGradientEx(const Image *dst, const Rectangle rec, const C
             const f32 w4 = tx*(1.0f - ty);
 
             const Color color = {
-                static_cast<u8>(col1.r*w1 + col2.r*w2 + col3.r*w3 + col4.r*w4),
-                static_cast<u8>(col1.g*w1 + col2.g*w2 + col3.g*w3 + col4.g*w4),
-                static_cast<u8>(col1.b*w1 + col2.b*w2 + col3.b*w3 + col4.b*w4),
-                static_cast<u8>(col1.a*w1 + col2.a*w2 + col3.a*w3 + col4.a*w4)
+                static_cast<u8>(static_cast<f32>(col1.r)*w1 + static_cast<f32>(col2.r)*w2 + static_cast<f32>(col3.r)*w3 + static_cast<f32>(col4.r)*w4),
+                static_cast<u8>(static_cast<f32>(col1.g)*w1 + static_cast<f32>(col2.g)*w2 + static_cast<f32>(col3.g)*w3 + static_cast<f32>(col4.g)*w4),
+                static_cast<u8>(static_cast<f32>(col1.b)*w1 + static_cast<f32>(col2.b)*w2 + static_cast<f32>(col3.b)*w3 + static_cast<f32>(col4.b)*w4),
+                static_cast<u8>(static_cast<f32>(col1.a)*w1 + static_cast<f32>(col2.a)*w2 + static_cast<f32>(col3.a)*w3 + static_cast<f32>(col4.a)*w4)
             };
 
             // Using ImageDrawPixel() to let it manage color format conversion
@@ -4191,8 +4191,8 @@ void ImageDrawCircleGradient(const Image *dst, const vec2 center, const f32 radi
         for (i32 x = x0; x < x1; x++)
         {
             // Center relative to circle center
-            const f32 dx = (x + 0.5f) - center.x;
-            const f32 dy = (y + 0.5f) - center.y;
+            const f32 dx = (static_cast<f32>(x) + 0.5f) - center.x;
+            const f32 dy = (static_cast<f32>(y) + 0.5f) - center.y;
 
             const f32 distSq = dx*dx + dy*dy;
 
@@ -4203,10 +4203,10 @@ void ImageDrawCircleGradient(const Image *dst, const vec2 center, const f32 radi
             // TODO: Consider other types of interpolation for better results?
             const f32 t = sqrtf(distSq)/radius;
             const Color color = {
-                static_cast<u8>(inner.r + (outer.r - inner.r)*t),
-                static_cast<u8>(inner.g + (outer.g - inner.g)*t),
-                static_cast<u8>(inner.b + (outer.b - inner.b)*t),
-                static_cast<u8>(inner.a + (outer.a - inner.a)*t)
+                static_cast<u8>(static_cast<f32>(inner.r) + static_cast<f32>((outer.r - inner.r))*t),
+                static_cast<u8>(static_cast<f32>(inner.g) + static_cast<f32>((outer.g - inner.g))*t),
+                static_cast<u8>(static_cast<f32>(inner.b) + static_cast<f32>((outer.b - inner.b))*t),
+                static_cast<u8>(static_cast<f32>(inner.a) + static_cast<f32>((outer.a - inner.a))*t)
             };
 
             // NOTE: Pixel format conversion managed by function
@@ -4234,8 +4234,8 @@ void ImageDrawImageEx(const Image *dst, const Image src, const vec2 position, co
     const f32 sinA = sinf(rotation*DEG2RAD);
 
     // Rotate around the source image top-left corner
-    const f32 cornersX[4] = { 0.0f, src.width*scale, src.width*scale, 0.0f };
-    const f32 cornersY[4] = { 0.0f, 0.0f, src.height*scale, src.height*scale };
+    const f32 cornersX[4] = { 0.0f, static_cast<f32>(src.width)*scale, static_cast<f32>(src.width)*scale, 0.0f };
+    const f32 cornersY[4] = { 0.0f, 0.0f, static_cast<f32>(src.height)*scale, static_cast<f32>(src.height)*scale };
 
     f32 minX = 65536;
     f32 minY = 65536;
@@ -4276,8 +4276,8 @@ void ImageDrawImageEx(const Image *dst, const Image src, const vec2 position, co
         for (i32 x = x0; x < x1; x++)
         {
             // Destination pixel center relative to image position
-            const f32 dx = (x + 0.5f) - position.x;
-            const f32 dy = (y + 0.5f) - position.y;
+            const f32 dx = (static_cast<f32>(x) + 0.5f) - position.x;
+            const f32 dy = (static_cast<f32>(y) + 0.5f) - position.y;
 
             // Inverse-rotate into the scaled source space
             f32 sx = dx*cosA + dy*sinA;
@@ -4288,7 +4288,7 @@ void ImageDrawImageEx(const Image *dst, const Image src, const vec2 position, co
             sy /= scale;
 
             // Skip pixels outside the source image
-            if ((sx < 0.0f) || (sy < 0.0f) || (sx >= src.width) || (sy >= src.height)) continue;
+            if ((sx < 0.0f) || (sy < 0.0f) || (sx >= static_cast<f32>(src.width)) || (sy >= static_cast<f32>(src.height))) continue;
 
             // Nearest-neighbor source sampling
             const auto srcX = static_cast<i32>(sx);
@@ -4334,8 +4334,8 @@ void ImageDrawImagePro(const Image *dst, Image src, Rectangle srcRec, Rectangle 
         // Source rectangle out-of-bounds security checks
         if (srcRec.x < 0) { srcRec.width += srcRec.x; srcRec.x = 0; }
         if (srcRec.y < 0) { srcRec.height += srcRec.y; srcRec.y = 0; }
-        if ((srcRec.x + srcRec.width) > src.width) srcRec.width = src.width - srcRec.x;
-        if ((srcRec.y + srcRec.height) > src.height) srcRec.height = src.height - srcRec.y;
+        if ((srcRec.x + srcRec.width) > static_cast<f32>(src.width)) srcRec.width = static_cast<f32>(src.width) - srcRec.x;
+        if ((srcRec.y + srcRec.height) > static_cast<f32>(src.height)) srcRec.height = static_cast<f32>(src.height) - srcRec.y;
 
         // Check if source rectangle needs to be resized to destination rectangle
         // In that case, make a copy of source, and apply all required transform
@@ -4356,7 +4356,7 @@ void ImageDrawImagePro(const Image *dst, Image src, Rectangle srcRec, Rectangle 
             srcRec.width += dstRec.x;
             dstRec.x = 0;
         }
-        else if ((dstRec.x + srcRec.width) > dst->width) srcRec.width = dst->width - dstRec.x;
+        else if ((dstRec.x + srcRec.width) > static_cast<f32>(dst->width)) srcRec.width = static_cast<f32>(dst->width) - dstRec.x;
 
         if (dstRec.y < 0)
         {
@@ -4364,10 +4364,10 @@ void ImageDrawImagePro(const Image *dst, Image src, Rectangle srcRec, Rectangle 
             srcRec.height += dstRec.y;
             dstRec.y = 0;
         }
-        else if ((dstRec.y + srcRec.height) > dst->height) srcRec.height = dst->height - dstRec.y;
+        else if ((dstRec.y + srcRec.height) > static_cast<f32>(dst->height)) srcRec.height = static_cast<f32>(dst->height) - dstRec.y;
 
-        if (dst->width < srcRec.width) srcRec.width = static_cast<f32>(dst->width);
-        if (dst->height < srcRec.height) srcRec.height = static_cast<f32>(dst->height);
+        if (static_cast<f32>(dst->width) < srcRec.width) srcRec.width = static_cast<f32>(dst->width);
+        if (static_cast<f32>(dst->height) < srcRec.height) srcRec.height = static_cast<f32>(dst->height);
 
         // This blitting method is quite fast! The process followed is:
         // for every pixel -> [get_src_format/get_dst_format -> blend -> format_to_dst]
@@ -4602,7 +4602,7 @@ TextureCubemap LoadTextureCubemap(const Image image, i32 layout)
         } */
         else
         {
-            if (layout == CUBEMAP_LAYOUT_LINE_HORIZONTAL) for (i32 i = 0; i < 6; i++) faceRecs[i].x = static_cast<f32>(size)*i;
+            if (layout == CUBEMAP_LAYOUT_LINE_HORIZONTAL) for (i32 i = 0; i < 6; i++) faceRecs[i].x = static_cast<f32>(size)*static_cast<f32>(i);
             else if (layout == CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR)
             {
                 faceRecs[0].x = static_cast<f32>(size); faceRecs[0].y = static_cast<f32>(size);
@@ -4634,7 +4634,7 @@ TextureCubemap LoadTextureCubemap(const Image image, i32 layout)
                 ImageMipmaps(&faces);
             }
 
-            for (i32 i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], Rectangle{ 0, static_cast<f32>(size)*i, static_cast<f32>(size), static_cast<f32>(size) }, vec2{ 0 }, 0.0f, WHITE);
+            for (i32 i = 0; i < 6; i++) ImageDrawImagePro(&faces, mipmapped, faceRecs[i], Rectangle{ 0, static_cast<f32>(size)*static_cast<f32>(i), static_cast<f32>(size), static_cast<f32>(size) }, vec2{ 0 }, 0.0f, WHITE);
 
             UnloadImage(mipmapped);
         }
@@ -5573,10 +5573,10 @@ Color ColorLerp(const Color color1, const Color color2, f32 factor)
     if (factor < 0.0f) factor = 0.0f;
     else if (factor > 1.0f) factor = 1.0f;
 
-    color.r = static_cast<u8>((1.0f - factor)*color1.r + factor*color2.r);
-    color.g = static_cast<u8>((1.0f - factor)*color1.g + factor*color2.g);
-    color.b = static_cast<u8>((1.0f - factor)*color1.b + factor*color2.b);
-    color.a = static_cast<u8>((1.0f - factor)*color1.a + factor*color2.a);
+    color.r = static_cast<u8>((1.0f - factor)*static_cast<f32>(color1.r) + factor*static_cast<f32>(color2.r));
+    color.g = static_cast<u8>((1.0f - factor)*static_cast<f32>(color1.g) + factor*static_cast<f32>(color2.g));
+    color.b = static_cast<u8>((1.0f - factor)*static_cast<f32>(color1.b) + factor*static_cast<f32>(color2.b));
+    color.a = static_cast<u8>((1.0f - factor)*static_cast<f32>(color1.a) + factor*static_cast<f32>(color2.a));
 
     return color;
 }

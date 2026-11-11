@@ -762,13 +762,13 @@ void InitWindow(i32 width, i32 height, std::string_view titleView)
 
     // Initialize rlgl default data (buffers and shaders)
     // NOTE: Current fbo size stored as globals in rlgl for convenience
-    rlglInit(CORE.Window.render.width, CORE.Window.render.height);
+    rlglInit(static_cast<i32>(CORE.Window.render.width), static_cast<i32>(CORE.Window.render.height));
 
     // Query the graphics device for the MSAA samples really provided, it can be less than the requested ones
     UpdateWindowProvidedSamples();
 
     // Setup default viewport
-    SetupViewport(CORE.Window.render.width, CORE.Window.render.height);
+    SetupViewport(static_cast<i32>(CORE.Window.render.width), static_cast<i32>(CORE.Window.render.height));
 
 #if SUPPORT_MODULE_RTEXT
     // Load default font
@@ -883,13 +883,13 @@ bool IsWindowState(const u32 flag)
 // Get current screen width
 i32 GetScreenWidth()
 {
-    return CORE.Window.screen.width;
+    return static_cast<i32>(CORE.Window.screen.width);
 }
 
 // Get current screen height
 i32 GetScreenHeight()
 {
-    return CORE.Window.screen.height;
+    return static_cast<i32>(CORE.Window.screen.height);
 }
 
 // Get current render width which is equal to screen width*dpi scale
@@ -897,8 +897,8 @@ i32 GetRenderWidth()
 {
     auto width = 0;
 
-    if (CORE.Window.usingFbo) width = CORE.Window.currentFbo.width;
-    else width = CORE.Window.render.width;
+    if (CORE.Window.usingFbo) width = static_cast<i32>(CORE.Window.currentFbo.width);
+    else width = static_cast<i32>(CORE.Window.render.width);
 
     return width;
 }
@@ -908,8 +908,8 @@ i32 GetRenderHeight()
 {
     auto height = 0;
 
-    if (CORE.Window.usingFbo) height = CORE.Window.currentFbo.height;
-    else height = CORE.Window.render.height;
+    if (CORE.Window.usingFbo) height = static_cast<i32>(CORE.Window.currentFbo.height);
+    else height = static_cast<i32>(CORE.Window.render.height);
 
     return height;
 }
@@ -1126,7 +1126,7 @@ void EndTextureMode()
     rlDisableFramebuffer();         // Disable render target (fbo)
 
     // Set viewport to default framebuffer size
-    SetupViewport(CORE.Window.render.width, CORE.Window.render.height);
+    SetupViewport(static_cast<i32>(CORE.Window.render.width), static_cast<i32>(CORE.Window.render.height));
 
     // Go back to the modelview state from BeginDrawing, back to the main framebuffer
     rlMatrixMode(RL_MODELVIEW);                            // Switch back to modelview matrix
@@ -1182,12 +1182,12 @@ void BeginScissorMode(const i32 x, const i32 y, const i32 width, const i32 heigh
     if (!CORE.Window.usingFbo && FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
         const auto scale = GetWindowScaleDPI();
-        rlScissor(static_cast<i32>(x*scale.x), static_cast<i32>(CORE.Window.currentFbo.height - (y + height)*scale.y), static_cast<i32>(width*scale.x), static_cast<i32>(height*scale.y));
+        rlScissor(static_cast<i32>(static_cast<f32>(x)*scale.x), static_cast<i32>(static_cast<f32>(CORE.Window.currentFbo.height) - static_cast<f32>((y + height))*scale.y), static_cast<i32>(static_cast<f32>(width)*scale.x), static_cast<i32>(static_cast<f32>(height)*scale.y));
     }
 #endif
     else
     {
-        rlScissor(x, CORE.Window.currentFbo.height - (y + height), width, height);
+        rlScissor(x, static_cast<i32>(CORE.Window.currentFbo.height) - (y + height), width, height);
     }
 }
 
@@ -1722,7 +1722,7 @@ i32 GetFPS()
             if (captureFramesCounted < FPS_CAPTURE_FRAMES_COUNT) captureFramesCounted += 1;
         }
 
-        if (captureFramesCounted > 0) fps = static_cast<i32>(roundf(captureFramesCounted/(average*FPS_CAPTURE_FRAMES_COUNT)));
+        if (captureFramesCounted > 0) fps = static_cast<i32>(roundf(static_cast<f32>(captureFramesCounted)/(average*FPS_CAPTURE_FRAMES_COUNT)));
     }
     else fps = 0;
 #endif
@@ -1772,8 +1772,8 @@ void WaitTime(const f64 seconds)
     #endif
     #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
         timespec req{};
-        const time_t sec = sleepSeconds;
-        const long nsec = (sleepSeconds - sec)*1000000000L;
+        const time_t sec = static_cast<time_t>(sleepSeconds);
+        const long nsec = static_cast<long>((sleepSeconds - static_cast<f64>(sec)))*1000000000L;
         req.tv_sec = sec;
         req.tv_nsec = nsec;
 
@@ -2087,7 +2087,7 @@ u8 * LoadFileData(std::string_view fileNameView, i32 *dataSize)
             // WARNING: On binary streams SEEK_END could not be found,
             // using fseek() and ftell() could not work in some (rare) cases
             fseek(file, 0, SEEK_END);
-            const i32 size = ftell(file);     // WARNING: ftell() returns 'long int', maximum size returned is INT_MAX (2147483647 bytes)
+            const i32 size = static_cast<i32>(ftell(file));     // WARNING: ftell() returns 'long int', maximum size returned is INT_MAX (2147483647 bytes)
             fseek(file, 0, SEEK_SET);
 
             if (size > 0)
@@ -2209,7 +2209,7 @@ bool ExportDataAsCode(const u8 *data, const i32 dataSize, std::string_view fileN
     for (i32 i = 0; varFileName[i] != '\0'; i++)
     {
         // Convert variable name to uppercase
-        if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
+        if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = static_cast<char>(varFileName[i] - 32); }
         // Replace non valid character for C identifier with '_'
         else if (varFileName[i] == '.' || varFileName[i] == '-' || varFileName[i] == '?' || varFileName[i] == '!' || varFileName[i] == '+') { varFileName[i] = '_'; }
     }
@@ -2556,7 +2556,7 @@ bool IsFileExtension(std::string_view fileNameView, std::string_view extView)
         for (i32 i = 0; (i < fileExtLength) && (i < 15); i++)
         {
             // Copy and convert to lower-case
-            if ((fileExt[i] >= 'A') && (fileExt[i] <= 'Z')) fileExtLower[i] =  fileExt[i] + 32;
+            if ((fileExt[i] >= 'A') && (fileExt[i] <= 'Z')) fileExtLower[i] =  static_cast<char>(fileExt[i] + 32);
             else fileExtLower[i] =  fileExt[i];
         }
 
@@ -2664,7 +2664,7 @@ i32 GetFileLength(std::string_view fileNameView)
     if (file != nullptr)
     {
         fseek(file, 0L, SEEK_END);
-        const i32 fileSize = ftell(file);
+        const i32 fileSize = static_cast<i32>(ftell(file));
 
         // Check for size overflow (INT_MAX)
         if (fileSize > 2147483647) logMessage(LogLevel::warn, std::format("[{}] File size overflows expected limit, do not use GetFileLength()", fileName));
@@ -2913,7 +2913,7 @@ std::string GetApplicationDirectory()
 
     if (len > 0)
     {
-        for (i32 i = len; i >= 0; i--)
+        for (i32 i = static_cast<i32>(len); i >= 0; i--)
         {
             if (appDir[i] == '/')
             {
@@ -3361,10 +3361,10 @@ std::string EncodeDataBase64(const u8 *data, const i32 dataSize, i32 *outputSize
 
         octetPack = (octetA << 16) | (octetB << 8) | octetC;
 
-        encodedData[outputCount + 0] = static_cast<u8>(base64EncodeTable[(octetPack >> 18) & 0x3f]);
-        encodedData[outputCount + 1] = static_cast<u8>(base64EncodeTable[(octetPack >> 12) & 0x3f]);
-        encodedData[outputCount + 2] = static_cast<u8>(base64EncodeTable[(octetPack >> 6) & 0x3f]);
-        encodedData[outputCount + 3] = static_cast<u8>(base64EncodeTable[octetPack & 0x3f]);
+        encodedData[outputCount + 0] = static_cast<char>(base64EncodeTable[(octetPack >> 18) & 0x3f]);
+        encodedData[outputCount + 1] = static_cast<char>(base64EncodeTable[(octetPack >> 12) & 0x3f]);
+        encodedData[outputCount + 2] = static_cast<char>(base64EncodeTable[(octetPack >> 6) & 0x3f]);
+        encodedData[outputCount + 3] = static_cast<char>(base64EncodeTable[octetPack & 0x3f]);
         outputCount += 4;
         i += 3;
     }
@@ -4570,7 +4570,7 @@ void SetupViewport(i32 width, i32 height)
     CORE.Window.render.height = height;
 
     // Set viewport width and height
-    rlViewport(CORE.Window.renderOffset.x/2, CORE.Window.renderOffset.y/2, CORE.Window.render.width, CORE.Window.render.height);
+    rlViewport(CORE.Window.renderOffset.x/2, CORE.Window.renderOffset.y/2, static_cast<i32>(CORE.Window.render.width), static_cast<i32>(CORE.Window.render.height));
 
     rlMatrixMode(RL_PROJECTION);        // Switch to projection matrix
     rlLoadIdentity();                   // Reset current matrix (projection)
@@ -4886,7 +4886,7 @@ static void RecordAutomationEvent()
         // Event type: INPUT_GESTURE
         currentEventList->events[currentEventList->count].frame = CORE.Time.frameCounter;
         currentEventList->events[currentEventList->count].type = INPUT_GESTURE;
-        currentEventList->events[currentEventList->count].params[0] = GESTURES.current;
+        currentEventList->events[currentEventList->count].params[0] = static_cast<i32>(GESTURES.current);
         currentEventList->events[currentEventList->count].params[1] = 0;
         currentEventList->events[currentEventList->count].params[2] = 0;
 

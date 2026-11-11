@@ -852,11 +852,11 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, i32 glyp
     // Estimate image atlas size from available data
     // NOTE: Multiplying total expected area by 1.2f scale factor but in case
     // some glyphs do not fit, the atlas height is scaled x2 to fit them
-    const f32 totalArea = totalWidth*paddedFontSize*1.2f;
+    const f32 totalArea = static_cast<f32>(totalWidth)*static_cast<f32>(paddedFontSize)*1.2f;
     const f32 imageMinSize = sqrtf(totalArea);
     const auto imageSize = static_cast<i32>(powf(2, ceilf(logf(imageMinSize)/logf(2))));
 
-    if (totalArea < ((imageSize*imageSize)/2))
+    if (totalArea < static_cast<f32>(((imageSize*imageSize)/2)))
     {
         atlas.width = imageSize;    // Atlas bitmap width
         atlas.height = imageSize/2; // Atlas bitmap height
@@ -959,8 +959,8 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, i32 glyp
         for (i32 i = 0; i < glyphCount; i++)
         {
             // It returns char rectangles in atlas
-            recs[i].x = rects[i].x + static_cast<f32>(padding);
-            recs[i].y = rects[i].y + static_cast<f32>(padding);
+            recs[i].x = static_cast<f32>(rects[i].x) + static_cast<f32>(padding);
+            recs[i].y = static_cast<f32>(rects[i].y) + static_cast<f32>(padding);
             recs[i].width = static_cast<f32>(glyphs[i].image.width);
             recs[i].height = static_cast<f32>(glyphs[i].image.height);
 
@@ -1250,12 +1250,12 @@ void DrawTextEx(Font font, std::string_view textView, const vec2 position, const
 
     if (font.texture.id == 0) font = GetFontDefault();  // Security check in case of not valid font
 
-    const i32 size = TextLength(text);    // Total size in bytes of the text, scanned by codepoints in loop
+    const i32 size = static_cast<i32>(TextLength(text));    // Total size in bytes of the text, scanned by codepoints in loop
 
     f32 textOffsetY = 0;          // Offset between lines (on linebreak '\n')
     auto textOffsetX = 0.0f;       // Offset X to next character to draw
 
-    const f32 scaleFactor = fontSize/font.baseSize;         // Character quad scaling factor
+    const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);         // Character quad scaling factor
 
     for (i32 i = 0; i < size;)
     {
@@ -1267,7 +1267,7 @@ void DrawTextEx(Font font, std::string_view textView, const vec2 position, const
         if (codepoint == '\n')
         {
             // NOTE: Line spacing is a global variable, use SetTextLineSpacing() to setup
-            textOffsetY += (fontSize + textLineSpacing);
+            textOffsetY += (fontSize + static_cast<f32>(textLineSpacing));
             textOffsetX = 0.0f;
         }
         else
@@ -1308,19 +1308,19 @@ void DrawTextCodepoint(const Font font, const i32 codepoint, const vec2 position
     // Character index position in sprite font
     // NOTE: In case a codepoint is not available in the font, index returned points to '?'
     const auto index = GetGlyphIndex(font, codepoint);
-    const f32 scaleFactor = fontSize/font.baseSize;     // Character quad scaling factor
+    const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);     // Character quad scaling factor
 
     // Character destination rectangle on screen
     // NOTE: Considering glyph padding on drawing
-    const Rectangle dstRec = { position.x + font.glyphs[index].offsetX*scaleFactor - static_cast<f32>(font.glyphPadding)*scaleFactor,
-                      position.y + font.glyphs[index].offsetY*scaleFactor - static_cast<f32>(font.glyphPadding)*scaleFactor,
-                      (font.recs[index].width + 2.0f*font.glyphPadding)*scaleFactor,
-                      (font.recs[index].height + 2.0f*font.glyphPadding)*scaleFactor };
+    const Rectangle dstRec = { position.x + static_cast<f32>(font.glyphs[index].offsetX)*scaleFactor - static_cast<f32>(font.glyphPadding)*scaleFactor,
+                      position.y + static_cast<f32>(font.glyphs[index].offsetY)*scaleFactor - static_cast<f32>(font.glyphPadding)*scaleFactor,
+                      (font.recs[index].width + 2.0f*static_cast<f32>(font.glyphPadding))*scaleFactor,
+                      (font.recs[index].height + 2.0f*static_cast<f32>(font.glyphPadding))*scaleFactor };
 
     // Character source rectangle from font texture atlas
     // NOTE: Considering glyphs padding when drawing, it could be required for outline/glow shader effects
     const Rectangle srcRec = { font.recs[index].x - static_cast<f32>(font.glyphPadding), font.recs[index].y - static_cast<f32>(font.glyphPadding),
-                         font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding };
+                         font.recs[index].width + 2.0f*static_cast<f32>(font.glyphPadding), font.recs[index].height + 2.0f*static_cast<f32>(font.glyphPadding) };
 
     // Draw the character texture on the screen
     DrawTexturePro(font.texture, srcRec, dstRec, vec2{ 0, 0 }, 0.0f, tint);
@@ -1332,7 +1332,7 @@ void DrawTextCodepoints(const Font font, const i32 *codepoints, const i32 codepo
     f32 textOffsetY = 0;          // Offset between lines (on linebreak '\n')
     auto textOffsetX = 0.0f;       // Offset X to next character to draw
 
-    const f32 scaleFactor = fontSize/font.baseSize;         // Character quad scaling factor
+    const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);         // Character quad scaling factor
 
     for (i32 i = 0; i < codepointCount; i++)
     {
@@ -1341,7 +1341,7 @@ void DrawTextCodepoints(const Font font, const i32 *codepoints, const i32 codepo
         if (codepoints[i] == '\n')
         {
             // NOTE: Line spacing is a global variable, use SetTextLineSpacing() to setup
-            textOffsetY += (fontSize + textLineSpacing);
+            textOffsetY += (fontSize + static_cast<f32>(textLineSpacing));
             textOffsetX = 0.0f;
         }
         else
@@ -1394,7 +1394,7 @@ vec2 MeasureTextEx(const Font font, std::string_view textView, const f32 fontSiz
 
     if ((font.texture.id == 0) || (text == nullptr) || (text[0] == '\0')) return textSize; // Security check
 
-    const i32 size = TextLength(text);    // Get size in bytes of text
+    const i32 size = static_cast<i32>(TextLength(text));    // Get size in bytes of text
     auto tempByteCounter = 0;              // Used to count longer text line num chars
     auto byteCounter = 0;
 
@@ -1419,8 +1419,8 @@ vec2 MeasureTextEx(const Font font, std::string_view textView, const f32 fontSiz
 
         if (letter != '\n')
         {
-            if (font.glyphs[index].advanceX > 0) textWidth += font.glyphs[index].advanceX;
-            else textWidth += (font.recs[index].width + font.glyphs[index].offsetX);
+            if (font.glyphs[index].advanceX > 0) textWidth += static_cast<f32>(font.glyphs[index].advanceX);
+            else textWidth += (font.recs[index].width + static_cast<f32>(font.glyphs[index].offsetX));
         }
         else
         {
@@ -1429,7 +1429,7 @@ vec2 MeasureTextEx(const Font font, std::string_view textView, const f32 fontSiz
             textWidth = 0;
 
             // NOTE: Line spacing is a global variable, use SetTextLineSpacing() to setup
-            textHeight += (fontSize + textLineSpacing);
+            textHeight += (fontSize + static_cast<f32>(textLineSpacing));
         }
 
         if (tempByteCounter < byteCounter) tempByteCounter = byteCounter;
@@ -1437,7 +1437,7 @@ vec2 MeasureTextEx(const Font font, std::string_view textView, const f32 fontSiz
 
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-    textSize.x = tempTextWidth*scaleFactor + ((tempByteCounter - 1)*spacing);
+    textSize.x = tempTextWidth*scaleFactor + (static_cast<f32>((tempByteCounter - 1))*spacing);
     textSize.y = textHeight;
 
     return textSize;
@@ -1475,8 +1475,8 @@ vec2 MeasureTextCodepoints(const Font font, const i32 *codepoints, const i32 len
         {
             glyphCounter++;
 
-            if (font.glyphs[index].advanceX > 0) textWidth += font.glyphs[index].advanceX;
-            else textWidth += (font.recs[index].width + font.glyphs[index].offsetX);
+            if (font.glyphs[index].advanceX > 0) textWidth += static_cast<f32>(font.glyphs[index].advanceX);
+            else textWidth += (font.recs[index].width + static_cast<f32>(font.glyphs[index].offsetX));
         }
         else
         {
@@ -1486,7 +1486,7 @@ vec2 MeasureTextCodepoints(const Font font, const i32 *codepoints, const i32 len
             glyphCounter = 0;
 
             // NOTE: Line spacing is a global variable, use SetTextLineSpacing() to setup
-            textHeight += (fontSize + textLineSpacing);
+            textHeight += (fontSize + static_cast<f32>(textLineSpacing));
         }
 
         if (tempGlyphCounter < glyphCounter) tempGlyphCounter = glyphCounter;
@@ -1494,7 +1494,7 @@ vec2 MeasureTextCodepoints(const Font font, const i32 *codepoints, const i32 len
 
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-    textSize.x = tempTextWidth*scaleFactor + ((tempGlyphCounter - 1)*spacing);
+    textSize.x = tempTextWidth*scaleFactor + (static_cast<f32>((tempGlyphCounter - 1))*spacing);
     textSize.y = textHeight;
 
     return textSize;
@@ -1729,7 +1729,7 @@ std::string TextSubtext(std::string_view textView, const i32 position, i32 lengt
 
     if ((text != nullptr) && (position >= 0) && (length > 0))
     {
-        const i32 textLength = TextLength(text);
+        const i32 textLength = static_cast<i32>(TextLength(text));
 
         if (position < textLength)
         {
@@ -1786,7 +1786,7 @@ std::string GetTextBetween(std::string_view textView, std::string_view beginView
 
     if (beginIndex > -1)
     {
-        const i32 beginLen = TextLength(begin);
+        const i32 beginLen = static_cast<i32>(TextLength(begin));
         auto endIndex = TextFindIndex(text + beginIndex + beginLen, end);
 
         if (endIndex > -1)
@@ -1827,9 +1827,9 @@ std::string TextReplace(std::string_view textView, std::string_view searchView, 
         auto lastReplacePos = 0;               // Distance between next search and end of last replace
         auto count = 0;                        // Number of replacements
 
-        textLen = TextLength(text);
-        searchLen = TextLength(search);
-        replaceLen = TextLength(replacement);
+        textLen = static_cast<i32>(TextLength(text));
+        searchLen = static_cast<i32>(TextLength(search));
+        replaceLen = static_cast<i32>(TextLength(replacement));
 
         // Count the number of replacements needed
         insertPoint = text;
@@ -1899,14 +1899,14 @@ std::string TextReplaceBetween(std::string_view textView, std::string_view begin
 
         if (beginIndex > -1)
         {
-            const i32 beginLen = TextLength(begin);
+            const i32 beginLen = static_cast<i32>(TextLength(begin));
             auto endIndex = TextFindIndex(text + beginIndex + beginLen, end);
 
             if (endIndex > -1)
             {
                 endIndex += (beginIndex + beginLen);
 
-                const i32 textLen = TextLength(text);
+                const i32 textLen = static_cast<i32>(TextLength(text));
                 const auto replaceLen = static_cast<i32>(replacementStr.size());
                 //int toreplaceLen = endIndex - beginIndex - beginLen;
 
@@ -1941,12 +1941,12 @@ std::string TextInsert(std::string_view textView, std::string_view insertView, i
 
     static char buffer[MAX_TEXT_BUFFER_LENGTH] = { 0 };
     memset(buffer, 0, MAX_TEXT_BUFFER_LENGTH);
-    const i32 textLen = TextLength(text);
+    const i32 textLen = static_cast<i32>(TextLength(text));
 
     if (!textStr.empty() && !insertStr.empty() && (position >= 0))
     {
         if (position > textLen) position = textLen; // End of text string
-        const i32 insertLen = TextLength(insert);
+        const i32 insertLen = static_cast<i32>(TextLength(insert));
 
         if ((textLen + insertLen) < (MAX_TEXT_BUFFER_LENGTH - 1))
         {
@@ -2044,7 +2044,7 @@ std::string TextToUpper(std::string_view textView)
     {
         for (i32 i = 0; (i < MAX_TEXT_BUFFER_LENGTH - 1) && (text[i] != '\0'); i++)
         {
-            if ((text[i] >= 'a') && (text[i] <= 'z')) buffer[i] = text[i] - 32;
+            if ((text[i] >= 'a') && (text[i] <= 'z')) buffer[i] = static_cast<char>(text[i] - 32);
             else buffer[i] = text[i];
         }
     }
@@ -2066,7 +2066,7 @@ std::string TextToLower(std::string_view textView)
     {
         for (i32 i = 0; (i < MAX_TEXT_BUFFER_LENGTH - 1) && (text[i] != '\0'); i++)
         {
-            if ((text[i] >= 'A') && (text[i] <= 'Z')) buffer[i] = text[i] + 32;
+            if ((text[i] >= 'A') && (text[i] <= 'Z')) buffer[i] = static_cast<char>(text[i] + 32);
             else buffer[i] = text[i];
         }
     }
@@ -2087,7 +2087,7 @@ std::string TextToPascal(std::string_view textView)
     if ((text != nullptr) && (text[0] != '\0'))
     {
         // Upper case first character
-        if ((text[0] >= 'a') && (text[0] <= 'z')) buffer[0] = text[0] - 32;
+        if ((text[0] >= 'a') && (text[0] <= 'z')) buffer[0] = static_cast<char>(text[0] - 32);
         else buffer[0] = text[0];
 
         // Check for next separator to upper case another character
@@ -2099,7 +2099,7 @@ std::string TextToPascal(std::string_view textView)
                 while (text[j] == '_') j++;     // Skip one or more separators
                 if (text[j] == '\0') break;     // Text ends on a separator, nothing left to copy
 
-                if ((text[j] >= 'a') && (text[j] <= 'z')) buffer[i] = text[j] - 32;
+                if ((text[j] >= 'a') && (text[j] <= 'z')) buffer[i] = static_cast<char>(text[j] - 32);
                 else buffer[i] = text[j];       // Character can not be upper-cased, copy it as is
             }
         }
@@ -2150,7 +2150,7 @@ std::string TextToSnake(std::string_view textView)
                     }
                 }
 
-                buffer[i] = text[j] + 32;
+                buffer[i] = static_cast<char>(text[j] + 32);
                 i++;
             }
             else
@@ -2177,7 +2177,7 @@ std::string TextToCamel(std::string_view textView)
     if ((text != nullptr) && (text[0] != '\0'))
     {
         // Lower case first character
-        if ((text[0] >= 'A') && (text[0] <= 'Z')) buffer[0] = text[0] + 32;
+        if ((text[0] >= 'A') && (text[0] <= 'Z')) buffer[0] = static_cast<char>(text[0] + 32);
         else buffer[0] = text[0];
 
         // Check for next separator to upper case another character
@@ -2189,7 +2189,7 @@ std::string TextToCamel(std::string_view textView)
                 while (text[j] == '_') j++;     // Skip one or more separators
                 if (text[j] == '\0') break;     // Text ends on a separator, nothing left to copy
 
-                if ((text[j] >= 'a') && (text[j] <= 'z')) buffer[i] = text[j] - 32;
+                if ((text[j] >= 'a') && (text[j] <= 'z')) buffer[i] = static_cast<char>(text[j] - 32);
                 else buffer[i] = text[j];       // Character can not be upper-cased, copy it as is
             }
         }
@@ -2225,7 +2225,7 @@ i32 * LoadCodepoints(std::string_view textView, i32 *count)
 
     if (text != nullptr)
     {
-        const i32 textLength = TextLength(text);
+        const i32 textLength = static_cast<i32>(TextLength(text));
 
         // Allocate a big enough buffer to store as many codepoints as text bytes
         codepoints = static_cast<i32 *>(calloc((textLength > 0) ? textLength : 1, sizeof(i32)));
@@ -2275,7 +2275,7 @@ i32 GetCodepointCount(std::string_view textView)
         }
     }
 
-    return length;
+    return static_cast<i32>(length);
 }
 
 // Encode codepoint into utf8 text (char array length returned as parameter)
@@ -2654,7 +2654,7 @@ static Font LoadBMFont(const char *fileName)
         if (readVars == 9) // Make sure all char data has been properly read
         {
             // Get character rectangle in the font atlas texture
-            font.recs[i] = Rectangle{ static_cast<f32>(charX), static_cast<f32>(charY) + static_cast<f32>(imHeight)*pageID, static_cast<f32>(charWidth), static_cast<f32>(charHeight) };
+            font.recs[i] = Rectangle{ static_cast<f32>(charX), static_cast<f32>(charY) + static_cast<f32>(imHeight)*static_cast<f32>(pageID), static_cast<f32>(charWidth), static_cast<f32>(charHeight) };
 
             // Save data properly in sprite font
             font.glyphs[i].value = charId;

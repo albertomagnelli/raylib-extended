@@ -137,16 +137,16 @@ void DrawPixelV(const vec2 position, const Color color)
         rlNormal3f(0.0f, 0.0f, 1.0f);
         rlColor4ub(color.r, color.g, color.b, color.a);
 
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(position.x, position.y);
 
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(position.x, position.y + 1);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(position.x + 1, position.y + 1);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(position.x + 1, position.y);
 
     rlEnd();
@@ -274,7 +274,7 @@ void DrawLineDashed(const vec2 startPos, const vec2 endPos, const i32 dashSize, 
     const f32 lineLength = sqrtf(dx*dx + dy*dy);
 
     // If the line is too short for dashing or dash size is invalid, draw a solid thick line
-    if ((lineLength < (dashSize + spaceSize)) || (dashSize <= 0))
+    if ((lineLength < static_cast<f32>((dashSize + spaceSize))) || (dashSize <= 0))
     {
         DrawLineV(startPos, endPos, color);
         return;
@@ -294,7 +294,7 @@ void DrawLineDashed(const vec2 startPos, const vec2 endPos, const i32 dashSize, 
         while (distanceTraveled < lineLength)
         {
             // Calculate the end of the current dash
-            f32 dashEndDist = distanceTraveled + dashSize;
+            f32 dashEndDist = distanceTraveled + static_cast<f32>(dashSize);
             if (dashEndDist > lineLength) dashEndDist = lineLength;
 
             const auto dashEndPos = vec2{ startPos.x + dashEndDist*dirX, startPos.y + dashEndDist*dirY };
@@ -304,7 +304,7 @@ void DrawLineDashed(const vec2 startPos, const vec2 endPos, const i32 dashSize, 
             rlVertex2f(dashEndPos.x, dashEndPos.y);
 
             // Update the distance traveled and move the current position for the next dash
-            distanceTraveled = dashEndDist + spaceSize;
+            distanceTraveled = dashEndDist + static_cast<f32>(spaceSize);
             currentPos.x = startPos.x + distanceTraveled*dirX;
             currentPos.y = startPos.y + distanceTraveled*dirY;
         }
@@ -329,19 +329,19 @@ void DrawTriangleGradient(const vec2 v1, const vec2 v2, const vec2 v3, const Col
         rlNormal3f(0.0f, 0.0f, 1.0f);
 
         rlColor4ub(c1.r, c1.g, c1.b, c1.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v1.x, v1.y);
 
         rlColor4ub(c2.r, c2.g, c2.b, c2.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v2.x, v2.y);
 
         rlColor4ub(c3.r, c3.g, c3.b, c3.a);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v3.x, v3.y);
 
         rlColor4ub(c3.r, c3.g, c3.b, c3.a);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v3.x, v3.y);
     rlEnd();
 
@@ -458,42 +458,42 @@ void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, const f32 thick, const Color
         rlColor4ub(color.r, color.g, color.b, color.a);
 
         // Edge 3
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v1.x, v1.y);
 
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v2.x, v2.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v5.x, v5.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v4.x, v4.y);
 
         // Edge 1
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v2.x, v2.y);
 
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v3.x, v3.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v6.x, v6.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v5.x, v5.y);
 
         // Edge 2
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v3.x, v3.y);
 
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v1.x, v1.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(v4.x, v4.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(v6.x, v6.y);
 
     rlEnd();
@@ -550,16 +550,16 @@ void DrawTriangleFan(const vec2 *points, const i32 pointCount, const Color color
 
             for (i32 i = 1; i < pointCount - 1; i++)
             {
-                rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(points[0].x, points[0].y);
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(points[i].x, points[i].y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(points[i + 1].x, points[i + 1].y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(points[i + 1].x, points[i + 1].y);
             }
         rlEnd();
@@ -663,16 +663,16 @@ void DrawRectanglePro(const Rectangle rec, const vec2 origin, const f32 rotation
         rlNormal3f(0.0f, 0.0f, 1.0f);
         rlColor4ub(color.r, color.g, color.b, color.a);
 
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(topLeft.x, topLeft.y);
 
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(bottomLeft.x, bottomLeft.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(bottomRight.x, bottomRight.y);
 
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(topRight.x, topRight.y);
 
     rlEnd();
@@ -718,19 +718,19 @@ void DrawRectangleGradientEx(const Rectangle rec, const Color col1, const Color 
 
         // NOTE: Default raylib font character 95 is a white square
         rlColor4ub(col1.r, col1.g, col1.b, col1.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(rec.x, rec.y);
 
         rlColor4ub(col2.r, col2.g, col2.b, col2.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(rec.x, rec.y + rec.height);
 
         rlColor4ub(col3.r, col3.g, col3.b, col3.a);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(rec.x + rec.width, rec.y + rec.height);
 
         rlColor4ub(col4.r, col4.g, col4.b, col4.a);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(rec.x + rec.width, rec.y);
     rlEnd();
 
@@ -940,16 +940,16 @@ void DrawRectangleRounded(const Rectangle rec, f32 roundness, i32 segments, cons
             for (i32 i = 0; i < segments/2; i++)
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
-                rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x, center.y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength*2))*radius, center.y + sinf(DEG2RAD*(angle + stepLength*2))*radius);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*radius, center.y + sinf(DEG2RAD*(angle + stepLength))*radius);
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*angle)*radius, center.y + sinf(DEG2RAD*angle)*radius);
 
                 angle += (stepLength*2);
@@ -959,73 +959,73 @@ void DrawRectangleRounded(const Rectangle rec, f32 roundness, i32 segments, cons
             if ((segments%2) == 1)
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
-                rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x, center.y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*radius, center.y + sinf(DEG2RAD*(angle + stepLength))*radius);
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*angle)*radius, center.y + sinf(DEG2RAD*angle)*radius);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x, center.y);
             }
         }
 
         // [2] Upper Rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[0].x, points[0].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[8].x, points[8].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[9].x, points[9].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[1].x, points[1].y);
 
         // [4] Right Rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[2].x, points[2].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[9].x, points[9].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[10].x, points[10].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[3].x, points[3].y);
 
         // [6] Bottom Rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[11].x, points[11].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[5].x, points[5].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[4].x, points[4].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[10].x, points[10].y);
 
         // [8] Left Rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[7].x, points[7].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[6].x, points[6].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[11].x, points[11].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[8].x, points[8].y);
 
         // [9] Middle Rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[8].x, points[8].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[11].x, points[11].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[10].x, points[10].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[9].x, points[9].y);
 
     rlEnd();
@@ -1350,16 +1350,16 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, con
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*angle)*innerRadius, center.y + sinf(DEG2RAD*angle)*innerRadius);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*innerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*innerRadius);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*outerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*outerRadius);
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(center.x + cosf(DEG2RAD*angle)*outerRadius, center.y + sinf(DEG2RAD*angle)*outerRadius);
 
                 angle += stepLength;
@@ -1368,46 +1368,46 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, con
 
         // Upper rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[0].x, points[0].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[8].x, points[8].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[9].x, points[9].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[1].x, points[1].y);
 
         // Right rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[2].x, points[2].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[10].x, points[10].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[11].x, points[11].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[3].x, points[3].y);
 
         // Lower rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[13].x, points[13].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[5].x, points[5].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[4].x, points[4].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[12].x, points[12].y);
 
         // Left rectangle
         rlColor4ub(color.r, color.g, color.b, color.a);
-        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[15].x, points[15].y);
-        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[7].x, points[7].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
         rlVertex2f(points[6].x, points[6].y);
-        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
         rlVertex2f(points[14].x, points[14].y);
 
     rlEnd();
@@ -1493,16 +1493,16 @@ void DrawPoly(const vec2 center, i32 sides, const f32 radius, const f32 rotation
             rlColor4ub(color.r, color.g, color.b, color.a);
             const f32 nextAngle = centralAngle + angleStep;
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x, center.y);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(centralAngle)*radius, center.y + sinf(centralAngle)*radius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(nextAngle)*radius, center.y + sinf(nextAngle)*radius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(centralAngle)*radius, center.y + sinf(centralAngle)*radius);
 
             centralAngle = nextAngle;
@@ -1576,16 +1576,16 @@ void DrawPolyLinesEx(const vec2 center, i32 sides, const f32 radius, const f32 r
             rlColor4ub(color.r, color.g, color.b, color.a);
             const f32 nextAngle = centralAngle + exteriorAngle;
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(centralAngle)*outerRadius, center.y + sinf(centralAngle)*outerRadius);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(centralAngle)*innerRadius, center.y + sinf(centralAngle)*innerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(nextAngle)*innerRadius, center.y + sinf(nextAngle)*innerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(nextAngle)*outerRadius, center.y + sinf(nextAngle)*outerRadius);
 
             centralAngle = nextAngle;
@@ -1635,9 +1635,9 @@ void DrawCircleGradient(const vec2 center, const f32 radius, const Color inner, 
             rlColor4ub(inner.r, inner.g, inner.b, inner.a);
             rlVertex2f(center.x, center.y);
             rlColor4ub(outer.r, outer.g, outer.b, outer.a);
-            rlVertex2f(center.x + cosf(DEG2RAD*(i + 10))*radius, center.y + sinf(DEG2RAD*(i + 10))*radius);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>((i + 10)))*radius, center.y + sinf(DEG2RAD*static_cast<f32>((i + 10)))*radius);
             rlColor4ub(outer.r, outer.g, outer.b, outer.a);
-            rlVertex2f(center.x + cosf(DEG2RAD*i)*radius, center.y + sinf(DEG2RAD*i)*radius);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>(i))*radius, center.y + sinf(DEG2RAD*static_cast<f32>(i))*radius);
         }
     rlEnd();
 }
@@ -1685,16 +1685,16 @@ void DrawCircleSector(const vec2 center, const f32 radius, f32 startAngle, f32 e
         {
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x, center.y);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength*2.0f))*radius, center.y + sinf(DEG2RAD*(angle + stepLength*2.0f))*radius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*radius, center.y + sinf(DEG2RAD*(angle + stepLength))*radius);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*radius, center.y + sinf(DEG2RAD*angle)*radius);
 
             angle += (stepLength*2.0f);
@@ -1705,16 +1705,16 @@ void DrawCircleSector(const vec2 center, const f32 radius, f32 startAngle, f32 e
         {
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x, center.y);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*radius, center.y + sinf(DEG2RAD*(angle + stepLength))*radius);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*radius, center.y + sinf(DEG2RAD*angle)*radius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x, center.y);
         }
 
@@ -2223,16 +2223,16 @@ void DrawCircleSectorLinesEx(const vec2 center, const f32 radius, f32 startAngle
         // Draw the circle outline
         for (i32 i = 0; i < segments; i++)
         {
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*outerRadius, center.y + sinf(DEG2RAD*angle)*outerRadius);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*innerRadius, center.y + sinf(DEG2RAD*angle)*innerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*innerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*innerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*outerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*outerRadius);
 
             angle += stepLength;
@@ -2241,29 +2241,29 @@ void DrawCircleSectorLinesEx(const vec2 center, const f32 radius, f32 startAngle
         // Draw the caps
         if (showCapLines)
         {
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x, center.y);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(c0.x, c0.y);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(c1.x, c1.y);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(c2.x, c2.y);
 
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x, center.y);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(c5.x, c5.y);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(c4.x, c4.y);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(c3.x, c3.y);
 
             // Some extra work may be needed when `thick` is positive
@@ -2277,29 +2277,29 @@ void DrawCircleSectorLinesEx(const vec2 center, const f32 radius, f32 startAngle
                     for (i32 i = 0; i < stepsBeforeC1/2; i++)
                     {
                         // Cap1
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(c1.x, c1.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + (angle + stepLength*2.0f)))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + (angle + stepLength*2.0f)))*innerRadius);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + (angle + stepLength)))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + (angle + stepLength)))*innerRadius);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerRadius);
 
                         // Cap2
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(c4.x, c4.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerRadius);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - (angle + stepLength)))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - (angle + stepLength)))*innerRadius);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - (angle + stepLength*2.0f)))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - (angle + stepLength*2.0f)))*innerRadius);
 
                         angle += stepLength*2.0f;
@@ -2309,29 +2309,29 @@ void DrawCircleSectorLinesEx(const vec2 center, const f32 radius, f32 startAngle
                     if ((stepsBeforeC1%2) == 1)
                     {
                         // Cap1
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(c1.x, c1.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(c1.x, c1.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + (angle + stepLength)))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + (angle + stepLength)))*innerRadius);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerRadius);
 
                         // Cap2
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(c4.x, c4.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(c4.x, c4.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerRadius);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - (angle + stepLength)))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - (angle + stepLength)))*innerRadius);
                     }
                 }
@@ -2344,62 +2344,62 @@ void DrawCircleSectorLinesEx(const vec2 center, const f32 radius, f32 startAngle
                     // No gap to fill
                     if (verticesBetweenC0andC3 == 0)
                     {
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x, center.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x, center.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(c3.x, c3.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(c0.x, c0.y);
                     }
                     // There's a gap to fill
                     else
                     {
                         // Triangle touching C0
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x, center.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x, center.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + stepLength*static_cast<f32>(stepsBeforeC0 + 1)))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + stepLength*static_cast<f32>(stepsBeforeC0 + 1)))*innerRadius);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(c0.x, c0.y);
 
                         // Triangle touching C3
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x, center.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x, center.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(c3.x, c3.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - stepLength*static_cast<f32>(stepsBeforeC0 + 1)))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - stepLength*static_cast<f32>(stepsBeforeC0 + 1)))*innerRadius);
 
                         // Triangles between the previous two
                         verticesBetweenC0andC3 -= 1;
-                        angle = startAngle + stepLength*(stepsBeforeC0 + 1);
+                        angle = startAngle + stepLength*static_cast<f32>((stepsBeforeC0 + 1));
                         for (i32 i = 0; i < verticesBetweenC0andC3/2; i++)
                         {
-                            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x, center.y);
 
-                            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength*2.0f))*innerRadius, center.y + sinf(DEG2RAD*(angle + stepLength*2.0f))*innerRadius);
 
-                            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*innerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*innerRadius);
 
-                            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x + cosf(DEG2RAD*angle)*innerRadius, center.y + sinf(DEG2RAD*angle)*innerRadius);
 
                             angle += stepLength*2.0f;
@@ -2407,16 +2407,16 @@ void DrawCircleSectorLinesEx(const vec2 center, const f32 radius, f32 startAngle
 
                         if ((verticesBetweenC0andC3%2) == 1)
                         {
-                            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x, center.y);
 
-                            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x, center.y);
 
-                            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*innerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*innerRadius);
 
-                            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                             rlVertex2f(center.x + cosf(DEG2RAD*angle)*innerRadius, center.y + sinf(DEG2RAD*angle)*innerRadius);
                         }
                     }
@@ -2549,8 +2549,8 @@ void DrawCircleLinesV(const vec2 center, const f32 radius, const Color color)
         // NOTE: Circle outline is drawn as 36 line segments (one vertex every 10 degrees)
         for (i32 i = 0; i < 360; i += 10)
         {
-            rlVertex2f(center.x + cosf(DEG2RAD*i)*radius, center.y + sinf(DEG2RAD*i)*radius);
-            rlVertex2f(center.x + cosf(DEG2RAD*(i + 10))*radius, center.y + sinf(DEG2RAD*(i + 10))*radius);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>(i))*radius, center.y + sinf(DEG2RAD*static_cast<f32>(i))*radius);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>((i + 10)))*radius, center.y + sinf(DEG2RAD*static_cast<f32>((i + 10)))*radius);
         }
     rlEnd();
 }
@@ -2574,8 +2574,8 @@ void DrawEllipseV(const vec2 center, const f32 radiusH, const f32 radiusV, const
         {
             rlColor4ub(color.r, color.g, color.b, color.a);
             rlVertex2f(center.x,  center.y);
-            rlVertex2f(center.x + cosf(DEG2RAD*(i + 10))*radiusH, center.y + sinf(DEG2RAD*(i + 10))*radiusV);
-            rlVertex2f(center.x + cosf(DEG2RAD*i)*radiusH, center.y + sinf(DEG2RAD*i)*radiusV);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>((i + 10)))*radiusH, center.y + sinf(DEG2RAD*static_cast<f32>((i + 10)))*radiusV);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>(i))*radiusH, center.y + sinf(DEG2RAD*static_cast<f32>(i))*radiusV);
         }
     rlEnd();
 }
@@ -2593,8 +2593,8 @@ void DrawEllipseLinesV(const vec2 center, const f32 radiusH, const f32 radiusV, 
         for (i32 i = 0; i < 360; i += 10)
         {
             rlColor4ub(color.r, color.g, color.b, color.a);
-            rlVertex2f(center.x + cosf(DEG2RAD*(i + 10))*radiusH, center.y + sinf(DEG2RAD*(i + 10))*radiusV);
-            rlVertex2f(center.x + cosf(DEG2RAD*i)*radiusH, center.y + sinf(DEG2RAD*i)*radiusV);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>((i + 10)))*radiusH, center.y + sinf(DEG2RAD*static_cast<f32>((i + 10)))*radiusV);
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>(i))*radiusH, center.y + sinf(DEG2RAD*static_cast<f32>(i))*radiusV);
         }
     rlEnd();
 }
@@ -2637,17 +2637,17 @@ void DrawEllipseLinesEx(const vec2 center, const f32 radiusH, const f32 radiusV,
 
         for (i32 i = 0; i < 360; i += 10)
         {
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
-            rlVertex2f(center.x + cosf(DEG2RAD*i)*innerRadiusH, center.y + sinf(DEG2RAD*i)*innerRadiusV);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>(i))*innerRadiusH, center.y + sinf(DEG2RAD*static_cast<f32>(i))*innerRadiusV);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
-            rlVertex2f(center.x + cosf(DEG2RAD*(i + 10))*innerRadiusH, center.y + sinf(DEG2RAD*(i + 10))*innerRadiusV);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>((i + 10)))*innerRadiusH, center.y + sinf(DEG2RAD*static_cast<f32>((i + 10)))*innerRadiusV);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
-            rlVertex2f(center.x + cosf(DEG2RAD*(i + 10))*outerRadiusH, center.y + sinf(DEG2RAD*(i + 10))*outerRadiusV);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>((i + 10)))*outerRadiusH, center.y + sinf(DEG2RAD*static_cast<f32>((i + 10)))*outerRadiusV);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
-            rlVertex2f(center.x + cosf(DEG2RAD*i)*outerRadiusH, center.y + sinf(DEG2RAD*i)*outerRadiusV);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
+            rlVertex2f(center.x + cosf(DEG2RAD*static_cast<f32>(i))*outerRadiusH, center.y + sinf(DEG2RAD*static_cast<f32>(i))*outerRadiusV);
         }
     rlEnd();
 
@@ -2728,16 +2728,16 @@ void DrawRing(const vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngl
         {
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*outerRadius, center.y + sinf(DEG2RAD*angle)*outerRadius);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*innerRadius, center.y + sinf(DEG2RAD*angle)*innerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*innerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*innerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*outerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*outerRadius);
 
             angle += stepLength;
@@ -3142,29 +3142,29 @@ void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 st
         for (i32 i = 0; i < segments; i++)
         {
             // `innerRadius` outline
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*outerInnerRadius, center.y + sinf(DEG2RAD*angle)*outerInnerRadius);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*innerInnerRadius, center.y + sinf(DEG2RAD*angle)*innerInnerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*innerInnerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*innerInnerRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*outerInnerRadius);
 
             // `outerRadius` outline
-            rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*outerOuterRadius, center.y + sinf(DEG2RAD*angle)*outerOuterRadius);
 
-            rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*angle)*innerOuterRadius, center.y + sinf(DEG2RAD*angle)*innerOuterRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*innerOuterRadius);
 
-            rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+            rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
             rlVertex2f(center.x + cosf(DEG2RAD*(angle + stepLength))*outerOuterRadius, center.y + sinf(DEG2RAD*(angle + stepLength))*outerOuterRadius);
 
             angle += stepLength;
@@ -3179,29 +3179,29 @@ void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 st
                 for (i32 i = 0; i < stepsBeforeOuter; i++)
                 {
                     // Cap 1
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*outerInnerRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius);
 
                     // Cap 2
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*outerInnerRadius);
 
                     angle += stepLength;
@@ -3233,29 +3233,29 @@ void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 st
                 for (i32 i = 0; i < stepsCount/2; i++)
                 {
                     // Cap 1
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1OuterVertexBeforeEnd.x, cap1OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*outerInnerRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle + stepLength*2.0f))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength*2.0f))*outerInnerRadius);
 
                     // Cap 2
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2OuterVertexBeforeEnd.x, cap2OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle - stepLength*2.0f))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength*2.0f))*outerInnerRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*outerInnerRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius);
 
                     angle += stepLength*2.0f;
@@ -3265,29 +3265,29 @@ void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 st
                 if ((stepsCount%2) == 1)
                 {
                     // Cap 1
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1OuterVertexBeforeEnd.x, cap1OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1OuterVertexBeforeEnd.x, cap1OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*outerInnerRadius);
 
                     // Cap 2
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2OuterVertexBeforeEnd.x, cap2OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2OuterVertexBeforeEnd.x, cap2OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*outerInnerRadius);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius);
 
                     angle += stepLength;
@@ -3321,29 +3321,29 @@ void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 st
                         const auto middleInnerVertex = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
 
                         // Cap 1
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(intersection.x, intersection.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap1OuterVertexEnd.x, cap1OuterVertexEnd.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap1OuterVertexBeforeEnd.x, cap1OuterVertexBeforeEnd.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(middleInnerVertex.x, middleInnerVertex.y);
 
                         // Cap 2
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(intersection.x, intersection.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(middleInnerVertex.x, middleInnerVertex.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap2OuterVertexBeforeEnd.x, cap2OuterVertexBeforeEnd.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap2OuterVertexEnd.x, cap2OuterVertexEnd.y);
                     }
                     else
@@ -3354,71 +3354,71 @@ void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 st
                         const auto middleInnerVertex2 = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
 
                         // Cap 1
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(intersection.x, intersection.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap1OuterVertexEnd.x, cap1OuterVertexEnd.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap1OuterVertexBeforeEnd.x, cap1OuterVertexBeforeEnd.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(middleInnerVertex1.x, middleInnerVertex1.y);
 
                         // Cap 2
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(intersection.x, intersection.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(middleInnerVertex2.x, middleInnerVertex2.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap2OuterVertexBeforeEnd.x, cap2OuterVertexBeforeEnd.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(cap2OuterVertexEnd.x, cap2OuterVertexEnd.y);
 
                         // Triangle between the caps
-                        rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(intersection.x, intersection.y);
 
-                        rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(intersection.x, intersection.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                         rlVertex2f(middleInnerVertex1.x, middleInnerVertex1.y);
 
-                        rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                        rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                         rlVertex2f(middleInnerVertex2.x, middleInnerVertex2.y);
                     }
                 }
                 else
                 {
                     // Cap 1
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1OuterVertexBeforeEnd.x, cap1OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1InnerVertexBeforeEnd.x, cap1InnerVertexBeforeEnd.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1InnerVertexEnd.x, cap1InnerVertexEnd.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1OuterVertexEnd.x, cap1OuterVertexEnd.y);
 
                     // Cap 2
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2OuterVertexBeforeEnd.x, cap2OuterVertexBeforeEnd.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2OuterVertexEnd.x, cap2OuterVertexEnd.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2InnerVertexEnd.x, cap2InnerVertexEnd.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2InnerVertexBeforeEnd.x, cap2InnerVertexBeforeEnd.y);
                 }
             }
@@ -3428,60 +3428,60 @@ void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 st
                 const auto cap1FirstInnerVertex = vec2{ center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
                 const auto cap1FirstOuterVertex = vec2{ center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap1FirstInnerVertex.x, cap1FirstInnerVertex.y);
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap1FirstOuterVertex.x, cap1FirstOuterVertex.y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap1SecondOuterVertex.x, cap1SecondOuterVertex.y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
                 // Cap 2
                 const auto cap2FirstInnerVertex = vec2{ center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
                 const auto cap2FirstOuterVertex = vec2{ center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap2FirstInnerVertex.x, cap2FirstInnerVertex.y);
 
-                rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap2SecondInnerVertex.x, cap2SecondInnerVertex.y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap2SecondOuterVertex.x, cap2SecondOuterVertex.y);
 
-                rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                 rlVertex2f(cap2FirstOuterVertex.x, cap2FirstOuterVertex.y);
 
                 if (capsIntersect)
                 {
                     // Cap 1
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap1SecondOuterVertex.x, cap1SecondOuterVertex.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(capIntersectionVertex.x, capIntersectionVertex.y);
 
                     // Cap 2
-                    rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2SecondInnerVertex.x, cap2SecondInnerVertex.y);
 
-                    rlTexCoord2f(shapeRect.x/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f(shapeRect.x/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(capIntersectionVertex.x, capIntersectionVertex.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, shapeRect.y/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), shapeRect.y/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2SecondOuterVertex.x, cap2SecondOuterVertex.y);
 
-                    rlTexCoord2f((shapeRect.x + shapeRect.width)/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
+                    rlTexCoord2f((shapeRect.x + shapeRect.width)/static_cast<f32>(texShapes.width), (shapeRect.y + shapeRect.height)/static_cast<f32>(texShapes.height));
                     rlVertex2f(cap2SecondInnerVertex.x, cap2SecondInnerVertex.y);
                 }
             }
@@ -4481,7 +4481,7 @@ bool CheckCollisionPointLine(const vec2 point, const vec2 p1, const vec2 p2, con
     const f32 dyl = p2.y - p1.y;
     const f32 cross = dxc*dyl - dyc*dxl;
 
-    if (fabsf(cross) < (threshold*fmaxf(fabsf(dxl), fabsf(dyl))))
+    if (fabsf(cross) < (static_cast<f32>(threshold)*fmaxf(fabsf(dxl), fabsf(dyl))))
     {
         if (fabsf(dxl) >= fabsf(dyl)) collision = (dxl > 0)? ((p1.x <= point.x) && (point.x <= p2.x)) : ((p2.x <= point.x) && (point.x <= p1.x));
         else collision = (dyl > 0)? ((p1.y <= point.y) && (point.y <= p2.y)) : ((p2.y <= point.y) && (point.y <= p1.y));

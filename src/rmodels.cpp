@@ -223,8 +223,8 @@ void DrawCircle3D(const vec3 center, const f32 radius, const vec3 rotationAxis, 
             {
                 rlColor4ub(color.r, color.g, color.b, color.a);
 
-                rlVertex3f(sinf(DEG2RAD*i)*radius, cosf(DEG2RAD*i)*radius, 0.0f);
-                rlVertex3f(sinf(DEG2RAD*(i + 10))*radius, cosf(DEG2RAD*(i + 10))*radius, 0.0f);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i))*radius, cosf(DEG2RAD*static_cast<f32>(i))*radius, 0.0f);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i + 10)))*radius, cosf(DEG2RAD*static_cast<f32>((i + 10)))*radius, 0.0f);
             }
         rlEnd();
     rlPopMatrix();
@@ -490,8 +490,8 @@ void DrawSphereEx(const vec3 centerPos, const f32 radius, const i32 rings, const
         rlBegin(RL_TRIANGLES);
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            const f32 ringangle = DEG2RAD*(180.0f/rings);   // Angle between latitudinal parallels
-            const f32 sliceangle = DEG2RAD*(360.0f/slices); // Angle between longitudinal meridians
+            const f32 ringangle = DEG2RAD*(180.0f/static_cast<f32>(rings));   // Angle between latitudinal parallels
+            const f32 sliceangle = DEG2RAD*(360.0f/static_cast<f32>(slices)); // Angle between longitudinal meridians
 
             const f32 cosring = cosf(ringangle);
             const f32 sinring = sinf(ringangle);
@@ -544,8 +544,8 @@ void DrawSphereWires(const vec3 centerPos, const f32 radius, const i32 rings, co
         rlBegin(RL_LINES);
             rlColor4ub(color.r, color.g, color.b, color.a);
 
-            const f32 ringangle = DEG2RAD*(180.0f/rings);   // Angle between latitudinal parallels
-            const f32 sliceangle = DEG2RAD*(360.0f/slices); // Angle between longitudinal meridians
+            const f32 ringangle = DEG2RAD*(180.0f/static_cast<f32>(rings));   // Angle between latitudinal parallels
+            const f32 sliceangle = DEG2RAD*(360.0f/static_cast<f32>(slices)); // Angle between longitudinal meridians
 
             const f32 cosring = cosf(ringangle);
             const f32 sinring = sinf(ringangle);
@@ -591,7 +591,7 @@ void DrawCylinder(const vec3 position, const f32 radiusTop, const f32 radiusBott
 {
     if (sides < 3) sides = 3;
 
-    const f32 angleStep = 360.0f/sides;
+    const f32 angleStep = 360.0f/static_cast<f32>(sides);
 
     rlPushMatrix();
         rlTranslatef(position.x, position.y, position.z);
@@ -604,21 +604,21 @@ void DrawCylinder(const vec3 position, const f32 radiusTop, const f32 radiusBott
                 // Draw Body -------------------------------------------------------------------------------------
                 for (i32 i = 0; i < sides; i++)
                 {
-                    rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusBottom, 0, cosf(DEG2RAD*i*angleStep)*radiusBottom);         //Bottom Left
-                    rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*(i+1)*angleStep)*radiusBottom); //Bottom Right
-                    rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusTop, height, cosf(DEG2RAD*(i+1)*angleStep)*radiusTop);  //Top Right
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom);         //Bottom Left
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom); //Bottom Right
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop);  //Top Right
 
-                    rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusTop, height, cosf(DEG2RAD*i*angleStep)*radiusTop);         //Top Left
-                    rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusBottom, 0, cosf(DEG2RAD*i*angleStep)*radiusBottom);        //Bottom Left
-                    rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusTop, height, cosf(DEG2RAD*(i+1)*angleStep)*radiusTop); //Top Right
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop);         //Top Left
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom);        //Bottom Left
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop); //Top Right
                 }
 
                 // Draw Cap --------------------------------------------------------------------------------------
                 for (i32 i = 0; i < sides; i++)
                 {
                     rlVertex3f(0, height, 0);
-                    rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusTop, height, cosf(DEG2RAD*i*angleStep)*radiusTop);
-                    rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusTop, height, cosf(DEG2RAD*(i+1)*angleStep)*radiusTop);
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop);
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop);
                 }
             }
             else
@@ -627,8 +627,8 @@ void DrawCylinder(const vec3 position, const f32 radiusTop, const f32 radiusBott
                 for (i32 i = 0; i < sides; i++)
                 {
                     rlVertex3f(0, height, 0);
-                    rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusBottom, 0, cosf(DEG2RAD*i*angleStep)*radiusBottom);
-                    rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*(i+1)*angleStep)*radiusBottom);
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom);
+                    rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom);
                 }
             }
 
@@ -636,8 +636,8 @@ void DrawCylinder(const vec3 position, const f32 radiusTop, const f32 radiusBott
             for (i32 i = 0; i < sides; i++)
             {
                 rlVertex3f(0, 0, 0);
-                rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*(i+1)*angleStep)*radiusBottom);
-                rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusBottom, 0, cosf(DEG2RAD*i*angleStep)*radiusBottom);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom);
             }
 
         rlEnd();
@@ -657,7 +657,7 @@ void DrawCylinderEx(const vec3 startPos, const vec3 endPos, const f32 startRadiu
     const vec3 b1 = glm::normalize(Vector3Perpendicular(direction));
     const vec3 b2 = glm::normalize(glm::cross(b1, direction));
 
-    const f32 baseAngle = (2.0f*PI)/sides;
+    const f32 baseAngle = (2.0f*PI)/static_cast<f32>(sides);
 
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -665,17 +665,17 @@ void DrawCylinderEx(const vec3 startPos, const vec3 endPos, const f32 startRadiu
         for (i32 i = 0; i < sides; i++)
         {
             // Compute the four vertices
-            const f32 s1 = sinf(baseAngle*(i + 0))*startRadius;
-            const f32 c1 = cosf(baseAngle*(i + 0))*startRadius;
+            const f32 s1 = sinf(baseAngle*static_cast<f32>((i + 0)))*startRadius;
+            const f32 c1 = cosf(baseAngle*static_cast<f32>((i + 0)))*startRadius;
             const auto w1 = vec3{ startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
-            const f32 s2 = sinf(baseAngle*(i + 1))*startRadius;
-            const f32 c2 = cosf(baseAngle*(i + 1))*startRadius;
+            const f32 s2 = sinf(baseAngle*static_cast<f32>((i + 1)))*startRadius;
+            const f32 c2 = cosf(baseAngle*static_cast<f32>((i + 1)))*startRadius;
             const auto w2 = vec3{ startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
-            const f32 s3 = sinf(baseAngle*(i + 0))*endRadius;
-            const f32 c3 = cosf(baseAngle*(i + 0))*endRadius;
+            const f32 s3 = sinf(baseAngle*static_cast<f32>((i + 0)))*endRadius;
+            const f32 c3 = cosf(baseAngle*static_cast<f32>((i + 0)))*endRadius;
             const auto w3 = vec3{ endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
-            const f32 s4 = sinf(baseAngle*(i + 1))*endRadius;
-            const f32 c4 = cosf(baseAngle*(i + 1))*endRadius;
+            const f32 s4 = sinf(baseAngle*static_cast<f32>((i + 1)))*endRadius;
+            const f32 c4 = cosf(baseAngle*static_cast<f32>((i + 1)))*endRadius;
             const auto w4 = vec3{ endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             if (startRadius > 0)
@@ -709,7 +709,7 @@ void DrawCylinderWires(const vec3 position, const f32 radiusTop, const f32 radiu
 {
     if (sides < 3) sides = 3;
 
-    const f32 angleStep = 360.0f/sides;
+    const f32 angleStep = 360.0f/static_cast<f32>(sides);
 
     rlPushMatrix();
         rlTranslatef(position.x, position.y, position.z);
@@ -719,17 +719,17 @@ void DrawCylinderWires(const vec3 position, const f32 radiusTop, const f32 radiu
 
             for (i32 i = 0; i < sides; i++)
             {
-                rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusBottom, 0, cosf(DEG2RAD*i*angleStep)*radiusBottom);
-                rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*(i+1)*angleStep)*radiusBottom);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom);
 
-                rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*(i+1)*angleStep)*radiusBottom);
-                rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusTop, height, cosf(DEG2RAD*(i+1)*angleStep)*radiusTop);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusBottom);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop);
 
-                rlVertex3f(sinf(DEG2RAD*(i+1)*angleStep)*radiusTop, height, cosf(DEG2RAD*(i+1)*angleStep)*radiusTop);
-                rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusTop, height, cosf(DEG2RAD*i*angleStep)*radiusTop);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>((i+1))*angleStep)*radiusTop);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop);
 
-                rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusTop, height, cosf(DEG2RAD*i*angleStep)*radiusTop);
-                rlVertex3f(sinf(DEG2RAD*i*angleStep)*radiusBottom, 0, cosf(DEG2RAD*i*angleStep)*radiusBottom);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop, height, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusTop);
+                rlVertex3f(sinf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom, 0, cosf(DEG2RAD*static_cast<f32>(i)*angleStep)*radiusBottom);
             }
         rlEnd();
     rlPopMatrix();
@@ -748,7 +748,7 @@ void DrawCylinderWiresEx(const vec3 startPos, const vec3 endPos, const f32 start
     const vec3 b1 = glm::normalize(Vector3Perpendicular(direction));
     const vec3 b2 = glm::normalize(glm::cross(b1, direction));
 
-    const f32 baseAngle = (2.0f*PI)/slices;
+    const f32 baseAngle = (2.0f*PI)/static_cast<f32>(slices);
 
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -756,17 +756,17 @@ void DrawCylinderWiresEx(const vec3 startPos, const vec3 endPos, const f32 start
         for (i32 i = 0; i < slices; i++)
         {
             // Compute the four vertices
-            const f32 s1 = sinf(baseAngle*(i + 0))*startRadius;
-            const f32 c1 = cosf(baseAngle*(i + 0))*startRadius;
+            const f32 s1 = sinf(baseAngle*static_cast<f32>((i + 0)))*startRadius;
+            const f32 c1 = cosf(baseAngle*static_cast<f32>((i + 0)))*startRadius;
             const auto w1 = vec3{ startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
-            const f32 s2 = sinf(baseAngle*(i + 1))*startRadius;
-            const f32 c2 = cosf(baseAngle*(i + 1))*startRadius;
+            const f32 s2 = sinf(baseAngle*static_cast<f32>((i + 1)))*startRadius;
+            const f32 c2 = cosf(baseAngle*static_cast<f32>((i + 1)))*startRadius;
             const auto w2 = vec3{ startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
-            const f32 s3 = sinf(baseAngle*(i + 0))*endRadius;
-            const f32 c3 = cosf(baseAngle*(i + 0))*endRadius;
+            const f32 s3 = sinf(baseAngle*static_cast<f32>((i + 0)))*endRadius;
+            const f32 c3 = cosf(baseAngle*static_cast<f32>((i + 0)))*endRadius;
             const auto w3 = vec3{ endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
-            const f32 s4 = sinf(baseAngle*(i + 1))*endRadius;
-            const f32 c4 = cosf(baseAngle*(i + 1))*endRadius;
+            const f32 s4 = sinf(baseAngle*static_cast<f32>((i + 1)))*endRadius;
+            const f32 c4 = cosf(baseAngle*static_cast<f32>((i + 1)))*endRadius;
             const auto w4 = vec3{ endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             rlVertex3f(w1.x, w1.y, w1.z);
@@ -798,8 +798,8 @@ void DrawCapsule(const vec3 startPos, const vec3 endPos, const f32 radius, i32 r
     const vec3 b2 = glm::normalize(glm::cross(b1, direction));
     vec3 capCenter = endPos;
 
-    const f32 baseSliceAngle = (2.0f*PI)/slices;
-    const f32 baseRingAngle  = PI*0.5f/rings;
+    const f32 baseSliceAngle = (2.0f*PI)/static_cast<f32>(slices);
+    const f32 baseRingAngle  = PI*0.5f/static_cast<f32>(rings);
 
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -814,34 +814,34 @@ void DrawCapsule(const vec3 startPos, const vec3 endPos, const f32 radius, i32 r
                     // Building up the rings from capCenter in the direction of the 'direction' vector computed earlier
 
                     // Compute the four vertices
-                    const f32 ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    const f32 ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
+                    const f32 ringSin1 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
+                    const f32 ringCos1 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
                     const vec3 w1 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
-                    const f32 ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    const f32 ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
+                    const f32 ringSin2 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
+                    const f32 ringCos2 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
                     const vec3 w2 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
                     };
 
-                    const f32 ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    const f32 ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
+                    const f32 ringSin3 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
+                    const f32 ringCos3 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
                     const vec3 w3 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
-                    const f32 ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    const f32 ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
+                    const f32 ringSin4 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
+                    const f32 ringCos4 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
                     const vec3 w4 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
                     };
 
                     // Make sure cap triangle normals are facing outwards
@@ -876,30 +876,30 @@ void DrawCapsule(const vec3 startPos, const vec3 endPos, const f32 radius, i32 r
             for (i32 j = 0; j < slices; j++)
             {
                 // compute the four vertices
-                const f32 ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
-                const f32 ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
+                const f32 ringSin1 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
+                const f32 ringCos1 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
                 const vec3 w1 = {
                     startPos.x + ringSin1*b1.x + ringCos1*b2.x,
                     startPos.y + ringSin1*b1.y + ringCos1*b2.y,
                     startPos.z + ringSin1*b1.z + ringCos1*b2.z
                 };
-                const f32 ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
-                const f32 ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
+                const f32 ringSin2 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
+                const f32 ringCos2 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
                 const vec3 w2 = {
                     startPos.x + ringSin2*b1.x + ringCos2*b2.x,
                     startPos.y + ringSin2*b1.y + ringCos2*b2.y,
                     startPos.z + ringSin2*b1.z + ringCos2*b2.z
                 };
 
-                const f32 ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
-                const f32 ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
+                const f32 ringSin3 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
+                const f32 ringCos3 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
                 const vec3 w3 = {
                     endPos.x + ringSin3*b1.x + ringCos3*b2.x,
                     endPos.y + ringSin3*b1.y + ringCos3*b2.y,
                     endPos.z + ringSin3*b1.z + ringCos3*b2.z
                 };
-                const f32 ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
-                const f32 ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
+                const f32 ringSin4 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
+                const f32 ringCos4 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
                 const vec3 w4 = {
                     endPos.x + ringSin4*b1.x + ringCos4*b2.x,
                     endPos.y + ringSin4*b1.y + ringCos4*b2.y,
@@ -937,8 +937,8 @@ void DrawCapsuleWires(const vec3 startPos, const vec3 endPos, const f32 radius, 
     const vec3 b2 = glm::normalize(glm::cross(b1, direction));
     vec3 capCenter = endPos;
 
-    const f32 baseSliceAngle = (2.0f*PI)/slices;
-    const f32 baseRingAngle  = PI*0.5f/rings;
+    const f32 baseSliceAngle = (2.0f*PI)/static_cast<f32>(slices);
+    const f32 baseRingAngle  = PI*0.5f/static_cast<f32>(rings);
 
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -953,34 +953,34 @@ void DrawCapsuleWires(const vec3 startPos, const vec3 endPos, const f32 radius, 
                     // Building up the rings from capCenter in the direction of the 'direction' vector computed earlier
 
                     // Compute the four vertices
-                    const f32 ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    const f32 ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
+                    const f32 ringSin1 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
+                    const f32 ringCos1 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
                     const vec3 w1 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
-                    const f32 ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    const f32 ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
+                    const f32 ringSin2 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
+                    const f32 ringCos2 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 0 )));
                     const vec3 w2 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 0 )))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
                     };
 
-                    const f32 ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    const f32 ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
+                    const f32 ringSin3 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
+                    const f32 ringCos3 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
                     const vec3 w3 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
-                    const f32 ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    const f32 ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
+                    const f32 ringSin4 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
+                    const f32 ringCos4 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*cosf(baseRingAngle*static_cast<f32>(( i + 1 )));
                     const vec3 w4 = vec3{
-                        capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
-                        capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
-                        capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
+                        capCenter.x + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
+                        capCenter.y + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
+                        capCenter.z + (sinf(baseRingAngle*static_cast<f32>(( i + 1 )))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
                     };
 
                     rlVertex3f(w1.x, w1.y, w1.z);
@@ -1008,30 +1008,30 @@ void DrawCapsuleWires(const vec3 startPos, const vec3 endPos, const f32 radius, 
             for (i32 j = 0; j < slices; j++)
             {
                 // compute the four vertices
-                const f32 ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
-                const f32 ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
+                const f32 ringSin1 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
+                const f32 ringCos1 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
                 const vec3 w1 = {
                     startPos.x + ringSin1*b1.x + ringCos1*b2.x,
                     startPos.y + ringSin1*b1.y + ringCos1*b2.y,
                     startPos.z + ringSin1*b1.z + ringCos1*b2.z
                 };
-                const f32 ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
-                const f32 ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
+                const f32 ringSin2 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
+                const f32 ringCos2 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
                 const vec3 w2 = {
                     startPos.x + ringSin2*b1.x + ringCos2*b2.x,
                     startPos.y + ringSin2*b1.y + ringCos2*b2.y,
                     startPos.z + ringSin2*b1.z + ringCos2*b2.z
                 };
 
-                const f32 ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
-                const f32 ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
+                const f32 ringSin3 = sinf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
+                const f32 ringCos3 = cosf(baseSliceAngle*static_cast<f32>((j + 0)))*radius;
                 const vec3 w3 = {
                     endPos.x + ringSin3*b1.x + ringCos3*b2.x,
                     endPos.y + ringSin3*b1.y + ringCos3*b2.y,
                     endPos.z + ringSin3*b1.z + ringCos3*b2.z
                 };
-                const f32 ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
-                const f32 ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
+                const f32 ringSin4 = sinf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
+                const f32 ringCos4 = cosf(baseSliceAngle*static_cast<f32>((j + 1)))*radius;
                 const vec3 w4 = {
                     endPos.x + ringSin4*b1.x + ringCos4*b2.x,
                     endPos.y + ringSin4*b1.y + ringCos4*b2.y,
@@ -1315,7 +1315,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
 
     // Enable vertex attributes: position (shader-location = 0)
     void *vertices = (mesh->animVertices != nullptr)? mesh->animVertices : mesh->vertices;
-    mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION] = rlLoadVertexBuffer(vertices, mesh->vertexCount*3*sizeof(f32), dynamic);
+    mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION] = rlLoadVertexBuffer(vertices, static_cast<i32>(mesh->vertexCount*3*sizeof(f32)), dynamic);
     rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION, 3, RL_FLOAT, 0, 0, 0);
     rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION);
 
@@ -1323,7 +1323,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
 
     if (mesh->texcoords != nullptr)
     {
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD] = rlLoadVertexBuffer(mesh->texcoords, mesh->vertexCount*2*sizeof(f32), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD] = rlLoadVertexBuffer(mesh->texcoords, static_cast<i32>(mesh->vertexCount*2*sizeof(f32)), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD, 2, RL_FLOAT, 0, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD);
     }
@@ -1340,7 +1340,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
     {
         // Enable vertex attributes: normals (shader-location = 2)
         void *normals = (mesh->animNormals != nullptr)? mesh->animNormals : mesh->normals;
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL] = rlLoadVertexBuffer(normals, mesh->vertexCount*3*sizeof(f32), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL] = rlLoadVertexBuffer(normals, static_cast<i32>(mesh->vertexCount*3*sizeof(f32)), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL, 3, RL_FLOAT, 0, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL);
     }
@@ -1356,7 +1356,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
     if (mesh->colors != nullptr)
     {
         // Enable vertex attribute: color (shader-location = 3)
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_COLOR] = rlLoadVertexBuffer(mesh->colors, mesh->vertexCount*4*sizeof(u8), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_COLOR] = rlLoadVertexBuffer(mesh->colors, static_cast<i32>(mesh->vertexCount*4*sizeof(u8)), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_COLOR, 4, RL_UNSIGNED_BYTE, 1, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_COLOR);
     }
@@ -1372,7 +1372,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
     if (mesh->tangents != nullptr)
     {
         // Enable vertex attribute: tangent (shader-location = 4)
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TANGENT] = rlLoadVertexBuffer(mesh->tangents, mesh->vertexCount*4*sizeof(f32), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TANGENT] = rlLoadVertexBuffer(mesh->tangents, static_cast<i32>(mesh->vertexCount*4*sizeof(f32)), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TANGENT, 4, RL_FLOAT, 0, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TANGENT);
     }
@@ -1388,7 +1388,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
     if (mesh->texcoords2 != nullptr)
     {
         // Enable vertex attribute: texcoord2 (shader-location = 5)
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD2] = rlLoadVertexBuffer(mesh->texcoords2, mesh->vertexCount*2*sizeof(f32), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD2] = rlLoadVertexBuffer(mesh->texcoords2, static_cast<i32>(mesh->vertexCount*2*sizeof(f32)), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD2, 2, RL_FLOAT, 0, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_TEXCOORD2);
     }
@@ -1405,7 +1405,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
     if (mesh->boneIndices != nullptr)
     {
         // Enable vertex attribute: boneIndices (shader-location = 7)
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEINDICES] = rlLoadVertexBuffer(mesh->boneIndices, mesh->vertexCount*4*sizeof(u8), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEINDICES] = rlLoadVertexBuffer(mesh->boneIndices, static_cast<i32>(mesh->vertexCount*4*sizeof(u8)), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEINDICES, 4, RL_UNSIGNED_BYTE, 0, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEINDICES);
     }
@@ -1421,7 +1421,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
     if (mesh->boneWeights != nullptr)
     {
         // Enable vertex attribute: boneWeights (shader-location = 8)
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEWEIGHTS] = rlLoadVertexBuffer(mesh->boneWeights, mesh->vertexCount*4*sizeof(f32), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEWEIGHTS] = rlLoadVertexBuffer(mesh->boneWeights, static_cast<i32>(mesh->vertexCount*4*sizeof(f32)), dynamic);
         rlSetVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEWEIGHTS, 4, RL_FLOAT, 0, 0, 0);
         rlEnableVertexAttribute(RL_DEFAULT_SHADER_ATTRIB_LOCATION_BONEWEIGHTS);
     }
@@ -1437,7 +1437,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
 
     if (mesh->indices != nullptr)
     {
-        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES] = rlLoadVertexBufferElement(mesh->indices, mesh->triangleCount*3*sizeof(u16), dynamic);
+        mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES] = rlLoadVertexBufferElement(mesh->indices, static_cast<i32>(mesh->triangleCount*3*sizeof(u16)), dynamic);
     }
 
     if (mesh->vaoId > 0) log(LogLevel::info, "VAO: [ID {}] Mesh uploaded successfully to VRAM (GPU)", mesh->vaoId);
@@ -1773,7 +1773,7 @@ void DrawMeshInstanced(const Mesh mesh, const Material material, const mat4 *tra
     // It isn't clear which would be reliably faster in all cases and on all platforms,
     // anecdotally glMapBuffer() seems quite slow (syncs) while glBufferSubData() seems
     // no faster, since all the transform matrices are transferred anyway
-    instancesVboId = rlLoadVertexBuffer(instanceTransform, instances*sizeof(float16), false);
+    instancesVboId = rlLoadVertexBuffer(instanceTransform, static_cast<i32>(instances*sizeof(float16)), false);
 
     // Instances transformation matrices are sent to shader attribute location: SHADER_LOC_VERTEX_INSTANCETRANSFORM
     if (material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] != -1)
@@ -1781,7 +1781,7 @@ void DrawMeshInstanced(const Mesh mesh, const Material material, const mat4 *tra
         for (u32 i = 0; i < 4; i++)
         {
             rlEnableVertexAttribute(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i);
-            rlSetVertexAttribute(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i, 4, RL_FLOAT, 0, sizeof(mat4), i*sizeof(vec4));
+            rlSetVertexAttribute(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i, 4, RL_FLOAT, 0, sizeof(mat4), static_cast<i32>(i*sizeof(vec4)));
             rlSetVertexAttributeDivisor(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i, 1);
         }
     }
@@ -2098,7 +2098,7 @@ bool ExportMeshAsCode(const Mesh mesh, std::string_view fileNameView)
     // Get file name from path and convert variable name to uppercase
     char varFileName[256] = { 0 };
     snprintf(varFileName, 256, "%s", GetFileNameWithoutExt(fileName).c_str()); // NOTE: Using function provided by [rcore] module
-    for (i32 i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = varFileName[i] - 32; }
+    for (i32 i = 0; varFileName[i] != '\0'; i++) if ((varFileName[i] >= 'a') && (varFileName[i] <= 'z')) { varFileName[i] = static_cast<char>(varFileName[i] - 32); }
 
     // Add image information
     byteCount += sprintf(txtData + byteCount, "// Mesh basic information\n");
@@ -2222,7 +2222,7 @@ Material * LoadMaterials(std::string_view fileNameView, i32 *materialCount)
         if (result != TINYOBJ_SUCCESS) log(LogLevel::warn, "MATERIAL: [{}] Failed to parse materials file", fileName);
 
         materials = static_cast<Material *>(calloc(count, sizeof(Material)));
-        ProcessMaterialsOBJ(materials, mats, count);
+        ProcessMaterialsOBJ(materials, mats, static_cast<i32>(count));
 
         tinyobj_materials_free(mats, count);
     }
@@ -2230,7 +2230,7 @@ Material * LoadMaterials(std::string_view fileNameView, i32 *materialCount)
     log(LogLevel::warn, "FILEIO: [{}] Failed to load material file", fileName);
 #endif
 
-    *materialCount = count;
+    *materialCount = static_cast<i32>(count);
     return materials;
 }
 
@@ -2337,7 +2337,7 @@ void UpdateModelAnimationBones(Model model, const ModelAnimation anim, const f32
         // Get frame and blending from frame factor required
         auto currentFrame = static_cast<i32>(frame);
         i32 nextFrame = currentFrame + 1;
-        f32 blend = frame - currentFrame;
+        f32 blend = frame - static_cast<f32>(currentFrame);
         blend = Clamp(blend, 0.0f, 1.0f);
         if (currentFrame >= anim.keyframeCount) currentFrame = currentFrame%anim.keyframeCount;
         if (nextFrame >= anim.keyframeCount) nextFrame = nextFrame%anim.keyframeCount;
@@ -2398,7 +2398,7 @@ void UpdateModelAnimationBonesEx(Model model, const ModelAnimation animA, const 
         // Inter-frame interpolation values for first animation
         i32 currentFrameA = static_cast<i32>(frameA)%animA.keyframeCount;
         i32 nextFrameA = currentFrameA + 1;
-        f32 blendA = frameA - currentFrameA;
+        f32 blendA = frameA - static_cast<f32>(currentFrameA);
         blendA = Clamp(blendA, 0.0f, 1.0f);
         if (currentFrameA >= animA.keyframeCount) currentFrameA = currentFrameA%animA.keyframeCount;
         if (nextFrameA >= animA.keyframeCount) nextFrameA = nextFrameA%animA.keyframeCount;
@@ -2406,7 +2406,7 @@ void UpdateModelAnimationBonesEx(Model model, const ModelAnimation animA, const 
         // Inter-frame interpolation values for second animation
         i32 currentFrameB = static_cast<i32>(frameB)%animB.keyframeCount;
         i32 nextFrameB = currentFrameB + 1;
-        f32 blendB = frameB - currentFrameB;
+        f32 blendB = frameB - static_cast<f32>(currentFrameB);
         blendB = Clamp(blendB, 0.0f, 1.0f);
         if (currentFrameB >= animB.keyframeCount) currentFrameB = currentFrameB%animB.keyframeCount;
         if (nextFrameB >= animB.keyframeCount) nextFrameB = nextFrameB%animB.keyframeCount;
@@ -2587,8 +2587,8 @@ static void UpdateModelAnimationVertexBuffers(const Model model)
         if (bufferUpdateRequired)
         {
             // Update GPU vertex buffers with updated data (position + normals)
-            rlUpdateVertexBuffer(mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION], mesh->animVertices, mesh->vertexCount*3*sizeof(f32), 0);
-            if (mesh->normals != nullptr) rlUpdateVertexBuffer(mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL], mesh->animNormals, mesh->vertexCount*3*sizeof(f32), 0);
+            rlUpdateVertexBuffer(mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_POSITION], mesh->animVertices, static_cast<i32>(mesh->vertexCount*3*sizeof(f32)), 0);
+            if (mesh->normals != nullptr) rlUpdateVertexBuffer(mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_NORMAL], mesh->animNormals, static_cast<i32>(mesh->vertexCount*3*sizeof(f32)), 0);
         }
     }
 }
@@ -2631,7 +2631,7 @@ Mesh GenMeshPoly(const i32 sides, const f32 radius)
     // Vertices definition
     auto vertices = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
 
-    f32 d = 0.0f, dStep = 360.0f/sides;
+    f32 d = 0.0f, dStep = 360.0f/static_cast<f32>(sides);
     for (i32 v = 0; v < vertexCount - 2; v += 3)
     {
         vertices[v] = vec3{ 0.0f, 0.0f, 0.0f };
@@ -2705,11 +2705,11 @@ Mesh GenMeshPlane(const f32 width, const f32 length, i32 resX, i32 resZ)
     for (i32 z = 0; z < resZ; z++)
     {
         // [-length/2, length/2]
-        const f32 zPos = (static_cast<f32>(z)/(resZ - 1) - 0.5f)*length;
+        const f32 zPos = (static_cast<f32>(z)/static_cast<f32>((resZ - 1)) - 0.5f)*length;
         for (i32 x = 0; x < resX; x++)
         {
             // [-width/2, width/2]
-            const f32 xPos = (static_cast<f32>(x)/(resX - 1) - 0.5f)*width;
+            const f32 xPos = (static_cast<f32>(x)/static_cast<f32>((resX - 1)) - 0.5f)*width;
             vertices[x + z*resX] = vec3{ xPos, 0.0f, zPos };
         }
     }
@@ -2724,7 +2724,7 @@ Mesh GenMeshPlane(const f32 width, const f32 length, i32 resX, i32 resZ)
     {
         for (i32 u = 0; u < resX; u++)
         {
-            texcoords[u + v*resX] = vec2{ static_cast<f32>(u)/(resX - 1), static_cast<f32>(v)/(resZ - 1) };
+            texcoords[u + v*resX] = vec2{ static_cast<f32>(u)/static_cast<f32>((resX - 1)), static_cast<f32>(v)/static_cast<f32>((resZ - 1)) };
         }
     }
 
@@ -3311,7 +3311,7 @@ Mesh GenMeshHeightmap(const Image heightmap, const vec3 size)
     auto tcCounter = 0;      // Used to count texcoords float by float
     auto nCounter = 0;       // Used to count normals float by float
 
-    const auto scaleFactor = vec3{ size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
+    const auto scaleFactor = vec3{ size.x/static_cast<f32>((mapX - 1)), size.y/255.0f, size.z/static_cast<f32>((mapZ - 1)) };
 
     vec3 vA{};
     vec3 vB{};
@@ -3354,14 +3354,14 @@ Mesh GenMeshHeightmap(const Image heightmap, const vec3 size)
 
             // Fill texcoords array with data
             //--------------------------------------------------------------
-            mesh.texcoords[tcCounter] = static_cast<f32>(x)/(mapX - 1);
-            mesh.texcoords[tcCounter + 1] = static_cast<f32>(z)/(mapZ - 1);
+            mesh.texcoords[tcCounter] = static_cast<f32>(x)/static_cast<f32>((mapX - 1));
+            mesh.texcoords[tcCounter + 1] = static_cast<f32>(z)/static_cast<f32>((mapZ - 1));
 
-            mesh.texcoords[tcCounter + 2] = static_cast<f32>(x)/(mapX - 1);
-            mesh.texcoords[tcCounter + 3] = static_cast<f32>(z + 1)/(mapZ - 1);
+            mesh.texcoords[tcCounter + 2] = static_cast<f32>(x)/static_cast<f32>((mapX - 1));
+            mesh.texcoords[tcCounter + 3] = static_cast<f32>(z + 1)/static_cast<f32>((mapZ - 1));
 
-            mesh.texcoords[tcCounter + 4] = static_cast<f32>(x + 1)/(mapX - 1);
-            mesh.texcoords[tcCounter + 5] = static_cast<f32>(z)/(mapZ - 1);
+            mesh.texcoords[tcCounter + 4] = static_cast<f32>(x + 1)/static_cast<f32>((mapX - 1));
+            mesh.texcoords[tcCounter + 5] = static_cast<f32>(z)/static_cast<f32>((mapZ - 1));
 
             mesh.texcoords[tcCounter + 6] = mesh.texcoords[tcCounter + 4];
             mesh.texcoords[tcCounter + 7] = mesh.texcoords[tcCounter + 5];
@@ -3369,8 +3369,8 @@ Mesh GenMeshHeightmap(const Image heightmap, const vec3 size)
             mesh.texcoords[tcCounter + 8] = mesh.texcoords[tcCounter + 2];
             mesh.texcoords[tcCounter + 9] = mesh.texcoords[tcCounter + 3];
 
-            mesh.texcoords[tcCounter + 10] = static_cast<f32>(x + 1)/(mapX - 1);
-            mesh.texcoords[tcCounter + 11] = static_cast<f32>(z + 1)/(mapZ - 1);
+            mesh.texcoords[tcCounter + 10] = static_cast<f32>(x + 1)/static_cast<f32>((mapX - 1));
+            mesh.texcoords[tcCounter + 11] = static_cast<f32>(z + 1)/static_cast<f32>((mapZ - 1));
             tcCounter += 12;    // 6 texcoords, 12 floats
 
             // Fill normals array with data
@@ -3470,14 +3470,14 @@ Mesh GenMeshCubicmap(const Image cubicmap, const vec3 cubeSize)
         for (i32 x = 0; x < cubicmap.width; x++)
         {
             // Define the 8 vertex of the cube, to be combined accordingly later
-            const auto v1 = vec3{ w*(x - 0.5f), h2, h*(z - 0.5f) };
-            const auto v2 = vec3{ w*(x - 0.5f), h2, h*(z + 0.5f) };
-            const auto v3 = vec3{ w*(x + 0.5f), h2, h*(z + 0.5f) };
-            const auto v4 = vec3{ w*(x + 0.5f), h2, h*(z - 0.5f) };
-            const auto v5 = vec3{ w*(x + 0.5f), 0, h*(z - 0.5f) };
-            const auto v6 = vec3{ w*(x - 0.5f), 0, h*(z - 0.5f) };
-            const auto v7 = vec3{ w*(x - 0.5f), 0, h*(z + 0.5f) };
-            const auto v8 = vec3{ w*(x + 0.5f), 0, h*(z + 0.5f) };
+            const auto v1 = vec3{ w*(static_cast<f32>(x) - 0.5f), h2, h*(static_cast<f32>(z) - 0.5f) };
+            const auto v2 = vec3{ w*(static_cast<f32>(x) - 0.5f), h2, h*(static_cast<f32>(z) + 0.5f) };
+            const auto v3 = vec3{ w*(static_cast<f32>(x) + 0.5f), h2, h*(static_cast<f32>(z) + 0.5f) };
+            const auto v4 = vec3{ w*(static_cast<f32>(x) + 0.5f), h2, h*(static_cast<f32>(z) - 0.5f) };
+            const auto v5 = vec3{ w*(static_cast<f32>(x) + 0.5f), 0, h*(static_cast<f32>(z) - 0.5f) };
+            const auto v6 = vec3{ w*(static_cast<f32>(x) - 0.5f), 0, h*(static_cast<f32>(z) - 0.5f) };
+            const auto v7 = vec3{ w*(static_cast<f32>(x) - 0.5f), 0, h*(static_cast<f32>(z) + 0.5f) };
+            const auto v8 = vec3{ w*(static_cast<f32>(x) + 0.5f), 0, h*(static_cast<f32>(z) + 0.5f) };
 
             // Check pixel color to be WHITE -> draw full cube
             if (COLOR_EQUAL(pixels[z*cubicmap.width + x], WHITE))
@@ -3944,12 +3944,12 @@ void GenMeshTangents(Mesh *mesh)
         if (mesh->vboId[SHADER_LOC_VERTEX_TANGENT] != 0)
         {
             // Update existing tangent vertex buffer
-            rlUpdateVertexBuffer(mesh->vboId[SHADER_LOC_VERTEX_TANGENT], mesh->tangents, mesh->vertexCount*4*sizeof(f32), 0);
+            rlUpdateVertexBuffer(mesh->vboId[SHADER_LOC_VERTEX_TANGENT], mesh->tangents, static_cast<i32>(mesh->vertexCount*4*sizeof(f32)), 0);
         }
         else
         {
             // Create new tangent vertex buffer
-            mesh->vboId[SHADER_LOC_VERTEX_TANGENT] = rlLoadVertexBuffer(mesh->tangents, mesh->vertexCount*4*sizeof(f32), false);
+            mesh->vboId[SHADER_LOC_VERTEX_TANGENT] = rlLoadVertexBuffer(mesh->tangents, static_cast<i32>(mesh->vertexCount*4*sizeof(f32)), false);
         }
 
         // Set up vertex attributes for shader
@@ -4005,7 +4005,7 @@ void DrawModelEx(Model model, const vec3 position, const vec3 rotationAxis, cons
         if ((mat.shader.locs != nullptr) && (mat.shader.locs[SHADER_LOC_MATRIX_BONETRANSFORMS] != -1) && (model.boneMatrices != nullptr))
         {
             rlEnableShader(mat.shader.id); // Enable shader to set bone transform matrices
-            rlSetUniformMatrices(mat.shader.locs[SHADER_LOC_MATRIX_BONETRANSFORMS], model.boneMatrices, model.skeleton.boneCount);
+            rlSetUniformMatrices(mat.shader.locs[SHADER_LOC_MATRIX_BONETRANSFORMS], model.boneMatrices, static_cast<i32>(model.skeleton.boneCount));
         }
 
         DrawMesh(model.meshes[i], mat, model.transform);
@@ -4109,10 +4109,10 @@ void DrawBillboardPro(const Camera camera, const Texture2D texture, Rectangle re
     }
 
     vec2 texcoords[4];
-    texcoords[0] = vec2{ rec.x/texture.width, (rec.y + rec.height)/texture.height };
-    texcoords[1] = vec2{ (rec.x + rec.width)/texture.width, (rec.y + rec.height)/texture.height };
-    texcoords[2] = vec2{ (rec.x + rec.width)/texture.width, rec.y/texture.height };
-    texcoords[3] = vec2{ rec.x/texture.width, rec.y/texture.height };
+    texcoords[0] = vec2{ rec.x/static_cast<f32>(texture.width), (rec.y + rec.height)/static_cast<f32>(texture.height) };
+    texcoords[1] = vec2{ (rec.x + rec.width)/static_cast<f32>(texture.width), (rec.y + rec.height)/static_cast<f32>(texture.height) };
+    texcoords[2] = vec2{ (rec.x + rec.width)/static_cast<f32>(texture.width), rec.y/static_cast<f32>(texture.height) };
+    texcoords[3] = vec2{ rec.x/static_cast<f32>(texture.width), rec.y/static_cast<f32>(texture.height) };
 
     rlSetTexture(texture.id);
     rlBegin(RL_QUADS);
@@ -4547,12 +4547,12 @@ static Model LoadOBJ(const char *fileName)
     }
 
     // Allocate the base meshes and materials
-    model.meshCount = meshIndex + 1;
+    model.meshCount = static_cast<i32>(meshIndex) + 1;
     model.meshes = static_cast<Mesh *>(MemAlloc(sizeof(Mesh)*model.meshCount));
 
     if (objMaterialCount > 0)
     {
-        model.materialCount = objMaterialCount;
+        model.materialCount = static_cast<i32>(objMaterialCount);
         model.materials = static_cast<Material *>(MemAlloc(sizeof(Material)*objMaterialCount));
     }
     else // Allocate at least one material
@@ -4614,8 +4614,8 @@ static Model LoadOBJ(const char *fileName)
         // Allocate the buffers for each mesh
         const u32 vertexCount = localMeshVertexCounts[i];
 
-        model.meshes[i].vertexCount = vertexCount;
-        model.meshes[i].triangleCount = vertexCount/3;
+        model.meshes[i].vertexCount = static_cast<i32>(vertexCount);
+        model.meshes[i].triangleCount = static_cast<i32>(vertexCount)/3;
 
         model.meshes[i].vertices = static_cast<f32 *>(MemAlloc(sizeof(f32)*vertexCount*3));
         model.meshes[i].normals = static_cast<f32 *>(MemAlloc(sizeof(f32)*vertexCount*3));
@@ -4709,7 +4709,7 @@ static Model LoadOBJ(const char *fileName)
         }
     }
 
-    if (objMaterialCount > 0) ProcessMaterialsOBJ(model.materials, objMaterials, objMaterialCount);
+    if (objMaterialCount > 0) ProcessMaterialsOBJ(model.materials, objMaterials, static_cast<i32>(objMaterialCount));
     else model.materials[0] = LoadMaterialDefault(); // Set default material for the mesh
 
     tinyobj_attrib_free(&objAttributes);
@@ -4868,7 +4868,7 @@ static Model LoadIQM(const char *fileName)
     //fread(imesh, sizeof(IQMMesh)*iqmHeader->num_meshes, 1, iqmFile);
     memcpy(imesh, fileDataPtr + iqmHeader->ofs_meshes, iqmHeader->num_meshes*sizeof(IQMMesh));
 
-    model.meshCount = iqmHeader->num_meshes;
+    model.meshCount = static_cast<i32>(iqmHeader->num_meshes);
     model.meshes = static_cast<Mesh *>(calloc(model.meshCount, sizeof(Mesh)));
 
     model.materialCount = model.meshCount;
@@ -4895,7 +4895,7 @@ static Model LoadIQM(const char *fileName)
 
         log(LogLevel::debug, "MODEL: [{}] mesh name ({}), material ({})", fileName, name, material);
 
-        model.meshes[i].vertexCount = imesh[i].num_vertexes;
+        model.meshes[i].vertexCount = static_cast<i32>(imesh[i].num_vertexes);
 
         model.meshes[i].vertices = static_cast<f32 *>(calloc(model.meshes[i].vertexCount*3, sizeof(f32)));       // Default vertex positions
         model.meshes[i].normals = static_cast<f32 *>(calloc(model.meshes[i].vertexCount*3, sizeof(f32)));        // Default vertex normals
@@ -4904,7 +4904,7 @@ static Model LoadIQM(const char *fileName)
         model.meshes[i].boneIndices = static_cast<u8 *>(calloc(model.meshes[i].vertexCount*4, sizeof(u8)));  // Up-to 4 bones supported!
         model.meshes[i].boneWeights = static_cast<f32 *>(calloc(model.meshes[i].vertexCount*4, sizeof(f32)));                  // Up-to 4 bones supported!
 
-        model.meshes[i].triangleCount = imesh[i].num_triangles;
+        model.meshes[i].triangleCount = static_cast<i32>(imesh[i].num_triangles);
         model.meshes[i].indices = static_cast<u16 *>(calloc(model.meshes[i].triangleCount*3, sizeof(u16)));
     }
 
@@ -5022,7 +5022,7 @@ static Model LoadIQM(const char *fileName)
                     auto boneCounter = 0;
                     for (u32 i = imesh[m].first_vertex*4; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*4; i++)
                     {
-                        model.meshes[m].boneWeights[boneCounter] = blendw[i]/255.0f;
+                        model.meshes[m].boneWeights[boneCounter] = static_cast<f32>(blendw[i])/255.0f;
                         boneCounter++;
                     }
                 }
@@ -5082,7 +5082,7 @@ static Model LoadIQM(const char *fileName)
         model.skeleton.bindPose[i].scale.z = ijoint[i].scale[2];
     }
 
-    BuildPoseFromParentJoints(model.skeleton.bones, model.skeleton.boneCount, model.skeleton.bindPose);
+    BuildPoseFromParentJoints(model.skeleton.bones, static_cast<i32>(model.skeleton.boneCount), model.skeleton.bindPose);
 
     // Initialize runtime animation data: current pose and bone matrices
     model.currentPose = static_cast<Transform *>(calloc((model.skeleton.boneCount > 0) ? model.skeleton.boneCount : 1, sizeof(Transform)));
@@ -5179,7 +5179,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
     memcpy(poses, fileDataPtr + iqmHeader->ofs_poses, iqmHeader->num_poses*sizeof(IQMPose));
 
     // Get animations data
-    *animCount = iqmHeader->num_anims;
+    *animCount = static_cast<i32>(iqmHeader->num_anims);
     auto anim = static_cast<IQMAnim *>(calloc(iqmHeader->num_anims, sizeof(IQMAnim)));
     //fseek(iqmFile, iqmHeader->ofs_anims, SEEK_SET);
     //fread(anim, sizeof(IQMAnim), iqmHeader->num_anims, iqmFile);
@@ -5202,7 +5202,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
         animations[a].boneCount = iqmHeader->num_poses;
         auto bones = static_cast<BoneInfo *>(calloc(iqmHeader->num_poses, sizeof(BoneInfo)));
 
-        animations[a].keyframeCount = anim[a].num_frames;
+        animations[a].keyframeCount = static_cast<i32>(anim[a].num_frames);
         animations[a].keyframePoses = static_cast<Transform * *>(calloc(anim[a].num_frames, sizeof(Transform *)));
         memcpy(animations[a].name, fileDataPtr + iqmHeader->ofs_text + anim[a].name, 32);
         // TODO: Store animation framerate data?
@@ -5222,7 +5222,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
         for (u32 j = 0; j < anim[a].num_frames; j++)
             animations[a].keyframePoses[j] = static_cast<Transform *>(calloc(iqmHeader->num_poses, sizeof(Transform)));
 
-        i32 dcounter = anim[a].first_frame*iqmHeader->num_framechannels;
+        i32 dcounter = static_cast<i32>(anim[a].first_frame*iqmHeader->num_framechannels);
 
         for (u32 frame = 0; frame < anim[a].num_frames; frame++)
         {
@@ -5232,7 +5232,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x01)
                 {
-                    animations[a].keyframePoses[frame][i].translation.x += framedata[dcounter]*poses[i].channelscale[0];
+                    animations[a].keyframePoses[frame][i].translation.x += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[0];
                     dcounter++;
                 }
 
@@ -5240,7 +5240,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x02)
                 {
-                    animations[a].keyframePoses[frame][i].translation.y += framedata[dcounter]*poses[i].channelscale[1];
+                    animations[a].keyframePoses[frame][i].translation.y += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[1];
                     dcounter++;
                 }
 
@@ -5248,7 +5248,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x04)
                 {
-                    animations[a].keyframePoses[frame][i].translation.z += framedata[dcounter]*poses[i].channelscale[2];
+                    animations[a].keyframePoses[frame][i].translation.z += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[2];
                     dcounter++;
                 }
 
@@ -5256,7 +5256,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x08)
                 {
-                    animations[a].keyframePoses[frame][i].rotation.x += framedata[dcounter]*poses[i].channelscale[3];
+                    animations[a].keyframePoses[frame][i].rotation.x += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[3];
                     dcounter++;
                 }
 
@@ -5264,7 +5264,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x10)
                 {
-                    animations[a].keyframePoses[frame][i].rotation.y += framedata[dcounter]*poses[i].channelscale[4];
+                    animations[a].keyframePoses[frame][i].rotation.y += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[4];
                     dcounter++;
                 }
 
@@ -5272,7 +5272,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x20)
                 {
-                    animations[a].keyframePoses[frame][i].rotation.z += framedata[dcounter]*poses[i].channelscale[5];
+                    animations[a].keyframePoses[frame][i].rotation.z += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[5];
                     dcounter++;
                 }
 
@@ -5280,7 +5280,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x40)
                 {
-                    animations[a].keyframePoses[frame][i].rotation.w += framedata[dcounter]*poses[i].channelscale[6];
+                    animations[a].keyframePoses[frame][i].rotation.w += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[6];
                     dcounter++;
                 }
 
@@ -5288,7 +5288,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x80)
                 {
-                    animations[a].keyframePoses[frame][i].scale.x += framedata[dcounter]*poses[i].channelscale[7];
+                    animations[a].keyframePoses[frame][i].scale.x += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[7];
                     dcounter++;
                 }
 
@@ -5296,7 +5296,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x100)
                 {
-                    animations[a].keyframePoses[frame][i].scale.y += framedata[dcounter]*poses[i].channelscale[8];
+                    animations[a].keyframePoses[frame][i].scale.y += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[8];
                     dcounter++;
                 }
 
@@ -5304,7 +5304,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
                 if (poses[i].mask & 0x200)
                 {
-                    animations[a].keyframePoses[frame][i].scale.z += framedata[dcounter]*poses[i].channelscale[9];
+                    animations[a].keyframePoses[frame][i].scale.z += static_cast<f32>(framedata[dcounter])*poses[i].channelscale[9];
                     dcounter++;
                 }
 
@@ -6193,7 +6193,7 @@ static Model LoadGLTF(const char *fileName)
                     // skipping index 0, the default material
                     if (&data->materials[m] == mesh->primitives[p].material)
                     {
-                        model.meshMaterial[meshIndex] = m + 1;
+                        model.meshMaterial[meshIndex] = static_cast<i32>(m) + 1;
                         break;
                     }
                 }
@@ -6387,7 +6387,7 @@ static Model LoadGLTF(const char *fileName)
                     {
                         if (data->skins[0].joints[joint] == node->parent)
                         {
-                            parentBoneId = joint;
+                            parentBoneId = static_cast<i32>(joint);
                             break;
                         }
                     }
@@ -6405,7 +6405,7 @@ static Model LoadGLTF(const char *fileName)
                     }
                 }
 
-                model.meshes[meshIndex].boneCount = model.skeleton.boneCount;
+                model.meshes[meshIndex].boneCount = static_cast<i32>(model.skeleton.boneCount);
 
                 meshIndex++; // Move to next mesh
             }
@@ -6697,7 +6697,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                     {
                         if (animData.channels[j].target_node == skin.joints[k])
                         {
-                            boneIndex = k;
+                            boneIndex = static_cast<i32>(k);
                             break;
                         }
                     }
@@ -6778,7 +6778,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                         animations[a].keyframePoses[j][k] = tr;
                     }
 
-                    BuildPoseFromParentJoints(bones, animations[a].boneCount, animations[a].keyframePoses[j]);
+                    BuildPoseFromParentJoints(bones, static_cast<i32>(animations[a].boneCount), animations[a].keyframePoses[j]);
                 }
 
                 log(LogLevel::info, "MODEL: [{}] Loaded animation: {} | Frames: {} | Duration: {:.6f}s", fileName, (animData.name != nullptr)? animData.name : "NULL", animations[a].keyframeCount, animDuration);
@@ -6948,7 +6948,7 @@ static Model LoadM3D(const char *fileName)
 
         if (m3d->nummaterial > 0)
         {
-            model.meshCount = model.materialCount = m3d->nummaterial;
+            model.meshCount = model.materialCount = static_cast<i32>(m3d->nummaterial);
             log(LogLevel::info, "MODEL: model has {} material meshes", model.materialCount);
         }
         else
@@ -7015,7 +7015,7 @@ static Model LoadM3D(const char *fileName)
                 }
 
                 k++;
-                mi = m3d->face[i].materialid;
+                mi = static_cast<i32>(m3d->face[i].materialid);
 
                 // Only allocate colors VertexBuffer if there's a color vertex in the model for this material batch
                 // if all colors are fully transparent black for all vertices of this material, then assuming no vertex colors
@@ -7107,7 +7107,7 @@ static Model LoadM3D(const char *fileName)
             {
                 for (n = 0; n < 3; n++)
                 {
-                    const i32 skinid = m3d->vertex[m3d->face[i].vertex[n]].skinid;
+                    const i32 skinid = static_cast<i32>(m3d->vertex[m3d->face[i].vertex[n]].skinid);
 
                     // Check if there is a skin for this mesh
                     if ((skinid != M3D_UNDEF) && (skinid < static_cast<i32>(m3d->numskin)))
@@ -7209,7 +7209,7 @@ static Model LoadM3D(const char *fileName)
 
             for (i = 0; i < static_cast<i32>(m3d->numbone); i++)
             {
-                model.skeleton.bones[i].parent = m3d->bone[i].parent;
+                model.skeleton.bones[i].parent = static_cast<i32>(m3d->bone[i].parent);
                 snprintf(model.skeleton.bones[i].name, sizeof(model.skeleton.bones[i].name), "%s", m3d->bone[i].name);
                 model.skeleton.bindPose[i].translation.x = m3d->vertex[m3d->bone[i].pos].x*m3d->scale;
                 model.skeleton.bindPose[i].translation.y = m3d->vertex[m3d->bone[i].pos].y*m3d->scale;
@@ -7252,7 +7252,7 @@ static Model LoadM3D(const char *fileName)
         {
             for (i = 0; i < model.meshCount; i++)
             {
-                model.meshes[i].boneCount = model.skeleton.boneCount;
+                model.meshes[i].boneCount = static_cast<i32>(model.skeleton.boneCount);
             }
 
             // Initialize runtime animation data: current pose and bone matrices
@@ -7303,14 +7303,14 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, i32 *animCou
         }
 
         animations = static_cast<ModelAnimation *>(calloc(m3d->numaction, sizeof(ModelAnimation)));
-        *animCount = m3d->numaction;
+        *animCount = static_cast<i32>(m3d->numaction);
 
         for (u32 a = 0; a < m3d->numaction; a++)
         {
             animations[a].boneCount = m3d->numbone + 1;
             auto bones = static_cast<BoneInfo *>(calloc((m3d->numbone + 1), sizeof(BoneInfo)));
 
-            animations[a].keyframeCount = m3d->action[a].durationmsec/M3D_ANIMDELAY;
+            animations[a].keyframeCount = static_cast<i32>(m3d->action[a].durationmsec)/M3D_ANIMDELAY;
             animations[a].keyframePoses = static_cast<Transform * *>(calloc(animations[a].keyframeCount, sizeof(Transform *)));
             snprintf(animations[a].name, sizeof(animations[a].name), "%s", m3d->action[a].name);
 
@@ -7318,7 +7318,7 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, i32 *animCou
 
             for (i = 0; i < static_cast<i32>(m3d->numbone); i++)
             {
-                bones[i].parent = m3d->bone[i].parent;
+                bones[i].parent = static_cast<i32>(m3d->bone[i].parent);
                 snprintf(bones[i].name, sizeof(bones[i].name), "%s", m3d->bone[i].name);
             }
 

@@ -1742,7 +1742,7 @@ void rlTextureParameters(const u32 id, const i32 param, const i32 value)
             // Reset anisotropy filter, in case it was set
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
 
-            if (value <= RLGL.ExtSupported.maxAnisotropyLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<f32>(value));
+            if (static_cast<f32>(value) <= RLGL.ExtSupported.maxAnisotropyLevel) glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<f32>(value));
             else if (RLGL.ExtSupported.maxAnisotropyLevel > 0.0f)
             {
                 TRACELOG(RL_LOG_WARNING, "GL: Maximum anisotropic filter level supported is %iX", id, static_cast<i32>(RLGL.ExtSupported.maxAnisotropyLevel));
@@ -1752,7 +1752,7 @@ void rlTextureParameters(const u32 id, const i32 param, const i32 value)
 #endif
         } break;
 #if defined(GRAPHICS_API_OPENGL_33)
-        case RL_TEXTURE_MIPMAP_BIAS_RATIO: glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, value/100.0f);
+        case RL_TEXTURE_MIPMAP_BIAS_RATIO: glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, static_cast<f32>(value)/100.0f);
 #endif
         default: break;
     }
@@ -1785,7 +1785,7 @@ void rlCubemapParameters(const u32 id, const i32 param, const i32 value)
         case RL_TEXTURE_MIN_FILTER: glTexParameteri(GL_TEXTURE_CUBE_MAP, param, value); break;
         case RL_TEXTURE_FILTER_ANISOTROPIC:
         {
-            if (value <= RLGL.ExtSupported.maxAnisotropyLevel) glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<f32>(value));
+            if (static_cast<f32>(value) <= RLGL.ExtSupported.maxAnisotropyLevel) glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<f32>(value));
             else if (RLGL.ExtSupported.maxAnisotropyLevel > 0.0f)
             {
                 TRACELOG(RL_LOG_WARNING, "GL: Maximum anisotropic filter level supported is %iX", id, static_cast<i32>(RLGL.ExtSupported.maxAnisotropyLevel));
@@ -1794,7 +1794,7 @@ void rlCubemapParameters(const u32 id, const i32 param, const i32 value)
             else TRACELOG(RL_LOG_WARNING, "GL: Anisotropic filtering not supported");
         } break;
 #if defined(GRAPHICS_API_OPENGL_33)
-        case RL_TEXTURE_MIPMAP_BIAS_RATIO: glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_LOD_BIAS, value/100.0f);
+        case RL_TEXTURE_MIPMAP_BIAS_RATIO: glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_LOD_BIAS, static_cast<f32>(value)/100.0f);
 #endif
         default: break;
     }
@@ -2828,28 +2828,28 @@ rlRenderBatch rlLoadRenderBatch(const i32 numBuffers, const i32 bufferElements)
         // Vertex position buffer (shader-location = 0)
         glGenBuffers(1, &batch.vertexBuffer[i].vboId[0]);
         glBindBuffer(GL_ARRAY_BUFFER, batch.vertexBuffer[i].vboId[0]);
-        glBufferData(GL_ARRAY_BUFFER, bufferElements*3*4*sizeof(f32), batch.vertexBuffer[i].vertices, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferElements*3*4*sizeof(f32)), batch.vertexBuffer[i].vertices, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_POSITION]);
         glVertexAttribPointer(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_POSITION], 3, GL_FLOAT, 0, 0, nullptr);
 
         // Vertex texcoord buffer (shader-location = 1)
         glGenBuffers(1, &batch.vertexBuffer[i].vboId[1]);
         glBindBuffer(GL_ARRAY_BUFFER, batch.vertexBuffer[i].vboId[1]);
-        glBufferData(GL_ARRAY_BUFFER, bufferElements*2*4*sizeof(f32), batch.vertexBuffer[i].texcoords, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferElements*2*4*sizeof(f32)), batch.vertexBuffer[i].texcoords, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_TEXCOORD01]);
         glVertexAttribPointer(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_TEXCOORD01], 2, GL_FLOAT, 0, 0, nullptr);
 
         // Vertex normal buffer (shader-location = 2)
         glGenBuffers(1, &batch.vertexBuffer[i].vboId[2]);
         glBindBuffer(GL_ARRAY_BUFFER, batch.vertexBuffer[i].vboId[2]);
-        glBufferData(GL_ARRAY_BUFFER, bufferElements*3*4*sizeof(f32), batch.vertexBuffer[i].normals, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferElements*3*4*sizeof(f32)), batch.vertexBuffer[i].normals, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_NORMAL]);
         glVertexAttribPointer(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_NORMAL], 3, GL_FLOAT, 0, 0, nullptr);
 
         // Vertex color buffer (shader-location = 3)
         glGenBuffers(1, &batch.vertexBuffer[i].vboId[3]);
         glBindBuffer(GL_ARRAY_BUFFER, batch.vertexBuffer[i].vboId[3]);
-        glBufferData(GL_ARRAY_BUFFER, bufferElements*4*4*sizeof(u8), batch.vertexBuffer[i].colors, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferElements*4*4*sizeof(u8)), batch.vertexBuffer[i].colors, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_COLOR]);
         glVertexAttribPointer(RLGL.State.currentShaderLocs[RL_SHADER_LOC_VERTEX_COLOR], 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, nullptr);
 
@@ -2857,7 +2857,7 @@ rlRenderBatch rlLoadRenderBatch(const i32 numBuffers, const i32 bufferElements)
         glGenBuffers(1, &batch.vertexBuffer[i].vboId[4]);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batch.vertexBuffer[i].vboId[4]);
 #if defined(GRAPHICS_API_OPENGL_33)
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferElements*6*sizeof(i32), batch.vertexBuffer[i].indices, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(bufferElements*6*sizeof(i32)), batch.vertexBuffer[i].indices, GL_STATIC_DRAW);
 #endif
 #if defined(GRAPHICS_API_OPENGL_ES2)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferElements*6*sizeof(short), batch.vertexBuffer[i].indices, GL_STATIC_DRAW);
@@ -2960,22 +2960,22 @@ void rlDrawRenderBatch(rlRenderBatch *batch)
 
         // Vertex positions buffer
         glBindBuffer(GL_ARRAY_BUFFER, batch->vertexBuffer[batch->currentBuffer].vboId[0]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, RLGL.State.vertexCounter*3*sizeof(f32), batch->vertexBuffer[batch->currentBuffer].vertices);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, static_cast<GLsizeiptr>(RLGL.State.vertexCounter*3*sizeof(f32)), batch->vertexBuffer[batch->currentBuffer].vertices);
         //glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*4*batch->vertexBuffer[batch->currentBuffer].elementCount, batch->vertexBuffer[batch->currentBuffer].vertices, GL_DYNAMIC_DRAW);  // Update all buffer
 
         // Texture coordinates buffer
         glBindBuffer(GL_ARRAY_BUFFER, batch->vertexBuffer[batch->currentBuffer].vboId[1]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, RLGL.State.vertexCounter*2*sizeof(f32), batch->vertexBuffer[batch->currentBuffer].texcoords);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, static_cast<GLsizeiptr>(RLGL.State.vertexCounter*2*sizeof(f32)), batch->vertexBuffer[batch->currentBuffer].texcoords);
         //glBufferData(GL_ARRAY_BUFFER, sizeof(float)*2*4*batch->vertexBuffer[batch->currentBuffer].elementCount, batch->vertexBuffer[batch->currentBuffer].texcoords, GL_DYNAMIC_DRAW); // Update all buffer
 
         // Normals buffer
         glBindBuffer(GL_ARRAY_BUFFER, batch->vertexBuffer[batch->currentBuffer].vboId[2]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, RLGL.State.vertexCounter*3*sizeof(f32), batch->vertexBuffer[batch->currentBuffer].normals);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, static_cast<GLsizeiptr>(RLGL.State.vertexCounter*3*sizeof(f32)), batch->vertexBuffer[batch->currentBuffer].normals);
         //glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*4*batch->vertexBuffer[batch->currentBuffer].elementCount, batch->vertexBuffer[batch->currentBuffer].normals, GL_DYNAMIC_DRAW); // Update all buffer
 
         // Colors buffer
         glBindBuffer(GL_ARRAY_BUFFER, batch->vertexBuffer[batch->currentBuffer].vboId[3]);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, RLGL.State.vertexCounter*4*sizeof(u8), batch->vertexBuffer[batch->currentBuffer].colors);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, static_cast<GLsizeiptr>(RLGL.State.vertexCounter*4*sizeof(u8)), batch->vertexBuffer[batch->currentBuffer].colors);
         //glBufferData(GL_ARRAY_BUFFER, sizeof(float)*4*4*batch->vertexBuffer[batch->currentBuffer].elementCount, batch->vertexBuffer[batch->currentBuffer].colors, GL_DYNAMIC_DRAW);    // Update all buffer
 
         // NOTE: glMapBuffer() causes sync issue
@@ -3202,7 +3202,7 @@ bool rlCheckRenderBatchLimit(const i32 vCount)
 
         // Store current primitive drawing mode and texture id
         const i32 currentMode = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].mode;
-        const i32 currentTexture = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].textureId;
+        const i32 currentTexture = static_cast<i32>(RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].textureId);
 
         rlDrawRenderBatch(RLGL.currentBatch);    // NOTE: Stereo rendering is checked inside
 
@@ -3293,9 +3293,9 @@ u32 rlLoadTexture(const void *data, const i32 width, const i32 height, const i32
 
         if (glInternalFormat != 0)
         {
-            if (format < RL_PIXELFORMAT_COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, glFormat, glType, dataPtr);
+            if (format < RL_PIXELFORMAT_COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_2D, i, static_cast<GLint>(glInternalFormat), mipWidth, mipHeight, 0, glFormat, glType, dataPtr);
 #if !defined(GRAPHICS_API_OPENGL_11)
-            else glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, mipSize, dataPtr);
+            else glCompressedTexImage2D(GL_TEXTURE_2D, i, glInternalFormat, mipWidth, mipHeight, 0, static_cast<GLsizei>(mipSize), dataPtr);
 #endif
 
 #if defined(GRAPHICS_API_OPENGL_33)
@@ -3318,7 +3318,7 @@ u32 rlLoadTexture(const void *data, const i32 width, const i32 height, const i32
 
         mipWidth /= 2;
         mipHeight /= 2;
-        mipOffset += mipSize;                    // Increment offset position to next mipmap
+        mipOffset += static_cast<i32>(mipSize);                    // Increment offset position to next mipmap
         if (data != nullptr) dataPtr += mipSize; // Increment data pointer to next mipmap
 
         // Security check for NPOT textures
@@ -3425,7 +3425,7 @@ u32 rlLoadTextureDepth(const i32 width, const i32 height, bool useRenderBuffer)
     {
         glGenTextures(1, &id);
         glBindTexture(GL_TEXTURE_2D, id);
-        glTexImage2D(GL_TEXTURE_2D, 0, glInternalFormat, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, static_cast<GLint>(glInternalFormat), width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, nullptr);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -3499,14 +3499,14 @@ u32 rlLoadTextureCubemap(const void *data, const i32 size, const i32 format, con
                         (format == RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32) ||
                         (format == RL_PIXELFORMAT_UNCOMPRESSED_R16) ||
                         (format == RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16A16)) TRACELOG(RL_LOG_WARNING, "TEXTURES: Cubemap requested format not supported");
-                    else glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, mipmapLevel, glInternalFormat, mipSize, mipSize, 0, glFormat, glType, nullptr);
+                    else glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, mipmapLevel, static_cast<GLint>(glInternalFormat), mipSize, mipSize, 0, glFormat, glType, nullptr);
                 }
                 else TRACELOG(RL_LOG_WARNING, "TEXTURES: Empty cubemap creation does not support compressed format");
             }
             else
             {
-                if (format < RL_PIXELFORMAT_COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, mipmapLevel, glInternalFormat, mipSize, mipSize, 0, glFormat, glType, dataPtr + face*dataSize);
-                else glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, mipmapLevel, glInternalFormat, mipSize, mipSize, 0, dataSize, dataPtr + face*dataSize);
+                if (format < RL_PIXELFORMAT_COMPRESSED_DXT1_RGB) glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, mipmapLevel, static_cast<GLint>(glInternalFormat), mipSize, mipSize, 0, glFormat, glType, dataPtr + face*dataSize);
+                else glCompressedTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + face, mipmapLevel, glInternalFormat, mipSize, mipSize, 0, static_cast<GLsizei>(dataSize), dataPtr + face*dataSize);
             }
 
 #if defined(GRAPHICS_API_OPENGL_33)
