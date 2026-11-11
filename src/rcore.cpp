@@ -615,7 +615,7 @@ void SetWindowSamples(int samples)
 {
     if (CORE.Window.ready)
     {
-        logMessage(LogLevel::warning, "WINDOW: MSAA samples can only be configured before window initialization");
+        logMessage(LogLevel::warn, "WINDOW: MSAA samples can only be configured before window initialization");
         return;
     }
 
@@ -655,7 +655,7 @@ static void UpdateWindowProvidedSamples(void)
     glGetIntegerv(GL_SAMPLES, &providedSamples);
     CORE.Window.samples = providedSamples;
 
-    if (providedSamples < requestedSamples) logMessage(LogLevel::warning, std::format("DISPLAY: Graphics device only provided MSAA x{}", providedSamples));
+    if (providedSamples < requestedSamples) logMessage(LogLevel::warn, std::format("DISPLAY: Graphics device only provided MSAA x{}", providedSamples));
 #endif
 }
 
@@ -742,7 +742,7 @@ void InitWindow(int width, int height, std::string_view titleView)
 
     if (result != 0)
     {
-        logMessage(LogLevel::warning, "SYSTEM: Failed to initialize platform");
+        logMessage(LogLevel::warn, "SYSTEM: Failed to initialize platform");
         return;
     }
 
@@ -1284,7 +1284,7 @@ VrStereoConfig LoadVrStereoConfig(VrDeviceInfo device)
         config.eyeViewportLeft[3] = device.vResolution;
         */
     }
-    else logMessage(LogLevel::warning, "RLGL: VR Simulator not supported on OpenGL 1.1");
+    else logMessage(LogLevel::warn, "RLGL: VR Simulator not supported on OpenGL 1.1");
 
     return config;
 }
@@ -1316,7 +1316,7 @@ Shader LoadShader(std::string_view vsFileNameView, std::string_view fsFileNameVi
     if (!vsFileNameView.empty()) vShaderStr = LoadFileText(vsFileNameView);
     if (!fsFileNameView.empty()) fShaderStr = LoadFileText(fsFileNameView);
 
-    if (vShaderStr.empty() && fShaderStr.empty()) logMessage(LogLevel::warning, "SHADER: Shader files provided are not valid, using default shader");
+    if (vShaderStr.empty() && fShaderStr.empty()) logMessage(LogLevel::warn, "SHADER: Shader files provided are not valid, using default shader");
 
     shader = LoadShaderFromMemory(vShaderStr, fShaderStr);
 
@@ -1828,7 +1828,7 @@ int GetRandomValue(int min, int max)
     // NOTE: Depending on the library it can be as low as 32767
     if (static_cast<unsigned int>((max - min)) > static_cast<unsigned int>(RAND_MAX))
     {
-        logMessage(LogLevel::warning, std::format("Invalid GetRandomValue() arguments, range should not be higher than {}", RAND_MAX));
+        logMessage(LogLevel::warn, std::format("Invalid GetRandomValue() arguments, range should not be higher than {}", RAND_MAX));
     }
 
     // NOTE: This one-line approach produces a non-uniform distribution,
@@ -1920,7 +1920,7 @@ void TakeScreenshot(std::string_view fileNameView)
 
 #if SUPPORT_MODULE_RTEXTURES
     // Security check to (partially) avoid malicious code
-    if (strchr(fileName, '\'') != nullptr) { logMessage(LogLevel::warning, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
+    if (strchr(fileName, '\'') != nullptr) { logMessage(LogLevel::warn, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
 
     // Apply content scaling if required
     vec2 scale = { 1.0f, 1.0f };
@@ -1937,9 +1937,9 @@ void TakeScreenshot(std::string_view fileNameView)
     free(imgData);
 
     if (FileExists(path)) logMessage(LogLevel::info, std::format("SYSTEM: [{}] Screenshot taken successfully", path));
-    else logMessage(LogLevel::warning, std::format("SYSTEM: [{}] Screenshot could not be saved", path));
+    else logMessage(LogLevel::warn, std::format("SYSTEM: [{}] Screenshot could not be saved", path));
 #else
-    logMessage(LogLevel::warning, "IMAGE: ExportImage() requires module: rtextures");
+    logMessage(LogLevel::warn, "IMAGE: ExportImage() requires module: rtextures");
 #endif
 }
 
@@ -1949,7 +1949,7 @@ void TakeScreenshot(std::string_view fileNameView)
 // To configure window states after creation, use SetWindowState()
 void SetConfigFlags(unsigned int flags)
 {
-    if (CORE.Window.ready) logMessage(LogLevel::warning, "WINDOW: SetConfigFlags called after window initialization, Use \"SetWindowState\" to set flags instead");
+    if (CORE.Window.ready) logMessage(LogLevel::warn, "WINDOW: SetConfigFlags called after window initialization, Use \"SetWindowState\" to set flags instead");
 
     // Selected flags are set but not evaluated at this point,
     // flag evaluation happens at InitWindow() or SetWindowState()
@@ -1968,7 +1968,7 @@ static LogLevel ToLogLevel(int logType)
         case LOG_TRACE:   return LogLevel::trace;
         case LOG_DEBUG:   return LogLevel::debug;
         case LOG_INFO:    return LogLevel::info;
-        case LOG_WARNING: return LogLevel::warning;
+        case LOG_WARNING: return LogLevel::warn;
         case LOG_ERROR:   return LogLevel::error;
         case LOG_FATAL:   return LogLevel::fatal;
         default:          return LogLevel::info;
@@ -1983,7 +1983,7 @@ static int ToRaylibLogLevel(LogLevel level)
         case LogLevel::trace:   return LOG_TRACE;
         case LogLevel::debug:   return LOG_DEBUG;
         case LogLevel::info:    return LOG_INFO;
-        case LogLevel::warning: return LOG_WARNING;
+        case LogLevel::warn: return LOG_WARNING;
         case LogLevel::error:   return LOG_ERROR;
         case LogLevel::fatal:   return LOG_FATAL;
         default:                return LOG_NONE;
@@ -2099,7 +2099,7 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                     // dataSize is unified along raylib as a 'int' type, so, for file-sizes >INT_MAX (2147483647 bytes) there is a limitation
                     if (count > 2147483647)
                     {
-                        logMessage(LogLevel::warning, std::format("FILEIO: [{}] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName));
+                        logMessage(LogLevel::warn, std::format("FILEIO: [{}] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName));
 
                         free(data);
                         data = nullptr;
@@ -2108,19 +2108,19 @@ unsigned char * LoadFileData(std::string_view fileNameView, int *dataSize)
                     {
                         *dataSize = static_cast<int>(count);
 
-                        if ((*dataSize) != size) logMessage(LogLevel::warning, std::format("FILEIO: [{}] File partially loaded ({} bytes out of {})", fileName, *dataSize, size));
+                        if ((*dataSize) != size) logMessage(LogLevel::warn, std::format("FILEIO: [{}] File partially loaded ({} bytes out of {})", fileName, *dataSize, size));
                         else logMessage(LogLevel::info, std::format("FILEIO: [{}] File loaded successfully", fileName));
                     }
                 }
-                else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
+                else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
             }
-            else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to read file", fileName));
+            else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to read file", fileName));
 
             fclose(file);
         }
-        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open file", fileName));
+        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open file", fileName));
     }
-    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
 
     return data;
 }
@@ -2151,16 +2151,16 @@ bool SaveFileData(std::string_view fileNameView, const void *data, int dataSize)
             // and expects a size_t input value but as dataSize is limited to INT_MAX (2147483647 bytes), there shouldn't be a problem
             const int count = static_cast<int>(fwrite(data, sizeof(unsigned char), dataSize, file));
 
-            if (count == 0) logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to write file", fileName));
-            else if (count != dataSize) logMessage(LogLevel::warning, std::format("FILEIO: [{}] File partially written", fileName));
+            if (count == 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to write file", fileName));
+            else if (count != dataSize) logMessage(LogLevel::warn, std::format("FILEIO: [{}] File partially written", fileName));
             else logMessage(LogLevel::info, std::format("FILEIO: [{}] File saved successfully", fileName));
 
             const int closed = fclose(file);
             if (closed == 0) result = true;
         }
-        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open file", fileName));
+        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open file", fileName));
     }
-    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
 
     return result;
 }
@@ -2216,7 +2216,7 @@ bool ExportDataAsCode(const unsigned char *data, int dataSize, std::string_view 
     free(txtData);
 
     if (result != 0) logMessage(LogLevel::info, std::format("FILEIO: [{}] Data as code exported successfully", fileName));
-    else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to export data as code", fileName));
+    else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to export data as code", fileName));
 
     return result;
 }
@@ -2263,15 +2263,15 @@ std::string LoadFileText(std::string_view fileNameView)
 
                     logMessage(LogLevel::info, std::format("FILEIO: [{}] Text file loaded successfully", fileName));
                 }
-                else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
+                else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
             }
-            else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to read text file", fileName));
+            else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to read text file", fileName));
 
             fclose(file);
         }
-        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open text file", fileName));
+        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open text file", fileName));
     }
-    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
 
     std::string fileText;
     if (text != nullptr) fileText.assign(text, textLength);
@@ -2306,15 +2306,15 @@ bool SaveFileText(std::string_view fileNameView, std::string_view textView)
         {
             const int count = fprintf(file, "%s", text);
 
-            if (count < 0) logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to write text file", fileName));
+            if (count < 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to write text file", fileName));
             else logMessage(LogLevel::info, std::format("FILEIO: [{}] Text file saved successfully", fileName));
 
             const int closed = fclose(file);
             if (closed == 0) result = true;
         }
-        else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to open text file", fileName));
+        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open text file", fileName));
     }
-    else logMessage(LogLevel::warning, "FILEIO: File name provided is not valid");
+    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
 
     return result;
 }
@@ -2433,12 +2433,12 @@ int FileMove(std::string_view srcPathView, std::string_view dstPathView)
             if (FileExists(dstPath) && (GetFileLength(srcPath) == GetFileLength(dstPath)))
             {
                 result = FileRemove(srcPath);
-                if (result != 0) logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to remove source file after copy", srcPath));
+                if (result != 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to remove source file after copy", srcPath));
             }
-            else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Failed to copy file to [{}]", srcPath, dstPath));
+            else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to copy file to [{}]", srcPath, dstPath));
         }
     }
-	else logMessage(LogLevel::warning, std::format("FILEIO: [{}] Source file does not exist", srcPath));
+	else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Source file does not exist", srcPath));
 
     return result;
 }
@@ -2468,7 +2468,7 @@ int FileTextReplace(std::string_view fileNameView, std::string_view searchView, 
         }
     }
 #else
-    logMessage(LogLevel::warning, "FILE: File text replace requires [rtext] module");
+    logMessage(LogLevel::warn, "FILE: File text replace requires [rtext] module");
 #endif
 
     return result;
@@ -2650,7 +2650,7 @@ int GetFileLength(std::string_view fileNameView)
         const long int fileSize = ftell(file);
 
         // Check for size overflow (INT_MAX)
-        if (fileSize > 2147483647) logMessage(LogLevel::warning, std::format("[{}] File size overflows expected limit, do not use GetFileLength()", fileName));
+        if (fileSize > 2147483647) logMessage(LogLevel::warn, std::format("[{}] File size overflows expected limit, do not use GetFileLength()", fileName));
         else size = static_cast<int>(fileSize);
 
         fclose(file);
@@ -2800,7 +2800,7 @@ std::string GetDirectoryPath(std::string_view filePathView)
             }
             else
             {
-                logMessage(LogLevel::warning, "FILEIO: Directory path too long");
+                logMessage(LogLevel::warn, "FILEIO: Directory path too long");
                 dirPath[0] = '\0';
             }
         }
@@ -2835,7 +2835,7 @@ std::string GetPrevDirectoryPath(std::string_view dirPathView)
             if (!isFile)
             {
                 if (i < MAX_FILEPATH_LENGTH) memcpy(prevDirPath, dirPath, i);
-                else logMessage(LogLevel::warning, "FILEIO: Directory path too long");
+                else logMessage(LogLevel::warn, "FILEIO: Directory path too long");
                 break;
             }
             else isFile = false;
@@ -3000,7 +3000,7 @@ FilePathList LoadDirectoryFilesEx(std::string_view basePathView, std::string_vie
         // WARNING: basePath is always prepended to scanned paths
         ScanDirectoryFiles(basePath, &files, filter, scanSubdirs);
     }
-    else logMessage(LogLevel::warning, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
+    else logMessage(LogLevel::warn, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
 
     return files;
 }
@@ -3055,7 +3055,7 @@ int ChangeDirectory(std::string_view dirPathView)
     // depending on the filesystem, other errors can be returned
     const int result = CHDIR(dirPath);
 
-    if (result != 0) logMessage(LogLevel::warning, std::format("SYSTEM: Failed to change to directory: {}", dirPath));
+    if (result != 0) logMessage(LogLevel::warn, std::format("SYSTEM: Failed to change to directory: {}", dirPath));
     else logMessage(LogLevel::info, std::format("SYSTEM: Working Directory: {}", dirPath));
 
     return result;
@@ -3238,7 +3238,7 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
                 // Don't add to count if path too long
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
                 {
-                    logMessage(LogLevel::warning, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
+                    logMessage(LogLevel::warn, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
                 }
                 else if (IsPathFile(path))
                 {
@@ -3254,7 +3254,7 @@ unsigned int GetDirectoryFileCountEx(std::string_view basePathView, std::string_
         }
         closedir(dir);
     }
-    else logMessage(LogLevel::warning, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
+    else logMessage(LogLevel::warn, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
     return fileCounter;
 }
 
@@ -3359,7 +3359,7 @@ std::string EncodeDataBase64(const unsigned char *data, int dataSize, int *outpu
     encodedData[outputCount] = '\0';
     outputCount++;
 
-    if (outputCount != estimatedOutputSize) logMessage(LogLevel::warning, "BASE64: Output size differs from estimation");
+    if (outputCount != estimatedOutputSize) logMessage(LogLevel::warn, "BASE64: Output size differs from estimation");
 
     *outputSize = estimatedOutputSize;
 
@@ -3411,7 +3411,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
         // Every 4 sextets must generate 3 octets
         if ((i + 2) >= dataSize)
         {
-            logMessage(LogLevel::warning, "BASE64: Decoding error: Input data size is not valid");
+            logMessage(LogLevel::warn, "BASE64: Decoding error: Input data size is not valid");
             break;
         }
 
@@ -3424,7 +3424,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
 
         if ((outputCount + 3) > maxOutputSize)
         {
-            logMessage(LogLevel::warning, "BASE64: Decoding error: Output data size is too small");
+            logMessage(LogLevel::warn, "BASE64: Decoding error: Output data size is too small");
             break;
         }
 
@@ -3435,7 +3435,7 @@ unsigned char * DecodeDataBase64(std::string_view textView, int *outputSize)
         i += 4;
     }
 
-    if (estimatedOutputSize != (outputCount - padding)) logMessage(LogLevel::warning, "BASE64: Decoded size differs from estimation");
+    if (estimatedOutputSize != (outputCount - padding)) logMessage(LogLevel::warn, "BASE64: Decoded size differs from estimation");
 
     *outputSize = estimatedOutputSize;
     return decodedData;
@@ -3852,7 +3852,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
         if ((fileId[0] == 'r') && (fileId[1] == 'A') && (fileId[2] == 'E') && (fileId[1] == ' '))
         {
             fread(&eventCount, sizeof(int), 1, raeFile);
-            logMessage(LogLevel::warning, std::format("Events loaded: {}\n", eventCount));
+            logMessage(LogLevel::warn, std::format("Events loaded: {}\n", eventCount));
             fread(events, sizeof(AutomationEvent), eventCount, raeFile);
         }
 
@@ -3870,7 +3870,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
             char eventDesc[64] = { 0 };
 
             char *result = fgets(buffer, 256, raeFile);
-            if (result != buffer) logMessage(LogLevel::warning, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
+            if (result != buffer) logMessage(LogLevel::warn, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
 
             while (!feof(raeFile))
             {
@@ -3886,18 +3886,18 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 
                             counter++;
                         }
-                        else logMessage(LogLevel::warning, std::format("AUTOMATION: Event goes beyond automated list capacity (MAX: {}): {}", list.capacity, buffer));
+                        else logMessage(LogLevel::warn, std::format("AUTOMATION: Event goes beyond automated list capacity (MAX: {}): {}", list.capacity, buffer));
                     } break;
                     default: break;
                 }
 
                 result = fgets(buffer, 256, raeFile);
-                if (result != buffer) logMessage(LogLevel::warning, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
+                if (result != buffer) logMessage(LogLevel::warn, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
             }
 
             if (counter != list.count)
             {
-                logMessage(LogLevel::warning, std::format("AUTOMATION: Events read from file [{}] do not mach event count specified [{}]", counter, list.count));
+                logMessage(LogLevel::warn, std::format("AUTOMATION: Events read from file [{}] do not mach event count specified [{}]", counter, list.count));
                 list.count = counter;
             }
 
@@ -4492,7 +4492,7 @@ vec2 GetTouchPosition(int index)
     vec2 position = { -1.0f, -1.0f };
 
     if (index < MAX_TOUCH_POINTS) position = CORE.Input.Touch.position[index];
-    else logMessage(LogLevel::warning, std::format("INPUT: Required touch point out of range (Max touch points: {})", MAX_TOUCH_POINTS));
+    else logMessage(LogLevel::warn, std::format("INPUT: Required touch point out of range (Max touch points: {})", MAX_TOUCH_POINTS));
 
     return position;
 }
@@ -4539,7 +4539,7 @@ void InitTimer(void)
     {
         CORE.Time.base = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
     }
-    else logMessage(LogLevel::warning, "TIMER: Hi-resolution timer not available");
+    else logMessage(LogLevel::warn, "TIMER: Hi-resolution timer not available");
 #endif
 
     CORE.Time.previous = GetTime(); // Get time as double
@@ -4592,7 +4592,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
                 {
-                    logMessage(LogLevel::warning, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
+                    logMessage(LogLevel::warn, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
                 }
                 else if (IsPathFile(path))
                 {
@@ -4616,7 +4616,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 
         closedir(dir);
     }
-    else logMessage(LogLevel::warning, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
+    else logMessage(LogLevel::warn, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
 }
 
 #if SUPPORT_AUTOMATION_EVENTS

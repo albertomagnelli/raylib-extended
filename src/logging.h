@@ -1,54 +1,84 @@
 #pragma once
 
 /// @file logging.h
-/// Logstufen und die zentrale Logging-Pipeline der Engine.
+/// Levelbasiertes Logging mit optionalem Callback- und Datei-Sink.
 ///
-/// Alle Logausgabe laeuft ueber `logMessage()`. Optional koennen eine
-/// Logdatei und/oder ein Callback gesetzt werden; ohne beides wird farbig
-/// auf stderr ausgegeben.
+/// Standardausgabe ist `stderr`. Ist ein Callback gesetzt, ersetzt er die
+/// Konsolenausgabe (der Datei-Sink bleibt aktiv). Logging ist thread-sicher.
+///
+/// Hinweis: Log-Funktionen allokieren und sind daher die einzige Ausnahme von
+/// der `noexcept`-Regel des Engine-Codes.
 
+#include <format>
+#include <string_view>
+#include <utility>
+
+#include "types.h"
 #include "error.h"
 
-#include <string_view>
+enum class LogLevel : u8 {
+    trace = 0,
+    debug,
+    info,
+    warn,
+    error,
+    fatal,
+    off,  ///< Schaltet Logging ab (nur als Grenzwert sinnvoll).
+};
 
+[[nodiscard]] std::string_view toString(LogLevel level) noexcept;
 
-    /// Logstufen, aufsteigend nach Prioritaet.
-    /// `off` unterdrueckt samtliche Ausgabe.
-    enum class LogLevel : u8 {
-        trace = 0,  ///< Trace-Logging, nur fuer internen Gebrauch.
-        debug,      ///< Debug-Logging, in Release-Builds deaktivieren.
-        info,       ///< Info-Logging, Programmablauf.
-        warning,    ///< Warnungen, recoverable Fehler.
-        error,      ///< Fehler, unrecoverable Fehler.
-        fatal,      ///< Fataler Fehler, Programmabbruch.
-        off,        ///< Logausgabe komplett deaktiviert.
-    };
+/// Empfaengt die fertig formatierte Zeile (ohne Zeilenumbruch).
+using LogCallback = void (*)(LogLevel level, std::string_view line, void* userData);
 
-    /// Callback-Signatur der zentralen Logging-Pipeline.
-    /// `line` ist die fertig formatierte Zeile inklusive Zeitstempel.
-    using LogCallback = void (*)(LogLevel level, std::string_view line, void* userData);
+void setLogLevel(LogLevel level) noexcept;
+[[nodiscard]] LogLevel logLevel() noexcept;
+[[nodiscard]] bool logEnabled(LogLevel level) noexcept;
 
-    /// Lesbare Bezeichnung einer Logstufe (`"TRACE"`, `"WARN"` usw.).
-    [[nodiscard]] std::string_view toString(LogLevel level) noexcept;
+/// Ersetzt die Konsolenausgabe. `nullptr` stellt `stderr` wieder her.
+void setLogCallback(LogCallback callback, void* userData = nullptr) noexcept;
 
-    /// Setzt die minimale Logstufe. Darunter liegende Meldungen werden verworfen.
-    void setLogLevel(LogLevel level) noexcept;
+/// Oeffnet eine Logdatei (wird bei jedem Aufruf neu angelegt).
+[[nodiscard]] Status setLogFile(std::string_view path);
+void closeLogFile() noexcept;
 
-    /// Aktuelle minimale Logstufe.
-    [[nodiscard]] LogLevel logLevel() noexcept;
+/// Schreibt eine bereits formatierte Zeile.
+void logMessage(LogLevel level, std::string_view message);
 
-    /// True, wenn Meldungen dieser Stufe ausgegeben wuerden.
-    [[nodiscard]] bool logEnabled(LogLevel level) noexcept;
+template <class... Args>
+void log(LogLevel level, std::format_string<Args...> formatString, Args&&... args) {
+    if (!logEnabled(level)) {
+        return;
+    }
+    logMessage(level, std::format(formatString, std::forward<Args>(args)...));
+}
 
-    /// Registriert einen Callback, der die formatierte Zeile erhaelt.
-    /// `callback == nullptr` entfernt den Callback.
-    void setLogCallback(LogCallback callback, void* userData) noexcept;
+template <class... Args>
+void trace(std::format_string<Args...> formatString, Args&&... args) {
+    log(LogLevel::trace, formatString, std::forward<Args>(args)...);
+}
 
-    /// Meldungen zusaetzlich in `path` schreiben. Leerer Pfad schliesst die Datei.
-    [[nodiscard]] Status setLogFile(std::string_view path);
+template <class... Args>
+void debug(std::format_string<Args...> formatString, Args&&... args) {
+    log(LogLevel::debug, formatString, std::forward<Args>(args)...);
+}
 
-    /// Logdatei schliessen.
-    void closeLogFile() noexcept;
+template <class... Args>
+void info(std::format_string<Args...> formatString, Args&&... args) {
+    log(LogLevel::info, formatString, std::forward<Args>(args)...);
+}
 
-    /// Zentrale Logausgabe: Zeitstempel, Stufe, Nachricht.
-    void logMessage(LogLevel level, std::string_view message);
+template <class... Args>
+void warn(std::format_string<Args...> formatString, Args&&... args) {
+    log(LogLevel::warn, formatString, std::forward<Args>(args)...);
+}
+
+template <class... Args>
+void error(std::format_string<Args...> formatString, Args&&... args) {
+    log(LogLevel::error, formatString, std::forward<Args>(args)...);
+}
+
+template <class... Args>
+void fatal(std::format_string<Args...> formatString, Args&&... args) {
+    log(LogLevel::fatal, formatString, std::forward<Args>(args)...);
+}
