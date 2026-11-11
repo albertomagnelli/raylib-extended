@@ -51,3 +51,12 @@ target_link_libraries(noise_example PRIVATE raylib)
 
 set_target_properties(noise_example PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+# Terrain example, 4096x4096 heightmap generated with the Noise class (needs OPENGL_VERSION 4.3 or 4.6)
+add_executable(terrain_example terrain_example.cpp)
+
+target_include_directories(terrain_example PRIVATE "${CMAKE_CURRENT_LIST_DIR}")
+target_link_libraries(terrain_example PRIVATE raylib)
+
+set_target_properties(terrain_example PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")

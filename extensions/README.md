@@ -10,6 +10,7 @@ extensions/
 ├── camera_controller_example.cpp   # Runnable example with all four modes
 ├── noise.h                         # The Noise class, 1D/2D/3D simplex noise via compute shaders
 ├── noise_example.cpp               # Renders the three noise textures and self-checks them
+├── terrain_example.cpp             # 4096x4096 heightmap terrain built from the noise octaves
 ├── particle_example.cpp            # 2d particle demo, ported from the RayLib-Demo project
 ├── shadows_example.cpp             # Directional light with shadow mapping, ported from RayLib-Demo
 ├── CMakeLists.txt                  # Builds the examples, standalone or with raylib
@@ -174,6 +175,7 @@ cmake -B build
 cmake --build build
 ./build/camera_controller_example
 ./build/noise_example
+./build/terrain_example
 ./build/particle_example
 ./build/shadows_example
 ```
@@ -186,6 +188,7 @@ cmake -B build
 cmake --build build
 ./build/camera_controller_example
 ./build/noise_example
+./build/terrain_example
 ./build/particle_example
 ./build/shadows_example
 ```
@@ -343,6 +346,49 @@ to `[0.0, 1.0]`, alpha stays `1.0`. Dimensions are rounded up to a multiple of t
 | `SPACE` | New random offset, renders all three textures again |
 | `MOUSE WHEEL` | Cycle the displayed 3D layer |
 | `1` / `2` / `3` | Save the 1D / 2D / 3D result as PNG |
+
+## terrain_example (4096x4096 heightmap from GPU noise)
+
+`terrain_example.cpp` turns the `Noise` class into a flyable terrain. The whole 16.7 million texel
+heightmap is produced on the GPU in roughly 180 ms:
+
+| Step | What runs on the GPU |
+| :--- | :--- |
+| 1. Noise octaves | `Noise::Create2D()` renders 5 textures (4096, 2048, 1024, 512, 256) |
+| 2. Combine | compute shader: domain warp, fBm sum, ridged mountain mask, height curve → `GL_R32F` heightmap |
+| 3. Erosion | 10 thermal erosion passes, ping pong between two heightmaps (talus angle) |
+| 4. Terrain | 512x512 quad grid, displaced in the vertex shader by sampling the heightmap |
+| 5. Shading | normals from a central difference stencil, sand/grass/rock/snow by height and slope, sun + sky light, distance fog |
+
+4096x4096 texels are far too many for a mesh, so the grid samples the heightmap instead: the
+heightmap stays a texture (67 MB as `R32F`) and is only read back to the CPU for the camera
+collision and the statistics in the HUD.
+
+| Input | Action |
+| :--- | :--- |
+| `W A S D` | Fly along the view direction |
+| `E` / `Q` | Up / down |
+| `MOUSE` (right button) | Look around |
+| `MOUSE WHEEL` | Flight speed |
+| `T` | Cycle view: shaded / heightmap / normals |
+| `F` | Wireframe |
+| `R` | Reset the camera |
+| `G` | Regenerate the heightmap with a new random offset |
+
+### Things to know when combining octaves and drawing them yourself
+
+- **Halving the octave texture doubles the texel scale, not the frequency**: with `size_i = S/2^i`
+  the world frequency is `size_i * scale_i`, so a per texel scale of `scale*2^i` keeps every octave
+  at the *same* frequency (a blurry copy at lower resolution). The per texel scale has to grow by
+  `4^i` to double the frequency, otherwise the fBm has no large landforms.
+- **Normal stencil must match the mesh, not the heightmap**: a +-1 texel central difference on a
+  4096 texel map picks up detail the 512 quad grid cannot represent, and the shading turns into
+  needles. The example widens the stencil to one grid quad (`HEIGHTMAP_SIZE/GRID_QUADS`).
+- **raylib rebinds texture unit 0 for the HUD**: `DrawText()` binds the font atlas, so a texture
+  bound once before the loop is gone on the next frame. The heightmap is bound again right before
+  the terrain draw.
+- **`DrawFPS()` needs a full second** to produce a number; in a 60 frame self run it still prints
+  single digits. The example smooths `GetFrameTime()` itself and shows ms/frame.
 
 ## MSAA 8x / 16x in the examples
 
