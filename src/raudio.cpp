@@ -77,6 +77,8 @@
     #include "config.h"         // Defines module configuration flags
 #endif
 
+#include "logging.h"            // Levelbasiertes Logging (log(), logMessage())
+
 #if SUPPORT_MODULE_RAUDIO || defined(RAUDIO_STANDALONE)
 
 #if defined(_WIN32)
@@ -180,12 +182,6 @@ typedef struct tagBITMAPINFOHEADER {
 #include <stdlib.h>                     // Required for: malloc(), free()
 #include <stdio.h>                      // Required for: FILE, fopen(), fclose(), fread()
 #include <string.h>                     // Required for: strcmp() [Used in IsFileExtension(), LoadWaveFromMemory(), LoadMusicStreamFromMemory()]
-
-#if defined(RAUDIO_STANDALONE)
-    #ifndef TRACELOG
-        #define TRACELOG(level, ...)    printf(__VA_ARGS__)
-    #endif
-#endif
 
 #if SUPPORT_FILEFORMAT_WAV
     #define DRWAV_MALLOC malloc
@@ -448,7 +444,7 @@ void UntrackAudioBuffer(AudioBuffer *buffer);
 //----------------------------------------------------------------------------------
 
 // Initialize audio device
-void InitAudioDevice(void)
+void InitAudioDevice()
 {
     // Init audio context
     const ma_context_config ctxConfig = ma_context_config_init();
@@ -457,7 +453,7 @@ void InitAudioDevice(void)
     ma_result result = ma_context_init(nullptr, 0, &ctxConfig, &AUDIO.System.context);
     if (result != MA_SUCCESS)
     {
-        TRACELOG(LOG_WARNING, "AUDIO: Failed to initialize context");
+        log(LogLevel::warn, "AUDIO: Failed to initialize context");
         return;
     }
 
@@ -477,7 +473,7 @@ void InitAudioDevice(void)
     result = ma_device_init(&AUDIO.System.context, &config, &AUDIO.System.device);
     if (result != MA_SUCCESS)
     {
-        TRACELOG(LOG_WARNING, "AUDIO: Failed to initialize playback device");
+        log(LogLevel::warn, "AUDIO: Failed to initialize playback device");
         ma_context_uninit(&AUDIO.System.context);
         return;
     }
@@ -487,7 +483,7 @@ void InitAudioDevice(void)
     // a bit smarter later on to keep everything real-time, if that's necessary
     if (ma_mutex_init(&AUDIO.System.lock) != MA_SUCCESS)
     {
-        TRACELOG(LOG_WARNING, "AUDIO: Failed to create mutex for mixing");
+        log(LogLevel::warn, "AUDIO: Failed to create mutex for mixing");
         ma_device_uninit(&AUDIO.System.device);
         ma_context_uninit(&AUDIO.System.context);
         return;
@@ -498,24 +494,24 @@ void InitAudioDevice(void)
     result = ma_device_start(&AUDIO.System.device);
     if (result != MA_SUCCESS)
     {
-        TRACELOG(LOG_WARNING, "AUDIO: Failed to start playback device");
+        log(LogLevel::warn, "AUDIO: Failed to start playback device");
         ma_device_uninit(&AUDIO.System.device);
         ma_context_uninit(&AUDIO.System.context);
         return;
     }
 
-    TRACELOG(LOG_INFO, "AUDIO: Device initialized successfully");
-    TRACELOG(LOG_INFO, "    > Backend:       miniaudio | %s", ma_get_backend_name(AUDIO.System.context.backend));
-    TRACELOG(LOG_INFO, "    > Format:        %s -> %s", ma_get_format_name(AUDIO.System.device.playback.format), ma_get_format_name(AUDIO.System.device.playback.internalFormat));
-    TRACELOG(LOG_INFO, "    > Channels:      %d -> %d", AUDIO.System.device.playback.channels, AUDIO.System.device.playback.internalChannels);
-    TRACELOG(LOG_INFO, "    > Sample rate:   %d -> %d", AUDIO.System.device.sampleRate, AUDIO.System.device.playback.internalSampleRate);
-    TRACELOG(LOG_INFO, "    > Periods size:  %d", AUDIO.System.device.playback.internalPeriodSizeInFrames*AUDIO.System.device.playback.internalPeriods);
+    log(LogLevel::info, "AUDIO: Device initialized successfully");
+    log(LogLevel::info, "    > Backend:       miniaudio | {}", ma_get_backend_name(AUDIO.System.context.backend));
+    log(LogLevel::info, "    > Format:        {} -> {}", ma_get_format_name(AUDIO.System.device.playback.format), ma_get_format_name(AUDIO.System.device.playback.internalFormat));
+    log(LogLevel::info, "    > Channels:      {} -> {}", AUDIO.System.device.playback.channels, AUDIO.System.device.playback.internalChannels);
+    log(LogLevel::info, "    > Sample rate:   {} -> {}", AUDIO.System.device.sampleRate, AUDIO.System.device.playback.internalSampleRate);
+    log(LogLevel::info, "    > Periods size:  {}", AUDIO.System.device.playback.internalPeriodSizeInFrames*AUDIO.System.device.playback.internalPeriods);
 
     AUDIO.System.isReady = true;
 }
 
 // Close the audio device for all contexts
-void CloseAudioDevice(void)
+void CloseAudioDevice()
 {
     if (AUDIO.System.isReady)
     {
@@ -529,13 +525,13 @@ void CloseAudioDevice(void)
         AUDIO.System.pcmBuffer = nullptr;
         AUDIO.System.pcmBufferSize = 0;
 
-        TRACELOG(LOG_INFO, "AUDIO: Device closed successfully");
+        log(LogLevel::info, "AUDIO: Device closed successfully");
     }
-    else TRACELOG(LOG_WARNING, "AUDIO: Device could not be closed, not currently initialized");
+    else log(LogLevel::warn, "AUDIO: Device could not be closed, not currently initialized");
 }
 
 // Check if device has been initialized successfully
-bool IsAudioDeviceReady(void)
+bool IsAudioDeviceReady()
 {
     return AUDIO.System.isReady;
 }
@@ -547,7 +543,7 @@ void SetMasterVolume(const f32 volume)
 }
 
 // Get master volume (listener)
-f32 GetMasterVolume(void)
+f32 GetMasterVolume()
 {
     auto volume = 0.0f;
     ma_device_get_master_volume(&AUDIO.System.device, &volume);
@@ -573,7 +569,7 @@ AudioBuffer *LoadAudioBuffer(const ma_format format, const ma_uint32 channels, c
 
     if (result != MA_SUCCESS)
     {
-        TRACELOG(LOG_WARNING, "AUDIO: Failed to create data conversion pipeline");
+        log(LogLevel::warn, "AUDIO: Failed to create data conversion pipeline");
         free(audioBuffer);
         return nullptr;
     }
@@ -797,8 +793,8 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const u8 *fileData, const
     auto wave = Wave{ 0 };
 
     // Security checks for input data
-    if ((fileData == nullptr) || (dataSize <= 0)) { TRACELOG(LOG_WARNING, "WAVE: Invalid file data"); return wave; }
-    if (fileTypeView.empty()) { TRACELOG(LOG_WARNING, "WAVE: Missing file extension"); return wave; }
+    if ((fileData == nullptr) || (dataSize <= 0)) { log(LogLevel::warn, "WAVE: Invalid file data"); return wave; }
+    if (fileTypeView.empty()) { log(LogLevel::warn, "WAVE: Missing file extension"); return wave; }
 
     if (false) { }
 #if SUPPORT_FILEFORMAT_WAV
@@ -818,7 +814,7 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const u8 *fileData, const
             // NOTE: Forcing conversion to 16bit sample size on reading
             drwav_read_pcm_frames_s16(&wav, wave.frameCount, static_cast<drwav_int16 *>(wave.data));
         }
-        else TRACELOG(LOG_WARNING, "WAVE: Failed to load WAV data");
+        else log(LogLevel::warn, "WAVE: Failed to load WAV data");
 
         drwav_uninit(&wav);
     }
@@ -836,13 +832,13 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const u8 *fileData, const
             wave.sampleSize = 16;       // By default, ogg data is 16 bit per sample (short)
             wave.channels = info.channels;
             wave.frameCount = stb_vorbis_stream_length_in_samples(oggData);  // NOTE: It returns frames!
-            wave.data = static_cast<short *>(calloc(wave.frameCount*wave.channels, sizeof(short)));
+            wave.data = static_cast<short *>(calloc((wave.frameCount*wave.channels > 0) ? wave.frameCount*wave.channels : 1, sizeof(short)));
 
             // NOTE: Get the number of samples to process (be careful! asking for number of shorts, not bytes!)
             stb_vorbis_get_samples_short_interleaved(oggData, info.channels, static_cast<short *>(wave.data), wave.frameCount*wave.channels);
             stb_vorbis_close(oggData);
         }
-        else TRACELOG(LOG_WARNING, "WAVE: Failed to load OGG data");
+        else log(LogLevel::warn, "WAVE: Failed to load OGG data");
     }
 #endif
 #if SUPPORT_FILEFORMAT_MP3
@@ -861,7 +857,7 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const u8 *fileData, const
             wave.sampleRate = config.sampleRate;
             wave.frameCount = static_cast<u32>(totalFrameCount); // WARNING: Potential loss of data
         }
-        else TRACELOG(LOG_WARNING, "WAVE: Failed to load MP3 data");
+        else log(LogLevel::warn, "WAVE: Failed to load MP3 data");
 
     }
 #endif
@@ -880,7 +876,7 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const u8 *fileData, const
             wave.sampleRate = qoa.samplerate;
             wave.frameCount = qoa.samples;
         }
-        else TRACELOG(LOG_WARNING, "WAVE: Failed to load QOA data");
+        else log(LogLevel::warn, "WAVE: Failed to load QOA data");
 
     }
 #endif
@@ -894,12 +890,12 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const u8 *fileData, const
         wave.sampleSize = 16;
 
         if (wave.data != nullptr) wave.frameCount = static_cast<u32>(totalFrameCount); // WARNING: Potential loss of data
-        else TRACELOG(LOG_WARNING, "WAVE: Failed to load FLAC data");
+        else log(LogLevel::warn, "WAVE: Failed to load FLAC data");
     }
 #endif
-    else TRACELOG(LOG_WARNING, "WAVE: Data format not supported");
+    else log(LogLevel::warn, "WAVE: Data format not supported");
 
-    TRACELOG(LOG_INFO, "WAVE: Data loaded successfully (%i Hz, %i bit, %i channels)", wave.sampleRate, wave.sampleSize, wave.channels);
+    log(LogLevel::info, "WAVE: Data loaded successfully ({} Hz, {} bit, {} channels)", wave.sampleRate, wave.sampleSize, wave.channels);
 
     return wave;
 }
@@ -955,13 +951,13 @@ Sound LoadSoundFromWave(const Wave& wave)
         const ma_uint32 frameCountIn = wave.frameCount;
 
         auto frameCount = static_cast<ma_uint32>(ma_convert_frames(nullptr, 0, AUDIO_DEVICE_FORMAT, AUDIO_DEVICE_CHANNELS, AUDIO.System.device.sampleRate, nullptr, frameCountIn, formatIn, wave.channels, wave.sampleRate));
-        if (frameCount == 0) TRACELOG(LOG_WARNING, "SOUND: Failed to get frame count for format conversion");
+        if (frameCount == 0) log(LogLevel::warn, "SOUND: Failed to get frame count for format conversion");
 
         auto audioBuffer = LoadAudioBuffer(AUDIO_DEVICE_FORMAT, AUDIO_DEVICE_CHANNELS, AUDIO.System.device.sampleRate, frameCount, AUDIO_BUFFER_USAGE_STATIC);
         if (audioBuffer != nullptr)
         {
             frameCount = static_cast<ma_uint32>(ma_convert_frames(audioBuffer->data, frameCount, AUDIO_DEVICE_FORMAT, AUDIO_DEVICE_CHANNELS, AUDIO.System.device.sampleRate, wave.data, frameCountIn, formatIn, wave.channels, wave.sampleRate));
-            if (frameCount == 0) TRACELOG(LOG_WARNING, "SOUND: Failed format conversion");
+            if (frameCount == 0) log(LogLevel::warn, "SOUND: Failed format conversion");
 
             sound.frameCount = frameCount;
             sound.stream.sampleRate = AUDIO.System.device.sampleRate;
@@ -969,7 +965,7 @@ Sound LoadSoundFromWave(const Wave& wave)
             sound.stream.channels = AUDIO_DEVICE_CHANNELS;
             sound.stream.buffer = audioBuffer;
         }
-        else TRACELOG(LOG_WARNING, "SOUND: Failed to create buffer");
+        else log(LogLevel::warn, "SOUND: Failed to create buffer");
     }
 
     return sound;
@@ -1001,7 +997,7 @@ Sound LoadSoundAlias(const Sound& source)
             sound.stream.channels = AUDIO_DEVICE_CHANNELS;
             sound.stream.buffer = audioBuffer;
         }
-        else TRACELOG(LOG_WARNING, "SOUND: Failed to create buffer");
+        else log(LogLevel::warn, "SOUND: Failed to create buffer");
     }
 
     return sound;
@@ -1025,14 +1021,14 @@ bool IsSoundValid(const Sound& sound)
 void UnloadWave(const Wave& wave)
 {
     free(wave.data);
-    //TRACELOG(LOG_INFO, "WAVE: Unloaded wave data from RAM");
+    //log(LogLevel::info, "WAVE: Unloaded wave data from RAM");
 }
 
 // Unload sound
 void UnloadSound(const Sound& sound)
 {
     UnloadAudioBuffer(sound.stream.buffer);
-    //TRACELOG(LOG_INFO, "SOUND: Unloaded sound data from RAM");
+    //log(LogLevel::info, "SOUND: Unloaded sound data from RAM");
 }
 
 void UnloadSoundAlias(const Sound& alias)
@@ -1105,7 +1101,7 @@ bool ExportWave(const Wave& wave, std::string_view fileNameView)
             const i32 bytesWritten = qoa_write(fileName, static_cast<const short *>(wave.data), &qoa);
             if (bytesWritten > 0) result = true;
         }
-        else TRACELOG(LOG_WARNING, "AUDIO: Wave data must be 16 bit per sample for QOA format export");
+        else log(LogLevel::warn, "AUDIO: Wave data must be 16 bit per sample for QOA format export");
     }
 #endif
     else if (IsFileExtension(fileName, ".raw"))
@@ -1115,8 +1111,8 @@ bool ExportWave(const Wave& wave, std::string_view fileNameView)
         result = SaveFileData(fileName, wave.data, wave.frameCount*wave.channels*wave.sampleSize/8);
     }
 
-    if (result) TRACELOG(LOG_INFO, "FILEIO: [%s] Wave data exported successfully", fileName);
-    else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export wave data", fileName);
+    if (result) log(LogLevel::info, "FILEIO: [{}] Wave data exported successfully", fileName);
+    else log(LogLevel::warn, "FILEIO: [{}] Failed to export wave data", fileName);
 
     return result;
 }
@@ -1185,8 +1181,8 @@ bool ExportWaveAsCode(const Wave& wave, std::string_view fileNameView)
 
     free(txtData);
 
-    if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Wave as code exported successfully", fileName);
-    else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export wave as code", fileName);
+    if (result != 0) log(LogLevel::info, "FILEIO: [{}] Wave as code exported successfully", fileName);
+    else log(LogLevel::warn, "FILEIO: [{}] Failed to export wave as code", fileName);
 
     return result;
 }
@@ -1254,7 +1250,7 @@ void WaveFormat(Wave *wave, i32 sampleRate, i32 sampleSize, i32 channels)
 
     if (frameCount == 0)
     {
-        TRACELOG(LOG_WARNING, "WAVE: Failed to get frame count for format conversion");
+        log(LogLevel::warn, "WAVE: Failed to get frame count for format conversion");
         return;
     }
 
@@ -1265,7 +1261,7 @@ void WaveFormat(Wave *wave, i32 sampleRate, i32 sampleSize, i32 channels)
     if (frameCount == 0)
     {
         free(data);
-        TRACELOG(LOG_WARNING, "WAVE: Failed format conversion");
+        log(LogLevel::warn, "WAVE: Failed format conversion");
         return;
     }
 
@@ -1309,7 +1305,7 @@ void WaveCrop(Wave *wave, const i32 initFrame, const i32 finalFrame)
         wave->data = data;
         wave->frameCount = static_cast<u32>(frameCount);
     }
-    else TRACELOG(LOG_WARNING, "WAVE: Crop range out of bounds");
+    else log(LogLevel::warn, "WAVE: Crop range out of bounds");
 }
 
 // Load samples data from wave as a floats array
@@ -1516,20 +1512,20 @@ Music LoadMusicStream(std::string_view fileNameView)
         }
     }
 #endif
-    else TRACELOG(LOG_WARNING, "STREAM: [%s] File format not supported", fileName);
+    else log(LogLevel::warn, "STREAM: [{}] File format not supported", fileName);
 
     if (!musicLoaded)
     {
-        TRACELOG(LOG_WARNING, "FILEIO: [%s] Music file could not be opened", fileName);
+        log(LogLevel::warn, "FILEIO: [{}] Music file could not be opened", fileName);
     }
     else
     {
         // Show some music stream info
-        TRACELOG(LOG_INFO, "FILEIO: [%s] Music file loaded successfully", fileName);
-        TRACELOG(LOG_INFO, "    > Sample rate:   %i Hz", music.stream.sampleRate);
-        TRACELOG(LOG_INFO, "    > Sample size:   %i bits", music.stream.sampleSize);
-        TRACELOG(LOG_INFO, "    > Channels:      %i (%s)", music.stream.channels, (music.stream.channels == 1)? "Mono" : (music.stream.channels == 2)? "Stereo" : "Multi");
-        TRACELOG(LOG_INFO, "    > Total frames:  %i", music.frameCount);
+        log(LogLevel::info, "FILEIO: [{}] Music file loaded successfully", fileName);
+        log(LogLevel::info, "    > Sample rate:   {} Hz", music.stream.sampleRate);
+        log(LogLevel::info, "    > Sample size:   {} bits", music.stream.sampleSize);
+        log(LogLevel::info, "    > Channels:      {} ({})", music.stream.channels, (music.stream.channels == 1)? "Mono" : (music.stream.channels == 2)? "Stereo" : "Multi");
+        log(LogLevel::info, "    > Total frames:  {}", music.frameCount);
     }
 
     return music;
@@ -1546,8 +1542,8 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const u8 *data, c
     auto musicLoaded = false;
 
     // Security checks for input data
-    if ((data == nullptr) || (dataSize <= 0)) { TRACELOG(LOG_WARNING, "MUSIC: Invalid file data"); return music; }
-    if (fileTypeView.empty()) { TRACELOG(LOG_WARNING, "MUSIC: Missing file extension"); return music; }
+    if ((data == nullptr) || (dataSize <= 0)) { log(LogLevel::warn, "MUSIC: Invalid file data"); return music; }
+    if (fileTypeView.empty()) { log(LogLevel::warn, "MUSIC: Missing file extension"); return music; }
 
     if (false) { }
 #if SUPPORT_FILEFORMAT_WAV
@@ -1736,20 +1732,20 @@ Music LoadMusicStreamFromMemory(std::string_view fileTypeView, const u8 *data, c
         }
     }
 #endif
-    else TRACELOG(LOG_WARNING, "STREAM: Data format not supported");
+    else log(LogLevel::warn, "STREAM: Data format not supported");
 
     if (!musicLoaded)
     {
-        TRACELOG(LOG_WARNING, "FILEIO: Music data could not be loaded");
+        log(LogLevel::warn, "FILEIO: Music data could not be loaded");
     }
     else
     {
         // Show some music stream info
-        TRACELOG(LOG_INFO, "FILEIO: Music data loaded successfully");
-        TRACELOG(LOG_INFO, "    > Sample rate:   %i Hz", music.stream.sampleRate);
-        TRACELOG(LOG_INFO, "    > Sample size:   %i bits", music.stream.sampleSize);
-        TRACELOG(LOG_INFO, "    > Channels:      %i (%s)", music.stream.channels, (music.stream.channels == 1)? "Mono" : (music.stream.channels == 2)? "Stereo" : "Multi");
-        TRACELOG(LOG_INFO, "    > Total frames:  %i", music.frameCount);
+        log(LogLevel::info, "FILEIO: Music data loaded successfully");
+        log(LogLevel::info, "    > Sample rate:   {} Hz", music.stream.sampleRate);
+        log(LogLevel::info, "    > Sample size:   {} bits", music.stream.sampleSize);
+        log(LogLevel::info, "    > Channels:      {} ({})", music.stream.channels, (music.stream.channels == 1)? "Mono" : (music.stream.channels == 2)? "Stereo" : "Multi");
+        log(LogLevel::info, "    > Total frames:  {}", music.frameCount);
     }
 
     return music;
@@ -2140,9 +2136,9 @@ AudioStream LoadAudioStream(u32 sampleRate, u32 sampleSize, u32 channels)
     if (stream.buffer != nullptr)
     {
         stream.buffer->looping = true;    // Always loop for streaming buffers
-        TRACELOG(LOG_INFO, "STREAM: Initialized successfully (%i Hz, %i bit, %s)", stream.sampleRate, stream.sampleSize, (stream.channels == 1)? "Mono" : "Stereo");
+        log(LogLevel::info, "STREAM: Initialized successfully ({} Hz, {} bit, {})", stream.sampleRate, stream.sampleSize, (stream.channels == 1)? "Mono" : "Stereo");
     }
-    else TRACELOG(LOG_WARNING, "STREAM: Failed to load audio buffer, stream could not be created");
+    else log(LogLevel::warn, "STREAM: Failed to load audio buffer, stream could not be created");
 
     return stream;
 }
@@ -2161,7 +2157,7 @@ void UnloadAudioStream(const AudioStream& stream)
 {
     UnloadAudioBuffer(stream.buffer);
 
-    TRACELOG(LOG_INFO, "STREAM: Unloaded audio stream data from RAM");
+    log(LogLevel::info, "STREAM: Unloaded audio stream data from RAM");
 }
 
 // Update audio stream buffers with data
@@ -2362,7 +2358,7 @@ void DetachAudioMixedProcessor(AudioCallback process)
 // Log callback function
 static void OnLog(void *pUserData, const ma_uint32 level, const char *pMessage)
 {
-    TRACELOG(LOG_WARNING, "miniaudio: %s", pMessage);   // All log messages from miniaudio are errors
+    log(LogLevel::warn, "miniaudio: {}", pMessage);   // All log messages from miniaudio are errors
 }
 
 // Reads audio data from an AudioBuffer object in internal format
@@ -2753,9 +2749,9 @@ static void UpdateAudioStreamInLockedState(const AudioStream stream, const void 
 
                 stream.buffer->isSubBufferProcessed[subBufferToUpdate] = false;
             }
-            else TRACELOG(LOG_WARNING, "STREAM: Attempting to write too many frames to buffer");
+            else log(LogLevel::warn, "STREAM: Attempting to write too many frames to buffer");
         }
-        else TRACELOG(LOG_WARNING, "STREAM: Buffer not available for updating");
+        else log(LogLevel::warn, "STREAM: Buffer not available for updating");
     }
 }
 
@@ -2873,16 +2869,16 @@ u8 * LoadFileData(std::string_view fileNameView, i32 *dataSize)
                 auto count = static_cast<u32>(fread(data, sizeof(u8), size, file));
                 *dataSize = count;
 
-                if (count != size) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially loaded", fileName);
-                else TRACELOG(LOG_INFO, "FILEIO: [%s] File loaded successfully", fileName);
+                if (count != size) log(LogLevel::warn, "FILEIO: [{}] File partially loaded", fileName);
+                else log(LogLevel::info, "FILEIO: [{}] File loaded successfully", fileName);
             }
-            else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to read file", fileName);
+            else log(LogLevel::warn, "FILEIO: [{}] Failed to read file", fileName);
 
             fclose(file);
         }
-        else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open file", fileName);
+        else log(LogLevel::warn, "FILEIO: [{}] Failed to open file", fileName);
     }
-    else TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
+    else log(LogLevel::warn, "FILEIO: File name provided is not valid");
 
     return data;
 }
@@ -2906,21 +2902,21 @@ static bool SaveFileData(const char *fileName, void *data, const i32 dataSize)
         {
             auto count = static_cast<u32>(fwrite(data, sizeof(u8), dataSize, file));
 
-            if (count == 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write file", fileName);
-            else if (count != dataSize) TRACELOG(LOG_WARNING, "FILEIO: [%s] File partially written", fileName);
-            else TRACELOG(LOG_INFO, "FILEIO: [%s] File saved successfully", fileName);
+            if (count == 0) log(LogLevel::warn, "FILEIO: [{}] Failed to write file", fileName);
+            else if (count != dataSize) log(LogLevel::warn, "FILEIO: [{}] File partially written", fileName);
+            else log(LogLevel::info, "FILEIO: [{}] File saved successfully", fileName);
 
             fclose(file);
         }
         else
         {
-            TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open file", fileName);
+            log(LogLevel::warn, "FILEIO: [{}] Failed to open file", fileName);
             result = false;
         }
     }
     else
     {
-        TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
+        log(LogLevel::warn, "FILEIO: File name provided is not valid");
         result = false;
     }
 
@@ -2941,20 +2937,20 @@ static bool SaveFileText(const char *fileName, char *text)
             auto count = 0;
             if (text != nullptr) count = fprintf(file, "%s", text);
 
-            if (count == 0) TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to write text file", fileName);
-            else TRACELOG(LOG_INFO, "FILEIO: [%s] Text file saved successfully", fileName);
+            if (count == 0) log(LogLevel::warn, "FILEIO: [{}] Failed to write text file", fileName);
+            else log(LogLevel::info, "FILEIO: [{}] Text file saved successfully", fileName);
 
             fclose(file);
         }
         else
         {
-            TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to open text file", fileName);
+            log(LogLevel::warn, "FILEIO: [{}] Failed to open text file", fileName);
             result = false;
         }
     }
     else
     {
-        TRACELOG(LOG_WARNING, "FILEIO: File name provided is not valid");
+        log(LogLevel::warn, "FILEIO: File name provided is not valid");
         result = false;
     }
 

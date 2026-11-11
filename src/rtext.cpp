@@ -53,6 +53,8 @@
 
 #include "config.h"         // Defines module configuration flags
 
+#include "logging.h"         // Levelbasiertes Logging (log(), logMessage())
+
 #if SUPPORT_MODULE_RTEXT
 
 #include "rlgl.h"           // OpenGL abstraction layer to OpenGL 1.1, 2.1, 3.3+ or ES2 -> Only DrawTextPro()
@@ -145,14 +147,14 @@ static Font LoadBMFont(const char *fileName);   // Load a BMFont file (AngelCode
 static GlyphInfo *LoadFontDataBDF(const u8 *fileData, const i32 dataSize, const i32 *codepoints, i32 codepointCount, const i32 *outFontSize);
 #endif
 
-extern void LoadFontDefault(void);
-extern void UnloadFontDefault(void);
+extern void LoadFontDefault();
+extern void UnloadFontDefault();
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Load raylib default font
-extern void LoadFontDefault(void)
+extern void LoadFontDefault()
 {
     #define BIT_CHECK(a,b) ((a) & (1u << (b)))
 
@@ -312,11 +314,11 @@ extern void LoadFontDefault(void)
 
     defaultFont.baseSize = static_cast<i32>(defaultFont.recs[0].height);
 
-    TRACELOG(LOG_INFO, "FONT: Default font loaded successfully (%i glyphs)", defaultFont.glyphCount);
+    log(LogLevel::info, "FONT: Default font loaded successfully ({} glyphs)", defaultFont.glyphCount);
 }
 
 // Unload raylib default font
-extern void UnloadFontDefault(void)
+extern void UnloadFontDefault()
 {
     for (i32 i = 0; i < defaultFont.glyphCount; i++) UnloadImage(defaultFont.glyphs[i].image);
     UnloadTexture(defaultFont.texture);
@@ -374,11 +376,11 @@ Font LoadFont(std::string_view fileNameView)
         UnloadImage(image);
     }
 
-    if (font.texture.id == 0) TRACELOG(LOG_WARNING, "FONT: [%s] Failed to load font texture -> Using default font", fileName);
+    if (font.texture.id == 0) log(LogLevel::warn, "FONT: [{}] Failed to load font texture -> Using default font", fileName);
     else
     {
         SetTextureFilter(font.texture, TEXTURE_FILTER_POINT); // By default, set point filter (the best performance)
-        TRACELOG(LOG_INFO, "FONT: Data loaded successfully (%i pixel size | %i glyphs)", font.baseSize, font.glyphCount);
+        log(LogLevel::info, "FONT: Data loaded successfully ({} pixel size | {} glyphs)", font.baseSize, font.glyphCount);
     }
 
     return font;
@@ -514,8 +516,9 @@ Font LoadFontFromImage(Image image, const Color key, const i32 firstChar)
 
     // Populate tempCharValues and tempCharsRecs with glyphs data
     // Move temp data to sized charValues and charRecs arrays
-    font.glyphs = static_cast<GlyphInfo *>(calloc(font.glyphCount, sizeof(GlyphInfo)));
-    font.recs = static_cast<Rectangle *>(calloc(font.glyphCount, sizeof(Rectangle)));
+    // NOTE: calloc(0) is implementation-defined (may return NULL), so allocate at least one glyph
+    font.glyphs = static_cast<GlyphInfo *>(calloc((font.glyphCount > 0) ? font.glyphCount : 1, sizeof(GlyphInfo)));
+    font.recs = static_cast<Rectangle *>(calloc((font.glyphCount > 0) ? font.glyphCount : 1, sizeof(Rectangle)));
 
     for (i32 i = 0; i < font.glyphCount; i++)
     {
@@ -591,15 +594,15 @@ Font LoadFontFromMemory(std::string_view fileTypeView, const u8 *fileData, const
 
         UnloadImage(atlas);
 
-        TRACELOG(LOG_INFO, "FONT: Data loaded successfully (%i pixel size | %i glyphs)", font.baseSize, font.glyphCount);
+        log(LogLevel::info, "FONT: Data loaded successfully ({} pixel size | {} glyphs)", font.baseSize, font.glyphCount);
     }
     else
     {
-        TRACELOG(LOG_WARNING, "FONT: Font is not supported by LoadFontEx/LoadFontFromMemory or no glyphs found, reverted to default font");
+        log(LogLevel::warn, "FONT: Font is not supported by LoadFontEx/LoadFontFromMemory or no glyphs found, reverted to default font");
         font = GetFontDefault();
     }
 #else
-    TRACELOG(LOG_WARNING, "FONT: Font is not supported by LoadFontEx/LoadFontFromMemory or no glyphs found, reverted to default font");
+    log(LogLevel::warn, "FONT: Font is not supported by LoadFontEx/LoadFontFromMemory or no glyphs found, reverted to default font");
     font = GetFontDefault();
 #endif
 
@@ -731,7 +734,7 @@ GlyphInfo *LoadFontData(const u8 *fileData, const i32 dataSize, const i32 fontSi
                         glyphs[k].advanceX = static_cast<i32>(static_cast<f32>(glyphs[k].advanceX)*scaleFactor);
 
                         // WARNING: If requested SDF font, sdf-glyph height is definitely bigger than fontSize due to FONT_SDF_CHAR_PADDING
-                        if ((type != FONT_SDF) && (cpHeight > fontSize)) TRACELOG(LOG_WARNING, "FONT: [0x%04x] Glyph height is bigger than requested font size: %i > %i", cp, cpHeight, static_cast<i32>(fontSize));
+                        if ((type != FONT_SDF) && (cpHeight > fontSize)) log(LogLevel::warn, "FONT: [0x{:04x}] Glyph height is bigger than requested font size: {} > {}", cp, cpHeight, static_cast<i32>(fontSize));
 
                         // Load glyph image
                         glyphs[k].image.width = cpWidth;
@@ -741,7 +744,7 @@ GlyphInfo *LoadFontData(const u8 *fileData, const i32 dataSize, const i32 fontSi
 
                         glyphs[k].offsetY += static_cast<i32>(static_cast<f32>(ascent)*scaleFactor);
                     }
-                    //else TRACELOG(LOG_WARNING, "FONT: Glyph [0x%08x] has no image data available", cp); // Only reported for 0x20 and 0x3000
+                    //else log(LogLevel::warn, "FONT: Glyph [0x{:08x}] has no image data available", cp); // Only reported for 0x20 and 0x3000
 
                     // Create an empty image for Unicode space characters, useful for sprite font generation
                     if ((cp == 0x20) ||   // ASCII space
@@ -801,9 +804,9 @@ GlyphInfo *LoadFontData(const u8 *fileData, const i32 dataSize, const i32 fontSi
                 }
             }
 
-            if (glyphCounter < codepointCount) TRACELOG(LOG_WARNING, "FONT: Requested codepoints glyphs found: [%i/%i]", k, codepointCount);
+            if (glyphCounter < codepointCount) log(LogLevel::warn, "FONT: Requested codepoints glyphs found: [{}/{}]", k, codepointCount);
         }
-        else TRACELOG(LOG_WARNING, "FONT: Failed to process TTF font data");
+        else log(LogLevel::warn, "FONT: Failed to process TTF font data");
 
         if (genFontChars) free(requiredCodepoints);
     }
@@ -822,7 +825,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, i32 glyp
 
     if (glyphs == nullptr)
     {
-        TRACELOG(LOG_WARNING, "FONT: Provided glyphs info not valid, returning empty image atlas");
+        log(LogLevel::warn, "FONT: Provided glyphs info not valid, returning empty image atlas");
         return atlas;
     }
 
@@ -892,7 +895,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, i32 glyp
 
                 if (offsetY > (atlas.height - fontSize - padding))
                 {
-                    TRACELOG(LOG_WARNING, "FONT: Updating atlas size to fit all characters");
+                    log(LogLevel::warn, "FONT: Updating atlas size to fit all characters");
 
                     // Update atlas size to fit all characters
                     const i32 updatedAtlasHeight = atlas.height*2;
@@ -980,7 +983,7 @@ Image GenImageFontAtlas(const GlyphInfo *glyphs, Rectangle **glyphRecs, i32 glyp
                     }
                 }
             }
-            else TRACELOG(LOG_WARNING, "FONT: Failed to package glyph (0x%02x)", glyphs[i].value);
+            else log(LogLevel::warn, "FONT: Failed to package glyph (0x{:02x})", glyphs[i].value);
         }
 
         free(rects);
@@ -1042,7 +1045,7 @@ void UnloadFont(Font font)
         UnloadTexture(font.texture);
         free(font.recs);
 
-        TRACELOG(LOG_DEBUG, "FONT: Unloaded font data from RAM and VRAM");
+        log(LogLevel::debug, "FONT: Unloaded font data from RAM and VRAM");
     }
 }
 
@@ -1065,7 +1068,7 @@ bool ExportFontAsCode(const Font font, std::string_view fileNameView)
     // Get font atlas image and size, required to estimate code file size
     // NOTE: This mechanism is highly coupled to raylib
     const auto image = LoadImageFromTexture(font.texture);
-    if (image.format != PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA) TRACELOG(LOG_WARNING, "Font export as code: Font image format is not GRAY+ALPHA!");
+    if (image.format != PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA) log(LogLevel::warn, "Font export as code: Font image format is not GRAY+ALPHA!");
     const auto imageDataSize = GetPixelDataSize(image.width, image.height, image.format);
 
     // Image data is usually GRAYSCALE + ALPHA and can be reduced to GRAYSCALE
@@ -1198,8 +1201,8 @@ bool ExportFontAsCode(const Font font, std::string_view fileNameView)
 
     free(txtData);
 
-    if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Font as code exported successfully", fileName);
-    else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export font as code", fileName);
+    if (result != 0) log(LogLevel::info, "FILEIO: [{}] Font as code exported successfully", fileName);
+    else log(LogLevel::warn, "FILEIO: [{}] Failed to export font as code", fileName);
 
     return result;
 }
@@ -1862,7 +1865,7 @@ std::string TextReplace(std::string_view textView, std::string_view searchView, 
             // NOTE: Text pointer internal copy has been updated along the process
             memcpy(tempPtr, text, TextLength(text));
         }
-        else TRACELOG(LOG_WARNING, "Text with replacement is longer than internal buffer");
+        else log(LogLevel::warn, "Text with replacement is longer than internal buffer");
     }
 
     return buffer;
@@ -1913,7 +1916,7 @@ std::string TextReplaceBetween(std::string_view textView, std::string_view begin
                     strncpy(buffer + beginIndex + beginLen, replacement, replaceLen);                          // Copy replacement (if provided)
                     strncpy(buffer + beginIndex + beginLen + replaceLen, text + endIndex, textLen - endIndex); // Copy end text part
                 }
-                else TRACELOG(LOG_WARNING, "TEXT: Text with replaced string is longer than internal buffer (MAX_TEXT_BUFFER_LENGTH)");
+                else log(LogLevel::warn, "TEXT: Text with replaced string is longer than internal buffer (MAX_TEXT_BUFFER_LENGTH)");
             }
         }
     }
@@ -1953,7 +1956,7 @@ std::string TextInsert(std::string_view textView, std::string_view insertView, i
 
             buffer[textLen + insertLen] = '\0'; // Add EOL
         }
-        else TRACELOG(LOG_WARNING, "Text with inserted string is longer than internal buffer, use TextInserExt()");
+        else log(LogLevel::warn, "Text with inserted string is longer than internal buffer, use TextInserExt()");
     }
 
     return buffer;
@@ -2225,7 +2228,7 @@ i32 * LoadCodepoints(std::string_view textView, i32 *count)
         const i32 textLength = TextLength(text);
 
         // Allocate a big enough buffer to store as many codepoints as text bytes
-        codepoints = static_cast<i32 *>(calloc(textLength, sizeof(i32)));
+        codepoints = static_cast<i32 *>(calloc((textLength > 0) ? textLength : 1, sizeof(i32)));
 
         auto codepointSize = 0;
         for (i32 i = 0; i < textLength; codepointCount++)
@@ -2235,7 +2238,7 @@ i32 * LoadCodepoints(std::string_view textView, i32 *count)
         }
 
         // Create second buffer and copy data manually to it
-        auto temp = static_cast<i32 *>(calloc(codepointCount, sizeof(i32)));
+        auto temp = static_cast<i32 *>(calloc((codepointCount > 0) ? codepointCount : 1, sizeof(i32)));
         for (i32 i = 0; i < codepointCount; i++) temp[i] = codepoints[i];
         free(codepoints);
         codepoints = temp;
@@ -2552,7 +2555,7 @@ static Font LoadBMFont(const char *fileName)
 
     if (pageCount > MAX_FONT_IMAGE_PAGES)
     {
-        TRACELOG(LOG_WARNING, "FONT: [%s] Font defines more pages than supported: %i/%i", fileName, pageCount, MAX_FONT_IMAGE_PAGES);
+        log(LogLevel::warn, "FONT: [{}] Font defines more pages than supported: {}/{}", fileName, pageCount, MAX_FONT_IMAGE_PAGES);
         pageCount = MAX_FONT_IMAGE_PAGES;
     }
 
@@ -2665,7 +2668,7 @@ static Font LoadBMFont(const char *fileName)
         else
         {
             font.glyphs[i].image = GenImageColor(static_cast<i32>(font.recs[i].width), static_cast<i32>(font.recs[i].height), BLACK);
-            TRACELOG(LOG_WARNING, "FONT: [%s] Some characters data not correctly provided", fileName);
+            log(LogLevel::warn, "FONT: [{}] Some characters data not correctly provided", fileName);
         }
     }
 
@@ -2675,9 +2678,9 @@ static Font LoadBMFont(const char *fileName)
     {
         UnloadFont(font);
         font = GetFontDefault();
-        TRACELOG(LOG_WARNING, "FONT: [%s] Failed to load texture, reverted to default font", fileName);
+        log(LogLevel::warn, "FONT: [{}] Failed to load texture, reverted to default font", fileName);
     }
-    else TRACELOG(LOG_INFO, "FONT: [%s] Font loaded successfully (%i glyphs)", fileName, font.glyphCount);
+    else log(LogLevel::info, "FONT: [{}] Font loaded successfully ({} glyphs)", fileName, font.glyphCount);
 
     return font;
 }

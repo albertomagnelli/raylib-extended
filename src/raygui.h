@@ -798,18 +798,18 @@ extern "C" {            // Prevents name mangling of functions
 #endif
 
 // Global gui state control functions
-RAYGUIAPI void GuiEnable(void);                                 // Enable gui controls (global state)
-RAYGUIAPI void GuiDisable(void);                                // Disable gui controls (global state)
-RAYGUIAPI void GuiLock(void);                                   // Lock gui controls (global state)
-RAYGUIAPI void GuiUnlock(void);                                 // Unlock gui controls (global state)
-RAYGUIAPI bool GuiIsLocked(void);                               // Check if gui is locked (global state)
+RAYGUIAPI void GuiEnable();                                 // Enable gui controls (global state)
+RAYGUIAPI void GuiDisable();                                // Disable gui controls (global state)
+RAYGUIAPI void GuiLock();                                   // Lock gui controls (global state)
+RAYGUIAPI void GuiUnlock();                                 // Unlock gui controls (global state)
+RAYGUIAPI bool GuiIsLocked();                               // Check if gui is locked (global state)
 RAYGUIAPI void GuiSetAlpha(f32 alpha);                        // Set gui controls alpha (global state), alpha goes from 0.0f to 1.0f
 RAYGUIAPI void GuiSetState(const i32 state);                          // Set gui state (global state)
-RAYGUIAPI i32 GuiGetState(void);                                // Get gui state (global state)
+RAYGUIAPI i32 GuiGetState();                                // Get gui state (global state)
 
 // Font set/get functions
 RAYGUIAPI void GuiSetFont(const Font font);                           // Set gui custom font (global state)
-RAYGUIAPI Font GuiGetFont(void);                                // Get gui custom font (global state)
+RAYGUIAPI Font GuiGetFont();                                // Get gui custom font (global state)
 
 // Style set/get functions
 RAYGUIAPI void GuiSetStyle(const i32 control, const i32 property, const i32 value); // Set one style property
@@ -818,18 +818,18 @@ RAYGUIAPI i32 GuiGetStyle(const i32 control, const i32 property);           // G
 // Styles loading functions
 RAYGUIAPI void GuiLoadStyle(const char *fileName);              // Load style file over global style variable (.rgs)
 RAYGUIAPI void GuiLoadStyleFromMemory(const u8 *fileData, const i32 dataSize); // Load style from memory (binary only)
-RAYGUIAPI void GuiLoadStyleDefault(void);                       // Load style default over global style
+RAYGUIAPI void GuiLoadStyleDefault();                       // Load style default over global style
 
 // Tooltips management functions
-RAYGUIAPI void GuiEnableTooltip(void);                          // Enable gui tooltips (global state)
-RAYGUIAPI void GuiDisableTooltip(void);                         // Disable gui tooltips (global state)
+RAYGUIAPI void GuiEnableTooltip();                          // Enable gui tooltips (global state)
+RAYGUIAPI void GuiDisableTooltip();                         // Disable gui tooltips (global state)
 RAYGUIAPI void GuiSetTooltip(const char *tooltip);              // Set tooltip string
 
 // Icons functionality
 RAYGUIAPI const char *GuiIconText(const i32 iconId, const char *text); // Get text with icon id prepended (if supported)
 #if !defined(RAYGUI_NO_ICONS)
 RAYGUIAPI void GuiSetIconScale(const i32 scale);                      // Set default icon drawing size
-RAYGUIAPI u32 *GuiGetIcons(void);                      // Get raygui icons data pointer
+RAYGUIAPI u32 *GuiGetIcons();                      // Get raygui icons data pointer
 RAYGUIAPI char **GuiLoadIcons(const char *fileName, const bool loadIconsName); // Load raygui icons file (.rgi) into internal icons data
 RAYGUIAPI char **GuiLoadIconsFromMemory(const u8 *fileData, const i32 dataSize, const bool loadIconsName); // Load raygui icons file (.rgi) from memory into internal icons data
 RAYGUIAPI void GuiDrawIcon(const i32 iconId, const i32 posX, const i32 posY, const i32 pixelSize, const Color color); // Draw icon using pixel size at specified position
@@ -1565,15 +1565,15 @@ static auto guiStyleLoaded = false;         // Style loaded flag for lazy style 
 
 // Input required functions
 //-------------------------------------------------------------------------------
-static Vector2 GetMousePosition(void);
-static f32 GetMouseWheelMove(void);
+static Vector2 GetMousePosition();
+static f32 GetMouseWheelMove();
 static bool IsMouseButtonDown(const i32 button);
 static bool IsMouseButtonPressed(const i32 button);
 static bool IsMouseButtonReleased(const i32 button);
 
 static bool IsKeyDown(const i32 key);
 static bool IsKeyPressed(const i32 key);
-static i32 GetCharPressed(void); // -- GuiTextBox(), GuiValueBox()
+static i32 GetCharPressed(); // -- GuiTextBox(), GuiValueBox()
 //-------------------------------------------------------------------------------
 
 // Drawing required functions
@@ -1584,7 +1584,7 @@ static void DrawRectangleGradientEx(const Rectangle rec, const Color col1, const
 
 // Text required functions
 //-------------------------------------------------------------------------------
-static Font GetFontDefault(void);                            // -- GuiLoadStyleDefault()
+static Font GetFontDefault();                            // -- GuiLoadStyleDefault()
 static Font LoadFontEx(const char *fileName, const i32 fontSize, i32 *codepoints, const i32 codepointCount); // -- GuiLoadStyle(), load font
 
 static Texture2D LoadTextureFromImage(const Image image);          // -- GuiLoadStyle(), required to load texture from embedded font atlas image
@@ -1645,20 +1645,20 @@ static Color GuiFade(const Color color, f32 alpha); // Fade color by an alpha fa
 //----------------------------------------------------------------------------------
 // Enable gui global state
 // NOTE: Checking for STATE_DISABLED to avoid messing custom global state setups
-void GuiEnable(void) { if (guiState == STATE_DISABLED) guiState = STATE_NORMAL; }
+void GuiEnable() { if (guiState == STATE_DISABLED) guiState = STATE_NORMAL; }
 
 // Disable gui global state
 // NOTE: Checking for STATE_NORMAL to avoid messing custom global state setups
-void GuiDisable(void) { if (guiState == STATE_NORMAL) guiState = STATE_DISABLED; }
+void GuiDisable() { if (guiState == STATE_NORMAL) guiState = STATE_DISABLED; }
 
 // Lock gui global state
-void GuiLock(void) { guiLocked = true; }
+void GuiLock() { guiLocked = true; }
 
 // Unlock gui global state
-void GuiUnlock(void) { guiLocked = false; }
+void GuiUnlock() { guiLocked = false; }
 
 // Check if gui is locked (global state)
-bool GuiIsLocked(void) { return guiLocked; }
+bool GuiIsLocked() { return guiLocked; }
 
 // Set gui controls alpha global state
 void GuiSetAlpha(f32 alpha)
@@ -1673,7 +1673,7 @@ void GuiSetAlpha(f32 alpha)
 void GuiSetState(const i32 state) { guiState = (GuiState)state; }
 
 // Get gui state (global state)
-i32 GuiGetState(void) { return guiState; }
+i32 GuiGetState() { return guiState; }
 
 // Set custom gui font
 // NOTE: Font loading/unloading is external to raygui
@@ -1690,7 +1690,7 @@ void GuiSetFont(const Font font)
 }
 
 // Get custom gui font
-Font GuiGetFont(void)
+Font GuiGetFont()
 {
     return guiFont;
 }
@@ -4620,10 +4620,10 @@ i32 GuiGrid(const Rectangle bounds, const char *text, const f32 spacing, const i
 // NOTE: Tooltips requires some global variables: tooltipPtr
 //----------------------------------------------------------------------------------
 // Enable gui tooltips (global state)
-void GuiEnableTooltip(void) { guiTooltip = true; }
+void GuiEnableTooltip() { guiTooltip = true; }
 
 // Disable gui tooltips (global state)
-void GuiDisableTooltip(void) { guiTooltip = false; }
+void GuiDisableTooltip() { guiTooltip = false; }
 
 // Set tooltip string
 void GuiSetTooltip(const char *tooltip) { guiTooltipPtr = tooltip; }
@@ -5074,7 +5074,7 @@ void GuiLoadStyleFromMemory(const u8 *fileData, const i32 dataSize)
 }
 
 // Load style default over global style
-void GuiLoadStyleDefault(void)
+void GuiLoadStyleDefault()
 {
     // Setting this flag first to avoid cyclic function calls
     // when calling GuiSetStyle() and GuiGetStyle()
@@ -5215,7 +5215,7 @@ const char *GuiIconText(const i32 iconId, const char *text)
 
 #if !defined(RAYGUI_NO_ICONS)
 // Get full icons data pointer
-u32 *GuiGetIcons(void) { return guiIconsPtr; }
+u32 *GuiGetIcons() { return guiIconsPtr; }
 
 // Load raygui icons file (.rgi)
 // WARNING: guiIconsName[]][] memory should be manually freed!

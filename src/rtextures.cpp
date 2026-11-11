@@ -62,6 +62,8 @@
 
 #include "config.h"             // Defines module configuration flags
 
+#include "logging.h"         // Levelbasiertes Logging (log(), logMessage())
+
 #if SUPPORT_MODULE_RTEXTURES
 
 #include "rlgl.h"               // OpenGL abstraction layer to multiple versions
@@ -165,7 +167,8 @@
 
     #define RLTEXGPU_MALLOC malloc
     #define RLTEXGPU_FREE free
-    #define RLTEXGPU_LOG(...) TRACELOG(LOG_WARNING, "IMAGE: " __VA_ARGS__)
+    // NOTE: printf-style varargs macro required by rltexgpu.h, TraceLog() forwards to the logging system
+    #define RLTEXGPU_LOG(...) TraceLog(LOG_WARNING, "IMAGE: " __VA_ARGS__)
     #define RLTEXGPU_SHOW_LOG_INFO
     #define RLTEXGPU_IMPLEMENTATION
     #include "external/rltexgpu.h"         // Required for: rl_load_xxx_from_memory()
@@ -257,7 +260,7 @@
 //----------------------------------------------------------------------------------
 // Other Modules Functions Declaration (required by text)
 //----------------------------------------------------------------------------------
-extern void LoadFontDefault(void);          // [Module: text] Loads default font, required by ImageDrawText()
+extern void LoadFontDefault();          // [Module: text] Loads default font, required by ImageDrawText()
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
@@ -438,8 +441,8 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, con
     auto image = Image{ nullptr };
 
     // Security checks for input data
-    if ((fileData == nullptr) || (dataSize == 0)) { TRACELOG(LOG_WARNING, "IMAGE: Invalid file data"); return image; }
-    if (fileTypeView.empty()) { TRACELOG(LOG_WARNING, "IMAGE: Missing file extension"); return image; }
+    if ((fileData == nullptr) || (dataSize == 0)) { log(LogLevel::warn, "IMAGE: Invalid file data"); return image; }
+    if (fileTypeView.empty()) { log(LogLevel::warn, "IMAGE: Missing file extension"); return image; }
 
     if ((false)
 #if SUPPORT_FILEFORMAT_PNG
@@ -506,7 +509,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, con
             else if (comp == 4) image.format = PIXELFORMAT_UNCOMPRESSED_R32G32B32A32;
             else
             {
-                TRACELOG(LOG_WARNING, "IMAGE: HDR file format not supported");
+                log(LogLevel::warn, "IMAGE: HDR file format not supported");
                 UnloadImage(image);
                 image = Image{};
             }
@@ -582,10 +585,10 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, con
         image.data = rl_load_astc_from_memory(fileData, dataSize, &image.width, &image.height, &image.format, &image.mipmaps);
     }
 #endif
-    else TRACELOG(LOG_WARNING, "IMAGE: Data format not supported");
+    else log(LogLevel::warn, "IMAGE: Data format not supported");
 
-    if (image.data != nullptr) TRACELOG(LOG_INFO, "IMAGE: Data loaded successfully (%ix%i | %s | %i mipmaps)", image.width, image.height, rlGetPixelFormatName(image.format).c_str(), image.mipmaps);
-    else TRACELOG(LOG_WARNING, "IMAGE: Failed to load image data");
+    if (image.data != nullptr) log(LogLevel::info, "IMAGE: Data loaded successfully ({}x{} | {} | {} mipmaps)", image.width, image.height, rlGetPixelFormatName(image.format).c_str(), image.mipmaps);
+    else log(LogLevel::warn, "IMAGE: Failed to load image data");
 
     return image;
 }
@@ -616,17 +619,17 @@ Image LoadImageFromTexture(const Texture2D texture)
 #endif
             image.mipmaps = 1;
 
-            TRACELOG(LOG_INFO, "TEXTURE: [ID %i] Pixel data retrieved successfully", texture.id);
+            log(LogLevel::info, "TEXTURE: [ID {}] Pixel data retrieved successfully", texture.id);
         }
-        else TRACELOG(LOG_WARNING, "TEXTURE: [ID %i] Failed to retrieve pixel data", texture.id);
+        else log(LogLevel::warn, "TEXTURE: [ID {}] Failed to retrieve pixel data", texture.id);
     }
-    else TRACELOG(LOG_WARNING, "TEXTURE: [ID %i] Failed to retrieve compressed pixel data", texture.id);
+    else log(LogLevel::warn, "TEXTURE: [ID {}] Failed to retrieve compressed pixel data", texture.id);
 
     return image;
 }
 
 // Load image from screen buffer (screenshot)
-Image LoadImageFromScreen(void)
+Image LoadImageFromScreen()
 {
     auto image = Image{ nullptr };
 
@@ -712,7 +715,7 @@ bool ExportImage(const Image image, std::string_view fileNameView)
         channels = 0;
         if (image.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8) channels = 3;
         else if (image.format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) channels = 4;
-        else TRACELOG(LOG_WARNING, "IMAGE: Image pixel format must be R8G8B8 or R8G8B8A8");
+        else log(LogLevel::warn, "IMAGE: Image pixel format must be R8G8B8 or R8G8B8A8");
 
         if ((channels == 3) || (channels == 4))
         {
@@ -742,7 +745,7 @@ bool ExportImage(const Image image, std::string_view fileNameView)
             PEP_FREE(pepData);
             pep_free(&p);
         }
-        else TRACELOG(LOG_WARNING, "IMAGE: Image can not be exported, .pep requires RGBA 32bit input");
+        else log(LogLevel::warn, "IMAGE: Image can not be exported, .pep requires RGBA 32bit input");
     }
 #endif
 #if SUPPORT_FILEFORMAT_KTX
@@ -757,13 +760,13 @@ bool ExportImage(const Image image, std::string_view fileNameView)
         // NOTE: It's up to the user to track image parameters
         result = SaveFileData(fileName, image.data, GetPixelDataSize(image.width, image.height, image.format));
     }
-    else TRACELOG(LOG_WARNING, "IMAGE: Export image format requested not supported");
+    else log(LogLevel::warn, "IMAGE: Export image format requested not supported");
 
     if (allocatedData) free(imgData);
 #endif // SUPPORT_IMAGE_EXPORT
 
-    if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Image exported successfully", fileName);
-    else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export image", fileName);
+    if (result != 0) log(LogLevel::info, "FILEIO: [{}] Image exported successfully", fileName);
+    else log(LogLevel::warn, "FILEIO: [{}] Failed to export image", fileName);
 
     return result;
 }
@@ -789,7 +792,7 @@ u8 *ExportImageToMemory(const Image image, const std::string_view fileType, i32 
         fileData = stbi_write_png_to_mem(static_cast<const u8 *>(image.data), image.width*channels, image.width, image.height, channels, dataSize);
     }
 #else
-    TRACELOG(LOG_WARNING, "IMAGE: To export image, enable flag SUPPORT_IMAGE_EXPORT");
+    log(LogLevel::warn, "IMAGE: To export image, enable flag SUPPORT_IMAGE_EXPORT");
 #endif
 
     return fileData;
@@ -845,8 +848,8 @@ bool ExportImageAsCode(const Image image, std::string_view fileNameView)
 
     free(txtData);
 
-    if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Image as code exported successfully", fileName);
-    else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export image as code", fileName);
+    if (result != 0) log(LogLevel::info, "FILEIO: [{}] Image as code exported successfully", fileName);
+    else log(LogLevel::warn, "FILEIO: [{}] Failed to export image as code", fileName);
 
     return result;
 }
@@ -858,7 +861,8 @@ bool ExportImageAsCode(const Image image, std::string_view fileNameView)
 Image GenImageColor(i32 width, i32 height, const Color color)
 {
     const auto dataSize = GetPixelDataSize(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-    auto pixels = static_cast<Color *>(calloc(dataSize, 1));
+    // NOTE: calloc(0) is implementation-defined (may return NULL), so allocate at least one pixel
+    auto pixels = static_cast<Color *>(calloc((dataSize > 0) ? dataSize : 1, 1));
 
     for (i32 i = 0; (pixels != nullptr) && (i < width*height); i++) pixels[i] = color;
 
@@ -1225,7 +1229,8 @@ Image ImageCopy(const Image image)
         if (height < 1) height = 1;
     }
 
-    newImage.data = calloc(size, 1);
+    // NOTE: calloc(0) is implementation-defined (may return NULL), so allocate at least one byte
+    newImage.data = calloc((size > 0) ? size : 1, 1);
 
     if (newImage.data != nullptr)
     {
@@ -1271,9 +1276,9 @@ Image ImageFromImage(const Image image, const Rectangle rec)
                     static_cast<i32>(rec.width)*bytesPerPixel);
             }
         }
-        else TRACELOG(LOG_WARNING, "IMAGE: ImageFromImage(), rectangle provided not valid");
+        else log(LogLevel::warn, "IMAGE: ImageFromImage(), rectangle provided not valid");
     }
-    else TRACELOG(LOG_WARNING, "IMAGE: Image manipulation not supported for compressed formats");
+    else log(LogLevel::warn, "IMAGE: Image manipulation not supported for compressed formats");
 
     return result;
 }
@@ -1297,7 +1302,7 @@ void ImageCrop(Image *image, Rectangle crop)
     if ((crop.y + crop.height) > image->height) crop.height = image->height - crop.y;
     if ((crop.x > image->width) || (crop.y > image->height) || (crop.width < 1) || (crop.height < 1))
     {
-        TRACELOG(LOG_WARNING, "IMAGE: Failed to crop, rectangle out of bounds");
+        log(LogLevel::warn, "IMAGE: Failed to crop, rectangle out of bounds");
         return;
     }
 
@@ -1306,8 +1311,8 @@ void ImageCrop(Image *image, Rectangle crop)
     const auto cropWidth = static_cast<i32>(crop.width);
     const auto cropHeight = static_cast<i32>(crop.height);
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
         const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
@@ -1542,7 +1547,7 @@ void ImageFormat(Image *image, const i32 newFormat)
                 if (image->data != nullptr) ImageMipmaps(image);
             }
         }
-        else TRACELOG(LOG_WARNING, "IMAGE: Data format is compressed, can not be converted");
+        else log(LogLevel::warn, "IMAGE: Data format is compressed, can not be converted");
     }
 }
 
@@ -1560,7 +1565,7 @@ Image ImageText(std::string_view textView, i32 fontSize, const Color color)
     imText = ImageTextEx(GetFontDefault(), text, static_cast<f32>(fontSize), static_cast<f32>(spacing), color);   // WARNING: Module required: rtext
 #else
     imText = GenImageColor(200, 60, BLACK);     // Generating placeholder black image rectangle
-    TRACELOG(LOG_WARNING, "IMAGE: ImageTextEx() requires module: rtext");
+    log(LogLevel::warn, "IMAGE: ImageTextEx() requires module: rtext");
 #endif
     return imText;
 }
@@ -1632,7 +1637,7 @@ Image ImageTextEx(const Font font, std::string_view textView, const f32 fontSize
     if (fontSize != static_cast<f32>(font.baseSize))
     {
         const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);
-        TRACELOG(LOG_INFO, "IMAGE: Text scaled by factor: %f", scaleFactor);
+        log(LogLevel::info, "IMAGE: Text scaled by factor: {:.6f}", scaleFactor);
 
         // Using nearest-neighbor scaling algorithm for default font
         // TODO: Support other scaling mechanism, use flag?
@@ -1641,7 +1646,7 @@ Image ImageTextEx(const Font font, std::string_view textView, const f32 fontSize
     }
 #else
     imText = GenImageColor(200, 60, BLACK);     // Generating placeholder black image rectangle
-    TRACELOG(LOG_WARNING, "IMAGE: ImageTextEx() requires module: rtext");
+    log(LogLevel::warn, "IMAGE: ImageTextEx() requires module: rtext");
 #endif
     return imText;
 }
@@ -1656,7 +1661,7 @@ Image ImageFromChannel(const Image image, i32 selectedChannel)
     // Check selected channel is valid
     if (selectedChannel < 0)
     {
-        TRACELOG(LOG_WARNING, "Channel cannot be negative. Setting channel to 0.");
+        log(LogLevel::warn, "Channel cannot be negative. Setting channel to 0.");
         selectedChannel = 0;
     }
 
@@ -1666,7 +1671,7 @@ Image ImageFromChannel(const Image image, i32 selectedChannel)
     {
         if (selectedChannel > 0)
         {
-            TRACELOG(LOG_WARNING, "This image has only 1 channel. Setting channel to it.");
+            log(LogLevel::warn, "This image has only 1 channel. Setting channel to it.");
             selectedChannel = 0;
         }
     }
@@ -1674,7 +1679,7 @@ Image ImageFromChannel(const Image image, i32 selectedChannel)
     {
         if (selectedChannel > 1)
         {
-            TRACELOG(LOG_WARNING, "This image has only 2 channels. Setting channel to alpha.");
+            log(LogLevel::warn, "This image has only 2 channels. Setting channel to alpha.");
             selectedChannel = 1;
         }
     }
@@ -1685,7 +1690,7 @@ Image ImageFromChannel(const Image image, i32 selectedChannel)
     {
         if (selectedChannel > 2)
         {
-            TRACELOG(LOG_WARNING, "This image has only 3 channels. Setting channel to red.");
+            log(LogLevel::warn, "This image has only 3 channels. Setting channel to red.");
             selectedChannel = 0;
         }
     }
@@ -1693,7 +1698,7 @@ Image ImageFromChannel(const Image image, i32 selectedChannel)
     // Check for RGBA formats
     if (selectedChannel > 3)
     {
-        TRACELOG(LOG_WARNING, "ImageFromChannel supports channels 0 to 3 (RGBA). Setting channel to alpha.");
+        log(LogLevel::warn, "ImageFromChannel supports channels 0 to 3 (RGBA). Setting channel to alpha.");
         selectedChannel = 3;
     }
 
@@ -1705,7 +1710,7 @@ Image ImageFromChannel(const Image image, i32 selectedChannel)
 
     auto pixels = static_cast<u8 *>(calloc(image.width*image.height, sizeof(u8))); // Values from 0 to 255
 
-    if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
+    if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
     {
         for (i32 i = 0, k = 0; i < image.width*image.height; i++)
@@ -1916,8 +1921,8 @@ void ImageResizeCanvas(Image *image, const i32 newWidth, const i32 newHeight, co
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else if ((newWidth != image->width) || (newHeight != image->height))
     {
         auto srcRec = Rectangle{ 0, 0, static_cast<f32>(image->width), static_cast<f32>(image->height) };
@@ -2012,8 +2017,8 @@ void ImageAlphaClear(const Image *image, const Color color, const f32 threshold)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
         switch (image->format)
@@ -2116,11 +2121,11 @@ void ImageAlphaMask(Image *image, const Image alphaMask)
 {
     if ((image->width != alphaMask.width) || (image->height != alphaMask.height))
     {
-        TRACELOG(LOG_WARNING, "IMAGE: Alpha mask must be same size as image");
+        log(LogLevel::warn, "IMAGE: Alpha mask must be same size as image");
     }
     else if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB)
     {
-        TRACELOG(LOG_WARNING, "IMAGE: Alpha mask can not be applied to compressed data formats");
+        log(LogLevel::warn, "IMAGE: Alpha mask can not be applied to compressed data formats");
     }
     else
     {
@@ -2349,7 +2354,7 @@ void ImageKernelConvolution(Image *image, const f32 *kernel, const i32 kernelSiz
 
     if (kernelWidth*kernelWidth != kernelSize)
     {
-        TRACELOG(LOG_WARNING, "IMAGE: Convolution kernel must be square to be applied");
+        log(LogLevel::warn, "IMAGE: Convolution kernel must be square to be applied");
         return;
     }
 
@@ -2452,7 +2457,7 @@ void ImageMipmaps(Image *image)
         if (mipWidth < 1) mipWidth = 1;
         if (mipHeight < 1) mipHeight = 1;
 
-        TRACELOG(LOG_DEBUG, "IMAGE: Next mipmap level: %i x %i - current size %i", mipWidth, mipHeight, mipSize);
+        log(LogLevel::debug, "IMAGE: Next mipmap level: {} x {} - current size {}", mipWidth, mipHeight, mipSize);
 
         mipCount++;
         mipSize += GetPixelDataSize(mipWidth, mipHeight, image->format);       // Add mipmap size (in bytes)
@@ -2489,7 +2494,7 @@ void ImageMipmaps(Image *image)
 
             if (i < image->mipmaps) continue;
 
-            TRACELOG(LOG_DEBUG, "IMAGE: Generating mipmap level: %i (%i x %i) - size: %i - offset: 0x%x", i, mipWidth, mipHeight, mipSize, nextmip);
+            log(LogLevel::debug, "IMAGE: Generating mipmap level: {} ({} x {}) - size: {} - offset: {}", i, mipWidth, mipHeight, mipSize, static_cast<const void *>(nextmip));
             ImageResize(&imCopy, mipWidth, mipHeight); // Uses internally Mitchell cubic downscale filter
             memcpy(nextmip, imCopy.data, mipSize);
         }
@@ -2498,7 +2503,7 @@ void ImageMipmaps(Image *image)
 
         image->mipmaps = mipCount;
     }
-    else TRACELOG(LOG_WARNING, "IMAGE: Mipmaps already available");
+    else log(LogLevel::warn, "IMAGE: Mipmaps already available");
 }
 
 // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
@@ -2511,13 +2516,13 @@ void ImageDither(Image *image, const i32 rBpp, const i32 gBpp, const i32 bBpp, c
 
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB)
     {
-        TRACELOG(LOG_WARNING, "IMAGE: Compressed data formats can not be dithered");
+        log(LogLevel::warn, "IMAGE: Compressed data formats can not be dithered");
         return;
     }
 
     if ((rBpp + gBpp + bBpp + aBpp) > 16)
     {
-        TRACELOG(LOG_WARNING, "IMAGE: Unsupported dithering bpps (%ibpp), only 16bpp or lower modes supported", (rBpp+gBpp+bBpp+aBpp));
+        log(LogLevel::warn, "IMAGE: Unsupported dithering bpps ({}bpp), only 16bpp or lower modes supported", (rBpp+gBpp+bBpp+aBpp));
     }
     else
     {
@@ -2527,7 +2532,7 @@ void ImageDither(Image *image, const i32 rBpp, const i32 gBpp, const i32 bBpp, c
 
         if ((image->format != PIXELFORMAT_UNCOMPRESSED_R8G8B8) && (image->format != PIXELFORMAT_UNCOMPRESSED_R8G8B8A8))
         {
-            TRACELOG(LOG_WARNING, "IMAGE: Format is already 16bpp or lower, dithering could have no effect");
+            log(LogLevel::warn, "IMAGE: Format is already 16bpp or lower, dithering could have no effect");
         }
 
         // Define new image format, check if desired bpp match internal known format
@@ -2537,7 +2542,7 @@ void ImageDither(Image *image, const i32 rBpp, const i32 gBpp, const i32 bBpp, c
         else
         {
             image->format = 0;
-            TRACELOG(LOG_WARNING, "IMAGE: Unsupported dithered OpenGL internal format: %ibpp (R%iG%iB%iA%i)", (rBpp+gBpp+bBpp+aBpp), rBpp, gBpp, bBpp, aBpp);
+            log(LogLevel::warn, "IMAGE: Unsupported dithered OpenGL internal format: {}bpp (R{}G{}B{}A{})", (rBpp+gBpp+bBpp+aBpp), rBpp, gBpp, bBpp, aBpp);
         }
 
         // NOTE: Storing the dithered data as unsigned short (16bpp)
@@ -2624,8 +2629,8 @@ void ImageFlipVertical(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
         const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
@@ -2648,8 +2653,8 @@ void ImageFlipHorizontal(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
         const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
@@ -2693,8 +2698,8 @@ void ImageRotate(Image *image, const i32 degrees)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
         const f32 rad = degrees*PI/180.0f;
@@ -2758,8 +2763,8 @@ void ImageRotateCW(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
         const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
@@ -2790,8 +2795,8 @@ void ImageRotateCCW(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
-    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
+    if (image->mipmaps > 1) log(LogLevel::warn, "Image manipulation only applied to base mipmap level");
+    if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image manipulation not supported for compressed formats");
     else
     {
         const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
@@ -3020,16 +3025,16 @@ Color *LoadImageColors(const Image image)
 
     auto pixels = static_cast<Color *>(calloc(image.width*image.height, sizeof(Color)));
 
-    if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
+    if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
     {
         if ((image.format == PIXELFORMAT_UNCOMPRESSED_R32) ||
             (image.format == PIXELFORMAT_UNCOMPRESSED_R32G32B32) ||
-            (image.format == PIXELFORMAT_UNCOMPRESSED_R32G32B32A32)) TRACELOG(LOG_WARNING, "IMAGE: Pixel format converted from 32bit to 8bit per channel");
+            (image.format == PIXELFORMAT_UNCOMPRESSED_R32G32B32A32)) log(LogLevel::warn, "IMAGE: Pixel format converted from 32bit to 8bit per channel");
 
         if ((image.format == PIXELFORMAT_UNCOMPRESSED_R16) ||
             (image.format == PIXELFORMAT_UNCOMPRESSED_R16G16B16) ||
-            (image.format == PIXELFORMAT_UNCOMPRESSED_R16G16B16A16)) TRACELOG(LOG_WARNING, "IMAGE: Pixel format converted from 16bit to 8bit per channel");
+            (image.format == PIXELFORMAT_UNCOMPRESSED_R16G16B16A16)) log(LogLevel::warn, "IMAGE: Pixel format converted from 16bit to 8bit per channel");
 
         for (i32 i = 0, k = 0; i < image.width*image.height; i++)
         {
@@ -3076,10 +3081,10 @@ Color *LoadImageColors(const Image image)
                 {
                     const u16 pixel = (static_cast<u16 *>(image.data))[i];
 
-                    pixels[i].r = static_cast<u8>(static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(255/15));
-                    pixels[i].g = static_cast<u8>(static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(255/15));
-                    pixels[i].b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(255/15));
-                    pixels[i].a = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000001111)*(255/15));
+                    pixels[i].r = static_cast<u8>(static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(255.0f/15.0f));
+                    pixels[i].g = static_cast<u8>(static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(255.0f/15.0f));
+                    pixels[i].b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(255.0f/15.0f));
+                    pixels[i].a = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000001111)*(255.0f/15.0f));
 
                 } break;
                 case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
@@ -3204,7 +3209,7 @@ Color *LoadImagePalette(const Image image, const i32 maxPaletteSize, i32 *colorC
                     if (palCount >= maxPaletteSize)
                     {
                         i = image.width*image.height;   // Finish palette get
-                        TRACELOG(LOG_WARNING, "IMAGE: Palette is greater than %i colors", maxPaletteSize);
+                        log(LogLevel::warn, "IMAGE: Palette is greater than {} colors", maxPaletteSize);
                     }
                 }
             }
@@ -3320,10 +3325,10 @@ Color GetImageColor(const Image image, const i32 x, const i32 y)
             {
                 const u16 pixel = (static_cast<u16 *>(image.data))[y*image.width + x];
 
-                color.r = static_cast<u8>(static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(255/15));
-                color.g = static_cast<u8>(static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(255/15));
-                color.b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(255/15));
-                color.a = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000001111)*(255/15));
+                color.r = static_cast<u8>(static_cast<f32>((pixel & 0b1111000000000000) >> 12)*(255.0f/15.0f));
+                color.g = static_cast<u8>(static_cast<f32>((pixel & 0b0000111100000000) >> 8)*(255.0f/15.0f));
+                color.b = static_cast<u8>(static_cast<f32>((pixel & 0b0000000011110000) >> 4)*(255.0f/15.0f));
+                color.a = static_cast<u8>(static_cast<f32>(pixel & 0b0000000000001111)*(255.0f/15.0f));
 
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
@@ -3390,10 +3395,10 @@ Color GetImageColor(const Image image, const i32 x, const i32 y)
                 color.a = static_cast<u8>(HalfToFloat((static_cast<u16 *>(image.data))[(y*image.width + x)*4 + 3])*255.0f);
 
             } break;
-            default: TRACELOG(LOG_WARNING, "Compressed image format does not support color reading"); break;
+            default: log(LogLevel::warn, "Compressed image format does not support color reading"); break;
         }
     }
-    else TRACELOG(LOG_WARNING, "Requested image pixel (%i, %i) out of bounds", x, y);
+    else log(LogLevel::warn, "Requested image pixel ({}, {}) out of bounds", x, y);
 
     return color;
 }
@@ -3629,10 +3634,12 @@ void ImageDrawLine(const Image *dst, const i32 startPosX, const i32 startPosY, c
 void ImageDrawLineV(const Image *dst, const vec2 start, const vec2 end, const Color color)
 {
     // Round start and end positions to nearest integer coordinates
-    const auto x1 = static_cast<i32>(start.x + 0.5f);
-    const auto y1 = static_cast<i32>(start.y + 0.5f);
-    const auto x2 = static_cast<i32>(end.x + 0.5f);
-    const auto y2 = static_cast<i32>(end.y + 0.5f);
+    // NOTE: round() is used instead of "(i32)(x + 0.5f)": the latter truncates towards
+    // zero and therefore rounds negative coordinates the wrong way (-1.2 became 0, not -1)
+    const auto x1 = static_cast<i32>(round(start.x));
+    const auto y1 = static_cast<i32>(round(start.y));
+    const auto x2 = static_cast<i32>(round(end.x));
+    const auto y2 = static_cast<i32>(round(end.y));
 
     // Draw a vertical line using ImageDrawLine function
     ImageDrawLine(dst, x1, y1, x2, y2, color);
@@ -3642,10 +3649,12 @@ void ImageDrawLineV(const Image *dst, const vec2 start, const vec2 end, const Co
 void ImageDrawLineEx(const Image *dst, const vec2 start, const vec2 end, const i32 thick, const Color color)
 {
     // Round start and end positions to nearest integer coordinates
-    const auto x1 = static_cast<i32>(start.x + 0.5f);
-    const auto y1 = static_cast<i32>(start.y + 0.5f);
-    const auto x2 = static_cast<i32>(end.x + 0.5f);
-    const auto y2 = static_cast<i32>(end.y + 0.5f);
+    // NOTE: round() is used instead of "(i32)(x + 0.5f)": the latter truncates towards
+    // zero and therefore rounds negative coordinates the wrong way (-1.2 became 0, not -1)
+    const auto x1 = static_cast<i32>(round(start.x));
+    const auto y1 = static_cast<i32>(round(start.y));
+    const auto x2 = static_cast<i32>(round(end.x));
+    const auto y2 = static_cast<i32>(round(end.y));
 
     // Calculate differences in x and y coordinates
     const i32 dx = x2 - x1;
@@ -4315,7 +4324,7 @@ void ImageDrawImagePro(const Image *dst, Image src, Rectangle srcRec, Rectangle 
     if ((dst == nullptr) || (dst->data == nullptr) || (dst->width == 0) || (dst->height == 0) ||
         (src.data == nullptr) || (src.width == 0) || (src.height == 0)) return;
 
-    if (dst->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image drawing not supported for compressed formats");
+    if (dst->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "Image drawing not supported for compressed formats");
     else
     {
         auto srcMod = Image{ nullptr };       // Source copy (in case it was required)
@@ -4472,7 +4481,7 @@ void ImageDrawText(const Image *dst, std::string_view textView, const i32 posX, 
     const auto position = vec2{ static_cast<f32>(posX), static_cast<f32>(posY) };
     ImageDrawTextEx(dst, GetFontDefault(), text, position, static_cast<f32>(fontSize), 1.0f, color);   // WARNING: Module required: rtext
 #else
-    TRACELOG(LOG_WARNING, "IMAGE: ImageDrawText() requires module: rtext");
+    log(LogLevel::warn, "IMAGE: ImageDrawText() requires module: rtext");
 #endif
 }
 
@@ -4533,7 +4542,7 @@ Texture2D LoadTextureFromImage(const Image image)
     {
         texture.id = rlLoadTexture(image.data, image.width, image.height, image.format, image.mipmaps);
     }
-    else TRACELOG(LOG_WARNING, "IMAGE: Data is not valid to load texture");
+    else log(LogLevel::warn, "IMAGE: Data is not valid to load texture");
 
     texture.width = image.width;
     texture.height = image.height;
@@ -4639,11 +4648,11 @@ TextureCubemap LoadTextureCubemap(const Image image, i32 layout)
             cubemap.format = faces.format;
             cubemap.mipmaps = faces.mipmaps;
         }
-        else TRACELOG(LOG_WARNING, "IMAGE: Failed to load cubemap image");
+        else log(LogLevel::warn, "IMAGE: Failed to load cubemap image");
 
         UnloadImage(faces);
     }
-    else TRACELOG(LOG_WARNING, "IMAGE: Failed to detect cubemap image layout");
+    else log(LogLevel::warn, "IMAGE: Failed to detect cubemap image layout");
 
     return cubemap;
 }
@@ -4662,7 +4671,7 @@ RLAPI RenderTexture2D LoadRenderTextureEx(i32 width, i32 height, i32 format)
 
     if (format >= PIXELFORMAT_COMPRESSED_DXT1_RGB)
     {
-        TRACELOG(LOG_WARNING, "FBO: Render texture format not supported");
+        log(LogLevel::warn, "FBO: Render texture format not supported");
         return target;
     }
 
@@ -4691,11 +4700,11 @@ RLAPI RenderTexture2D LoadRenderTextureEx(i32 width, i32 height, i32 format)
         rlFramebufferAttach(target.id, target.depth.id, RL_ATTACHMENT_DEPTH, RL_ATTACHMENT_RENDERBUFFER, 0);
 
         // Check if fbo is complete with attachments (valid)
-        if (rlFramebufferComplete(target.id)) TRACELOG(LOG_INFO, "FBO: [ID %i] Framebuffer object created successfully", target.id);
+        if (rlFramebufferComplete(target.id)) log(LogLevel::info, "FBO: [ID {}] Framebuffer object created successfully", target.id);
 
         rlDisableFramebuffer();
     }
-    else TRACELOG(LOG_WARNING, "FBO: Framebuffer object can not be created");
+    else log(LogLevel::warn, "FBO: Framebuffer object can not be created");
 
     return target;
 }
@@ -4721,7 +4730,7 @@ void UnloadTexture(const Texture2D texture)
     {
         rlUnloadTexture(texture.id);
 
-        TRACELOG(LOG_INFO, "TEXTURE: [ID %i] Unloaded texture data from VRAM (GPU)", texture.id);
+        log(LogLevel::info, "TEXTURE: [ID {}] Unloaded texture data from VRAM (GPU)", texture.id);
     }
 }
 
@@ -4834,7 +4843,7 @@ void SetTextureFilter(const Texture2D texture, const i32 filter)
             }
             else
             {
-                TRACELOG(LOG_WARNING, "TEXTURE: [ID %i] No mipmaps available for TRILINEAR texture filtering", texture.id);
+                log(LogLevel::warn, "TEXTURE: [ID {}] No mipmaps available for TRILINEAR texture filtering", texture.id);
 
                 // RL_TEXTURE_FILTER_LINEAR - tex filter: BILINEAR, no mipmaps
                 rlTextureParameters(texture.id, RL_TEXTURE_MIN_FILTER, RL_TEXTURE_FILTER_LINEAR);
@@ -5820,7 +5829,7 @@ i32 GetPixelDataSize(const i32 width, const i32 height, const i32 format)
     else
     {
         // NOTE: In case required image data larger than 2GB, no memory allocated at all (NULL)
-        TRACELOG(LOG_WARNING, "Requested image size is larger than 2GB, it can not be allocated");
+        log(LogLevel::warn, "Requested image size is larger than 2GB, it can not be allocated");
     }
 
     return dataSize;
@@ -5876,7 +5885,7 @@ static vec4 *LoadImageDataNormalized(const Image image)
 {
     auto pixels = static_cast<vec4 *>(calloc(image.width*image.height, sizeof(vec4)));
 
-    if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
+    if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) log(LogLevel::warn, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
     {
         for (i32 i = 0, k = 0; i < image.width*image.height; i++)

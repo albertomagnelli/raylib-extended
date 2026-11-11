@@ -45,6 +45,8 @@
 
 #include "config.h"         // Defines module configuration flags
 
+#include "logging.h"         // Levelbasiertes Logging (log(), logMessage())
+
 #if SUPPORT_MODULE_RMODELS
 
 #include "rlgl.h"           // OpenGL abstraction layer to OpenGL 1.1, 2.1, 3.3+ or ES2
@@ -1141,17 +1143,17 @@ Model LoadModel(std::string_view fileNameView)
         // Upload vertex data to GPU (static meshes)
         for (i32 i = 0; i < model.meshCount; i++) UploadMesh(&model.meshes[i], false);
     }
-    else TRACELOG(LOG_WARNING, "MESH: [%s] Failed to load model mesh(es) data", fileName);
+    else log(LogLevel::warn, "MESH: [{}] Failed to load model mesh(es) data", fileName);
 
     if (model.materialCount == 0)
     {
-        TRACELOG(LOG_WARNING, "MATERIAL: [%s] Failed to load model material data, default to white material", fileName);
+        log(LogLevel::warn, "MATERIAL: [{}] Failed to load model material data, default to white material", fileName);
 
         model.materialCount = 1;
         model.materials = static_cast<Material *>(calloc(model.materialCount, sizeof(Material)));
         model.materials[0] = LoadMaterialDefault();
 
-        if (model.meshMaterial == nullptr) model.meshMaterial = static_cast<i32 *>(calloc(model.meshCount, sizeof(i32)));
+        if (model.meshMaterial == nullptr) model.meshMaterial = static_cast<i32 *>(calloc((model.meshCount > 0) ? model.meshCount : 1, sizeof(i32)));
     }
 
     return model;
@@ -1194,7 +1196,9 @@ bool IsModelValid(const Model model)
 
     // NOTE: Many elements could be validated from a model, including every model mesh VAO/VBOs
     // but some VBOs could not be used, it depends on Mesh vertex data
-    for (i32 i = 0; i < model.meshCount; i++)
+    // NOTE: Guard the loop with 'model.meshes != nullptr': a model with meshCount > 0
+    // but a null meshes array (failed load) would dereference a null pointer here
+    for (i32 i = 0; (model.meshes != nullptr) && (i < model.meshCount); i++)
     {
         if ((model.meshes[i].vertices != nullptr) && (model.meshes[i].vboId[0] == 0)) { result = false; break; }   // Vertex position buffer not uploaded to GPU
         if ((model.meshes[i].texcoords != nullptr) && (model.meshes[i].vboId[1] == 0)) { result = false; break; }  // Vertex textcoords buffer not uploaded to GPU
@@ -1239,7 +1243,7 @@ void UnloadModel(Model model)
     free(model.currentPose);
     free(model.boneMatrices);
 
-    TRACELOG(LOG_INFO, "MODEL: Unloaded model (and meshes) from RAM and VRAM");
+    log(LogLevel::info, "MODEL: Unloaded model (and meshes) from RAM and VRAM");
 }
 
 // Compute model bounding box limits (considers all meshes)
@@ -1283,7 +1287,7 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
     if (mesh->vaoId > 0)
     {
         // Check if mesh has already been loaded in GPU
-        TRACELOG(LOG_WARNING, "VAO: [ID %i] Trying to re-load an already loaded mesh", mesh->vaoId);
+        log(LogLevel::warn, "VAO: [ID {}] Trying to re-load an already loaded mesh", mesh->vaoId);
         return;
     }
 
@@ -1436,8 +1440,8 @@ void UploadMesh(Mesh *mesh, const bool dynamic)
         mesh->vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES] = rlLoadVertexBufferElement(mesh->indices, mesh->triangleCount*3*sizeof(u16), dynamic);
     }
 
-    if (mesh->vaoId > 0) TRACELOG(LOG_INFO, "VAO: [ID %i] Mesh uploaded successfully to VRAM (GPU)", mesh->vaoId);
-    else TRACELOG(LOG_INFO, "VBO: Mesh uploaded successfully to VRAM (GPU)");
+    if (mesh->vaoId > 0) log(LogLevel::info, "VAO: [ID {}] Mesh uploaded successfully to VRAM (GPU)", mesh->vaoId);
+    else log(LogLevel::info, "VBO: Mesh uploaded successfully to VRAM (GPU)");
 
     rlDisableVertexArray();
 #endif
@@ -2158,8 +2162,8 @@ bool ExportMeshAsCode(const Mesh mesh, std::string_view fileNameView)
 
     free(txtData);
 
-    //if (result != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Image as code exported successfully", fileName);
-    //else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export image as code", fileName);
+    //if (result != 0) log(LogLevel::info, "FILEIO: [{}] Image as code exported successfully", fileName);
+    //else log(LogLevel::warn, "FILEIO: [{}] Failed to export image as code", fileName);
 
     return result;
 }
@@ -2215,7 +2219,7 @@ Material * LoadMaterials(std::string_view fileNameView, i32 *materialCount)
         tinyobj_material_t *mats = nullptr;
 
         const i32 result = tinyobj_parse_mtl_file(&mats, &count, fileName);
-        if (result != TINYOBJ_SUCCESS) TRACELOG(LOG_WARNING, "MATERIAL: [%s] Failed to parse materials file", fileName);
+        if (result != TINYOBJ_SUCCESS) log(LogLevel::warn, "MATERIAL: [{}] Failed to parse materials file", fileName);
 
         materials = static_cast<Material *>(calloc(count, sizeof(Material)));
         ProcessMaterialsOBJ(materials, mats, count);
@@ -2223,7 +2227,7 @@ Material * LoadMaterials(std::string_view fileNameView, i32 *materialCount)
         tinyobj_materials_free(mats, count);
     }
 #else
-    TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to load material file", fileName);
+    log(LogLevel::warn, "FILEIO: [{}] Failed to load material file", fileName);
 #endif
 
     *materialCount = count;
@@ -2231,7 +2235,7 @@ Material * LoadMaterials(std::string_view fileNameView, i32 *materialCount)
 }
 
 // Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)
-Material LoadMaterialDefault(void)
+Material LoadMaterialDefault()
 {
     auto material = Material{ 0 };
     material.maps = static_cast<MaterialMap *>(calloc(MAX_MATERIAL_MAPS, sizeof(MaterialMap)));
@@ -2293,8 +2297,8 @@ void SetMaterialTexture(const Material *material, const i32 mapType, Texture2D t
 // Set the material for a mesh
 void SetModelMeshMaterial(Model *model, const i32 meshId, const i32 materialId)
 {
-    if (meshId >= model->meshCount) TRACELOG(LOG_WARNING, "MESH: Id greater than mesh count");
-    else if (materialId >= model->materialCount) TRACELOG(LOG_WARNING, "MATERIAL: Id greater than material count");
+    if (meshId >= model->meshCount) log(LogLevel::warn, "MESH: Id greater than mesh count");
+    else if (materialId >= model->materialCount) log(LogLevel::warn, "MATERIAL: Id greater than material count");
     else  model->meshMaterial[meshId] = materialId;
 }
 
@@ -2726,7 +2730,7 @@ Mesh GenMeshPlane(const f32 width, const f32 length, i32 resX, i32 resZ)
 
     // Triangles definition (indices)
     const i32 numFaces = (resX - 1)*(resZ - 1);
-    auto triangles = static_cast<i32 *>(calloc(numFaces*6, sizeof(i32)));
+    auto triangles = static_cast<i32 *>(calloc((numFaces > 0) ? numFaces*6 : 1, sizeof(i32)));
     auto t = 0;
     for (i32 face = 0; face < numFaces; face++)
     {
@@ -2747,7 +2751,7 @@ Mesh GenMeshPlane(const f32 width, const f32 length, i32 resX, i32 resZ)
     mesh.vertices = static_cast<f32 *>(calloc(mesh.vertexCount*3, sizeof(f32)));
     mesh.texcoords = static_cast<f32 *>(calloc(mesh.vertexCount*2, sizeof(f32)));
     mesh.normals = static_cast<f32 *>(calloc(mesh.vertexCount*3, sizeof(f32)));
-    mesh.indices = static_cast<u16 *>(calloc(mesh.triangleCount*3, sizeof(u16)));
+    mesh.indices = static_cast<u16 *>(calloc((mesh.triangleCount > 0) ? mesh.triangleCount*3 : 1, sizeof(u16)));
 
     // Mesh vertices position array
     for (i32 i = 0; i < mesh.vertexCount; i++)
@@ -2994,9 +2998,9 @@ Mesh GenMeshSphere(const f32 radius, const i32 rings, const i32 slices)
         par_shapes_scale(sphere, radius, radius, radius);
         // NOTE: Soft normals are computed internally
 
-        mesh.vertices = static_cast<f32 *>(calloc(sphere->ntriangles*3*3, sizeof(f32)));
-        mesh.texcoords = static_cast<f32 *>(calloc(sphere->ntriangles*3*2, sizeof(f32)));
-        mesh.normals = static_cast<f32 *>(calloc(sphere->ntriangles*3*3, sizeof(f32)));
+        mesh.vertices = static_cast<f32 *>(calloc((sphere->ntriangles > 0) ? sphere->ntriangles*3*3 : 1, sizeof(f32)));
+        mesh.texcoords = static_cast<f32 *>(calloc((sphere->ntriangles > 0) ? sphere->ntriangles*3*2 : 1, sizeof(f32)));
+        mesh.normals = static_cast<f32 *>(calloc((sphere->ntriangles > 0) ? sphere->ntriangles*3*3 : 1, sizeof(f32)));
 
         mesh.vertexCount = sphere->ntriangles*3;
         mesh.triangleCount = sphere->ntriangles;
@@ -3020,7 +3024,7 @@ Mesh GenMeshSphere(const f32 radius, const i32 rings, const i32 slices)
         // Upload vertex data to GPU (static mesh)
         UploadMesh(&mesh, false);
     }
-    else TRACELOG(LOG_WARNING, "MESH: Failed to generate mesh: sphere");
+    else log(LogLevel::warn, "MESH: Failed to generate mesh: sphere");
 
     return mesh;
 }
@@ -3038,9 +3042,9 @@ Mesh GenMeshHemiSphere(f32 radius, const i32 rings, const i32 slices)
         par_shapes_scale(sphere, radius, radius, radius);
         // NOTE: Soft normals are computed internally
 
-        mesh.vertices = static_cast<f32 *>(calloc(sphere->ntriangles*3*3, sizeof(f32)));
-        mesh.texcoords = static_cast<f32 *>(calloc(sphere->ntriangles*3*2, sizeof(f32)));
-        mesh.normals = static_cast<f32 *>(calloc(sphere->ntriangles*3*3, sizeof(f32)));
+        mesh.vertices = static_cast<f32 *>(calloc((sphere->ntriangles > 0) ? sphere->ntriangles*3*3 : 1, sizeof(f32)));
+        mesh.texcoords = static_cast<f32 *>(calloc((sphere->ntriangles > 0) ? sphere->ntriangles*3*2 : 1, sizeof(f32)));
+        mesh.normals = static_cast<f32 *>(calloc((sphere->ntriangles > 0) ? sphere->ntriangles*3*3 : 1, sizeof(f32)));
 
         mesh.vertexCount = sphere->ntriangles*3;
         mesh.triangleCount = sphere->ntriangles;
@@ -3064,7 +3068,7 @@ Mesh GenMeshHemiSphere(f32 radius, const i32 rings, const i32 slices)
         // Upload vertex data to GPU (static mesh)
         UploadMesh(&mesh, false);
     }
-    else TRACELOG(LOG_WARNING, "MESH: Failed to generate mesh: hemisphere");
+    else log(LogLevel::warn, "MESH: Failed to generate mesh: hemisphere");
 
     return mesh;
 }
@@ -3128,7 +3132,7 @@ Mesh GenMeshCylinder(const f32 radius, const f32 height, const i32 slices)
         // Upload vertex data to GPU (static mesh)
         UploadMesh(&mesh, false);
     }
-    else TRACELOG(LOG_WARNING, "MESH: Failed to generate mesh: cylinder");
+    else log(LogLevel::warn, "MESH: Failed to generate mesh: cylinder");
 
     return mesh;
 }
@@ -3183,7 +3187,7 @@ Mesh GenMeshCone(const f32 radius, const f32 height, const i32 slices)
         // Upload vertex data to GPU (static mesh)
         UploadMesh(&mesh, false);
     }
-    else TRACELOG(LOG_WARNING, "MESH: Failed to generate mesh: cone");
+    else log(LogLevel::warn, "MESH: Failed to generate mesh: cone");
 
     return mesh;
 }
@@ -3231,7 +3235,7 @@ Mesh GenMeshTorus(f32 radius, const f32 size, const i32 radSeg, const i32 sides)
         // Upload vertex data to GPU (static mesh)
         UploadMesh(&mesh, false);
     }
-    else TRACELOG(LOG_WARNING, "MESH: Failed to generate mesh: torus");
+    else log(LogLevel::warn, "MESH: Failed to generate mesh: torus");
 
     return mesh;
 }
@@ -3275,7 +3279,7 @@ Mesh GenMeshKnot(f32 radius, const f32 size, const i32 radSeg, const i32 sides)
         // Upload vertex data to GPU (static mesh)
         UploadMesh(&mesh, false);
     }
-    else TRACELOG(LOG_WARNING, "MESH: Failed to generate mesh: knot");
+    else log(LogLevel::warn, "MESH: Failed to generate mesh: knot");
 
     return mesh;
 }
@@ -3298,9 +3302,9 @@ Mesh GenMeshHeightmap(const Image heightmap, const vec3 size)
 
     mesh.vertexCount = mesh.triangleCount*3;
 
-    mesh.vertices = static_cast<f32 *>(calloc(mesh.vertexCount*3, sizeof(f32)));
-    mesh.normals = static_cast<f32 *>(calloc(mesh.vertexCount*3, sizeof(f32)));
-    mesh.texcoords = static_cast<f32 *>(calloc(mesh.vertexCount*2, sizeof(f32)));
+    mesh.vertices = static_cast<f32 *>(calloc((mesh.vertexCount > 0) ? mesh.vertexCount*3 : 1, sizeof(f32)));
+    mesh.normals = static_cast<f32 *>(calloc((mesh.vertexCount > 0) ? mesh.vertexCount*3 : 1, sizeof(f32)));
+    mesh.texcoords = static_cast<f32 *>(calloc((mesh.vertexCount > 0) ? mesh.vertexCount*2 : 1, sizeof(f32)));
     mesh.colors = nullptr;
 
     auto vCounter = 0;       // Used to count vertices float by float
@@ -3712,9 +3716,9 @@ Mesh GenMeshCubicmap(const Image cubicmap, const vec3 cubeSize)
     mesh.vertexCount = vCounter;
     mesh.triangleCount = vCounter/3;
 
-    mesh.vertices = static_cast<f32 *>(calloc(mesh.vertexCount*3, sizeof(f32)));
-    mesh.normals = static_cast<f32 *>(calloc(mesh.vertexCount*3, sizeof(f32)));
-    mesh.texcoords = static_cast<f32 *>(calloc(mesh.vertexCount*2, sizeof(f32)));
+    mesh.vertices = static_cast<f32 *>(calloc((mesh.vertexCount > 0) ? mesh.vertexCount*3 : 1, sizeof(f32)));
+    mesh.normals = static_cast<f32 *>(calloc((mesh.vertexCount > 0) ? mesh.vertexCount*3 : 1, sizeof(f32)));
+    mesh.texcoords = static_cast<f32 *>(calloc((mesh.vertexCount > 0) ? mesh.vertexCount*2 : 1, sizeof(f32)));
     mesh.colors = nullptr;
 
     auto fCounter = 0;
@@ -3796,7 +3800,7 @@ void GenMeshTangents(Mesh *mesh)
     // Check if input mesh data is useful
     if ((mesh == nullptr) || (mesh->vertices == nullptr) || (mesh->texcoords == nullptr) || (mesh->normals == nullptr))
     {
-        TRACELOG(LOG_WARNING, "MESH: Tangents generation requires vertices, texcoords and normals vertex attribute data");
+        log(LogLevel::warn, "MESH: Tangents generation requires vertices, texcoords and normals vertex attribute data");
         return;
     }
 
@@ -3814,7 +3818,7 @@ void GenMeshTangents(Mesh *mesh)
 
     if (tan1 == nullptr || tan2 == nullptr)
     {
-        TRACELOG(LOG_WARNING, "MESH: Failed to allocate temporary memory for tangent calculation");
+        log(LogLevel::warn, "MESH: Failed to allocate temporary memory for tangent calculation");
         if (tan1) free(tan1);
         if (tan2) free(tan2);
         return;
@@ -3955,7 +3959,7 @@ void GenMeshTangents(Mesh *mesh)
         rlDisableVertexArray();
     }
 
-    TRACELOG(LOG_INFO, "MESH: Tangents data computed and uploaded for provided mesh");
+    log(LogLevel::info, "MESH: Tangents data computed and uploaded for provided mesh");
 }
 
 // Draw a model (with texture if set)
@@ -4454,7 +4458,7 @@ static void BuildPoseFromParentJoints(const BoneInfo *bones, const i32 boneCount
         {
             if (bones[i].parent > i)
             {
-                TRACELOG(LOG_WARNING, "Skipping bone not topologically sorted: Bone %d has parent %d", i, bones[i].parent);
+                log(LogLevel::warn, "Skipping bone not topologically sorted: Bone {} has parent {}", i, bones[i].parent);
                 continue;
             }
             transforms[i].rotation = ((transforms[bones[i].parent].rotation) * (transforms[i].rotation));
@@ -4489,7 +4493,7 @@ static Model LoadOBJ(const char *fileName)
 
     if (fileText.empty())
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] Unable to read obj file", fileName);
+        log(LogLevel::warn, "MODEL: [{}] Unable to read obj file", fileName);
         return model;
     }
 
@@ -4497,7 +4501,7 @@ static Model LoadOBJ(const char *fileName)
     const auto currentDirPath = GetWorkingDirectory();
     snprintf(currentDir, MAX_FILEPATH_LENGTH, "%s", currentDirPath.c_str()); // Save current working directory
     const auto workingDir = GetDirectoryPath(fileName);               // Switch to OBJ directory for material path correctness
-    if (CHDIR(workingDir.c_str()) != 0) TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to change working directory", workingDir.c_str());
+    if (CHDIR(workingDir.c_str()) != 0) log(LogLevel::warn, "MODEL: [{}] Failed to change working directory", workingDir.c_str());
 
     const auto dataSize = static_cast<u32>(fileText.size());
 
@@ -4506,7 +4510,7 @@ static Model LoadOBJ(const char *fileName)
 
     if (ret != TINYOBJ_SUCCESS)
     {
-        TRACELOG(LOG_WARNING, "MODEL: Unable to read obj data %s", fileName);
+        log(LogLevel::warn, "MODEL: Unable to read obj data {}", fileName);
         return model;
     }
 
@@ -4715,7 +4719,7 @@ static Model LoadOBJ(const char *fileName)
     // Restore current working directory
     if (CHDIR(currentDir) != 0)
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to change working directory", currentDir);
+        log(LogLevel::warn, "MODEL: [{}] Failed to change working directory", currentDir);
     }
 
     return model;
@@ -4844,14 +4848,14 @@ static Model LoadIQM(const char *fileName)
 
     if (memcmp(iqmHeader->magic, IQM_MAGIC, sizeof(IQM_MAGIC)) != 0)
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] IQM file is not a valid model", fileName);
+        log(LogLevel::warn, "MODEL: [{}] IQM file is not a valid model", fileName);
         UnloadFileData(fileData);
         return model;
     }
 
     if (iqmHeader->version != IQM_VERSION)
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] IQM file version not supported (%i)", fileName, iqmHeader->version);
+        log(LogLevel::warn, "MODEL: [{}] IQM file version not supported ({})", fileName, iqmHeader->version);
         UnloadFileData(fileData);
         return model;
     }
@@ -4889,7 +4893,7 @@ static Model LoadIQM(const char *fileName)
 
         model.meshMaterial[i] = i;
 
-        TRACELOG(LOG_DEBUG, "MODEL: [%s] mesh name (%s), material (%s)", fileName, name, material);
+        log(LogLevel::debug, "MODEL: [{}] mesh name ({}), material ({})", fileName, name, material);
 
         model.meshes[i].vertexCount = imesh[i].num_vertexes;
 
@@ -5081,8 +5085,8 @@ static Model LoadIQM(const char *fileName)
     BuildPoseFromParentJoints(model.skeleton.bones, model.skeleton.boneCount, model.skeleton.bindPose);
 
     // Initialize runtime animation data: current pose and bone matrices
-    model.currentPose = static_cast<Transform *>(calloc(model.skeleton.boneCount, sizeof(Transform)));
-    model.boneMatrices = static_cast<mat4 *>(calloc(model.skeleton.boneCount, sizeof(mat4)));
+    model.currentPose = static_cast<Transform *>(calloc((model.skeleton.boneCount > 0) ? model.skeleton.boneCount : 1, sizeof(Transform)));
+    model.boneMatrices = static_cast<mat4 *>(calloc((model.skeleton.boneCount > 0) ? model.skeleton.boneCount : 1, sizeof(mat4)));
     for (u32 j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = mat4(1.0f);
 
     UnloadFileData(fileData);
@@ -5156,14 +5160,14 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 
     if (memcmp(iqmHeader->magic, IQM_MAGIC, sizeof(IQM_MAGIC)) != 0)
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] IQM file is not a valid model", fileName);
+        log(LogLevel::warn, "MODEL: [{}] IQM file is not a valid model", fileName);
         UnloadFileData(fileData);
         return nullptr;
     }
 
     if (iqmHeader->version != IQM_VERSION)
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] IQM file version not supported (%i)", fileName, iqmHeader->version);
+        log(LogLevel::warn, "MODEL: [{}] IQM file version not supported ({})", fileName, iqmHeader->version);
         UnloadFileData(fileData);
         return nullptr;
     }
@@ -5204,7 +5208,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
         // TODO: Store animation framerate data?
         //animations[a].framerate = anim.framerate;
 
-        TRACELOG(LOG_INFO, "MODEL: [%s] Loaded animation: %s | Frames: %d | Framerate: %f", fileName, animations[a].name, animations[a].keyframeCount, anim[a].framerate);
+        log(LogLevel::info, "MODEL: [{}] Loaded animation: {} | Frames: {} | Framerate: {:.6f}", fileName, animations[a].name, animations[a].keyframeCount, anim[a].framerate);
 
         for (u32 j = 0; j < iqmHeader->num_poses; j++)
         {
@@ -5381,7 +5385,7 @@ static Image LoadImageFromCgltfImage(const cgltf_image *cgltfImage, const char *
             auto i = 0;
             while ((cgltfImage->uri[i] != ',') && (cgltfImage->uri[i] != 0)) i++;
 
-            if (cgltfImage->uri[i] == 0) TRACELOG(LOG_WARNING, "IMAGE: glTF data URI is not a valid image");
+            if (cgltfImage->uri[i] == 0) log(LogLevel::warn, "IMAGE: glTF data URI is not a valid image");
             else
             {
                 auto base64Size = static_cast<i32>(strlen(cgltfImage->uri + i + 1));
@@ -5430,7 +5434,7 @@ static Image LoadImageFromCgltfImage(const cgltf_image *cgltfImage, const char *
         {
             image = LoadImageFromMemory(".jpg", data, static_cast<i32>(cgltfImage->buffer_view->size));
         }
-        else TRACELOG(LOG_WARNING, "MODEL: glTF image data MIME type not recognized (%s)", TextFormat("%s/%s", texPath, cgltfImage->uri).c_str());
+        else log(LogLevel::warn, "MODEL: glTF image data MIME type not recognized ({})", TextFormat("%s/%s", texPath, cgltfImage->uri).c_str());
 
         free(data);
     }
@@ -5536,20 +5540,20 @@ static Model LoadGLTF(const char *fileName)
 
     if (result == cgltf_result_success)
     {
-        if (data->file_type == cgltf_file_type_glb) TRACELOG(LOG_INFO, "MODEL: [%s] Model basic data (glb) loaded successfully", fileName);
-        else if (data->file_type == cgltf_file_type_gltf) TRACELOG(LOG_INFO, "MODEL: [%s] Model basic data (glTF) loaded successfully", fileName);
-        else TRACELOG(LOG_WARNING, "MODEL: [%s] Model format not recognized", fileName);
+        if (data->file_type == cgltf_file_type_glb) log(LogLevel::info, "MODEL: [{}] Model basic data (glb) loaded successfully", fileName);
+        else if (data->file_type == cgltf_file_type_gltf) log(LogLevel::info, "MODEL: [{}] Model basic data (glTF) loaded successfully", fileName);
+        else log(LogLevel::warn, "MODEL: [{}] Model format not recognized", fileName);
 
-        TRACELOG(LOG_INFO, "    > Meshes count: %i", data->meshes_count);
-        TRACELOG(LOG_INFO, "    > Materials count: %i (+1 default)", data->materials_count);
-        TRACELOG(LOG_DEBUG, "    > Buffers count: %i", data->buffers_count);
-        TRACELOG(LOG_DEBUG, "    > Images count: %i", data->images_count);
-        TRACELOG(LOG_DEBUG, "    > Textures count: %i", data->textures_count);
+        log(LogLevel::info, "    > Meshes count: {}", data->meshes_count);
+        log(LogLevel::info, "    > Materials count: {} (+1 default)", data->materials_count);
+        log(LogLevel::debug, "    > Buffers count: {}", data->buffers_count);
+        log(LogLevel::debug, "    > Images count: {}", data->images_count);
+        log(LogLevel::debug, "    > Textures count: {}", data->textures_count);
 
         // Force reading data buffers (fills buffer_view->buffer->data)
         // NOTE: If an uri is defined to base64 data or external path, it's automatically loaded
         result = cgltf_load_buffers(&options, data, fileName);
-        if (result != cgltf_result_success) TRACELOG(LOG_INFO, "MODEL: [%s] Failed to load mesh/material buffers", fileName);
+        if (result != cgltf_result_success) log(LogLevel::info, "MODEL: [{}] Failed to load mesh/material buffers", fileName);
 
         auto primitivesCount = 0;
         auto dracoCompression = false;
@@ -5567,7 +5571,7 @@ static Model LoadGLTF(const char *fileName)
                 if (mesh->primitives[p].has_draco_mesh_compression)
                 {
                     dracoCompression = true;
-                    TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load mesh data, Draco compression not supported", fileName);
+                    log(LogLevel::warn, "MODEL: [{}] Failed to load mesh data, Draco compression not supported", fileName);
                     break;
                 }
                 else if (mesh->primitives[p].type == cgltf_primitive_type_triangles) primitivesCount++;
@@ -5576,17 +5580,17 @@ static Model LoadGLTF(const char *fileName)
 
         if (dracoCompression)
         {
-            TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load glTF data", fileName);
+            log(LogLevel::warn, "MODEL: [{}] Failed to load glTF data", fileName);
             cgltf_free(data);
             UnloadFileData(fileData);
             return model;
         }
 
-        TRACELOG(LOG_DEBUG, "    > Primitives (triangles only) count based on hierarchy : %i", primitivesCount);
+        log(LogLevel::debug, "    > Primitives (triangles only) count based on hierarchy : {}", primitivesCount);
 
         // Load our model data: meshes and materials
         model.meshCount = primitivesCount;
-        model.meshes = static_cast<Mesh *>(calloc(model.meshCount, sizeof(Mesh)));
+        model.meshes = static_cast<Mesh *>(calloc((model.meshCount > 0) ? model.meshCount : 1, sizeof(Mesh)));
 
         // NOTE: Keep an extra slot for default material, in case some mesh requires it
         model.materialCount = static_cast<i32>(data->materials_count) + 1;
@@ -5594,7 +5598,7 @@ static Model LoadGLTF(const char *fileName)
         model.materials[0] = LoadMaterialDefault();     // Load default material (index: 0)
 
         // Load mesh-material indices, by default all meshes are mapped to material index: 0
-        model.meshMaterial = static_cast<i32 *>(calloc(model.meshCount, sizeof(i32)));
+        model.meshMaterial = static_cast<i32 *>(calloc((model.meshCount > 0) ? model.meshCount : 1, sizeof(i32)));
 
         // Load materials data
         //----------------------------------------------------------------------------------------------------
@@ -5760,7 +5764,7 @@ static Model LoadGLTF(const char *fileName)
 
                         // WARNING: SPECS: POSITION accessor MUST have its min and max properties defined
 
-                        if (model.meshes[meshIndex].vertices != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Vertices attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].vertices != nullptr) log(LogLevel::warn, "MODEL: [{}] Vertices attribute data already loaded", fileName);
                         else
                         {
                             if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_32f))
@@ -5832,14 +5836,14 @@ static Model LoadGLTF(const char *fileName)
                                     vertices[3*k + 2] = vt.z;
                                 }
                             }
-                            else TRACELOG(LOG_WARNING, "MODEL: [%s] Vertices attribute data format not supported, use vec3 float", fileName);
+                            else log(LogLevel::warn, "MODEL: [{}] Vertices attribute data format not supported, use vec3 float", fileName);
                         }
                     }
                     else if (mesh->primitives[p].attributes[j].type == cgltf_attribute_type_normal) // NORMAL, vec3, float
                     {
                         cgltf_accessor *attribute = mesh->primitives[p].attributes[j].data;
 
-                        if (model.meshes[meshIndex].normals != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Normals attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].normals != nullptr) log(LogLevel::warn, "MODEL: [{}] Normals attribute data already loaded", fileName);
                         else
                         {
                             if ((attribute->type == cgltf_type_vec3) && (attribute->component_type == cgltf_component_type_r_32f))
@@ -5932,14 +5936,14 @@ static Model LoadGLTF(const char *fileName)
                                     normals[3*k + 2] = nt.z;
                                 }
                             }
-                            else TRACELOG(LOG_WARNING, "MODEL: [%s] Normals attribute data format not supported, use vec3 float", fileName);
+                            else log(LogLevel::warn, "MODEL: [{}] Normals attribute data format not supported, use vec3 float", fileName);
                         }
                     }
                     else if (mesh->primitives[p].attributes[j].type == cgltf_attribute_type_tangent) // TANGENT, vec4, float, w is tangent basis sign
                     {
                         cgltf_accessor *attribute = mesh->primitives[p].attributes[j].data;
 
-                        if (model.meshes[meshIndex].tangents != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Tangents attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].tangents != nullptr) log(LogLevel::warn, "MODEL: [{}] Tangents attribute data already loaded", fileName);
                         else
                         {
                             if ((attribute->type == cgltf_type_vec4) && (attribute->component_type == cgltf_component_type_r_32f))
@@ -5960,7 +5964,7 @@ static Model LoadGLTF(const char *fileName)
                                     tangents[4*k+2] = tt.z;
                                 }
                             }
-                            else TRACELOG(LOG_WARNING, "MODEL: [%s] Tangents attribute data format not supported, use vec4 float", fileName);
+                            else log(LogLevel::warn, "MODEL: [{}] Tangents attribute data format not supported, use vec4 float", fileName);
                         }
                     }
                     else if (mesh->primitives[p].attributes[j].type == cgltf_attribute_type_texcoord) // TEXCOORD_n, vec2, float/u8n/u16n
@@ -6008,16 +6012,16 @@ static Model LoadGLTF(const char *fileName)
 
                                 free(temp);
                             }
-                            else TRACELOG(LOG_WARNING, "MODEL: [%s] Texcoords attribute data format not supported", fileName);
+                            else log(LogLevel::warn, "MODEL: [{}] Texcoords attribute data format not supported", fileName);
                         }
-                        else TRACELOG(LOG_WARNING, "MODEL: [%s] Texcoords attribute data format not supported, use vec2 float", fileName);
+                        else log(LogLevel::warn, "MODEL: [{}] Texcoords attribute data format not supported, use vec2 float", fileName);
 
                         const i32 index = mesh->primitives[p].attributes[j].index;
                         if (index == 0) model.meshes[meshIndex].texcoords = texcoordPtr;
                         else if (index == 1) model.meshes[meshIndex].texcoords2 = texcoordPtr;
                         else
                         {
-                            TRACELOG(LOG_WARNING, "MODEL: [%s] No more than 2 texture coordinates attributes supported", fileName);
+                            log(LogLevel::warn, "MODEL: [{}] No more than 2 texture coordinates attributes supported", fileName);
                             if (texcoordPtr != nullptr) free(texcoordPtr);
                         }
                     }
@@ -6027,7 +6031,7 @@ static Model LoadGLTF(const char *fileName)
 
                         // WARNING: SPECS: All components of each COLOR_n accessor element MUST be clamped to [0.0, 1.0] range
 
-                        if (model.meshes[meshIndex].colors != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Colors attribute data already loaded", fileName);
+                        if (model.meshes[meshIndex].colors != nullptr) log(LogLevel::warn, "MODEL: [{}] Colors attribute data already loaded", fileName);
                         else
                         {
                             if (attribute->type == cgltf_type_vec3) // RGB
@@ -6092,7 +6096,7 @@ static Model LoadGLTF(const char *fileName)
 
                                     free(temp);
                                 }
-                                else TRACELOG(LOG_WARNING, "MODEL: [%s] Color attribute data format not supported", fileName);
+                                else log(LogLevel::warn, "MODEL: [{}] Color attribute data format not supported", fileName);
                             }
                             else if (attribute->type == cgltf_type_vec4) // RGBA
                             {
@@ -6132,9 +6136,9 @@ static Model LoadGLTF(const char *fileName)
 
                                     free(temp);
                                 }
-                                else TRACELOG(LOG_WARNING, "MODEL: [%s] Color attribute data format not supported", fileName);
+                                else log(LogLevel::warn, "MODEL: [{}] Color attribute data format not supported", fileName);
                             }
-                            else TRACELOG(LOG_WARNING, "MODEL: [%s] Color attribute data format not supported", fileName);
+                            else log(LogLevel::warn, "MODEL: [{}] Color attribute data format not supported", fileName);
                         }
                     }
 
@@ -6148,7 +6152,7 @@ static Model LoadGLTF(const char *fileName)
 
                     model.meshes[meshIndex].triangleCount = static_cast<i32>(attribute->count)/3;
 
-                    if (model.meshes[meshIndex].indices != nullptr) TRACELOG(LOG_WARNING, "MODEL: [%s] Indices attribute data already loaded", fileName);
+                    if (model.meshes[meshIndex].indices != nullptr) log(LogLevel::warn, "MODEL: [{}] Indices attribute data already loaded", fileName);
                     else
                     {
                         if (attribute->component_type == cgltf_component_type_r_16u)
@@ -6172,9 +6176,9 @@ static Model LoadGLTF(const char *fileName)
                             model.meshes[meshIndex].indices = static_cast<u16 *>(calloc(attribute->count, sizeof(u16)));
                             LOAD_ATTRIBUTE_CAST(attribute, 1, u32, model.meshes[meshIndex].indices, u16);
 
-                            TRACELOG(LOG_WARNING, "MODEL: [%s] Indices data converted from u32 to u16, possible loss of data", fileName);
+                            log(LogLevel::warn, "MODEL: [{}] Indices data converted from u32 to u16, possible loss of data", fileName);
                         }
-                        else TRACELOG(LOG_WARNING, "MODEL: [%s] Indices data format not supported, use u16", fileName);
+                        else log(LogLevel::warn, "MODEL: [{}] Indices data format not supported, use u16", fileName);
                     }
                 }
                 else model.meshes[meshIndex].triangleCount = model.meshes[meshIndex].vertexCount/3;    // Unindexed mesh
@@ -6251,7 +6255,7 @@ static Model LoadGLTF(const char *fileName)
                     &(model.skeleton.bindPose[i].scale));
             }
 
-            if (data->skins_count > 1) TRACELOG(LOG_WARNING, "MODEL: [%s] can only load one skin (armature) per model, but gltf skins_count == %i", fileName, data->skins_count);
+            if (data->skins_count > 1) log(LogLevel::warn, "MODEL: [{}] can only load one skin (armature) per model, but gltf skins_count == {}", fileName, data->skins_count);
         }
 
         meshIndex = 0;
@@ -6309,7 +6313,7 @@ static Model LoadGLTF(const char *fileName)
                                 {
                                     if ((temp[b] > 255) && !boneIdOverflowWarning)
                                     {
-                                        TRACELOG(LOG_WARNING, "MODEL: [%s] Joint attribute data format (u16) overflow", fileName);
+                                        log(LogLevel::warn, "MODEL: [{}] Joint attribute data format (u16) overflow", fileName);
                                         boneIdOverflowWarning = true;
                                     }
 
@@ -6319,9 +6323,9 @@ static Model LoadGLTF(const char *fileName)
 
                                 free(temp);
                             }
-                            else TRACELOG(LOG_WARNING, "MODEL: [%s] Joint attribute data format not supported", fileName);
+                            else log(LogLevel::warn, "MODEL: [{}] Joint attribute data format not supported", fileName);
                         }
-                        else TRACELOG(LOG_WARNING, "MODEL: [%s] Joint attribute data format not supported", fileName);
+                        else log(LogLevel::warn, "MODEL: [{}] Joint attribute data format not supported", fileName);
                     }
                     else if (mesh->primitives[p].attributes[j].type == cgltf_attribute_type_weights) // WEIGHTS_n (vec4, u8n/u16n/f32)
                     {
@@ -6368,9 +6372,9 @@ static Model LoadGLTF(const char *fileName)
                                 //   - 256 values, provided as cgltf_type_vec4 of float (4 byte per joint, stride 16)
                                 LOAD_ATTRIBUTE(attribute, 4, f32, model.meshes[meshIndex].boneWeights)
                             }
-                            else TRACELOG(LOG_WARNING, "MODEL: [%s] Joint weight attribute data format not supported, use vec4 float", fileName);
+                            else log(LogLevel::warn, "MODEL: [{}] Joint weight attribute data format not supported, use vec4 float", fileName);
                         }
-                        else TRACELOG(LOG_WARNING, "MODEL: [%s] Joint weight attribute data format not supported, use vec4 float", fileName);
+                        else log(LogLevel::warn, "MODEL: [{}] Joint weight attribute data format not supported, use vec4 float", fileName);
                     }
                 }
 
@@ -6408,8 +6412,8 @@ static Model LoadGLTF(const char *fileName)
         }
 
         // Initialize runtime animation data: current pose and bone matrices
-        model.currentPose = static_cast<Transform *>(calloc(model.skeleton.boneCount, sizeof(Transform)));
-        model.boneMatrices = static_cast<mat4 *>(calloc(model.skeleton.boneCount, sizeof(mat4)));
+        model.currentPose = static_cast<Transform *>(calloc((model.skeleton.boneCount > 0) ? model.skeleton.boneCount : 1, sizeof(Transform)));
+        model.boneMatrices = static_cast<mat4 *>(calloc((model.skeleton.boneCount > 0) ? model.skeleton.boneCount : 1, sizeof(mat4)));
         for (u32 j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = mat4(1.0f);
         //----------------------------------------------------------------------------------------------------
 
@@ -6425,7 +6429,7 @@ static Model LoadGLTF(const char *fileName)
         // Free all cgltf loaded data
         cgltf_free(data);
     }
-    else TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load glTF data", fileName);
+    else log(LogLevel::warn, "MODEL: [{}] Failed to load glTF data", fileName);
 
     // WARNING: cgltf requires the file pointer available while reading data
     UnloadFileData(fileData);
@@ -6603,13 +6607,13 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
 
     if (result != cgltf_result_success)
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load glTF data", fileName);
+        log(LogLevel::warn, "MODEL: [{}] Failed to load glTF data", fileName);
         *animCount = 0;
         return nullptr;
     }
 
     result = cgltf_load_buffers(&options, data, fileName);
-    if (result != cgltf_result_success) TRACELOG(LOG_INFO, "MODEL: [%s] Failed to load animation buffers", fileName);
+    if (result != cgltf_result_success) log(LogLevel::info, "MODEL: [{}] Failed to load animation buffers", fileName);
 
     if (result == cgltf_result_success)
     {
@@ -6629,7 +6633,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
             {
                 // Allocation failed: abort animation loading at the source rather than
                 // propagating a NULL pointer into the per-frame transform loop below
-                TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to allocate joint offset buffer", fileName);
+                log(LogLevel::warn, "MODEL: [{}] Failed to allocate joint offset buffer", fileName);
                 cgltf_free(data);
                 UnloadFileData(fileData);
                 *animCount = 0;
@@ -6705,15 +6709,15 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                         if (channel.target_path == cgltf_animation_path_type_translation) boneChannels[boneIndex].translate = &animData.channels[j];
                         else if (channel.target_path == cgltf_animation_path_type_rotation) boneChannels[boneIndex].rotate = &animData.channels[j];
                         else if (channel.target_path == cgltf_animation_path_type_scale) boneChannels[boneIndex].scale = &animData.channels[j];
-                        else TRACELOG(LOG_WARNING, "MODEL: [%s] Unsupported target_path on channel %d's sampler for animation %d. Skipping.", fileName, j, a);
+                        else log(LogLevel::warn, "MODEL: [{}] Unsupported target_path on channel {}'s sampler for animation {}. Skipping.", fileName, j, a);
                     }
-                    else TRACELOG(LOG_WARNING, "MODEL: [%s] Invalid interpolation curve encountered for GLTF animation.", fileName);
+                    else log(LogLevel::warn, "MODEL: [{}] Invalid interpolation curve encountered for GLTF animation.", fileName);
 
                     auto time = 0.0f;
                     result = static_cast<cgltf_result>(cgltf_accessor_read_float(channel.sampler->input, channel.sampler->input->count - 1, &time, 1));
                     if (!result)
                     {
-                        TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load input time", fileName);
+                        log(LogLevel::warn, "MODEL: [{}] Failed to load input time", fileName);
                         continue;
                     }
 
@@ -6740,7 +6744,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                         {
                             if (!GetPoseAtTimeGLTF(boneChannels[k].translate->sampler->interpolation, boneChannels[k].translate->sampler->input, boneChannels[k].translate->sampler->output, time, &translation))
                             {
-                                TRACELOG(LOG_INFO, "MODEL: [%s] Failed to load translate pose data for bone %s", fileName, bones[k].name);
+                                log(LogLevel::info, "MODEL: [{}] Failed to load translate pose data for bone {}", fileName, bones[k].name);
                             }
                         }
 
@@ -6748,7 +6752,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                         {
                             if (!GetPoseAtTimeGLTF(boneChannels[k].rotate->sampler->interpolation, boneChannels[k].rotate->sampler->input, boneChannels[k].rotate->sampler->output, time, &rotation))
                             {
-                                TRACELOG(LOG_INFO, "MODEL: [%s] Failed to load rotate pose data for bone %s", fileName, bones[k].name);
+                                log(LogLevel::info, "MODEL: [{}] Failed to load rotate pose data for bone {}", fileName, bones[k].name);
                             }
                         }
 
@@ -6756,7 +6760,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                         {
                             if (!GetPoseAtTimeGLTF(boneChannels[k].scale->sampler->interpolation, boneChannels[k].scale->sampler->input, boneChannels[k].scale->sampler->output, time, &scale))
                             {
-                                TRACELOG(LOG_INFO, "MODEL: [%s] Failed to load scale pose data for bone %s", fileName, bones[k].name);
+                                log(LogLevel::info, "MODEL: [{}] Failed to load scale pose data for bone {}", fileName, bones[k].name);
                             }
                         }
 
@@ -6777,7 +6781,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                     BuildPoseFromParentJoints(bones, animations[a].boneCount, animations[a].keyframePoses[j]);
                 }
 
-                TRACELOG(LOG_INFO, "MODEL: [%s] Loaded animation: %s | Frames: %d | Duration: %fs", fileName, (animData.name != nullptr)? animData.name : "NULL", animations[a].keyframeCount, animDuration);
+                log(LogLevel::info, "MODEL: [{}] Loaded animation: {} | Frames: {} | Duration: {:.6f}s", fileName, (animData.name != nullptr)? animData.name : "NULL", animations[a].keyframeCount, animDuration);
                 free(boneChannels);
                 free(bones);
             }
@@ -6787,7 +6791,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
 
         if (data->skins_count > 1)
         {
-            TRACELOG(LOG_WARNING, "MODEL: [%s] Expected one unique skin to load animation data from, but found %i", fileName, data->skins_count);
+            log(LogLevel::warn, "MODEL: [{}] Expected one unique skin to load animation data from, but found {}", fileName, data->skins_count);
         }
 
         cgltf_free(data);
@@ -6814,7 +6818,7 @@ static Model LoadVOX(const char *fileName)
 
     if (fileData == nullptr)
     {
-        TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load VOX file", fileName);
+        log(LogLevel::warn, "MODEL: [{}] Failed to load VOX file", fileName);
         return model;
     }
 
@@ -6827,7 +6831,7 @@ static Model LoadVOX(const char *fileName)
         // Error
         UnloadFileData(fileData);
 
-        TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load VOX data", fileName);
+        log(LogLevel::warn, "MODEL: [{}] Failed to load VOX data", fileName);
         return model;
     }
     else
@@ -6836,7 +6840,7 @@ static Model LoadVOX(const char *fileName)
         nbvertices = voxarray.vertices.used;
         meshescount = 1 + (nbvertices/65536);
 
-        TRACELOG(LOG_INFO, "MODEL: [%s] VOX data loaded successfully : %i vertices/%i meshes", fileName, nbvertices, meshescount);
+        log(LogLevel::info, "MODEL: [{}] VOX data loaded successfully : {} vertices/{} meshes", fileName, nbvertices, meshescount);
     }
 
     // Build models from meshes
@@ -6878,7 +6882,7 @@ static Model LoadVOX(const char *fileName)
         memcpy(pmesh->normals, pnormals, pmesh->vertexCount*3*sizeof(f32));
 
         // Copy indices
-        pmesh->indices = static_cast<u16 *>(calloc(voxarray.indices.used, sizeof(u16)));
+        pmesh->indices = static_cast<u16 *>(calloc((voxarray.indices.used > 0) ? voxarray.indices.used : 1, sizeof(u16)));
         memcpy(pmesh->indices, pindices, voxarray.indices.used*sizeof(u16));
 
         pmesh->triangleCount = (pmesh->vertexCount/4)*2;
@@ -6927,12 +6931,12 @@ static Model LoadM3D(const char *fileName)
 
         if (!m3d || M3D_ERR_ISFATAL(m3d->errcode))
         {
-            TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load M3D data, error code %d", fileName, m3d? m3d->errcode : -2);
+            log(LogLevel::warn, "MODEL: [{}] Failed to load M3D data, error code {}", fileName, m3d? m3d->errcode : -2);
             if (m3d) m3d_free(m3d);
             UnloadFileData(fileData);
             return model;
         }
-        else TRACELOG(LOG_INFO, "MODEL: [%s] M3D data loaded successfully: %i faces/%i materials", fileName, m3d->numface, m3d->nummaterial);
+        else log(LogLevel::info, "MODEL: [{}] M3D data loaded successfully: {} faces/{} materials", fileName, m3d->numface, m3d->nummaterial);
 
         // Check if face is found, if not, probably just a material library
         if (!m3d->numface)
@@ -6945,12 +6949,12 @@ static Model LoadM3D(const char *fileName)
         if (m3d->nummaterial > 0)
         {
             model.meshCount = model.materialCount = m3d->nummaterial;
-            TRACELOG(LOG_INFO, "MODEL: model has %i material meshes", model.materialCount);
+            log(LogLevel::info, "MODEL: model has {} material meshes", model.materialCount);
         }
         else
         {
             model.meshCount = 1; model.materialCount = 0;
-            TRACELOG(LOG_INFO, "MODEL: No materials, putting all meshes in a default material");
+            log(LogLevel::info, "MODEL: No materials, putting all meshes in a default material");
         }
 
         // A default material is always required, so adding +1
@@ -6979,8 +6983,8 @@ static Model LoadM3D(const char *fileName)
         }
         */
 
-        model.meshes = static_cast<Mesh *>(calloc(model.meshCount, sizeof(Mesh)));
-        model.meshMaterial = static_cast<i32 *>(calloc(model.meshCount, sizeof(i32)));
+        model.meshes = static_cast<Mesh *>(calloc((model.meshCount > 0) ? model.meshCount : 1, sizeof(Mesh)));
+        model.meshMaterial = static_cast<i32 *>(calloc((model.meshCount > 0) ? model.meshCount : 1, sizeof(i32)));
         model.materials = static_cast<Material *>(calloc(model.materialCount + 1, sizeof(Material)));
 
         // Map no material to index 0 with default shader, everything else materialid + 1
@@ -7049,15 +7053,19 @@ static Model LoadM3D(const char *fileName)
             }
 
             // Process meshes per material, add triangles
-            model.meshes[k].vertices[l*9 + 0] = m3d->vertex[m3d->face[i].vertex[0]].x*m3d->scale;
-            model.meshes[k].vertices[l*9 + 1] = m3d->vertex[m3d->face[i].vertex[0]].y*m3d->scale;
-            model.meshes[k].vertices[l*9 + 2] = m3d->vertex[m3d->face[i].vertex[0]].z*m3d->scale;
-            model.meshes[k].vertices[l*9 + 3] = m3d->vertex[m3d->face[i].vertex[1]].x*m3d->scale;
-            model.meshes[k].vertices[l*9 + 4] = m3d->vertex[m3d->face[i].vertex[1]].y*m3d->scale;
-            model.meshes[k].vertices[l*9 + 5] = m3d->vertex[m3d->face[i].vertex[1]].z*m3d->scale;
-            model.meshes[k].vertices[l*9 + 6] = m3d->vertex[m3d->face[i].vertex[2]].x*m3d->scale;
-            model.meshes[k].vertices[l*9 + 7] = m3d->vertex[m3d->face[i].vertex[2]].y*m3d->scale;
-            model.meshes[k].vertices[l*9 + 8] = m3d->vertex[m3d->face[i].vertex[2]].z*m3d->scale;
+            // NOTE: Buffer data is checked for null: allocation may fail on huge models
+            if (model.meshes[k].vertices != nullptr)
+            {
+                model.meshes[k].vertices[l*9 + 0] = m3d->vertex[m3d->face[i].vertex[0]].x*m3d->scale;
+                model.meshes[k].vertices[l*9 + 1] = m3d->vertex[m3d->face[i].vertex[0]].y*m3d->scale;
+                model.meshes[k].vertices[l*9 + 2] = m3d->vertex[m3d->face[i].vertex[0]].z*m3d->scale;
+                model.meshes[k].vertices[l*9 + 3] = m3d->vertex[m3d->face[i].vertex[1]].x*m3d->scale;
+                model.meshes[k].vertices[l*9 + 4] = m3d->vertex[m3d->face[i].vertex[1]].y*m3d->scale;
+                model.meshes[k].vertices[l*9 + 5] = m3d->vertex[m3d->face[i].vertex[1]].z*m3d->scale;
+                model.meshes[k].vertices[l*9 + 6] = m3d->vertex[m3d->face[i].vertex[2]].x*m3d->scale;
+                model.meshes[k].vertices[l*9 + 7] = m3d->vertex[m3d->face[i].vertex[2]].y*m3d->scale;
+                model.meshes[k].vertices[l*9 + 8] = m3d->vertex[m3d->face[i].vertex[2]].z*m3d->scale;
+            }
 
             // Without vertex color (full transparency), using the default color
             if (model.meshes[k].colors != nullptr)
@@ -7070,7 +7078,7 @@ static Model LoadM3D(const char *fileName)
                     memcpy(&model.meshes[k].colors[l*12 + 8], &m3d->vertex[m3d->face[i].vertex[2]].color, 4);
             }
 
-            if (m3d->face[i].texcoord[0] != M3D_UNDEF)
+            if ((model.meshes[k].texcoords != nullptr) && (m3d->face[i].texcoord[0] != M3D_UNDEF))
             {
                 model.meshes[k].texcoords[l*6 + 0] = m3d->tmap[m3d->face[i].texcoord[0]].u;
                 model.meshes[k].texcoords[l*6 + 1] = 1.0f - m3d->tmap[m3d->face[i].texcoord[0]].v;
@@ -7080,7 +7088,7 @@ static Model LoadM3D(const char *fileName)
                 model.meshes[k].texcoords[l*6 + 5] = 1.0f - m3d->tmap[m3d->face[i].texcoord[2]].v;
             }
 
-            if (m3d->face[i].normal[0] != M3D_UNDEF)
+            if ((model.meshes[k].normals != nullptr) && (m3d->face[i].normal[0] != M3D_UNDEF))
             {
                 model.meshes[k].normals[l*9 + 0] = m3d->vertex[m3d->face[i].normal[0]].x;
                 model.meshes[k].normals[l*9 + 1] = m3d->vertex[m3d->face[i].normal[0]].y;
@@ -7094,7 +7102,8 @@ static Model LoadM3D(const char *fileName)
             }
 
             // Add skin (vertex / bone weight pairs)
-            if (m3d->numbone && m3d->numskin)
+            if ((m3d->numbone && m3d->numskin) &&
+                (model.meshes[k].boneIndices != nullptr) && (model.meshes[k].boneWeights != nullptr))
             {
                 for (n = 0; n < 3; n++)
                 {
@@ -7247,8 +7256,8 @@ static Model LoadM3D(const char *fileName)
             }
 
             // Initialize runtime animation data: current pose and bone matrices
-            model.currentPose = static_cast<Transform *>(calloc(model.skeleton.boneCount, sizeof(Transform)));
-            model.boneMatrices = static_cast<mat4 *>(calloc(model.skeleton.boneCount, sizeof(mat4)));
+            model.currentPose = static_cast<Transform *>(calloc((model.skeleton.boneCount > 0) ? model.skeleton.boneCount : 1, sizeof(Transform)));
+            model.boneMatrices = static_cast<mat4 *>(calloc((model.skeleton.boneCount > 0) ? model.skeleton.boneCount : 1, sizeof(mat4)));
             for (u32 j = 0; j < model.skeleton.boneCount; j++) model.boneMatrices[j] = mat4(1.0f);
         }
 
@@ -7279,11 +7288,11 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, i32 *animCou
 
         if (!m3d || M3D_ERR_ISFATAL(m3d->errcode))
         {
-            TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to load M3D data, error code %d", fileName, m3d? m3d->errcode : -2);
+            log(LogLevel::warn, "MODEL: [{}] Failed to load M3D data, error code {}", fileName, m3d? m3d->errcode : -2);
             UnloadFileData(fileData);
             return nullptr;
         }
-        else TRACELOG(LOG_INFO, "MODEL: [%s] M3D data loaded successfully: %i animations, %i bones, %i skins", fileName, m3d->numaction, m3d->numbone, m3d->numskin);
+        else log(LogLevel::info, "MODEL: [{}] M3D data loaded successfully: {} animations, {} bones, {} skins", fileName, m3d->numaction, m3d->numbone, m3d->numskin);
 
         // No animation or bones, exit out. skins are not required because some people use one animation for N models
         if (!m3d->numaction || !m3d->numbone)
@@ -7305,7 +7314,7 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, i32 *animCou
             animations[a].keyframePoses = static_cast<Transform * *>(calloc(animations[a].keyframeCount, sizeof(Transform *)));
             snprintf(animations[a].name, sizeof(animations[a].name), "%s", m3d->action[a].name);
 
-            TRACELOG(LOG_INFO, "MODEL: [%s] Loaded animation: %s | Frames: %d | Duration: %fs", fileName, animations[a].name, animations[a].keyframeCount, m3d->action[a].durationmsec);
+            log(LogLevel::info, "MODEL: [{}] Loaded animation: {} | Frames: {} | Duration: {} ms", fileName, animations[a].name, animations[a].keyframeCount, m3d->action[a].durationmsec);
 
             for (i = 0; i < static_cast<i32>(m3d->numbone); i++)
             {

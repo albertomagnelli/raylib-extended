@@ -492,22 +492,22 @@ static auto automationEventRecording = false;                  // Recording auto
 // NOTE: Those functions are common for all platforms!
 //----------------------------------------------------------------------------------
 #if SUPPORT_MODULE_RTEXT
-extern void LoadFontDefault(void);      // [Module: text] Loads default font on InitWindow()
-extern void UnloadFontDefault(void);    // [Module: text] Unloads default font from GPU memory
+extern void LoadFontDefault();      // [Module: text] Loads default font on InitWindow()
+extern void UnloadFontDefault();    // [Module: text] Unloads default font from GPU memory
 #endif
 
-extern i32 InitPlatform(void);          // Initialize platform (graphics, inputs and more)
-extern void ClosePlatform(void);        // Close platform
+extern i32 InitPlatform();          // Initialize platform (graphics, inputs and more)
+extern void ClosePlatform();        // Close platform
 
-static void InitTimer(void);                                // Initialize timer, hi-resolution if available (required by InitPlatform())
+static void InitTimer();                                // Initialize timer, hi-resolution if available (required by InitPlatform())
 static void SetupViewport(i32 width, i32 height);           // Set viewport for a provided width and height
-static i32 GetWindowRequestedSamples(void);                 // Get the MSAA samples requested by the window flags (required by InitPlatform())
-static void UpdateWindowProvidedSamples(void);              // Get the MSAA samples really provided by the graphics device (required by InitWindow())
+static i32 GetWindowRequestedSamples();                 // Get the MSAA samples requested by the window flags (required by InitPlatform())
+static void UpdateWindowProvidedSamples();              // Get the MSAA samples really provided by the graphics device (required by InitWindow())
 
 static void ScanDirectoryFiles(const char *basePath, FilePathList *list, const char *filter, const bool scanSubdirs); // Scan all files and directories in a base path
 
 #if SUPPORT_AUTOMATION_EVENTS
-static void RecordAutomationEvent(void); // Record frame events (to internal events array)
+static void RecordAutomationEvent(); // Record frame events (to internal events array)
 #endif
 
 #if defined(_WIN32) && !defined(PLATFORM_DESKTOP_RGFW)
@@ -597,7 +597,7 @@ std::string TextFormat(std::string_view text, ...); // Formatting of text with v
 
 // Get the MSAA samples requested for the window, zero means MSAA disabled
 // NOTE: FLAG_MSAA_4X_HINT, FLAG_MSAA_8X_HINT and FLAG_MSAA_16X_HINT configure it, the highest one set wins
-static i32 GetWindowRequestedSamples(void)
+static i32 GetWindowRequestedSamples()
 {
     auto samples = 0;
 
@@ -633,7 +633,7 @@ void SetWindowSamples(i32 samples)
 // Get the MSAA samples in use, zero means MSAA disabled
 // NOTE: Before InitWindow() it returns the requested samples,
 // once the window is created it returns the samples really provided by the graphics device
-i32 GetWindowSamples(void)
+i32 GetWindowSamples()
 {
     return CORE.Window.samples;
 }
@@ -641,7 +641,7 @@ i32 GetWindowSamples(void)
 // Update the MSAA samples really provided by the graphics device, zero means MSAA disabled
 // NOTE: It queries the current OpenGL default framebuffer, it must be called once the context is active,
 // some platform backends also set CORE.Window.samples while creating the window context
-static void UpdateWindowProvidedSamples(void)
+static void UpdateWindowProvidedSamples()
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     const auto requestedSamples = GetWindowRequestedSamples();
@@ -813,7 +813,7 @@ void InitWindow(i32 width, i32 height, std::string_view titleView)
 }
 
 // Close window and unload OpenGL context
-void CloseWindow(void)
+void CloseWindow()
 {
 #if SUPPORT_MODULE_RTEXT
     UnloadFontDefault();        // WARNING: Module required: rtext
@@ -833,43 +833,43 @@ void CloseWindow(void)
 }
 
 // Check if window has been initialized successfully
-bool IsWindowReady(void)
+bool IsWindowReady()
 {
     return CORE.Window.ready;
 }
 
 // Check if window is currently fullscreen
-bool IsWindowFullscreen(void)
+bool IsWindowFullscreen()
 {
     return FLAG_IS_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE);
 }
 
 // Check if window is currently hidden
-bool IsWindowHidden(void)
+bool IsWindowHidden()
 {
     return FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIDDEN);
 }
 
 // Check if window has been minimized
-bool IsWindowMinimized(void)
+bool IsWindowMinimized()
 {
     return FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_MINIMIZED);
 }
 
 // Check if window has been maximized
-bool IsWindowMaximized(void)
+bool IsWindowMaximized()
 {
     return FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_MAXIMIZED);
 }
 
 // Check if window has the focus
-bool IsWindowFocused(void)
+bool IsWindowFocused()
 {
     return !FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_UNFOCUSED);
 }
 
 // Check if window has been resizedLastFrame
-bool IsWindowResized(void)
+bool IsWindowResized()
 {
     return CORE.Window.resizedLastFrame;
 }
@@ -881,19 +881,19 @@ bool IsWindowState(const u32 flag)
 }
 
 // Get current screen width
-i32 GetScreenWidth(void)
+i32 GetScreenWidth()
 {
     return CORE.Window.screen.width;
 }
 
 // Get current screen height
-i32 GetScreenHeight(void)
+i32 GetScreenHeight()
 {
     return CORE.Window.screen.height;
 }
 
 // Get current render width which is equal to screen width*dpi scale
-i32 GetRenderWidth(void)
+i32 GetRenderWidth()
 {
     auto width = 0;
 
@@ -904,7 +904,7 @@ i32 GetRenderWidth(void)
 }
 
 // Get current screen height which is equal to screen height*dpi scale
-i32 GetRenderHeight(void)
+i32 GetRenderHeight()
 {
     auto height = 0;
 
@@ -915,25 +915,25 @@ i32 GetRenderHeight(void)
 }
 
 // Enable waiting for events on EndDrawing(), no automatic event polling
-void EnableEventWaiting(void)
+void EnableEventWaiting()
 {
     CORE.Window.eventWaiting = true;
 }
 
 // Disable waiting for events on EndDrawing(), automatic events polling
-void DisableEventWaiting(void)
+void DisableEventWaiting()
 {
     CORE.Window.eventWaiting = false;
 }
 
 // Check if cursor is not visible
-bool IsCursorHidden(void)
+bool IsCursorHidden()
 {
     return CORE.Input.Mouse.cursorHidden;
 }
 
 // Check if cursor is on the current screen
-bool IsCursorOnScreen(void)
+bool IsCursorOnScreen()
 {
     return CORE.Input.Mouse.cursorOnScreen;
 }
@@ -950,7 +950,7 @@ void ClearBackground(const Color color)
 }
 
 // Begin canvas (framebuffer) drawing
-void BeginDrawing(void)
+void BeginDrawing()
 {
     // WARNING: Previously to BeginDrawing() other render textures drawing could happen,
     // consequently the measure for update vs draw is not accurate (only the total frame time is accurate)
@@ -967,7 +967,7 @@ void BeginDrawing(void)
 }
 
 // End canvas (framebuffer) drawing and swap buffers (double buffering)
-void EndDrawing(void)
+void EndDrawing()
 {
     rlDrawRenderBatchActive();      // Update and draw internal render batch
 
@@ -1023,7 +1023,7 @@ void BeginMode2D(const Camera2D camera)
 }
 
 // End 2D mode with custom camera
-void EndMode2D(void)
+void EndMode2D()
 {
     rlDrawRenderBatchActive();      // Update and draw internal render batch
 
@@ -1072,7 +1072,7 @@ void BeginMode3D(const Camera camera)
 }
 
 // End 3D mode and returns to default 2D orthographic mode
-void EndMode3D(void)
+void EndMode3D()
 {
     rlDrawRenderBatchActive();      // Update and draw internal render batch
 
@@ -1119,7 +1119,7 @@ void BeginTextureMode(const RenderTexture2D target)
 }
 
 // End drawing to render texture
-void EndTextureMode(void)
+void EndTextureMode()
 {
     rlDrawRenderBatchActive();      // Update and draw internal render batch
 
@@ -1146,7 +1146,7 @@ void BeginShaderMode(const Shader shader)
 }
 
 // End custom shader mode (returns to default shader)
-void EndShaderMode(void)
+void EndShaderMode()
 {
     rlSetShader(rlGetShaderIdDefault(), rlGetShaderLocsDefault());
 }
@@ -1159,7 +1159,7 @@ void BeginBlendMode(const i32 mode)
 }
 
 // End blending mode (reset to default: alpha blending)
-void EndBlendMode(void)
+void EndBlendMode()
 {
     rlSetBlendMode(BLEND_ALPHA);
 }
@@ -1192,7 +1192,7 @@ void BeginScissorMode(const i32 x, const i32 y, const i32 width, const i32 heigh
 }
 
 // End scissor mode
-void EndScissorMode(void)
+void EndScissorMode()
 {
     rlDrawRenderBatchActive();      // Update and draw internal render batch
     rlDisableScissorTest();
@@ -1213,7 +1213,7 @@ void BeginVrStereoMode(const VrStereoConfig config)
 }
 
 // End VR drawing process (and desktop mirror)
-void EndVrStereoMode(void)
+void EndVrStereoMode()
 {
     rlDisableStereoRender();
 }
@@ -1683,7 +1683,7 @@ void SetTargetFPS(const i32 fps)
 
 // Get current FPS
 // NOTE: Calculating an average framerate
-i32 GetFPS(void)
+i32 GetFPS()
 {
     auto fps = 0;
 
@@ -1731,7 +1731,7 @@ i32 GetFPS(void)
 }
 
 // Get time in seconds for last frame drawn (delta time)
-f32 GetFrameTime(void)
+f32 GetFrameTime()
 {
     return static_cast<f32>(CORE.Time.frame);
 }
@@ -2863,7 +2863,7 @@ std::string GetPrevDirectoryPath(std::string_view dirPathView)
 }
 
 // Get current working directory
-std::string GetWorkingDirectory(void)
+std::string GetWorkingDirectory()
 {
     static char currentDir[MAX_FILEPATH_LENGTH] = { 0 };
     memset(currentDir, 0, MAX_FILEPATH_LENGTH);
@@ -2873,7 +2873,7 @@ std::string GetWorkingDirectory(void)
     return GetStringOrEmpty(path);
 }
 
-std::string GetApplicationDirectory(void)
+std::string GetApplicationDirectory()
 {
     static char appDir[MAX_FILEPATH_LENGTH] = { 0 };
     memset(appDir, 0, MAX_FILEPATH_LENGTH);
@@ -3193,7 +3193,7 @@ bool IsFileNameValid(std::string_view fileNameView)
 }
 
 // Check if file has been dropped into window
-bool IsFileDropped(void)
+bool IsFileDropped()
 {
     auto result = false;
 
@@ -3203,7 +3203,7 @@ bool IsFileDropped(void)
 }
 
 // Load dropped filepaths
-FilePathList LoadDroppedFiles(void)
+FilePathList LoadDroppedFiles()
 {
     FilePathList files;
 
@@ -3420,7 +3420,8 @@ u8 * DecodeDataBase64(std::string_view textView, i32 *outputSize)
 
     // Load some memory to store decoded data
     // NOTE: Allocated enough size to include padding
-    auto decodedData = static_cast<u8 *>(calloc(maxOutputSize, 1));
+    // NOTE: calloc(0) is implementation-defined (may return NULL), so allocate at least one byte
+    auto decodedData = static_cast<u8 *>(calloc((maxOutputSize > 0) ? maxOutputSize : 1, 1));
 
     auto outputCount = 0;
     for (i32 i = 0; i < dataSize;)
@@ -4017,7 +4018,7 @@ void SetAutomationEventBaseFrame(const i32 frame)
 }
 
 // Start recording automation events (AutomationEventList must be set)
-void StartAutomationEventRecording(void)
+void StartAutomationEventRecording()
 {
 #if SUPPORT_AUTOMATION_EVENTS
     automationEventRecording = true;
@@ -4025,7 +4026,7 @@ void StartAutomationEventRecording(void)
 }
 
 // Stop recording automation events
-void StopAutomationEventRecording(void)
+void StopAutomationEventRecording()
 {
 #if SUPPORT_AUTOMATION_EVENTS
     automationEventRecording = false;
@@ -4179,7 +4180,7 @@ bool IsKeyUp(const i32 key)
 }
 
 // Get the last key pressed
-i32 GetKeyPressed(void)
+i32 GetKeyPressed()
 {
     auto value = 0;
 
@@ -4201,7 +4202,7 @@ i32 GetKeyPressed(void)
 }
 
 // Get the last char pressed
-i32 GetCharPressed(void)
+i32 GetCharPressed()
 {
     auto value = 0;
 
@@ -4310,7 +4311,7 @@ bool IsGamepadButtonUp(const i32 gamepad, const i32 button)
 
 // Get the last gamepad button pressed
 // NOTE: Returns last gamepad button down, down->up change not considered
-i32 GetGamepadButtonPressed(void)
+i32 GetGamepadButtonPressed()
 {
     return CORE.Input.Gamepad.lastButtonPressed;
 }
@@ -4413,7 +4414,7 @@ bool IsMouseButtonUp(const i32 button)
 }
 
 // Get mouse position X
-i32 GetMouseX(void)
+i32 GetMouseX()
 {
     const auto mouseX = static_cast<i32>((CORE.Input.Mouse.currentPosition.x + CORE.Input.Mouse.offset.x)*CORE.Input.Mouse.scale.x);
 
@@ -4421,7 +4422,7 @@ i32 GetMouseX(void)
 }
 
 // Get mouse position Y
-i32 GetMouseY(void)
+i32 GetMouseY()
 {
     const auto mouseY = static_cast<i32>((CORE.Input.Mouse.currentPosition.y + CORE.Input.Mouse.offset.y)*CORE.Input.Mouse.scale.y);
 
@@ -4429,7 +4430,7 @@ i32 GetMouseY(void)
 }
 
 // Get mouse position XY
-vec2 GetMousePosition(void)
+vec2 GetMousePosition()
 {
     vec2 position{};
 
@@ -4440,7 +4441,7 @@ vec2 GetMousePosition(void)
 }
 
 // Get mouse delta between frames
-vec2 GetMouseDelta(void)
+vec2 GetMouseDelta()
 {
     vec2 delta{};
 
@@ -4465,7 +4466,7 @@ void SetMouseScale(const f32 scaleX, const f32 scaleY)
 }
 
 // Get mouse wheel movement Y
-f32 GetMouseWheelMove(void)
+f32 GetMouseWheelMove()
 {
     auto result = 0.0f;
 
@@ -4476,7 +4477,7 @@ f32 GetMouseWheelMove(void)
 }
 
 // Get mouse wheel movement X/Y as a vector
-vec2 GetMouseWheelMoveV(void)
+vec2 GetMouseWheelMoveV()
 {
     vec2 result{};
 
@@ -4490,14 +4491,14 @@ vec2 GetMouseWheelMoveV(void)
 //----------------------------------------------------------------------------------
 
 // Get touch position X for touch point 0 (relative to screen size)
-i32 GetTouchX(void)
+i32 GetTouchX()
 {
     const auto touchX = static_cast<i32>(CORE.Input.Touch.position[0].x);
     return touchX;
 }
 
 // Get touch position Y for touch point 0 (relative to screen size)
-i32 GetTouchY(void)
+i32 GetTouchY()
 {
     const auto touchY = static_cast<i32>(CORE.Input.Touch.position[0].y);
     return touchY;
@@ -4525,7 +4526,7 @@ i32 GetTouchPointId(const i32 index)
 }
 
 // Get number of touch points
-i32 GetTouchPointCount(void)
+i32 GetTouchPointCount()
 {
     return CORE.Input.Touch.pointCount;
 }
@@ -4539,7 +4540,7 @@ i32 GetTouchPointCount(void)
 //void ClosePlatform(void)
 
 // Initialize hi-resolution timer
-void InitTimer(void)
+void InitTimer()
 {
     // Setting a higher resolution can improve the accuracy of time-out intervals in wait functions
     // However, it can also reduce overall system performance, because the thread scheduler switches tasks more often
@@ -4640,7 +4641,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 // Automation event recording
 // Checking events in current frame and save them into currentEventList
 // NOTE: Recording is by default done at EndDrawing(), before PollInputEvents()
-static void RecordAutomationEvent(void)
+static void RecordAutomationEvent()
 {
     if (currentEventList->count == currentEventList->capacity) return;
 

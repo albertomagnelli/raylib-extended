@@ -120,18 +120,18 @@ extern "C" {            // Prevents name mangling of functions
 #endif
 
 void ProcessGestureEvent(const GestureEvent event);           // Process gesture event and translate it into gestures
-void UpdateGestures(void);                              // Update gestures detected (must be called every frame)
+void UpdateGestures();                              // Update gestures detected (must be called every frame)
 
 #if defined(RGESTURES_STANDALONE)
 void SetGesturesEnabled(const u32 flags);            // Enable a set of gestures using flags
 bool IsGestureDetected(const i32 gesture);                    // Check if gesture has been detected
-i32 GetGestureDetected(void);                           // Get latest detected gesture
+i32 GetGestureDetected();                           // Get latest detected gesture
 
-f32 GetGestureHoldDuration(void);                     // Get gesture hold time in seconds
-vec2 GetGestureDragVector(void);                        // Get gesture drag vector
-f32 GetGestureDragAngle(void);                        // Get gesture drag angle
-vec2 GetGesturePinchVector(void);                       // Get gesture pinch delta
-f32 GetGesturePinchAngle(void);                       // Get gesture pinch angle
+f32 GetGestureHoldDuration();                     // Get gesture hold time in seconds
+vec2 GetGestureDragVector();                        // Get gesture drag vector
+f32 GetGestureDragAngle();                        // Get gesture drag angle
+vec2 GetGesturePinchVector();                       // Get gesture pinch delta
+f32 GetGesturePinchAngle();                       // Get gesture pinch angle
 #endif
 
 #if defined(__cplusplus)
@@ -244,7 +244,7 @@ static GesturesData GESTURES = {
 //----------------------------------------------------------------------------------
 static f32 rgVector2Angle(const vec2 initialPosition, const vec2 finalPosition);
 static f32 rgVector2Distance(const vec2 v1, const vec2 v2);
-static f64 rgGetCurrentTime(void);
+static f64 rgGetCurrentTime();
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
@@ -411,7 +411,7 @@ void ProcessGestureEvent(const GestureEvent event)
 }
 
 // Update gestures detected (must be called every frame)
-void UpdateGestures(void)
+void UpdateGestures()
 {
     // NOTE: Gestures are processed through system callbacks on touch events
 
@@ -430,14 +430,14 @@ void UpdateGestures(void)
 }
 
 // Get latest detected gesture
-i32 GetGestureDetected(void)
+i32 GetGestureDetected()
 {
     // Get current gesture only if enabled
     return (GESTURES.enabledFlags & GESTURES.current);
 }
 
 // Hold time measured in seconds
-f32 GetGestureHoldDuration(void)
+f32 GetGestureHoldDuration()
 {
     // NOTE: time is calculated on current gesture HOLD
 
@@ -449,7 +449,7 @@ f32 GetGestureHoldDuration(void)
 }
 
 // Get drag vector (between initial touch point to current)
-vec2 GetGestureDragVector(void)
+vec2 GetGestureDragVector()
 {
     // NOTE: drag vector is calculated on one touch points TOUCH_ACTION_MOVE
 
@@ -458,7 +458,7 @@ vec2 GetGestureDragVector(void)
 
 // Get drag angle
 // NOTE: Angle in degrees, horizontal-right is 0, counterclockwise
-f32 GetGestureDragAngle(void)
+f32 GetGestureDragAngle()
 {
     // NOTE: drag angle is calculated on one touch points TOUCH_ACTION_UP
 
@@ -466,7 +466,7 @@ f32 GetGestureDragAngle(void)
 }
 
 // Get distance between two pinch points
-vec2 GetGesturePinchVector(void)
+vec2 GetGesturePinchVector()
 {
     // NOTE: Pinch distance is calculated on two touch points TOUCH_ACTION_MOVE
 
@@ -475,7 +475,7 @@ vec2 GetGesturePinchVector(void)
 
 // Get angle between two pinch points
 // NOTE: Angle in degrees, horizontal-right is 0, counterclockwise
-f32 GetGesturePinchAngle(void)
+f32 GetGesturePinchAngle()
 {
     // NOTE: pinch angle is calculated on two touch points TOUCH_ACTION_MOVE
 
@@ -509,7 +509,7 @@ static f32 rgVector2Distance(const vec2 v1, const vec2 v2)
 }
 
 // Time measure returned are seconds
-static f64 rgGetCurrentTime(void)
+static f64 rgGetCurrentTime()
 {
     f64 time = 0;
 
