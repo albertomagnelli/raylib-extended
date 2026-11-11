@@ -41,13 +41,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - portal window");
 
     // Camera to navigate the "real world" (Dimension A)
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ 0.0f, 2.5f, 7.0f };
     camera.target = vec3{ 0.0f, 1.8f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -56,16 +56,16 @@ i32 main()
 
     // The archway opening, in Dimension A world space (used both to draw the frame and
     // as the window rectangle the oblique projection is built from)
-    const vec3 archBottomLeft  = { -1.5f, 0.0f, 0.0f };
-    const vec3 archBottomRight = {  1.5f, 0.0f, 0.0f };
-    const vec3 archTopLeft     = { -1.5f, 4.0f, 0.0f };
+    const auto archBottomLeft = vec3{ -1.5f, 0.0f, 0.0f };
+    const auto archBottomRight = vec3{  1.5f, 0.0f, 0.0f };
+    const auto archTopLeft = vec3{ -1.5f, 4.0f, 0.0f };
 
     // The archway sits at portalA and looks out onto portalB, far away in world space.
     // Every frame, Dimension B gets rendered to a texture using the same relative eye
     // and window position, shifted by the offset between the two portals
-    const vec3 portalA = { 0.0f, 0.0f, 0.0f };
-    const vec3 portalB = { 0.0f, 0.0f, -60.0f };
-    const RenderTexture2D portalView = LoadRenderTexture(480, 640);
+    const auto portalA = vec3{ 0.0f, 0.0f, 0.0f };
+    const auto portalB = vec3{ 0.0f, 0.0f, -60.0f };
+    const auto portalView = LoadRenderTexture(480, 640);
 
     DisableCursor();        // Lock cursor for first-person free camera controls
     SetTargetFPS(60);
@@ -77,7 +77,7 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
-        const f32 time = static_cast<f32>(GetTime());
+        const auto time = static_cast<f32>(GetTime());
 
         // Eye and window corners, shifted into Dimension B so they match the player's
         // actual position and viewing angle relative to the archway

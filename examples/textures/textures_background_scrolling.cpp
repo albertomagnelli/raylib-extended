@@ -22,8 +22,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - background scrolling");
 
@@ -33,9 +33,9 @@ i32 main()
     const Texture2D midground = LoadTexture("resources/cyberpunk_street_midground.png");
     const Texture2D foreground = LoadTexture("resources/cyberpunk_street_foreground.png");
 
-    f32 scrollingBack = 0.0f;
-    f32 scrollingMid = 0.0f;
-    f32 scrollingFore = 0.0f;
+    auto scrollingBack = 0.0f;
+    auto scrollingMid = 0.0f;
+    auto scrollingFore = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

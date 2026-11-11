@@ -35,8 +35,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - shapes textures");
 

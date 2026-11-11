@@ -31,8 +31,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image kernel");
 
@@ -60,13 +60,13 @@ i32 main()
     NormalizeKernel(sharpenkernel, 9);
     NormalizeKernel(sobelkernel, 9);
 
-    Image catSharpend = ImageCopy(image);
+    auto catSharpend = ImageCopy(image);
     ImageKernelConvolution(&catSharpend, sharpenkernel, 9);
 
-    Image catSobel = ImageCopy(image);
+    auto catSobel = ImageCopy(image);
     ImageKernelConvolution(&catSobel, sobelkernel, 9);
 
-    Image catGaussian = ImageCopy(image);
+    auto catGaussian = ImageCopy(image);
 
     for (i32 i = 0; i < 6; i++)
     {
@@ -79,10 +79,10 @@ i32 main()
     ImageCrop(&catSharpend, Rectangle{ 0, 0, static_cast<f32>(200), static_cast<f32>(450) });
 
     // Images converted to texture, GPU memory (VRAM)
-    const Texture2D texture = LoadTextureFromImage(image);
-    const Texture2D catSharpendTexture = LoadTextureFromImage(catSharpend);
-    const Texture2D catSobelTexture = LoadTextureFromImage(catSobel);
-    const Texture2D catGaussianTexture = LoadTextureFromImage(catGaussian);
+    const auto texture = LoadTextureFromImage(image);
+    const auto catSharpendTexture = LoadTextureFromImage(catSharpend);
+    const auto catSobelTexture = LoadTextureFromImage(catSobel);
+    const auto catGaussianTexture = LoadTextureFromImage(catGaussian);
 
     // Once images have been converted to texture and uploaded to VRAM,
     // they can be unloaded from RAM
@@ -135,7 +135,7 @@ i32 main()
 //------------------------------------------------------------------------------------
 static void NormalizeKernel(f32 *kernel, i32 size)
 {
-    f32 sum = 0.0f;
+    auto sum = 0.0f;
     for (i32 i = 0; i < size; i++) sum += kernel[i];
 
     if (sum != 0.0f)

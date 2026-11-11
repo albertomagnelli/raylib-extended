@@ -27,26 +27,26 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - clock of clocks");
 
-    const Color bgColor = ColorLerp(DARKBLUE, BLACK, 0.75f);
-    const Color handsColor = ColorLerp(YELLOW, RAYWHITE, .25f);
+    const auto bgColor = ColorLerp(DARKBLUE, BLACK, 0.75f);
+    const auto handsColor = ColorLerp(YELLOW, RAYWHITE, .25f);
 
     constexpr f32 clockFaceSize = 24;
-    constexpr f32 clockFaceSpacing = 8.0f;
-    constexpr f32 sectionSpacing = 16.0f;
+    constexpr auto clockFaceSpacing = 8.0f;
+    constexpr auto sectionSpacing = 16.0f;
 
-    const vec2 TL = vec2{   0.0f,  90.0f }; // Top-left corner
-    const vec2 TR = vec2{  90.0f, 180.0f }; // Top-right corner
-    const vec2 BR = vec2{ 180.0f, 270.0f }; // Bottom-right corner
-    const vec2 BL = vec2{   0.0f, 270.0f }; // Bottom-left corner
-    const vec2 HH = vec2{   0.0f, 180.0f }; // Horizontal line
-    const vec2 VV = vec2{  90.0f, 270.0f }; // Vertical line
-    const vec2 ZZ = vec2{ 135.0f, 135.0f }; // Not relevant
+    const auto TL = vec2{   0.0f,  90.0f }; // Top-left corner
+    const auto TR = vec2{  90.0f, 180.0f }; // Top-right corner
+    const auto BR = vec2{ 180.0f, 270.0f }; // Bottom-right corner
+    const auto BL = vec2{   0.0f, 270.0f }; // Bottom-left corner
+    const auto HH = vec2{   0.0f, 180.0f }; // Horizontal line
+    const auto VV = vec2{  90.0f, 270.0f }; // Vertical line
+    const auto ZZ = vec2{ 135.0f, 135.0f }; // Not relevant
 
     const vec2 digitAngles[10][24] = {
         /* 0 */ { TL,HH,HH,TR, /* */ VV,TL,TR,VV,/* */ VV,VV,VV,VV,/* */ VV,VV,VV,VV,/* */ VV,BL,BR,VV,/* */ BL,HH,HH,BR },
@@ -62,15 +62,15 @@ i32 main()
     };
 
     // Time for the hands to move to the new position (in seconds); this must be <1s
-    constexpr f32 handsMoveDuration = 0.5f;
+    constexpr auto handsMoveDuration = 0.5f;
 
-    i32 prevSeconds = -1;
+    auto prevSeconds = -1;
     vec2 currentAngles[6][24] = {};
     vec2 srcAngles[6][24] = {};
     vec2 dstAngles[6][24] = {};
 
-    f32 handsMoveTimer = 0.0f;
-    i32 hourMode = 24;
+    auto handsMoveTimer = 0.0f;
+    auto hourMode = 24;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ i32 main()
 
             DrawText(TextFormat("%d-h mode, space to change", hourMode), 10, 30, 20, RAYWHITE);
 
-            f32 xOffset = 4.0f;
+            auto xOffset = 4.0f;
 
             for (u32 digit = 0; digit < 6; digit++)
             {

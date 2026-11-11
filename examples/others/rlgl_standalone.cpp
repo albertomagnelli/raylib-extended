@@ -123,8 +123,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     // GLFW3 Initialization + OpenGL 3.3 Context + Extensions
     //--------------------------------------------------------
@@ -183,13 +183,13 @@ i32 main()
     rlClearColor(245, 245, 245, 255);                   // Define clear color
     rlEnableDepthTest();                                // Enable DEPTH_TEST for 3D
 
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 5.0f, 5.0f, 5.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
 
-    const vec3 cubePosition = { 0.0f, 0.0f, 0.0f };      // Cube default position (center)
+    const auto cubePosition = vec3{ 0.0f, 0.0f, 0.0f };      // Cube default position (center)
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -332,9 +332,9 @@ static void DrawGrid(i32 slices, f32 spacing)
 // NOTE: Cube position is the center position
 static void DrawCube(vec3 position, f32 width, f32 height, f32 length, Color color)
 {
-    constexpr f32 x = 0.0f;
-    constexpr f32 y = 0.0f;
-    constexpr f32 z = 0.0f;
+    constexpr auto x = 0.0f;
+    constexpr auto y = 0.0f;
+    constexpr auto z = 0.0f;
 
     rlPushMatrix();
 
@@ -406,9 +406,9 @@ static void DrawCube(vec3 position, f32 width, f32 height, f32 length, Color col
 // Draw cube wires
 static void DrawCubeWires(vec3 position, f32 width, f32 height, f32 length, Color color)
 {
-    constexpr f32 x = 0.0f;
-    constexpr f32 y = 0.0f;
-    constexpr f32 z = 0.0f;
+    constexpr auto x = 0.0f;
+    constexpr auto y = 0.0f;
+    constexpr auto z = 0.0f;
 
     rlPushMatrix();
 

@@ -38,8 +38,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - point rendering");
 
@@ -51,13 +51,13 @@ i32 main()
         .projection = CAMERA_PERSPECTIVE
     };
 
-    const vec3 position = { 0.0f, 0.0f, 0.0f };
-    bool useDrawModelPoints = true;
-    bool numPointsChanged = false;
-    i32 numPoints = 1000;
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f };
+    auto useDrawModelPoints = true;
+    auto numPointsChanged = false;
+    auto numPoints = 1000;
 
-    Mesh mesh = GenMeshPoints(numPoints);
-    Model model = LoadModelFromMesh(mesh);
+    auto mesh = GenMeshPoints(numPoints);
+    auto model = LoadModelFromMesh(mesh);
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -172,7 +172,7 @@ static Mesh GenMeshPoints(i32 numPoints)
         mesh.vertices[i*3 + 1] = r*sinf(theta)*sinf(phi);
         mesh.vertices[i*3 + 2] = r*cosf(theta);
 
-        const Color color = ColorFromHSV(r*360.0f, 1.0f, 1.0f);
+        const auto color = ColorFromHSV(r*360.0f, 1.0f, 1.0f);
 
         mesh.colors[i*4 + 0] = color.r;
         mesh.colors[i*4 + 1] = color.g;

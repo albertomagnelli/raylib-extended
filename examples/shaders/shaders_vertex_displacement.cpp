@@ -35,13 +35,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - vertex displacement");
 
     // set up camera
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{20.0f, 5.0f, -20.0f};
     camera.target = vec3{0.0f, 0.0f, 0.0f};
     camera.up = vec3{0.0f, 1.0f, 0.0f};
@@ -54,7 +54,7 @@ i32 main()
         TextFormat("resources/shaders/glsl%i/vertex_displacement.fs", GLSL_VERSION));
 
     // Load perlin noise texture
-    const Image perlinNoiseImage = GenImagePerlinNoise(512, 512, 0, 0, 1.0f);
+    const auto perlinNoiseImage = GenImagePerlinNoise(512, 512, 0, 0, 1.0f);
     const Texture perlinNoiseMap = LoadTextureFromImage(perlinNoiseImage);
     UnloadImage(perlinNoiseImage);
 
@@ -66,12 +66,12 @@ i32 main()
     rlSetUniformSampler(perlinNoiseMapLoc, 1);
 
     // Create a plane mesh and model
-    const Mesh planeMesh = GenMeshPlane(50, 50, 50, 50);
-    const Model planeModel = LoadModelFromMesh(planeMesh);
+    const auto planeMesh = GenMeshPlane(50, 50, 50, 50);
+    const auto planeModel = LoadModelFromMesh(planeMesh);
     // Set plane model material
     planeModel.materials[0].shader = shader;
 
-    f32 time = 0.0f;
+    auto time = 0.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

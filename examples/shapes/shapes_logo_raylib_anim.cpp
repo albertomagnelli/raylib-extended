@@ -22,25 +22,25 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - logo raylib anim");
 
     const i32 logoPositionX = screenWidth/2 - 128;
     const i32 logoPositionY = screenHeight/2 - 128;
 
-    i32 framesCounter = 0;
-    i32 lettersCount = 0;
+    auto framesCounter = 0;
+    auto lettersCount = 0;
 
-    i32 topSideRecWidth = 16;
-    i32 leftSideRecHeight = 16;
+    auto topSideRecWidth = 16;
+    auto leftSideRecHeight = 16;
 
-    i32 bottomSideRecWidth = 16;
-    i32 rightSideRecHeight = 16;
+    auto bottomSideRecWidth = 16;
+    auto rightSideRecHeight = 16;
 
-    i32 state = 0;                  // Tracking animation states (State Machine)
-    f32 alpha = 1.0f;             // Useful for fading
+    auto state = 0;                  // Tracking animation states (State Machine)
+    auto alpha = 1.0f;             // Useful for fading
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

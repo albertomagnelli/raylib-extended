@@ -24,20 +24,20 @@ i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bouncing ball");
 
-    vec2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
-    vec2 ballSpeed = { 5.0f, 4.0f };
-    constexpr i32 ballRadius = 20;
-    constexpr f32 gravity = 0.2f;
+    auto ballPosition = vec2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    auto ballSpeed = vec2{ 5.0f, 4.0f };
+    constexpr auto ballRadius = 20;
+    constexpr auto gravity = 0.2f;
 
-    bool useGravity = true;
+    auto useGravity = true;
     bool pause = 0;
-    i32 framesCounter = 0;
+    auto framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------

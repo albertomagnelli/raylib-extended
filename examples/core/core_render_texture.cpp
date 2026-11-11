@@ -22,21 +22,21 @@ i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - render texture");
 
     // Define a render texture to render
-    constexpr i32 renderTextureWidth = 300;
-    constexpr i32 renderTextureHeight = 300;
-    const RenderTexture2D target = LoadRenderTexture(renderTextureWidth, renderTextureHeight);
+    constexpr auto renderTextureWidth = 300;
+    constexpr auto renderTextureHeight = 300;
+    const auto target = LoadRenderTexture(renderTextureWidth, renderTextureHeight);
 
-    vec2 ballPosition = { renderTextureWidth/2.0f, renderTextureHeight/2.0f };
-    vec2 ballSpeed = { 5.0f, 4.0f };
-    constexpr i32 ballRadius = 20;
+    auto ballPosition = vec2{ renderTextureWidth/2.0f, renderTextureHeight/2.0f };
+    auto ballSpeed = vec2{ 5.0f, 4.0f };
+    constexpr auto ballRadius = 20;
 
-    f32 rotation = 0.0f;
+    auto rotation = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------

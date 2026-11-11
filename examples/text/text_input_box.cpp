@@ -24,18 +24,18 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - input box");
 
     char name[MAX_INPUT_CHARS + 1] = "\0";      // NOTE: One extra space required for null terminator char '\0'
-    i32 letterCount = 0;
+    auto letterCount = 0;
 
-    const Rectangle textBox = { screenWidth/2.0f - 100, 180, 225, 50 };
-    bool mouseOnText = false;
+    const auto textBox = Rectangle{ screenWidth/2.0f - 100, 180, 225, 50 };
+    auto mouseOnText = false;
 
-    i32 framesCounter = 0;
+    auto framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ i32 main()
             SetMouseCursor(MOUSE_CURSOR_IBEAM);
 
             // Get char pressed (unicode character) on the queue
-            i32 key = GetCharPressed();
+            auto key = GetCharPressed();
 
             // Check if more characters have been pressed on the same frame
             while (key > 0)
@@ -125,8 +125,8 @@ i32 main()
 // NOTE: We limit keys check to keys between 32 (KEY_SPACE) and 126
 bool IsAnyKeyPressed()
 {
-    bool keyPressed = false;
-    const i32 key = GetKeyPressed();
+    auto keyPressed = false;
+    const auto key = GetKeyPressed();
 
     if ((key >= 32) && (key <= 126)) keyPressed = true;
 

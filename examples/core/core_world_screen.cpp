@@ -22,21 +22,21 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - world screen");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 10.0f, 10.0f, 10.0f };      // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    const vec3 cubePosition = { 0.0f, 0.0f, 0.0f };
-    vec2 cubeScreenPosition = { 0.0f, 0.0f };
+    const auto cubePosition = vec3{ 0.0f, 0.0f, 0.0f };
+    auto cubeScreenPosition = vec2{ 0.0f, 0.0f };
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
 

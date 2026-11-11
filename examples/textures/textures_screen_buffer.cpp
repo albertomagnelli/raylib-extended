@@ -29,8 +29,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - screen buffer");
 
@@ -39,10 +39,10 @@ i32 main()
     const i32 flameWidth = screenWidth/SCALE_FACTOR;
 
     Color palette[MAX_COLORS] = {};
-    u8 *indexBuffer = static_cast<u8 *>(calloc(imageWidth*imageWidth, sizeof(u8)));
-    u8 *flameRootBuffer = static_cast<u8 *>(calloc(flameWidth, sizeof(u8)));
+    auto indexBuffer = static_cast<u8 *>(calloc(imageWidth*imageWidth, sizeof(u8)));
+    auto flameRootBuffer = static_cast<u8 *>(calloc(flameWidth, sizeof(u8)));
 
-    Image screenImage = GenImageColor(imageWidth, imageHeight, BLACK);
+    auto screenImage = GenImageColor(imageWidth, imageHeight, BLACK);
     const Texture screenTexture = LoadTextureFromImage(screenImage);
 
     // Generate flame color palette
@@ -67,7 +67,7 @@ i32 main()
         // Grow flameRoot
         for (i32 x = 2; x < flameWidth; x++)
         {
-            i32 flame = static_cast<i32>(flameRootBuffer[x]);
+            auto flame = static_cast<i32>(flameRootBuffer[x]);
             flame += GetRandomValue(0, 2);
             flameRootBuffer[x] = (flame > 255)? 255: static_cast<u8>(flame);
         }
@@ -103,7 +103,7 @@ i32 main()
                     if ((newX > 0) && (newX < imageWidth))
                     {
                         const u32 iabove = i - imageWidth + moveX;
-                        const i32 decay = GetRandomValue(0, 3);
+                        const auto decay = GetRandomValue(0, 3);
                         colorIndex -= (decay < colorIndex)? decay : colorIndex;
                         indexBuffer[iabove] = colorIndex;
                     }

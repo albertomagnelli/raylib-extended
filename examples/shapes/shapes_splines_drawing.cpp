@@ -47,8 +47,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - splines drawing");
@@ -65,9 +65,9 @@ i32 main()
     // including control points interleaved with start-end segment points
     vec2 pointsInterleaved[3*(MAX_SPLINE_POINTS - 1) + 1] = {};
 
-    i32 pointCount = 5;
-    i32 selectedPoint = -1;
-    i32 focusedPoint = -1;
+    auto pointCount = 5;
+    auto selectedPoint = -1;
+    auto focusedPoint = -1;
     vec2 *selectedControlPoint = nullptr;
     vec2 *focusedControlPoint = nullptr;
 
@@ -80,10 +80,10 @@ i32 main()
     }
 
     // Spline config variables
-    f32 splineThickness = 8.0f;
+    auto splineThickness = 8.0f;
     i32 splineTypeActive = SPLINE_LINEAR; // 0-Linear, 1-BSpline, 2-CatmullRom, 3-Bezier
-    bool splineTypeEditMode = false;
-    bool splineHelpersActive = true;
+    auto splineTypeEditMode = false;
+    auto splineHelpersActive = true;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

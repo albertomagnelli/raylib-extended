@@ -46,12 +46,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ball physics");
 
-    Ball *balls = static_cast<Ball *>(malloc(sizeof(Ball)*MAX_BALLS));
+    auto balls = static_cast<Ball *>(malloc(sizeof(Ball)*MAX_BALLS));
 
     // Init first ball in the array
     balls[0] = Ball{
@@ -65,13 +65,13 @@ i32 main()
         .grabbed = false
     };
 
-    i32 ballCount = 1;
+    auto ballCount = 1;
     Ball *grabbedBall = nullptr;       // A pointer to the current ball that is grabbed
-    vec2 pressOffset = {};             // Mouse press offset relative to the ball that grabbedd
+    auto pressOffset = vec2{};             // Mouse press offset relative to the ball that grabbedd
 
     f32 gravity = 100;            // World gravity
     
-    vec2 windowPosition = GetWindowPosition();
+    auto windowPosition = GetWindowPosition();
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------
@@ -81,8 +81,8 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const f32 delta = GetFrameTime();
-        const vec2 mousePos = GetMousePosition();
+        const auto delta = GetFrameTime();
+        const auto mousePos = GetMousePosition();
 
         // Checks if a ball was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))

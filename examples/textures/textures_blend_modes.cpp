@@ -26,23 +26,23 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - blend modes");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     const Image bgImage = LoadImage("resources/cyberpunk_street_background.png");     // Loaded in CPU memory (RAM)
-    const Texture2D bgTexture = LoadTextureFromImage(bgImage);          // Image converted to texture, GPU memory (VRAM)
+    const auto bgTexture = LoadTextureFromImage(bgImage);          // Image converted to texture, GPU memory (VRAM)
 
     const Image fgImage = LoadImage("resources/cyberpunk_street_foreground.png");     // Loaded in CPU memory (RAM)
-    const Texture2D fgTexture = LoadTextureFromImage(fgImage);          // Image converted to texture, GPU memory (VRAM)
+    const auto fgTexture = LoadTextureFromImage(fgImage);          // Image converted to texture, GPU memory (VRAM)
 
     // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
     UnloadImage(bgImage);
     UnloadImage(fgImage);
 
-    constexpr i32 blendCountMax = 4;
+    constexpr auto blendCountMax = 4;
     BlendMode blendMode = BLEND_ALPHA;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

@@ -26,32 +26,32 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - npatch drawing");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     const Texture2D nPatchTexture = LoadTexture("resources/ninepatch_button.png");
 
-    vec2 mousePosition = {};
-    const vec2 origin = { 0.0f, 0.0f };
+    auto mousePosition = vec2{};
+    const auto origin = vec2{ 0.0f, 0.0f };
 
     // Position and size of the n-patches
-    Rectangle dstRec1 = { 480.0f, 160.0f, 32.0f, 32.0f };
-    Rectangle dstRec2 = { 160.0f, 160.0f, 32.0f, 32.0f };
-    Rectangle dstRecH = { 160.0f, 93.0f, 32.0f, 32.0f };
-    Rectangle dstRecV = { 92.0f, 160.0f, 32.0f, 32.0f };
+    auto dstRec1 = Rectangle{ 480.0f, 160.0f, 32.0f, 32.0f };
+    auto dstRec2 = Rectangle{ 160.0f, 160.0f, 32.0f, 32.0f };
+    auto dstRecH = Rectangle{ 160.0f, 93.0f, 32.0f, 32.0f };
+    auto dstRecV = Rectangle{ 92.0f, 160.0f, 32.0f, 32.0f };
 
     // A 9-patch (NPATCH_NINE_PATCH) changes its sizes in both axis
-    const NPatchInfo ninePatchInfo1 = { Rectangle{ 0.0f, 0.0f, 64.0f, 64.0f }, 12, 40, 12, 12, NPATCH_NINE_PATCH };
-    const NPatchInfo ninePatchInfo2 = { Rectangle{ 0.0f, 128.0f, 64.0f, 64.0f }, 16, 16, 16, 16, NPATCH_NINE_PATCH };
+    const auto ninePatchInfo1 = NPatchInfo{ Rectangle{ 0.0f, 0.0f, 64.0f, 64.0f }, 12, 40, 12, 12, NPATCH_NINE_PATCH };
+    const auto ninePatchInfo2 = NPatchInfo{ Rectangle{ 0.0f, 128.0f, 64.0f, 64.0f }, 16, 16, 16, 16, NPATCH_NINE_PATCH };
 
     // A horizontal 3-patch (NPATCH_THREE_PATCH_HORIZONTAL) changes its sizes along the x axis only
-    const NPatchInfo h3PatchInfo = { Rectangle{ 0.0f,  64.0f, 64.0f, 64.0f }, 8, 8, 8, 8, NPATCH_THREE_PATCH_HORIZONTAL };
+    const auto h3PatchInfo = NPatchInfo{ Rectangle{ 0.0f,  64.0f, 64.0f, 64.0f }, 8, 8, 8, 8, NPATCH_THREE_PATCH_HORIZONTAL };
 
     // A vertical 3-patch (NPATCH_THREE_PATCH_VERTICAL) changes its sizes along the y axis only
-    const NPatchInfo v3PatchInfo = { Rectangle{ 0.0f, 192.0f, 64.0f, 64.0f }, 6, 6, 6, 6, NPATCH_THREE_PATCH_VERTICAL };
+    const auto v3PatchInfo = NPatchInfo{ Rectangle{ 0.0f, 192.0f, 64.0f, 64.0f }, 6, 6, 6, 6, NPATCH_THREE_PATCH_VERTICAL };
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------

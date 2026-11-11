@@ -77,8 +77,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [others] example - OpenGL 4.6 compute particles");
@@ -176,9 +176,9 @@ i32 main()
         "    finalColor = vec4(fragColor.rgb, smoothstep(1.0, 0.6, radius));\n"
         "}\n";
 
-    const GLuint computeShader = CompileShader(GL_COMPUTE_SHADER, computeShaderCode);
-    const GLuint vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderCode);
-    const GLuint fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderCode);
+    const auto computeShader = CompileShader(GL_COMPUTE_SHADER, computeShaderCode);
+    const auto vertexShader = CompileShader(GL_VERTEX_SHADER, vertexShaderCode);
+    const auto fragmentShader = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderCode);
 
     if ((computeShader == 0) || (vertexShader == 0) || (fragmentShader == 0))
     {
@@ -208,7 +208,7 @@ i32 main()
         return 1;
     }
 
-    const GLuint renderProgram = LinkProgram(vertexShader, fragmentShader);
+    const auto renderProgram = LinkProgram(vertexShader, fragmentShader);
 
     // Shaders are no longer required once the programs are linked
     glDeleteShader(computeShader);

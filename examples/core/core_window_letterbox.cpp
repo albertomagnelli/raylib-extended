@@ -27,19 +27,19 @@
 //------------------------------------------------------------------------------------
 i32 main()
 {
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     // Enable config flags for resizable window and vertical synchro
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - window letterbox");
     SetWindowMinSize(320, 240);
 
-    constexpr i32 gameScreenWidth = 640;
-    constexpr i32 gameScreenHeight = 480;
+    constexpr auto gameScreenWidth = 640;
+    constexpr auto gameScreenHeight = 480;
 
     // Render texture initialization, used to hold the rendering result so we can easily resize it
-    const RenderTexture2D target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
+    const auto target = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);  // Texture scale filter to use
 
     Color colors[10] = {};
@@ -63,8 +63,8 @@ i32 main()
         }
 
         // Update virtual mouse (clamped mouse value behind game screen)
-        const vec2 mouse = GetMousePosition();
-        vec2 virtualMouse = {};
+        const auto mouse = GetMousePosition();
+        auto virtualMouse = vec2{};
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.5f)/scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.5f)/scale;
         virtualMouse = glm::clamp(virtualMouse, vec2{ 0, 0 }, vec2{ static_cast<f32>(gameScreenWidth), static_cast<f32>(gameScreenHeight) });

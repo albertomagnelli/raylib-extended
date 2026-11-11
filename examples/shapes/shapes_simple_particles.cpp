@@ -66,19 +66,19 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - simple particles");
 
     // Definition of particles
-    Particle *particles = static_cast<Particle *>(calloc(MAX_PARTICLES, sizeof(Particle))); // Particle array
-    CircularBuffer circularBuffer = { 0, 0, particles };
+    auto particles = static_cast<Particle *>(calloc(MAX_PARTICLES, sizeof(Particle))); // Particle array
+    auto circularBuffer = CircularBuffer{ 0, 0, particles };
 
     // Particle emitter parameters
-    i32 emissionRate = -2;          // Negative: on average every -X frames. Positive: particles per frame
+    auto emissionRate = -2;          // Negative: on average every -X frames. Positive: particles per frame
     ParticleType currentType = WATER;
-    vec2 emitterPosition = { screenWidth/2.0f, screenHeight/2.0f };
+    auto emitterPosition = vec2{ screenWidth/2.0f, screenHeight/2.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ i32 main()
 //----------------------------------------------------------------------------------
 static void EmitParticle(CircularBuffer *circularBuffer, vec2 emitterPosition, ParticleType type)
 {
-    Particle *newParticle = AddToCircularBuffer(circularBuffer);
+    auto newParticle = AddToCircularBuffer(circularBuffer);
 
     // If buffer is full, newParticle is NULL
     if (newParticle != nullptr)
@@ -196,7 +196,7 @@ static void EmitParticle(CircularBuffer *circularBuffer, vec2 emitterPosition, P
             default: break;
         }
 
-        const f32 direction = static_cast<f32>(rand()%360);
+        const auto direction = static_cast<f32>(rand()%360);
         newParticle->velocity = vec2{ speed*cosf(direction*DEG2RAD), speed*sinf(direction*DEG2RAD) };
     }
 }

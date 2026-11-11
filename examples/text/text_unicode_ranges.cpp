@@ -32,8 +32,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - unicode ranges");
 
@@ -41,8 +41,8 @@ i32 main()
     Font font = LoadFont("resources/NotoSansTC-Regular.ttf");
     SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
 
-    i32 unicodeRange = 0;           // Track the ranges of codepoints added to font
-    i32 prevUnicodeRange = 0;       // Previous Unicode range to avoid reloading every frame
+    auto unicodeRange = 0;           // Track the ranges of codepoints added to font
+    auto prevUnicodeRange = 0;       // Previous Unicode range to avoid reloading every frame
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -189,7 +189,7 @@ static void AddCodepointRange(Font *font, const char *fontPath, i32 start, i32 s
     // add them to existing font, regenerating font image and texture
 
     const i32 updatedCodepointCount = currentRangeSize + rangeSize;
-    i32 *updatedCodepoints = static_cast<i32 *>(calloc(updatedCodepointCount, sizeof(i32)));
+    auto updatedCodepoints = static_cast<i32 *>(calloc(updatedCodepointCount, sizeof(i32)));
 
     // Get current codepoint list
     for (i32 i = 0; i < currentRangeSize; i++) updatedCodepoints[i] = font->glyphs[i].value;

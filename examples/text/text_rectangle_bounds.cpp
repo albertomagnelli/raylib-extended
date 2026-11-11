@@ -32,8 +32,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - rectangle bounds");
 
@@ -41,11 +41,11 @@ i32 main()
 a long text for testing.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod \
 tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet risus nullam eget felis eget.";
 
-    bool resizing = false;
-    bool wordWrap = true;
+    auto resizing = false;
+    auto wordWrap = true;
 
-    Rectangle container = { 25.0f, 25.0f, screenWidth - 50.0f, screenHeight - 250.0f };
-    Rectangle resizer = { container.x + container.width - 17, container.y + container.height - 17, 14, 14 };
+    auto container = Rectangle{ 25.0f, 25.0f, screenWidth - 50.0f, screenHeight - 250.0f };
+    auto resizer = Rectangle{ container.x + container.width - 17, container.y + container.height - 17, 14, 14 };
 
     // Minimum width and heigh for the container rectangle
     constexpr f32 minWidth = 60;
@@ -53,9 +53,9 @@ tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet ris
     const f32 maxWidth = screenWidth - 50.0f;
     const f32 maxHeight = screenHeight - 160.0f;
 
-    vec2 lastMouse = { 0.0f, 0.0f };          // Stores last mouse coordinates
+    auto lastMouse = vec2{ 0.0f, 0.0f };          // Stores last mouse coordinates
     Color borderColor = MAROON;               // Container border color
-    const Font font = GetFontDefault();       // Get default system font
+    const auto font = GetFontDefault();       // Get default system font
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet ris
         //----------------------------------------------------------------------------------
         if (IsKeyPressed(KEY_SPACE)) wordWrap = !wordWrap;
 
-        const vec2 mouse = GetMousePosition();
+        const auto mouse = GetMousePosition();
 
         // Check if the mouse is inside the container and toggle border color
         if (CheckCollisionPointRec(mouse, container)) borderColor = Fade(MAROON, 0.4f);
@@ -150,7 +150,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
     const i32 length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
 
     f32 textOffsetY = 0;          // Offset between lines (on line break '\n')
-    f32 textOffsetX = 0.0f;       // Offset X to next character to draw
+    auto textOffsetX = 0.0f;       // Offset X to next character to draw
 
     const f32 scaleFactor = fontSize/static_cast<f32>(font.baseSize);     // Character rectangle scaling factor
 
@@ -158,16 +158,16 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
     enum { MEASURE_STATE = 0, DRAW_STATE = 1 };
     i32 state = wordWrap? MEASURE_STATE : DRAW_STATE;
 
-    i32 startLine = -1;         // Index where to begin drawing (where a line begins)
-    i32 endLine = -1;           // Index where to stop drawing (where a line ends)
-    i32 lastk = -1;             // Holds last value of the character position
+    auto startLine = -1;         // Index where to begin drawing (where a line begins)
+    auto endLine = -1;           // Index where to stop drawing (where a line ends)
+    auto lastk = -1;             // Holds last value of the character position
 
     for (i32 i = 0, k = 0; i < length; i++, k++)
     {
         // Get next codepoint from byte string and glyph index in font
-        i32 codepointByteCount = 0;
-        const i32 codepoint = GetCodepoint(&text[i], &codepointByteCount);
-        const i32 index = GetGlyphIndex(font, codepoint);
+        auto codepointByteCount = 0;
+        const auto codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        const auto index = GetGlyphIndex(font, codepoint);
 
         // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
         // but we need to draw all of the bad bytes using the '?' symbol moving one byte
@@ -242,7 +242,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 if ((textOffsetY + font.baseSize*scaleFactor) > rec.height) break;
 
                 // Draw selection background
-                bool isGlyphSelected = false;
+                auto isGlyphSelected = false;
                 if ((selectStart >= 0) && (k >= selectStart) && (k < (selectStart + selectLength)))
                 {
                     DrawRectangleRec(Rectangle{ rec.x + textOffsetX - 1, rec.y + textOffsetY, glyphWidth, static_cast<f32>(font.baseSize)*scaleFactor }, selectBackTint);

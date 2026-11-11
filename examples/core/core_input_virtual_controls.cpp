@@ -36,12 +36,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input virtual controls");
 
-    vec2 padPosition = { 100, 350 };
+    auto padPosition = vec2{ 100, 350 };
     constexpr f32 buttonRadius = 30;
 
     vec2 buttonPositions[BUTTON_MAX] = {
@@ -86,9 +86,9 @@ i32 main()
     };
 
     i32 pressedButton = BUTTON_NONE;
-    vec2 inputPosition = { 0, 0 };
+    auto inputPosition = vec2{ 0, 0 };
 
-    vec2 playerPosition = { static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2 };
+    auto playerPosition = vec2{ static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2 };
     constexpr f32 playerSpeed = 75;
 
     SetTargetFPS(60);

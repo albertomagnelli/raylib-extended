@@ -30,13 +30,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - textured cube");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 0.0f, 10.0f, 10.0f };
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -164,8 +164,8 @@ void DrawCubeTextureRec(Texture2D texture, Rectangle source, vec3 position, f32 
     const f32 x = position.x;
     const f32 y = position.y;
     const f32 z = position.z;
-    const f32 texWidth = static_cast<f32>(texture.width);
-    const f32 texHeight = static_cast<f32>(texture.height);
+    const auto texWidth = static_cast<f32>(texture.width);
+    const auto texHeight = static_cast<f32>(texture.height);
 
     // Set desired texture to be enabled while drawing following vertex data
     rlSetTexture(texture.id);

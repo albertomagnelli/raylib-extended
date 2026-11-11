@@ -26,8 +26,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - magnifying glass");
 
@@ -35,14 +35,14 @@ i32 main()
     const Texture2D parrots = LoadTexture("resources/parrots.png");
 
     // Use image draw to generate a mask texture instead of loading it from a file.
-    Image circle = GenImageColor(256, 256, BLANK);
+    auto circle = GenImageColor(256, 256, BLANK);
     ImageDrawCircle(&circle, 128, 128, 128, WHITE);
-    const Texture2D mask = LoadTextureFromImage(circle); // Copy the mask image from RAM to VRAM
+    const auto mask = LoadTextureFromImage(circle); // Copy the mask image from RAM to VRAM
     UnloadImage(circle);                                 // Unload the image from RAM
 
-    const RenderTexture2D magnifiedWorld = LoadRenderTexture(256, 256);
+    const auto magnifiedWorld = LoadRenderTexture(256, 256);
 
-    Camera2D camera = {};
+    auto camera = Camera2D{};
     // Set magnifying glass zoom
     camera.zoom = 2;
     // Offset by half the size of the magnifying glass to counteract drawing the texture centered on the mouse position
@@ -56,7 +56,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mPos = GetMousePosition();
+        const auto mPos = GetMousePosition();
         camera.target = mPos;
 
         //----------------------------------------------------------------------------------

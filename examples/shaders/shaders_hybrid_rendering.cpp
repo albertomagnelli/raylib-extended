@@ -52,8 +52,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - hybrid rendering");
 
@@ -65,7 +65,7 @@ i32 main()
     const Shader shdrRaster = LoadShader({}, TextFormat("resources/shaders/glsl%i/hybrid_raster.fs", GLSL_VERSION));
 
     // Declare Struct used to store camera locs
-    RayLocs marchLocs = {};
+    auto marchLocs = RayLocs{};
 
     // Fill the struct with shader locs
     marchLocs.camPos = GetShaderLocation(shdrRaymarch, "camPos");
@@ -73,11 +73,11 @@ i32 main()
     marchLocs.screenCenter = GetShaderLocation(shdrRaymarch, "screenCenter");
 
     // Transfer screenCenter position to shader. Which is used to calculate ray direction
-    vec2 screenCenter = { screenWidth/2.0f, screenHeight/2.0f };
+    auto screenCenter = vec2{ screenWidth/2.0f, screenHeight/2.0f };
     SetShaderValue(shdrRaymarch, marchLocs.screenCenter , &screenCenter , SHADER_UNIFORM_VEC2);
 
     // Use Customized function to create writable depth texture buffer
-    const RenderTexture2D target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
+    const auto target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
 
     // Define the camera to look into our 3d world
     Camera camera = {
@@ -162,7 +162,7 @@ i32 main()
 // Load custom render texture, create a writable depth texture buffer
 static RenderTexture2D LoadRenderTextureDepthTex(i32 width, i32 height)
 {
-    RenderTexture2D target = {};
+    auto target = RenderTexture2D{};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
 

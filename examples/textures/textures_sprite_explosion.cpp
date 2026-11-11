@@ -25,8 +25,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite explosion");
 
@@ -41,14 +41,14 @@ i32 main()
     // Init variables for animation
     const f32 frameWidth = static_cast<f32>(explosion.width)/NUM_FRAMES_PER_LINE;   // Sprite one frame rectangle width
     const f32 frameHeight = static_cast<f32>(explosion.height)/NUM_LINES;           // Sprite one frame rectangle height
-    i32 currentFrame = 0;
-    i32 currentLine = 0;
+    auto currentFrame = 0;
+    auto currentLine = 0;
 
-    Rectangle frameRec = { 0, 0, frameWidth, frameHeight };
-    vec2 position = { 0.0f, 0.0f };
+    auto frameRec = Rectangle{ 0, 0, frameWidth, frameHeight };
+    auto position = vec2{ 0.0f, 0.0f };
 
-    bool active = false;
-    i32 framesCounter = 0;
+    auto active = false;
+    auto framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------

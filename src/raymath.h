@@ -69,32 +69,32 @@ typedef struct float16 {
 //----------------------------------------------------------------------------------
 // Module Functions Definition - Scalar helpers
 //----------------------------------------------------------------------------------
-inline f32 Clamp(f32 value, f32 min, f32 max)
+inline f32 Clamp(const f32 value, const f32 min, const f32 max)
 {
     return (value < min)? min : ((value > max)? max : value);
 }
 
-inline f32 Lerp(f32 start, f32 end, f32 amount)
+inline f32 Lerp(const f32 start, const f32 end, const f32 amount)
 {
     return start + amount*(end - start);
 }
 
-inline f32 Normalize(f32 value, f32 start, f32 end)
+inline f32 Normalize(const f32 value, const f32 start, const f32 end)
 {
     return (value - start)/(end - start);
 }
 
-inline f32 Remap(f32 value, f32 inputStart, f32 inputEnd, f32 outputStart, f32 outputEnd)
+inline f32 Remap(const f32 value, const f32 inputStart, const f32 inputEnd, const f32 outputStart, const f32 outputEnd)
 {
     return outputStart + ((outputEnd - outputStart)/(inputEnd - inputStart))*(value - inputStart);
 }
 
-inline f32 Wrap(f32 value, f32 min, f32 max)
+inline f32 Wrap(const f32 value, const f32 min, const f32 max)
 {
     return value - (max - min)*std::floor((value - min)/(max - min));
 }
 
-inline bool FloatEquals(f32 x, f32 y)
+inline bool FloatEquals(const f32 x, const f32 y)
 {
     // Relative epsilon comparison, keeps the previous raymath behaviour
     return (std::fabs(x - y) <= EPSILON*std::fmax(1.0f, std::fmax(std::fabs(x), std::fabs(y))));
@@ -104,13 +104,13 @@ inline bool FloatEquals(f32 x, f32 y)
 // Module Functions Definition - vec2 helpers
 //----------------------------------------------------------------------------------
 // Calculate the 2d cross product of two vectors (scalar)
-inline f32 Vector2CrossProduct(vec2 v1, vec2 v2)
+inline f32 Vector2CrossProduct(const vec2 v1, const vec2 v2)
 {
     return (v1.x*v2.y - v1.y*v2.x);
 }
 
 // Calculate angle defined by a two vectors line (radians)
-inline f32 Vector2Angle(vec2 v1, vec2 v2)
+inline f32 Vector2Angle(const vec2 v1, const vec2 v2)
 {
     const f32 dot = v1.x*v2.x + v1.y*v2.y;
     const f32 det = v1.x*v2.y - v1.y*v2.x;
@@ -119,7 +119,7 @@ inline f32 Vector2Angle(vec2 v1, vec2 v2)
 }
 
 // Calculate angle between two vectors, in radians, clockwise from the X axis
-inline f32 Vector2LineAngle(vec2 start, vec2 end)
+inline f32 Vector2LineAngle(const vec2 start, const vec2 end)
 {
     return -std::atan2(end.y - start.y, end.x - start.x);
 }
@@ -127,7 +127,7 @@ inline f32 Vector2LineAngle(vec2 start, vec2 end)
 // Move Vector towards target
 // Rotate vector by angle
 // NOTE: raylib-specific 2D helper, glm::rotate() works on 3D vectors only
-inline vec2 Vector2Rotate(vec2 v, f32 angle)
+inline vec2 Vector2Rotate(const vec2 v, const f32 angle)
 {
     const f32 cosres = std::cos(angle);
     const f32 sinres = std::sin(angle);
@@ -135,7 +135,7 @@ inline vec2 Vector2Rotate(vec2 v, f32 angle)
     return vec2{v.x*cosres - v.y*sinres, v.x*sinres + v.y*cosres};
 }
 
-inline vec2 Vector2MoveTowards(vec2 v, vec2 target, f32 maxDistance)
+inline vec2 Vector2MoveTowards(const vec2 v, const vec2 target, const f32 maxDistance)
 {
     const f32 dx = target.x - v.x;
     const f32 dy = target.y - v.y;
@@ -152,7 +152,7 @@ inline vec2 Vector2MoveTowards(vec2 v, vec2 target, f32 maxDistance)
 // Module Functions Definition - vec3 helpers
 //----------------------------------------------------------------------------------
 // Calculate the perpendicular vector to another
-inline vec3 Vector3Perpendicular(vec3 v)
+inline vec3 Vector3Perpendicular(const vec3 v)
 {
     f32 min = std::fabs(v.x);
     vec3 cardinalAxis{1.0f, 0.0f, 0.0f};
@@ -171,14 +171,14 @@ inline vec3 Vector3Perpendicular(vec3 v)
 }
 
 // Calculate angle between two vectors, returns degrees
-inline f32 Vector3Angle(vec3 v1, vec3 v2)
+inline f32 Vector3Angle(const vec3 v1, const vec3 v2)
 {
     const vec3 cross = glm::cross(v1, v2);
     return std::atan2(std::sqrt(glm::dot(cross, cross)), glm::dot(v1, v2));
 }
 
 // Calculate the projection of the vector v1 on to v2
-inline vec3 Vector3Project(vec3 v1, vec3 v2)
+inline vec3 Vector3Project(const vec3 v1, const vec3 v2)
 {
     const f32 v2Length = glm::dot(v2, v2);
 
@@ -188,7 +188,7 @@ inline vec3 Vector3Project(vec3 v1, vec3 v2)
 }
 
 // Calculate the rejection of the vector v1 on to v2
-inline vec3 Vector3Reject(vec3 v1, vec3 v2)
+inline vec3 Vector3Reject(const vec3 v1, const vec3 v2)
 {
     const f32 v2Length = glm::dot(v2, v2);
 
@@ -209,7 +209,7 @@ inline void Vector3OrthoNormalize(vec3 *v1, vec3 *v2)
 }
 
 // Rotate vector by axis and angle using Euler-Rodrigues formula, angle in radians
-inline vec3 Vector3RotateByAxisAngle(vec3 v, vec3 axis, f32 angle)
+inline vec3 Vector3RotateByAxisAngle(const vec3 v, vec3 axis, f32 angle)
 {
     axis = glm::normalize(axis);
 
@@ -225,7 +225,7 @@ inline vec3 Vector3RotateByAxisAngle(vec3 v, vec3 axis, f32 angle)
 }
 
 // Move Vector towards target
-inline vec3 Vector3MoveTowards(vec3 v, vec3 target, f32 maxDistance)
+inline vec3 Vector3MoveTowards(const vec3 v, const vec3 target, const f32 maxDistance)
 {
     const vec3 dir = target - v;
     const f32 value = glm::dot(dir, dir);
@@ -236,7 +236,7 @@ inline vec3 Vector3MoveTowards(vec3 v, vec3 target, f32 maxDistance)
 }
 
 // Calculate the cubic Hermite interpolation between two values
-inline vec3 Vector3CubicHermite(vec3 v1, vec3 tangent1, vec3 v2, vec3 tangent2, f32 amount)
+inline vec3 Vector3CubicHermite(const vec3 v1, const vec3 tangent1, const vec3 v2, const vec3 tangent2, const f32 amount)
 {
     const f32 t2 = amount*amount;
     const f32 t3 = t2*amount;
@@ -249,7 +249,7 @@ inline vec3 Vector3CubicHermite(vec3 v1, vec3 tangent1, vec3 v2, vec3 tangent2, 
 }
 
 // Calculate barycenter of a triangle, given 4 points: p point in the triangle, a, b, c triangle vertices
-inline vec3 Vector3Barycenter(vec3 p, vec3 a, vec3 b, vec3 c)
+inline vec3 Vector3Barycenter(const vec3 p, const vec3 a, const vec3 b, const vec3 c)
 {
     const vec3 v0 = b - a;
     const vec3 v1 = c - a;
@@ -297,7 +297,7 @@ inline float3 Vector3ToFloatV(vec3 v)
 // Module Functions Definition - vec4 helpers
 //----------------------------------------------------------------------------------
 // Move Vector towards target
-inline vec4 Vector4MoveTowards(vec4 v, vec4 target, f32 maxDistance)
+inline vec4 Vector4MoveTowards(const vec4 v, const vec4 target, const f32 maxDistance)
 {
     const vec4 dir = target - v;
     const f32 value = glm::dot(dir, dir);
@@ -312,38 +312,38 @@ inline vec4 Vector4MoveTowards(vec4 v, vec4 target, f32 maxDistance)
 //----------------------------------------------------------------------------------
 // NOTE: quat has no component-wise operators, these helpers are kept because
 // raymath's spline and interpolation code uses them as plain 4-component values.
-inline quat QuaternionAdd(quat q1, quat q2)
+inline quat QuaternionAdd(const quat q1, const quat q2)
 {
     return quat{q1.w + q2.w, q1.x + q2.x, q1.y + q2.y, q1.z + q2.z};
 }
 
-inline quat QuaternionAddValue(quat q, f32 add)
+inline quat QuaternionAddValue(const quat q, const f32 add)
 {
     return quat{q.w + add, q.x + add, q.y + add, q.z + add};
 }
 
-inline quat QuaternionSubtract(quat q1, quat q2)
+inline quat QuaternionSubtract(const quat q1, const quat q2)
 {
     return quat{q1.w - q2.w, q1.x - q2.x, q1.y - q2.y, q1.z - q2.z};
 }
 
-inline quat QuaternionSubtractValue(quat q, f32 sub)
+inline quat QuaternionSubtractValue(const quat q, const f32 sub)
 {
     return quat{q.w - sub, q.x - sub, q.y - sub, q.z - sub};
 }
 
-inline quat QuaternionScale(quat q, f32 mul)
+inline quat QuaternionScale(const quat q, const f32 mul)
 {
     return quat{q.w*mul, q.x*mul, q.y*mul, q.z*mul};
 }
 
-inline quat QuaternionDivide(quat q, f32 div)
+inline quat QuaternionDivide(const quat q, const f32 div)
 {
     return quat{q.w/div, q.x/div, q.y/div, q.z/div};
 }
 
 // Calculate quaternion based on the rotation from one vector to another
-inline quat QuaternionFromVector3ToVector3(vec3 from, vec3 to)
+inline quat QuaternionFromVector3ToVector3(const vec3 from, const vec3 to)
 {
     const f32 cos2Theta = glm::dot(from, to);
     const vec3 cross = glm::cross(from, to);
@@ -380,7 +380,7 @@ inline quat QuaternionFromVector3ToVector3(vec3 from, vec3 to)
 // Calculate slerp-optimized interpolation between two quaternions
 // NOTE: Takes the shorter path (negates q2 when the dot product is negative), which
 // glm does not expose as a single call.
-inline quat QuaternionNlerp(quat q1, quat q2, f32 amount)
+inline quat QuaternionNlerp(const quat q1, quat q2, const f32 amount)
 {
     if (glm::dot(q1, q2) < 0.0f) q2 = -q2;
 
@@ -389,7 +389,7 @@ inline quat QuaternionNlerp(quat q1, quat q2, f32 amount)
 
 // Calculate quaternion cubic spline interpolation using Cubic Hermite Spline algorithm
 // as described in the GLTF 2.0 specification: https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html#interpolation-cubic
-inline quat QuaternionCubicHermiteSpline(quat q1, quat outTangent1, quat q2, quat inTangent2, f32 t)
+inline quat QuaternionCubicHermiteSpline(const quat q1, const quat outTangent1, const quat q2, const quat inTangent2, const f32 t)
 {
     const f32 t2 = t*t;
     const f32 t3 = t2*t;
@@ -403,7 +403,7 @@ inline quat QuaternionCubicHermiteSpline(quat q1, quat outTangent1, quat q2, qua
 }
 
 // Calculate quaternion from Euler angles (pitch, yaw, roll), in radians
-inline quat QuaternionFromEuler(f32 pitch, f32 yaw, f32 roll)
+inline quat QuaternionFromEuler(const f32 pitch, const f32 yaw, const f32 roll)
 {
     const f32 x0 = std::cos(pitch*0.5f);
     const f32 x1 = std::sin(pitch*0.5f);
@@ -419,7 +419,7 @@ inline quat QuaternionFromEuler(f32 pitch, f32 yaw, f32 roll)
 }
 
 // Calculate Euler angles (pitch, yaw, roll) from a quaternion, in radians
-inline vec3 QuaternionToEuler(quat q)
+inline vec3 QuaternionToEuler(const quat q)
 {
     vec3 result{};
 
@@ -452,7 +452,7 @@ inline vec3 QuaternionToEuler(quat q)
 }
 
 // Calculate quaternion from axis and angle, angle in radians
-inline quat QuaternionFromAxisAngle(vec3 axis, f32 angle)
+inline quat QuaternionFromAxisAngle(const vec3 axis, const f32 angle)
 {
     return glm::angleAxis(angle, glm::normalize(axis));
 }
@@ -487,7 +487,7 @@ inline void QuaternionToAxisAngle(quat q, vec3 *outAxis, f32 *outAngle)
 // Module Functions Definition - mat4 helpers
 //----------------------------------------------------------------------------------
 // Create a rotation matrix from Euler angles (x, y, z), in radians
-inline mat4 MatrixRotateXYZ(vec3 angle)
+inline mat4 MatrixRotateXYZ(const vec3 angle)
 {
     auto result = mat4(1.0f);
 
@@ -514,7 +514,7 @@ inline mat4 MatrixRotateXYZ(vec3 angle)
 }
 
 // Create a rotation matrix from Euler angles (x, y, z), applied in ZYX order, in radians
-inline mat4 MatrixRotateZYX(vec3 angle)
+inline mat4 MatrixRotateZYX(const vec3 angle)
 {
     auto result = mat4(1.0f);
 
@@ -541,7 +541,7 @@ inline mat4 MatrixRotateZYX(vec3 angle)
 }
 
 // Compose a transformation matrix from translation, rotation and scale
-inline mat4 MatrixCompose(vec3 translation, quat rotation, vec3 scale)
+inline mat4 MatrixCompose(const vec3 translation, const quat rotation, const vec3 scale)
 {
     mat4 result = glm::mat4_cast(rotation);
 
@@ -554,7 +554,7 @@ inline mat4 MatrixCompose(vec3 translation, quat rotation, vec3 scale)
 }
 
 // Decompose a transformation matrix into its rotational, translational and scaling components and remove shear
-inline void MatrixDecompose(mat4 mat, vec3 *translation, quat *rotation, vec3 *scale)
+inline void MatrixDecompose(const mat4 mat, vec3 *translation, quat *rotation, vec3 *scale)
 {
     constexpr auto eps = static_cast<f32>(1e-9);
 
@@ -630,7 +630,7 @@ inline void MatrixDecompose(mat4 mat, vec3 *translation, quat *rotation, vec3 *s
 }
 
 // Get mat4 as float16, useful for shader uniforms
-inline float16 MatrixToFloatV(mat4 mat)
+inline float16 MatrixToFloatV(const mat4 mat)
 {
     float16 result{};
     for (i32 i = 0; i < 16; i++) result.v[i] = mat[i/4][i%4];

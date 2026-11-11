@@ -60,13 +60,13 @@ i32 main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - rlgl compute");
 
-    const vec2 resolution = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
+    const auto resolution = vec2{ static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
     u32 brushSize = 8;
 
     // Game of Life logic compute shader
     const std::string golLogicCode = LoadFileText("resources/shaders/glsl430/gol.glsl");
-    const u32 golLogicShader = rlLoadShader(golLogicCode, RL_COMPUTE_SHADER);
-    const u32 golLogicProgram = rlLoadShaderProgramCompute(golLogicShader);
+    const auto golLogicShader = rlLoadShader(golLogicCode, RL_COMPUTE_SHADER);
+    const auto golLogicProgram = rlLoadShaderProgramCompute(golLogicShader);
 
     // Game of Life logic render shader
     const Shader golRenderShader = LoadShader({}, "resources/shaders/glsl430/gol_render.glsl");
@@ -74,19 +74,19 @@ i32 main()
 
     // Game of Life transfert shader (CPU<->GPU download and upload)
     const std::string golTransfertCode = LoadFileText("resources/shaders/glsl430/gol_transfert.glsl");
-    const u32 golTransfertShader = rlLoadShader(golTransfertCode, RL_COMPUTE_SHADER);
-    const u32 golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
+    const auto golTransfertShader = rlLoadShader(golTransfertCode, RL_COMPUTE_SHADER);
+    const auto golTransfertProgram = rlLoadShaderProgramCompute(golTransfertShader);
 
     // Load shader storage buffer object (SSBO), id returned
-    u32 ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(u32), nullptr, RL_DYNAMIC_COPY);
-    u32 ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(u32), nullptr, RL_DYNAMIC_COPY);
-    const u32 ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), nullptr, RL_DYNAMIC_COPY);
+    auto ssboA = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(u32), nullptr, RL_DYNAMIC_COPY);
+    auto ssboB = rlLoadShaderBuffer(GOL_WIDTH*GOL_WIDTH*sizeof(u32), nullptr, RL_DYNAMIC_COPY);
+    const auto ssboTransfert = rlLoadShaderBuffer(sizeof(GolUpdateSSBO), nullptr, RL_DYNAMIC_COPY);
 
-    GolUpdateSSBO transfertBuffer = {};
+    auto transfertBuffer = GolUpdateSSBO{};
 
     // Create a white texture of the size of the window to update
     // each pixel of the window using the fragment shader: golRenderShader
-    const Image whiteImage = GenImageColor(GOL_WIDTH, GOL_WIDTH, WHITE);
+    const auto whiteImage = GenImageColor(GOL_WIDTH, GOL_WIDTH, WHITE);
     const Texture whiteTex = LoadTextureFromImage(whiteImage);
     UnloadImage(whiteImage);
 

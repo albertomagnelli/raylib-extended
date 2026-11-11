@@ -36,19 +36,19 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - codepoints loading");
 
     // Convert each utf-8 character into its
     // corresponding codepoint in the font file
-    i32 codepointCount = 0;
-    i32 *codepoints = LoadCodepoints(text, &codepointCount);
+    auto codepointCount = 0;
+    auto codepoints = LoadCodepoints(text, &codepointCount);
 
     // Removed duplicate codepoints to generate smaller font atlas
-    i32 codepointsNoDupsCount = 0;
-    i32 *codepointsNoDups = CodepointRemoveDuplicates(codepoints, codepointCount, &codepointsNoDupsCount);
+    auto codepointsNoDupsCount = 0;
+    auto codepointsNoDups = CodepointRemoveDuplicates(codepoints, codepointCount, &codepointsNoDupsCount);
     UnloadCodepoints(codepoints);
 
     // Load font containing all the provided codepoint glyphs
@@ -63,9 +63,9 @@ i32 main()
     // Free codepoints, atlas has already been generated
     free(codepointsNoDups);
 
-    bool showFontAtlas = false;
+    auto showFontAtlas = false;
 
-    i32 codepointSize = 0;
+    auto codepointSize = 0;
     const char *ptr = text;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -139,7 +139,7 @@ i32 main()
 static i32 *CodepointRemoveDuplicates(i32 *codepoints, i32 codepointCount, i32 *codepointsResultCount)
 {
     i32 codepointsNoDupsCount = codepointCount;
-    i32 *codepointsNoDups = static_cast<i32 *>(calloc(codepointCount, sizeof(i32)));
+    auto codepointsNoDups = static_cast<i32 *>(calloc(codepointCount, sizeof(i32)));
     memcpy(codepointsNoDups, codepoints, codepointCount*sizeof(i32));
 
     // Remove duplicates

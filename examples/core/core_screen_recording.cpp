@@ -32,17 +32,17 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - screen recording");
 
-    bool gifRecording = false;           // GIF recording state
+    auto gifRecording = false;           // GIF recording state
     u32 gifFrameCounter = 0;    // GIF frames counter
-    MsfGifState gifState = {};           // MSGIF context state
+    auto gifState = MsfGifState{};           // MSGIF context state
 
-    vec2 circlePosition = { 0.0f, screenHeight/2.0f };
-    f32 timeCounter = 0.0f;
+    auto circlePosition = vec2{ 0.0f, screenHeight/2.0f };
+    auto timeCounter = 0.0f;
 
     // Get sine wave points for line drawing
     vec2 sinePoints[MAX_SINEWAVE_POINTS] = {};
@@ -104,7 +104,7 @@ i32 main()
             {
                 // Get image data for the current frame (from backbuffer)
                 // WARNING: This process is quite slow, it can generate stuttering
-                const Image imScreen = LoadImageFromScreen();
+                const auto imScreen = LoadImageFromScreen();
 
                 // Add the frame to the gif recording, providing and "estimated" time for display in centiseconds
                 msf_gif_frame(&gifState, static_cast<u8 *>(imScreen.data), static_cast<i32>((1.0f/60.0f)*GIF_RECORD_FRAMERATE)/10, 16, imScreen.width*4);

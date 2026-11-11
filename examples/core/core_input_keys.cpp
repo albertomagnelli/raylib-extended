@@ -22,12 +22,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input keys");
 
-    vec2 ballPosition = { static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2 };
+    auto ballPosition = vec2{ static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2 };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

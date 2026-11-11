@@ -24,18 +24,18 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - highdpi testbed");
 
-    vec2 scaleDpi = GetWindowScaleDPI();
-    vec2 mousePos = GetMousePosition();
-    i32 currentMonitor = GetCurrentMonitor();
-    vec2 windowPos = GetWindowPosition();
+    auto scaleDpi = GetWindowScaleDPI();
+    auto mousePos = GetMousePosition();
+    auto currentMonitor = GetCurrentMonitor();
+    auto windowPos = GetWindowPosition();
 
-    constexpr i32 gridSpacing = 40;   // Grid spacing in pixels
+    constexpr auto gridSpacing = 40;   // Grid spacing in pixels
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

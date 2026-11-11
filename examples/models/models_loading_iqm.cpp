@@ -30,13 +30,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading iqm");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 10.0f, 10.0f, 10.0f };      // Camera position
     camera.target = vec3{ 0.0f, 4.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -46,16 +46,16 @@ i32 main()
     const Model model = LoadModel("resources/models/iqm/guy.iqm");                    // Load the animated model mesh and basic data
     const Texture2D texture = LoadTexture("resources/models/iqm/guytex.png");         // Load model texture and set material
     SetMaterialTexture(&model.materials[0], MATERIAL_MAP_DIFFUSE, texture);           // Set model material map texture
-    const vec3 position = { 0.0f, 0.0f, 0.0f };                                       // Set model position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f };                                       // Set model position
 
     // Load animation data
-    i32 animCount = 0;
+    auto animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/iqm/guyanim.iqm", &animCount);
 
     // Animation playing variables
     u32 animIndex = 0;         // Current animation playing
-    f32 animCurrentFrame = 0.0f;      // Current animation frame (supporting interpolated frames)
-    f32 animSpeed = 1.0f;             // How fast the animation plays
+    auto animCurrentFrame = 0.0f;      // Current animation frame (supporting interpolated frames)
+    auto animSpeed = 1.0f;             // How fast the animation plays
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -24,8 +24,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - raw data");
 
@@ -33,18 +33,18 @@ i32 main()
 
     // Load RAW image data (512x512, 32bit RGBA, no file header)
     const Image fudesumiRaw = LoadImageRaw("resources/fudesumi.raw", 384, 512, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 0);
-    const Texture2D fudesumi = LoadTextureFromImage(fudesumiRaw);  // Upload CPU (RAM) image to GPU (VRAM)
+    const auto fudesumi = LoadTextureFromImage(fudesumiRaw);  // Upload CPU (RAM) image to GPU (VRAM)
     UnloadImage(fudesumiRaw);                                // Unload CPU (RAM) image data
 
     // Generate a checked texture by code
-    constexpr i32 imWidth = 960;
-    constexpr i32 imHeight = 480;
+    constexpr auto imWidth = 960;
+    constexpr auto imHeight = 480;
 
     // Dynamic memory allocation to store pixels data (Color type)
     // WARNING: Using raylib provided MemAlloc() that uses default raylib
     // internal memory allocator, so this data can be freed using UnloadImage()
     // that also uses raylib internal memory de-allocator
-    Color *pixels = static_cast<Color *>(MemAlloc(imWidth*imHeight*sizeof(Color)));
+    auto pixels = static_cast<Color *>(MemAlloc(imWidth*imHeight*sizeof(Color)));
 
     for (i32 y = 0; y < imHeight; y++)
     {
@@ -66,7 +66,7 @@ i32 main()
         PIXELFORMAT_UNCOMPRESSED_R8G8B8A8
     };
 
-    const Texture2D checked = LoadTextureFromImage(checkedIm);
+    const auto checked = LoadTextureFromImage(checkedIm);
     UnloadImage(checkedIm);         // Unload CPU (RAM) image data (pixels)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

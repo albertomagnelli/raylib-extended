@@ -117,17 +117,17 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings testbed");
 
-    vec2 ballPosition = { 100.0f, 100.0f };
+    auto ballPosition = vec2{ 100.0f, 100.0f };
 
-    f32 t = 0.0f;             // Current time (in any unit measure, but same unit as duration)
-    f32 d = 300.0f;           // Total time it should take to complete (duration)
-    bool paused = true;
-    bool boundedT = true;       // If true, t will stop when d >= td, otherwise t will keep adding td to its value every loop
+    auto t = 0.0f;             // Current time (in any unit measure, but same unit as duration)
+    auto d = 300.0f;           // Total time it should take to complete (duration)
+    auto paused = true;
+    auto boundedT = true;       // If true, t will stop when d >= td, otherwise t will keep adding td to its value every loop
 
     i32 easingX = EASING_NONE;  // Easing selected for x axis
     i32 easingY = EASING_NONE;  // Easing selected for y axis

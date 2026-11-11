@@ -19,24 +19,24 @@
 
 // Initialization constants
 //--------------------------------------------------------------------------------------
-constexpr i32 screenWidth = 800;
-constexpr i32 screenHeight = 450;
-constexpr i32 imageWidth = 800;
+constexpr auto screenWidth = 800;
+constexpr auto screenHeight = 450;
+constexpr auto imageWidth = 800;
 const i32 imageHeight = 800/2;
 
 // Rule button sizes and positions
-constexpr i32 drawRuleStartX = 585;
-constexpr i32 drawRuleStartY = 10;
-constexpr i32 drawRuleSpacing = 15;
-constexpr i32 drawRuleGroupSpacing = 50;
-constexpr i32 drawRuleSize = 14;
-constexpr i32 drawRuleInnerSize = 10;
+constexpr auto drawRuleStartX = 585;
+constexpr auto drawRuleStartY = 10;
+constexpr auto drawRuleSpacing = 15;
+constexpr auto drawRuleGroupSpacing = 50;
+constexpr auto drawRuleSize = 14;
+constexpr auto drawRuleInnerSize = 10;
 
 // Preset button sizes
-constexpr i32 presetsSizeX = 42;
-constexpr i32 presetsSizeY = 22;
+constexpr auto presetsSizeX = 42;
+constexpr auto presetsSizeY = 22;
 
-constexpr i32 linesUpdatedPerFrame = 4;
+constexpr auto linesUpdatedPerFrame = 4;
 
 //----------------------------------------------------------------------------------
 // Functions
@@ -67,19 +67,19 @@ i32 main()
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - cellular automata");
 
     // Image that contains the cellular automaton
-    Image image = GenImageColor(imageWidth, imageHeight, RAYWHITE);
+    auto image = GenImageColor(imageWidth, imageHeight, RAYWHITE);
     // The top central pixel set as black
     ImageDrawPixel(&image, imageWidth/2, 0, BLACK);
 
-    const Texture2D texture = LoadTextureFromImage(image);
+    const auto texture = LoadTextureFromImage(image);
 
     // Some interesting rules
     const i32 presetValues[] = { 18, 30, 60, 86, 102, 124, 126, 150, 182, 225 };
     const i32 presetsCount = sizeof(presetValues)/sizeof(presetValues[0]);
 
     // Variables
-    i32 rule = 30;  // Starting rule
-    i32 line = 1;   // Line to compute, starting from line 1. One point in line 0 is already set
+    auto rule = 30;  // Starting rule
+    auto line = 1;   // Line to compute, starting from line 1. One point in line 0 is already set
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------
@@ -90,8 +90,8 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         // Handle mouse
-        const vec2 mouse = GetMousePosition();
-        i32 mouseInCell = -1;   // -1: outside any button; 0-7: rule cells; 8+: preset cells
+        const auto mouse = GetMousePosition();
+        auto mouseInCell = -1;   // -1: outside any button; 0-7: rule cells; 8+: preset cells
 
         // Check mouse on rule cells
         for (i32 i = 0; i < 8; i++)

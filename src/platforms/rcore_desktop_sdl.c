@@ -122,7 +122,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = {};   // Platform specific data
+static auto platform = PlatformData{};   // Platform specific data
 
 static constexpr KeyboardKey mapScancodeToKey[SCANCODE_MAPPED_NUM] = {
     KEY_NULL,           // SDL_SCANCODE_UNKNOWN
@@ -289,11 +289,11 @@ static constexpr i32 CursorsLUT[] = {
 #define SDL_DROPFILE  SDL_EVENT_DROP_FILE
 
 // SDL2 implementation for SDL3 function
-const char *SDL_GameControllerNameForIndex(i32 joystickIndex)
+const char *SDL_GameControllerNameForIndex(const i32 joystickIndex)
 {
     // NOTE: SDL3 uses the IDs itself (SDL_JoystickID) instead of SDL2 joystick_index
     const char *name = nullptr;
-    i32 numJoysticks = 0;
+    auto numJoysticks = 0;
     SDL_JoystickID *joysticks = SDL_GetJoysticks(&numJoysticks);
 
     if (joysticks)
@@ -312,7 +312,7 @@ const char *SDL_GameControllerNameForIndex(i32 joystickIndex)
 
 i32 SDL_GetNumVideoDisplays(void)
 {
-    i32 monitorCount = 0;
+    auto monitorCount = 0;
     SDL_DisplayID *displays = SDL_GetDisplays(&monitorCount);
 
     // Safe because If 'mem' is NULL, SDL_free does nothing
@@ -323,7 +323,7 @@ i32 SDL_GetNumVideoDisplays(void)
 
 // SLD3 Migration: To emulate SDL2 this function should return 'SDL_DISABLE' or 'SDL_ENABLE'
 // representing the *processing state* of the event before this function makes any changes to it
-Uint8 SDL_EventState(Uint32 type, i32 state)
+Uint8 SDL_EventState(const Uint32 type, const i32 state)
 {
     Uint8 stateBefore = SDL_EventEnabled(type);
 
@@ -337,7 +337,7 @@ Uint8 SDL_EventState(Uint32 type, i32 state)
     return stateBefore;
 }
 
-void SDL_GetCurrentDisplayMode_Adapter(SDL_DisplayID displayID, SDL_DisplayMode *mode)
+void SDL_GetCurrentDisplayMode_Adapter(const SDL_DisplayID displayID, SDL_DisplayMode *mode)
 {
     const SDL_DisplayMode *currentMode = SDL_GetCurrentDisplayMode(displayID);
 
@@ -348,7 +348,7 @@ void SDL_GetCurrentDisplayMode_Adapter(SDL_DisplayID displayID, SDL_DisplayMode 
 // SDL3 Migration: Renamed
 #define SDL_GetCurrentDisplayMode SDL_GetCurrentDisplayMode_Adapter
 
-SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, i32 width, i32 height, i32 depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+SDL_Surface *SDL_CreateRGBSurface(const Uint32 flags, const i32 width, const i32 height, const i32 depth, const Uint32 Rmask, const Uint32 Gmask, const Uint32 Bmask, const Uint32 Amask)
 {
     return SDL_CreateSurface(width, height, SDL_GetPixelFormatForMasks(depth, Rmask, Gmask, Bmask, Amask));
 }
@@ -357,7 +357,7 @@ SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, i32 width, i32 height, i32 depth
 // SDL_GetDisplayDPI() not reliable across platforms, approximately replaced by multiplying
 // SDL_GetWindowDisplayScale() times 160 on iPhone and Android, and 96 on other platforms
 // returns 0 on success or a negative error code on failure
-i32 SDL_GetDisplayDPI(i32 displayIndex, f32 *ddpi, f32 *hdpi, f32 *vdpi)
+i32 SDL_GetDisplayDPI(const i32 displayIndex, f32 *ddpi, f32 *hdpi, f32 *vdpi)
 {
     f32 dpi = SDL_GetWindowDisplayScale(platform.window)*96.0;
 
@@ -368,17 +368,17 @@ i32 SDL_GetDisplayDPI(i32 displayIndex, f32 *ddpi, f32 *hdpi, f32 *vdpi)
     return 0;
 }
 
-SDL_Surface *SDL_CreateRGBSurfaceWithFormat(Uint32 flags, i32 width, i32 height, i32 depth, Uint32 format)
+SDL_Surface *SDL_CreateRGBSurfaceWithFormat(const Uint32 flags, const i32 width, const i32 height, const i32 depth, const Uint32 format)
 {
     return SDL_CreateSurface(width, height, format);
 }
 
-SDL_Surface *SDL_CreateRGBSurfaceFrom(void *pixels, i32 width, i32 height, i32 depth, i32 pitch, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+SDL_Surface *SDL_CreateRGBSurfaceFrom(const void *pixels, const i32 width, const i32 height, const i32 depth, const i32 pitch, const Uint32 Rmask, const Uint32 Gmask, const Uint32 Bmask, const Uint32 Amask)
 {
     return SDL_CreateSurfaceFrom(width, height, SDL_GetPixelFormatForMasks(depth, Rmask, Gmask, Bmask, Amask), pixels, pitch);
 }
 
-SDL_Surface *SDL_CreateRGBSurfaceWithFormatFrom(void *pixels, i32 width, i32 height, i32 depth, i32 pitch, Uint32 format)
+SDL_Surface *SDL_CreateRGBSurfaceWithFormatFrom(const void *pixels, const i32 width, const i32 height, const i32 depth, const i32 pitch, const Uint32 format)
 {
     return SDL_CreateSurfaceFrom(width, height, format, pixels, pitch);
 }
@@ -394,7 +394,7 @@ i32 SDL_NumJoysticks(void)
 // SDL_SetRelativeMouseMode
 // returns 0 on success or a negative error code on failure
 // If relative mode is not supported, this returns -1
-i32 SDL_SetRelativeMouseMode_Adapter(SDL_bool enabled)
+i32 SDL_SetRelativeMouseMode_Adapter(const SDL_bool enabled)
 {
     // SDL_SetWindowRelativeMouseMode(SDL_Window *window, bool enabled)
     // \returns true on success or false on failure; call SDL_GetError() for more
@@ -417,10 +417,10 @@ bool SDL_GetRelativeMouseMode_Adapter(void)
 
 #define SDL_GetRelativeMouseMode SDL_GetRelativeMouseMode_Adapter
 
-i32 SDL_GetNumTouchFingers(SDL_TouchID touchID)
+i32 SDL_GetNumTouchFingers(const SDL_TouchID touchID)
 {
     // SDL_Finger **SDL_GetTouchFingers(SDL_TouchID touchID, int *count)
-    i32 count = 0;
+    auto count = 0;
     SDL_Finger **fingers = SDL_GetTouchFingers(touchID, &count);
     SDL_free(fingers);
     return count;
@@ -446,9 +446,9 @@ void *SDL_GetClipboardData(const char *mime_type, size_t *size)
 i32 InitPlatform(void);         // Initialize platform (graphics, inputs and more)
 void ClosePlatform(void);       // Close platform
 
-static KeyboardKey ConvertScancodeToKey(SDL_Scancode sdlScancode);    // Help convert SDL scancodes to raylib key
+static KeyboardKey ConvertScancodeToKey(const SDL_Scancode sdlScancode);    // Help convert SDL scancodes to raylib key
 static i32 GetCodepointNextSDL(const char *text, i32 *codepointSize); // Get next codepoint in a byte sequence and bytes processed
-static void UpdateTouchPointsSDL(SDL_TouchFingerEvent event);         // Update CORE input touch point info from SDL touch data
+static void UpdateTouchPointsSDL(const SDL_TouchFingerEvent event);         // Update CORE input touch point info from SDL touch data
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -538,7 +538,7 @@ void RestoreWindow(void)
 }
 
 // Set window configuration state using flags
-void SetWindowState(u32 flags)
+void SetWindowState(const u32 flags)
 {
     if (!CORE.Window.ready) TRACELOG(LOG_WARNING, "WINDOW: SetWindowState does nothing before window initialization, Use \"SetConfigFlags\" instead");
 
@@ -625,7 +625,7 @@ void SetWindowState(u32 flags)
     }
     if ((flags & MSAA_FLAGS) != 0)
     {
-        i32 requestedSamples = GetWindowRequestedSamples();
+        auto requestedSamples = GetWindowRequestedSamples();
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);                // Enable multisampling buffers
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples); // Enable multisampling
     }
@@ -636,7 +636,7 @@ void SetWindowState(u32 flags)
 }
 
 // Clear window configuration state flags
-void ClearWindowState(u32 flags)
+void ClearWindowState(const u32 flags)
 {
     FLAG_CLEAR(CORE.Window.flags, flags);
 
@@ -707,13 +707,13 @@ void ClearWindowState(u32 flags)
 }
 
 // Set icon for window
-void SetWindowIcon(Image image)
+void SetWindowIcon(const Image image)
 {
     SDL_Surface *iconSurface = nullptr;
 
     u32 rmask = 0, gmask = 0, bmask = 0, amask = 0;
-    i32 depth = 0;  // Depth in bits
-    i32 pitch = 0;  // Pixel spacing (pitch) in bytes
+    auto depth = 0;  // Depth in bits
+    auto pitch = 0;  // Pixel spacing (pitch) in bytes
 
     switch (image.format)
     {
@@ -809,7 +809,7 @@ void SetWindowIcon(Image image)
 }
 
 // Set icon for window
-void SetWindowIcons(Image *images, i32 count)
+void SetWindowIcons(Image *images, const i32 count)
 {
     TRACELOG(LOG_WARNING, "SetWindowIcons() not available on target platform");
 }
@@ -835,7 +835,7 @@ void SetWindowPosition(i32 x, i32 y)
 }
 
 // Set monitor for the current window
-void SetWindowMonitor(i32 monitor)
+void SetWindowMonitor(const i32 monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -944,7 +944,7 @@ void *GetWindowHandle(void)
     #if defined(_WIN32)
     handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr); // Type: HWND
     #elif defined(__linux__)
-    unsigned long windowId = static_cast<unsigned long>(SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0)); // Type: unsigned long (XID, Window)
+    auto windowId = static_cast<unsigned long>(SDL_GetNumberProperty(props, SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0)); // Type: unsigned long (XID, Window)
     if (windowId != 0)
     {
         // X11 window ID
@@ -961,7 +961,7 @@ void *GetWindowHandle(void)
     handle = (void *)SDL_GetPointerProperty(props, SDL_PROP_WINDOW_COCOA_WINDOW_POINTER, nullptr); // Type: NSWindow*
     #endif
 #elif defined(USING_SDL2_PROJECT)
-    SDL_SysWMinfo wmInfo = {};
+    auto wmInfo = SDL_SysWMinfo{};
     SDL_VERSION(&wmInfo.version);
     if (SDL_GetWindowWMInfo(platform.window, &wmInfo))
     {
@@ -1003,7 +1003,7 @@ i32 GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-vec2 GetMonitorPosition(i32 monitor)
+vec2 GetMonitorPosition(const i32 monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1028,9 +1028,9 @@ vec2 GetMonitorPosition(i32 monitor)
 }
 
 // Get selected monitor width (currently used by monitor)
-i32 GetMonitorWidth(i32 monitor)
+i32 GetMonitorWidth(const i32 monitor)
 {
-    i32 width = 0;
+    auto width = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1048,9 +1048,9 @@ i32 GetMonitorWidth(i32 monitor)
 }
 
 // Get selected monitor height (currently used by monitor)
-i32 GetMonitorHeight(i32 monitor)
+i32 GetMonitorHeight(const i32 monitor)
 {
-    i32 height = 0;
+    auto height = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1068,9 +1068,9 @@ i32 GetMonitorHeight(i32 monitor)
 }
 
 // Get selected monitor physical width in millimetres
-i32 GetMonitorPhysicalWidth(i32 monitor)
+i32 GetMonitorPhysicalWidth(const i32 monitor)
 {
-    i32 width = 0;
+    auto width = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1078,7 +1078,7 @@ i32 GetMonitorPhysicalWidth(i32 monitor)
     if ((monitor >= 0) && (monitor < SDL_GetNumVideoDisplays()))
 #endif
     {
-        f32 ddpi = 0.0f;
+        auto ddpi = 0.0f;
         SDL_GetDisplayDPI(monitor, &ddpi, nullptr, nullptr);
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
@@ -1091,9 +1091,9 @@ i32 GetMonitorPhysicalWidth(i32 monitor)
 }
 
 // Get selected monitor physical height in millimetres
-i32 GetMonitorPhysicalHeight(i32 monitor)
+i32 GetMonitorPhysicalHeight(const i32 monitor)
 {
-    i32 height = 0;
+    auto height = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1101,7 +1101,7 @@ i32 GetMonitorPhysicalHeight(i32 monitor)
     if ((monitor >= 0) && (monitor < SDL_GetNumVideoDisplays()))
 #endif
     {
-        f32 ddpi = 0.0f;
+        auto ddpi = 0.0f;
         SDL_GetDisplayDPI(monitor, &ddpi, nullptr, nullptr);
         SDL_DisplayMode mode;
         SDL_GetCurrentDisplayMode(monitor, &mode);
@@ -1114,9 +1114,9 @@ i32 GetMonitorPhysicalHeight(i32 monitor)
 }
 
 // Get selected monitor refresh rate
-i32 GetMonitorRefreshRate(i32 monitor)
+i32 GetMonitorRefreshRate(const i32 monitor)
 {
-    i32 refresh = 0;
+    auto refresh = 0;
 
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1134,7 +1134,7 @@ i32 GetMonitorRefreshRate(i32 monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-std::string GetMonitorName(i32 monitor)
+std::string GetMonitorName(const i32 monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1152,8 +1152,8 @@ std::string GetMonitorName(i32 monitor)
 // Get window position XY on monitor
 vec2 GetWindowPosition(void)
 {
-    i32 x = 0;
-    i32 y = 0;
+    auto x = 0;
+    auto y = 0;
 
     SDL_GetWindowPosition(platform.window, &x, &y);
 
@@ -1163,7 +1163,7 @@ vec2 GetWindowPosition(void)
 // Get window scale DPI factor for current monitor
 vec2 GetWindowScaleDPI(void)
 {
-    vec2 scale = { 1.0f, 1.0f };
+    auto scale = vec2{ 1.0f, 1.0f };
 
 #if defined(USING_VERSION_SDL3)
     // NOTE: SDL_GetWindowDisplayScale added on SDL3
@@ -1210,7 +1210,7 @@ std::string GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = {};
+    auto image = Image{};
 
 #if SUPPORT_CLIPBOARD_IMAGE
 #if !SUPPORT_MODULE_RTEXTURES
@@ -1368,10 +1368,10 @@ i32 SetGamepadMappings(std::string_view mappingsView)
     const char *mappings = mappingsStr.c_str();
 
     const i32 mappingsLength = strlen(mappings);
-    char *buffer = static_cast<char *>(calloc(mappingsLength + 1, sizeof(char)));
+    auto buffer = static_cast<char *>(calloc(mappingsLength + 1, sizeof(char)));
     memcpy(buffer, mappings, mappingsLength);
     char *p = strtok(buffer, "\n");
-    bool succeed = true;
+    auto succeed = true;
 
     while (p != nullptr)
     {
@@ -1389,7 +1389,7 @@ i32 SetGamepadMappings(std::string_view mappingsView)
 }
 
 // Set gamepad vibration
-void SetGamepadVibration(i32 gamepad, f32 leftMotor, f32 rightMotor, f32 duration)
+void SetGamepadVibration(const i32 gamepad, f32 leftMotor, f32 rightMotor, f32 duration)
 {
     if ((gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (duration > 0.0f))
     {
@@ -1421,7 +1421,7 @@ void SetMouseCursor(i32 cursor)
 }
 
 // Get physical key name
-std::string GetKeyName(i32 key)
+std::string GetKeyName(const i32 key)
 {
     return GetStringOrEmpty(SDL_GetKeyName(key));
 }
@@ -1471,8 +1471,8 @@ void PollInputEvents(void)
     // Map touch position to mouse position for convenience
     if (CORE.Input.Touch.pointCount == 0) CORE.Input.Touch.position[0] = CORE.Input.Mouse.currentPosition;
 
-    i32 touchAction = -1;       // 0-TOUCH_ACTION_UP, 1-TOUCH_ACTION_DOWN, 2-TOUCH_ACTION_MOVE
-    bool realTouch = false;     // Flag to differentiate real touch gestures from mouse ones
+    auto touchAction = -1;       // 0-TOUCH_ACTION_UP, 1-TOUCH_ACTION_DOWN, 2-TOUCH_ACTION_MOVE
+    auto realTouch = false;     // Flag to differentiate real touch gestures from mouse ones
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys
@@ -1500,7 +1500,7 @@ void PollInputEvents(void)
         CORE.Time.previous = GetTime();
     }
 
-    SDL_Event event = {};
+    auto event = SDL_Event{};
     while (SDL_PollEvent(&event) != 0)
     {
         // All input events can be processed after polling
@@ -1514,7 +1514,7 @@ void PollInputEvents(void)
                 i32 newCount = CORE.Window.dropFileCount + 1;
 
                 // Reallocate array to fit the new file path pointer
-                char **tempPaths = static_cast<char **>(realloc(CORE.Window.dropFilepaths, newCount*sizeof(char *)));
+                auto tempPaths = static_cast<char **>(realloc(CORE.Window.dropFilepaths, newCount*sizeof(char *)));
 
                 if (tempPaths != nullptr)
                 {
@@ -1579,10 +1579,10 @@ void PollInputEvents(void)
                         // to remove the FLAG_WINDOW_MAXIMIZED accordingly
                         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_MAXIMIZED))
                         {
-                            i32 borderTop = 0;
-                            i32 borderLeft = 0;
-                            i32 borderBottom = 0;
-                            i32 borderRight = 0;
+                            auto borderTop = 0;
+                            auto borderLeft = 0;
+                            auto borderBottom = 0;
+                            auto borderRight = 0;
                             SDL_GetWindowBordersSize(platform.window, &borderTop, &borderLeft, &borderBottom, &borderRight);
                             SDL_Rect usableBounds;
                             SDL_GetDisplayUsableBounds(SDL_GetWindowDisplayIndex(platform.window), &usableBounds);
@@ -1651,9 +1651,9 @@ void PollInputEvents(void)
             {
             #if defined(USING_VERSION_SDL3)
                 // SDL3 Migration: The following structures have been removed: SDL_Keysym
-                KeyboardKey key = ConvertScancodeToKey(event.key.scancode);
+                auto key = ConvertScancodeToKey(event.key.scancode);
             #else
-                KeyboardKey key = ConvertScancodeToKey(event.key.keysym.scancode);
+                auto key = ConvertScancodeToKey(event.key.keysym.scancode);
             #endif
 
                 if (key != KEY_NULL)
@@ -1677,9 +1677,9 @@ void PollInputEvents(void)
             case SDL_KEYUP:
             {
             #if defined(USING_VERSION_SDL3)
-                KeyboardKey key = ConvertScancodeToKey(event.key.scancode);
+                auto key = ConvertScancodeToKey(event.key.scancode);
             #else
-                KeyboardKey key = ConvertScancodeToKey(event.key.keysym.scancode);
+                auto key = ConvertScancodeToKey(event.key.keysym.scancode);
             #endif
                 if (key != KEY_NULL) CORE.Input.Keyboard.currentKeyState[key] = 0;
             } break;
@@ -1693,10 +1693,10 @@ void PollInputEvents(void)
                     // Add character (codepoint) to the queue
                 #if defined(USING_VERSION_SDL3)
                     size_t textLen = strlen(event.text.text);
-                    u32 codepoint = static_cast<u32>(SDL_StepUTF8(&event.text.text, &textLen));
+                    auto codepoint = static_cast<u32>(SDL_StepUTF8(&event.text.text, &textLen));
                 #else
-                    i32 codepointSize = 0;
-                    i32 codepoint = GetCodepointNextSDL(event.text.text, &codepointSize);
+                    auto codepointSize = 0;
+                    auto codepoint = GetCodepointNextSDL(event.text.text, &codepointSize);
                 #endif
 
                     CORE.Input.Keyboard.charPressedQueue[CORE.Input.Keyboard.charPressedQueueCount] = codepoint;
@@ -1789,7 +1789,7 @@ void PollInputEvents(void)
                     if (jid == platform.gamepadId[i]) return;
                 }
 
-                i32 nextAvailableSlot = 0;
+                auto nextAvailableSlot = 0;
                 while (nextAvailableSlot < MAX_GAMEPADS && CORE.Input.Gamepad.ready[nextAvailableSlot])
                 {
                     nextAvailableSlot++;
@@ -1807,7 +1807,7 @@ void PollInputEvents(void)
                         CORE.Input.Gamepad.axisState[nextAvailableSlot][GAMEPAD_AXIS_LEFT_TRIGGER] = -1.0f;
                         CORE.Input.Gamepad.axisState[nextAvailableSlot][GAMEPAD_AXIS_RIGHT_TRIGGER] = -1.0f;
                         memset(CORE.Input.Gamepad.name[nextAvailableSlot], 0, MAX_GAMEPAD_NAME_LENGTH);
-                        const char *controllerName = SDL_GameControllerNameForIndex(nextAvailableSlot);
+                        auto controllerName = SDL_GameControllerNameForIndex(nextAvailableSlot);
                         if (controllerName != nullptr) snprintf(CORE.Input.Gamepad.name[nextAvailableSlot], MAX_GAMEPAD_NAME_LENGTH, "%s", controllerName);
                         else memcpy(CORE.Input.Gamepad.name[nextAvailableSlot], "noname", 6);
                     }
@@ -1832,7 +1832,7 @@ void PollInputEvents(void)
             } break;
             case SDL_CONTROLLERBUTTONDOWN:
             {
-                i32 button = -1;
+                auto button = -1;
 
             #if defined(USING_VERSION_SDL3)
                 switch (event.gbutton.button)
@@ -1881,7 +1881,7 @@ void PollInputEvents(void)
             } break;
             case SDL_CONTROLLERBUTTONUP:
             {
-                i32 button = -1;
+                auto button = -1;
 
             #if defined(USING_VERSION_SDL3)
                 switch (event.gbutton.button)
@@ -1930,7 +1930,7 @@ void PollInputEvents(void)
             } break;
             case SDL_CONTROLLERAXISMOTION:
             {
-                i32 axis = -1;
+                auto axis = -1;
 
                 switch (event.jaxis.axis)
                 {
@@ -1974,7 +1974,7 @@ void PollInputEvents(void)
         if (touchAction > -1)
         {
             // Process mouse events as touches to be able to use mouse-gestures
-            GestureEvent gestureEvent = {};
+            auto gestureEvent = GestureEvent{};
 
             // Register touch actions
             gestureEvent.touchAction = touchAction;
@@ -2095,7 +2095,7 @@ i32 InitPlatform(void)
 
         if ((CORE.Window.flags & MSAA_FLAGS) != 0)
         {
-            i32 requestedSamples = GetWindowRequestedSamples();
+            auto requestedSamples = GetWindowRequestedSamples();
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
             SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, requestedSamples);
         }
@@ -2127,7 +2127,7 @@ i32 InitPlatform(void)
     {
         CORE.Window.ready = true;
 
-        SDL_DisplayMode displayMode = {};
+        auto displayMode = SDL_DisplayMode{};
         SDL_GetCurrentDisplayMode(GetCurrentMonitor(), &displayMode);
 
         CORE.Window.display.width = displayMode.w;
@@ -2174,7 +2174,7 @@ i32 InitPlatform(void)
     i32 numJoysticks;
     SDL_JoystickID *joysticks = SDL_GetJoysticks(&numJoysticks);
 #else
-    i32 numJoysticks = SDL_NumJoysticks();
+    auto numJoysticks = SDL_NumJoysticks();
 #endif
 
     for (i32 i = 0; (i < numJoysticks) && (i < MAX_GAMEPADS); i++)
@@ -2195,7 +2195,7 @@ i32 InitPlatform(void)
 #if defined(USING_VERSION_SDL3)
             const char *joystickName = SDL_GetJoystickNameForID(joysticks[i]);
 #else
-            const char *joystickName = SDL_GameControllerNameForIndex(i);
+            auto joystickName = SDL_GameControllerNameForIndex(i);
 #endif
             snprintf(CORE.Input.Gamepad.name[i], MAX_GAMEPAD_NAME_LENGTH, "%s", joystickName);
             CORE.Input.Gamepad.name[i][MAX_GAMEPAD_NAME_LENGTH - 1] = '\0';
@@ -2251,7 +2251,7 @@ void ClosePlatform(void)
 }
 
 // Scancode to keycode mapping
-static KeyboardKey ConvertScancodeToKey(SDL_Scancode sdlScancode)
+static KeyboardKey ConvertScancodeToKey(const SDL_Scancode sdlScancode)
 {
     if ((sdlScancode >= 0) && (sdlScancode < SCANCODE_MAPPED_NUM))
     {
@@ -2301,10 +2301,10 @@ static i32 GetCodepointNextSDL(const char *text, i32 *codepointSize)
 }
 
 // Update CORE input touch point info from SDL touch data
-static void UpdateTouchPointsSDL(SDL_TouchFingerEvent event)
+static void UpdateTouchPointsSDL(const SDL_TouchFingerEvent event)
 {
 #if defined(USING_VERSION_SDL3) // SDL3
-    i32 count = 0;
+    auto count = 0;
     SDL_Finger **fingers = SDL_GetTouchFingers(event.touchID, &count);
     CORE.Input.Touch.pointCount = count;
 

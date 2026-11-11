@@ -22,14 +22,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - format text");
 
-    constexpr i32 score = 100020;
-    constexpr i32 hiscore = 200450;
-    constexpr i32 lives = 5;
+    constexpr auto score = 100020;
+    constexpr auto hiscore = 200450;
+    constexpr auto lives = 5;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

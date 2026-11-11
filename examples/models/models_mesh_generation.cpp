@@ -29,14 +29,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh generation");
 
     // We generate a checked image for texturing
-    const Image checked = GenImageChecked(2, 2, 1, 1, RED, GREEN);
-    const Texture2D texture = LoadTextureFromImage(checked);
+    const auto checked = GenImageChecked(2, 2, 1, 1, RED, GREEN);
+    const auto texture = LoadTextureFromImage(checked);
     UnloadImage(checked);
 
     Model models[NUM_MODELS] = {};
@@ -57,12 +57,12 @@ i32 main()
     for (i32 i = 0; i < NUM_MODELS; i++) models[i].materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
     // Define the camera to look into our 3d world
-    Camera camera = { { 5.0f, 5.0f, 5.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
+    auto camera = Camera{ { 5.0f, 5.0f, 5.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
 
     // Model drawing position
-    const vec3 position = { 0.0f, 0.0f, 0.0f };
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f };
 
-    i32 currentModel = 0;
+    auto currentModel = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ i32 main()
 // Generate a simple triangle mesh from code
 static Mesh GenMeshCustom(void)
 {
-    Mesh mesh = {};
+    auto mesh = Mesh{};
     mesh.triangleCount = 1;
     mesh.vertexCount = mesh.triangleCount*3;
     mesh.vertices = static_cast<f32 *>(MemAlloc(mesh.vertexCount*3*sizeof(f32)));    // 3 vertices, 3 coordinates each (x, y, z)

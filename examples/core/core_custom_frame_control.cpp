@@ -37,23 +37,23 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - custom frame control");
 
     // Custom timming variables
-    f64 previousTime = GetTime();    // Previous time measure
-    f64 currentTime = 0.0;           // Current time measure
-    f64 updateDrawTime = 0.0;        // Update + Draw time
-    f64 waitTime = 0.0;              // Wait time (if target fps required)
-    f32 deltaTime = 0.0f;             // Frame time (Update + Draw + Wait time)
+    auto previousTime = GetTime();    // Previous time measure
+    auto currentTime = 0.0;           // Current time measure
+    auto updateDrawTime = 0.0;        // Update + Draw time
+    auto waitTime = 0.0;              // Wait time (if target fps required)
+    auto deltaTime = 0.0f;             // Frame time (Update + Draw + Wait time)
 
-    f32 timeCounter = 0.0f;           // Accumulative time counter (seconds)
-    f32 position = 0.0f;              // Circle position
-    bool pause = false;                 // Pause control flag
+    auto timeCounter = 0.0f;           // Accumulative time counter (seconds)
+    auto position = 0.0f;              // Circle position
+    auto pause = false;                 // Pause control flag
 
-    i32 targetFPS = 60;                 // Our initial target fps
+    auto targetFPS = 60;                 // Our initial target fps
     //--------------------------------------------------------------------------------------
 
     // Main game loop

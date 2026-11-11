@@ -32,13 +32,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture tiling");
 
     // Define the camera to look into our 3d world
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ 4.0f, 4.0f, 4.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.5f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -46,8 +46,8 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load a cube model
-    const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    const Model model = LoadModelFromMesh(cube);
+    const auto cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    const auto model = LoadModelFromMesh(cube);
 
     // Load a texture and assign to cube model
     const Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");

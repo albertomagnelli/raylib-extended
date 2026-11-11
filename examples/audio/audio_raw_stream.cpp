@@ -28,8 +28,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - raw stream");
 
@@ -40,15 +40,15 @@ i32 main()
     f32 buffer[BUFFER_SIZE] = {};
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
-    const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
-    f32 pan = 0.0f;
+    const auto stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
+    auto pan = 0.0f;
     SetAudioStreamPan(stream, pan);
     PlayAudioStream(stream);
 
-    i32 sineFrequency = 440;
-    i32 newSineFrequency = 440;
-    i32 sineIndex = 0;
-    f64 sineStartTime = 0.0;
+    auto sineFrequency = 440;
+    auto newSineFrequency = 440;
+    auto sineIndex = 0;
+    auto sineStartTime = 0.0;
 
     SetTargetFPS(30);
     //--------------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ i32 main()
             DrawText("Up/down to change frequency", 10, 10, 20, DARKGRAY);
             DrawText("Left/right to pan", 10, 30, 20, DARKGRAY);
 
-            const i32 windowStart = static_cast<i32>((GetTime() - sineStartTime)*SAMPLE_RATE);
+            const auto windowStart = static_cast<i32>((GetTime() - sineStartTime)*SAMPLE_RATE);
             const i32 windowSize = SAMPLE_RATE/10;
             const i32 wavelength = SAMPLE_RATE/sineFrequency;
 
@@ -125,8 +125,8 @@ i32 main()
             {
                 const i32 t0 = windowStart + i*windowSize/screenWidth;
                 const i32 t1 = windowStart + (i + 1)*windowSize/screenWidth;
-                const vec2 startPos = { static_cast<f32>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
-                const vec2 endPos = { static_cast<f32>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
+                const auto startPos = vec2{ static_cast<f32>(i), 250 + 50*sinf(2*PI*t0/wavelength) };
+                const auto endPos = vec2{ static_cast<f32>(i) + 1, 250 + 50*sinf(2*PI*t1/wavelength) };
                 DrawLineV(startPos, endPos, RED);
             }
 

@@ -26,13 +26,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - waving cubes");
 
     // Initialize the camera
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ 30.0f, 20.0f, 30.0f };      // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -40,7 +40,7 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Specify the amount of blocks in each direction
-    constexpr i32 numBlocks = 15;
+    constexpr auto numBlocks = 15;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const f64 time = GetTime();
+        const auto time = GetTime();
 
         // Calculate time scale for cube position and size
         const f32 scale = (2.0f + static_cast<f32>(sin(time)))*0.7f;
@@ -93,7 +93,7 @@ i32 main()
                             // Pick a color with a hue depending on cube position for the rainbow color effect
                             // NOTE: This function is quite costly to be done per cube and frame,
                             // pre-catching the results into a separate array could improve performance
-                            const Color cubeColor = ColorFromHSV(static_cast<f32>(((x + y + z)*18)%360), 0.75f, 0.9f);
+                            const auto cubeColor = ColorFromHSV(static_cast<f32>(((x + y + z)*18)%360), 0.75f, 0.9f);
 
                             // Calculate cube size
                             const f32 cubeSize = (2.4f - scale)*blockScale;

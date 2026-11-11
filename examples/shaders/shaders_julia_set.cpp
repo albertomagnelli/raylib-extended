@@ -39,12 +39,12 @@ const f32 pointsOfInterest[6][2] =
     { -0.70176f, -0.3842f },
 };
 
-constexpr i32 screenWidth = 800;
-constexpr i32 screenHeight = 450;
-constexpr f32 zoomSpeed = 1.01f;
-constexpr f32 offsetSpeedMul = 2.0f;
+constexpr auto screenWidth = 800;
+constexpr auto screenHeight = 450;
+constexpr auto zoomSpeed = 1.01f;
+constexpr auto offsetSpeedMul = 2.0f;
 
-constexpr f32 startingZoom = 0.75f;
+constexpr auto startingZoom = 0.75f;
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -60,7 +60,7 @@ i32 main()
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/julia_set.fs", GLSL_VERSION));
 
     // Create a RenderTexture2D to be used for render to texture
-    const RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    const auto target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     // c constant to use in z^2 + c
     f32 c[2] = { pointsOfInterest[0][0], pointsOfInterest[0][1] };
@@ -80,8 +80,8 @@ i32 main()
     SetShaderValue(shader, zoomLoc, &zoom, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, offsetLoc, offset, SHADER_UNIFORM_VEC2);
 
-    i32 incrementSpeed = 0;             // Multiplier of speed to change c value
-    bool showControls = true;           // Show controls
+    auto incrementSpeed = 0;             // Multiplier of speed to change c value
+    auto showControls = true;           // Show controls
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ i32 main()
             // Change zoom. If Mouse left -> zoom in. Mouse right -> zoom out
             zoom *= IsMouseButtonDown(MOUSE_BUTTON_LEFT)? zoomSpeed : 1.0f/zoomSpeed;
 
-            const vec2 mousePos = GetMousePosition();
+            const auto mousePos = GetMousePosition();
             vec2 offsetVelocity;
             // Find the velocity at which to change the camera. Take the distance of the mouse
             // from the center of the screen as the direction, and adjust magnitude based on the current zoom

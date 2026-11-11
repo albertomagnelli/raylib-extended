@@ -29,14 +29,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_HIGHDPI | FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - highdpi demo");
     SetWindowMinSize(450, 450);
 
-    constexpr i32 logicalGridDescY = 120;
+    constexpr auto logicalGridDescY = 120;
     const i32 logicalGridLabelY = logicalGridDescY + 30;
     const i32 logicalGridTop = logicalGridLabelY + 30;
     const i32 logicalGridBottom = logicalGridTop + 80;
@@ -44,8 +44,8 @@ i32 main()
     const i32 pixelGridBottom = pixelGridTop + 80;
     const i32 pixelGridLabelY = pixelGridBottom + 30;
     const i32 pixelGridDescY = pixelGridLabelY + 30;
-    constexpr i32 cellSize = 50;
-    f32 cellSizePx = static_cast<f32>(cellSize);
+    constexpr auto cellSize = 50;
+    auto cellSizePx = static_cast<f32>(cellSize);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -55,15 +55,15 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const i32 monitorCount = GetMonitorCount();
+        const auto monitorCount = GetMonitorCount();
 
         if ((monitorCount > 1) && IsKeyPressed(KEY_N))
         {
             SetWindowMonitor((GetCurrentMonitor() + 1)%monitorCount);
         }
 
-        const i32 currentMonitor = GetCurrentMonitor();
-        const vec2 dpiScale = GetWindowScaleDPI();
+        const auto currentMonitor = GetCurrentMonitor();
+        const auto dpiScale = GetWindowScaleDPI();
         cellSizePx = (static_cast<f32>(cellSize))/dpiScale.x;
         //----------------------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ i32 main()
             DrawTextCenter(TextFormat("Monitor: %d/%d ([N] next monitor)", currentMonitor+1, monitorCount), windowCenter, 70, 20, LIGHTGRAY);
             DrawTextCenter(TextFormat("Window is %d \"logical points\" wide", GetScreenWidth()), windowCenter, logicalGridDescY, 20, ORANGE);
 
-            bool odd = true;
+            auto odd = true;
             for (i32 i = cellSize; i < GetScreenWidth(); i += cellSize, odd = !odd)
             {
                 if (odd) DrawRectangle(i, logicalGridTop, cellSize, logicalGridBottom-logicalGridTop, ORANGE);
@@ -88,7 +88,7 @@ i32 main()
             }
 
             odd = true;
-            constexpr i32 minTextSpace = 30;
+            constexpr auto minTextSpace = 30;
             i32 lastTextX = -minTextSpace;
             for (i32 i = cellSize; i < GetRenderWidth(); i += cellSize, odd = !odd)
             {
@@ -107,8 +107,8 @@ i32 main()
             DrawTextCenter(TextFormat("Window is %d \"physical pixels\" wide", GetRenderWidth()), windowCenter, pixelGridDescY, 20, BLUE);
 
             constexpr const char *text = "Can you see this?";
-            const vec2 size = MeasureTextEx(GetFontDefault(), text, 20, 3);
-            const vec2 pos = vec2{ GetScreenWidth() - size.x - 5, GetScreenHeight() - size.y - 5 };
+            const auto size = MeasureTextEx(GetFontDefault(), text, 20, 3);
+            const auto pos = vec2{ GetScreenWidth() - size.x - 5, GetScreenHeight() - size.y - 5 };
             DrawTextEx(GetFontDefault(), text, pos, 20, 3, LIGHTGRAY);
 
         EndDrawing();
@@ -128,7 +128,7 @@ i32 main()
 //------------------------------------------------------------------------------------
 static void DrawTextCenter(std::string_view text, i32 x, i32 y, i32 fontSize, Color color)
 {
-    const vec2 size = MeasureTextEx(GetFontDefault(), text, static_cast<f32>(fontSize), 3);
-    const vec2 pos = vec2{ x - size.x/2, y - size.y/2 };
+    const auto size = MeasureTextEx(GetFontDefault(), text, static_cast<f32>(fontSize), 3);
+    const auto pos = vec2{ x - size.x/2, y - size.y/2 };
     DrawTextEx(GetFontDefault(), text, pos, static_cast<f32>(fontSize), 3, color);
 }

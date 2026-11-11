@@ -42,14 +42,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Enable Multi Sampling Anti Aliasing 4x (if available)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - basic lighting");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 2.0f, 4.0f, 6.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.5f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)

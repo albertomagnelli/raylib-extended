@@ -64,12 +64,12 @@ i32 main()
 {
     // Initialization
     // -------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - deferred rendering");
 
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 5.0f, 4.0f, 5.0f };         // Camera position
     camera.target = vec3{ 0.0f, 1.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -77,8 +77,8 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load plane model from a generated mesh
-    const Model model = LoadModelFromMesh(GenMeshPlane(10.0f, 10.0f, 3, 3));
-    const Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
+    const auto model = LoadModelFromMesh(GenMeshPlane(10.0f, 10.0f, 3, 3));
+    const auto cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
 
     // Load geometry buffer (G-buffer) shader and deferred shader
     const Shader gbufferShader = LoadShader(TextFormat("resources/shaders/glsl%i/gbuffer.vs", GLSL_VERSION),
@@ -89,7 +89,7 @@ i32 main()
     deferredShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(deferredShader, "viewPosition");
 
     // Initialize the G-buffer
-    GBuffer gBuffer = {};
+    auto gBuffer = GBuffer{};
     gBuffer.framebufferId = rlLoadFramebuffer();
     if (gBuffer.framebufferId == 0) TraceLog(LOG_WARNING, "Failed to create framebufferId");
 
@@ -132,9 +132,9 @@ i32 main()
     // We do this by setting the uniform's values to the texture units that
     // we later bind our g-buffer textures to
     rlEnableShader(deferredShader.id);
-    i32 texUnitPosition = 0;
-    i32 texUnitNormal = 1;
-    i32 texUnitAlbedoSpec = 2;
+    auto texUnitPosition = 0;
+    auto texUnitNormal = 1;
+    auto texUnitAlbedoSpec = 2;
     SetShaderValue(deferredShader, rlGetLocationUniform(deferredShader.id, "gPosition"), &texUnitPosition, RL_SHADER_UNIFORM_SAMPLER2D);
     SetShaderValue(deferredShader, rlGetLocationUniform(deferredShader.id, "gNormal"), &texUnitNormal, RL_SHADER_UNIFORM_SAMPLER2D);
     SetShaderValue(deferredShader, rlGetLocationUniform(deferredShader.id, "gAlbedoSpec"), &texUnitAlbedoSpec, RL_SHADER_UNIFORM_SAMPLER2D);

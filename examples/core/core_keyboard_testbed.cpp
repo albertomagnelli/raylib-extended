@@ -33,8 +33,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard testbed");
     SetExitKey(KEY_NULL); // Avoid exit on KEY_ESCAPE
@@ -104,7 +104,7 @@ i32 main()
         KEY_RIGHT_CONTROL, KEY_LEFT, KEY_DOWN, KEY_RIGHT
     };
 
-    const vec2 keyboardOffset = { 26, 80 };
+    const auto keyboardOffset = vec2{ 26, 80 };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -114,10 +114,10 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const i32 key = GetKeyPressed(); // Get pressed keycode
+        const auto key = GetKeyPressed(); // Get pressed keycode
         if (key > 0) TraceLog(LOG_INFO, "KEYBOARD TESTBED: KEY PRESSED:    %d", key);
 
-        const i32 ch = GetCharPressed(); // Get pressed char for text input, using OS mapping
+        const auto ch = GetCharPressed(); // Get pressed char for text input, using OS mapping
         if (ch > 0) TraceLog(LOG_INFO,  "KEYBOARD TESTBED: CHAR PRESSED:   %c (%d)", ch, ch);
         //----------------------------------------------------------------------------------
 

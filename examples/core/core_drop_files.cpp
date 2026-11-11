@@ -29,12 +29,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - drop files");
 
-    i32 filePathCounter = 0;
+    auto filePathCounter = 0;
     char *filePaths[MAX_FILEPATH_RECORDED] = {}; // We will register a maximum of filepaths
 
     // Allocate space for the required file paths
@@ -53,7 +53,7 @@ i32 main()
         //----------------------------------------------------------------------------------
         if (IsFileDropped())
         {
-            FilePathList droppedFiles = LoadDroppedFiles();
+            auto droppedFiles = LoadDroppedFiles();
 
             for (i32 i = 0, offset = filePathCounter; i < static_cast<i32>(droppedFiles.paths.size()); i++)
             {

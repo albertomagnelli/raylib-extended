@@ -79,19 +79,19 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - top down lights");
 
     // Initialize our 'world' of boxes
-    i32 boxCount = 0;
+    auto boxCount = 0;
     Rectangle boxes[MAX_BOXES] = {};
     SetupBoxes(boxes, &boxCount);
 
     // Create a checkerboard ground texture
-    const Image img = GenImageChecked(64, 64, 32, 32, DARKBROWN, DARKGRAY);
-    const Texture2D backgroundTexture = LoadTextureFromImage(img);
+    const auto img = GenImageChecked(64, 64, 32, 32, DARKBROWN, DARKGRAY);
+    const auto backgroundTexture = LoadTextureFromImage(img);
     UnloadImage(img);
 
     // Create a global light mask to hold all the blended lights
@@ -99,9 +99,9 @@ i32 main()
 
     // Setup initial light
     SetupLight(0, 600, 400, 300);
-    i32 nextLight = 1;
+    auto nextLight = 1;
 
-    bool showLines = false;
+    auto showLines = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ i32 main()
         if (IsKeyPressed(KEY_F1)) showLines = !showLines;
 
         // Update the lights and keep track if any were dirty so we know if we need to update the master light mask
-        bool dirtyLights = false;
+        auto dirtyLights = false;
         for (i32 i = 0; i < MAX_LIGHTS; i++)
         {
             if (UpdateLight(i, boxes, boxCount)) dirtyLights = true;
@@ -293,8 +293,8 @@ static bool UpdateLight(i32 slot, Rectangle* boxes, i32 count)
         // Check the edges that are on the same side we are, and cast shadow volumes out from them
 
         // Top
-        vec2 sp = vec2{ boxes[i].x, boxes[i].y };
-        vec2 ep = vec2{ boxes[i].x + boxes[i].width, boxes[i].y };
+        auto sp = vec2{ boxes[i].x, boxes[i].y };
+        auto ep = vec2{ boxes[i].x + boxes[i].width, boxes[i].y };
 
         if (lights[slot].position.y > ep.y) ComputeShadowVolumeForEdge(slot, sp, ep);
 

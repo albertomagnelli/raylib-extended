@@ -28,13 +28,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - tesseract view");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 4.0f, 4.0f, 4.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 0.0f, 1.0f };               // Camera up vector (rotation towards target)
@@ -53,7 +53,7 @@ i32 main()
         { -1, -1, -1, 1 }, { -1, -1, -1, -1 },
     };
 
-    f32 rotation = 0.0f;
+    auto rotation = 0.0f;
     vec3 transformed[16] = {};
     f32 wValues[16] = {};
 
@@ -72,7 +72,7 @@ i32 main()
             vec4 p = tesseract[i];
 
             // Rotate the XW part of the vector
-            const vec2 rotXW = Vector2Rotate(vec2{ p.x, p.w }, rotation);
+            const auto rotXW = Vector2Rotate(vec2{ p.x, p.w }, rotation);
             p.x = rotXW.x;
             p.w = rotXW.y;
 

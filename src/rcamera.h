@@ -129,13 +129,13 @@ RLAPI vec3 GetCameraRight(const Camera *camera);
 
 // Camera movement
 RLAPI void CameraMoveForward(Camera *camera, f32 distance, bool moveInWorldPlane);
-RLAPI void CameraMoveUp(Camera *camera, f32 distance);
+RLAPI void CameraMoveUp(Camera *camera, const f32 distance);
 RLAPI void CameraMoveRight(Camera *camera, f32 distance, bool moveInWorldPlane);
-RLAPI void CameraMoveToTarget(Camera *camera, f32 delta);
+RLAPI void CameraMoveToTarget(Camera *camera, const f32 delta);
 
 // Camera rotation
 RLAPI void CameraYaw(Camera *camera, f32 angle, bool rotateAroundTarget);
-RLAPI void CameraPitch(Camera *camera, f32 angle, bool lockView, bool rotateAroundTarget, bool rotateUp);
+RLAPI void CameraPitch(Camera *camera, f32 angle, bool lockView, bool rotateAroundTarget, const bool rotateUp);
 RLAPI void CameraRoll(Camera *camera, f32 angle);
 
 RLAPI mat4 GetCameraViewMatrix(const Camera *camera);
@@ -217,8 +217,8 @@ vec3 GetCameraUp(const Camera *camera)
 // Returns the cameras right vector (normalized)
 vec3 GetCameraRight(const Camera *camera)
 {
-    const vec3 forward = GetCameraForward(camera);
-    const vec3 up = GetCameraUp(camera);
+    const auto forward = GetCameraForward(camera);
+    const auto up = GetCameraUp(camera);
 
     return glm::normalize(glm::cross(forward, up));
 }
@@ -226,7 +226,7 @@ vec3 GetCameraRight(const Camera *camera)
 // Moves the camera in its forward direction
 void CameraMoveForward(Camera *camera, const f32 distance, const bool moveInWorldPlane)
 {
-    vec3 forward = GetCameraForward(camera);
+    auto forward = GetCameraForward(camera);
 
     if (moveInWorldPlane)
     {
@@ -247,9 +247,9 @@ void CameraMoveForward(Camera *camera, const f32 distance, const bool moveInWorl
 }
 
 // Moves the camera in its up direction
-void CameraMoveUp(Camera *camera, f32 distance)
+void CameraMoveUp(Camera *camera, const f32 distance)
 {
-    vec3 up = GetCameraUp(camera);
+    auto up = GetCameraUp(camera);
 
     // Scale by distance
     up *= distance;
@@ -262,7 +262,7 @@ void CameraMoveUp(Camera *camera, f32 distance)
 // Moves the camera target in its current right direction
 void CameraMoveRight(Camera *camera, const f32 distance, const bool moveInWorldPlane)
 {
-    vec3 right = GetCameraRight(camera);
+    auto right = GetCameraRight(camera);
 
     if (moveInWorldPlane)
     {
@@ -283,7 +283,7 @@ void CameraMoveRight(Camera *camera, const f32 distance, const bool moveInWorldP
 }
 
 // Moves the camera position closer/farther to/from the camera target
-void CameraMoveToTarget(Camera *camera, f32 delta)
+void CameraMoveToTarget(Camera *camera, const f32 delta)
 {
     f32 distance = glm::distance(camera->position, camera->target);
 
@@ -294,7 +294,7 @@ void CameraMoveToTarget(Camera *camera, f32 delta)
     if (distance <= 0) distance = 0.001f;
 
     // Set new distance by moving the position along the forward vector
-    const vec3 forward = GetCameraForward(camera);
+    const auto forward = GetCameraForward(camera);
     camera->position = camera->target - forward*distance;
 }
 
@@ -305,7 +305,7 @@ void CameraMoveToTarget(Camera *camera, f32 delta)
 void CameraYaw(Camera *camera, const f32 angle, const bool rotateAroundTarget)
 {
     // Rotation axis
-    const vec3 up = GetCameraUp(camera);
+    const auto up = GetCameraUp(camera);
 
     // View vector
     vec3 targetPosition = camera->target - camera->position;
@@ -330,10 +330,10 @@ void CameraYaw(Camera *camera, const f32 angle, const bool rotateAroundTarget)
 //  - rotateAroundTarget defines if rotation is around target or around its position
 //  - rotateUp rotates the up direction as well (typically only useful in CAMERA_FREE)
 // NOTE: [angle] must be provided in radians
-void CameraPitch(Camera *camera, f32 angle, const bool lockView, const bool rotateAroundTarget, bool rotateUp)
+void CameraPitch(Camera *camera, f32 angle, const bool lockView, const bool rotateAroundTarget, const bool rotateUp)
 {
     // Up direction
-    const vec3 up = GetCameraUp(camera);
+    const auto up = GetCameraUp(camera);
 
     // View vector
     vec3 targetPosition = camera->target - camera->position;
@@ -356,7 +356,7 @@ void CameraPitch(Camera *camera, f32 angle, const bool lockView, const bool rota
     }
 
     // Rotation axis
-    const vec3 right = GetCameraRight(camera);
+    const auto right = GetCameraRight(camera);
 
     // Rotate view vector around right axis
     targetPosition = glm::angleAxis(angle, glm::normalize(right))*targetPosition;
@@ -385,7 +385,7 @@ void CameraPitch(Camera *camera, f32 angle, const bool lockView, const bool rota
 void CameraRoll(Camera *camera, const f32 angle)
 {
     // Rotation axis
-    const vec3 forward = GetCameraForward(camera);
+    const auto forward = GetCameraForward(camera);
 
     // Rotate up direction around forward axis
     camera->up = glm::angleAxis(angle, glm::normalize(forward))*camera->up;
@@ -420,7 +420,7 @@ mat4 GetCameraProjectionMatrix(const Camera *camera, const f32 aspect)
 // Camera mode: CAMERA_FREE, CAMERA_FIRST_PERSON, CAMERA_THIRD_PERSON, CAMERA_ORBITAL or CUSTOM
 void UpdateCamera(Camera *camera, const i32 mode)
 {
-    const vec2 mousePositionDelta = GetMouseDelta();
+    const auto mousePositionDelta = GetMouseDelta();
 
     const bool moveInWorldPlane = ((mode == CAMERA_FIRST_PERSON) || (mode == CAMERA_THIRD_PERSON));
     const bool rotateAroundTarget = ((mode == CAMERA_THIRD_PERSON) || (mode == CAMERA_ORBITAL));
@@ -442,7 +442,7 @@ void UpdateCamera(Camera *camera, const i32 mode)
     }
     else
     {
-        constexpr bool rotateUp = false;
+        constexpr auto rotateUp = false;
         // Camera rotation
         if (IsKeyDown(KEY_DOWN)) CameraPitch(camera, -cameraRotationSpeed, lockView, rotateAroundTarget, rotateUp);
         if (IsKeyDown(KEY_UP)) CameraPitch(camera, cameraRotationSpeed, lockView, rotateAroundTarget, rotateUp);
@@ -455,7 +455,7 @@ void UpdateCamera(Camera *camera, const i32 mode)
         // Camera pan (for CAMERA_FREE)
         if ((mode == CAMERA_FREE) && (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)))
         {
-            const vec2 mouseDelta = GetMouseDelta();
+            const auto mouseDelta = GetMouseDelta();
             if (mouseDelta.x > 0.0f) CameraMoveRight(camera, cameraPanSpeed, moveInWorldPlane);
             if (mouseDelta.x < 0.0f) CameraMoveRight(camera, -cameraPanSpeed, moveInWorldPlane);
             if (mouseDelta.y > 0.0f) CameraMoveUp(camera, -cameraPanSpeed);
@@ -516,10 +516,10 @@ void UpdateCameraPro(Camera *camera, const vec3 movement, const vec3 rotation, c
     // rotation.z - roll
     // zoom - Move towards target
 
-    constexpr bool lockView = true;
-    constexpr bool rotateAroundTarget = false;
-    constexpr bool rotateUp = false;
-    constexpr bool moveInWorldPlane = true;
+    constexpr auto lockView = true;
+    constexpr auto rotateAroundTarget = false;
+    constexpr auto rotateUp = false;
+    constexpr auto moveInWorldPlane = true;
 
     // Camera rotation
     CameraPitch(camera, -rotation.y*DEG2RAD, lockView, rotateAroundTarget, rotateUp);

@@ -42,21 +42,21 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Enable Multi Sampling Anti Aliasing 4x (if available)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lightmap rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 4.0f, 6.0f, 8.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Mesh mesh = GenMeshPlane(static_cast<f32>(MAP_SIZE), static_cast<f32>(MAP_SIZE), 1, 1);
+    auto mesh = GenMeshPlane(static_cast<f32>(MAP_SIZE), static_cast<f32>(MAP_SIZE), 1, 1);
 
     // GenMeshPlane doesn't generate texcoords2 so we will upload them separately
     mesh.texcoords2 = static_cast<f32 *>(malloc(mesh.vertexCount*2*sizeof(f32)));
@@ -88,7 +88,7 @@ i32 main()
 
     RenderTexture lightmap = LoadRenderTexture(MAP_SIZE, MAP_SIZE);
 
-    Material material = LoadMaterialDefault();
+    auto material = LoadMaterialDefault();
     material.shader = shader;
     material.maps[MATERIAL_MAP_ALBEDO].texture = texture;
     material.maps[MATERIAL_MAP_METALNESS].texture = lightmap.texture;

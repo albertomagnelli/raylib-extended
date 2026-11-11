@@ -40,14 +40,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Enable Multi Sampling Anti Aliasing 4x (if available)
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - fog rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 2.0f, 2.0f, 6.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.5f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -55,9 +55,9 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load models and texture
-    Model modelA = LoadModelFromMesh(GenMeshTorus(0.4f, 1.0f, 16, 32));
-    const Model modelB = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    const Model modelC = LoadModelFromMesh(GenMeshSphere(0.5f, 32, 32));
+    auto modelA = LoadModelFromMesh(GenMeshTorus(0.4f, 1.0f, 16, 32));
+    const auto modelB = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    const auto modelC = LoadModelFromMesh(GenMeshSphere(0.5f, 32, 32));
     const Texture texture = LoadTexture("resources/texel_checker.png");
 
     // Assign texture to default model material
@@ -72,15 +72,15 @@ i32 main()
     shader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shader, "viewPos");
 
     // Ambient light level
-    vec4 ambient = vec4{ 0.2f, 0.2f, 0.2f, 1.0f };
+    auto ambient = vec4{ 0.2f, 0.2f, 0.2f, 1.0f };
     const i32 ambientLoc = GetShaderLocation(shader, "ambient");
     SetShaderValue(shader, ambientLoc, &ambient, SHADER_UNIFORM_VEC4);
 
-    vec4 fogColor = ColorNormalize(GRAY);
+    auto fogColor = ColorNormalize(GRAY);
     const i32 fogColorLoc = GetShaderLocation(shader, "fogColor");
     SetShaderValue(shader, fogColorLoc, &fogColor, SHADER_UNIFORM_VEC4);
 
-    f32 fogDensity = 0.15f;
+    auto fogDensity = 0.15f;
     const i32 fogDensityLoc = GetShaderLocation(shader, "fogDensity");
     SetShaderValue(shader, fogDensityLoc, &fogDensity, SHADER_UNIFORM_FLOAT);
 

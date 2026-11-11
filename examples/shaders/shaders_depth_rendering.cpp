@@ -43,13 +43,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - depth rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 4.0f, 1.0f, 5.0f };
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -57,7 +57,7 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load render texture with a depth texture attached
-    const RenderTexture2D target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
+    const auto target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
 
     // Load depth shader and get depth texture shader location
     const Shader depthShader = LoadShader({}, TextFormat("resources/shaders/glsl%i/depth_render.fs", GLSL_VERSION));
@@ -66,8 +66,8 @@ i32 main()
     SetShaderValue(depthShader, flipTextureLoc, std::initializer_list<i32>{ 1 }.begin(), SHADER_UNIFORM_INT); // Flip Y texture
 
     // Load scene models
-    const Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
-    const Model floor = LoadModelFromMesh(GenMeshPlane(20.0f, 20.0f, 1, 1));
+    const auto cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    const auto floor = LoadModelFromMesh(GenMeshPlane(20.0f, 20.0f, 1, 1));
 
     DisableCursor();  // Limit cursor to relative movement inside the window
 
@@ -133,7 +133,7 @@ i32 main()
 // Load custom render texture, create a writable depth texture buffer
 static RenderTexture2D LoadRenderTextureDepthTex(i32 width, i32 height)
 {
-    RenderTexture2D target = {};
+    auto target = RenderTexture2D{};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
 

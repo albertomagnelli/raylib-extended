@@ -56,22 +56,22 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ellipse collision");
     SetTargetFPS(60);
 
-    vec2 ellipseACenter = { static_cast<f32>(screenWidth)/4, static_cast<f32>(screenHeight)/2 };
-    constexpr f32 ellipseARx = 120.0f;
-    constexpr f32 ellipseARy = 70.0f;
+    auto ellipseACenter = vec2{ static_cast<f32>(screenWidth)/4, static_cast<f32>(screenHeight)/2 };
+    constexpr auto ellipseARx = 120.0f;
+    constexpr auto ellipseARy = 70.0f;
 
-    vec2 ellipseBCenter = { static_cast<f32>(screenWidth)*3/4, static_cast<f32>(screenHeight)/2 };
-    constexpr f32 ellipseBRx = 90.0f;
-    constexpr f32 ellipseBRy = 140.0f;
+    auto ellipseBCenter = vec2{ static_cast<f32>(screenWidth)*3/4, static_cast<f32>(screenHeight)/2 };
+    constexpr auto ellipseBRx = 90.0f;
+    constexpr auto ellipseBRy = 140.0f;
 
     // 0 = controlling A, 1 = controlling B
-    i32 controlled = 0;
+    auto controlled = 0;
 
     //--------------------------------------------------------------------------------------
 
@@ -91,8 +91,8 @@ i32 main()
             ellipseBCenter, ellipseBRx, ellipseBRy
         );
 
-        const bool mouseInA = CheckCollisionPointEllipse(GetMousePosition(), ellipseACenter, ellipseARx, ellipseARy);
-        const bool mouseInB = CheckCollisionPointEllipse(GetMousePosition(), ellipseBCenter, ellipseBRx, ellipseBRy);
+        const auto mouseInA = CheckCollisionPointEllipse(GetMousePosition(), ellipseACenter, ellipseARx, ellipseARy);
+        const auto mouseInB = CheckCollisionPointEllipse(GetMousePosition(), ellipseBCenter, ellipseBRx, ellipseBRy);
         //----------------------------------------------------------------------------------
 
         // Draw

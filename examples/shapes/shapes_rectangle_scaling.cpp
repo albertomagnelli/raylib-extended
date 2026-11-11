@@ -26,17 +26,17 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rectangle scaling");
 
-    Rectangle rec = { 100, 100, 200, 80 };
+    auto rec = Rectangle{ 100, 100, 200, 80 };
 
-    vec2 mousePosition = {};
+    auto mousePosition = vec2{};
 
-    bool mouseScaleReady = false;
-    bool mouseScaleMode = false;
+    auto mouseScaleReady = false;
+    auto mouseScaleMode = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

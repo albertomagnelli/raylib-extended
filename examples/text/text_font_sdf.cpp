@@ -30,8 +30,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font sdf");
 
@@ -40,11 +40,11 @@ i32 main()
     const char msg[50] = "Signed Distance Fields";
 
     // Loading file to memory
-    i32 fileSize = 0;
+    auto fileSize = 0;
     u8 *fileData = LoadFileData("resources/anonymous_pro_bold.ttf", &fileSize);
 
     // Default font generation from TTF font
-    Font fontDefault = {};
+    auto fontDefault = Font{};
     fontDefault.baseSize = 16;
     fontDefault.glyphCount = 95;
 
@@ -52,12 +52,12 @@ i32 main()
     // Parameters > font size: 16, no glyphs array provided (0), glyphs count: 95 (autogenerate chars array)
     fontDefault.glyphs = LoadFontData(fileData, fileSize, 16, nullptr, 95, FONT_DEFAULT, &fontDefault.glyphCount);
     // Parameters > glyphs count: 95, font size: 16, glyphs padding in image: 4 px, pack method: 0 (default)
-    Image atlas = GenImageFontAtlas(fontDefault.glyphs, &fontDefault.recs, 95, 16, 4, 0);
+    auto atlas = GenImageFontAtlas(fontDefault.glyphs, &fontDefault.recs, 95, 16, 4, 0);
     fontDefault.texture = LoadTextureFromImage(atlas);
     UnloadImage(atlas);
 
     // SDF font generation from TTF font
-    Font fontSDF = {};
+    auto fontSDF = Font{};
     fontSDF.baseSize = 16;
     fontSDF.glyphCount = 95;
     // Parameters > font size: 16, no glyphs array provided (0), glyphs count: 0 (defaults to 95)
@@ -74,10 +74,10 @@ i32 main()
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/sdf.fs", GLSL_VERSION));
     SetTextureFilter(fontSDF.texture, TEXTURE_FILTER_BILINEAR);    // Required for SDF font
 
-    vec2 fontPosition = { 40, screenHeight/2.0f - 50 };
-    vec2 textSize = { 0.0f, 0.0f };
-    f32 fontSize = 16.0f;
-    i32 currentFont = 0;            // 0 - fontDefault, 1 - fontSDF
+    auto fontPosition = vec2{ 40, screenHeight/2.0f - 50 };
+    auto textSize = vec2{ 0.0f, 0.0f };
+    auto fontSize = 16.0f;
+    auto currentFont = 0;            // 0 - fontDefault, 1 - fontSDF
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

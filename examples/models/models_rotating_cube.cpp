@@ -24,13 +24,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - rotating cube");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 0.0f, 3.0f, 3.0f };
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -38,16 +38,16 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Load image to create texture for the cube
-    const Model model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    const auto model = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
     const Image img = LoadImage("resources/cubicmap_atlas.png");
-    const Image crop = ImageFromImage(img, Rectangle{0, img.height/2.0f, img.width/2.0f, img.height/2.0f});
-    const Texture2D texture = LoadTextureFromImage(crop);
+    const auto crop = ImageFromImage(img, Rectangle{0, img.height/2.0f, img.width/2.0f, img.height/2.0f});
+    const auto texture = LoadTextureFromImage(crop);
     UnloadImage(img);
     UnloadImage(crop);
 
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;
 
-    f32 rotation = 0.0f;
+    auto rotation = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

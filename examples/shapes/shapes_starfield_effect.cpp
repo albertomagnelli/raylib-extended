@@ -28,18 +28,18 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - starfield effect");
 
-    const Color bgColor = ColorLerp(DARKBLUE, BLACK, 0.69f);
+    const auto bgColor = ColorLerp(DARKBLUE, BLACK, 0.69f);
 
     // Speed at which we fly forward
     f32 speed = 10.0f/9.0f;
 
     // We're either drawing lines or circles
-    bool drawLines = true;
+    auto drawLines = true;
 
     vec3 stars[STAR_COUNT] = {};
     vec2 starsScreenPos[STAR_COUNT] = {};
@@ -61,7 +61,7 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         // Change speed based on mouse
-        const f32 mouseMove = GetMouseWheelMove();
+        const auto mouseMove = GetMouseWheelMove();
         if (static_cast<i32>(mouseMove) != 0) speed += 2.0f*mouseMove/9.0f;
         if (speed < 0.0f) speed = 0.1f;
         else if (speed > 2.0f) speed = 2.0f;
@@ -69,7 +69,7 @@ i32 main()
         // Toggle lines / points with space bar
         if (IsKeyPressed(KEY_SPACE)) drawLines = !drawLines;
 
-        const f32 dt = GetFrameTime();
+        const auto dt = GetFrameTime();
         for (i32 i = 0; i < STAR_COUNT; i++)
         {
             // Update star's timer
@@ -103,7 +103,7 @@ i32 main()
                 if (drawLines)
                 {
                     // Get the time a little while ago for this star, but clamp it
-                    const f32 t = Clamp(stars[i].z + 1.0f/32.0f, 0.0f, 1.0f);
+                    const auto t = Clamp(stars[i].z + 1.0f/32.0f, 0.0f, 1.0f);
 
                     // If it's different enough from the current time, we proceed
                     if ((t - stars[i].z) > 1e-3)
@@ -121,7 +121,7 @@ i32 main()
                 else
                 {
                     // Make the radius grow as the star ages
-                    const f32 radius = Lerp(stars[i].z, 1.0f, 5.0f);
+                    const auto radius = Lerp(stars[i].z, 1.0f, 5.0f);
 
                     // Draw the circle
                     DrawCircleV(starsScreenPos[i], radius, RAYWHITE);

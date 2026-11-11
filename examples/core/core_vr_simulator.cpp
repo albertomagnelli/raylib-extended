@@ -28,8 +28,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     // NOTE: screenWidth/screenHeight should match VR device aspect ratio
     InitWindow(screenWidth, screenHeight, "raylib [core] example - vr simulator");
@@ -52,7 +52,7 @@ i32 main()
     };
 
     // Load VR stereo config for VR device parameteres (Oculus Rift CV1 parameters)
-    VrStereoConfig config = LoadVrStereoConfig(device);
+    auto config = LoadVrStereoConfig(device);
 
     // Distortion shader (uses device lens distortion and chroma)
     const Shader distortion = LoadShader({}, TextFormat("resources/shaders/glsl%i/distortion.fs", GLSL_VERSION));
@@ -78,21 +78,21 @@ i32 main()
 
     // Initialize framebuffer for stereo rendering
     // NOTE: Screen size should match HMD aspect ratio
-    const RenderTexture2D target = LoadRenderTexture(device.hResolution, device.vResolution);
+    const auto target = LoadRenderTexture(device.hResolution, device.vResolution);
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<f32>(target.texture.width), -static_cast<f32>(target.texture.height) };
-    const Rectangle destRec = { 0.0f, 0.0f, static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) };
+    const auto sourceRec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(target.texture.width), -static_cast<f32>(target.texture.height) };
+    const auto destRec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) };
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 5.0f, 2.0f, 5.0f };         // Camera position
     camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    const vec3 cubePosition = { 0.0f, 0.0f, 0.0f };
+    const auto cubePosition = vec3{ 0.0f, 0.0f, 0.0f };
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
 

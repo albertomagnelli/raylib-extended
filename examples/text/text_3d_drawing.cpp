@@ -47,8 +47,8 @@
 #define TEXT_MAX_LAYERS         32
 #define LETTER_BOUNDRY_COLOR    VIOLET
 
-bool SHOW_LETTER_BOUNDRY = false;
-bool SHOW_TEXT_BOUNDRY = false;
+auto SHOW_LETTER_BOUNDRY = false;
+auto SHOW_TEXT_BOUNDRY = false;
 
 //--------------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -83,17 +83,17 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT|FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [text] example - 3d drawing");
 
-    bool spin = true;        // Spin the camera?
-    bool multicolor = false; // Multicolor mode
+    auto spin = true;        // Spin the camera?
+    auto multicolor = false; // Multicolor mode
 
     // Define the camera to look into our 3d world
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ -10.0f, 15.0f, -10.0f };        // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };               // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };                   // Camera up vector (rotation towards target)
@@ -102,28 +102,28 @@ i32 main()
 
     i32 camera_mode = CAMERA_ORBITAL;
 
-    const vec3 cubePosition = { 0.0f, 1.0f, 0.0f };
-    const vec3 cubeSize = { 2.0f, 2.0f, 2.0f };
+    const auto cubePosition = vec3{ 0.0f, 1.0f, 0.0f };
+    const auto cubeSize = vec3{ 2.0f, 2.0f, 2.0f };
 
     // Use the default font
-    Font font = GetFontDefault();
-    f32 fontSize = 0.8f;
-    f32 fontSpacing = 0.05f;
-    f32 lineSpacing = -0.1f;
+    auto font = GetFontDefault();
+    auto fontSize = 0.8f;
+    auto fontSpacing = 0.05f;
+    auto lineSpacing = -0.1f;
 
     // Set the text (using markdown!)
     char text[64] = "Hello ~~World~~ in 3D!";
-    vec3 tbox = {};
-    i32 layers = 1;
-    i32 quads = 0;
-    f32 layerDistance = 0.01f;
+    auto tbox = vec3{};
+    auto layers = 1;
+    auto quads = 0;
+    auto layerDistance = 0.01f;
 
     WaveTextConfig wcfg;
     wcfg.waveSpeed.x = wcfg.waveSpeed.y = 3.0f; wcfg.waveSpeed.z = 0.5f;
     wcfg.waveOffset.x = wcfg.waveOffset.y = wcfg.waveOffset.z = 0.35f;
     wcfg.waveRange.x = wcfg.waveRange.y = wcfg.waveRange.z = 0.45f;
 
-    f32 time = 0.0f;
+    auto time = 0.0f;
 
     // Setup a light and dark color
     Color light = MAROON;
@@ -150,7 +150,7 @@ i32 main()
         // Handle font files dropped
         if (IsFileDropped())
         {
-            FilePathList droppedFiles = LoadDroppedFiles();
+            auto droppedFiles = LoadDroppedFiles();
 
             // NOTE: We only support first ttf file dropped
             if (IsFileExtension(droppedFiles.paths[0], ".ttf"))
@@ -197,7 +197,7 @@ i32 main()
         // Handle clicking the cube
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            const Ray ray = GetScreenToWorldRay(GetMousePosition(), camera);
+            const auto ray = GetScreenToWorldRay(GetMousePosition(), camera);
 
             // Check collision between ray and box
             const RayCollision collision = GetRayCollisionBox(ray,
@@ -240,7 +240,7 @@ i32 main()
         }
 
         // Handle text input
-        const i32 ch = GetCharPressed();
+        const auto ch = GetCharPressed();
         if (IsKeyPressed(KEY_BACKSPACE))
         {
             // Remove last char
@@ -317,8 +317,8 @@ i32 main()
                         rlRotatef(180.0f, 0.0f, 1.0f, 0.0f);
                         std::string opt = TextFormat("< SIZE: %2.1f >", fontSize);
                         quads += TextLength(opt);
-                        vec2 m = MeasureTextEx(GetFontDefault(), opt, 0.8f, 0.1f);
-                        vec3 pos = { -m.x/2.0f, 0.01f, 2.0f};
+                        auto m = MeasureTextEx(GetFontDefault(), opt, 0.8f, 0.1f);
+                        auto pos = vec3{ -m.x/2.0f, 0.01f, 2.0f};
                         DrawText3D(GetFontDefault(), opt, pos, 0.8f, 0.1f, 0.0f, false, BLUE);
                         pos.z += 0.5f + m.y;
 
@@ -414,7 +414,7 @@ i32 main()
 
             quads += TextLength(text)*2*layers;
             std::string tmp = TextFormat("%2i layer(s) | %s camera | %4i quads (%4i verts)", layers, spin? "ORBITAL" : "FREE", quads, quads*4);
-            i32 width = MeasureText(tmp, 10);
+            auto width = MeasureText(tmp, 10);
             DrawText(tmp, screenWidth - 20 - width, 10, 10, DARKGREEN);
 
             tmp = "[Home]/[End] to add/remove 3D text layers";
@@ -458,7 +458,7 @@ static void DrawTextCodepoint3D(Font font, i32 codepoint, vec3 position, f32 fon
 {
     // Character index position in sprite font
     // NOTE: In case a codepoint is not available in the font, index returned points to '?'
-    const i32 index = GetGlyphIndex(font, codepoint);
+    const auto index = GetGlyphIndex(font, codepoint);
     const f32 scale = fontSize/static_cast<f32>(font.baseSize);
 
     // Character destination rectangle on screen
@@ -476,9 +476,9 @@ static void DrawTextCodepoint3D(Font font, i32 codepoint, vec3 position, f32 fon
 
     if (font.texture.id > 0)
     {
-        constexpr f32 x = 0.0f;
-        constexpr f32 y = 0.0f;
-        constexpr f32 z = 0.0f;
+        constexpr auto x = 0.0f;
+        constexpr auto y = 0.0f;
+        constexpr auto z = 0.0f;
 
         // normalized texture coordinates of the glyph inside the font texture (0.0f -> 1.0f)
         const f32 tx = srcRec.x/font.texture.width;
@@ -525,17 +525,17 @@ static void DrawText3D(Font font, std::string_view text, vec3 position, f32 font
 {
     const i32 length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
-    f32 textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
-    f32 textOffsetX = 0.0f;               // Offset X to next character to draw
+    auto textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
+    auto textOffsetX = 0.0f;               // Offset X to next character to draw
 
     const f32 scale = fontSize/static_cast<f32>(font.baseSize);
 
     for (i32 i = 0; i < length;)
     {
         // Get next codepoint from byte string and glyph index in font
-        i32 codepointByteCount = 0;
-        const i32 codepoint = GetCodepoint(&text[i], &codepointByteCount);
-        const i32 index = GetGlyphIndex(font, codepoint);
+        auto codepointByteCount = 0;
+        const auto codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        const auto index = GetGlyphIndex(font, codepoint);
 
         // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
         // but we need to draw all of the bad bytes using the '?' symbol moving one byte
@@ -567,19 +567,19 @@ static void DrawTextWave3D(Font font, std::string_view text, vec3 position, f32 
 {
     const i32 length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
-    f32 textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
-    f32 textOffsetX = 0.0f;               // Offset X to next character to draw
+    auto textOffsetY = 0.0f;               // Offset between lines (on line break '\n')
+    auto textOffsetX = 0.0f;               // Offset X to next character to draw
 
     const f32 scale = fontSize/static_cast<f32>(font.baseSize);
 
-    bool wave = false;
+    auto wave = false;
 
     for (i32 i = 0, k = 0; i < length; ++k)
     {
         // Get next codepoint from byte string and glyph index in font
-        i32 codepointByteCount = 0;
-        const i32 codepoint = GetCodepoint(&text[i], &codepointByteCount);
-        const i32 index = GetGlyphIndex(font, codepoint);
+        auto codepointByteCount = 0;
+        const auto codepoint = GetCodepoint(&text[i], &codepointByteCount);
+        const auto index = GetGlyphIndex(font, codepoint);
 
         // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
         // but we need to draw all of the bad bytes using the '?' symbol moving one byte
@@ -626,21 +626,21 @@ static void DrawTextWave3D(Font font, std::string_view text, vec3 position, f32 
 static vec3 MeasureTextWave3D(Font font, std::string_view text, f32 fontSize, f32 fontSpacing, f32 lineSpacing)
 {
     const i32 len = TextLength(text);
-    i32 tempLen = 0;                // Used to count longer text line num chars
-    i32 lenCounter = 0;
+    auto tempLen = 0;                // Used to count longer text line num chars
+    auto lenCounter = 0;
 
-    f32 tempTextWidth = 0.0f;     // Used to count longer text line width
+    auto tempTextWidth = 0.0f;     // Used to count longer text line width
 
     const f32 scale = fontSize/static_cast<f32>(font.baseSize);
     f32 textHeight = scale;
-    f32 textWidth = 0.0f;
+    auto textWidth = 0.0f;
 
-    i32 letter = 0;                 // Current character
-    i32 index = 0;                  // Index position in sprite font
+    auto letter = 0;                 // Current character
+    auto index = 0;                  // Index position in sprite font
 
     for (i32 i = 0; i < len; i++)
     {
-        i32 next = 0;
+        auto next = 0;
         letter = GetCodepoint(&text[i], &next);
         index = GetGlyphIndex(font, letter);
 
@@ -675,7 +675,7 @@ static vec3 MeasureTextWave3D(Font font, std::string_view text, f32 fontSize, f3
 
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-    vec3 vec = {};
+    auto vec = vec3{};
     vec.x = tempTextWidth + ((tempLen - 1)*fontSpacing); // Adds chars spacing to measure
     vec.y = 0.25f;
     vec.z = textHeight;
@@ -686,8 +686,8 @@ static vec3 MeasureTextWave3D(Font font, std::string_view text, f32 fontSize, f3
 // Generates a nice color with a random hue
 static Color GenerateRandomColor(f32 s, f32 v)
 {
-    constexpr f32 Phi = 0.618033988749895f; // Golden ratio conjugate
-    f32 h = static_cast<f32>(GetRandomValue(0, 360));
+    constexpr auto Phi = 0.618033988749895f; // Golden ratio conjugate
+    auto h = static_cast<f32>(GetRandomValue(0, 360));
     h = fmodf((h + h*Phi), 360.0f);
     return ColorFromHSV(h, s, v);
 }

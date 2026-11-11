@@ -26,8 +26,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rlgl triangle");
@@ -37,9 +37,9 @@ i32 main()
     vec2 trianglePositions[3] = { startingPositions[0], startingPositions[1], startingPositions[2] };
 
     // Currently selected vertex, -1 means none
-    i32 triangleIndex = -1;
-    bool linesMode = false;
-    constexpr f32 handleRadius = 8.0f;
+    auto triangleIndex = -1;
+    auto linesMode = false;
+    constexpr auto handleRadius = 8.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ i32 main()
         {
             vec2 *position = &trianglePositions[triangleIndex];
 
-            const vec2 mouseDelta = GetMouseDelta();
+            const auto mouseDelta = GetMouseDelta();
             position->x += mouseDelta.x;
             position->y += mouseDelta.y;
         }

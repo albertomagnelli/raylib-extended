@@ -25,20 +25,20 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite animation");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     const Texture2D scarfy = LoadTexture("resources/scarfy.png");        // Texture loading
 
-    const vec2 position = { 350.0f, 280.0f };
-    Rectangle frameRec = { 0.0f, 0.0f, static_cast<f32>(scarfy.width)/6, static_cast<f32>(scarfy.height) };
-    i32 currentFrame = 0;
+    const auto position = vec2{ 350.0f, 280.0f };
+    auto frameRec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(scarfy.width)/6, static_cast<f32>(scarfy.height) };
+    auto currentFrame = 0;
 
-    i32 framesCounter = 0;
-    i32 framesSpeed = 8;            // Number of spritesheet frames shown by second
+    auto framesCounter = 0;
+    auto framesSpeed = 8;            // Number of spritesheet frames shown by second
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

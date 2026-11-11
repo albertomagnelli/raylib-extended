@@ -30,15 +30,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - compute hash");
 
     // UI controls variables
     char textInput[96] = "The quick brown fox jumps over the lazy dog.";
-    bool textBoxEditMode = false;
-    bool btnComputeHashes = false;
+    auto textBoxEditMode = false;
+    auto btnComputeHashes = false;
 
     // Data hash values
     u32 hashCRC32 = 0;
@@ -48,7 +48,7 @@ i32 main()
 
     // Base64 encoded data
     std::string base64Text;
-    i32 base64TextSize = 0;
+    auto base64TextSize = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ i32 main()
         //----------------------------------------------------------------------------------
         if (btnComputeHashes)
         {
-            const i32 textInputLen = static_cast<i32>(strlen(textInput));
+            const auto textInputLen = static_cast<i32>(strlen(textInput));
 
             // Encode data to Base64 string (includes NULL terminator), memory must be MemFree()
             base64Text = EncodeDataBase64(reinterpret_cast<u8 *>(textInput), textInputLen, &base64TextSize);

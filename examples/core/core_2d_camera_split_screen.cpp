@@ -29,21 +29,21 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 440;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 440;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera split screen");
 
-    Rectangle player1 = { 200, 200, PLAYER_SIZE, PLAYER_SIZE };
-    Rectangle player2 = { 250, 200, PLAYER_SIZE, PLAYER_SIZE };
+    auto player1 = Rectangle{ 200, 200, PLAYER_SIZE, PLAYER_SIZE };
+    auto player2 = Rectangle{ 250, 200, PLAYER_SIZE, PLAYER_SIZE };
 
-    Camera2D camera1 = {};
+    auto camera1 = Camera2D{};
     camera1.target = vec2{ player1.x, player1.y };
     camera1.offset = vec2{ 200.0f, 200.0f };
     camera1.rotation = 0.0f;
     camera1.zoom = 1.0f;
 
-    Camera2D camera2 = {};
+    auto camera2 = Camera2D{};
     camera2.target = vec2{ player2.x, player2.y };
     camera2.offset = vec2{ 200.0f, 200.0f };
     camera2.rotation = 0.0f;
@@ -53,7 +53,7 @@ i32 main()
     const RenderTexture screenCamera2 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Build a flipped rectangle the size of the split view to use for drawing later
-    const Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<f32>(screenCamera1.texture.width), static_cast<f32>(-screenCamera1.texture.height) };
+    const auto splitScreenRect = Rectangle{ 0.0f, 0.0f, static_cast<f32>(screenCamera1.texture.width), static_cast<f32>(-screenCamera1.texture.height) };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -24,8 +24,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - colors palette");
 
@@ -52,7 +52,7 @@ i32 main()
 
     i32 colorState[MAX_COLORS_COUNT] = {};           // Color state: 0-DEFAULT, 1-MOUSE_HOVER
 
-    vec2 mousePoint = { 0.0f, 0.0f };
+    auto mousePoint = vec2{ 0.0f, 0.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -31,8 +31,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     // The minimum/maximum points the circle can have
     constexpr u32 pointsMin = 3;
@@ -40,24 +40,24 @@ i32 main()
 
     // The current number of points and the radius of the circle
     u32 triangleCount = 64;
-    f32 pointScale = 150.0f;
+    auto pointScale = 150.0f;
 
     // Slider value, literally maps to value in HSV
-    f32 value = 1.0f;
+    auto value = 1.0f;
 
     // The center of the screen
-    const vec2 center = { static_cast<f32>(screenWidth)/2.0f, static_cast<f32>(screenHeight)/2.0f };
+    const auto center = vec2{ static_cast<f32>(screenWidth)/2.0f, static_cast<f32>(screenHeight)/2.0f };
     // The location of the color wheel
     vec2 circlePosition = center;
 
     // The currently selected color
-    Color color = { 255, 255, 255, 255 };
+    auto color = Color{ 255, 255, 255, 255 };
 
     // Indicates if the slider is being clicked
-    bool sliderClicked = false;
+    auto sliderClicked = false;
 
     // Indicates if the current color going to be updated, as well as the handle position
-    bool settingColor = false;
+    auto settingColor = false;
 
     // How the color wheel will be rendered
     u32 renderType = RL_TRIANGLES;
@@ -77,8 +77,8 @@ i32 main()
         const f32 wheel = roundf(GetMouseWheelMove());
         triangleCount = static_cast<u32>(Clamp(static_cast<f32>(triangleCount) + wheel, static_cast<f32>(pointsMin), static_cast<f32>(pointsMax)));
 
-        const Rectangle sliderRectangle = { 42.0f, 16.0f + 64.0f + 45.0f, 64.0f, 16.0f };
-        const vec2 mousePosition = GetMousePosition();
+        const auto sliderRectangle = Rectangle{ 42.0f, 16.0f + 64.0f + 45.0f, 64.0f, 16.0f };
+        const auto mousePosition = GetMousePosition();
 
         // Checks if the user is hovering over the value slider
         const bool sliderHover = (mousePosition.x >= sliderRectangle.x && mousePosition.y >= sliderRectangle.y && mousePosition.x < sliderRectangle.x + sliderRectangle.width && mousePosition.y < sliderRectangle.y + sliderRectangle.height);
@@ -160,7 +160,7 @@ i32 main()
             if (settingColor && distance > 1.0f) circlePosition = ((vec2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI* 2.0f))*pointScale }) + (center));
 
             const f32 angle360 = angle*360.0f;
-            const f32 valueActual = Clamp(distance, 0.0f, 1.0f);
+            const auto valueActual = Clamp(distance, 0.0f, 1.0f);
             color = ColorLerp(Color{ static_cast<u8>(value*255.0f), static_cast<u8>(value*255.0f), static_cast<u8>(value*255.0f), 255 }, ColorFromHSV(angle360, Clamp(distance, 0.0f, 1.0f), 1.0f), valueActual);
         }
         //----------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ i32 main()
             const f32 angleOffset = ((PI*2.0f)/static_cast<f32>(triangleCount));
             const f32 angle = angleOffset*static_cast<f32>(i);
             const f32 angleOffsetCalculated = (static_cast<f32>(i) + 1)*angleOffset;
-            const vec2 scale = vec2{ pointScale, pointScale };
+            const auto scale = vec2{ pointScale, pointScale };
 
             const vec2 offset = ((vec2{ sinf(angle), -cosf(angle) }) * (scale));
             const vec2 offset2 = ((vec2{ sinf(angleOffsetCalculated), -cosf(angleOffsetCalculated) }) * (scale));
@@ -189,8 +189,8 @@ i32 main()
             const f32 angleNonRadian = (angle/(2.0f*PI))*360.0f;
             const f32 angleNonRadianOffset = (angleOffset/(2.0f*PI))*360.0f;
 
-            const Color currentColor = ColorFromHSV(angleNonRadian, 1.0f, 1.0f);
-            const Color offsetColor = ColorFromHSV(angleNonRadian + angleNonRadianOffset, 1.0f, 1.0f);
+            const auto currentColor = ColorFromHSV(angleNonRadian, 1.0f, 1.0f);
+            const auto offsetColor = ColorFromHSV(angleNonRadian + angleNonRadianOffset, 1.0f, 1.0f);
 
             // Input vertices differently depending on mode
             if (renderType == RL_TRIANGLES)

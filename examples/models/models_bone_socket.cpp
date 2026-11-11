@@ -31,13 +31,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - bone socket");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 5.0f, 5.0f, 5.0f };     // Camera position
     camera.target = vec3{ 0.0f, 2.0f, 0.0f };       // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };           // Camera up vector (rotation towards target)
@@ -55,7 +55,7 @@ i32 main()
     bool showEquip[3] = { true, true, true };   // Toggle on/off equip
 
     // Load gltf model animations
-    i32 animsCount = 0;
+    auto animsCount = 0;
     u32 animIndex = 0;
     u32 animCurrentFrame = 0;
     ModelAnimation *modelAnimations = LoadModelAnimations("resources/models/gltf/greenman.glb", &animsCount);
@@ -85,7 +85,7 @@ i32 main()
         }
     }
 
-    const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f }; // Set model position
     u16 angle = 0;                   // Set angle for rotate character
 
     DisableCursor();                    // Limit cursor to relative movement inside the window

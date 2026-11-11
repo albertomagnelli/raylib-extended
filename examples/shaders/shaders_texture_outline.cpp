@@ -33,8 +33,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture outline");
 
@@ -42,7 +42,7 @@ i32 main()
 
     const Shader shdrOutline = LoadShader({}, TextFormat("resources/shaders/glsl%i/outline.fs", GLSL_VERSION));
 
-    f32 outlineSize = 2.0f;
+    auto outlineSize = 2.0f;
     f32 outlineColor[4] = { 1.0f, 0.0f, 0.0f, 1.0f };     // Normalized RED color
     f32 textureSize[2] = { static_cast<f32>(texture.width), static_cast<f32>(texture.height) };
 

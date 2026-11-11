@@ -22,13 +22,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse wheel");
 
     i32 boxPositionY = screenHeight/2 - 40;
-    constexpr i32 scrollSpeed = 4;            // Scrolling speed in pixels
+    constexpr auto scrollSpeed = 4;            // Scrolling speed in pixels
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

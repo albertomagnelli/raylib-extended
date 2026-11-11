@@ -22,8 +22,8 @@ i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     // Possible window flags
     /*
@@ -46,11 +46,11 @@ i32 main()
     //SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);// | FLAG_WINDOW_TRANSPARENT);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - window flags");
 
-    vec2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
-    vec2 ballSpeed = { 5.0f, 4.0f };
+    auto ballPosition = vec2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    auto ballSpeed = vec2{ 5.0f, 4.0f };
     constexpr f32 ballRadius = 20;
 
-    i32 framesCounter = 0;
+    auto framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------

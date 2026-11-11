@@ -34,8 +34,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rectangle advanced");
 
@@ -151,7 +151,7 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, f32 roundnessLeft, f32 
 
 #if defined(SUPPORT_QUADS_DRAW_MODE)
     rlSetTexture(GetShapesTexture().id);
-    Rectangle shapeRect = GetShapesTextureRectangle();
+    auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         // Draw all the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right Corner, [7] Lower Left Corner
@@ -281,8 +281,8 @@ static void DrawRectangleRoundedGradientH(Rectangle rec, f32 roundnessLeft, f32 
         // Draw all of the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right Corner, [7] Lower Left Corner
         for (i32 k = 0; k < 4; ++k)
         {
-            Color color = {};
-            f32 radius = 0.0f;
+            auto color = Color{};
+            auto radius = 0.0f;
             if (k == 0) color = left,  radius = radiusLeft;     // [1] Upper Left Corner
             if (k == 1) color = right, radius = radiusRight;    // [3] Upper Right Corner
             if (k == 2) color = right, radius = radiusRight;    // [5] Lower Right Corner

@@ -27,42 +27,42 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
-    constexpr i32 virtualScreenWidth = 160;
-    constexpr i32 virtualScreenHeight = 90;
+    constexpr auto virtualScreenWidth = 160;
+    constexpr auto virtualScreenHeight = 90;
 
     const f32 virtualRatio = static_cast<f32>(screenWidth)/static_cast<f32>(virtualScreenWidth);
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - smooth pixelperfect");
 
-    Camera2D worldSpaceCamera = {};  // Game world camera
+    auto worldSpaceCamera = Camera2D{};  // Game world camera
     worldSpaceCamera.zoom = 1.0f;
 
-    Camera2D screenSpaceCamera = {}; // Smoothing camera
+    auto screenSpaceCamera = Camera2D{}; // Smoothing camera
     screenSpaceCamera.zoom = 1.0f;
 
     // Load render texture to draw all our objects
-    const RenderTexture2D target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
+    const auto target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
 
-    const Rectangle rec01 = { 70.0f, 35.0f, 20.0f, 20.0f };
-    const Rectangle rec02 = { 90.0f, 55.0f, 30.0f, 10.0f };
-    const Rectangle rec03 = { 80.0f, 65.0f, 15.0f, 25.0f };
+    const auto rec01 = Rectangle{ 70.0f, 35.0f, 20.0f, 20.0f };
+    const auto rec02 = Rectangle{ 90.0f, 55.0f, 30.0f, 10.0f };
+    const auto rec03 = Rectangle{ 80.0f, 65.0f, 15.0f, 25.0f };
 
     // The target's height is flipped (in the source Rectangle), due to OpenGL reasons
-    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<f32>(target.texture.width), -static_cast<f32>(target.texture.height) };
-    Rectangle destRec = { (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
+    const auto sourceRec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(target.texture.width), -static_cast<f32>(target.texture.height) };
+    auto destRec = Rectangle{ (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
 
-    const vec2 origin = { 0.0f, 0.0f };
+    const auto origin = vec2{ 0.0f, 0.0f };
 
-    f32 rotation = 0.0f;
+    auto rotation = 0.0f;
 
-    f32 cameraX = 0.0f;
-    f32 cameraY = 0.0f;
+    auto cameraX = 0.0f;
+    auto cameraY = 0.0f;
 
-    bool smoothOn = true;
-    bool overscan = false;
+    auto smoothOn = true;
+    auto overscan = false;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

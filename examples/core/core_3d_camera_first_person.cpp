@@ -25,13 +25,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera first person");
 
     // Define the camera to look into our 3d world (position, target, up vector)
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 0.0f, 2.0f, 4.0f };         // Camera position
     camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)

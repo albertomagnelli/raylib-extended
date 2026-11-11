@@ -22,16 +22,16 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - lines bezier");
 
-    vec2 startPoint = { 30, 30 };
-    vec2 endPoint = { static_cast<f32>(screenWidth) - 30, static_cast<f32>(screenHeight) - 30 };
-    bool moveStartPoint = false;
-    bool moveEndPoint = false;
+    auto startPoint = vec2{ 30, 30 };
+    auto endPoint = vec2{ static_cast<f32>(screenWidth) - 30, static_cast<f32>(screenHeight) - 30 };
+    auto moveStartPoint = false;
+    auto moveEndPoint = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mouse = GetMousePosition();
+        const auto mouse = GetMousePosition();
 
         if (CheckCollisionPointCircle(mouse, startPoint, 10.0f) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) moveStartPoint = true;
         else if (CheckCollisionPointCircle(mouse, endPoint, 10.0f) && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) moveEndPoint = true;

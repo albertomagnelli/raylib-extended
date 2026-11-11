@@ -39,8 +39,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     // Shadows are a HUGE topic, and this example shows an extremely simple implementation of the shadowmapping algorithm,
     // which is the industry standard for shadows. This algorithm can be extended in a ridiculous number of ways to improve
@@ -49,7 +49,7 @@ i32 main()
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - shadowmap rendering");
 
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ 10.0f, 10.0f, 10.0f };
     camera.target = vec3{};
     camera.projection = CAMERA_PERSPECTIVE;
@@ -62,7 +62,7 @@ i32 main()
 
     vec3 lightDir = glm::normalize(vec3{ 0.35f, -1.0f, -0.35f });
     const Color lightColor = WHITE;
-    vec4 lightColorNormalized = ColorNormalize(lightColor);
+    auto lightColorNormalized = ColorNormalize(lightColor);
     const i32 lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
     const i32 lightColLoc = GetShaderLocation(shadowShader, "lightColor");
     SetShaderValue(shadowShader, lightDirLoc, &lightDir, SHADER_UNIFORM_VEC3);
@@ -75,31 +75,31 @@ i32 main()
     i32 shadowMapResolution = SHADOWMAP_RESOLUTION;
     SetShaderValue(shadowShader, GetShaderLocation(shadowShader, "shadowMapResolution"), &shadowMapResolution, SHADER_UNIFORM_INT);
 
-    const Model cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
+    const auto cube = LoadModelFromMesh(GenMeshCube(1.0f, 1.0f, 1.0f));
     cube.materials[0].shader = shadowShader;
     const Model robot = LoadModel("resources/models/robot.glb");
     for (i32 i = 0; i < robot.materialCount; i++) robot.materials[i].shader = shadowShader;
 
-    i32 animCount = 0;
+    auto animCount = 0;
     ModelAnimation* anims = LoadModelAnimations("resources/models/robot.glb", &animCount);
 
-    const RenderTexture2D shadowMap = LoadShadowmapRenderTexture(SHADOWMAP_RESOLUTION, SHADOWMAP_RESOLUTION);
+    const auto shadowMap = LoadShadowmapRenderTexture(SHADOWMAP_RESOLUTION, SHADOWMAP_RESOLUTION);
 
     // For the shadowmapping algorithm, we will be rendering everything from the light's point of view
-    Camera3D lightCamera = {};
+    auto lightCamera = Camera3D{};
     lightCamera.position = ((lightDir) * (-15.0f));
     lightCamera.target = vec3{};
     lightCamera.projection = CAMERA_ORTHOGRAPHIC; // Use an orthographic projection for directional lights
     lightCamera.up = vec3{ 0.0f, 1.0f, 0.0f };
     lightCamera.fovy = 20.0f;
 
-    i32 frameCounter = 0;
+    auto frameCounter = 0;
 
     // Store the light matrices
-    mat4 lightView = {};
-    mat4 lightProj = {};
-    mat4 lightViewProj = {};
-    i32 textureActiveSlot = 10; // Can be anything 0 to 15, but 0 will probably be taken up
+    auto lightView = mat4{};
+    auto lightProj = mat4{};
+    auto lightViewProj = mat4{};
+    auto textureActiveSlot = 10; // Can be anything 0 to 15, but 0 will probably be taken up
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const f32 deltaTime = GetFrameTime();
+        const auto deltaTime = GetFrameTime();
 
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
@@ -122,7 +122,7 @@ i32 main()
         UpdateModelAnimation(robot, anims[0], static_cast<f32>(frameCounter));
 
         // Move light with arrow keys
-        constexpr f32 cameraSpeed = 0.05f;
+        constexpr auto cameraSpeed = 0.05f;
         if (IsKeyDown(KEY_LEFT))
         {
             if (lightDir.x < 0.6f) lightDir.x += cameraSpeed*60.0f*deltaTime;
@@ -211,7 +211,7 @@ i32 main()
 // no color attachment required for shadowmap
 static RenderTexture2D LoadShadowmapRenderTexture(i32 width, i32 height)
 {
-    RenderTexture2D target = {};
+    auto target = RenderTexture2D{};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
     target.texture.width = width;

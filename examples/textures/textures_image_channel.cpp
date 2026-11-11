@@ -26,33 +26,33 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image channel");
 
     const Image fudesumiImage = LoadImage("resources/fudesumi.png");
 
-    Image imageAlpha = ImageFromChannel(fudesumiImage, 3);
+    auto imageAlpha = ImageFromChannel(fudesumiImage, 3);
     ImageAlphaMask(&imageAlpha, imageAlpha);
 
-    Image imageRed = ImageFromChannel(fudesumiImage, 0);
+    auto imageRed = ImageFromChannel(fudesumiImage, 0);
     ImageAlphaMask(&imageRed, imageAlpha);
 
-    Image imageGreen = ImageFromChannel(fudesumiImage, 1);
+    auto imageGreen = ImageFromChannel(fudesumiImage, 1);
     ImageAlphaMask(&imageGreen, imageAlpha);
 
-    Image imageBlue = ImageFromChannel(fudesumiImage, 2);
+    auto imageBlue = ImageFromChannel(fudesumiImage, 2);
     ImageAlphaMask(&imageBlue, imageAlpha);
 
-    const Image backgroundImage = GenImageChecked(screenWidth, screenHeight, screenWidth/20, screenHeight/20, ORANGE, YELLOW);
+    const auto backgroundImage = GenImageChecked(screenWidth, screenHeight, screenWidth/20, screenHeight/20, ORANGE, YELLOW);
 
-    const Texture2D fudesumiTexture = LoadTextureFromImage(fudesumiImage);
-    const Texture2D textureAlpha = LoadTextureFromImage(imageAlpha);
-    const Texture2D textureRed = LoadTextureFromImage(imageRed);
-    const Texture2D textureGreen = LoadTextureFromImage(imageGreen);
-    const Texture2D textureBlue = LoadTextureFromImage(imageBlue);
-    const Texture2D backgroundTexture = LoadTextureFromImage(backgroundImage);
+    const auto fudesumiTexture = LoadTextureFromImage(fudesumiImage);
+    const auto textureAlpha = LoadTextureFromImage(imageAlpha);
+    const auto textureRed = LoadTextureFromImage(imageRed);
+    const auto textureGreen = LoadTextureFromImage(imageGreen);
+    const auto textureBlue = LoadTextureFromImage(imageBlue);
+    const auto backgroundTexture = LoadTextureFromImage(backgroundImage);
 
     UnloadImage(fudesumiImage);
     UnloadImage(imageAlpha);
@@ -61,13 +61,13 @@ i32 main()
     UnloadImage(imageBlue);
     UnloadImage(backgroundImage);
 
-    const Rectangle fudesumiRec = {0, 0, static_cast<f32>(fudesumiImage.width), static_cast<f32>(fudesumiImage.height)};
+    const auto fudesumiRec = Rectangle{0, 0, static_cast<f32>(fudesumiImage.width), static_cast<f32>(fudesumiImage.height)};
 
-    const Rectangle fudesumiPos = {50, 10, fudesumiImage.width*0.8f, fudesumiImage.height*0.8f};
-    const Rectangle redPos = { 410, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
-    const Rectangle greenPos = { 600, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
-    const Rectangle bluePos = { 410, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
-    const Rectangle alphaPos = { 600, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const auto fudesumiPos = Rectangle{50, 10, fudesumiImage.width*0.8f, fudesumiImage.height*0.8f};
+    const auto redPos = Rectangle{ 410, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const auto greenPos = Rectangle{ 600, 10, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const auto bluePos = Rectangle{ 410, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
+    const auto alphaPos = Rectangle{ 600, 230, fudesumiPos.width/2.0f, fudesumiPos.height/2.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

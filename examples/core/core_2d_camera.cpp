@@ -25,16 +25,16 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera");
 
-    Rectangle player = { 400, 280, 40, 40 };
+    auto player = Rectangle{ 400, 280, 40, 40 };
     Rectangle buildings[MAX_BUILDINGS] = {};
     Color buildColors[MAX_BUILDINGS] = {};
 
-    i32 spacing = 0;
+    auto spacing = 0;
 
     for (i32 i = 0; i < MAX_BUILDINGS; i++)
     {
@@ -52,7 +52,7 @@ i32 main()
             255};
     }
 
-    Camera2D camera = {};
+    auto camera = Camera2D{};
     camera.target = vec2{ player.x + 20.0f, player.y + 20.0f };
     camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;

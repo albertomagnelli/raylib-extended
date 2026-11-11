@@ -28,17 +28,17 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - triangle strip");
 
     vec2 points[122] = {};
-    const vec2 center = { (screenWidth/2.0f) - 125.0f, screenHeight/2.0f };
-    f32 segments = 6.0f;
-    constexpr f32 insideRadius = 100.0f;
-    constexpr f32 outsideRadius = 150.0f;
-    bool outline = true;
+    const auto center = vec2{ (screenWidth/2.0f) - 125.0f, screenHeight/2.0f };
+    auto segments = 6.0f;
+    constexpr auto insideRadius = 100.0f;
+    constexpr auto outsideRadius = 150.0f;
+    auto outline = true;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const i32 pointCount = static_cast<i32>(segments);
+        const auto pointCount = static_cast<i32>(segments);
         const f32 angleStep = (360.0f/pointCount)*DEG2RAD;
 
         for (i32 i = 0, i2 = 0; i < pointCount; i++, i2 += 2)

@@ -24,15 +24,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image loading");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 
     const Image image = LoadImage("resources/raylib_logo.png");     // Loaded in CPU memory (RAM)
-    const Texture2D texture = LoadTextureFromImage(image);          // Image converted to texture, GPU memory (VRAM)
+    const auto texture = LoadTextureFromImage(image);          // Image converted to texture, GPU memory (VRAM)
     UnloadImage(image);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
     SetTargetFPS(60);     // Set our game to run at 60 frames-per-second

@@ -29,8 +29,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - mouse trail");
 
@@ -45,7 +45,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mousePosition = GetMousePosition();
+        const auto mousePosition = GetMousePosition();
 
         // Shift all existing positions backward by one slot in the array
         // The last element (the oldest position) is dropped
@@ -75,7 +75,7 @@ i32 main()
 
                     // Fade effect: oldest positions are more transparent
                     // Fade (color, alpha) - alpha is 0.5 to 1.0 based on ratio
-                    const Color trailColor = Fade(SKYBLUE, ratio*0.5f + 0.5f);
+                    const auto trailColor = Fade(SKYBLUE, ratio*0.5f + 0.5f);
 
                     // Size effect: oldest positions are smaller
                     const f32 trailRadius = 15.0f*ratio;

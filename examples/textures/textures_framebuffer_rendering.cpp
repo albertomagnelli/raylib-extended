@@ -1,4 +1,4 @@
-﻿/*******************************************************************************************
+/*******************************************************************************************
 *
 *   raylib [textures] example - framebuffer rendering
 *
@@ -30,14 +30,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
     const i32 splitWidth = screenWidth/2;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - framebuffer rendering");
 
     // Camera to look at the 3D world
-    Camera3D subjectCamera = {};
+    auto subjectCamera = Camera3D{};
     subjectCamera.position = vec3{ 5.0f, 5.0f, 5.0f };
     subjectCamera.target = vec3{ 0.0f, 0.0f, 0.0f };
     subjectCamera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -45,7 +45,7 @@ i32 main()
     subjectCamera.projection = CAMERA_PERSPECTIVE;
 
     // Camera to observe the subject camera and 3D world
-    Camera3D observerCamera = {};
+    auto observerCamera = Camera3D{};
     observerCamera.position = vec3{ 10.0f, 10.0f, 10.0f };
     observerCamera.target = vec3{ 0.0f, 0.0f, 0.0f };
     observerCamera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -53,19 +53,19 @@ i32 main()
     observerCamera.projection = CAMERA_PERSPECTIVE;
 
     // Set up render textures
-    const RenderTexture2D observerTarget = LoadRenderTexture(splitWidth, screenHeight);
-    const Rectangle observerSource = { 0.0f, 0.0f, static_cast<f32>(observerTarget.texture.width), -static_cast<f32>(observerTarget.texture.height) };
-    const Rectangle observerDest = { 0.0f, 0.0f, static_cast<f32>(splitWidth), static_cast<f32>(screenHeight) };
+    const auto observerTarget = LoadRenderTexture(splitWidth, screenHeight);
+    const auto observerSource = Rectangle{ 0.0f, 0.0f, static_cast<f32>(observerTarget.texture.width), -static_cast<f32>(observerTarget.texture.height) };
+    const auto observerDest = Rectangle{ 0.0f, 0.0f, static_cast<f32>(splitWidth), static_cast<f32>(screenHeight) };
 
-    const RenderTexture2D subjectTarget = LoadRenderTexture(splitWidth, screenHeight);
-    const Rectangle subjectSource = { 0.0f, 0.0f, static_cast<f32>(subjectTarget.texture.width), -static_cast<f32>(subjectTarget.texture.height) };
-    const Rectangle subjectDest = { static_cast<f32>(splitWidth), 0.0f, static_cast<f32>(splitWidth), static_cast<f32>(screenHeight) };
+    const auto subjectTarget = LoadRenderTexture(splitWidth, screenHeight);
+    const auto subjectSource = Rectangle{ 0.0f, 0.0f, static_cast<f32>(subjectTarget.texture.width), -static_cast<f32>(subjectTarget.texture.height) };
+    const auto subjectDest = Rectangle{ static_cast<f32>(splitWidth), 0.0f, static_cast<f32>(splitWidth), static_cast<f32>(screenHeight) };
     const f32 textureAspectRatio = static_cast<f32>(subjectTarget.texture.width)/static_cast<f32>(subjectTarget.texture.height);
 
     // Rectangles for cropping render texture
-    constexpr f32 captureSize = 128.0f;
-    const Rectangle cropSource = { (subjectTarget.texture.width - captureSize)/2.0f, (subjectTarget.texture.height - captureSize)/2.0f, captureSize, -captureSize };
-    const Rectangle cropDest = { splitWidth + 20.0f, 20.0f, captureSize, captureSize};
+    constexpr auto captureSize = 128.0f;
+    const auto cropSource = Rectangle{ (subjectTarget.texture.width - captureSize)/2.0f, (subjectTarget.texture.height - captureSize)/2.0f, captureSize, -captureSize };
+    const auto cropDest = Rectangle{ splitWidth + 20.0f, 20.0f, captureSize, captureSize};
 
     SetTargetFPS(60);
     DisableCursor();
@@ -170,7 +170,7 @@ static void DrawCameraPrism(Camera3D camera, f32 aspect, Color color)
     };
 
     // Build the matrices
-    const mat4 view = GetCameraMatrix(camera);
+    const auto view = GetCameraMatrix(camera);
     const mat4 proj = glm::perspective(camera.fovy * DEG2RAD, aspect, 0.05f, length);
     // Combine view and projection so we can reverse the full camera transform
     const mat4 viewProj = ((proj) * (view));

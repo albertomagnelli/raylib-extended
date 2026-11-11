@@ -31,8 +31,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - sound positioning");
 
@@ -60,9 +60,9 @@ i32 main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_FREE);
 
-        const f32 th = static_cast<f32>(GetTime());
+        const auto th = static_cast<f32>(GetTime());
 
-        const vec3 spherePos = { 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
+        const auto spherePos = vec3{ 5.0f*cosf(th), 0.0f, 5.0f*sinf(th) };
 
         SetSoundPosition(camera, sound, spherePos, 1.0f);
 

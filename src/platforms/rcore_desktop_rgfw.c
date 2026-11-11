@@ -194,7 +194,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 extern CoreData CORE;                   // Global CORE state context
 
-static PlatformData platform = {};   // Platform specific
+static auto platform = PlatformData{};   // Platform specific
 
 #if defined(__linux__) // prevent collision of raylibs KEY_<X> and linux/input.h KEY_<X>
     #undef KEY_NULL
@@ -456,7 +456,7 @@ static i32 mg_axisConvertTable[] = {
     [MG_AXIS_HAT_DPAD_DOWN] = -1,
 };
 
-static KeyboardKey ConvertScancodeToKey(u32 keycode);
+static KeyboardKey ConvertScancodeToKey(const u32 keycode);
 void RemapMouseToTouch(i32 touchAction);
 
 // ---------------------------------------------------------------------------------
@@ -536,7 +536,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
         // Consider content scaling if required
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
-            vec2 scaleDpi = GetWindowScaleDPI();
+            auto scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = static_cast<i32>((platform.window->w/scaleDpi.x));
             CORE.Window.screen.height = static_cast<i32>((platform.window->h/scaleDpi.y));
             CORE.Window.screenScale = glm::scale(mat4(1.0f), vec3{scaleDpi.x, scaleDpi.y, 1.0f});
@@ -568,7 +568,7 @@ static void RGFW_cb_windowresizefunc(const RGFW_event *e)
         // in software mode we dont have the viewport so we need to reverse the highdpi changes
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
-            vec2 scaleDpi = GetWindowScaleDPI();
+            auto scaleDpi = GetWindowScaleDPI();
             platform.surfaceWidth *= scaleDpi.x;
             platform.surfaceHeight *= scaleDpi.y;
         }
@@ -668,14 +668,14 @@ static void RGFW_cb_mouserawmotionfunc(const RGFW_event *e)
         return;
     }
 
-    f32 mouseX = 0.0f;
-    f32 mouseY = 0.0f;
+    auto mouseX = 0.0f;
+    auto mouseY = 0.0f;
     mouseX = e->delta.x;
     mouseY = e->delta.y;
 
     #if defined(__EMSCRIPTEN__)
-        f64 canvasWidth = 0.0;
-        f64 canvasHeight = 0.0;
+        auto canvasWidth = 0.0;
+        auto canvasHeight = 0.0;
         emscripten_get_element_css_size("#canvas", &canvasWidth, &canvasHeight);
         mouseX *= (static_cast<f32>(GetScreenWidth())/static_cast<f32>(canvasWidth));
         mouseY *= (static_cast<f32>(GetScreenHeight())/static_cast<f32>(canvasHeight));
@@ -696,14 +696,14 @@ static void RGFW_cb_mousemotionfunc(const RGFW_event *e)
         return;
     }
 
-    f32 mouseX = 0.0f;
-    f32 mouseY = 0.0f;
+    auto mouseX = 0.0f;
+    auto mouseY = 0.0f;
     mouseX = e->mouse.x;
     mouseY = e->mouse.y;
 
     #if defined(__EMSCRIPTEN__)
-        f64 canvasWidth = 0.0;
-        f64 canvasHeight = 0.0;
+        auto canvasWidth = 0.0;
+        auto canvasHeight = 0.0;
         emscripten_get_element_css_size("#canvas", &canvasWidth, &canvasHeight);
         mouseX *= (static_cast<f32>(GetScreenWidth())/static_cast<f32>(canvasWidth));
         mouseY *= (static_cast<f32>(GetScreenHeight())/static_cast<f32>(canvasHeight));
@@ -720,7 +720,7 @@ static void RGFW_cb_keyfunc(const RGFW_keyEvent* e)
 {
     if (e->win != platform.window) return;
 
-    KeyboardKey key = ConvertScancodeToKey(e->value);
+    auto key = ConvertScancodeToKey(e->value);
     if (key == KEY_NULL) return;
 
     // pressed or released
@@ -773,7 +773,7 @@ void ToggleFullscreen(void)
     {
         FLAG_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE);
         // Store previous window position (in case of exiting fullscreen)
-        vec2 currentPosition = GetWindowPosition();
+        auto currentPosition = GetWindowPosition();
         CORE.Window.previousPosition.x = currentPosition.x;
         CORE.Window.previousPosition.y = currentPosition.y;
         CORE.Window.previousScreen = CORE.Window.screen;
@@ -813,7 +813,7 @@ void ToggleBorderlessWindowed(void)
     {
         FLAG_SET(CORE.Window.flags, FLAG_BORDERLESS_WINDOWED_MODE);
 
-        vec2 currentPosition = GetWindowPosition();
+        auto currentPosition = GetWindowPosition();
         CORE.Window.previousPosition.x = static_cast<i32>(currentPosition.x);
         CORE.Window.previousPosition.y = static_cast<i32>(currentPosition.y);
         CORE.Window.previousScreen = CORE.Window.screen;
@@ -856,7 +856,7 @@ void RestoreWindow(void)
 }
 
 // Set window configuration state using flags
-void SetWindowState(u32 flags)
+void SetWindowState(const u32 flags)
 {
     if (!CORE.Window.ready) TRACELOG(LOG_WARNING, "WINDOW: SetWindowState does nothing before window initialization, Use \"SetConfigFlags\" instead");
 
@@ -934,7 +934,7 @@ void SetWindowState(u32 flags)
 }
 
 // Clear window configuration state flags
-void ClearWindowState(u32 flags)
+void ClearWindowState(const u32 flags)
 {
     FLAG_CLEAR(CORE.Window.flags, flags);
 
@@ -1010,7 +1010,7 @@ void ClearWindowState(u32 flags)
 }
 
 // Set icon for window
-void SetWindowIcon(Image image)
+void SetWindowIcon(const Image image)
 {
     if (image.format != PIXELFORMAT_UNCOMPRESSED_R8G8B8A8)
     {
@@ -1021,7 +1021,7 @@ void SetWindowIcon(Image image)
 }
 
 // Set icon for window
-void SetWindowIcons(Image *images, i32 count)
+void SetWindowIcons(Image *images, const i32 count)
 {
     if ((images == nullptr) || (count <= 0))
     {
@@ -1065,7 +1065,7 @@ void SetWindowPosition(i32 x, i32 y)
 }
 
 // Set monitor for the current window
-void SetWindowMonitor(i32 monitor)
+void SetWindowMonitor(const i32 monitor)
 {
     RGFW_window_moveToMonitor(platform.window, RGFW_getMonitors(nullptr)[monitor]);
 }
@@ -1094,7 +1094,7 @@ void SetWindowSize(i32 width, i32 height)
         CORE.Window.screen.width = width;
         CORE.Window.screen.height = height;
 
-        vec2 scaleDpi = GetWindowScaleDPI();
+        auto scaleDpi = GetWindowScaleDPI();
 
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
@@ -1189,7 +1189,7 @@ i32 GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-vec2 GetMonitorPosition(i32 monitor)
+vec2 GetMonitorPosition(const i32 monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
@@ -1197,7 +1197,7 @@ vec2 GetMonitorPosition(i32 monitor)
 }
 
 // Get selected monitor width (currently used by monitor)
-i32 GetMonitorWidth(i32 monitor)
+i32 GetMonitorWidth(const i32 monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
@@ -1205,7 +1205,7 @@ i32 GetMonitorWidth(i32 monitor)
 }
 
 // Get selected monitor height (currently used by monitor)
-i32 GetMonitorHeight(i32 monitor)
+i32 GetMonitorHeight(const i32 monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
@@ -1213,7 +1213,7 @@ i32 GetMonitorHeight(i32 monitor)
 }
 
 // Get selected monitor physical width in millimetres
-i32 GetMonitorPhysicalWidth(i32 monitor)
+i32 GetMonitorPhysicalWidth(const i32 monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
@@ -1221,7 +1221,7 @@ i32 GetMonitorPhysicalWidth(i32 monitor)
 }
 
 // Get selected monitor physical height in millimetres
-i32 GetMonitorPhysicalHeight(i32 monitor)
+i32 GetMonitorPhysicalHeight(const i32 monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
@@ -1229,7 +1229,7 @@ i32 GetMonitorPhysicalHeight(i32 monitor)
 }
 
 // Get selected monitor refresh rate
-i32 GetMonitorRefreshRate(i32 monitor)
+i32 GetMonitorRefreshRate(const i32 monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
@@ -1237,7 +1237,7 @@ i32 GetMonitorRefreshRate(i32 monitor)
 }
 
 // Get the human-readable, UTF-8 encoded name of the selected monitor
-std::string GetMonitorName(i32 monitor)
+std::string GetMonitorName(const i32 monitor)
 {
     RGFW_monitor **mons = RGFW_getMonitors(nullptr);
 
@@ -1322,7 +1322,7 @@ std::string GetClipboardText(void)
 // Get clipboard image
 Image GetClipboardImage(void)
 {
-    Image image = {};
+    auto image = Image{};
 
 #if SUPPORT_CLIPBOARD_IMAGE && SUPPORT_MODULE_RTEXTURES
 #if defined(_WIN32)
@@ -1330,8 +1330,8 @@ Image GetClipboardImage(void)
     u32 dataSize = 0;
     void *fileData = nullptr;
 
-    i32 width = 0;
-    i32 height = 0;
+    auto width = 0;
+    auto height = 0;
     fileData = static_cast<void *>(Win32GetClipboardImageData(&width, &height, &dataSize));
 
     if (fileData == nullptr) TRACELOG(LOG_WARNING, "Clipboard image: Couldn't get clipboard data");
@@ -1367,11 +1367,11 @@ Image GetClipboardImage(void)
     XConvertSelection(dpy, clipboard, targetType, property, win, CurrentTime);
 
     // Wait for the SelectionNotify event
-    XEvent ev = {};
+    auto ev = XEvent{};
     XNextEvent(dpy, &ev);
 
-    Atom actualType = {};
-    i32 actualFormat = 0;
+    auto actualType = Atom{};
+    auto actualFormat = 0;
     unsigned long nitems = 0;
     unsigned long bytesAfter = 0;
     u8 *data = nullptr;
@@ -1503,7 +1503,7 @@ void OpenURL(std::string_view urlView)
     }
     else
     {
-        char *cmd = static_cast<char *>(calloc(strlen(url) + 16, sizeof(char)));
+        auto cmd = static_cast<char *>(calloc(strlen(url) + 16, sizeof(char)));
 #if defined(_WIN32)
         sprintf(cmd, "explorer \"%s\"", url);
 #endif
@@ -1533,7 +1533,7 @@ i32 SetGamepadMappings(std::string_view mappingsView)
 }
 
 // Set gamepad vibration
-void SetGamepadVibration(i32 gamepad, f32 leftMotor, f32 rightMotor, f32 duration)
+void SetGamepadVibration(const i32 gamepad, f32 leftMotor, f32 rightMotor, f32 duration)
 {
     TRACELOG(LOG_WARNING, "SetGamepadVibration() unsupported on target platform");
 }
@@ -1552,7 +1552,7 @@ void SetMouseCursor(i32 cursor)
 }
 
 // Get physical key name
-std::string GetKeyName(i32 key)
+std::string GetKeyName(const i32 key)
 {
     TRACELOG(LOG_WARNING, "GetKeyName() unsupported on target platform");
 
@@ -1636,7 +1636,7 @@ void PollInputEvents(void)
     RGFW_pollEvents();
     //-----------------------------------------------------------------------------
 
-    mg_event gamepad_event = {};
+    auto gamepad_event = mg_event{};
     while (mg_gamepads_check_event(&platform.minigamepad, &gamepad_event))
     {
         i32 gamepadIndex = gamepad_event.gamepad->index;
@@ -1695,7 +1695,7 @@ void PollInputEvents(void)
                 CORE.Input.Gamepad.axisState[gamepadIndex][GAMEPAD_AXIS_LEFT_TRIGGER] = -1.0f;
                 CORE.Input.Gamepad.axisState[gamepadIndex][GAMEPAD_AXIS_RIGHT_TRIGGER] = -1.0f;
 
-                i32 axisCount = 0;
+                auto axisCount = 0;
                 for (i32 i = 0; i < MG_AXIS_COUNT; i += 1)
                 {
                     if (platform.minigamepad.gamepads[gamepadIndex].axes[i].supported) axisCount += 1;
@@ -1872,7 +1872,7 @@ i32 InitPlatform(void)
 
     // adjust scale if using highdpi
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI)) {
-        vec2 scaleDpi = GetWindowScaleDPI();
+        auto scaleDpi = GetWindowScaleDPI();
 
         #if defined(__APPLE__)
             RGFW_monitor *currentMonitor = RGFW_window_getMonitor(platform.window);
@@ -2043,7 +2043,7 @@ void ClosePlatform(void)
 }
 
 // Keycode mapping
-static KeyboardKey ConvertScancodeToKey(u32 keycode)
+static KeyboardKey ConvertScancodeToKey(const u32 keycode)
 {
     if (keycode > sizeof(RGFW_keyConvertTable)/sizeof(u16)) return KEY_NULL;
 
@@ -2057,7 +2057,7 @@ void RemapMouseToTouch(i32 touchAction)
     #if SUPPORT_GESTURES_SYSTEM
         if (touchAction < 0) return;
 
-        GestureEvent gestureEvent = {};
+        auto gestureEvent = GestureEvent{};
 
         // Register touch actions
         gestureEvent.touchAction = touchAction;
@@ -2084,12 +2084,12 @@ void RemapMouseToTouch(i32 touchAction)
 // Helper functions for Time
 f64 GetTimeSeconds(void)
 {
-    f64 currentTime = 0.0;
+    auto currentTime = 0.0;
 
     #if defined(_WIN32)
-        static LARGE_INTEGER freq = {};
-        static bool freqInitialized = false;
-        LARGE_INTEGER counter = {};
+        static auto freq = LARGE_INTEGER{};
+        static auto freqInitialized = false;
+        auto counter = LARGE_INTEGER{};
         if (!freqInitialized)
         {
             // Lazy initialization
@@ -2101,8 +2101,8 @@ f64 GetTimeSeconds(void)
     #elif defined(__EMSCRIPTEN__)
         currentTime = emscripten_get_now()/1000.0;
     #elif defined(__APPLE__)
-        static mach_timebase_info_data_t tb = {};
-        static bool tbInitialized = false;
+        static auto tb = mach_timebase_info_data_t{};
+        static auto tbInitialized = false;
         if (!tbInitialized)
         {
             mach_timebase_info(&tb);
@@ -2112,7 +2112,7 @@ f64 GetTimeSeconds(void)
 
         currentTime = static_cast<f64>(ticks)*static_cast<f64>(tb.numer)/static_cast<f64>(tb.denom)/1e9;
     #elif defined(__linux__)
-        struct timespec ts = {};
+        auto ts = struct timespec{};
         clock_gettime(CLOCK_MONOTONIC, &ts);
         currentTime = static_cast<f64>(ts.tv_sec) + static_cast<f64>(ts.tv_nsec)/1e9;
     #else

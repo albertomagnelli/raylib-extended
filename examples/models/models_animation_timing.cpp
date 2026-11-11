@@ -25,13 +25,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation timing");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 6.0f, 6.0f, 6.0f };         // Camera position
     camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -40,24 +40,24 @@ i32 main()
 
     // Load model
     const Model model = LoadModel("resources/models/gltf/robot.glb");
-    const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f }; // Set model world position
 
     // Load model animations
-    i32 animCount = 0;
+    auto animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/robot.glb", &animCount);
 
     // Animation playing variables
-    i32 animIndex = 10;                  // Current animation playing
-    f32 animCurrentFrame = 0.0f;       // Current animation frame (supporting interpolated frames)
-    f32 animFrameSpeed = 0.5f;         // Animation play speed
-    bool animPause = false;              // Pause animation
+    auto animIndex = 10;                  // Current animation playing
+    auto animCurrentFrame = 0.0f;       // Current animation frame (supporting interpolated frames)
+    auto animFrameSpeed = 0.5f;         // Animation play speed
+    auto animPause = false;              // Pause animation
 
     // UI required variables
     std::vector<std::string> animNames;
     for (i32 i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
 
-    bool dropdownEditMode = false;
-    f32 animFrameProgress = 0.0f;
+    auto dropdownEditMode = false;
+    auto animFrameProgress = 0.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

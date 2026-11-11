@@ -62,7 +62,7 @@ typedef struct {
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static i32 lightCount = 0;     // Current number of dynamic lights that have been created
+static auto lightCount = 0;     // Current number of dynamic lights that have been created
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -81,14 +81,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - basic pbr");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 2.0f, 2.0f, 6.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.5f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -117,9 +117,9 @@ i32 main()
     SetShaderValue(shader, lightCountLoc, &maxLightCount, SHADER_UNIFORM_INT);
 
     // Setup ambient color and intensity parameters
-    f32 ambientIntensity = 0.02f;
-    const Color ambientColor = Color{ 26, 32, 135, 255 };
-    vec3 ambientColorNormalized = vec3{ ambientColor.r/255.0f, ambientColor.g/255.0f, ambientColor.b/255.0f };
+    auto ambientIntensity = 0.02f;
+    const auto ambientColor = Color{ 26, 32, 135, 255 };
+    auto ambientColorNormalized = vec3{ ambientColor.r/255.0f, ambientColor.g/255.0f, ambientColor.b/255.0f };
     SetShaderValue(shader, GetShaderLocation(shader, "ambientColor"), &ambientColorNormalized, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, GetShaderLocation(shader, "ambient"), &ambientIntensity, SHADER_UNIFORM_FLOAT);
 
@@ -175,8 +175,8 @@ i32 main()
 
     // Models texture tiling parameter can be stored in the Material struct if required (CURRENTLY NOT USED)
     // NOTE: Material.params[4] are available for generic parameters storage (float)
-    vec2 carTextureTiling = vec2{ 0.5f, 0.5f };
-    vec2 floorTextureTiling = vec2{ 0.5f, 0.5f };
+    auto carTextureTiling = vec2{ 0.5f, 0.5f };
+    auto floorTextureTiling = vec2{ 0.5f, 0.5f };
 
     // Create some lights
     Light lights[MAX_LIGHTS] = {};
@@ -187,7 +187,7 @@ i32 main()
 
     // Setup material texture maps usage in shader
     // NOTE: By default, the texture maps are always used
-    i32 usage = 1;
+    auto usage = 1;
     SetShaderValue(shader, GetShaderLocation(shader, "useTexAlbedo"), &usage, SHADER_UNIFORM_INT);
     SetShaderValue(shader, GetShaderLocation(shader, "useTexNormal"), &usage, SHADER_UNIFORM_INT);
     SetShaderValue(shader, GetShaderLocation(shader, "useTexMRA"), &usage, SHADER_UNIFORM_INT);
@@ -227,7 +227,7 @@ i32 main()
 
                 // Set floor model texture tiling and emissive color parameters on shader
                 SetShaderValue(shader, textureTilingLoc, &floorTextureTiling, SHADER_UNIFORM_VEC2);
-                vec4 floorEmissiveColor = ColorNormalize(floor.materials[0].maps[MATERIAL_MAP_EMISSION].color);
+                auto floorEmissiveColor = ColorNormalize(floor.materials[0].maps[MATERIAL_MAP_EMISSION].color);
                 SetShaderValue(shader, emissiveColorLoc, &floorEmissiveColor, SHADER_UNIFORM_VEC4);
 
                 // Set floor metallic and roughness values
@@ -238,9 +238,9 @@ i32 main()
 
                 // Set old car model texture tiling, emissive color and emissive intensity parameters on shader
                 SetShaderValue(shader, textureTilingLoc, &carTextureTiling, SHADER_UNIFORM_VEC2);
-                vec4 carEmissiveColor = ColorNormalize(car.materials[0].maps[MATERIAL_MAP_EMISSION].color);
+                auto carEmissiveColor = ColorNormalize(car.materials[0].maps[MATERIAL_MAP_EMISSION].color);
                 SetShaderValue(shader, emissiveColorLoc, &carEmissiveColor, SHADER_UNIFORM_VEC4);
-                f32 emissiveIntensity = 0.01f;
+                auto emissiveIntensity = 0.01f;
                 SetShaderValue(shader, emissiveIntensityLoc, &emissiveIntensity, SHADER_UNIFORM_FLOAT);
 
                 // Set old car metallic and roughness values
@@ -303,7 +303,7 @@ i32 main()
 // NOTE: It updated the global lightCount and it's limited to MAX_LIGHTS
 static Light CreateLight(i32 type, vec3 position, vec3 target, Color color, f32 intensity, Shader shader)
 {
-    Light light = {};
+    auto light = Light{};
 
     if (lightCount < MAX_LIGHTS)
     {

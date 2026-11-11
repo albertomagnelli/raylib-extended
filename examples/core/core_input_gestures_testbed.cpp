@@ -35,41 +35,41 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures testbed");
 
-    const vec2 messagePosition = { 160, 7 };
+    const auto messagePosition = vec2{ 160, 7 };
 
     // Last gesture variables definitions
-    i32 lastGesture = 0;
-    const vec2 lastGesturePosition = { 165, 130 };
+    auto lastGesture = 0;
+    const auto lastGesturePosition = vec2{ 165, 130 };
 
     // Gesture log variables definitions
     // NOTE: The gesture log uses an array (as an inverted circular queue) to store the performed gestures
     std::string gestureLog[GESTURE_LOG_SIZE];
     // NOTE: The index for the inverted circular queue (moving from last to first direction, then looping around)
-    i32 gestureLogIndex = 0;
-    i32 previousGesture = 0;
+    auto gestureLogIndex = 0;
+    auto previousGesture = 0;
 
     // Log mode values:
     // - 0 shows repeated events
     // - 1 hides repeated events
     // - 2 shows repeated events but hide hold events
     // - 3 hides repeated events and hide hold events
-    i32 logMode = 1;
+    auto logMode = 1;
 
-    Color gestureColor = { 0, 0, 0, 255 };
-    const Rectangle logButton1 = { 53, 7, 48, 26 };
-    const Rectangle logButton2 = { 108, 7, 36, 26 };
-    const vec2 gestureLogPosition = { 10, 10 };
+    auto gestureColor = Color{ 0, 0, 0, 255 };
+    const auto logButton1 = Rectangle{ 53, 7, 48, 26 };
+    const auto logButton2 = Rectangle{ 108, 7, 36, 26 };
+    const auto gestureLogPosition = vec2{ 10, 10 };
 
     // Protractor variables definitions
-    constexpr f32 angleLength = 90.0f;
-    f32 currentAngleDegrees = 0.0f;
-    vec2 finalVector = { 0.0f, 0.0f };
-    const vec2 protractorPosition = { 266.0f, 315.0f };
+    constexpr auto angleLength = 90.0f;
+    auto currentAngleDegrees = 0.0f;
+    auto finalVector = vec2{ 0.0f, 0.0f };
+    const auto protractorPosition = vec2{ 266.0f, 315.0f };
 
     SetTargetFPS(60);   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -81,10 +81,10 @@ i32 main()
         //--------------------------------------------------------------------------------------
         // Handle common gestures data
         i32 i, ii; // Iterators that will be reused by all for loops
-        const i32 currentGesture = GetGestureDetected();
-        const f32 currentDragDegrees = GetGestureDragAngle();
-        const f32 currentPitchDegrees = GetGesturePinchAngle();
-        const i32 touchCount = GetTouchPointCount();
+        const auto currentGesture = GetGestureDetected();
+        const auto currentDragDegrees = GetGestureDragAngle();
+        const auto currentPitchDegrees = GetGesturePinchAngle();
+        const auto touchCount = GetTouchPointCount();
 
         // Handle last gesture
         if ((currentGesture != 0) && (currentGesture != 4) && (currentGesture != previousGesture))
@@ -115,7 +115,7 @@ i32 main()
             }
         }
 
-        i32 fillLog = 0; // Gate variable to be used to allow or not the gesture log to be filled
+        auto fillLog = 0; // Gate variable to be used to allow or not the gesture log to be filled
         if (currentGesture !=0)
         {
             if (logMode == 3) // 3 hides repeated events and hide hold events
@@ -159,7 +159,7 @@ i32 main()
 
         // Handle touch and mouse pointer points
         vec2 touchPosition[MAX_TOUCH_COUNT] = {};
-        vec2 mousePosition = {};
+        auto mousePosition = vec2{};
         if (currentGesture != GESTURE_NONE)
         {
             if (touchCount != 0)
@@ -222,7 +222,7 @@ i32 main()
             DrawText("Angle", static_cast<i32>(protractorPosition.x) + 55, static_cast<i32>(protractorPosition.y) + 76, 10, BLACK);
             const std::string angleString = TextFormat("%f", currentAngleDegrees);
             const i32 angleStringDot = TextFindIndex(angleString, ".");
-            const std::string angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
+            const auto angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
             DrawText( angleStringTrim, static_cast<i32>(protractorPosition.x) + 55, static_cast<i32>(protractorPosition.y) + 92, 20, gestureColor);
             DrawCircleV(protractorPosition, 80.0f, WHITE);
             DrawLineEx(vec2{ protractorPosition.x - 90, protractorPosition.y }, vec2{ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);

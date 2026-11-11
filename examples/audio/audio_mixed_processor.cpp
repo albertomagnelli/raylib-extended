@@ -17,7 +17,7 @@
 #include "raylib.h"
 #include <math.h>
 
-static f32 exponent = 1.0f;                 // Audio exponentiation value
+static auto exponent = 1.0f;                 // Audio exponentiation value
 static f32 averageVolume[400] = {};   // Average volume history
 
 //------------------------------------------------------------------------------------
@@ -25,8 +25,8 @@ static f32 averageVolume[400] = {};   // Average volume history
 //------------------------------------------------------------------------------------
 void ProcessAudio(void *buffer, u32 frames)
 {
-    f32 *samples = static_cast<f32 *>(buffer);   // Samples internally stored as <float>s
-    f32 average = 0.0f;               // Temporary average volume
+    auto samples = static_cast<f32 *>(buffer);   // Samples internally stored as <float>s
+    auto average = 0.0f;               // Temporary average volume
 
     for (u32 frame = 0; frame < frames; frame++)
     {
@@ -52,8 +52,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - mixed processor");
 

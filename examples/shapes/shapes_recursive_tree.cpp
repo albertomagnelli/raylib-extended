@@ -38,18 +38,18 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - recursive tree");
 
-    const vec2 start = { (screenWidth/2.0f) - 125.0f, static_cast<f32>(screenHeight) };
-    f32 angle = 40.0f;
-    f32 thick = 1.0f;
-    f32 treeDepth = 10.0f;
-    f32 branchDecay = 0.66f;
-    f32 length = 120.0f;
-    bool bezier = false;
+    const auto start = vec2{ (screenWidth/2.0f) - 125.0f, static_cast<f32>(screenHeight) };
+    auto angle = 40.0f;
+    auto thick = 1.0f;
+    auto treeDepth = 10.0f;
+    auto branchDecay = 0.66f;
+    auto length = 120.0f;
+    auto bezier = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -60,11 +60,11 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         const f32 theta = angle*DEG2RAD;
-        const i32 maxBranches = static_cast<i32>(powf(2, floorf(treeDepth)));
+        const auto maxBranches = static_cast<i32>(powf(2, floorf(treeDepth)));
         Branch branches[1030] = {};
-        i32 count = 0;
+        auto count = 0;
 
-        const vec2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
+        const auto initialEnd = vec2{ start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
         branches[count++] = Branch{start, initialEnd, 0.0f, length};
 
         for (i32 i = 0; i < count; i++)
@@ -79,11 +79,11 @@ i32 main()
                 const vec2 branchStart = branch.end;
 
                 const f32 angle1 = branch.angle + theta;
-                const vec2 branchEnd1 = { branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
+                const auto branchEnd1 = vec2{ branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
                 branches[count++] = Branch{branchStart, branchEnd1, angle1, nextLength};
 
                 const f32 angle2 = branch.angle - theta;
-                const vec2 branchEnd2 = { branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
+                const auto branchEnd2 = vec2{ branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
                 branches[count++] = Branch{branchStart, branchEnd2, angle2, nextLength};
             }
         }

@@ -41,12 +41,12 @@ const f32 pointsOfInterest[6][3] =
     { 0.317785531f, -0.0322612226f, 29297.9258f },
 };
 
-constexpr i32 screenWidth = 800;
-constexpr i32 screenHeight = 450;
-constexpr f32 zoomSpeed = 1.01f;
-constexpr f32 offsetSpeedMul = 2.0f;
+constexpr auto screenWidth = 800;
+constexpr auto screenHeight = 450;
+constexpr auto zoomSpeed = 1.01f;
+constexpr auto offsetSpeedMul = 2.0f;
 
-constexpr f32 startingZoom = 0.6f;
+constexpr auto startingZoom = 0.6f;
 const f32 startingOffset[2] = { -0.5f, 0.0f };
 
 //------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ i32 main()
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/mandelbrot_set.fs", GLSL_VERSION));
 
     // Create a RenderTexture2D to be used for render to texture
-    const RenderTexture2D target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+    const auto target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     // Offset and zoom to draw the mandelbrot set at. (centered on screen and default size)
     f32 offset[2] = { startingOffset[0], startingOffset[1] };
@@ -71,11 +71,11 @@ i32 main()
     // Depending on the zoom the mximum number of iterations must be adapted to get more detail as we zzoom in
     // The solution is not perfect, so a control has been added to increase/decrease the number of iterations with UP/DOWN keys
 #if defined(PLATFORM_DESKTOP)
-    i32 maxIterations = 333;
-    f32 maxIterationsMultiplier = 166.5f;
+    auto maxIterations = 333;
+    auto maxIterationsMultiplier = 166.5f;
 #else
-    i32 maxIterations = 43;
-    f32 maxIterationsMultiplier = 22.0f;
+    auto maxIterations = 43;
+    auto maxIterationsMultiplier = 22.0f;
 #endif
 
     // Get variable (uniform) locations on the shader to connect with the program
@@ -89,7 +89,7 @@ i32 main()
     SetShaderValue(shader, offsetLoc, offset, SHADER_UNIFORM_VEC2);
     SetShaderValue(shader, maxIterationsLoc, &maxIterations, SHADER_UNIFORM_INT);
 
-    bool showControls = true;           // Show controls
+    auto showControls = true;           // Show controls
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        bool updateShader = false;
+        auto updateShader = false;
 
         // Press [1 - 6] to reset c to a point of interest
         if (IsKeyPressed(KEY_ONE) ||
@@ -109,7 +109,7 @@ i32 main()
             IsKeyPressed(KEY_FIVE) ||
             IsKeyPressed(KEY_SIX))
         {
-            i32 interestIndex = 0;
+            auto interestIndex = 0;
             if (IsKeyPressed(KEY_ONE)) interestIndex = 0;
             else if (IsKeyPressed(KEY_TWO)) interestIndex = 1;
             else if (IsKeyPressed(KEY_THREE)) interestIndex = 2;
@@ -153,7 +153,7 @@ i32 main()
             // Change zoom. If Mouse left -> zoom in. Mouse right -> zoom out
             zoom *= IsMouseButtonDown(MOUSE_BUTTON_LEFT)? zoomSpeed : (1.0f/zoomSpeed);
 
-            const vec2 mousePos = GetMousePosition();
+            const auto mousePos = GetMousePosition();
             vec2 offsetVelocity;
             // Find the velocity at which to change the camera. Take the distance of the mouse
             // From the center of the screen as the direction, and adjust magnitude based on the current zoom

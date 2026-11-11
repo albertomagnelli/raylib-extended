@@ -24,13 +24,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - scissor test");
 
-    Rectangle scissorArea = { 0, 0, 300, 300 };
-    bool scissorMode = true;
+    auto scissorArea = Rectangle{ 0, 0, 300, 300 };
+    auto scissorMode = true;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

@@ -30,8 +30,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - ascii rendering");
 
@@ -49,17 +49,17 @@ i32 main()
 
     // Set the character size for the ASCII effect
     // Fontsize should be 9 or more
-    f32 fontSize = 9.0f;
+    auto fontSize = 9.0f;
 
     // Send the updated values to the shader
     f32 resolution[2] = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    vec2 circlePos = vec2{40.0f, static_cast<f32>(screenHeight)*0.5f};
-    f32 circleSpeed = 1.0f;
+    auto circlePos = vec2{40.0f, static_cast<f32>(screenHeight)*0.5f};
+    auto circleSpeed = 1.0f;
 
     // RenderTexture to apply the postprocessing later
-    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const auto target = LoadRenderTexture(screenWidth, screenHeight);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

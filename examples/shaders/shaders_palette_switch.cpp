@@ -83,8 +83,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - palette switch");
 
@@ -97,7 +97,7 @@ i32 main()
     // NOTE: If uniform variable could not be found in the shader, function returns -1
     const i32 paletteLoc = GetShaderLocation(shader, "palette");
 
-    i32 currentPalette = 0;
+    auto currentPalette = 0;
     const i32 lineHeight = screenHeight/COLORS_PER_PALETTE;
 
     SetTargetFPS(60);                       // Set our game to run at 60 frames-per-second

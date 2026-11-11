@@ -38,13 +38,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - simple mask");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 0.0f, 1.0f, 2.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -52,15 +52,15 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Define our three models to show the shader on
-    const Mesh torus = GenMeshTorus(0.3f, 1, 16, 32);
-    Model model1 = LoadModelFromMesh(torus);
+    const auto torus = GenMeshTorus(0.3f, 1, 16, 32);
+    auto model1 = LoadModelFromMesh(torus);
 
-    const Mesh cube = GenMeshCube(0.8f,0.8f,0.8f);
-    const Model model2 = LoadModelFromMesh(cube);
+    const auto cube = GenMeshCube(0.8f,0.8f,0.8f);
+    const auto model2 = LoadModelFromMesh(cube);
 
     // Generate model to be shaded just to see the gaps in the other two
-    const Mesh sphere = GenMeshSphere(1, 16, 16);
-    const Model model3 = LoadModelFromMesh(sphere);
+    const auto sphere = GenMeshSphere(1, 16, 16);
+    const auto model3 = LoadModelFromMesh(sphere);
 
     // Load the shader
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/mask.fs", GLSL_VERSION));
@@ -84,8 +84,8 @@ i32 main()
     model1.materials[0].shader = shader;
     model2.materials[0].shader = shader;
 
-    i32 framesCounter = 0;
-    vec3 rotation = {};         // Model rotation angles
+    auto framesCounter = 0;
+    auto rotation = vec3{};         // Model rotation angles
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
     SetTargetFPS(60);                   // Set  to run at 60 frames-per-second

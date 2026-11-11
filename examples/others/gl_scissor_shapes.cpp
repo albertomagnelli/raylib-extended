@@ -81,14 +81,14 @@ static void EndScissorModeShape(void)
 typedef struct { vec2 center; f32 radius; } CircleMask;
 static void DrawCircleMask(void *userData)
 {
-    CircleMask *m = static_cast<CircleMask *>(userData);
+    auto m = static_cast<CircleMask *>(userData);
     DrawCircleV(m->center, m->radius, WHITE);
 }
 
 typedef struct { vec2 center; f32 radius; i32 sides; } PolyMask;
 static void DrawPolyMask(void *userData)
 {
-    PolyMask *m = static_cast<PolyMask *>(userData);
+    auto m = static_cast<PolyMask *>(userData);
     DrawPoly(m->center, m->sides, m->radius, 0.0f, WHITE);
 }
 
@@ -99,14 +99,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - scissor shapes");
 
-    vec2 circleCenter = { screenWidth/2.0f - 120, screenHeight/2.0f };
-    const vec2 hexCenter = { screenWidth/2.0f + 120, screenHeight/2.0f };
-    constexpr f32 maskRadius = 100.0f;
+    auto circleCenter = vec2{ screenWidth/2.0f - 120, screenHeight/2.0f };
+    const auto hexCenter = vec2{ screenWidth/2.0f + 120, screenHeight/2.0f };
+    constexpr auto maskRadius = 100.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -126,13 +126,13 @@ i32 main()
             ClearBackground(RAYWHITE);
 
             // Circle-shaped clip: the full-screen rectangle only shows inside the circle
-            CircleMask circleMask = { circleCenter, maskRadius };
+            auto circleMask = CircleMask{ circleCenter, maskRadius };
             BeginScissorModeShape(DrawCircleMask, &circleMask);
                 DrawRectangle(0, 0, screenWidth, screenHeight, BLUE);
             EndScissorModeShape();
 
             // Hexagon-shaped clip: same mechanism, a different mask shape
-            PolyMask hexMask = { hexCenter, maskRadius, 6 };
+            auto hexMask = PolyMask{ hexCenter, maskRadius, 6 };
             BeginScissorModeShape(DrawPolyMask, &hexMask);
                 DrawRectangle(0, 0, screenWidth, screenHeight, ORANGE);
             EndScissorModeShape();

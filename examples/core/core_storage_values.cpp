@@ -38,14 +38,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - storage values");
 
-    i32 score = 0;
-    i32 hiscore = 0;
-    i32 framesCounter = 0;
+    auto score = 0;
+    auto hiscore = 0;
+    auto framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -110,10 +110,10 @@ i32 main()
 // NOTE: Storage positions is directly related to file memory layout (4 bytes each integer)
 bool SaveStorageValue(u32 position, i32 value)
 {
-    bool success = false;
-    i32 dataSize = 0;
+    auto success = false;
+    auto dataSize = 0;
     u32 newDataSize = 0;
-    u8 *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
+    auto fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
     u8 *newFileData = nullptr;
 
     if (fileData != nullptr)
@@ -127,7 +127,7 @@ bool SaveStorageValue(u32 position, i32 value)
             if (newFileData != nullptr)
             {
                 // realloc succeded
-                i32 *dataPtr = reinterpret_cast<i32 *>(newFileData);
+                auto dataPtr = reinterpret_cast<i32 *>(newFileData);
                 dataPtr[position] = value;
             }
             else
@@ -147,7 +147,7 @@ bool SaveStorageValue(u32 position, i32 value)
             newDataSize = dataSize;
 
             // Replace value on selected position
-            i32 *dataPtr = reinterpret_cast<i32 *>(newFileData);
+            auto dataPtr = reinterpret_cast<i32 *>(newFileData);
             dataPtr[position] = value;
         }
 
@@ -162,7 +162,7 @@ bool SaveStorageValue(u32 position, i32 value)
 
         dataSize = (position + 1)*sizeof(i32);
         fileData = static_cast<u8 *>(malloc(dataSize));
-        i32 *dataPtr = reinterpret_cast<i32 *>(fileData);
+        auto dataPtr = reinterpret_cast<i32 *>(fileData);
         dataPtr[position] = value;
 
         success = SaveFileData(STORAGE_DATA_FILE, fileData, dataSize);
@@ -178,16 +178,16 @@ bool SaveStorageValue(u32 position, i32 value)
 // NOTE: If requested position could not be found, value 0 is returned
 i32 LoadStorageValue(u32 position)
 {
-    i32 value = 0;
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
+    auto value = 0;
+    auto dataSize = 0;
+    auto fileData = LoadFileData(STORAGE_DATA_FILE, &dataSize);
 
     if (fileData != nullptr)
     {
         if (dataSize < (static_cast<i32>(position*4))) TraceLog(LOG_WARNING, "FILEIO: [%s] Failed to find storage position: %i", STORAGE_DATA_FILE, position);
         else
         {
-            i32 *dataPtr = reinterpret_cast<i32 *>(fileData);
+            auto dataPtr = reinterpret_cast<i32 *>(fileData);
             value = dataPtr[position];
         }
 

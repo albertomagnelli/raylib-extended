@@ -42,12 +42,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - eratosthenes sieve");
 
-    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const auto target = LoadRenderTexture(screenWidth, screenHeight);
 
     // Load Eratosthenes shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader

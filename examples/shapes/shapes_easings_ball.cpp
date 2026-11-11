@@ -24,18 +24,18 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings ball");
 
     // Ball variable value to be animated with easings
-    i32 ballPositionX = -100;
-    i32 ballRadius = 20;
-    f32 ballAlpha = 0.0f;
+    auto ballPositionX = -100;
+    auto ballRadius = 20;
+    auto ballAlpha = 0.0f;
 
-    i32 state = 0;
-    i32 framesCounter = 0;
+    auto state = 0;
+    auto framesCounter = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

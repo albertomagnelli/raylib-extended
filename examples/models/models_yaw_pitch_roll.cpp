@@ -26,13 +26,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     //SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [models] example - yaw pitch roll");
 
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 0.0f, 50.0f, -120.0f };     // Camera position perspective
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -46,9 +46,9 @@ i32 main()
 
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set map diffuse texture
 
-    f32 pitch = 0.0f;
-    f32 roll = 0.0f;
-    f32 yaw = 0.0f;
+    auto pitch = 0.0f;
+    auto roll = 0.0f;
+    auto yaw = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

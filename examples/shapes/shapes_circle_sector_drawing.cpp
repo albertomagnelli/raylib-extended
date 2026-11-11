@@ -27,17 +27,17 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - circle sector drawing");
 
-    const vec2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
+    const auto center = vec2{(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
-    f32 outerRadius = 180.0f;
-    f32 startAngle = 0.0f;
-    f32 endAngle = 180.0f;
-    f32 segments = 10.0f;
+    auto outerRadius = 180.0f;
+    auto startAngle = 0.0f;
+    auto endAngle = 180.0f;
+    auto segments = 10.0f;
     f32 minSegments = 4;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

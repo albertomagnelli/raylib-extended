@@ -55,8 +55,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     // We have multiple options to implement an Undo/Redo system
     // Probably the most professional one is using the Command pattern to
@@ -69,24 +69,24 @@ i32 main()
     InitWindow(screenWidth, screenHeight, "raylib [core] example - undo redo");
 
     // Undo/redo system variables
-    i32 currentUndoIndex = 0;
-    i32 firstUndoIndex = 0;
-    i32 lastUndoIndex = 0;
-    i32 undoFrameCounter = 0;
-    const vec2 undoInfoPos = { 110, 400 };
+    auto currentUndoIndex = 0;
+    auto firstUndoIndex = 0;
+    auto lastUndoIndex = 0;
+    auto undoFrameCounter = 0;
+    const auto undoInfoPos = vec2{ 110, 400 };
 
     // Init current player state and undo/redo recorded states array
-    PlayerState player = {};
+    auto player = PlayerState{};
     player.cell = Point{ 10, 10 };
     player.color = RED;
 
     // Init undo buffer to store MAX_UNDO_STATES states
-    PlayerState *states = static_cast<PlayerState *>(calloc(MAX_UNDO_STATES, sizeof(PlayerState)));
+    auto states = static_cast<PlayerState *>(calloc(MAX_UNDO_STATES, sizeof(PlayerState)));
     // Init all undo states to current state
     for (i32 i = 0; i < MAX_UNDO_STATES; i++) memcpy(&states[i], &player, sizeof(PlayerState));
 
     // Grid variables
-    const vec2 gridPosition = { 40, 60 };
+    const auto gridPosition = vec2{ 40, 60 };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

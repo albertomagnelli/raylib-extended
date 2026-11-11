@@ -22,25 +22,25 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - box collisions");
 
     // Define the camera to look into our 3d world
-    const Camera camera = { { 0.0f, 10.0f, 10.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
+    const auto camera = Camera{ { 0.0f, 10.0f, 10.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f }, 45.0f, 0 };
 
-    vec3 playerPosition = { 0.0f, 1.0f, 2.0f };
-    const vec3 playerSize = { 1.0f, 2.0f, 1.0f };
+    auto playerPosition = vec3{ 0.0f, 1.0f, 2.0f };
+    const auto playerSize = vec3{ 1.0f, 2.0f, 1.0f };
     Color playerColor = GREEN;
 
-    const vec3 enemyBoxPos = { -4.0f, 1.0f, 0.0f };
-    const vec3 enemyBoxSize = { 2.0f, 2.0f, 2.0f };
+    const auto enemyBoxPos = vec3{ -4.0f, 1.0f, 0.0f };
+    const auto enemyBoxSize = vec3{ 2.0f, 2.0f, 2.0f };
 
-    const vec3 enemySpherePos = { 4.0f, 0.0f, 0.0f };
-    constexpr f32 enemySphereSize = 1.5f;
+    const auto enemySpherePos = vec3{ 4.0f, 0.0f, 0.0f };
+    constexpr auto enemySphereSize = 1.5f;
 
-    bool collision = false;
+    auto collision = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

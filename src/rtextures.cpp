@@ -262,9 +262,9 @@ extern void LoadFontDefault(void);          // [Module: text] Loads default font
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static f32 HalfToFloat(u16 x);
-static u16 FloatToHalf(f32 x);
-static vec4 *LoadImageDataNormalized(Image image);     // Load pixel data from image as vec4 array (float normalized)
+static f32 HalfToFloat(const u16 x);
+static u16 FloatToHalf(const f32 x);
+static vec4 *LoadImageDataNormalized(const Image image);     // Load pixel data from image as vec4 array (float normalized)
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
@@ -275,7 +275,7 @@ Image LoadImage(std::string_view fileNameView)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    Image image = { nullptr };
+    auto image = Image{ nullptr };
 
 #if SUPPORT_FILEFORMAT_PNG || \
     SUPPORT_FILEFORMAT_BMP || \
@@ -291,8 +291,8 @@ Image LoadImage(std::string_view fileNameView)
 #endif
 
     // Loading file to memory
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
 
     // Loading image from memory data
     if (fileData != nullptr)
@@ -306,20 +306,20 @@ Image LoadImage(std::string_view fileNameView)
 }
 
 // Load an image from RAW file data
-Image LoadImageRaw(std::string_view fileNameView, i32 width, i32 height, i32 format, i32 headerSize)
+Image LoadImageRaw(std::string_view fileNameView, i32 width, i32 height, i32 format, const i32 headerSize)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    Image image = { nullptr };
+    auto image = Image{ nullptr };
 
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
 
     if (fileData != nullptr)
     {
         u8 *dataPtr = fileData;
-        const i32 size = GetPixelDataSize(width, height, format);
+        const auto size = GetPixelDataSize(width, height, format);
 
         if (size <= dataSize) // Security check
         {
@@ -350,18 +350,18 @@ Image LoadImageAnim(std::string_view fileNameView, i32 *frames)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    Image image = { nullptr };
-    i32 frameCount = 0;
+    auto image = Image{ nullptr };
+    auto frameCount = 0;
 
 #if SUPPORT_FILEFORMAT_GIF
     if (IsFileExtension(fileName, ".gif"))
     {
-        i32 dataSize = 0;
-        u8 *fileData = LoadFileData(fileName, &dataSize);
+        auto dataSize = 0;
+        auto fileData = LoadFileData(fileName, &dataSize);
 
         if (fileData != nullptr)
         {
-            i32 comp = 0;
+            auto comp = 0;
             i32 *delays = nullptr;
             image.data = stbi_load_gif_from_memory(fileData, dataSize, &delays, &image.width, &image.height, &frameCount, &comp, 4);
 
@@ -390,13 +390,13 @@ Image LoadImageAnim(std::string_view fileNameView, i32 *frames)
 //  - Number of frames is returned through 'frames' parameter
 //  - All frames are returned in RGBA format
 //  - Frames delay data is discarded
-Image LoadImageAnimFromMemory(std::string_view fileTypeView, const u8 *fileData, i32 dataSize, i32 *frames)
+Image LoadImageAnimFromMemory(std::string_view fileTypeView, const u8 *fileData, const i32 dataSize, i32 *frames)
 {
     const std::string fileTypeStr(fileTypeView);
     const char *fileType = fileTypeStr.c_str();
 
-    Image image = { nullptr };
-    i32 frameCount = 0;
+    auto image = Image{ nullptr };
+    auto frameCount = 0;
 
     if (fileTypeView.empty() || (fileData == nullptr) || (dataSize == 0)) return image; // Security check
 
@@ -405,7 +405,7 @@ Image LoadImageAnimFromMemory(std::string_view fileTypeView, const u8 *fileData,
     {
         if (fileData != nullptr)
         {
-            i32 comp = 0;
+            auto comp = 0;
             i32 *delays = nullptr;
             image.data = stbi_load_gif_from_memory(fileData, dataSize, &delays, &image.width, &image.height, &frameCount, &comp, 4);
 
@@ -430,12 +430,12 @@ Image LoadImageAnimFromMemory(std::string_view fileTypeView, const u8 *fileData,
 
 // Load image from memory buffer, fileType refers to extension: i.e. ".png"
 // WARNING: File extension must be provided in lower-case
-Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, i32 dataSize)
+Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, const i32 dataSize)
 {
     const std::string fileTypeStr(fileTypeView);
     const char *fileType = fileTypeStr.c_str();
 
-    Image image = { nullptr };
+    auto image = Image{ nullptr };
 
     // Security checks for input data
     if ((fileData == nullptr) || (dataSize == 0)) { TRACELOG(LOG_WARNING, "IMAGE: Invalid file data"); return image; }
@@ -475,7 +475,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, i32
 
         if (fileData != nullptr)
         {
-            i32 comp = 0;
+            auto comp = 0;
             image.data = stbi_load_from_memory(fileData, dataSize, &image.width, &image.height, &comp, 0);
 
             if (image.data != nullptr)
@@ -496,7 +496,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, i32
 #if defined(STBI_REQUIRED)
         if (fileData != nullptr)
         {
-            i32 comp = 0;
+            auto comp = 0;
             image.data = stbi_loadf_from_memory(fileData, dataSize, &image.width, &image.height, &comp, 0);
 
             image.mipmaps = 1;
@@ -519,7 +519,7 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, i32
     {
         if (fileData != nullptr)
         {
-            qoi_desc desc = { 0 };
+            auto desc = qoi_desc{ 0 };
             image.data = qoi_decode(fileData, dataSize, &desc, 0);   // NOTE: Using channels from file data
             image.width = desc.width;
             image.height = desc.height;
@@ -592,9 +592,9 @@ Image LoadImageFromMemory(std::string_view fileTypeView, const u8 *fileData, i32
 
 // Load image from GPU texture data
 // NOTE: Compressed texture formats not supported
-Image LoadImageFromTexture(Texture2D texture)
+Image LoadImageFromTexture(const Texture2D texture)
 {
-    Image image = { nullptr };
+    auto image = Image{ nullptr };
 
     if (texture.format < PIXELFORMAT_COMPRESSED_DXT1_RGB)
     {
@@ -628,7 +628,7 @@ Image LoadImageFromTexture(Texture2D texture)
 // Load image from screen buffer (screenshot)
 Image LoadImageFromScreen(void)
 {
-    Image image = { nullptr };
+    auto image = Image{ nullptr };
 
     image.width = GetRenderWidth();
     image.height = GetRenderHeight();
@@ -640,9 +640,9 @@ Image LoadImageFromScreen(void)
 }
 
 // Check if an image is ready
-bool IsImageValid(Image image)
+bool IsImageValid(const Image image)
 {
-    bool result = false;
+    auto result = false;
 
     if ((image.data != nullptr) &&     // Validate pixel data available
         (image.width > 0) &&        // Validate image width
@@ -661,19 +661,19 @@ void UnloadImage(Image image)
 
 // Export image data to file
 // NOTE: File format depends on fileName extension
-bool ExportImage(Image image, std::string_view fileNameView)
+bool ExportImage(const Image image, std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    i32 result = 0;
+    auto result = 0;
 
     if ((image.width == 0) || (image.height == 0) || (image.data == nullptr)) return result; // Security check
 
 #if SUPPORT_IMAGE_EXPORT
-    i32 channels = 4;
-    bool allocatedData = false;
-    u8 *imgData = static_cast<u8 *>(image.data);
+    auto channels = 4;
+    auto allocatedData = false;
+    auto imgData = static_cast<u8 *>(image.data);
 
     if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) channels = 1;
     else if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA) channels = 2;
@@ -690,7 +690,7 @@ bool ExportImage(Image image, std::string_view fileNameView)
 #if SUPPORT_FILEFORMAT_PNG
     else if (IsFileExtension(fileName, ".png"))
     {
-        i32 dataSize = 0;
+        auto dataSize = 0;
         u8 *fileData = stbi_write_png_to_mem(static_cast<const u8 *>(imgData), image.width*channels, image.width, image.height, channels, &dataSize);
         result = SaveFileData(fileName, fileData, dataSize);
         free(fileData);
@@ -716,7 +716,7 @@ bool ExportImage(Image image, std::string_view fileNameView)
 
         if ((channels == 3) || (channels == 4))
         {
-            qoi_desc desc = { 0 };
+            auto desc = qoi_desc{ 0 };
             desc.width = image.width;
             desc.height = image.height;
             desc.channels = channels;
@@ -769,14 +769,14 @@ bool ExportImage(Image image, std::string_view fileNameView)
 }
 
 // Export image to memory buffer
-u8 *ExportImageToMemory(Image image, std::string_view fileType, i32 *dataSize)
+u8 *ExportImageToMemory(const Image image, const std::string_view fileType, i32 *dataSize)
 {
     u8 *fileData = nullptr;
     *dataSize = 0;
 
     if ((image.width == 0) || (image.height == 0) || (image.data == nullptr)) return fileData; // Security check
 
-    i32 channels = 4;
+    auto channels = 4;
 
     if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) channels = 1;
     else if (image.format == PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA) channels = 2;
@@ -796,24 +796,24 @@ u8 *ExportImageToMemory(Image image, std::string_view fileType, i32 *dataSize)
 }
 
 // Export image as code file (.h) defining an array of bytes
-bool ExportImageAsCode(Image image, std::string_view fileNameView)
+bool ExportImageAsCode(const Image image, std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    bool result = false;
+    auto result = false;
 
 #ifndef TEXT_BYTES_PER_LINE
     #define TEXT_BYTES_PER_LINE     20
 #endif
 
-    const i32 dataSize = GetPixelDataSize(image.width, image.height, image.format);
+    const auto dataSize = GetPixelDataSize(image.width, image.height, image.format);
 
     // NOTE: Text data buffer size is estimated considering image data size in bytes
     // and requiring 6 char bytes for every byte: "0x00, "
-    char *txtData = static_cast<char *>(calloc(dataSize*6 + 2000, sizeof(char)));
+    auto txtData = static_cast<char *>(calloc(dataSize*6 + 2000, sizeof(char)));
 
-    i32 byteCount = 0;
+    auto byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
     byteCount += sprintf(txtData + byteCount, "//                                                                                    //\n");
     byteCount += sprintf(txtData + byteCount, "// ImageAsCode exporter v1.0 - Image pixel data exported as an array of bytes         //\n");
@@ -855,10 +855,10 @@ bool ExportImageAsCode(Image image, std::string_view fileNameView)
 // Image generation functions
 //------------------------------------------------------------------------------------
 // Generate image: plain color
-Image GenImageColor(i32 width, i32 height, Color color)
+Image GenImageColor(i32 width, i32 height, const Color color)
 {
-    const i32 dataSize = GetPixelDataSize(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-    Color *pixels = static_cast<Color *>(calloc(dataSize, 1));
+    const auto dataSize = GetPixelDataSize(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
+    auto pixels = static_cast<Color *>(calloc(dataSize, 1));
 
     for (i32 i = 0; (pixels != nullptr) && (i < width*height); i++) pixels[i] = color;
 
@@ -878,9 +878,9 @@ Image GenImageColor(i32 width, i32 height, Color color)
 // The direction value specifies the direction of the gradient (in degrees)
 // with 0 being vertical (from top to bottom), 90 being horizontal (from left to right)
 // The gradient effectively rotates counter-clockwise by the specified amount
-Image GenImageGradientLinear(i32 width, i32 height, i32 direction, Color start, Color end)
+Image GenImageGradientLinear(i32 width, i32 height, const i32 direction, const Color start, const Color end)
 {
-    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const f32 radianDirection = static_cast<f32>(90 - direction)/180.f*3.14159f;
     const f32 cosDir = cosf(radianDirection);
@@ -926,9 +926,9 @@ Image GenImageGradientLinear(i32 width, i32 height, i32 direction, Color start, 
 }
 
 // Generate image: radial gradient
-Image GenImageGradientRadial(i32 width, i32 height, f32 density, Color inner, Color outer)
+Image GenImageGradientRadial(i32 width, i32 height, const f32 density, const Color inner, const Color outer)
 {
-    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
     const f32 radius = (width < height)? static_cast<f32>(width)/2.0f : static_cast<f32>(height)/2.0f;
 
     const f32 centerX = static_cast<f32>(width)/2.0f;
@@ -963,9 +963,9 @@ Image GenImageGradientRadial(i32 width, i32 height, f32 density, Color inner, Co
 }
 
 // Generate image: square gradient
-Image GenImageGradientSquare(i32 width, i32 height, f32 density, Color inner, Color outer)
+Image GenImageGradientSquare(i32 width, i32 height, const f32 density, const Color inner, const Color outer)
 {
-    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const f32 centerX = static_cast<f32>(width)/2.0f;
     const f32 centerY = static_cast<f32>(height)/2.0f;
@@ -1012,9 +1012,9 @@ Image GenImageGradientSquare(i32 width, i32 height, f32 density, Color inner, Co
 }
 
 // Generate image: checked
-Image GenImageChecked(i32 width, i32 height, i32 checksX, i32 checksY, Color col1, Color col2)
+Image GenImageChecked(i32 width, i32 height, const i32 checksX, const i32 checksY, const Color col1, const Color col2)
 {
-    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     for (i32 y = 0; y < height; y++)
     {
@@ -1038,9 +1038,9 @@ Image GenImageChecked(i32 width, i32 height, i32 checksX, i32 checksY, Color col
 
 // Generate image: white noise
 // NOTE: It requires GetRandomValue(), defined in [rcore]
-Image GenImageWhiteNoise(i32 width, i32 height, f32 factor)
+Image GenImageWhiteNoise(i32 width, i32 height, const f32 factor)
 {
-    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     for (i32 i = 0; i < width*height; i++)
     {
@@ -1060,9 +1060,9 @@ Image GenImageWhiteNoise(i32 width, i32 height, f32 factor)
 }
 
 // Generate image: perlin noise
-Image GenImagePerlinNoise(i32 width, i32 height, i32 offsetX, i32 offsetY, f32 scale)
+Image GenImagePerlinNoise(i32 width, i32 height, const i32 offsetX, const i32 offsetY, const f32 scale)
 {
-    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const f32 aspectRatio = static_cast<f32>(width)/static_cast<f32>(height);
 
@@ -1094,7 +1094,7 @@ Image GenImagePerlinNoise(i32 width, i32 height, i32 offsetX, i32 offsetY, f32 s
             // Data needs to be normalized from [-1..1] to [0..1]
             const f32 np = (p + 1.0f)/2.0f;
 
-            const u8 intensity = static_cast<u8>(np*255.0f);
+            const auto intensity = static_cast<u8>(np*255.0f);
             pixels[y*width + x] = Color{ intensity, intensity, intensity, 255 };
         }
     }
@@ -1111,15 +1111,15 @@ Image GenImagePerlinNoise(i32 width, i32 height, i32 offsetX, i32 offsetY, f32 s
 }
 
 // Generate image: cellular algorithm. Bigger tileSize means bigger cells
-Image GenImageCellular(i32 width, i32 height, i32 tileSize)
+Image GenImageCellular(i32 width, i32 height, const i32 tileSize)
 {
-    Color *pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(width*height, sizeof(Color)));
 
     const i32 seedsPerRow = width/tileSize;
     const i32 seedsPerCol = height/tileSize;
     const i32 seedCount = seedsPerRow*seedsPerCol;
 
-    vec2 *seeds = static_cast<vec2 *>(calloc(seedCount, sizeof(vec2)));
+    auto seeds = static_cast<vec2 *>(calloc(seedCount, sizeof(vec2)));
 
     for (i32 i = 0; i < seedCount; i++)
     {
@@ -1136,7 +1136,7 @@ Image GenImageCellular(i32 width, i32 height, i32 tileSize)
         {
             const i32 tileX = x/tileSize;
 
-            f32 minDistance = 65536.0f; //(float)strtod("Inf", NULL);
+            auto minDistance = 65536.0f; //(float)strtod("Inf", NULL);
 
             // Check all adjacent tiles
             for (i32 i = -1; i < 2; i++)
@@ -1155,10 +1155,10 @@ Image GenImageCellular(i32 width, i32 height, i32 tileSize)
             }
 
             // This approach seems to give good results at all tile sizes
-            i32 intensity = static_cast<i32>(minDistance*256.0f/tileSize);
+            auto intensity = static_cast<i32>(minDistance*256.0f/tileSize);
             if (intensity > 255) intensity = 255;
 
-            const u8 intensityUC = static_cast<u8>(intensity);
+            const auto intensityUC = static_cast<u8>(intensity);
             pixels[y*width + x] = Color{ intensityUC, intensityUC, intensityUC, 255 };
         }
     }
@@ -1182,7 +1182,7 @@ Image GenImageText(i32 width, i32 height, std::string_view textView)
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    Image image = { nullptr };
+    auto image = Image{ nullptr };
 
     const i32 imageSize = width*height;
     image.width = width;
@@ -1193,7 +1193,7 @@ Image GenImageText(i32 width, i32 height, std::string_view textView)
 
     if (text != nullptr)
     {
-        const i32 textLength = static_cast<i32>(strlen(text));
+        const auto textLength = static_cast<i32>(strlen(text));
         memcpy(image.data, text, (textLength > imageSize)? imageSize : textLength);
     }
 
@@ -1205,13 +1205,13 @@ Image GenImageText(i32 width, i32 height, std::string_view textView)
 // Image manipulation functions
 //------------------------------------------------------------------------------------
 // Copy an image to a new image
-Image ImageCopy(Image image)
+Image ImageCopy(const Image image)
 {
-    Image newImage = { nullptr };
+    auto newImage = Image{ nullptr };
 
     i32 width = image.width;
     i32 height = image.height;
-    i32 size = 0;
+    auto size = 0;
 
     for (i32 i = 0; i < image.mipmaps; i++)
     {
@@ -1242,9 +1242,9 @@ Image ImageCopy(Image image)
 }
 
 // Create an image from another image piece
-Image ImageFromImage(Image image, Rectangle rec)
+Image ImageFromImage(const Image image, const Rectangle rec)
 {
-    Image result = { nullptr };
+    auto result = Image{ nullptr };
 
     // Security check to avoid program crash
     if ((image.data == nullptr) || (image.width == 0) || (image.height == 0)) return result;
@@ -1256,7 +1256,7 @@ Image ImageFromImage(Image image, Rectangle rec)
             ((static_cast<i32>(rec.x) + static_cast<i32>(rec.width)) <= image.width) &&
             ((static_cast<i32>(rec.y) + static_cast<i32>(rec.height)) <= image.height))
         {
-            const i32 bytesPerPixel = GetPixelDataSize(1, 1, image.format);
+            const auto bytesPerPixel = GetPixelDataSize(1, 1, image.format);
 
             result.width = static_cast<i32>(rec.width);
             result.height = static_cast<i32>(rec.height);
@@ -1301,18 +1301,18 @@ void ImageCrop(Image *image, Rectangle crop)
         return;
     }
 
-    const i32 cropX = static_cast<i32>(crop.x);
-    const i32 cropY = static_cast<i32>(crop.y);
-    const i32 cropWidth = static_cast<i32>(crop.width);
-    const i32 cropHeight = static_cast<i32>(crop.height);
+    const auto cropX = static_cast<i32>(crop.x);
+    const auto cropY = static_cast<i32>(crop.y);
+    const auto cropWidth = static_cast<i32>(crop.width);
+    const auto cropHeight = static_cast<i32>(crop.height);
 
     if (image->mipmaps > 1) TRACELOG(LOG_WARNING, "Image manipulation only applied to base mipmap level");
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
 
-        u8 *croppedData = static_cast<u8 *>(calloc(cropWidth*cropHeight*bytesPerPixel, 1));
+        auto croppedData = static_cast<u8 *>(calloc(cropWidth*cropHeight*bytesPerPixel, 1));
 
         // OPTION 1: Move cropped data line-by-line
         for (i32 y = cropY, offsetSize = 0; y < cropY + cropHeight; y++)
@@ -1341,7 +1341,7 @@ void ImageCrop(Image *image, Rectangle crop)
 }
 
 // Convert image data to desired format
-void ImageFormat(Image *image, i32 newFormat)
+void ImageFormat(Image *image, const i32 newFormat)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1350,7 +1350,7 @@ void ImageFormat(Image *image, i32 newFormat)
     {
         if ((image->format < PIXELFORMAT_COMPRESSED_DXT1_RGB) && (newFormat < PIXELFORMAT_COMPRESSED_DXT1_RGB))
         {
-            vec4 *pixels = LoadImageDataNormalized(*image);   // Supports 8 to 32 bit per channel
+            auto pixels = LoadImageDataNormalized(*image);   // Supports 8 to 32 bit per channel
 
             free(image->data);      // WARNING! Loosing mipmaps data --> Regenerated at the end
             image->data = nullptr;
@@ -1547,14 +1547,14 @@ void ImageFormat(Image *image, i32 newFormat)
 }
 
 // Create an image from text (default font)
-Image ImageText(std::string_view textView, i32 fontSize, Color color)
+Image ImageText(std::string_view textView, i32 fontSize, const Color color)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    Image imText = { nullptr };
+    auto imText = Image{ nullptr };
 #if SUPPORT_MODULE_RTEXT
-    constexpr i32 defaultFontSize = 10;   // Default Font chars height in pixel
+    constexpr auto defaultFontSize = 10;   // Default Font chars height in pixel
     if (fontSize < defaultFontSize) fontSize = defaultFontSize;
     const i32 spacing = fontSize/defaultFontSize;
     imText = ImageTextEx(GetFontDefault(), text, static_cast<f32>(fontSize), static_cast<f32>(spacing), color);   // WARNING: Module required: rtext
@@ -1567,31 +1567,31 @@ Image ImageText(std::string_view textView, i32 fontSize, Color color)
 
 // Create an image from text (custom sprite font)
 // WARNING: Module required: rtext
-Image ImageTextEx(Font font, std::string_view textView, f32 fontSize, f32 spacing, Color tint)
+Image ImageTextEx(const Font font, std::string_view textView, const f32 fontSize, const f32 spacing, const Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    Image imText = { nullptr };
+    auto imText = Image{ nullptr };
 #if SUPPORT_MODULE_RTEXT
     if (text == nullptr) return imText;
 
-    const i32 textLength = static_cast<i32>(strlen(text)); // Get length of text in bytes
-    i32 textOffsetX = 0;                                   // Image drawing position X
-    i32 textOffsetY = 0;                                   // Offset between lines (on linebreak '\n')
-    i32 lineIndex = 0;                                     // Current line index (on linebreak '\n')
+    const auto textLength = static_cast<i32>(strlen(text)); // Get length of text in bytes
+    auto textOffsetX = 0;                                   // Image drawing position X
+    auto textOffsetY = 0;                                   // Offset between lines (on linebreak '\n')
+    auto lineIndex = 0;                                     // Current line index (on linebreak '\n')
 
     // NOTE: Text image is generated at font base size, later scaled to desired font size
-    const vec2 imSize = MeasureTextEx(font, text, static_cast<f32>(font.baseSize), spacing);// WARNING: Module required: rtext
-    const vec2 textSize = MeasureTextEx(font, text, fontSize, spacing);
+    const auto imSize = MeasureTextEx(font, text, static_cast<f32>(font.baseSize), spacing);// WARNING: Module required: rtext
+    const auto textSize = MeasureTextEx(font, text, fontSize, spacing);
 
-    i32 lineBreakCount = 0;         // Number of line breaks ('\n') in text
+    auto lineBreakCount = 0;         // Number of line breaks ('\n') in text
     for (i32 i = 0; i < textLength; i++)
     {
         if (text[i] == '\n') lineBreakCount++;
     }
 
-    f32 lineSpacing = 0.0f;       // Line spacing, as used by MeasureTextEx()
+    auto lineSpacing = 0.0f;       // Line spacing, as used by MeasureTextEx()
     if (lineBreakCount > 0) lineSpacing = (textSize.y - fontSize)/lineBreakCount - fontSize;
 
     const f32 lineStep = static_cast<f32>(font.baseSize) + lineSpacing*static_cast<f32>(font.baseSize)/fontSize;   // Line advance at base size
@@ -1602,9 +1602,9 @@ Image ImageTextEx(Font font, std::string_view textView, f32 fontSize, f32 spacin
     for (i32 i = 0; i < textLength;)
     {
         // Get next codepoint from byte string and glyph index in font
-        i32 codepointByteCount = 0;
-        const i32 codepoint = GetCodepointNext(&text[i], &codepointByteCount);    // WARNING: Module required: rtext
-        const i32 index = GetGlyphIndex(font, codepoint);                         // WARNING: Module required: rtext
+        auto codepointByteCount = 0;
+        const auto codepoint = GetCodepointNext(&text[i], &codepointByteCount);    // WARNING: Module required: rtext
+        const auto index = GetGlyphIndex(font, codepoint);                         // WARNING: Module required: rtext
 
         if (codepoint == '\n')
         {
@@ -1616,7 +1616,7 @@ Image ImageTextEx(Font font, std::string_view textView, f32 fontSize, f32 spacin
         {
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                const Rectangle rec = { static_cast<f32>(textOffsetX + font.glyphs[index].offsetX), static_cast<f32>(textOffsetY + font.glyphs[index].offsetY), font.recs[index].width, font.recs[index].height };
+                const auto rec = Rectangle{ static_cast<f32>(textOffsetX + font.glyphs[index].offsetX), static_cast<f32>(textOffsetY + font.glyphs[index].offsetY), font.recs[index].width, font.recs[index].height };
                 ImageDrawImagePro(&imText, font.glyphs[index].image, Rectangle{ 0, 0, static_cast<f32>(font.glyphs[index].image.width), static_cast<f32>(font.glyphs[index].image.height) },
                     rec, vec2{ 0 }, 0.0f, tint);
             }
@@ -1647,9 +1647,9 @@ Image ImageTextEx(Font font, std::string_view textView, f32 fontSize, f32 spacin
 }
 
 // Create an image from a selected channel of another image
-Image ImageFromChannel(Image image, i32 selectedChannel)
+Image ImageFromChannel(const Image image, i32 selectedChannel)
 {
-    Image result = { nullptr };
+    auto result = Image{ nullptr };
 
     if ((image.data == nullptr) || (image.width == 0) || (image.height == 0)) return result; // Security check
 
@@ -1703,7 +1703,7 @@ Image ImageFromChannel(Image image, i32 selectedChannel)
     result.width = image.width;
     result.mipmaps = 1;
 
-    u8 *pixels = static_cast<u8 *>(calloc(image.width*image.height, sizeof(u8))); // Values from 0 to 255
+    auto pixels = static_cast<u8 *>(calloc(image.width*image.height, sizeof(u8))); // Values from 0 to 255
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
@@ -1814,20 +1814,20 @@ Image ImageFromChannel(Image image, i32 selectedChannel)
 }
 
 // Resize and image to new size using Nearest-Neighbor scaling algorithm
-void ImageResizeNN(Image *image, i32 newWidth, i32 newHeight)
+void ImageResizeNN(Image *image, const i32 newWidth, const i32 newHeight)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    Color *pixels = LoadImageColors(*image);
-    Color *output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
+    auto pixels = LoadImageColors(*image);
+    auto output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
 
     // EDIT: added +1 to account for an early rounding problem
     const i32 xRatio = ((image->width << 16)/newWidth) + 1;
     const i32 yRatio = ((image->height << 16)/newHeight) + 1;
 
-    i32 x2 = 0;
-    i32 y2 = 0;
+    auto x2 = 0;
+    auto y2 = 0;
     for (i32 y = 0; y < newHeight; y++)
     {
         for (i32 x = 0; x < newWidth; x++)
@@ -1857,7 +1857,7 @@ void ImageResizeNN(Image *image, i32 newWidth, i32 newHeight)
 // NOTE: Uses stb default scaling filters (both bicubic):
 // STBIR_DEFAULT_FILTER_UPSAMPLE    STBIR_FILTER_CATMULLROM
 // STBIR_DEFAULT_FILTER_DOWNSAMPLE  STBIR_FILTER_MITCHELL   (high-quality Catmull-Rom)
-void ImageResize(Image *image, i32 newWidth, i32 newHeight)
+void ImageResize(Image *image, const i32 newWidth, const i32 newHeight)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1869,8 +1869,8 @@ void ImageResize(Image *image, i32 newWidth, i32 newHeight)
         (image->format == PIXELFORMAT_UNCOMPRESSED_R8G8B8) ||
         (image->format == PIXELFORMAT_UNCOMPRESSED_R8G8B8A8))
     {
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        u8 *output = static_cast<u8 *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        auto output = static_cast<u8 *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
 
         switch (image->format)
         {
@@ -1889,8 +1889,8 @@ void ImageResize(Image *image, i32 newWidth, i32 newHeight)
     else
     {
         // Get data as Color pixels array to work with it
-        Color *pixels = LoadImageColors(*image);
-        Color *output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
+        auto pixels = LoadImageColors(*image);
+        auto output = static_cast<Color *>(calloc(newWidth*newHeight, sizeof(Color)));
 
         // NOTE: Color data is cast to (unsigned char *), there shouldn't been any problem...
         stbir_resize_uint8_linear(reinterpret_cast<u8 *>(pixels), image->width, image->height, 0, reinterpret_cast<u8 *>(output), newWidth, newHeight, 0, static_cast<stbir_pixel_layout>(4));
@@ -1911,7 +1911,7 @@ void ImageResize(Image *image, i32 newWidth, i32 newHeight)
 
 // Resize canvas and fill with color
 // NOTE: Resize offset is relative to the top-left corner of the original image
-void ImageResizeCanvas(Image *image, i32 newWidth, i32 newHeight, i32 offsetX, i32 offsetY, Color fill)
+void ImageResizeCanvas(Image *image, const i32 newWidth, const i32 newHeight, const i32 offsetX, const i32 offsetY, const Color fill)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1920,8 +1920,8 @@ void ImageResizeCanvas(Image *image, i32 newWidth, i32 newHeight, i32 offsetX, i
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else if ((newWidth != image->width) || (newHeight != image->height))
     {
-        Rectangle srcRec = { 0, 0, static_cast<f32>(image->width), static_cast<f32>(image->height) };
-        vec2 dstPos = { static_cast<f32>(offsetX), static_cast<f32>(offsetY) };
+        auto srcRec = Rectangle{ 0, 0, static_cast<f32>(image->width), static_cast<f32>(image->height) };
+        auto dstPos = vec2{ static_cast<f32>(offsetX), static_cast<f32>(offsetY) };
 
         if (offsetX < 0)
         {
@@ -1942,8 +1942,8 @@ void ImageResizeCanvas(Image *image, i32 newWidth, i32 newHeight, i32 offsetX, i
         if (newWidth < srcRec.width) srcRec.width = static_cast<f32>(newWidth);
         if (newHeight < srcRec.height) srcRec.height = static_cast<f32>(newHeight);
 
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        u8 *resizedData = static_cast<u8 *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        auto resizedData = static_cast<u8 *>(calloc(newWidth*newHeight*bytesPerPixel, 1));
 
         // Fill resized canvas with fill color
         // Set first pixel with image->format
@@ -1978,7 +1978,7 @@ void ImageResizeCanvas(Image *image, i32 newWidth, i32 newHeight, i32 offsetX, i
 
 // Convert image to POT (power-of-two)
 // NOTE: It could be useful on OpenGL ES 2.0 (RPI, HTML5)
-void ImageToPOT(Image *image, Color fill)
+void ImageToPOT(Image *image, const Color fill)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -1994,12 +1994,12 @@ void ImageToPOT(Image *image, Color fill)
 
 // Crop image depending on alpha value
 // NOTE: Threshold is defined as a percentage: 0.0f -> 1.0f
-void ImageAlphaCrop(Image *image, f32 threshold)
+void ImageAlphaCrop(Image *image, const f32 threshold)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    const Rectangle crop = GetImageAlphaBorder(*image, threshold);
+    const auto crop = GetImageAlphaBorder(*image, threshold);
 
     // Crop if rectangle is valid
     if ((static_cast<i32>(crop.width) != 0) && (static_cast<i32>(crop.height) != 0)) ImageCrop(image, crop);
@@ -2007,7 +2007,7 @@ void ImageAlphaCrop(Image *image, f32 threshold)
 
 // Clear alpha channel to desired color
 // NOTE: Threshold defines the alpha limit, 0.0f to 1.0f
-void ImageAlphaClear(Image *image, Color color, f32 threshold)
+void ImageAlphaClear(const Image *image, const Color color, const f32 threshold)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2020,7 +2020,7 @@ void ImageAlphaClear(Image *image, Color color, f32 threshold)
         {
             case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
             {
-                const u8 thresholdValue = static_cast<u8>(threshold*255.0f);
+                const auto thresholdValue = static_cast<u8>(threshold*255.0f);
                 for (i32 i = 1; i < image->width*image->height*2; i += 2)
                 {
                     if ((static_cast<u8 *>(image->data))[i] <= thresholdValue)
@@ -2049,7 +2049,7 @@ void ImageAlphaClear(Image *image, Color color, f32 threshold)
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
             {
-                const u8 thresholdValue = static_cast<u8>(threshold*15.0f);
+                const auto thresholdValue = static_cast<u8>(threshold*15.0f);
 
                 const u8 r = static_cast<u8>(round(static_cast<f32>(color.r)/255.0*15.0f));
                 const u8 g = static_cast<u8>(round(static_cast<f32>(color.g)/255.0*15.0f));
@@ -2066,7 +2066,7 @@ void ImageAlphaClear(Image *image, Color color, f32 threshold)
             } break;
             case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
             {
-                const u8 thresholdValue = static_cast<u8>(threshold*255.0f);
+                const auto thresholdValue = static_cast<u8>(threshold*255.0f);
                 for (i32 i = 3; i < image->width*image->height*4; i += 4)
                 {
                     if ((static_cast<u8 *>(image->data))[i] <= thresholdValue)
@@ -2112,7 +2112,7 @@ void ImageAlphaClear(Image *image, Color color, f32 threshold)
 // Apply alpha mask to image
 // NOTE 1: Returned image is GRAY_ALPHA (16bit) or RGBA (32bit)
 // NOTE 2: alphaMask should be same size as image
-void ImageAlphaMask(Image *image, Image alphaMask)
+void ImageAlphaMask(Image *image, const Image alphaMask)
 {
     if ((image->width != alphaMask.width) || (image->height != alphaMask.height))
     {
@@ -2125,13 +2125,13 @@ void ImageAlphaMask(Image *image, Image alphaMask)
     else
     {
         // Force mask to be Grayscale
-        Image mask = ImageCopy(alphaMask);
+        auto mask = ImageCopy(alphaMask);
         if (mask.format != PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) ImageFormat(&mask, PIXELFORMAT_UNCOMPRESSED_GRAYSCALE);
 
         // In case image is only grayscale, add alpha channel
         if (image->format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE)
         {
-            u8 *data = static_cast<u8 *>(calloc(image->width*image->height*2, 1));
+            auto data = static_cast<u8 *>(calloc(image->width*image->height*2, 1));
 
             // Apply alpha mask to alpha channel
             for (i32 i = 0, k = 0; (i < mask.width*mask.height) || (i < image->width*image->height); i++, k += 2)
@@ -2166,8 +2166,8 @@ void ImageAlphaPremultiply(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    f32 alpha = 0.0f;
-    Color *pixels = LoadImageColors(*image);
+    auto alpha = 0.0f;
+    auto pixels = LoadImageColors(*image);
 
     for (i32 i = 0; i < image->width*image->height; i++)
     {
@@ -2196,18 +2196,18 @@ void ImageAlphaPremultiply(Image *image)
 }
 
 // Apply box blur to image
-void ImageBlurGaussian(Image *image, i32 blurSize)
+void ImageBlurGaussian(Image *image, const i32 blurSize)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
     ImageAlphaPremultiply(image);
 
-    Color *pixels = LoadImageColors(*image);
+    auto pixels = LoadImageColors(*image);
 
     // Loop switches between pixelsCopy1 and pixelsCopy2
-    vec4 *pixelsCopy1 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
-    vec4 *pixelsCopy2 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
+    auto pixelsCopy1 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
+    auto pixelsCopy2 = static_cast<vec4 *>(calloc(image->height*image->width, sizeof(vec4)));
 
     for (i32 i = 0; i < (image->height*image->width); i++)
     {
@@ -2223,10 +2223,10 @@ void ImageBlurGaussian(Image *image, i32 blurSize)
         // Horizontal motion blur
         for (i32 row = 0; row < image->height; row++)
         {
-            f32 avgR = 0.0f;
-            f32 avgG = 0.0f;
-            f32 avgB = 0.0f;
-            f32 avgAlpha = 0.0f;
+            auto avgR = 0.0f;
+            auto avgG = 0.0f;
+            auto avgB = 0.0f;
+            auto avgAlpha = 0.0f;
             i32 convolutionSize = blurSize;
 
             for (i32 i = 0; i < blurSize; i++)
@@ -2267,10 +2267,10 @@ void ImageBlurGaussian(Image *image, i32 blurSize)
         // Vertical motion blur
         for (i32 col = 0; col < image->width; col++)
         {
-            f32 avgR = 0.0f;
-            f32 avgG = 0.0f;
-            f32 avgB = 0.0f;
-            f32 avgAlpha = 0.0f;
+            auto avgR = 0.0f;
+            auto avgG = 0.0f;
+            auto avgB = 0.0f;
+            auto avgAlpha = 0.0f;
             i32 convolutionSize = blurSize;
 
             for (i32 i = 0; i < blurSize; i++)
@@ -2341,7 +2341,7 @@ void ImageBlurGaussian(Image *image, i32 blurSize)
 
 // Apply custom square convolution kernel to image
 // NOTE: The convolution kernel matrix is expected to be square
-void ImageKernelConvolution(Image *image, const f32 *kernel, i32 kernelSize)
+void ImageKernelConvolution(Image *image, const f32 *kernel, const i32 kernelSize)
 {
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0) || kernel == nullptr) return;
 
@@ -2353,8 +2353,8 @@ void ImageKernelConvolution(Image *image, const f32 *kernel, i32 kernelSize)
         return;
     }
 
-    Color *pixels = LoadImageColors(*image);
-    Color *result = static_cast<Color *>(calloc((image->height)*(image->width), sizeof(Color)));
+    auto pixels = LoadImageColors(*image);
+    auto result = static_cast<Color *>(calloc((image->height)*(image->width), sizeof(Color)));
 
     i32 startRange = 0, endRange = 0;
 
@@ -2373,10 +2373,10 @@ void ImageKernelConvolution(Image *image, const f32 *kernel, i32 kernelSize)
     {
         for (i32 y = 0; y < image->width; y++)
         {
-            f32 rRes = 0.0f;
-            f32 gRes = 0.0f;
-            f32 bRes = 0.0f;
-            f32 aRes = 0.0f;
+            auto rRes = 0.0f;
+            auto gRes = 0.0f;
+            auto bRes = 0.0f;
+            auto aRes = 0.0f;
 
             for (i32 xk = startRange; xk < endRange; xk++)
             {
@@ -2437,10 +2437,10 @@ void ImageMipmaps(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    i32 mipCount = 1;                                                    // Required mipmap levels count (including base level)
+    auto mipCount = 1;                                                    // Required mipmap levels count (including base level)
     i32 mipWidth = image->width;                                         // Base image width
     i32 mipHeight = image->height;                                       // Base image height
-    i32 mipSize = GetPixelDataSize(mipWidth, mipHeight, image->format);  // Image data size (in bytes)
+    auto mipSize = GetPixelDataSize(mipWidth, mipHeight, image->format);  // Image data size (in bytes)
 
     // Count mipmap levels required
     while ((mipWidth != 1) || (mipHeight != 1))
@@ -2467,12 +2467,12 @@ void ImageMipmaps(Image *image)
         image->data = temp;
 
         // Pointer to allocated memory point where store next mipmap level data
-        u8 *nextmip = static_cast<u8 *>(image->data);
+        auto nextmip = static_cast<u8 *>(image->data);
 
         mipWidth = image->width;
         mipHeight = image->height;
         mipSize = GetPixelDataSize(mipWidth, mipHeight, image->format);
-        Image imCopy = ImageCopy(*image);
+        auto imCopy = ImageCopy(*image);
 
         for (i32 i = 1; i < mipCount; i++)
         {
@@ -2504,7 +2504,7 @@ void ImageMipmaps(Image *image)
 // Dither image data to 16bpp or lower (Floyd-Steinberg dithering)
 // NOTE: In case selected bpp do not represent a known 16bit format,
 // dithered data is stored in the LSB part of the unsigned short
-void ImageDither(Image *image, i32 rBpp, i32 gBpp, i32 bBpp, i32 aBpp)
+void ImageDither(Image *image, const i32 rBpp, const i32 gBpp, const i32 bBpp, const i32 aBpp)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2521,7 +2521,7 @@ void ImageDither(Image *image, i32 rBpp, i32 gBpp, i32 bBpp, i32 aBpp)
     }
     else
     {
-        Color *pixels = LoadImageColors(*image);
+        auto pixels = LoadImageColors(*image);
 
         free(image->data);      // free old image data
 
@@ -2546,9 +2546,9 @@ void ImageDither(Image *image, i32 rBpp, i32 gBpp, i32 bBpp, i32 aBpp)
         Color oldPixel = WHITE;
         Color newPixel = WHITE;
 
-        i32 rError = 0;
-        i32 gError = 0;
-        i32 bError = 0;
+        auto rError = 0;
+        auto gError = 0;
+        auto bError = 0;
         u16 rPixel = 0;   // Used for 16bit pixel composition
         u16 gPixel = 0;
         u16 bPixel = 0;
@@ -2628,8 +2628,8 @@ void ImageFlipVertical(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        u8 *flippedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        auto flippedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (i32 i = (image->height - 1), offsetSize = 0; i >= 0; i--)
         {
@@ -2652,8 +2652,8 @@ void ImageFlipHorizontal(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        u8 *flippedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        auto flippedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (i32 y = 0; y < image->height; y++)
         {
@@ -2688,7 +2688,7 @@ void ImageFlipHorizontal(Image *image)
 }
 
 // Rotate image in degrees
-void ImageRotate(Image *image, i32 degrees)
+void ImageRotate(Image *image, const i32 degrees)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
@@ -2701,12 +2701,12 @@ void ImageRotate(Image *image, i32 degrees)
         const f32 sinRadius = sinf(rad);
         const f32 cosRadius = cosf(rad);
 
-        const i32 width = static_cast<i32>(fabsf(image->width*cosRadius) + fabsf(image->height*sinRadius));
-        const i32 height = static_cast<i32>(fabsf(image->height*cosRadius) + fabsf(image->width*sinRadius));
+        const auto width = static_cast<i32>(fabsf(image->width*cosRadius) + fabsf(image->height*sinRadius));
+        const auto height = static_cast<i32>(fabsf(image->height*cosRadius) + fabsf(image->width*sinRadius));
 
-        const i32 dataSize = GetPixelDataSize(width, height, image->format);
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        u8 *rotatedData = static_cast<u8 *>(calloc(dataSize, 1));
+        const auto dataSize = GetPixelDataSize(width, height, image->format);
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        auto rotatedData = static_cast<u8 *>(calloc(dataSize, 1));
 
         if (rotatedData != nullptr)
         {
@@ -2721,8 +2721,8 @@ void ImageRotate(Image *image, i32 degrees)
                     {
                         const f32 sampleX = (oldX < 0)? 0 : oldX;
                         const f32 sampleY = (oldY < 0)? 0 : oldY;
-                        const i32 x1 = static_cast<i32>(floorf(sampleX));
-                        const i32 y1 = static_cast<i32>(floorf(sampleY));
+                        const auto x1 = static_cast<i32>(floorf(sampleX));
+                        const auto y1 = static_cast<i32>(floorf(sampleY));
                         const i32 x2 = MIN(x1 + 1, image->width - 1);
                         const i32 y2 = MIN(y1 + 1, image->height - 1);
 
@@ -2762,8 +2762,8 @@ void ImageRotateCW(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        u8 *rotatedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        auto rotatedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (i32 y = 0; y < image->height; y++)
         {
@@ -2794,8 +2794,8 @@ void ImageRotateCCW(Image *image)
     if (image->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image manipulation not supported for compressed formats");
     else
     {
-        const i32 bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        u8 *rotatedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
+        const auto bytesPerPixel = GetPixelDataSize(1, 1, image->format);
+        auto rotatedData = static_cast<u8 *>(calloc(image->width*image->height*bytesPerPixel, 1));
 
         for (i32 y = 0; y < image->height; y++)
         {
@@ -2817,12 +2817,12 @@ void ImageRotateCCW(Image *image)
 }
 
 // Modify image color: tint
-void ImageColorTint(Image *image, Color color)
+void ImageColorTint(Image *image, const Color color)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    Color *pixels = LoadImageColors(*image);
+    auto pixels = LoadImageColors(*image);
 
     for (i32 i = 0; i < image->width*image->height; i++)
     {
@@ -2852,7 +2852,7 @@ void ImageColorInvert(Image *image)
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    Color *pixels = LoadImageColors(*image);
+    auto pixels = LoadImageColors(*image);
 
     for (i32 i = 0; i < image->width*image->height; i++)
     {
@@ -2889,7 +2889,7 @@ void ImageColorContrast(Image *image, i32 contrast)
     f32 factor = (100.0f + contrast)/100.0f;
     factor *= factor;
 
-    Color *pixels = LoadImageColors(*image);
+    auto pixels = LoadImageColors(*image);
 
     for (i32 i = 0; i < image->width*image->height; i++)
     {
@@ -2941,7 +2941,7 @@ void ImageColorBrightness(Image *image, i32 brightness)
     if (brightness < -255) brightness = -255;
     if (brightness > 255) brightness = 255;
 
-    Color *pixels = LoadImageColors(*image);
+    auto pixels = LoadImageColors(*image);
 
     for (i32 i = 0; i < image->width*image->height; i++)
     {
@@ -2973,12 +2973,12 @@ void ImageColorBrightness(Image *image, i32 brightness)
 }
 
 // Modify image color: replace color
-void ImageColorReplace(Image *image, Color color, Color replace)
+void ImageColorReplace(Image *image, const Color color, const Color replace)
 {
     // Security check to avoid program crash
     if ((image->data == nullptr) || (image->width == 0) || (image->height == 0)) return;
 
-    Color *pixels = LoadImageColors(*image);
+    auto pixels = LoadImageColors(*image);
 
     for (i32 i = 0; i < image->width*image->height; i++)
     {
@@ -3014,11 +3014,11 @@ void ImageColorReplace(Image *image, Color color, Color replace)
 
 // Load color data from image as a Color array (RGBA - 32bit)
 // NOTE: Memory allocated should be freed using UnloadImageColors();
-Color *LoadImageColors(Image image)
+Color *LoadImageColors(const Image image)
 {
     if ((image.width == 0) || (image.height == 0)) return nullptr; // Security check
 
-    Color *pixels = static_cast<Color *>(calloc(image.width*image.height, sizeof(Color)));
+    auto pixels = static_cast<Color *>(calloc(image.width*image.height, sizeof(Color)));
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else
@@ -3164,13 +3164,13 @@ Color *LoadImageColors(Image image)
 
 // Load colors palette from image as a Color array (RGBA - 32bit)
 // NOTE: Memory allocated should be freed using UnloadImagePalette()
-Color *LoadImagePalette(Image image, i32 maxPaletteSize, i32 *colorCount)
+Color *LoadImagePalette(const Image image, const i32 maxPaletteSize, i32 *colorCount)
 {
     #define COLOR_EQUAL(col1, col2) ((col1.r == col2.r)&&(col1.g == col2.g)&&(col1.b == col2.b)&&(col1.a == col2.a))
 
-    i32 palCount = 0;
+    auto palCount = 0;
     Color *palette = nullptr;
-    Color *pixels = LoadImageColors(image);
+    auto pixels = LoadImageColors(image);
 
     if (pixels != nullptr)
     {
@@ -3182,7 +3182,7 @@ Color *LoadImagePalette(Image image, i32 maxPaletteSize, i32 *colorCount)
         {
             if (pixels[i].a > 0)
             {
-                bool colorInPalette = false;
+                auto colorInPalette = false;
 
                 // Check if the color is already on palette
                 for (i32 j = 0; j < maxPaletteSize; j++)
@@ -3232,18 +3232,18 @@ void UnloadImagePalette(Color *colors)
 
 // Get image alpha border rectangle
 // NOTE: Threshold is defined as a percentage: 0.0f -> 1.0f
-Rectangle GetImageAlphaBorder(Image image, f32 threshold)
+Rectangle GetImageAlphaBorder(const Image image, const f32 threshold)
 {
-    Rectangle crop = { 0 };
+    auto crop = Rectangle{ 0 };
 
-    Color *pixels = LoadImageColors(image);
+    auto pixels = LoadImageColors(image);
 
     if (pixels != nullptr)
     {
-        i32 xMin = 65536;   // Define a big enough number
-        i32 xMax = 0;
-        i32 yMin = 65536;
-        i32 yMax = 0;
+        auto xMin = 65536;   // Define a big enough number
+        auto xMax = 0;
+        auto yMin = 65536;
+        auto yMax = 0;
 
         for (i32 y = 0; y < image.height; y++)
         {
@@ -3272,9 +3272,9 @@ Rectangle GetImageAlphaBorder(Image image, f32 threshold)
 }
 
 // Get image pixel color at (x, y) position
-Color GetImageColor(Image image, i32 x, i32 y)
+Color GetImageColor(const Image image, const i32 x, const i32 y)
 {
-    Color color = { 0 };
+    auto color = Color{ 0 };
 
     if ((x >=0) && (x < image.width) && (y >= 0) && (y < image.height))
     {
@@ -3402,7 +3402,7 @@ Color GetImageColor(Image image, i32 x, i32 y)
 // Image drawing functions
 //------------------------------------------------------------------------------------
 // Clear image background with given color
-void ImageClearBackground(Image *dst, Color color)
+void ImageClearBackground(const Image *dst, const Color color)
 {
     // Security check to avoid program crash
     if ((dst->data == nullptr) || (dst->width == 0) || (dst->height == 0)) return;
@@ -3410,8 +3410,8 @@ void ImageClearBackground(Image *dst, Color color)
     // Fill in first pixel based on image format
     ImageDrawPixel(dst, 0, 0, color);
 
-    u8 *pSrcPixel = static_cast<u8 *>(dst->data);
-    const i32 bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
+    auto pSrcPixel = static_cast<u8 *>(dst->data);
+    const auto bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
     const i32 totalPixels = dst->width*dst->height;
 
     // Repeat the first pixel data throughout the image,
@@ -3425,7 +3425,7 @@ void ImageClearBackground(Image *dst, Color color)
 
 // Draw pixel within an image
 // NOTE: Compressed image formats not supported
-void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
+void ImageDrawPixel(const Image *dst, const i32 x, const i32 y, const Color color)
 {
     // Security check to avoid program crash
     if ((dst->data == nullptr) || (x < 0) || (x >= dst->width) || (y < 0) || (y >= dst->height)) return;
@@ -3435,8 +3435,8 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
-            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<u8 *>(dst->data))[y*dst->width + x] = gray;
 
@@ -3444,8 +3444,8 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
-            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<u8 *>(dst->data))[(y*dst->width + x)*2] = gray;
             (static_cast<u8 *>(dst->data))[(y*dst->width + x)*2 + 1] = color.a;
@@ -3454,11 +3454,11 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
             // NOTE: Calculate R5G6B5 equivalent color
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            const u8 r = static_cast<u8>(round(coln.x*31.0f));
-            const u8 g = static_cast<u8>(round(coln.y*63.0f));
-            const u8 b = static_cast<u8>(round(coln.z*31.0f));
+            const auto r = static_cast<u8>(round(coln.x*31.0f));
+            const auto g = static_cast<u8>(round(coln.y*63.0f));
+            const auto b = static_cast<u8>(round(coln.z*31.0f));
 
             (static_cast<u16 *>(dst->data))[y*dst->width + x] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 5 | static_cast<u16>(b);
 
@@ -3466,11 +3466,11 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
+            const auto coln = vec4{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const u8 r = static_cast<u8>(round(coln.x*31.0f));
-            const u8 g = static_cast<u8>(round(coln.y*31.0f));
-            const u8 b = static_cast<u8>(round(coln.z*31.0f));
+            const auto r = static_cast<u8>(round(coln.x*31.0f));
+            const auto g = static_cast<u8>(round(coln.y*31.0f));
+            const auto b = static_cast<u8>(round(coln.z*31.0f));
             const u8 a = (coln.w > (static_cast<f32>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
 
             (static_cast<u16 *>(dst->data))[y*dst->width + x] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 6 | static_cast<u16>(b) << 1 | static_cast<u16>(a);
@@ -3479,12 +3479,12 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
+            const auto coln = vec4{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const u8 r = static_cast<u8>(round(coln.x*15.0f));
-            const u8 g = static_cast<u8>(round(coln.y*15.0f));
-            const u8 b = static_cast<u8>(round(coln.z*15.0f));
-            const u8 a = static_cast<u8>(round(coln.w*15.0f));
+            const auto r = static_cast<u8>(round(coln.x*15.0f));
+            const auto g = static_cast<u8>(round(coln.y*15.0f));
+            const auto b = static_cast<u8>(round(coln.z*15.0f));
+            const auto a = static_cast<u8>(round(coln.w*15.0f));
 
             (static_cast<u16 *>(dst->data))[y*dst->width + x] = static_cast<u16>(r) << 12 | static_cast<u16>(g) << 8 | static_cast<u16>(b) << 4 | static_cast<u16>(a);
 
@@ -3507,7 +3507,7 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R32:
         {
             // NOTE: Calculate grayscale equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
             (static_cast<f32 *>(dst->data))[y*dst->width + x] = coln.x*0.299f + coln.y*0.587f + coln.z*0.114f;
 
@@ -3515,7 +3515,7 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32:
         {
             // NOTE: Calculate R32G32B32 equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
             (static_cast<f32 *>(dst->data))[(y*dst->width + x)*3] = coln.x;
             (static_cast<f32 *>(dst->data))[(y*dst->width + x)*3 + 1] = coln.y;
@@ -3524,7 +3524,7 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R32G32B32A32:
         {
             // NOTE: Calculate R32G32B32A32 equivalent color (normalized to 32bit)
-            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
+            const auto coln = vec4{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
             (static_cast<f32 *>(dst->data))[(y*dst->width + x)*4] = coln.x;
             (static_cast<f32 *>(dst->data))[(y*dst->width + x)*4 + 1] = coln.y;
@@ -3535,7 +3535,7 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R16:
         {
             // NOTE: Calculate grayscale equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
             (static_cast<u16 *>(dst->data))[y*dst->width + x] = FloatToHalf(coln.x*0.299f + coln.y*0.587f + coln.z*0.114f);
 
@@ -3543,7 +3543,7 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16:
         {
             // NOTE: Calculate R32G32B32 equivalent color (normalized to 32bit)
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
             (static_cast<u16 *>(dst->data))[(y*dst->width + x)*3] = FloatToHalf(coln.x);
             (static_cast<u16 *>(dst->data))[(y*dst->width + x)*3 + 1] = FloatToHalf(coln.y);
@@ -3552,7 +3552,7 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
         case PIXELFORMAT_UNCOMPRESSED_R16G16B16A16:
         {
             // NOTE: Calculate R32G32B32A32 equivalent color (normalized to 32bit)
-            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
+            const auto coln = vec4{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
             (static_cast<u16 *>(dst->data))[(y*dst->width + x)*4] = FloatToHalf(coln.x);
             (static_cast<u16 *>(dst->data))[(y*dst->width + x)*4 + 1] = FloatToHalf(coln.y);
@@ -3565,18 +3565,18 @@ void ImageDrawPixel(Image *dst, i32 x, i32 y, Color color)
 }
 
 // Draw pixel within an image (Vector version)
-void ImageDrawPixelV(Image *dst, vec2 position, Color color)
+void ImageDrawPixelV(const Image *dst, const vec2 position, const Color color)
 {
     ImageDrawPixel(dst, static_cast<i32>(position.x), static_cast<i32>(position.y), color);
 }
 
 // Draw line within an image
-void ImageDrawLine(Image *dst, i32 startPosX, i32 startPosY, i32 endPosX, i32 endPosY, Color color)
+void ImageDrawLine(const Image *dst, const i32 startPosX, const i32 startPosY, const i32 endPosX, const i32 endPosY, const Color color)
 {
     // Calculate differences in coordinates
     i32 shortLen = endPosY - startPosY;
     i32 longLen = endPosX - startPosX;
-    bool yLonger = false;
+    auto yLonger = false;
 
     // Determine if the line is more vertical than horizontal
     if (abs(shortLen) > abs(longLen))
@@ -3590,7 +3590,7 @@ void ImageDrawLine(Image *dst, i32 startPosX, i32 startPosY, i32 endPosX, i32 en
 
     // Initialize variables for drawing loop
     i32 endVal = longLen + 1;
-    i32 sgnInc = 1;
+    auto sgnInc = 1;
 
     // Adjust direction increment based on longLen sign
     if (longLen < 0)
@@ -3626,26 +3626,26 @@ void ImageDrawLine(Image *dst, i32 startPosX, i32 startPosY, i32 endPosX, i32 en
 }
 
 // Draw line within an image (Vector version)
-void ImageDrawLineV(Image *dst, vec2 start, vec2 end, Color color)
+void ImageDrawLineV(const Image *dst, const vec2 start, const vec2 end, const Color color)
 {
     // Round start and end positions to nearest integer coordinates
-    const i32 x1 = static_cast<i32>(start.x + 0.5f);
-    const i32 y1 = static_cast<i32>(start.y + 0.5f);
-    const i32 x2 = static_cast<i32>(end.x + 0.5f);
-    const i32 y2 = static_cast<i32>(end.y + 0.5f);
+    const auto x1 = static_cast<i32>(start.x + 0.5f);
+    const auto y1 = static_cast<i32>(start.y + 0.5f);
+    const auto x2 = static_cast<i32>(end.x + 0.5f);
+    const auto y2 = static_cast<i32>(end.y + 0.5f);
 
     // Draw a vertical line using ImageDrawLine function
     ImageDrawLine(dst, x1, y1, x2, y2, color);
 }
 
 // Draw a line defining thickness within an image
-void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, i32 thick, Color color)
+void ImageDrawLineEx(const Image *dst, const vec2 start, const vec2 end, const i32 thick, const Color color)
 {
     // Round start and end positions to nearest integer coordinates
-    const i32 x1 = static_cast<i32>(start.x + 0.5f);
-    const i32 y1 = static_cast<i32>(start.y + 0.5f);
-    const i32 x2 = static_cast<i32>(end.x + 0.5f);
-    const i32 y2 = static_cast<i32>(end.y + 0.5f);
+    const auto x1 = static_cast<i32>(start.x + 0.5f);
+    const auto y1 = static_cast<i32>(start.y + 0.5f);
+    const auto x2 = static_cast<i32>(end.x + 0.5f);
+    const auto y2 = static_cast<i32>(end.y + 0.5f);
 
     // Calculate differences in x and y coordinates
     const i32 dx = x2 - x1;
@@ -3693,7 +3693,7 @@ void ImageDrawLineEx(Image *dst, vec2 start, vec2 end, i32 thick, Color color)
 }
 
 // Draw a lines sequence within an image
-void ImageDrawLineStrip(Image *dst, const vec2 *points, i32 pointCount, Color color)
+void ImageDrawLineStrip(const Image *dst, const vec2 *points, const i32 pointCount, const Color color)
 {
     for (i32 i = 0; i < pointCount - 1; i++)
     {
@@ -3702,14 +3702,14 @@ void ImageDrawLineStrip(Image *dst, const vec2 *points, i32 pointCount, Color co
 }
 
 // Draw triangle within an image
-void ImageDrawTriangle(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
+void ImageDrawTriangle(const Image *dst, const vec2 v1, const vec2 v2, const vec2 v3, const Color color)
 {
     // Calculate the 2D bounding box of the triangle
     // Determine the minimum and maximum x and y coordinates of the triangle vertices
-    i32 xMin = static_cast<i32>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
-    i32 yMin = static_cast<i32>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
-    i32 xMax = static_cast<i32>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
-    i32 yMax = static_cast<i32>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
+    auto xMin = static_cast<i32>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
+    auto yMin = static_cast<i32>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
+    auto xMax = static_cast<i32>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
+    auto yMax = static_cast<i32>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
 
     // Clamp the bounding box to the image dimensions
     if (xMin < 0) xMin = 0;
@@ -3737,9 +3737,9 @@ void ImageDrawTriangle(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
     }
 
     // Calculate the initial barycentric coordinates for the top-left point of the bounding box
-    i32 w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
-    i32 w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
-    i32 w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
+    auto w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
+    auto w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
+    auto w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
 
     // Rasterization loop
     // Iterate through each pixel in the bounding box
@@ -3769,14 +3769,14 @@ void ImageDrawTriangle(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
 }
 
 // Draw triangle with interpolated colors within an image
-void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, Color c2, Color c3)
+void ImageDrawTriangleGradient(const Image *dst, const vec2 v1, const vec2 v2, const vec2 v3, const Color c1, const Color c2, const Color c3)
 {
     // Calculate the 2D bounding box of the triangle
     // Determine the minimum and maximum x and y coordinates of the triangle vertices
-    i32 xMin = static_cast<i32>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
-    i32 yMin = static_cast<i32>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
-    i32 xMax = static_cast<i32>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
-    i32 yMax = static_cast<i32>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
+    auto xMin = static_cast<i32>((v1.x < v2.x)? ((v1.x < v3.x)? v1.x : v3.x) : ((v2.x < v3.x)? v2.x : v3.x));
+    auto yMin = static_cast<i32>((v1.y < v2.y)? ((v1.y < v3.y)? v1.y : v3.y) : ((v2.y < v3.y)? v2.y : v3.y));
+    auto xMax = static_cast<i32>((v1.x > v2.x)? ((v1.x > v3.x)? v1.x : v3.x) : ((v2.x > v3.x)? v2.x : v3.x));
+    auto yMax = static_cast<i32>((v1.y > v2.y)? ((v1.y > v3.y)? v1.y : v3.y) : ((v2.y > v3.y)? v2.y : v3.y));
 
     // Clamp the bounding box to the image dimensions
     if (xMin < 0) xMin = 0;
@@ -3804,9 +3804,9 @@ void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, 
     }
 
     // Calculate the initial barycentric coordinates for the top-left point of the bounding box
-    i32 w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
-    i32 w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
-    i32 w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
+    auto w1Row = static_cast<i32>((xMin - v2.x)*w1XStep + w1YStep*(yMin - v2.y));
+    auto w2Row = static_cast<i32>((xMin - v3.x)*w2XStep + w2YStep*(yMin - v3.y));
+    auto w3Row = static_cast<i32>((xMin - v1.x)*w3XStep + w3YStep*(yMin - v1.y));
 
     // Calculate the inverse of the sum of the barycentric coordinates for normalization
     const f32 wInvSum = 255.0f/(w1Row + w2Row + w3Row);
@@ -3830,7 +3830,7 @@ void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, 
                 const u8 aW3 = static_cast<u8>(static_cast<f32>(w3)*wInvSum);
 
                 // Interpolate the color using the barycentric coordinates
-                Color finalColor = { 0 };
+                auto finalColor = Color{ 0 };
                 finalColor.r = (c1.r*aW1 + c2.r*aW2 + c3.r*aW3)/255;
                 finalColor.g = (c1.g*aW1 + c2.g*aW2 + c3.g*aW3)/255;
                 finalColor.b = (c1.b*aW1 + c2.b*aW2 + c3.b*aW3)/255;
@@ -3854,7 +3854,7 @@ void ImageDrawTriangleGradient(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color c1, 
 }
 
 // Draw triangle outline within an image
-void ImageDrawTriangleLines(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
+void ImageDrawTriangleLines(const Image *dst, const vec2 v1, const vec2 v2, const vec2 v3, const Color color)
 {
     ImageDrawLine(dst, static_cast<i32>(v1.x), static_cast<i32>(v1.y), static_cast<i32>(v2.x), static_cast<i32>(v2.y), color);
     ImageDrawLine(dst, static_cast<i32>(v2.x), static_cast<i32>(v2.y), static_cast<i32>(v3.x), static_cast<i32>(v3.y), color);
@@ -3862,7 +3862,7 @@ void ImageDrawTriangleLines(Image *dst, vec2 v1, vec2 v2, vec2 v3, Color color)
 }
 
 // Draw a triangle fan defined by points within an image (first vertex is the center)
-void ImageDrawTriangleFan(Image *dst, const vec2 *points, i32 pointCount, Color color)
+void ImageDrawTriangleFan(const Image *dst, const vec2 *points, const i32 pointCount, const Color color)
 {
     if (pointCount >= 3)
     {
@@ -3874,7 +3874,7 @@ void ImageDrawTriangleFan(Image *dst, const vec2 *points, i32 pointCount, Color 
 }
 
 // Draw a triangle strip defined by points within an image
-void ImageDrawTriangleStrip(Image *dst, const vec2 *points, i32 pointCount, Color color)
+void ImageDrawTriangleStrip(const Image *dst, const vec2 *points, const i32 pointCount, const Color color)
 {
     if (pointCount >= 3)
     {
@@ -3887,19 +3887,19 @@ void ImageDrawTriangleStrip(Image *dst, const vec2 *points, i32 pointCount, Colo
 }
 
 // Draw rectangle within an image
-void ImageDrawRectangle(Image *dst, i32 posX, i32 posY, i32 width, i32 height, Color color)
+void ImageDrawRectangle(const Image *dst, const i32 posX, const i32 posY, const i32 width, const i32 height, const Color color)
 {
     ImageDrawRectangleRec(dst, Rectangle{ static_cast<f32>(posX), static_cast<f32>(posY), static_cast<f32>(width), static_cast<f32>(height) }, color);
 }
 
 // Draw rectangle within an image (Vector version)
-void ImageDrawRectangleV(Image *dst, vec2 position, vec2 size, Color color)
+void ImageDrawRectangleV(const Image *dst, const vec2 position, const vec2 size, const Color color)
 {
     ImageDrawRectangle(dst, static_cast<i32>(position.x), static_cast<i32>(position.y), static_cast<i32>(size.x), static_cast<i32>(size.y), color);
 }
 
 // Draw rectangle within an image
-void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color)
+void ImageDrawRectangleRec(const Image *dst, Rectangle rec, const Color color)
 {
     // Security check to avoid program crash
     if ((dst->data == nullptr) || (dst->width == 0) || (dst->height == 0)) return;
@@ -3918,10 +3918,10 @@ void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color)
     if ((rec.x >= dst->width) || (rec.y >= dst->height)) return;
     if (((rec.x + rec.width) <= 0) || (rec.y + rec.height <= 0)) return;
 
-    const i32 sy = static_cast<i32>(rec.y);
-    const i32 sx = static_cast<i32>(rec.x);
+    const auto sy = static_cast<i32>(rec.y);
+    const auto sx = static_cast<i32>(rec.x);
 
-    const i32 bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
+    const auto bytesPerPixel = GetPixelDataSize(1, 1, dst->format);
 
     // Fill in the first pixel of the first row based on image format
     ImageDrawPixel(dst, sx, sy, color);
@@ -3945,7 +3945,7 @@ void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color)
 }
 
 // Draw a color-filled rectangle with pro parameters within and image
-void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, f32 rotation, Color color)
+void ImageDrawRectanglePro(const Image *dst, const Rectangle rec, const vec2 origin, const f32 rotation, const Color color)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (rec.width <= 0) || (rec.height <= 0)) return;
@@ -3988,10 +3988,10 @@ void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, f32 rotation,
     }
 
     // Convert bounding box to integer pixel bounds
-    i32 x0 = static_cast<i32>(floorf(minX));
-    i32 y0 = static_cast<i32>(floorf(minY));
-    i32 xEnd = static_cast<i32>(ceilf(maxX));
-    i32 yEnd = static_cast<i32>(ceilf(maxY));
+    auto x0 = static_cast<i32>(floorf(minX));
+    auto y0 = static_cast<i32>(floorf(minY));
+    auto xEnd = static_cast<i32>(ceilf(maxX));
+    auto yEnd = static_cast<i32>(ceilf(maxY));
 
     // Limit drawing to image bounds
     if (x0 < 0) x0 = 0;
@@ -4026,14 +4026,14 @@ void ImageDrawRectanglePro(Image *dst, Rectangle rec, vec2 origin, f32 rotation,
 }
 
 // Draw rectangle lines within an image
-void ImageDrawRectangleLines(Image *dst, i32 posX, i32 posY, i32 width, i32 height, Color color)
+void ImageDrawRectangleLines(const Image *dst, const i32 posX, const i32 posY, const i32 width, const i32 height, const Color color)
 {
-    const Rectangle rec = { static_cast<f32>(posX), static_cast<f32>(posY), static_cast<f32>(width), static_cast<f32>(height) };
+    const auto rec = Rectangle{ static_cast<f32>(posX), static_cast<f32>(posY), static_cast<f32>(width), static_cast<f32>(height) };
     ImageDrawRectangleLinesEx(dst, rec, 1, color);
 }
 
 // Draw rectangle lines within an image with line thickness
-void ImageDrawRectangleLinesEx(Image *dst, Rectangle rec, i32 thick, Color color)
+void ImageDrawRectangleLinesEx(const Image *dst, const Rectangle rec, const i32 thick, const Color color)
 {
     ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y), static_cast<i32>(rec.width), thick, color);
     ImageDrawRectangle(dst, static_cast<i32>(rec.x), static_cast<i32>(rec.y + thick), thick, static_cast<i32>(rec.height - thick*2), color);
@@ -4042,15 +4042,15 @@ void ImageDrawRectangleLinesEx(Image *dst, Rectangle rec, i32 thick, Color color
 }
 
 // Draw rectangle with gradient colors within an image, counter-clockwise color order
-void ImageDrawRectangleGradientEx(Image *dst, Rectangle rec, Color col1, Color col2, Color col3, Color col4)
+void ImageDrawRectangleGradientEx(const Image *dst, const Rectangle rec, const Color col1, const Color col2, const Color col3, const Color col4)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (rec.width <= 0) || (rec.height <= 0)) return;
 
-    i32 x0 = static_cast<i32>(floorf(rec.x));
-    i32 y0 = static_cast<i32>(floorf(rec.y));
-    i32 x1 = static_cast<i32>(ceilf(rec.x + rec.width));
-    i32 y1 = static_cast<i32>(ceilf(rec.y + rec.height));
+    auto x0 = static_cast<i32>(floorf(rec.x));
+    auto y0 = static_cast<i32>(floorf(rec.y));
+    auto x1 = static_cast<i32>(ceilf(rec.x + rec.width));
+    auto y1 = static_cast<i32>(ceilf(rec.y + rec.height));
 
     // Limit draw to image bounds
     if (x0 < 0) x0 = 0;
@@ -4093,9 +4093,9 @@ void ImageDrawRectangleGradientEx(Image *dst, Rectangle rec, Color col1, Color c
 }
 
 // Draw circle within an image
-void ImageDrawCircle(Image *dst, i32 centerX, i32 centerY, i32 radius, Color color)
+void ImageDrawCircle(const Image *dst, const i32 centerX, const i32 centerY, const i32 radius, const Color color)
 {
-    i32 x = 0;
+    auto x = 0;
     i32 y = radius;
     i32 decesionParameter = 3 - 2*radius;
 
@@ -4117,15 +4117,15 @@ void ImageDrawCircle(Image *dst, i32 centerX, i32 centerY, i32 radius, Color col
 }
 
 // Draw circle within an image (Vector version)
-void ImageDrawCircleV(Image *dst, vec2 center, i32 radius, Color color)
+void ImageDrawCircleV(const Image *dst, const vec2 center, const i32 radius, const Color color)
 {
     ImageDrawCircle(dst, static_cast<i32>(center.x), static_cast<i32>(center.y), radius, color);
 }
 
 // Draw circle outline within an image
-void ImageDrawCircleLines(Image *dst, i32 centerX, i32 centerY, i32 radius, Color color)
+void ImageDrawCircleLines(const Image *dst, const i32 centerX, const i32 centerY, const i32 radius, const Color color)
 {
-    i32 x = 0;
+    auto x = 0;
     i32 y = radius;
     i32 decesionParameter = 3 - 2*radius;
 
@@ -4151,21 +4151,21 @@ void ImageDrawCircleLines(Image *dst, i32 centerX, i32 centerY, i32 radius, Colo
 }
 
 // Draw circle outline within an image (Vector version)
-void ImageDrawCircleLinesV(Image *dst, vec2 center, i32 radius, Color color)
+void ImageDrawCircleLinesV(const Image *dst, const vec2 center, const i32 radius, const Color color)
 {
     ImageDrawCircleLines(dst, static_cast<i32>(center.x), static_cast<i32>(center.y), radius, color);
 }
 
 // Draw a gradient-filled circle within an image
-void ImageDrawCircleGradient(Image *dst, vec2 center, f32 radius, Color inner, Color outer)
+void ImageDrawCircleGradient(const Image *dst, const vec2 center, const f32 radius, const Color inner, const Color outer)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (radius <= 0.0f)) return;
 
-    i32 x0 = static_cast<i32>(floorf(center.x - radius));
-    i32 y0 = static_cast<i32>(floorf(center.y - radius));
-    i32 x1 = static_cast<i32>(ceilf(center.x + radius));
-    i32 y1 = static_cast<i32>(ceilf(center.y + radius));
+    auto x0 = static_cast<i32>(floorf(center.x - radius));
+    auto y0 = static_cast<i32>(floorf(center.y - radius));
+    auto x1 = static_cast<i32>(ceilf(center.x + radius));
+    auto y1 = static_cast<i32>(ceilf(center.y + radius));
 
     // Limit drawing to image bounds
     if (x0 < 0) x0 = 0;
@@ -4207,16 +4207,16 @@ void ImageDrawCircleGradient(Image *dst, vec2 center, f32 radius, Color inner, C
 }
 
 // Draw an image within an image
-void ImageDrawImage(Image *dst, Image src, i32 posX, i32 posY, Color tint)
+void ImageDrawImage(const Image *dst, const Image src, const i32 posX, const i32 posY, const Color tint)
 {
-    const Rectangle srcRec = { 0.0f, 0.0f, static_cast<f32>(src.width), static_cast<f32>(src.height) };
-    const Rectangle dstRec = { static_cast<f32>(posX), static_cast<f32>(posY), srcRec.width, srcRec.height };
+    const auto srcRec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(src.width), static_cast<f32>(src.height) };
+    const auto dstRec = Rectangle{ static_cast<f32>(posX), static_cast<f32>(posY), srcRec.width, srcRec.height };
     ImageDrawImagePro(dst, src, srcRec, dstRec, vec2{ 0 }, 0.0f, tint);
 }
 
 // Draw an image with scaling and rotation within an image
 // NOTE: Rotation applied from top-left corner origin
-void ImageDrawImageEx(Image *dst, Image src, vec2 position, f32 rotation, f32 scale, Color tint)
+void ImageDrawImageEx(const Image *dst, const Image src, const vec2 position, const f32 rotation, const f32 scale, const Color tint)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (dst->width <= 0) || (dst->height <= 0) || (src.width <= 0) || (src.height <= 0)) return;
@@ -4248,10 +4248,10 @@ void ImageDrawImageEx(Image *dst, Image src, vec2 position, f32 rotation, f32 sc
         if (ry > maxY) maxY = ry;
     }
 
-    i32 x0 = static_cast<i32>(floorf(minX));
-    i32 y0 = static_cast<i32>(floorf(minY));
-    i32 x1 = static_cast<i32>(ceilf(maxX));
-    i32 y1 = static_cast<i32>(ceilf(maxY));
+    auto x0 = static_cast<i32>(floorf(minX));
+    auto y0 = static_cast<i32>(floorf(minY));
+    auto x1 = static_cast<i32>(ceilf(maxX));
+    auto y1 = static_cast<i32>(ceilf(maxY));
 
     // Limit drawing to destination bounds
     if (x0 < 0) x0 = 0;
@@ -4282,10 +4282,10 @@ void ImageDrawImageEx(Image *dst, Image src, vec2 position, f32 rotation, f32 sc
             if ((sx < 0.0f) || (sy < 0.0f) || (sx >= src.width) || (sy >= src.height)) continue;
 
             // Nearest-neighbor source sampling
-            const i32 srcX = static_cast<i32>(sx);
-            const i32 srcY = static_cast<i32>(sy);
+            const auto srcX = static_cast<i32>(sx);
+            const auto srcY = static_cast<i32>(sy);
 
-            const Color srcColor = GetImageColor(src, srcX, srcY);
+            const auto srcColor = GetImageColor(src, srcX, srcY);
 
             // Skip fully transparent pixels
             if (srcColor.a == 0) continue;
@@ -4293,7 +4293,7 @@ void ImageDrawImageEx(Image *dst, Image src, vec2 position, f32 rotation, f32 sc
             // Read destination pixel and blend source over it, applying tint
             // NOTE: ColorAlphaBlend() takes destination alpha into account,
             // same as ImageDrawImagePro(), required to draw on transparent images
-            const Color dstColor = GetImageColor(*dst, x, y);
+            const auto dstColor = GetImageColor(*dst, x, y);
 
             ImageDrawPixel(dst, x, y, ColorAlphaBlend(dstColor, srcColor, tint));
         }
@@ -4301,15 +4301,15 @@ void ImageDrawImageEx(Image *dst, Image src, vec2 position, f32 rotation, f32 sc
 }
 
 // Draw a part of an image defined by a rectangle within an image
-void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, vec2 position, Color tint)
+void ImageDrawImageRec(const Image *dst, const Image src, const Rectangle srcRec, const vec2 position, const Color tint)
 {
-    const Rectangle dstRec = { position.x, position.y, srcRec.width, srcRec.height };
+    const auto dstRec = Rectangle{ position.x, position.y, srcRec.width, srcRec.height };
     ImageDrawImagePro(dst, src, srcRec, dstRec, vec2{ 0 }, 0.0f, tint);
 }
 
 // Draw a part of an image defined by a rectangle into destination rectangle, with scaling and rotation, within an image
 // TODO: REVIEW: ImageDrawImagePro(), implement origin and rotation for image drawing
-void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, vec2 origin, f32 rotation, Color tint)
+void ImageDrawImagePro(const Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, const vec2 origin, const f32 rotation, const Color tint)
 {
     // Security checks to avoid program crash
     if ((dst == nullptr) || (dst->data == nullptr) || (dst->width == 0) || (dst->height == 0) ||
@@ -4318,9 +4318,9 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
     if (dst->format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "Image drawing not supported for compressed formats");
     else
     {
-        Image srcMod = { nullptr };       // Source copy (in case it was required)
+        auto srcMod = Image{ nullptr };       // Source copy (in case it was required)
         Image *srcPtr = &src;             // Pointer to source image
-        bool useSrcMod = false;           // Track source copy required
+        auto useSrcMod = false;           // Track source copy required
 
         // Source rectangle out-of-bounds security checks
         if (srcRec.x < 0) { srcRec.width += srcRec.x; srcRec.x = 0; }
@@ -4372,10 +4372,10 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
         //    [-] GetPixelColor(): Get vec4 instead of Color, easier for ColorAlphaBlend()
         //    [-] Support 16bit and 32bit (float) channels drawing
 
-        Color colSrc = { 0 };
-        Color colDst = { 0 };
-        Color colBlend = { 0 };
-        bool blendRequired = true;
+        auto colSrc = Color{ 0 };
+        auto colDst = Color{ 0 };
+        auto colBlend = Color{ 0 };
+        auto blendRequired = true;
 
         // Fast path: Avoid blend if source has no alpha to blend
         if ((tint.a == 255) &&
@@ -4388,10 +4388,10 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
             (srcPtr->format == PIXELFORMAT_UNCOMPRESSED_R16G16B16)))
             blendRequired = false;
 
-        const i32 strideDst = GetPixelDataSize(dst->width, 1, dst->format);
+        const auto strideDst = GetPixelDataSize(dst->width, 1, dst->format);
         const i32 bytesPerPixelDst = strideDst/(dst->width);
 
-        const i32 strideSrc = GetPixelDataSize(srcPtr->width, 1, srcPtr->format);
+        const auto strideSrc = GetPixelDataSize(srcPtr->width, 1, srcPtr->format);
         const i32 bytesPerPixelSrc = strideSrc/(srcPtr->width);
 
         u8 *pSrcBase = static_cast<u8 *>(srcPtr->data) + (static_cast<i32>(srcRec.y)*srcPtr->width + static_cast<i32>(srcRec.x))*bytesPerPixelSrc;
@@ -4460,7 +4460,7 @@ void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec
 }
 
 // Draw text (default font) within an image (destination)
-void ImageDrawText(Image *dst, std::string_view textView, i32 posX, i32 posY, i32 fontSize, Color color)
+void ImageDrawText(const Image *dst, std::string_view textView, const i32 posX, const i32 posY, const i32 fontSize, const Color color)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -4469,7 +4469,7 @@ void ImageDrawText(Image *dst, std::string_view textView, i32 posX, i32 posY, i3
     // Make sure default font is loaded to be used on image text drawing
     if (GetFontDefault().texture.id == 0) LoadFontDefault();
 
-    const vec2 position = { static_cast<f32>(posX), static_cast<f32>(posY) };
+    const auto position = vec2{ static_cast<f32>(posX), static_cast<f32>(posY) };
     ImageDrawTextEx(dst, GetFontDefault(), text, position, static_cast<f32>(fontSize), 1.0f, color);   // WARNING: Module required: rtext
 #else
     TRACELOG(LOG_WARNING, "IMAGE: ImageDrawText() requires module: rtext");
@@ -4477,15 +4477,15 @@ void ImageDrawText(Image *dst, std::string_view textView, i32 posX, i32 posY, i3
 }
 
 // Draw text (custom sprite font) within an image (destination)
-void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, vec2 position, f32 fontSize, f32 spacing, Color tint)
+void ImageDrawTextEx(const Image *dst, const Font font, std::string_view textView, const vec2 position, const f32 fontSize, const f32 spacing, const Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    const Image imText = ImageTextEx(font, text, fontSize, spacing, tint);
+    const auto imText = ImageTextEx(font, text, fontSize, spacing, tint);
 
-    const Rectangle srcRec = { 0.0f, 0.0f, static_cast<f32>(imText.width), static_cast<f32>(imText.height) };
-    const Rectangle dstRec = { position.x, position.y, static_cast<f32>(imText.width), static_cast<f32>(imText.height) };
+    const auto srcRec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(imText.width), static_cast<f32>(imText.height) };
+    const auto dstRec = Rectangle{ position.x, position.y, static_cast<f32>(imText.width), static_cast<f32>(imText.height) };
 
     ImageDrawImagePro(dst, imText, srcRec, dstRec, vec2{ 0 }, 0.0f, WHITE);
 
@@ -4493,7 +4493,7 @@ void ImageDrawTextEx(Image *dst, Font font, std::string_view textView, vec2 posi
 }
 
 // Draw text using Font and pro parameters (rotation)
-void ImageDrawTextPro(Image *dst, Font font, std::string_view textView, vec2 position, vec2 origin, f32 rotation, f32 fontSize, f32 spacing, Color tint)
+void ImageDrawTextPro(const Image *dst, const Font font, std::string_view textView, const vec2 position, const vec2 origin, const f32 rotation, const f32 fontSize, const f32 spacing, const Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -4510,9 +4510,9 @@ Texture2D LoadTexture(std::string_view fileNameView)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    Texture2D texture = { 0 };
+    auto texture = Texture2D{ 0 };
 
-    const Image image = LoadImage(fileName);
+    const auto image = LoadImage(fileName);
 
     if (image.data != nullptr)
     {
@@ -4525,9 +4525,9 @@ Texture2D LoadTexture(std::string_view fileNameView)
 
 // Load a texture from image data
 // NOTE: image is not unloaded, it must be done manually
-Texture2D LoadTextureFromImage(Image image)
+Texture2D LoadTextureFromImage(const Image image)
 {
-    Texture2D texture = { 0 };
+    auto texture = Texture2D{ 0 };
 
     if ((image.width != 0) && (image.height != 0))
     {
@@ -4544,9 +4544,9 @@ Texture2D LoadTextureFromImage(Image image)
 }
 
 // Load cubemap from image, multiple image cubemap layouts supported
-TextureCubemap LoadTextureCubemap(Image image, i32 layout)
+TextureCubemap LoadTextureCubemap(const Image image, i32 layout)
 {
-    TextureCubemap cubemap = { 0 };
+    auto cubemap = TextureCubemap{ 0 };
 
     if (layout == CUBEMAP_LAYOUT_AUTO_DETECT) // Try to automatically guess layout type
     {
@@ -4577,7 +4577,7 @@ TextureCubemap LoadTextureCubemap(Image image, i32 layout)
     {
         const i32 size = cubemap.width;
 
-        Image faces = { nullptr };                // Vertical column image
+        auto faces = Image{ nullptr };                // Vertical column image
         Rectangle faceRecs[6] = { 0 };            // Face source rectangles
 
         for (i32 i = 0; i < 6; i++) faceRecs[i] = Rectangle{ 0, 0, static_cast<f32>(size), static_cast<f32>(size) };
@@ -4618,7 +4618,7 @@ TextureCubemap LoadTextureCubemap(Image image, i32 layout)
             faces = GenImageColor(size, size*6, MAGENTA);
             ImageFormat(&faces, image.format);
 
-            Image mipmapped = ImageCopy(image);
+            auto mipmapped = ImageCopy(image);
             if (image.mipmaps > 1)
             {
                 ImageMipmaps(&mipmapped);
@@ -4649,7 +4649,7 @@ TextureCubemap LoadTextureCubemap(Image image, i32 layout)
 }
 
 // Load RGBA texture for rendering (framebuffer)
-RenderTexture2D LoadRenderTexture(i32 width, i32 height)
+RenderTexture2D LoadRenderTexture(const i32 width, const i32 height)
 {
     return LoadRenderTextureEx(width, height, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
 }
@@ -4658,7 +4658,7 @@ RenderTexture2D LoadRenderTexture(i32 width, i32 height)
 // NOTE: Render texture is loaded by default with RGBA color attachment and depth RenderBuffer
 RLAPI RenderTexture2D LoadRenderTextureEx(i32 width, i32 height, i32 format)
 {
-    RenderTexture2D target = { 0 };
+    auto target = RenderTexture2D{ 0 };
 
     if (format >= PIXELFORMAT_COMPRESSED_DXT1_RGB)
     {
@@ -4701,9 +4701,9 @@ RLAPI RenderTexture2D LoadRenderTextureEx(i32 width, i32 height, i32 format)
 }
 
 // Check if texture is valid (loaded in GPU)
-bool IsTextureValid(Texture2D texture)
+bool IsTextureValid(const Texture2D texture)
 {
-    bool result = false;
+    auto result = false;
 
     if ((texture.id > 0) &&         // Validate OpenGL id (texture uploaded to GPU)
         (texture.width > 0) &&      // Validate texture width
@@ -4715,7 +4715,7 @@ bool IsTextureValid(Texture2D texture)
 }
 
 // Unload texture from GPU memory (VRAM)
-void UnloadTexture(Texture2D texture)
+void UnloadTexture(const Texture2D texture)
 {
     if (texture.id > 0)
     {
@@ -4726,9 +4726,9 @@ void UnloadTexture(Texture2D texture)
 }
 
 // Check if render texture is valid (loaded in GPU)
-bool IsRenderTextureValid(RenderTexture2D target)
+bool IsRenderTextureValid(const RenderTexture2D target)
 {
-    bool result = false;
+    auto result = false;
 
     if ((target.id > 0) &&                  // Validate OpenGL id (loaded on GPU)
         IsTextureValid(target.depth) &&     // Validate FBO depth texture/renderbuffer attachment
@@ -4738,7 +4738,7 @@ bool IsRenderTextureValid(RenderTexture2D target)
 }
 
 // Unload render texture from GPU memory (VRAM)
-void UnloadRenderTexture(RenderTexture2D target)
+void UnloadRenderTexture(const RenderTexture2D target)
 {
     if (target.id > 0)
     {
@@ -4757,7 +4757,7 @@ void UnloadRenderTexture(RenderTexture2D target)
 // Update GPU texture with new data
 // NOTE 1: pixels data must match texture.format
 // NOTE 2: pixels data must contain at least as many pixels as texture
-void UpdateTexture(Texture2D texture, const void *pixels)
+void UpdateTexture(const Texture2D texture, const void *pixels)
 {
     rlUpdateTexture(texture.id, 0, 0, texture.width, texture.height, texture.format, pixels);
 }
@@ -4766,7 +4766,7 @@ void UpdateTexture(Texture2D texture, const void *pixels)
 // NOTE 1: pixels data must match texture.format
 // NOTE 2: pixels data must contain as many pixels as rec contains
 // NOTE 3: rec must fit completely within texture's width and height
-void UpdateTextureRec(Texture2D texture, Rectangle rec, const void *pixels)
+void UpdateTextureRec(const Texture2D texture, const Rectangle rec, const void *pixels)
 {
     rlUpdateTexture(texture.id, static_cast<i32>(rec.x), static_cast<i32>(rec.y), static_cast<i32>(rec.width), static_cast<i32>(rec.height), texture.format, pixels);
 }
@@ -4783,7 +4783,7 @@ void GenTextureMipmaps(Texture2D *texture)
 }
 
 // Set texture scaling filter mode
-void SetTextureFilter(Texture2D texture, i32 filter)
+void SetTextureFilter(const Texture2D texture, const i32 filter)
 {
     switch (filter)
     {
@@ -4849,7 +4849,7 @@ void SetTextureFilter(Texture2D texture, i32 filter)
 }
 
 // Set texture wrapping mode
-void SetTextureWrap(Texture2D texture, i32 wrap)
+void SetTextureWrap(const Texture2D texture, const i32 wrap)
 {
     switch (wrap)
     {
@@ -4882,48 +4882,48 @@ void SetTextureWrap(Texture2D texture, i32 wrap)
 // Texture drawing functions
 //------------------------------------------------------------------------------------
 // Draw a texture
-void DrawTexture(Texture2D texture, i32 posX, i32 posY, Color tint)
+void DrawTexture(const Texture2D texture, const i32 posX, const i32 posY, const Color tint)
 {
     DrawTextureEx(texture, vec2{ static_cast<f32>(posX), static_cast<f32>(posY) }, 0.0f, 1.0f, tint);
 }
 
 // Draw a texture with position defined as vec2
-void DrawTextureV(Texture2D texture, vec2 position, Color tint)
+void DrawTextureV(const Texture2D texture, const vec2 position, const Color tint)
 {
     DrawTextureEx(texture, position, 0.0f, 1.0f, tint);
 }
 
 // Draw a texture with rotation and scale
 // NOTE: Rotation applied from top-left corner origin
-void DrawTextureEx(Texture2D texture, vec2 position, f32 rotation, f32 scale, Color tint)
+void DrawTextureEx(const Texture2D texture, const vec2 position, const f32 rotation, const f32 scale, const Color tint)
 {
-    const Rectangle srcrec = { 0.0f, 0.0f, static_cast<f32>(texture.width), static_cast<f32>(texture.height) };
-    const Rectangle dstrec = { position.x, position.y, static_cast<f32>(texture.width)*scale, static_cast<f32>(texture.height)*scale };
-    const vec2 origin = { 0.0f, 0.0f };
+    const auto srcrec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(texture.width), static_cast<f32>(texture.height) };
+    const auto dstrec = Rectangle{ position.x, position.y, static_cast<f32>(texture.width)*scale, static_cast<f32>(texture.height)*scale };
+    const auto origin = vec2{ 0.0f, 0.0f };
 
     DrawTexturePro(texture, srcrec, dstrec, origin, rotation, tint);
 }
 
 // Draw a part of a texture (defined by a rectangle)
-void DrawTextureRec(Texture2D texture, Rectangle rec, vec2 position, Color tint)
+void DrawTextureRec(const Texture2D texture, const Rectangle rec, const vec2 position, const Color tint)
 {
-    const Rectangle dstrec = { position.x, position.y, fabsf(rec.width), fabsf(rec.height) };
-    const vec2 origin = { 0.0f, 0.0f };
+    const auto dstrec = Rectangle{ position.x, position.y, fabsf(rec.width), fabsf(rec.height) };
+    const auto origin = vec2{ 0.0f, 0.0f };
 
     DrawTexturePro(texture, rec, dstrec, origin, 0.0f, tint);
 }
 
 // Draw a part of a texture (defined by a rectangle) with 'pro' parameters
 // NOTE: origin is relative to destination rectangle size
-void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 origin, f32 rotation, Color tint)
+void DrawTexturePro(const Texture2D texture, Rectangle srcrec, Rectangle dstrec, const vec2 origin, const f32 rotation, const Color tint)
 {
     // Check if texture is valid
     if (texture.id > 0)
     {
-        const f32 width = static_cast<f32>(texture.width);
-        const f32 height = static_cast<f32>(texture.height);
+        const auto width = static_cast<f32>(texture.width);
+        const auto height = static_cast<f32>(texture.height);
 
-        bool flipX = false;
+        auto flipX = false;
 
         if (srcrec.width < 0) { flipX = true; srcrec.width *= -1; }
         if (srcrec.height < 0) srcrec.y -= srcrec.height;
@@ -5040,12 +5040,12 @@ void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, vec2 
 }
 
 // Draw a texture (or part of it) that stretches or shrinks nicely using n-patch info
-void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstrec, vec2 origin, f32 rotation, Color tint)
+void DrawTextureNPatch(const Texture2D texture, NPatchInfo nPatchInfo, const Rectangle dstrec, const vec2 origin, const f32 rotation, const Color tint)
 {
     if (texture.id > 0)
     {
-        const f32 width = static_cast<f32>(texture.width);
-        const f32 height = static_cast<f32>(texture.height);
+        const auto width = static_cast<f32>(texture.width);
+        const auto height = static_cast<f32>(texture.height);
 
         f32 patchWidth = (static_cast<i32>(dstrec.width) <= 0)? 0.0f : dstrec.width;
         f32 patchHeight = (static_cast<i32>(dstrec.height) <= 0)? 0.0f : dstrec.height;
@@ -5055,12 +5055,12 @@ void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstre
         if (nPatchInfo.layout == NPATCH_THREE_PATCH_HORIZONTAL) patchHeight = nPatchInfo.source.height;
         if (nPatchInfo.layout == NPATCH_THREE_PATCH_VERTICAL) patchWidth = nPatchInfo.source.width;
 
-        bool drawCenter = true;
-        bool drawMiddle = true;
-        f32 leftBorder = static_cast<f32>(nPatchInfo.left);
-        f32 topBorder = static_cast<f32>(nPatchInfo.top);
-        f32 rightBorder = static_cast<f32>(nPatchInfo.right);
-        f32 bottomBorder = static_cast<f32>(nPatchInfo.bottom);
+        auto drawCenter = true;
+        auto drawMiddle = true;
+        auto leftBorder = static_cast<f32>(nPatchInfo.left);
+        auto topBorder = static_cast<f32>(nPatchInfo.top);
+        auto rightBorder = static_cast<f32>(nPatchInfo.right);
+        auto bottomBorder = static_cast<f32>(nPatchInfo.bottom);
 
         // Adjust the lateral (left and right) border widths in case patchWidth < texture.width
         if (patchWidth <= (leftBorder + rightBorder) && nPatchInfo.layout != NPATCH_THREE_PATCH_VERTICAL)
@@ -5243,9 +5243,9 @@ void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstre
 }
 
 // Check if two colors are equal
-bool ColorIsEqual(Color col1, Color col2)
+bool ColorIsEqual(const Color col1, const Color col2)
 {
-    bool result = false;
+    auto result = false;
 
     if ((col1.r == col2.r) && (col1.g == col2.g) && (col1.b == col2.b) && (col1.a == col2.a)) result = true;
 
@@ -5253,7 +5253,7 @@ bool ColorIsEqual(Color col1, Color col2)
 }
 
 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
-Color Fade(Color color, f32 alpha)
+Color Fade(const Color color, f32 alpha)
 {
     Color result = color;
 
@@ -5266,9 +5266,9 @@ Color Fade(Color color, f32 alpha)
 }
 
 // Get hexadecimal value for a Color
-i32 ColorToInt(Color color)
+i32 ColorToInt(const Color color)
 {
-    i32 result = 0;
+    auto result = 0;
 
     result = static_cast<i32>((static_cast<u32>(color.r) << 24) |
                    (static_cast<u32>(color.g) << 16) |
@@ -5279,7 +5279,7 @@ i32 ColorToInt(Color color)
 }
 
 // Get color normalized as float [0..1]
-vec4 ColorNormalize(Color color)
+vec4 ColorNormalize(const Color color)
 {
     vec4 result;
 
@@ -5292,7 +5292,7 @@ vec4 ColorNormalize(Color color)
 }
 
 // Get color from normalized values [0..1]
-Color ColorFromNormalized(vec4 normalized)
+Color ColorFromNormalized(const vec4 normalized)
 {
     Color result;
 
@@ -5306,13 +5306,13 @@ Color ColorFromNormalized(vec4 normalized)
 
 // Get HSV values for a Color
 // NOTE: Hue is returned as degrees [0..360]
-vec3 ColorToHSV(Color color)
+vec3 ColorToHSV(const Color color)
 {
     vec3 hsv{};
-    const vec3 rgb = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
-    f32 min = 0.0f;
-    f32 max = 0.0f;
-    f32 delta = 0.0f;
+    const auto rgb = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+    auto min = 0.0f;
+    auto max = 0.0f;
+    auto delta = 0.0f;
 
     min = (rgb.x < rgb.y)? rgb.x : rgb.y;
     min = (min < rgb.z)? min : rgb.z;
@@ -5363,9 +5363,9 @@ vec3 ColorToHSV(Color color)
 // NOTE: Color->HSV->Color conversion will not yield exactly the same color due to rounding errors
 // Hue is provided in degrees: [0..360]
 // Saturation/Value are provided normalized: [0.0f..1.0f]
-Color ColorFromHSV(f32 hue, f32 saturation, f32 value)
+Color ColorFromHSV(const f32 hue, const f32 saturation, const f32 value)
 {
-    Color color = { 0, 0, 0, 255 };
+    auto color = Color{ 0, 0, 0, 255 };
 
     // Red channel
     f32 k = fmodf((5.0f + hue/60.0f), 6);
@@ -5395,7 +5395,7 @@ Color ColorFromHSV(f32 hue, f32 saturation, f32 value)
 }
 
 // Get color multiplied with another color
-Color ColorTint(Color color, Color tint)
+Color ColorTint(const Color color, const Color tint)
 {
     Color result = color;
 
@@ -5413,16 +5413,16 @@ Color ColorTint(Color color, Color tint)
 }
 
 // Get color with brightness correction, brightness factor goes from -1.0f to 1.0f
-Color ColorBrightness(Color color, f32 factor)
+Color ColorBrightness(const Color color, f32 factor)
 {
     Color result = color;
 
     if (factor > 1.0f) factor = 1.0f;
     else if (factor < -1.0f) factor = -1.0f;
 
-    f32 red = static_cast<f32>(color.r);
-    f32 green = static_cast<f32>(color.g);
-    f32 blue = static_cast<f32>(color.b);
+    auto red = static_cast<f32>(color.r);
+    auto green = static_cast<f32>(color.g);
+    auto blue = static_cast<f32>(color.b);
 
     if (factor < 0.0f)
     {
@@ -5447,7 +5447,7 @@ Color ColorBrightness(Color color, f32 factor)
 
 // Get color with contrast correction
 // NOTE: Contrast values between -1.0f and 1.0f
-Color ColorContrast(Color color, f32 contrast)
+Color ColorContrast(const Color color, f32 contrast)
 {
     Color result = color;
 
@@ -5489,7 +5489,7 @@ Color ColorContrast(Color color, f32 contrast)
 }
 
 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
-Color ColorAlpha(Color color, f32 alpha)
+Color ColorAlpha(const Color color, f32 alpha)
 {
     Color result = color;
 
@@ -5502,7 +5502,7 @@ Color ColorAlpha(Color color, f32 alpha)
 }
 
 // Get src alpha-blended into dst color with tint
-Color ColorAlphaBlend(Color dst, Color src, Color tint)
+Color ColorAlphaBlend(const Color dst, Color src, const Color tint)
 {
     Color result = WHITE;
 
@@ -5535,9 +5535,9 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
     else if (src.a == 255) result = src;
     else
     {
-        vec4 fdst = ColorNormalize(dst);
-        vec4 fsrc = ColorNormalize(src);
-        vec4 ftint = ColorNormalize(tint);
+        auto fdst = ColorNormalize(dst);
+        auto fsrc = ColorNormalize(src);
+        auto ftint = ColorNormalize(tint);
         vec4 fout{};
 
         fout.w = fsrc.w + fdst.w*(1.0f - fsrc.w);
@@ -5557,9 +5557,9 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
 }
 
 // Get color lerp interpolation between two colors, factor [0.0f..1.0f]
-Color ColorLerp(Color color1, Color color2, f32 factor)
+Color ColorLerp(const Color color1, const Color color2, f32 factor)
 {
-    Color color = { 0 };
+    auto color = Color{ 0 };
 
     if (factor < 0.0f) factor = 0.0f;
     else if (factor > 1.0f) factor = 1.0f;
@@ -5573,7 +5573,7 @@ Color ColorLerp(Color color1, Color color2, f32 factor)
 }
 
 // Get a Color struct from hexadecimal value
-Color GetColor(u32 hexValue)
+Color GetColor(const u32 hexValue)
 {
     Color color;
 
@@ -5586,9 +5586,9 @@ Color GetColor(u32 hexValue)
 }
 
 // Get color from a pixel from certain format
-Color GetPixelColor(const void *srcPtr, i32 format)
+Color GetPixelColor(const void *srcPtr, const i32 format)
 {
-    Color color = { 0 };
+    auto color = Color{ 0 };
 
     switch (format)
     {
@@ -5681,15 +5681,15 @@ Color GetPixelColor(const void *srcPtr, i32 format)
 }
 
 // Set pixel color formatted into destination pointer
-void SetPixelColor(void *dstPtr, Color color, i32 format)
+void SetPixelColor(void *dstPtr, const Color color, const i32 format)
 {
     switch (format)
     {
         case PIXELFORMAT_UNCOMPRESSED_GRAYSCALE:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
-            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<u8 *>(dstPtr))[0] = gray;
 
@@ -5697,8 +5697,8 @@ void SetPixelColor(void *dstPtr, Color color, i32 format)
         case PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA:
         {
             // NOTE: Calculate grayscale equivalent color
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
-            const u8 gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto gray = static_cast<u8>((coln.x*0.299f + coln.y*0.587f + coln.z*0.114f)*255.0f);
 
             (static_cast<u8 *>(dstPtr))[0] = gray;
             (static_cast<u8 *>(dstPtr))[1] = color.a;
@@ -5707,11 +5707,11 @@ void SetPixelColor(void *dstPtr, Color color, i32 format)
         case PIXELFORMAT_UNCOMPRESSED_R5G6B5:
         {
             // NOTE: Calculate R5G6B5 equivalent color
-            const vec3 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
+            const auto coln = vec3{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f };
 
-            const u8 r = static_cast<u8>(round(coln.x*31.0f));
-            const u8 g = static_cast<u8>(round(coln.y*63.0f));
-            const u8 b = static_cast<u8>(round(coln.z*31.0f));
+            const auto r = static_cast<u8>(round(coln.x*31.0f));
+            const auto g = static_cast<u8>(round(coln.y*63.0f));
+            const auto b = static_cast<u8>(round(coln.z*31.0f));
 
             (static_cast<u16 *>(dstPtr))[0] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 5 | static_cast<u16>(b);
 
@@ -5719,11 +5719,11 @@ void SetPixelColor(void *dstPtr, Color color, i32 format)
         case PIXELFORMAT_UNCOMPRESSED_R5G5B5A1:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
+            const auto coln = vec4{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const u8 r = static_cast<u8>(round(coln.x*31.0f));
-            const u8 g = static_cast<u8>(round(coln.y*31.0f));
-            const u8 b = static_cast<u8>(round(coln.z*31.0f));
+            const auto r = static_cast<u8>(round(coln.x*31.0f));
+            const auto g = static_cast<u8>(round(coln.y*31.0f));
+            const auto b = static_cast<u8>(round(coln.z*31.0f));
             const u8 a = (coln.w > (static_cast<f32>(PIXELFORMAT_UNCOMPRESSED_R5G5B5A1_ALPHA_THRESHOLD)/255.0f))? 1 : 0;
 
             (static_cast<u16 *>(dstPtr))[0] = static_cast<u16>(r) << 11 | static_cast<u16>(g) << 6 | static_cast<u16>(b) << 1 | static_cast<u16>(a);
@@ -5732,12 +5732,12 @@ void SetPixelColor(void *dstPtr, Color color, i32 format)
         case PIXELFORMAT_UNCOMPRESSED_R4G4B4A4:
         {
             // NOTE: Calculate R5G5B5A1 equivalent color
-            const vec4 coln = { static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
+            const auto coln = vec4{ static_cast<f32>(color.r)/255.0f, static_cast<f32>(color.g)/255.0f, static_cast<f32>(color.b)/255.0f, static_cast<f32>(color.a)/255.0f };
 
-            const u8 r = static_cast<u8>(round(coln.x*15.0f));
-            const u8 g = static_cast<u8>(round(coln.y*15.0f));
-            const u8 b = static_cast<u8>(round(coln.z*15.0f));
-            const u8 a = static_cast<u8>(round(coln.w*15.0f));
+            const auto r = static_cast<u8>(round(coln.x*15.0f));
+            const auto g = static_cast<u8>(round(coln.y*15.0f));
+            const auto b = static_cast<u8>(round(coln.z*15.0f));
+            const auto a = static_cast<u8>(round(coln.w*15.0f));
 
             (static_cast<u16 *>(dstPtr))[0] = static_cast<u16>(r) << 12 | static_cast<u16>(g) << 8 | static_cast<u16>(b) << 4 | static_cast<u16>(a);
 
@@ -5763,10 +5763,10 @@ void SetPixelColor(void *dstPtr, Color color, i32 format)
 
 // Get pixel data size in bytes for certain format
 // NOTE: Size can be requested for Image or Texture data
-i32 GetPixelDataSize(i32 width, i32 height, i32 format)
+i32 GetPixelDataSize(const i32 width, const i32 height, const i32 format)
 {
-    i32 dataSize = 0;       // Size in bytes
-    i32 bpp = 0;            // Bits per pixel
+    auto dataSize = 0;       // Size in bytes
+    auto bpp = 0;            // Bits per pixel
     
     if ((width <= 0) || (height <= 0)) return dataSize;
     
@@ -5831,9 +5831,9 @@ i32 GetPixelDataSize(i32 width, i32 height, i32 format)
 //----------------------------------------------------------------------------------
 // Convert half-float (stored as unsigned short) to float
 // REF: https://stackoverflow.com/questions/1659440/32-bit-to-16-bit-floating-point-conversion/60047308#60047308
-static f32 HalfToFloat(u16 x)
+static f32 HalfToFloat(const u16 x)
 {
-    f32 result = 0.0f;
+    auto result = 0.0f;
 
     union {
         f32 fm;
@@ -5852,7 +5852,7 @@ static f32 HalfToFloat(u16 x)
 }
 
 // Convert float to half-float (stored as unsigned short)
-static u16 FloatToHalf(f32 x)
+static u16 FloatToHalf(const f32 x)
 {
     u16 result = 0;
 
@@ -5872,9 +5872,9 @@ static u16 FloatToHalf(f32 x)
 }
 
 // Get pixel data from image as vec4 array (float normalized)
-static vec4 *LoadImageDataNormalized(Image image)
+static vec4 *LoadImageDataNormalized(const Image image)
 {
-    vec4 *pixels = static_cast<vec4 *>(calloc(image.width*image.height, sizeof(vec4)));
+    auto pixels = static_cast<vec4 *>(calloc(image.width*image.height, sizeof(vec4)));
 
     if (image.format >= PIXELFORMAT_COMPRESSED_DXT1_RGB) TRACELOG(LOG_WARNING, "IMAGE: Pixel data retrieval not supported for compressed image formats");
     else

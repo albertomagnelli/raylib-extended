@@ -57,15 +57,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - strings management");
 
     TextParticle textParticles[MAX_TEXT_PARTICLES] = {};
-    i32 particleCount = 0;
+    auto particleCount = 0;
     TextParticle *grabbedTextParticle = nullptr;
-    vec2 pressOffset = {};
+    auto pressOffset = vec2{};
 
     PrepareFirstTextParticle("raylib => fun videogames programming!", textParticles, &particleCount);
 
@@ -77,8 +77,8 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const f32 delta = GetFrameTime();
-        const vec2 mousePos = GetMousePosition();
+        const auto delta = GetFrameTime();
+        const auto mousePos = GetMousePosition();
 
         // Checks if a text particle was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -315,8 +315,8 @@ void SliceTextParticle(TextParticle *tp, i32 particlePos, i32 sliceLength, TextP
 
 void SliceTextParticleByChar(TextParticle *tp, char charToSlice, TextParticle *tps, i32 *particleCount)
 {
-    std::vector<std::string> tokens = TextSplit(tp->text, charToSlice);
-    const i32 tokenCount = static_cast<i32>(tokens.size());
+    auto tokens = TextSplit(tp->text, charToSlice);
+    const auto tokenCount = static_cast<i32>(tokens.size());
 
     if (tokenCount > 1)
     {
@@ -357,8 +357,8 @@ void ShatterTextParticle(TextParticle *tp, i32 particlePos, TextParticle *tps, i
 
 void GlueTextParticles(TextParticle *grabbed, TextParticle *target, TextParticle *tps, i32 *particleCount)
 {
-    i32 p1 = -1;
-    i32 p2 = -1;
+    auto p1 = -1;
+    auto p2 = -1;
 
     for (i32 i = 0; i < *particleCount; i++)
     {

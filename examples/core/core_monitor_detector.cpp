@@ -37,14 +37,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - monitor detector");
 
     MonitorInfo monitors[MAX_MONITORS] = {};
-    i32 currentMonitorIndex = GetCurrentMonitor();
-    i32 monitorCount = 0;
+    auto currentMonitorIndex = GetCurrentMonitor();
+    auto monitorCount = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -55,11 +55,11 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         // Variables to find the max x and Y to calculate the scale
-        i32 maxWidth = 1;
-        i32 maxHeight = 1;
+        auto maxWidth = 1;
+        auto maxHeight = 1;
 
         // Monitor offset is to fix when monitor position x is negative
-        i32 monitorOffsetX = 0;
+        auto monitorOffsetX = 0;
 
         // Rebuild monitors array every frame
         monitorCount = GetMonitorCount();
@@ -95,7 +95,7 @@ i32 main()
         }
         else currentMonitorIndex = GetCurrentMonitor(); // Get currentMonitorIndex if manually moved
 
-        f32 monitorScale = 0.6f;
+        auto monitorScale = 0.6f;
 
         if (maxHeight > (maxWidth + monitorOffsetX)) monitorScale *= (static_cast<f32>(screenHeight)/static_cast<f32>(maxHeight));
         else monitorScale *= (static_cast<f32>(screenWidth)/static_cast<f32>(maxWidth + monitorOffsetX));
@@ -139,7 +139,7 @@ i32 main()
                 if (i == currentMonitorIndex)
                 {
                     DrawRectangleLinesEx(rec, 5, RED);
-                    const vec2 windowPosition = vec2{ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
+                    const auto windowPosition = vec2{ (GetWindowPosition().x + monitorOffsetX)*monitorScale  + 140, GetWindowPosition().y*monitorScale + 80 };
 
                     // Draw window position based on monitors
                     DrawRectangleV(windowPosition, vec2{screenWidth*monitorScale, screenHeight*monitorScale}, Fade(GREEN, 0.5));

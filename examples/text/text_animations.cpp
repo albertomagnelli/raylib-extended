@@ -39,17 +39,17 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - animations");
 
     char animations[3][MAX_TEXT_LENGTH] = { "Waving", "Flashing", "Shaking" };
     const i32 animationsSize = sizeof(animations)/sizeof(animations[0]);
-    i32 currentAnimation = 0;
+    auto currentAnimation = 0;
 
     AnimatedText text = { "This is an animated text!", { 200, 250 }, 24.0f, 6, 60 };
-    i32 frameCount = 0;
+    auto frameCount = 0;
 
     vec2 glyphPosition[MAX_TEXT_LENGTH] = {};
     u8 glyphAlpha[MAX_TEXT_LENGTH] = {};
@@ -107,8 +107,8 @@ i32 main()
                 for (u32 i = 0; i < TextLength(text.str); i++)
                 {
                     const f32 time = static_cast<i32>(frameCount + i*text.offset)%static_cast<i32>(text.duration);
-                    const f32 deltaX = static_cast<f32>(GetRandomValue(-text.delta/10, text.delta/10));
-                    const f32 deltaY = static_cast<f32>(GetRandomValue(-text.delta/10, text.delta/10));
+                    const auto deltaX = static_cast<f32>(GetRandomValue(-text.delta/10, text.delta/10));
+                    const auto deltaY = static_cast<f32>(GetRandomValue(-text.delta/10, text.delta/10));
 
                     if (time < (text.duration/2))
                     {

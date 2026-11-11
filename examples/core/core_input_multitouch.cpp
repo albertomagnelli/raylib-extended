@@ -26,8 +26,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input multitouch");
 
@@ -42,7 +42,7 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         // Get the touch point count ( how many fingers are touching the screen )
-        i32 tCount = GetTouchPointCount();
+        auto tCount = GetTouchPointCount();
         // Clamp touch points available ( set the maximum touch points allowed )
         if (tCount > MAX_TOUCH_POINTS) tCount = MAX_TOUCH_POINTS;
         // Get touch points positions

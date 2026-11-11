@@ -24,15 +24,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures");
 
-    vec2 touchPosition = { 0, 0 };
-    const Rectangle touchArea = { 220, 10, screenWidth - 230.0f, screenHeight - 20.0f };
+    auto touchPosition = vec2{ 0, 0 };
+    const auto touchArea = Rectangle{ 220, 10, screenWidth - 230.0f, screenHeight - 20.0f };
 
-    i32 gesturesCount = 0;
+    auto gesturesCount = 0;
     std::string gestureStrings[MAX_GESTURE_STRINGS];
 
     i32 currentGesture = GESTURE_NONE;

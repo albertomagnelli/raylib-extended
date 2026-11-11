@@ -31,13 +31,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - clipboard image");
 
     TextureCollection collection[MAX_TEXTURE_COLLECTION] = {};
-    i32 currentCollectionIndex = 0;
+    auto currentCollectionIndex = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ i32 main()
         if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_V) &&
             (currentCollectionIndex < MAX_TEXTURE_COLLECTION))
         {
-            const Image image = GetClipboardImage();
+            const auto image = GetClipboardImage();
 
             if (IsImageValid(image))
             {

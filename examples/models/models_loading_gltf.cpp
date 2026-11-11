@@ -29,13 +29,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading gltf");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 6.0f, 6.0f, 6.0f };         // Camera position
     camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -44,10 +44,10 @@ i32 main()
 
     // Load model
     const Model model = LoadModel("resources/models/gltf/robot.glb");
-    const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model world position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f }; // Set model world position
 
     // Load model animations
-    i32 animCount = 0;
+    auto animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/robot.glb", &animCount);
 
     // Animation playing variables

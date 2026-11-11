@@ -32,31 +32,31 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
-    constexpr f32 sunRadius = 4.0f;
-    constexpr f32 earthRadius = 0.6f;
-    constexpr f32 earthOrbitRadius = 8.0f;
-    constexpr f32 moonRadius = 0.16f;
-    constexpr f32 moonOrbitRadius = 1.5f;
+    constexpr auto sunRadius = 4.0f;
+    constexpr auto earthRadius = 0.6f;
+    constexpr auto earthOrbitRadius = 8.0f;
+    constexpr auto moonRadius = 0.16f;
+    constexpr auto moonOrbitRadius = 1.5f;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - rlgl solar system");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 16.0f, 16.0f, 16.0f };      // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    constexpr f32 rotationSpeed = 0.2f;         // General system rotation speed
+    constexpr auto rotationSpeed = 0.2f;         // General system rotation speed
 
-    f32 earthRotation = 0.0f;         // Rotation of earth around itself (days) in degrees
-    f32 earthOrbitRotation = 0.0f;    // Rotation of earth around the Sun (years) in degrees
-    f32 moonRotation = 0.0f;          // Rotation of moon around itself
-    f32 moonOrbitRotation = 0.0f;     // Rotation of moon around earth in degrees
+    auto earthRotation = 0.0f;         // Rotation of earth around itself (days) in degrees
+    auto earthOrbitRotation = 0.0f;    // Rotation of earth around the Sun (years) in degrees
+    auto moonRotation = 0.0f;          // Rotation of moon around itself
+    auto moonOrbitRotation = 0.0f;     // Rotation of moon around earth in degrees
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -132,8 +132,8 @@ i32 main()
 // NOTE: Sphere is drawn in world position ( 0, 0, 0 ) with radius 1.0f
 void DrawSphereBasic(Color color)
 {
-    constexpr i32 rings = 16;
-    constexpr i32 slices = 16;
+    constexpr auto rings = 16;
+    constexpr auto slices = 16;
 
     // Make sure there is enough space in the internal render batch
     // buffer to store all required vertex, batch is reseted if required

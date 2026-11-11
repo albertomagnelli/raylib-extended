@@ -26,8 +26,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font filters");
 
@@ -42,13 +42,13 @@ i32 main()
     // NOTE: On 2D drawing it won't be noticeable, it looks like FILTER_BILINEAR
     GenTextureMipmaps(&font.texture);
 
-    f32 fontSize = static_cast<f32>(font.baseSize);
-    vec2 fontPosition = { 40.0f, screenHeight/2.0f - 80.0f };
-    vec2 textSize = { 0.0f, 0.0f };
+    auto fontSize = static_cast<f32>(font.baseSize);
+    auto fontPosition = vec2{ 40.0f, screenHeight/2.0f - 80.0f };
+    auto textSize = vec2{ 0.0f, 0.0f };
 
     // Setup texture scaling filter
     SetTextureFilter(font.texture, TEXTURE_FILTER_POINT);
-    i32 currentFontFilter = 0;      // TEXTURE_FILTER_POINT
+    auto currentFontFilter = 0;      // TEXTURE_FILTER_POINT
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ i32 main()
         // Load a dropped TTF file dynamically (at current fontSize)
         if (IsFileDropped())
         {
-            FilePathList droppedFiles = LoadDroppedFiles();
+            auto droppedFiles = LoadDroppedFiles();
 
             // NOTE: We only support first ttf file dropped
             if (IsFileExtension(droppedFiles.paths[0], ".ttf"))

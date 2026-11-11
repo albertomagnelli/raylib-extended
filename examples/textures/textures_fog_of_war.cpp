@@ -39,12 +39,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - fog of war");
 
-    Map map = {};
+    auto map = Map{};
     map.tilesX = 25;
     map.tilesY = 15;
 
@@ -59,14 +59,14 @@ i32 main()
     for (u32 i = 0; i < map.tilesY*map.tilesX; i++) map.tileIds[i] = GetRandomValue(0, 1);
 
     // Player position on the screen (pixel coordinates, not tile coordinates)
-    vec2 playerPosition = { 180, 130 };
-    i32 playerTileX = 0;
-    i32 playerTileY = 0;
+    auto playerPosition = vec2{ 180, 130 };
+    auto playerTileX = 0;
+    auto playerTileY = 0;
 
     // Render texture to render fog of war
     // NOTE: To get an automatic smooth-fog effect we use a render texture to render fog
     // at a smaller size (one pixel per tile) and scale it on drawing with bilinear filtering
-    const RenderTexture2D fogOfWar = LoadRenderTexture(map.tilesX, map.tilesY);
+    const auto fogOfWar = LoadRenderTexture(map.tilesX, map.tilesY);
     SetTextureFilter(fogOfWar.texture, TEXTURE_FILTER_BILINEAR);
     SetTextureWrap(fogOfWar.texture, TEXTURE_WRAP_CLAMP);
 

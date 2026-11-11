@@ -37,21 +37,21 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - hilbert curve");
 
-    i32 order = 2;
-    f32 size = static_cast<f32>(GetScreenHeight());
-    i32 strokeCount = 0;
-    vec2 *hilbertPath = LoadHilbertPath(order, size, &strokeCount);
+    auto order = 2;
+    auto size = static_cast<f32>(GetScreenHeight());
+    auto strokeCount = 0;
+    auto hilbertPath = LoadHilbertPath(order, size, &strokeCount);
 
     i32 prevOrder = order;
-    i32 prevSize = static_cast<i32>(size);       // NOTE: Size from slider is float but for comparison we use int
-    i32 counter = 0;
-    f32 thick = 2.0f;
-    bool animate = true;
+    auto prevSize = static_cast<i32>(size);       // NOTE: Size from slider is float but for comparison we use int
+    auto counter = 0;
+    auto thick = 2.0f;
+    auto animate = true;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -132,7 +132,7 @@ static vec2 *LoadHilbertPath(i32 order, f32 size, i32 *strokeCount)
     const f32 len = size/N;
     *strokeCount = N*N;
 
-    vec2 *hilbertPath = static_cast<vec2 *>(calloc(*strokeCount, sizeof(vec2)));
+    auto hilbertPath = static_cast<vec2 *>(calloc(*strokeCount, sizeof(vec2)));
 
     for (i32 i = 0; i < *strokeCount; i++)
     {
@@ -163,8 +163,8 @@ static vec2 ComputeHilbertStep(i32 order, i32 index)
 
     i32 hilbertIndex = index&3;
     vec2 vect = hilbertPoints[hilbertIndex];
-    f32 temp = 0.0f;
-    i32 len = 0;
+    auto temp = 0.0f;
+    auto len = 0;
 
     for (i32 j = 1; j < order; j++)
     {

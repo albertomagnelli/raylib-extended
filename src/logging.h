@@ -31,22 +31,22 @@ enum class LogLevel : u8 {
 /// Empfaengt die fertig formatierte Zeile (ohne Zeilenumbruch).
 using LogCallback = void (*)(LogLevel level, std::string_view line, void* userData);
 
-void setLogLevel(LogLevel level) noexcept;
+void setLogLevel(const LogLevel level) noexcept;
 [[nodiscard]] LogLevel logLevel() noexcept;
 [[nodiscard]] bool logEnabled(LogLevel level) noexcept;
 
 /// Ersetzt die Konsolenausgabe. `nullptr` stellt `stderr` wieder her.
-void setLogCallback(LogCallback callback, void* userData = nullptr) noexcept;
+void setLogCallback(const LogCallback callback, void* userData = nullptr) noexcept;
 
 /// Oeffnet eine Logdatei (wird bei jedem Aufruf neu angelegt).
 [[nodiscard]] Status setLogFile(std::string_view path);
 void closeLogFile() noexcept;
 
 /// Schreibt eine bereits formatierte Zeile.
-void logMessage(LogLevel level, std::string_view message);
+void logMessage(const LogLevel level, const std::string_view message);
 
 template <class... Args>
-void log(LogLevel level, std::format_string<Args...> formatString, Args&&... args) {
+void log(const LogLevel level, const std::format_string<Args...> formatString, Args&&... args) {
     if (!logEnabled(level)) {
         return;
     }
@@ -54,31 +54,31 @@ void log(LogLevel level, std::format_string<Args...> formatString, Args&&... arg
 }
 
 template <class... Args>
-void trace(std::format_string<Args...> formatString, Args&&... args) {
+void trace(const std::format_string<Args...> formatString, Args&&... args) {
     log(LogLevel::trace, formatString, std::forward<Args>(args)...);
 }
 
 template <class... Args>
-void debug(std::format_string<Args...> formatString, Args&&... args) {
+void debug(const std::format_string<Args...> formatString, Args&&... args) {
     log(LogLevel::debug, formatString, std::forward<Args>(args)...);
 }
 
 template <class... Args>
-void info(std::format_string<Args...> formatString, Args&&... args) {
+void info(const std::format_string<Args...> formatString, Args&&... args) {
     log(LogLevel::info, formatString, std::forward<Args>(args)...);
 }
 
 template <class... Args>
-void warn(std::format_string<Args...> formatString, Args&&... args) {
+void warn(const std::format_string<Args...> formatString, Args&&... args) {
     log(LogLevel::warn, formatString, std::forward<Args>(args)...);
 }
 
 template <class... Args>
-void error(std::format_string<Args...> formatString, Args&&... args) {
+void error(const std::format_string<Args...> formatString, Args&&... args) {
     log(LogLevel::error, formatString, std::forward<Args>(args)...);
 }
 
 template <class... Args>
-void fatal(std::format_string<Args...> formatString, Args&&... args) {
+void fatal(const std::format_string<Args...> formatString, Args&&... args) {
     log(LogLevel::fatal, formatString, std::forward<Args>(args)...);
 }

@@ -39,8 +39,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     const char *voxFileNames[] = {
         "resources/models/vox/chr_knight.vox",
@@ -52,7 +52,7 @@ i32 main()
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading vox");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 10.0f, 10.0f, 10.0f };      // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -72,8 +72,8 @@ i32 main()
         TraceLog(LOG_INFO, TextFormat("[%s] Model file loaded in %.3f ms", voxFileNames[i], t1 - t0));
 
         // Compute model translation matrix to center model on draw position (0, 0 , 0)
-        const BoundingBox bb = GetModelBoundingBox(models[i]);
-        vec3 center = {};
+        const auto bb = GetModelBoundingBox(models[i]);
+        auto center = vec3{};
         center.x = bb.min.x + (((bb.max.x - bb.min.x)/2));
         center.z = bb.min.z + (((bb.max.z - bb.min.z)/2));
 
@@ -81,9 +81,9 @@ i32 main()
         models[i].transform = matTranslate;
     }
 
-    i32 currentModel = 0;
-    const vec3 modelpos = {};
-    vec3 camerarot = {};
+    auto currentModel = 0;
+    const auto modelpos = vec3{};
+    auto camerarot = vec3{};
 
     // Load voxel shader
     const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/voxel_lighting.vs", GLSL_VERSION),
@@ -122,7 +122,7 @@ i32 main()
         //----------------------------------------------------------------------------------
         if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE))
         {
-            const vec2 mouseDelta = GetMouseDelta();
+            const auto mouseDelta = GetMouseDelta();
             camerarot.x = mouseDelta.x*0.05f;
             camerarot.y = mouseDelta.y*0.05f;
         }

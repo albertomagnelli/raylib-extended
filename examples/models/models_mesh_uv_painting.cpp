@@ -54,12 +54,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh uv painting");
 
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ 0.0f, 3.5f, 6.5f };
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -67,23 +67,23 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // CPU-side canvas plus the GPU texture it gets pushed to after every stroke
-    Image canvasImage = GenImageColor(CANVAS_SIZE, CANVAS_SIZE, RAYWHITE);
-    const Texture2D canvasTexture = LoadTextureFromImage(canvasImage);
+    auto canvasImage = GenImageColor(CANVAS_SIZE, CANVAS_SIZE, RAYWHITE);
+    const auto canvasTexture = LoadTextureFromImage(canvasImage);
     SetTextureFilter(canvasTexture, TEXTURE_FILTER_BILINEAR);
 
-    Model model = {};
-    BoundingBox modelBBox = {};
+    auto model = Model{};
+    auto modelBBox = BoundingBox{};
     ShapeType currentShape = SHAPE_SPHERE;
     ChangeShape(&model, &modelBBox, &currentShape, SHAPE_SPHERE, canvasTexture);
 
     ToolMode currentTool = TOOL_PAINT;
     Color activeColor = RED;
-    i32 brushRadius = 12;
-    vec2 lastHitUV = {};
-    bool hasLastHit = false;
+    auto brushRadius = 12;
+    auto lastHitUV = vec2{};
+    auto hasLastHit = false;
 
     const Color palette[PALETTE_COUNT] = { RED, ORANGE, GOLD, LIME, SKYBLUE, PURPLE, DARKGRAY, WHITE };
-    const Rectangle uiPanelRec = { 10.0f, 10.0f, 230.0f, 490.0f };
+    const auto uiPanelRec = Rectangle{ 10.0f, 10.0f, 230.0f, 490.0f };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -93,28 +93,28 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mousePos = GetMousePosition();
-        const bool isMouseOverUI = CheckCollisionPointRec(mousePos, uiPanelRec);
+        const auto mousePos = GetMousePosition();
+        const auto isMouseOverUI = CheckCollisionPointRec(mousePos, uiPanelRec);
 
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) UpdateCamera(&camera, CAMERA_THIRD_PERSON);
 
         if (!isMouseOverUI && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
-            const Ray ray = GetScreenToWorldRay(mousePos, camera);
-            vec2 hitUV = {};
+            const auto ray = GetScreenToWorldRay(mousePos, camera);
+            auto hitUV = vec2{};
 
             if (GetMeshHitUV(ray, model, modelBBox, &hitUV))
             {
-                const i32 px = static_cast<i32>(hitUV.x * CANVAS_SIZE);
-                const i32 py = static_cast<i32>(hitUV.y * CANVAS_SIZE);
+                const auto px = static_cast<i32>(hitUV.x * CANVAS_SIZE);
+                const auto py = static_cast<i32>(hitUV.y * CANVAS_SIZE);
 
                 if (currentTool == TOOL_PAINT)
                 {
                     // Stroke from the last hit to this one, guarding against jumps across a UV seam
                     if (hasLastHit && (fabsf(hitUV.x - lastHitUV.x) < 0.25f) && (fabsf(hitUV.y - lastHitUV.y) < 0.25f))
                     {
-                        const i32 lastPx = static_cast<i32>(lastHitUV.x * CANVAS_SIZE);
-                        const i32 lastPy = static_cast<i32>(lastHitUV.y * CANVAS_SIZE);
+                        const auto lastPx = static_cast<i32>(lastHitUV.x * CANVAS_SIZE);
+                        const auto lastPy = static_cast<i32>(lastHitUV.y * CANVAS_SIZE);
                         const f32 dist = glm::distance(vec2{ static_cast<f32>(lastPx), static_cast<f32>(lastPy) }, vec2{ static_cast<f32>(px), static_cast<f32>(py) });
                         const i32 steps = static_cast<i32>(dist / 2.0f) + 1;
 
@@ -190,7 +190,7 @@ i32 main()
             DrawText("Palette Swatches:", 25, 225, 10, LIGHTGRAY);
             for (i32 i = 0; i < PALETTE_COUNT; i++)
             {
-                const Rectangle swatchRec = { 25.0f + (i%4)*48, 245.0f + (i/4)*45, 40.0f, 38.0f };
+                const auto swatchRec = Rectangle{ 25.0f + (i%4)*48, 245.0f + (i/4)*45, 40.0f, 38.0f };
                 DrawRectangleRec(swatchRec, palette[i]);
                 DrawRectangleLinesEx(swatchRec, 1.0f, WHITE);
                 if (CheckCollisionPointRec(mousePos, swatchRec) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) activeColor = palette[i];
@@ -242,7 +242,7 @@ static void ChangeShape(Model *model, BoundingBox *bbox, ShapeType *currentShape
 {
     UnloadModel(*model);
 
-    Mesh mesh = {};
+    auto mesh = Mesh{};
 
     switch (newShape)
     {
@@ -260,7 +260,7 @@ static void ChangeShape(Model *model, BoundingBox *bbox, ShapeType *currentShape
 
     model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = canvasTexture;
 
-    BoundingBox box = GetMeshBoundingBox(model->meshes[0]);
+    auto box = GetMeshBoundingBox(model->meshes[0]);
     box.min = vec3((model->transform)*vec4(box.min, 1.0f));
     box.max = vec3((model->transform)*vec4(box.max, 1.0f));
     *bbox = box;
@@ -276,8 +276,8 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, vec2 *outUV)
 
     const Mesh mesh = model.meshes[0];
     f32 closestDistance = 1e9f;
-    bool found = false;
-    vec2 hitUV = {};
+    auto found = false;
+    auto hitUV = vec2{};
 
     for (i32 tri = 0; tri < mesh.triangleCount; tri++)
     {
@@ -291,22 +291,22 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, vec2 *outUV)
         }
         else { i0 = 3*tri; i1 = 3*tri + 1; i2 = 3*tri + 2; }
 
-        const vec3 a = vec3((model.transform)*vec4(vec3{ mesh.vertices[3*i0], mesh.vertices[3*i0 + 1], mesh.vertices[3*i0 + 2] }, 1.0f));
-        const vec3 b = vec3((model.transform)*vec4(vec3{ mesh.vertices[3*i1], mesh.vertices[3*i1 + 1], mesh.vertices[3*i1 + 2] }, 1.0f));
-        const vec3 c = vec3((model.transform)*vec4(vec3{ mesh.vertices[3*i2], mesh.vertices[3*i2 + 1], mesh.vertices[3*i2 + 2] }, 1.0f));
+        const auto a = vec3((model.transform)*vec4(vec3{ mesh.vertices[3*i0], mesh.vertices[3*i0 + 1], mesh.vertices[3*i0 + 2] }, 1.0f));
+        const auto b = vec3((model.transform)*vec4(vec3{ mesh.vertices[3*i1], mesh.vertices[3*i1 + 1], mesh.vertices[3*i1 + 2] }, 1.0f));
+        const auto c = vec3((model.transform)*vec4(vec3{ mesh.vertices[3*i2], mesh.vertices[3*i2 + 1], mesh.vertices[3*i2 + 2] }, 1.0f));
 
-        const RayCollision hit = GetRayCollisionTriangle(ray, a, b, c);
+        const auto hit = GetRayCollisionTriangle(ray, a, b, c);
 
         if (hit.hit && (hit.distance < closestDistance))
         {
             closestDistance = hit.distance;
             found = true;
 
-            const vec2 uvA = { mesh.texcoords[2*i0], mesh.texcoords[2*i0 + 1] };
-            const vec2 uvB = { mesh.texcoords[2*i1], mesh.texcoords[2*i1 + 1] };
-            const vec2 uvC = { mesh.texcoords[2*i2], mesh.texcoords[2*i2 + 1] };
+            const auto uvA = vec2{ mesh.texcoords[2*i0], mesh.texcoords[2*i0 + 1] };
+            const auto uvB = vec2{ mesh.texcoords[2*i1], mesh.texcoords[2*i1 + 1] };
+            const auto uvC = vec2{ mesh.texcoords[2*i2], mesh.texcoords[2*i2 + 1] };
 
-            const vec3 w = Vector3Barycenter(hit.point, a, b, c);
+            const auto w = Vector3Barycenter(hit.point, a, b, c);
 
             hitUV.x = w.x*uvA.x + w.y*uvB.x + w.z*uvC.x;
             hitUV.y = w.x*uvA.y + w.y*uvB.y + w.z*uvC.y;

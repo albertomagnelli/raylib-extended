@@ -68,8 +68,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - outlines testbed");
 
@@ -78,21 +78,21 @@ i32 main()
 
     // User configurable options while running the program.
     f32 lineOpacity          = 130;
-    f32 lineThickness        = 4.0f;
-    f32 rectangleRoundness   = 0.4f;
+    auto lineThickness = 4.0f;
+    auto rectangleRoundness = 0.4f;
     f32 rectangleSegments    = 9;
-    f32 ellipseRadiusY       = 0.5f;
-    f32 circleStartAngle     = 20.0f;
-    f32 circleEndAngle       = 270.0f;
+    auto ellipseRadiusY = 0.5f;
+    auto circleStartAngle = 20.0f;
+    auto circleEndAngle = 270.0f;
     f32 circleSegments       = 36;
-    f32 ringInnerRadiusScale = 0.3f;
+    auto ringInnerRadiusScale = 0.3f;
     f32 polygonSides         = 6;
 
-    bool disableMouseControl = false;
+    auto disableMouseControl = false;
 
-    const Rectangle optionsBackground = { 510, 0, 290, 450 };
+    const auto optionsBackground = Rectangle{ 510, 0, 290, 450 };
 
-    const vec2 zoomPoint = {(static_cast<f32>(screenWidth) - optionsBackground.width)/2.0f, static_cast<f32>(screenHeight)/2.0f};
+    const auto zoomPoint = vec2{(static_cast<f32>(screenWidth) - optionsBackground.width)/2.0f, static_cast<f32>(screenHeight)/2.0f};
 
     GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, ColorToInt(WHITE));
 
@@ -104,8 +104,8 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mousePosScreen = GetMousePosition();
-        const vec2 mouseWheelVec = GetMouseWheelMoveV();
+        const auto mousePosScreen = GetMousePosition();
+        const auto mouseWheelVec = GetMouseWheelMoveV();
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosScreen, optionsBackground)) disableMouseControl = true;
 
@@ -113,25 +113,25 @@ i32 main()
 
         if (!disableMouseControl) {
             if (mouseWheelVec.y != 0.0f) {
-                const vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+                const auto prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
                 camera.zoom *= exp2f(MOUSE_CAMERA_ZOOM_SPEED*mouseWheelVec.y); // Constant zoom rate
                 camera.zoom = Clamp(camera.zoom, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 
-                const vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+                const auto worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
                 camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
             }
 
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                const vec2 mouseDelta = GetMouseDelta();
+                const auto mouseDelta = GetMouseDelta();
                 camera.target.x -= mouseDelta.x/camera.zoom;
                 camera.target.y -= mouseDelta.y/camera.zoom;
 
-                const i32 mouseMaxX = static_cast<i32>(optionsBackground.x);
+                const auto mouseMaxX = static_cast<i32>(optionsBackground.x);
                 const i32 mouseMaxY = screenHeight;
 
-                i32 newX = static_cast<i32>(mousePosScreen.x);
-                i32 newY = static_cast<i32>(mousePosScreen.y);
+                auto newX = static_cast<i32>(mousePosScreen.x);
+                auto newY = static_cast<i32>(mousePosScreen.y);
 
                 // In C, the '%' operator computes the remainder, we want the modulus
                 newX = (newX%mouseMaxX + mouseMaxX)%mouseMaxX;
@@ -148,33 +148,33 @@ i32 main()
 
         if (IsKeyDown(KEY_UP))
         {
-            const vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const auto prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
             camera.zoom *= exp2f(KEYBOARD_CAMERA_ZOOM_SPEED);
             camera.zoom = Clamp(camera.zoom, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 
-            const vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const auto worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
             camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
         }
         if (IsKeyDown(KEY_DOWN))
         {
-            const vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const auto prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
             camera.zoom *= exp2f(-KEYBOARD_CAMERA_ZOOM_SPEED);
             camera.zoom = Clamp(camera.zoom, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 
-            const vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const auto worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
             camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
         }
 
         if (IsKeyPressed(KEY_Z))
         {
-            const vec2 zoomPoint = {(static_cast<f32>(screenWidth) - optionsBackground.width)/2.0f, static_cast<f32>(screenHeight)/2.0f};
-            const vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const auto zoomPoint = vec2{(static_cast<f32>(screenWidth) - optionsBackground.width)/2.0f, static_cast<f32>(screenHeight)/2.0f};
+            const auto prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
             camera.zoom = 1.0f;
 
-            const vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const auto worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
             camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
         }
 
@@ -202,9 +202,9 @@ i32 main()
             const f32 ringOuterRadius = SHAPE_SIZE/2.0f;
             const f32 ringInnerRadius = ringOuterRadius*ringInnerRadiusScale;
 
-            const vec2 triangleVertex0Offset = { 0.0f, SHAPE_SIZE*0.8f };
-            const vec2 triangleVertex1Offset = { SHAPE_SIZE*0.6f, SHAPE_SIZE };
-            const vec2 triangleVertex2Offset = { SHAPE_SIZE, 0.0f };
+            const auto triangleVertex0Offset = vec2{ 0.0f, SHAPE_SIZE*0.8f };
+            const auto triangleVertex1Offset = vec2{ SHAPE_SIZE*0.6f, SHAPE_SIZE };
+            const auto triangleVertex2Offset = vec2{ SHAPE_SIZE, 0.0f };
 
             // ----------------------------------------
             // Draw*Lines()

@@ -48,7 +48,7 @@ typedef struct PenroseLSystem {
 // Global Variables Definition
 //----------------------------------------------------------------------------------
 static TurtleState turtleStack[TURTLE_STACK_MAX_SIZE];
-static i32 turtleTop = -1;
+static auto turtleTop = -1;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -67,19 +67,19 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - penrose tile");
 
-    constexpr f32 drawLength = 460.0f;
-    constexpr i32 minGenerations = 0;
-    constexpr i32 maxGenerations = 4;
-    i32 generations = 1;
+    constexpr auto drawLength = 460.0f;
+    constexpr auto minGenerations = 0;
+    constexpr auto maxGenerations = 4;
+    auto generations = 1;
 
     // Initialize new penrose tile
-    PenroseLSystem ls = LoadPenroseLSystem(drawLength*(generations/static_cast<f32>(maxGenerations)));
+    auto ls = LoadPenroseLSystem(drawLength*(generations/static_cast<f32>(maxGenerations)));
     for (i32 i = 0; i < generations; i++) BuildProductionStep(&ls);
 
     SetTargetFPS(120);              // Set our game to run at 120 frames-per-second
@@ -90,7 +90,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        bool rebuild = false;
+        auto rebuild = false;
         if (IsKeyPressed(KEY_UP))
         {
             if (generations < maxGenerations)
@@ -190,10 +190,10 @@ static void UnloadPenroseLSystem(PenroseLSystem ls)
 // Build next penrose step
 static void BuildProductionStep(PenroseLSystem *ls)
 {
-    char *newProduction = static_cast<char *>(malloc(sizeof(char)*STR_MAX_SIZE));
+    auto newProduction = static_cast<char *>(malloc(sizeof(char)*STR_MAX_SIZE));
     newProduction[0] = '\0';
 
-    const i32 productionLength = static_cast<i32>(strnlen(ls->production, STR_MAX_SIZE));
+    const auto productionLength = static_cast<i32>(strnlen(ls->production, STR_MAX_SIZE));
 
     for (i32 i = 0; i < productionLength; i++)
     {
@@ -209,7 +209,7 @@ static void BuildProductionStep(PenroseLSystem *ls)
             {
                 if (step != 'F')
                 {
-                    const i32 t = static_cast<i32>(strnlen(newProduction, STR_MAX_SIZE));
+                    const auto t = static_cast<i32>(strnlen(newProduction, STR_MAX_SIZE));
                     newProduction[t] = step;
                     newProduction[t + 1] = '\0';
                 }
@@ -226,15 +226,15 @@ static void BuildProductionStep(PenroseLSystem *ls)
 // Draw penrose tile lines
 static void DrawPenroseLSystem(PenroseLSystem *ls)
 {
-    const vec2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    const auto screenCenter = vec2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
     TurtleState turtle = {
         .origin = {},
         .angle = -90.0f
     };
 
-    i32 repeats = 1;
-    const i32 productionLength = static_cast<i32>(strnlen(ls->production, STR_MAX_SIZE));
+    auto repeats = 1;
+    const auto productionLength = static_cast<i32>(strnlen(ls->production, STR_MAX_SIZE));
     ls->steps += 12;
 
     if (ls->steps > productionLength) ls->steps = productionLength;
@@ -250,8 +250,8 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
                 const f32 radAngle = DEG2RAD*turtle.angle;
                 turtle.origin.x += ls->drawLength*cosf(radAngle);
                 turtle.origin.y += ls->drawLength*sinf(radAngle);
-                const vec2 startPosScreen = { startPosWorld.x + screenCenter.x, startPosWorld.y + screenCenter.y };
-                const vec2 endPosScreen = { turtle.origin.x + screenCenter.x, turtle.origin.y + screenCenter.y };
+                const auto startPosScreen = vec2{ startPosWorld.x + screenCenter.x, startPosWorld.y + screenCenter.y };
+                const auto endPosScreen = vec2{ turtle.origin.x + screenCenter.x, turtle.origin.y + screenCenter.y };
 
                 DrawLineEx(startPosScreen, endPosScreen, 2, Fade(BLACK, 0.2f));
             }

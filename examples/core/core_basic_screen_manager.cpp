@@ -29,8 +29,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - basic screen manager");
 
@@ -38,7 +38,7 @@ i32 main()
 
     // TODO: Initialize all required variables and load all required data here!
 
-    i32 framesCounter = 0;          // Useful to count frames
+    auto framesCounter = 0;          // Useful to count frames
 
     SetTargetFPS(60);               // Set desired framerate (frames-per-second)
     //--------------------------------------------------------------------------------------

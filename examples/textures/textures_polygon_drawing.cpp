@@ -32,8 +32,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - polygon drawing");
 
@@ -69,7 +69,7 @@ i32 main()
     // Load texture to be mapped to poly
     const Texture texture = LoadTexture("resources/cat.png");
 
-    f32 angle = 0.0f;             // Rotation angle (in degrees)
+    auto angle = 0.0f;             // Rotation angle (in degrees)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

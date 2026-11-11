@@ -28,44 +28,44 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh picking");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 20.0f, 20.0f, 20.0f };      // Camera position
     camera.target = vec3{ 0.0f, 8.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.6f, 0.0f };               // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    Ray ray = {};        // Picking ray
+    auto ray = Ray{};        // Picking ray
 
     const Model tower = LoadModel("resources/models/obj/turret.obj");                 // Load OBJ model
     const Texture2D texture = LoadTexture("resources/models/obj/turret_diffuse.png"); // Load model texture
     tower.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;                  // Set model diffuse texture
 
-    const vec3 towerPos = { 0.0f, 0.0f, 0.0f };                           // Set model position
-    const BoundingBox towerBBox = GetMeshBoundingBox(tower.meshes[0]);    // Get mesh bounding box
+    const auto towerPos = vec3{ 0.0f, 0.0f, 0.0f };                           // Set model position
+    const auto towerBBox = GetMeshBoundingBox(tower.meshes[0]);    // Get mesh bounding box
 
     // Ground quad
-    const vec3 g0 = vec3{ -50.0f, 0.0f, -50.0f };
-    const vec3 g1 = vec3{ -50.0f, 0.0f,  50.0f };
-    const vec3 g2 = vec3{  50.0f, 0.0f,  50.0f };
-    const vec3 g3 = vec3{  50.0f, 0.0f, -50.0f };
+    const auto g0 = vec3{ -50.0f, 0.0f, -50.0f };
+    const auto g1 = vec3{ -50.0f, 0.0f,  50.0f };
+    const auto g2 = vec3{  50.0f, 0.0f,  50.0f };
+    const auto g3 = vec3{  50.0f, 0.0f, -50.0f };
 
     // Test triangle
-    const vec3 ta = vec3{ -25.0f, 0.5f, 0.0f };
-    const vec3 tb = vec3{ -4.0f, 2.5f, 1.0f };
-    const vec3 tc = vec3{ -8.0f, 6.5f, 0.0f };
+    const auto ta = vec3{ -25.0f, 0.5f, 0.0f };
+    const auto tb = vec3{ -4.0f, 2.5f, 1.0f };
+    const auto tc = vec3{ -8.0f, 6.5f, 0.0f };
 
-    vec3 bary = { 0.0f, 0.0f, 0.0f };
+    auto bary = vec3{ 0.0f, 0.0f, 0.0f };
 
     // Test sphere
-    const vec3 sp = vec3{ -30.0f, 5.0f, 5.0f };
-    constexpr f32 sr = 4.0f;
+    const auto sp = vec3{ -30.0f, 5.0f, 5.0f };
+    constexpr auto sr = 4.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ i32 main()
         }
 
         // Display information about closest hit
-        RayCollision collision = {};
+        auto collision = RayCollision{};
         const char *hitObjectName = "None";
         collision.distance = FLT_MAX;
         collision.hit = false;
@@ -94,7 +94,7 @@ i32 main()
         ray = GetScreenToWorldRay(GetMousePosition(), camera);
 
         // Check ray collision against ground quad
-        const RayCollision groundHitInfo = GetRayCollisionQuad(ray, g0, g1, g2, g3);
+        const auto groundHitInfo = GetRayCollisionQuad(ray, g0, g1, g2, g3);
 
         if ((groundHitInfo.hit) && (groundHitInfo.distance < collision.distance))
         {
@@ -104,7 +104,7 @@ i32 main()
         }
 
         // Check ray collision against test triangle
-        const RayCollision triHitInfo = GetRayCollisionTriangle(ray, ta, tb, tc);
+        const auto triHitInfo = GetRayCollisionTriangle(ray, ta, tb, tc);
 
         if ((triHitInfo.hit) && (triHitInfo.distance < collision.distance))
         {
@@ -116,7 +116,7 @@ i32 main()
         }
 
         // Check ray collision against test sphere
-        const RayCollision sphereHitInfo = GetRayCollisionSphere(ray, sp, sr);
+        const auto sphereHitInfo = GetRayCollisionSphere(ray, sp, sr);
 
         if ((sphereHitInfo.hit) && (sphereHitInfo.distance < collision.distance))
         {
@@ -126,7 +126,7 @@ i32 main()
         }
 
         // Check ray collision against bounding box first, before trying the full ray-mesh test
-        const RayCollision boxHitInfo = GetRayCollisionBox(ray, towerBBox);
+        const auto boxHitInfo = GetRayCollisionBox(ray, towerBBox);
 
         if ((boxHitInfo.hit) && (boxHitInfo.distance < collision.distance))
         {
@@ -135,7 +135,7 @@ i32 main()
             hitObjectName = "Box";
 
             // Check ray collision against model meshes
-            RayCollision meshHitInfo = {};
+            auto meshHitInfo = RayCollision{};
             for (i32 m = 0; m < tower.meshCount; m++)
             {
                 // NOTE: We consider the model.transform for the collision check but
@@ -209,7 +209,7 @@ i32 main()
 
             if (collision.hit)
             {
-                constexpr i32 ypos = 70;
+                constexpr auto ypos = 70;
 
                 DrawText(TextFormat("Distance: %3.2f", collision.distance), 10, ypos, 10, BLACK);
 

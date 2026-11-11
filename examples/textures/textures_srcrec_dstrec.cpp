@@ -22,8 +22,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - srcrec dstrec");
 
@@ -35,15 +35,15 @@ i32 main()
     const i32 frameHeight = scarfy.height;
 
     // Source rectangle (part of the texture to use for drawing)
-    const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<f32>(frameWidth), static_cast<f32>(frameHeight) };
+    const auto sourceRec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(frameWidth), static_cast<f32>(frameHeight) };
 
     // Destination rectangle (screen rectangle where drawing part of texture)
-    const Rectangle destRec = { screenWidth/2.0f, screenHeight/2.0f, frameWidth*2.0f, frameHeight*2.0f };
+    const auto destRec = Rectangle{ screenWidth/2.0f, screenHeight/2.0f, frameWidth*2.0f, frameHeight*2.0f };
 
     // Origin of the texture (rotation/scale point), it's relative to destination rectangle size
-    const vec2 origin = { static_cast<f32>(frameWidth), static_cast<f32>(frameHeight) };
+    const auto origin = vec2{ static_cast<f32>(frameWidth), static_cast<f32>(frameHeight) };
 
-    i32 rotation = 0;
+    auto rotation = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

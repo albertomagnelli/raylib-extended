@@ -23,13 +23,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - billboard rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 5.0f, 4.0f, 5.0f };         // Camera position
     camera.target = vec3{ 0.0f, 2.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -37,17 +37,17 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     const Texture2D bill = LoadTexture("resources/billboard.png");    // Our billboard texture
-    const vec3 billPositionStatic = { 0.0f, 2.0f, 0.0f };             // Position of static billboard
-    const vec3 billPositionRotating = { 1.0f, 2.0f, 1.0f };           // Position of rotating billboard
+    const auto billPositionStatic = vec3{ 0.0f, 2.0f, 0.0f };             // Position of static billboard
+    const auto billPositionRotating = vec3{ 1.0f, 2.0f, 1.0f };           // Position of rotating billboard
 
     // Entire billboard texture, source is used to take a segment from a larger texture
-    const Rectangle source = { 0.0f, 0.0f, static_cast<f32>(bill.width), static_cast<f32>(bill.height) };
+    const auto source = Rectangle{ 0.0f, 0.0f, static_cast<f32>(bill.width), static_cast<f32>(bill.height) };
 
     // NOTE: Billboard locked on axis-Y
-    const vec3 billUp = { 0.0f, 1.0f, 0.0f };
+    const auto billUp = vec3{ 0.0f, 1.0f, 0.0f };
 
     // Set the height of the rotating billboard to 1.0 with the aspect ratio fixed
-    const vec2 size = { source.width/source.height, 1.0f };
+    const auto size = vec2{ source.width/source.height, 1.0f };
 
     // Rotate around origin
     // Here we choose to rotate around the image center
@@ -57,7 +57,7 @@ i32 main()
     // Larger distance (further away from the camera) should be drawn prior to smaller distance
     f32 distanceStatic;
     f32 distanceRotating;
-    f32 rotation = 0.0f;
+    auto rotation = 0.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

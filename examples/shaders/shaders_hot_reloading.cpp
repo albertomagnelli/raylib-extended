@@ -34,8 +34,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - hot reloading");
 
@@ -44,7 +44,7 @@ i32 main()
 
     // Load raymarching shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
-    Shader shader = LoadShader({}, TextFormat(fragShaderFileName, GLSL_VERSION));
+    auto shader = LoadShader({}, TextFormat(fragShaderFileName, GLSL_VERSION));
 
     // Get shader locations for required uniforms
     i32 resolutionLoc = GetShaderLocation(shader, "resolution");
@@ -54,8 +54,8 @@ i32 main()
     f32 resolution[2] = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    f32 totalTime = 0.0f;
-    bool shaderAutoReloading = false;
+    auto totalTime = 0.0f;
+    auto shaderAutoReloading = false;
 
     SetTargetFPS(60);                       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         totalTime += GetFrameTime();
-        const vec2 mouse = GetMousePosition();
+        const auto mouse = GetMousePosition();
         f32 mousePos[2] = { mouse.x, mouse.y };
 
         // Set shader required uniform values
@@ -76,13 +76,13 @@ i32 main()
         // Hot shader reloading
         if (shaderAutoReloading || (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)))
         {
-            const long currentFragShaderModTime = GetFileModTime(TextFormat(fragShaderFileName, GLSL_VERSION));
+            const auto currentFragShaderModTime = GetFileModTime(TextFormat(fragShaderFileName, GLSL_VERSION));
 
             // Check if shader file has been modified
             if (currentFragShaderModTime != fragShaderFileModTime)
             {
                 // Try reloading updated shader
-                const Shader updatedShader = LoadShader({}, TextFormat(fragShaderFileName, GLSL_VERSION));
+                const auto updatedShader = LoadShader({}, TextFormat(fragShaderFileName, GLSL_VERSION));
 
                 if (updatedShader.id != rlGetShaderIdDefault())      // It was correctly loaded
                 {

@@ -62,14 +62,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [models] example - decals");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 5.0f, 5.0f, 5.0f };         // Camera position
     camera.target = vec3{ 0.0f, 1.0f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.6f, 0.0f };               // Camera up vector (rotation towards target)
@@ -84,7 +84,7 @@ i32 main()
     SetTextureFilter(modelTexture, TEXTURE_FILTER_BILINEAR);
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = modelTexture;
 
-    const BoundingBox modelBBox = GetMeshBoundingBox(model.meshes[0]);    // Get mesh bounding box
+    const auto modelBBox = GetMeshBoundingBox(model.meshes[0]);    // Get mesh bounding box
 
     camera.target  = glm::mix(modelBBox.min, modelBBox.max, 0.5f);
     camera.position = ((modelBBox.max) * (1.0f));
@@ -97,12 +97,12 @@ i32 main()
     camera.position = vec3{ 0.0f, modelBBox.max.y*1.2f, modelSize*3.0f };
 
     const f32 decalSize = modelSize*0.25f;
-    constexpr f32 decalOffset = 0.01f;
+    constexpr auto decalOffset = 0.01f;
 
-    Model placementCube = LoadModelFromMesh(GenMeshCube(decalSize, decalSize, decalSize));
+    auto placementCube = LoadModelFromMesh(GenMeshCube(decalSize, decalSize, decalSize));
     placementCube.materials[0].maps[0].color = LIME;
 
-    const Material decalMaterial = LoadMaterialDefault();
+    const auto decalMaterial = LoadMaterialDefault();
     decalMaterial.maps[0].color = YELLOW;
 
     Image decalImage = LoadImage("resources/raylib_logo.png");
@@ -114,9 +114,9 @@ i32 main()
     decalMaterial.maps[MATERIAL_MAP_DIFFUSE].texture = decalTexture;
     decalMaterial.maps[MATERIAL_MAP_DIFFUSE].color = RAYWHITE;
 
-    bool showModel = true;
+    auto showModel = true;
     static Model decalModels[MAX_DECALS] = {};
-    i32 decalCount = 0;
+    auto decalCount = 0;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -129,20 +129,20 @@ i32 main()
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) UpdateCamera(&camera, CAMERA_THIRD_PERSON);
 
         // Display information about closest hit
-        RayCollision collision = {};
+        auto collision = RayCollision{};
         collision.distance = FLT_MAX;
         collision.hit = false;
 
         // Get mouse ray
-        const Ray ray = GetScreenToWorldRay(GetMousePosition(), camera);
+        const auto ray = GetScreenToWorldRay(GetMousePosition(), camera);
 
         // Check ray collision against bounding box first, before trying the full ray-mesh test
-        const RayCollision boxHitInfo = GetRayCollisionBox(ray, modelBBox);
+        const auto boxHitInfo = GetRayCollisionBox(ray, modelBBox);
 
         if ((boxHitInfo.hit) && (decalCount < MAX_DECALS))
         {
             // Check ray collision against model meshes
-            RayCollision meshHitInfo = {};
+            auto meshHitInfo = RayCollision{};
             for (i32 m = 0; m < model.meshCount; m++)
             {
                 // NOTE: We consider the model.transform for the collision check but
@@ -169,7 +169,7 @@ i32 main()
             // Spin the placement around a bit
             splat = ((glm::rotate(mat4(1.0f), DEG2RAD*(static_cast<f32>(GetRandomValue(-180, 180))), vec3{0.0f, 0.0f, 1.0f})) * (splat));
 
-            const Mesh decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset);
+            const auto decalMesh = GenMeshDecal(model, splat, decalSize, decalOffset);
 
             if (decalMesh.vertexCount > 0)
             {
@@ -213,8 +213,8 @@ i32 main()
             DrawText("Triangles", static_cast<i32>(x2), static_cast<i32>(yPos), 10, LIME);
             yPos += 15;
 
-            i32 vertexCount = 0;
-            i32 triangleCount = 0;
+            auto vertexCount = 0;
+            auto triangleCount = 0;
 
             for (i32 i = 0; i < model.meshCount; i++)
             {
@@ -300,7 +300,7 @@ static void AddTriangleToMeshBuilder(MeshBuilder *mb, vec3 vertices[3])
     if (mb->vertexCapacity <= (mb->vertexCount + 3))
     {
         const i32 newVertexCapacity = (1 + (mb->vertexCapacity/256))*256;
-        vec3 *newVertices = static_cast<vec3 *>(MemAlloc(newVertexCapacity*sizeof(vec3)));
+        auto newVertices = static_cast<vec3 *>(MemAlloc(newVertexCapacity*sizeof(vec3)));
 
         if (mb->vertexCapacity > 0)
         {
@@ -330,7 +330,7 @@ static void FreeMeshBuilder(MeshBuilder *mb)
 // Build a Mesh from MeshBuilder data
 static Mesh BuildMesh(MeshBuilder *mb)
 {
-    Mesh outMesh = {};
+    auto outMesh = Mesh{};
 
     outMesh.vertexCount = mb->vertexCount;
     outMesh.triangleCount = mb->vertexCount/3;
@@ -391,7 +391,7 @@ static Mesh GenMeshDecal(Model target, mat4 projection, f32 decalSize, f32 decal
 
     // We'll be flip-flopping between the two mesh builders
     // Reading from one and writing to the other, then swapping
-    i32 mbIndex = 0;
+    auto mbIndex = 0;
 
     // First pass, just get any triangle inside the bounding box (for each mesh of the model)
     for (i32 meshIndex = 0; meshIndex < target.meshCount; meshIndex++)
@@ -428,11 +428,11 @@ static Mesh GenMeshDecal(Model target, mat4 projection, f32 decalSize, f32 decal
 
             // Transform all 3 vertices of the triangle
             // and check if they are inside our decal box
-            i32 insideCount = 0;
+            auto insideCount = 0;
             for (i32 i = 0; i < 3; i++)
             {
                 // To projection space
-                const vec3 v = vec3((projection)*vec4(vertices[i], 1.0f));
+                const auto v = vec3((projection)*vec4(vertices[i], 1.0f));
 
                 if ((fabsf(v.x) < decalSize) || (fabsf(v.y) <= decalSize) || (fabsf(v.z) <= decalSize)) insideCount++;
 
@@ -593,7 +593,7 @@ static Mesh GenMeshDecal(Model target, mat4 projection, f32 decalSize, f32 decal
 static bool GuiButton(Rectangle rec, const char *label)
 {
     Color bgColor = GRAY;
-    bool pressed = false;
+    auto pressed = false;
 
     if (CheckCollisionPointRec(GetMousePosition(), rec))
     {
@@ -604,8 +604,8 @@ static bool GuiButton(Rectangle rec, const char *label)
     DrawRectangleRec(rec, bgColor);
     DrawRectangleLinesEx(rec, 2.0f, DARKGRAY);
 
-    constexpr i32 fontSize = 10;
-    const i32 textWidth = MeasureText(label, fontSize);
+    constexpr auto fontSize = 10;
+    const auto textWidth = MeasureText(label, fontSize);
 
     DrawText(label, static_cast<i32>(rec.x + rec.width*0.5f - textWidth*0.5f), static_cast<i32>(rec.y + rec.height*0.5f - fontSize*0.5f), fontSize, DARKGRAY);
 

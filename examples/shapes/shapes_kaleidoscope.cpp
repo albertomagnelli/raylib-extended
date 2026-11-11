@@ -41,31 +41,31 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - kaleidoscope");
 
     // Line drawing properties
-    constexpr i32 symmetry = 6;
+    constexpr auto symmetry = 6;
     const f32 angle = 360.0f/static_cast<f32>(symmetry);
-    constexpr f32 thickness = 3.0f;
-    const Rectangle resetButtonRec = { screenWidth - 55.0f, 5.0f, 50, 25 };
-    const Rectangle backButtonRec = { screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };
-    const Rectangle nextButtonRec = { screenWidth - 30.0f, screenHeight - 30.0f, 25, 25 };
-    vec2 mousePos = {};
-    vec2 prevMousePos = {};
-    const vec2 scaleVector = { 1.0f, -1.0f };
-    const vec2 offset = { GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    constexpr auto thickness = 3.0f;
+    const auto resetButtonRec = Rectangle{ screenWidth - 55.0f, 5.0f, 50, 25 };
+    const auto backButtonRec = Rectangle{ screenWidth - 55.0f, screenHeight - 30.0f, 25, 25 };
+    const auto nextButtonRec = Rectangle{ screenWidth - 30.0f, screenHeight - 30.0f, 25, 25 };
+    auto mousePos = vec2{};
+    auto prevMousePos = vec2{};
+    const auto scaleVector = vec2{ 1.0f, -1.0f };
+    const auto offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
 
-    Camera2D camera = {};
+    auto camera = Camera2D{};
     camera.target = vec2{};
     camera.offset = offset;
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    i32 currentLineCounter = 0;
-    i32 totalLineCounter = 0;
+    auto currentLineCounter = 0;
+    auto totalLineCounter = 0;
     i32 resetButtonClicked = false;
     i32 backButtonClicked = false;
     i32 nextButtonClicked = false;

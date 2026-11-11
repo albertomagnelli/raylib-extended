@@ -38,8 +38,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - stream effects");
 
@@ -53,11 +53,11 @@ i32 main()
 
     PlayMusicStream(music);
 
-    f32 timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
-    bool pause = false;             // Music playing paused
+    auto timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
+    auto pause = false;             // Music playing paused
 
-    bool enableEffectLPF = false;   // Enable effect low-pass-filter
-    bool enableEffectDelay = false; // Enable effect delay (1 second)
+    auto enableEffectLPF = false;   // Enable effect low-pass-filter
+    auto enableEffectDelay = false; // Enable effect delay (1 second)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ static void AudioProcessEffectLPF(void *buffer, u32 frames)
     const f32 k = cutoff/(cutoff + 0.1591549431f); // RC filter formula
 
     // Converts the buffer data before using it
-    f32 *bufferData = static_cast<f32 *>(buffer);
+    auto bufferData = static_cast<f32 *>(buffer);
     for (u32 i = 0; i < frames*2; i += 2)
     {
         const f32 l = bufferData[i];

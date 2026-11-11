@@ -46,13 +46,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - automation events");
 
     // Define player
-    Player player = {};
+    auto player = Player{};
     player.position = vec2{ 400, 280 };
     player.speed = 0;
     player.canJump = false;
@@ -67,17 +67,17 @@ i32 main()
     };
 
     // Define camera
-    Camera2D camera = {};
+    auto camera = Camera2D{};
     camera.target = player.position;
     camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
     // Automation events
-    AutomationEventList aelist = LoadAutomationEventList({});  // Initialize list of automation events to record new events
+    auto aelist = LoadAutomationEventList({});  // Initialize list of automation events to record new events
     SetAutomationEventList(&aelist);
-    bool eventRecording = false;
-    bool eventPlaying = false;
+    auto eventRecording = false;
+    auto eventPlaying = false;
 
     u32 frameCounter = 0;
     u32 playFrameCounter = 0;
@@ -91,13 +91,13 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        constexpr f32 deltaTime = 0.015f;//GetFrameTime();
+        constexpr auto deltaTime = 0.015f;//GetFrameTime();
 
         // Dropped files logic
         //----------------------------------------------------------------------------------
         if (IsFileDropped())
         {
-            FilePathList droppedFiles = LoadDroppedFiles();
+            auto droppedFiles = LoadDroppedFiles();
 
             // Supports loading .rgs style files (text or binary) and .png style palette images
             if (IsFileExtension(droppedFiles.paths[0], ".txt;.rae"))
@@ -135,7 +135,7 @@ i32 main()
             player.canJump = false;
         }
 
-        i32 hitObstacle = 0;
+        auto hitObstacle = 0;
         for (i32 i = 0; i < MAX_ENVIRONMENT_ELEMENTS; i++)
         {
             EnvElement *element = &envElements[i];
@@ -221,8 +221,8 @@ i32 main()
             maxY = fmaxf(element->rect.y + element->rect.height, maxY);
         }
 
-        const vec2 max = GetWorldToScreen2D(vec2{ maxX, maxY }, camera);
-        const vec2 min = GetWorldToScreen2D(vec2{ minX, minY }, camera);
+        const auto max = GetWorldToScreen2D(vec2{ maxX, maxY }, camera);
+        const auto min = GetWorldToScreen2D(vec2{ minX, minY }, camera);
 
         if (max.x < screenWidth) camera.offset.x = screenWidth - (max.x - static_cast<f32>(screenWidth)/2);
         if (max.y < screenHeight) camera.offset.y = screenHeight - (max.y - static_cast<f32>(screenHeight)/2);

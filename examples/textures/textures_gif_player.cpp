@@ -25,12 +25,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - gif player");
 
-    i32 animFrames = 0;
+    auto animFrames = 0;
 
     // Load all GIF animation frames into a single Image
     // NOTE: GIF data is always loaded as RGBA (32bit) by default
@@ -41,13 +41,13 @@ i32 main()
     // NOTE: We will update this texture when required with next frame data
     // WARNING: It's not recommended to use this technique for sprites animation,
     // use spritesheets instead, like illustrated in textures_sprite_anim example
-    const Texture2D texScarfyAnim = LoadTextureFromImage(imScarfyAnim);
+    const auto texScarfyAnim = LoadTextureFromImage(imScarfyAnim);
 
     u32 nextFrameDataOffset = 0;  // Current byte offset to next frame in image.data
 
-    i32 currentAnimFrame = 0;       // Current animation frame to load and draw
-    i32 frameDelay = 8;             // Frame delay to switch between animation frames
-    i32 frameCounter = 0;           // General frames counter
+    auto currentAnimFrame = 0;       // Current animation frame to load and draw
+    auto frameDelay = 8;             // Frame delay to switch between animation frames
+    auto frameCounter = 0;           // General frames counter
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

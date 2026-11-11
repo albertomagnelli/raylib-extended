@@ -39,13 +39,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - skybox rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 1.0f, 1.0f, 1.0f };         // Camera position
     camera.target = vec3{ 4.0f, 1.0f, 4.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -53,12 +53,12 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load skybox model
-    const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    const Model skybox = LoadModelFromMesh(cube);
+    const auto cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    const auto skybox = LoadModelFromMesh(cube);
 
     // Set this to true to use an HDR Texture
     // NOTE: raylib must be built with HDR Support for this to work: SUPPORT_FILEFORMAT_HDR
-    constexpr bool useHDR = false;
+    constexpr auto useHDR = false;
 
     // Load skybox shader and set required locations
     // NOTE: Some locations are automatically set at shader loading
@@ -82,7 +82,7 @@ i32 main()
         skyboxFileName = "resources/dresden_square_2k.hdr";
 
         // Load HDR panorama (sphere) texture
-        const Texture2D panorama = LoadTexture(skyboxFileName);
+        const auto panorama = LoadTexture(skyboxFileName);
 
         // Generate cubemap (texture with 6 quads-cube-mapping) from panorama HDR texture
         // NOTE 1: New texture is generated rendering to texture, shader calculates the sphere->cube coordinates mapping
@@ -116,7 +116,7 @@ i32 main()
         // Load new cubemap texture on drag&drop
         if (IsFileDropped())
         {
-            FilePathList droppedFiles = LoadDroppedFiles();
+            auto droppedFiles = LoadDroppedFiles();
 
             if (droppedFiles.paths.size() == 1)         // Only support one file dropped
             {
@@ -128,7 +128,7 @@ i32 main()
                     if (useHDR)
                     {
                         // Load HDR panorama (sphere) texture
-                        const Texture2D panorama = LoadTexture(droppedFiles.paths[0]);
+                        const auto panorama = LoadTexture(droppedFiles.paths[0]);
 
                         // Generate cubemap from panorama texture
                         skybox.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = GenTextureCubemap(shdrCubemap, panorama, 1024, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
@@ -137,7 +137,7 @@ i32 main()
                     }
                     else
                     {
-                        const Image image = LoadImage(droppedFiles.paths[0]);
+                        const auto image = LoadImage(droppedFiles.paths[0]);
                         skybox.materials[0].maps[MATERIAL_MAP_CUBEMAP].texture = LoadTextureCubemap(image, CUBEMAP_LAYOUT_AUTO_DETECT);
                         UnloadImage(image);
                     }
@@ -196,16 +196,16 @@ i32 main()
 // Generate cubemap texture from HDR texture
 static TextureCubemap GenTextureCubemap(Shader shader, Texture2D panorama, i32 size, i32 format)
 {
-    TextureCubemap cubemap = {};
+    auto cubemap = TextureCubemap{};
 
     rlDisableBackfaceCulling();     // Disable backface culling to render inside the cube
 
     // STEP 1: Setup framebuffer
     //------------------------------------------------------------------------------------------
-    const u32 rbo = rlLoadTextureDepth(size, size, true);
+    const auto rbo = rlLoadTextureDepth(size, size, true);
     cubemap.id = rlLoadTextureCubemap(nullptr, size, format, 1);
 
-    const u32 fbo = rlLoadFramebuffer();
+    const auto fbo = rlLoadFramebuffer();
     rlFramebufferAttach(fbo, rbo, RL_ATTACHMENT_DEPTH, RL_ATTACHMENT_RENDERBUFFER, 0);
     rlFramebufferAttach(fbo, cubemap.id, RL_ATTACHMENT_COLOR_CHANNEL0, RL_ATTACHMENT_CUBEMAP_POSITIVE_X, 0);
 

@@ -35,16 +35,16 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - multi sample2d");
 
-    const Image imRed = GenImageColor(800, 450, Color{ 255, 0, 0, 255 });
+    const auto imRed = GenImageColor(800, 450, Color{ 255, 0, 0, 255 });
     const Texture texRed = LoadTextureFromImage(imRed);
     UnloadImage(imRed);
 
-    const Image imBlue = GenImageColor(800, 450, Color{ 0, 0, 255, 255 });
+    const auto imBlue = GenImageColor(800, 450, Color{ 0, 0, 255, 255 });
     const Texture texBlue = LoadTextureFromImage(imBlue);
     UnloadImage(imBlue);
 
@@ -55,7 +55,7 @@ i32 main()
 
     // Get shader uniform for divider
     const i32 dividerLoc = GetShaderLocation(shader, "divider");
-    f32 dividerValue = 0.5f;
+    auto dividerValue = 0.5f;
 
     SetTargetFPS(60);                           // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

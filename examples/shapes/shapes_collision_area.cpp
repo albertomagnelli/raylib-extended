@@ -22,24 +22,24 @@ i32 main()
 {
     // Initialization
     //---------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - collision area");
 
     // Box A: Moving box
-    Rectangle boxA = { 10, GetScreenHeight()/2.0f - 50, 200, 100 };
-    i32 boxASpeedX = 4;
+    auto boxA = Rectangle{ 10, GetScreenHeight()/2.0f - 50, 200, 100 };
+    auto boxASpeedX = 4;
 
     // Box B: Mouse moved box
-    Rectangle boxB = { GetScreenWidth()/2.0f - 30, GetScreenHeight()/2.0f - 30, 60, 60 };
+    auto boxB = Rectangle{ GetScreenWidth()/2.0f - 30, GetScreenHeight()/2.0f - 30, 60, 60 };
 
-    Rectangle boxCollision = {}; // Collision rectangle
+    auto boxCollision = Rectangle{}; // Collision rectangle
 
-    constexpr i32 screenUpperLimit = 40;      // Top menu limits
+    constexpr auto screenUpperLimit = 40;      // Top menu limits
 
-    bool pause = false;             // Movement pause
-    bool collision = false;         // Collision detection
+    auto pause = false;             // Movement pause
+    auto collision = false;         // Collision detection
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //----------------------------------------------------------

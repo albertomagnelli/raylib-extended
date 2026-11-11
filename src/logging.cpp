@@ -72,23 +72,23 @@ void appendTimestamp(std::string& out) {
 
 }  // namespace
 
-std::string_view toString(LogLevel level) noexcept { return kLevelNames[levelIndex(level)]; }
+std::string_view toString(const LogLevel level) noexcept { return kLevelNames[levelIndex(level)]; }
 
-void setLogLevel(LogLevel level) noexcept { g_level.store(level, std::memory_order_relaxed); }
+void setLogLevel(const LogLevel level) noexcept { g_level.store(level, std::memory_order_relaxed); }
 
 LogLevel logLevel() noexcept { return g_level.load(std::memory_order_relaxed); }
 
-bool logEnabled(LogLevel level) noexcept {
+bool logEnabled(const LogLevel level) noexcept {
     return level != LogLevel::off && level >= g_level.load(std::memory_order_relaxed);
 }
 
-void setLogCallback(LogCallback callback, void* userData) noexcept {
+void setLogCallback(const LogCallback callback, void* userData) noexcept {
     const std::lock_guard lock(g_mutex);
     g_callback = callback;
     g_callbackUser = userData;
 }
 
-Status setLogFile(std::string_view path) {
+Status setLogFile(const std::string_view path) {
     const std::lock_guard lock(g_mutex);
 
     if (g_file.is_open()) {
@@ -112,7 +112,7 @@ void closeLogFile() noexcept {
     }
 }
 
-void logMessage(LogLevel level, std::string_view message) {
+void logMessage(const LogLevel level, const std::string_view message) {
     if (!logEnabled(level)) {
         return;
     }

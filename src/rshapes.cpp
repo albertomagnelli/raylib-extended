@@ -76,13 +76,13 @@
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static Texture2D texShapes = { 1, 1, 1, 1, 7 };                // Texture used on shapes drawing (white pixel loaded by rlgl)
-static Rectangle texShapesRec = { 0.0f, 0.0f, 1.0f, 1.0f };    // Texture source rectangle used on shapes drawing
+static auto texShapes = Texture2D{ 1, 1, 1, 1, 7 };                // Texture used on shapes drawing (white pixel loaded by rlgl)
+static auto texShapesRec = Rectangle{ 0.0f, 0.0f, 1.0f, 1.0f };    // Texture source rectangle used on shapes drawing
 
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static f32 EaseCubicInOut(f32 t, f32 b, f32 c, f32 d);    // Cubic easing
+static f32 EaseCubicInOut(f32 t, const f32 b, const f32 c, const f32 d);    // Cubic easing
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
@@ -90,7 +90,7 @@ static f32 EaseCubicInOut(f32 t, f32 b, f32 c, f32 d);    // Cubic easing
 // Set texture and rectangle to be used on shapes drawing
 // NOTE: It can be useful when using basic shapes and one single font,
 // defining a font char white rectangle would allow drawing everything in a single draw call
-void SetShapesTexture(Texture2D texture, Rectangle rec)
+void SetShapesTexture(const Texture2D texture, const Rectangle rec)
 {
     // Reset texture to default pixel if required
     // WARNING: Shapes texture should be probably better validated,
@@ -120,17 +120,17 @@ Rectangle GetShapesTextureRectangle(void)
 }
 
 // Draw a pixel
-void DrawPixel(i32 posX, i32 posY, Color color)
+void DrawPixel(const i32 posX, const i32 posY, const Color color)
 {
     DrawPixelV(vec2{ static_cast<f32>(posX), static_cast<f32>(posY) }, color);
 }
 
 // Draw a pixel (Vector version)
-void DrawPixelV(vec2 position, Color color)
+void DrawPixelV(const vec2 position, const Color color)
 {
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -170,7 +170,7 @@ void DrawPixelV(vec2 position, Color color)
 }
 
 // Draw a line (using gl lines)
-void DrawLine(i32 startPosX, i32 startPosY, i32 endPosX, i32 endPosY, Color color)
+void DrawLine(const i32 startPosX, const i32 startPosY, const i32 endPosX, const i32 endPosY, const Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -180,16 +180,16 @@ void DrawLine(i32 startPosX, i32 startPosY, i32 endPosX, i32 endPosY, Color colo
 }
 
 // Draw a line defining thickness
-void DrawLineEx(vec2 startPos, vec2 endPos, f32 thick, Color color)
+void DrawLineEx(const vec2 startPos, const vec2 endPos, const f32 thick, const Color color)
 {
-    const vec2 delta = { endPos.x - startPos.x, endPos.y - startPos.y };
+    const auto delta = vec2{ endPos.x - startPos.x, endPos.y - startPos.y };
     const f32 length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
     if ((length > 0) && (thick > 0))
     {
         const f32 scale = thick/(2*length);
 
-        const vec2 radius = { -scale*delta.y, scale*delta.x };
+        const auto radius = vec2{ -scale*delta.y, scale*delta.x };
         vec2 strip[4] = {
             { startPos.x - radius.x, startPos.y - radius.y },
             { startPos.x + radius.x, startPos.y + radius.y },
@@ -202,7 +202,7 @@ void DrawLineEx(vec2 startPos, vec2 endPos, f32 thick, Color color)
 }
 
 // Draw a line (using gl lines)
-void DrawLineV(vec2 startPos, vec2 endPos, Color color)
+void DrawLineV(const vec2 startPos, const vec2 endPos, const Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -212,7 +212,7 @@ void DrawLineV(vec2 startPos, vec2 endPos, Color color)
 }
 
 // Draw lines sequence (using gl lines)
-void DrawLineStrip(const vec2 *points, i32 pointCount, Color color)
+void DrawLineStrip(const vec2 *points, const i32 pointCount, const Color color)
 {
     if (pointCount < 2) return; // Security check
 
@@ -228,7 +228,7 @@ void DrawLineStrip(const vec2 *points, i32 pointCount, Color color)
 }
 
 // Draw line using cubic-bezier spline, in-out interpolation, no control points
-void DrawLineBezier(vec2 startPos, vec2 endPos, f32 thick, Color color)
+void DrawLineBezier(const vec2 startPos, const vec2 endPos, const f32 thick, const Color color)
 {
     vec2 previous = startPos;
     vec2 current{};
@@ -266,7 +266,7 @@ void DrawLineBezier(vec2 startPos, vec2 endPos, f32 thick, Color color)
 }
 
 // Draw a dashed line
-void DrawLineDashed(vec2 startPos, vec2 endPos, i32 dashSize, i32 spaceSize, Color color)
+void DrawLineDashed(const vec2 startPos, const vec2 endPos, const i32 dashSize, const i32 spaceSize, const Color color)
 {
     // Calculate the vector and length of the line
     const f32 dx = endPos.x - startPos.x;
@@ -297,7 +297,7 @@ void DrawLineDashed(vec2 startPos, vec2 endPos, i32 dashSize, i32 spaceSize, Col
             f32 dashEndDist = distanceTraveled + dashSize;
             if (dashEndDist > lineLength) dashEndDist = lineLength;
 
-            const vec2 dashEndPos = { startPos.x + dashEndDist*dirX, startPos.y + dashEndDist*dirY };
+            const auto dashEndPos = vec2{ startPos.x + dashEndDist*dirX, startPos.y + dashEndDist*dirY };
 
             // Draw the dash segment
             rlVertex2f(currentPos.x, currentPos.y);
@@ -313,17 +313,17 @@ void DrawLineDashed(vec2 startPos, vec2 endPos, i32 dashSize, i32 spaceSize, Col
 
 // Draw a triangle
 // NOTE: Vertex must be provided in counter-clockwise order
-void DrawTriangle(vec2 v1, vec2 v2, vec2 v3, Color color)
+void DrawTriangle(const vec2 v1, const vec2 v2, const vec2 v3, const Color color)
 {
     DrawTriangleGradient(v1, v2, v3, color, color, color);
 }
 
 // Draw triangle with interpolated colors (vertex in counter-clockwise order!)
-void DrawTriangleGradient(vec2 v1, vec2 v2, vec2 v3, Color c1, Color c2, Color c3)
+void DrawTriangleGradient(const vec2 v1, const vec2 v2, const vec2 v3, const Color c1, const Color c2, const Color c3)
 {
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         rlNormal3f(0.0f, 0.0f, 1.0f);
@@ -360,7 +360,7 @@ void DrawTriangleGradient(vec2 v1, vec2 v2, vec2 v3, Color c1, Color c2, Color c
 
 // Draw a triangle using lines
 // NOTE: Vertex must be provided in counter-clockwise order
-void DrawTriangleLines(vec2 v1, vec2 v2, vec2 v3, Color color)
+void DrawTriangleLines(const vec2 v1, const vec2 v2, const vec2 v3, const Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -377,7 +377,7 @@ void DrawTriangleLines(vec2 v1, vec2 v2, vec2 v3, Color color)
 
 // Draw a triangle using lines with thickness
 // NOTE: Vertex must be provided in counter-clockwise order
-void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, f32 thick, Color color)
+void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, const f32 thick, const Color color)
 {
     /*
     A sketch to make things simpler
@@ -397,9 +397,9 @@ void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, f32 thick, Color color)
              e1
     */
 
-    const vec2 e1 = { v2.x - v3.x, v2.y - v3.y };
-    const vec2 e2 = { v3.x - v1.x, v3.y - v1.y };
-    const vec2 e3 = { v1.x - v2.x, v1.y - v2.y };
+    const auto e1 = vec2{ v2.x - v3.x, v2.y - v3.y };
+    const auto e2 = vec2{ v3.x - v1.x, v3.y - v1.y };
+    const auto e3 = vec2{ v1.x - v2.x, v1.y - v2.y };
 
     const f32 e1Length = sqrtf(e1.x*e1.x + e1.y*e1.y);
     const f32 e2Length = sqrtf(e2.x*e2.x + e2.y*e2.y);
@@ -429,9 +429,9 @@ void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, f32 thick, Color color)
     }
 
     // In order for the scaling to be correct, the incenter has to be at the origin (0, 0) when scaling
-    vec2 v4 = { incenter.x + (v1.x - incenter.x)*scale, incenter.y + (v1.y - incenter.y)*scale };
-    vec2 v5 = { incenter.x + (v2.x - incenter.x)*scale, incenter.y + (v2.y - incenter.y)*scale };
-    vec2 v6 = { incenter.x + (v3.x - incenter.x)*scale, incenter.y + (v3.y - incenter.y)*scale };
+    auto v4 = vec2{ incenter.x + (v1.x - incenter.x)*scale, incenter.y + (v1.y - incenter.y)*scale };
+    auto v5 = vec2{ incenter.x + (v2.x - incenter.x)*scale, incenter.y + (v2.y - incenter.y)*scale };
+    auto v6 = vec2{ incenter.x + (v3.x - incenter.x)*scale, incenter.y + (v3.y - incenter.y)*scale };
 
     // Swap the vertices so the winding order is correct
     if (thick < 0.0f)
@@ -451,7 +451,7 @@ void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, f32 thick, Color color)
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -538,12 +538,12 @@ void DrawTriangleLinesEx(vec2 v1, vec2 v2, vec2 v3, f32 thick, Color color)
 // Draw a triangle fan defined by points
 // NOTE: First vertex provided is the center, shared by all triangles
 // By default, following vertex should be provided in counter-clockwise order
-void DrawTriangleFan(const vec2 *points, i32 pointCount, Color color)
+void DrawTriangleFan(const vec2 *points, const i32 pointCount, const Color color)
 {
     if (pointCount >= 3)
     {
         rlSetTexture(GetShapesTexture().id);
-        const Rectangle shapeRect = GetShapesTextureRectangle();
+        const auto shapeRect = GetShapesTextureRectangle();
 
         rlBegin(RL_QUADS);
             rlColor4ub(color.r, color.g, color.b, color.a);
@@ -569,7 +569,7 @@ void DrawTriangleFan(const vec2 *points, i32 pointCount, Color color)
 
 // Draw a triangle strip defined by points
 // NOTE: Every new vertex connects with previous two
-void DrawTriangleStrip(const vec2 *points, i32 pointCount, Color color)
+void DrawTriangleStrip(const vec2 *points, const i32 pointCount, const Color color)
 {
     if (pointCount >= 3)
     {
@@ -596,26 +596,26 @@ void DrawTriangleStrip(const vec2 *points, i32 pointCount, Color color)
 }
 
 // Draw a color-filled rectangle
-void DrawRectangle(i32 posX, i32 posY, i32 width, i32 height, Color color)
+void DrawRectangle(const i32 posX, const i32 posY, const i32 width, const i32 height, const Color color)
 {
     DrawRectangleV(vec2{ static_cast<f32>(posX), static_cast<f32>(posY) }, vec2{ static_cast<f32>(width), static_cast<f32>(height) }, color);
 }
 
 // Draw a color-filled rectangle (Vector version)
 // NOTE: On OpenGL 3.3 and ES2 using QUADS to avoid drawing order issues
-void DrawRectangleV(vec2 position, vec2 size, Color color)
+void DrawRectangleV(const vec2 position, const vec2 size, const Color color)
 {
     DrawRectanglePro(Rectangle{ position.x, position.y, size.x, size.y }, vec2{ 0.0f, 0.0f }, 0.0f, color);
 }
 
 // Draw a color-filled rectangle
-void DrawRectangleRec(Rectangle rec, Color color)
+void DrawRectangleRec(const Rectangle rec, const Color color)
 {
     DrawRectanglePro(rec, vec2{ 0.0f, 0.0f }, 0.0f, color);
 }
 
 // Draw a color-filled rectangle with pro parameters
-void DrawRectanglePro(Rectangle rec, vec2 origin, f32 rotation, Color color)
+void DrawRectanglePro(const Rectangle rec, const vec2 origin, const f32 rotation, const Color color)
 {
     vec2 topLeft{};
     vec2 topRight{};
@@ -656,7 +656,7 @@ void DrawRectanglePro(Rectangle rec, vec2 origin, f32 rotation, Color color)
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -696,22 +696,22 @@ void DrawRectanglePro(Rectangle rec, vec2 origin, f32 rotation, Color color)
 }
 
 // Draw a vertical-gradient-filled rectangle
-void DrawRectangleGradientV(i32 posX, i32 posY, i32 width, i32 height, Color top, Color bottom)
+void DrawRectangleGradientV(const i32 posX, const i32 posY, const i32 width, const i32 height, const Color top, const Color bottom)
 {
     DrawRectangleGradientEx(Rectangle{ static_cast<f32>(posX), static_cast<f32>(posY), static_cast<f32>(width), static_cast<f32>(height) }, top, bottom, bottom, top);
 }
 
 // Draw a horizontal-gradient-filled rectangle
-void DrawRectangleGradientH(i32 posX, i32 posY, i32 width, i32 height, Color left, Color right)
+void DrawRectangleGradientH(const i32 posX, const i32 posY, const i32 width, const i32 height, const Color left, const Color right)
 {
     DrawRectangleGradientEx(Rectangle{ static_cast<f32>(posX), static_cast<f32>(posY), static_cast<f32>(width), static_cast<f32>(height) }, left, left, right, right);
 }
 
 // Draw a gradient-filled rectangle with custom vertex colors, counter-clockwise color order
-void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, Color col4)
+void DrawRectangleGradientEx(const Rectangle rec, const Color col1, const Color col2, const Color col3, const Color col4)
 {
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         rlNormal3f(0.0f, 0.0f, 1.0f);
@@ -741,9 +741,9 @@ void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, 
 // WARNING: All Draw*Lines() functions use RL_LINES for drawing,
 // it implies flushing the current batch and changing draw mode to RL_LINES
 // but it solves another issue: https://github.com/raysan5/raylib/issues/3884
-void DrawRectangleLines(i32 posX, i32 posY, i32 width, i32 height, Color color)
+void DrawRectangleLines(const i32 posX, const i32 posY, const i32 width, const i32 height, const Color color)
 {
-    mat4 mat = rlGetMatrixTransform();
+    auto mat = rlGetMatrixTransform();
     const f32 xOffset = 0.5f/mat[0][0];
     const f32 yOffset = 0.5f/mat[1][1];
 
@@ -789,7 +789,7 @@ void DrawRectangleLines(i32 posX, i32 posY, i32 width, i32 height, Color color)
 }
 
 // Draw rectangle outline with line thickness
-void DrawRectangleLinesEx(Rectangle rec, f32 thick, Color color)
+void DrawRectangleLinesEx(const Rectangle rec, f32 thick, const Color color)
 {
     if ((thick > rec.width/2) || (thick > rec.height/2))
     {
@@ -810,10 +810,10 @@ void DrawRectangleLinesEx(Rectangle rec, f32 thick, Color color)
         //   BBBBBBBB
         //
 
-        const Rectangle top = { rec.x, rec.y, rec.width, thick };
-        const Rectangle bottom = { rec.x, rec.y - thick + rec.height, rec.width, thick };
-        const Rectangle left = { rec.x, rec.y + thick, thick, rec.height - thick*2.0f };
-        const Rectangle right = { rec.x - thick + rec.width, rec.y + thick, thick, rec.height - thick*2.0f };
+        const auto top = Rectangle{ rec.x, rec.y, rec.width, thick };
+        const auto bottom = Rectangle{ rec.x, rec.y - thick + rec.height, rec.width, thick };
+        const auto left = Rectangle{ rec.x, rec.y + thick, thick, rec.height - thick*2.0f };
+        const auto right = Rectangle{ rec.x - thick + rec.width, rec.y + thick, thick, rec.height - thick*2.0f };
 
         DrawRectangleRec(top, color);
         DrawRectangleRec(bottom, color);
@@ -839,10 +839,10 @@ void DrawRectangleLinesEx(Rectangle rec, f32 thick, Color color)
 
         thick *= -1.0f;
 
-        const Rectangle top = { rec.x - thick, rec.y - thick, rec.width + thick*2.0f, thick };
-        const Rectangle bottom = { rec.x - thick, rec.y + rec.height, rec.width + thick*2.0f, thick};
-        const Rectangle left = { rec.x - thick, rec.y, thick, rec.height };
-        const Rectangle right = { rec.x + rec.width, rec.y, thick, rec.height };
+        const auto top = Rectangle{ rec.x - thick, rec.y - thick, rec.width + thick*2.0f, thick };
+        const auto bottom = Rectangle{ rec.x - thick, rec.y + rec.height, rec.width + thick*2.0f, thick};
+        const auto left = Rectangle{ rec.x - thick, rec.y, thick, rec.height };
+        const auto right = Rectangle{ rec.x + rec.width, rec.y, thick, rec.height };
 
         DrawRectangleRec(top, color);
         DrawRectangleRec(bottom, color);
@@ -852,7 +852,7 @@ void DrawRectangleLinesEx(Rectangle rec, f32 thick, Color color)
 }
 
 // Draw rectangle with rounded edges
-void DrawRectangleRounded(Rectangle rec, f32 roundness, i32 segments, Color color)
+void DrawRectangleRounded(const Rectangle rec, f32 roundness, i32 segments, const Color color)
 {
     // Not a rounded rectangle
     if (roundness <= 0.0f)
@@ -927,7 +927,7 @@ void DrawRectangleRounded(Rectangle rec, f32 roundness, i32 segments, Color colo
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         // Draw all the 4 corners: [1] Upper Left Corner, [3] Upper Right Corner, [5] Lower Right Corner, [7] Lower Left Corner
@@ -1097,7 +1097,7 @@ void DrawRectangleRounded(Rectangle rec, f32 roundness, i32 segments, Color colo
 }
 
 // Draw rectangle with rounded edges
-void DrawRectangleRoundedLines(Rectangle rec, f32 roundness, i32 segments, Color color)
+void DrawRectangleRoundedLines(const Rectangle rec, f32 roundness, i32 segments, const Color color)
 {
     // Not a rounded rectangle
     if (roundness <= 0.0f)
@@ -1199,7 +1199,7 @@ void DrawRectangleRoundedLines(Rectangle rec, f32 roundness, i32 segments, Color
 }
 
 // Draw rectangle with rounded edges outline with line thickness
-void DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, f32 thick, Color color)
+void DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, const f32 thick, const Color color)
 {
     // Not a rounded rectangle
     if (roundness <= 0.0f)
@@ -1210,9 +1210,9 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, f32
 
     if (roundness >= 1.0f) roundness = 1.0f;
 
-    f32 roundedOutlineThick = 0.0f;
-    f32 outerRadius = 0.0f;
-    f32 innerRadius = 0.0f;
+    auto roundedOutlineThick = 0.0f;
+    auto outerRadius = 0.0f;
+    auto innerRadius = 0.0f;
     if (thick >= 0.0f)
     {
         // Calculate corner radius
@@ -1337,7 +1337,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, f32
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -1477,7 +1477,7 @@ void DrawRectangleRoundedLinesEx(Rectangle rec, f32 roundness, i32 segments, f32
 }
 
 // Draw a polygon of n sides
-void DrawPoly(vec2 center, i32 sides, f32 radius, f32 rotation, Color color)
+void DrawPoly(const vec2 center, i32 sides, const f32 radius, const f32 rotation, const Color color)
 {
     if (sides < 3) sides = 3;
     f32 centralAngle = rotation*DEG2RAD;
@@ -1485,7 +1485,7 @@ void DrawPoly(vec2 center, i32 sides, f32 radius, f32 rotation, Color color)
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         for (i32 i = 0; i < sides; i++)
@@ -1526,7 +1526,7 @@ void DrawPoly(vec2 center, i32 sides, f32 radius, f32 rotation, Color color)
 }
 
 // Draw a polygon outline of n sides
-void DrawPolyLines(vec2 center, i32 sides, f32 radius, f32 rotation, Color color)
+void DrawPolyLines(const vec2 center, i32 sides, const f32 radius, const f32 rotation, const Color color)
 {
     if (sides < 3) sides = 3;
     f32 centralAngle = rotation*DEG2RAD;
@@ -1545,15 +1545,15 @@ void DrawPolyLines(vec2 center, i32 sides, f32 radius, f32 rotation, Color color
     rlEnd();
 }
 
-void DrawPolyLinesEx(vec2 center, i32 sides, f32 radius, f32 rotation, f32 thick, Color color)
+void DrawPolyLinesEx(const vec2 center, i32 sides, const f32 radius, const f32 rotation, f32 thick, const Color color)
 {
     if (sides < 3) sides = 3;
     f32 centralAngle = rotation*DEG2RAD;
     const f32 exteriorAngle = 360.0f/static_cast<f32>(sides)*DEG2RAD;
     const f32 apothem = radius*cosf(DEG2RAD*180.0f/static_cast<f32>(sides));
 
-    f32 outerRadius = 0.0f;
-    f32 innerRadius = 0.0f;
+    auto outerRadius = 0.0f;
+    auto innerRadius = 0.0f;
     if (thick >= 0.0f)
     {
         outerRadius = radius;
@@ -1568,7 +1568,7 @@ void DrawPolyLinesEx(vec2 center, i32 sides, f32 radius, f32 rotation, f32 thick
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         for (i32 i = 0; i < sides; i++)
@@ -1614,20 +1614,20 @@ void DrawPolyLinesEx(vec2 center, i32 sides, f32 radius, f32 rotation, f32 thick
 }
 
 // Draw a color-filled circle
-void DrawCircle(i32 centerX, i32 centerY, f32 radius, Color color)
+void DrawCircle(const i32 centerX, const i32 centerY, const f32 radius, const Color color)
 {
     DrawCircleV(vec2{ static_cast<f32>(centerX), static_cast<f32>(centerY) }, radius, color);
 }
 
 // Draw a color-filled circle (Vector version)
 // NOTE: On OpenGL 3.3 and ES2 using QUADS to avoid drawing order issues
-void DrawCircleV(vec2 center, f32 radius, Color color)
+void DrawCircleV(const vec2 center, const f32 radius, const Color color)
 {
     DrawCircleSector(center, radius, 0, 360, 36, color);
 }
 
 // Draw a gradient-filled circle
-void DrawCircleGradient(vec2 center, f32 radius, Color inner, Color outer)
+void DrawCircleGradient(const vec2 center, const f32 radius, const Color inner, const Color outer)
 {
     rlBegin(RL_TRIANGLES);
         for (i32 i = 0; i < 360; i += 10)
@@ -1643,7 +1643,7 @@ void DrawCircleGradient(vec2 center, f32 radius, Color inner, Color outer)
 }
 
 // Draw a piece of a circle
-void DrawCircleSector(vec2 center, f32 radius, f32 startAngle, f32 endAngle, i32 segments, Color color)
+void DrawCircleSector(const vec2 center, const f32 radius, f32 startAngle, f32 endAngle, i32 segments, const Color color)
 {
     if (startAngle == endAngle) return;
     if (radius <= 0.0f) return; // There's nothing to draw (also avoid div by zero)
@@ -1660,7 +1660,7 @@ void DrawCircleSector(vec2 center, f32 radius, f32 startAngle, f32 endAngle, i32
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f) endAngle = startAngle + 360.0f;
 
-    const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
+    const auto minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
@@ -1676,7 +1676,7 @@ void DrawCircleSector(vec2 center, f32 radius, f32 startAngle, f32 endAngle, i32
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -1738,7 +1738,7 @@ void DrawCircleSector(vec2 center, f32 radius, f32 startAngle, f32 endAngle, i32
 }
 
 // Draw a piece of a circle outlines
-void DrawCircleSectorLines(vec2 center, f32 radius, f32 startAngle, f32 endAngle, i32 segments, Color color)
+void DrawCircleSectorLines(const vec2 center, const f32 radius, f32 startAngle, f32 endAngle, i32 segments, const Color color)
 {
     if (startAngle == endAngle) return;
     if (radius <= 0.0f) return; // There's nothing to draw (also avoid div by zero)
@@ -1752,7 +1752,7 @@ void DrawCircleSectorLines(vec2 center, f32 radius, f32 startAngle, f32 endAngle
         endAngle = tmp;
     }
 
-    bool showCapLines = true;
+    auto showCapLines = true;
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f)
     {
@@ -1760,7 +1760,7 @@ void DrawCircleSectorLines(vec2 center, f32 radius, f32 startAngle, f32 endAngle
         endAngle = startAngle + 360.0f;
     }
 
-    const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
+    const auto minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
@@ -1802,7 +1802,7 @@ void DrawCircleSectorLines(vec2 center, f32 radius, f32 startAngle, f32 endAngle
 }
 
 // Draw a piece of a circle outlines with thickness
-void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAngle, i32 segments, f32 thick, Color color)
+void DrawCircleSectorLinesEx(const vec2 center, const f32 radius, f32 startAngle, f32 endAngle, i32 segments, const f32 thick, const Color color)
 {
     if (startAngle == endAngle) return;
     if (radius <= 0.0f) return; // There's nothing to draw (also avoid div by zero)
@@ -1816,7 +1816,7 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
         endAngle = tmp;
     }
 
-    bool showCapLines = true;
+    auto showCapLines = true;
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f)
     {
@@ -1824,7 +1824,7 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
         endAngle = startAngle + 360.0f;
     }
 
-    const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
+    const auto minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
@@ -1919,11 +1919,11 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
     vec2 c5{};
 
     // The number of angle steps that come before C1 (from `startAngle`, counter clockwise)
-    i32 stepsBeforeC1 = 0;
-    bool s1OutsideOfCircle = false;
+    auto stepsBeforeC1 = 0;
+    auto s1OutsideOfCircle = false;
     // The number of angle steps that come before C0 (from `startAngle`, counter clockwise)
     // Only used if S1 is outside of the circle
-    i32 stepsBeforeC0 = 0;
+    auto stepsBeforeC0 = 0;
 
     if (showCapLines)
     {
@@ -1982,22 +1982,22 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
              p2
             */
 
-            vec2 p1 = { cosf(DEG2RAD*vertexAngleBeforeC1)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC1)*innerRadius };
-            vec2 p2 = { cosf(DEG2RAD*vertexAngleAfterC1)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC1)*innerRadius };
+            auto p1 = vec2{ cosf(DEG2RAD*vertexAngleBeforeC1)*innerRadius, sinf(DEG2RAD*vertexAngleBeforeC1)*innerRadius };
+            auto p2 = vec2{ cosf(DEG2RAD*vertexAngleAfterC1)*innerRadius, sinf(DEG2RAD*vertexAngleAfterC1)*innerRadius };
 
             // Find the `t` of C1 between p1 and p2 ('t' as in `Lerp(start, end, t)`)
             // This is used to lerp between the actual vertices (outside of our modified frame of reference)
             // before and after C1
             f32 t = (p1.y - thick)/(p1.y - p2.y);
 
-            vec2 vertexBeforeCap1Vertex = { center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius };
-            vec2 vertexAfterCap1Vertex = { center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius };
+            auto vertexBeforeCap1Vertex = vec2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleBeforeC1))*innerRadius };
+            auto vertexAfterCap1Vertex = vec2{ center.x + cosf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(startAngle + vertexAngleAfterC1))*innerRadius };
 
             c1.x = vertexBeforeCap1Vertex.x + (vertexAfterCap1Vertex.x - vertexBeforeCap1Vertex.x)*t;
             c1.y = vertexBeforeCap1Vertex.y + (vertexAfterCap1Vertex.y - vertexBeforeCap1Vertex.y)*t;
 
-            vec2 vertexBeforeCap2Vertex = { center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius };
-            vec2 vertexAfterCap2Vertex = { center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius };
+            auto vertexBeforeCap2Vertex = vec2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleBeforeC1))*innerRadius };
+            auto vertexAfterCap2Vertex = vec2{ center.x + cosf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius, center.y + sinf(DEG2RAD*(endAngle - vertexAngleAfterC1))*innerRadius };
 
             c4.x = vertexBeforeCap2Vertex.x + (vertexAfterCap2Vertex.x - vertexBeforeCap2Vertex.x)*t;
             c4.y = vertexBeforeCap2Vertex.y + (vertexAfterCap2Vertex.y - vertexBeforeCap2Vertex.y)*t;
@@ -2109,9 +2109,9 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
 
             // Change the frame of reference so that `center` is the origin and `startAngle` is 0 degrees
 
-            vec2 c0Translated = { c0.x - center.x, c0.y - center.y };
-            vec2 circleVertex1 = { c2.x - center.x, c2.y - center.y };
-            vec2 circleVertex2 = { cosf(DEG2RAD*(startAngle + stepLength))*outerRadius, sinf(DEG2RAD*(startAngle + stepLength))*outerRadius };
+            auto c0Translated = vec2{ c0.x - center.x, c0.y - center.y };
+            auto circleVertex1 = vec2{ c2.x - center.x, c2.y - center.y };
+            auto circleVertex2 = vec2{ cosf(DEG2RAD*(startAngle + stepLength))*outerRadius, sinf(DEG2RAD*(startAngle + stepLength))*outerRadius };
 
             // Copied from "raymath.h" Vector2Rotate()
             f32 tempX = c0Translated.x;
@@ -2141,8 +2141,8 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
             {
                 // The caps are intersecting each other
 
-                vec2 circleVertex3 = { c5.x - center.x, c5.y - center.y };
-                vec2 circleVertex4 = { cosf(DEG2RAD*(endAngle - stepLength))*outerRadius, sinf(DEG2RAD*(endAngle - stepLength))*outerRadius };
+                auto circleVertex3 = vec2{ c5.x - center.x, c5.y - center.y };
+                auto circleVertex4 = vec2{ cosf(DEG2RAD*(endAngle - stepLength))*outerRadius, sinf(DEG2RAD*(endAngle - stepLength))*outerRadius };
 
                 tempX = circleVertex3.x;
                 circleVertex3.x = cosf(-DEG2RAD*startAngle)*tempX - sinf(-DEG2RAD*startAngle)*circleVertex3.y;
@@ -2154,7 +2154,7 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
 
                 // `startAngle` is 0 degrees within this frame of reference,
                 // so C1 just goes horizontally out from C0
-                vec2 c1Translated = { c0Translated.x + c1DistanceFromC0, c0Translated.y };
+                auto c1Translated = vec2{ c0Translated.x + c1DistanceFromC0, c0Translated.y };
 
                 // Make `circleVertex2` the origin
                 circleVertex1.x -= circleVertex2.x;
@@ -2214,7 +2214,7 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -2535,13 +2535,13 @@ void DrawCircleSectorLinesEx(vec2 center, f32 radius, f32 startAngle, f32 endAng
 }
 
 // Draw circle outline
-void DrawCircleLines(i32 centerX, i32 centerY, f32 radius, Color color)
+void DrawCircleLines(const i32 centerX, const i32 centerY, const f32 radius, const Color color)
 {
     DrawCircleLinesV(vec2{ static_cast<f32>(centerX), static_cast<f32>(centerY) }, radius, color);
 }
 
 // Draw circle outline (Vector version)
-void DrawCircleLinesV(vec2 center, f32 radius, Color color)
+void DrawCircleLinesV(const vec2 center, const f32 radius, const Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -2555,19 +2555,19 @@ void DrawCircleLinesV(vec2 center, f32 radius, Color color)
     rlEnd();
 }
 
-void DrawCircleLinesEx(vec2 center, f32 radius, f32 thick, Color color)
+void DrawCircleLinesEx(const vec2 center, const f32 radius, const f32 thick, const Color color)
 {
     DrawRing(center, radius - thick, radius, 0.0f, 360.0f, 36, color);
 }
 
 // Draw ellipse
-void DrawEllipse(i32 centerX, i32 centerY, f32 radiusH, f32 radiusV, Color color)
+void DrawEllipse(const i32 centerX, const i32 centerY, const f32 radiusH, const f32 radiusV, const Color color)
 {
     DrawEllipseV(vec2{ static_cast<f32>(centerX), static_cast<f32>(centerY) }, radiusH, radiusV, color);
 }
 
 // Draw ellipse (Vector version)
-void DrawEllipseV(vec2 center, f32 radiusH, f32 radiusV, Color color)
+void DrawEllipseV(const vec2 center, const f32 radiusH, const f32 radiusV, const Color color)
 {
     rlBegin(RL_TRIANGLES);
         for (i32 i = 0; i < 360; i += 10)
@@ -2581,13 +2581,13 @@ void DrawEllipseV(vec2 center, f32 radiusH, f32 radiusV, Color color)
 }
 
 // Draw ellipse outline
-void DrawEllipseLines(i32 centerX, i32 centerY, f32 radiusH, f32 radiusV, Color color)
+void DrawEllipseLines(const i32 centerX, const i32 centerY, const f32 radiusH, const f32 radiusV, const Color color)
 {
     DrawEllipseLinesV(vec2{ static_cast<f32>(centerX), static_cast<f32>(centerY) }, radiusH, radiusV, color);
 }
 
 // Draw ellipse outline
-void DrawEllipseLinesV(vec2 center, f32 radiusH, f32 radiusV, Color color)
+void DrawEllipseLinesV(const vec2 center, const f32 radiusH, const f32 radiusV, const Color color)
 {
     rlBegin(RL_LINES);
         for (i32 i = 0; i < 360; i += 10)
@@ -2600,7 +2600,7 @@ void DrawEllipseLinesV(vec2 center, f32 radiusH, f32 radiusV, Color color)
 }
 
 // Draw ellipse outline with thickness
-void DrawEllipseLinesEx(vec2 center, f32 radiusH, f32 radiusV, f32 thick, Color color)
+void DrawEllipseLinesEx(const vec2 center, const f32 radiusH, const f32 radiusV, const f32 thick, const Color color)
 {
     f32 outerRadiusH = radiusH;
     f32 innerRadiusH = radiusH - thick;
@@ -2629,7 +2629,7 @@ void DrawEllipseLinesEx(vec2 center, f32 radiusH, f32 radiusV, f32 thick, Color 
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -2672,7 +2672,7 @@ void DrawEllipseLinesEx(vec2 center, f32 radiusH, f32 radiusV, f32 thick, Color 
 }
 
 // Draw ring
-void DrawRing(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, Color color)
+void DrawRing(const vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, const Color color)
 {
     if (startAngle == endAngle) return;
 
@@ -2698,7 +2698,7 @@ void DrawRing(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f) endAngle = startAngle + 360.0f;
 
-    const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
+    const auto minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
@@ -2721,7 +2721,7 @@ void DrawRing(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
         for (i32 i = 0; i < segments; i++)
@@ -2766,7 +2766,7 @@ void DrawRing(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32
 }
 
 // Draw ring outline
-void DrawRingLines(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, Color color)
+void DrawRingLines(const vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, const Color color)
 {
     if (startAngle == endAngle) return;
 
@@ -2789,7 +2789,7 @@ void DrawRingLines(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle
         endAngle = tmp;
     }
 
-    bool showCapLines = true;
+    auto showCapLines = true;
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f)
     {
@@ -2797,7 +2797,7 @@ void DrawRingLines(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle
         endAngle = startAngle + 360.0f;
     }
 
-    const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
+    const auto minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
@@ -2848,7 +2848,7 @@ void DrawRingLines(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle
 }
 
 // Draw ring outline with line thickness
-void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, f32 thick, Color color)
+void DrawRingLinesEx(const vec2 center, f32 innerRadius, f32 outerRadius, f32 startAngle, f32 endAngle, i32 segments, const f32 thick, const Color color)
 {
     if (startAngle == endAngle) return;
 
@@ -2871,7 +2871,7 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
         endAngle = tmp;
     }
 
-    bool showCapLines = true;
+    auto showCapLines = true;
     // Drawing a whole circle, things get weird without limiting the circle to 360 degrees
     if (endAngle - startAngle >= 360.0f)
     {
@@ -2879,7 +2879,7 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
         endAngle = startAngle + 360.0f;
     }
 
-    const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
+    const auto minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
 
     if (segments < minSegments)
     {
@@ -2905,10 +2905,10 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
     //   2. innerOuterRadius
     //   3. outerInnerRadius
     //   4. innerInnerRadius (closest)
-    f32 innerOuterRadius = 0.0f;
-    f32 outerOuterRadius = 0.0f;
-    f32 innerInnerRadius = 0.0f;
-    f32 outerInnerRadius = 0.0f;
+    auto innerOuterRadius = 0.0f;
+    auto outerOuterRadius = 0.0f;
+    auto innerInnerRadius = 0.0f;
+    auto outerInnerRadius = 0.0f;
 
     if (thick >= 0.0f)
     {
@@ -2944,18 +2944,18 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
     }
 
     // For positive `thick` values
-    i32 stepsBeforeInner = 0;
-    i32 stepsBeforeOuter = 0;
-    f32 tInner = 0.0f;
-    f32 tOuter = 0.0f;
-    bool innerAnglesCrossEachOther = false;
+    auto stepsBeforeInner = 0;
+    auto stepsBeforeOuter = 0;
+    auto tInner = 0.0f;
+    auto tOuter = 0.0f;
+    auto innerAnglesCrossEachOther = false;
 
     // For negative `thick` values
     vec2 cap1SecondInnerVertex{};
     vec2 cap1SecondOuterVertex{};
     vec2 cap2SecondInnerVertex{};
     vec2 cap2SecondOuterVertex{};
-    bool capsIntersect = false;
+    auto capsIntersect = false;
     vec2 capIntersectionVertex{};
 
     if (showCapLines)
@@ -2986,13 +2986,13 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
             //
             // With that, we know these lines intersect when 'y' equals 0,
             // so we just need to solve for 't' (as in `Lerp(start, end, t)`)
-            const vec2 beforeInnerVertex = { cosf(DEG2RAD*(static_cast<f32>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
-            const vec2 afterInnerVertex = { cosf(DEG2RAD*(static_cast<f32>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
+            const auto beforeInnerVertex = vec2{ cosf(DEG2RAD*(static_cast<f32>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeInner)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
+            const auto afterInnerVertex = vec2{ cosf(DEG2RAD*(static_cast<f32>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeInner + 1)*stepLength - cap1InnerAngleEnd))*outerInnerRadius };
             tInner = beforeInnerVertex.y/(beforeInnerVertex.y - afterInnerVertex.y);
 
             // The same as above, but for the outer edge
-            const vec2 beforeOuterVertex = { cosf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
-            const vec2 afterOuterVertex = { cosf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
+            const auto beforeOuterVertex = vec2{ cosf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
+            const auto afterOuterVertex = vec2{ cosf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius, sinf(DEG2RAD*(static_cast<f32>(stepsBeforeOuter + 1)*stepLength - cap1OuterAngleEnd))*innerOuterRadius };
             tOuter = beforeOuterVertex.y/(beforeOuterVertex.y - afterOuterVertex.y);
         }
         else
@@ -3030,30 +3030,30 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
             and, if there's any intersection, I0->I2 is one of the edges
             */
 
-            vec2 cap1O0 = { outerOuterRadius, 0.0f };
-            vec2 cap1O1 = { cosf(DEG2RAD*stepLength)*outerOuterRadius, sinf(DEG2RAD*stepLength)*outerOuterRadius };
+            auto cap1O0 = vec2{ outerOuterRadius, 0.0f };
+            auto cap1O1 = vec2{ cosf(DEG2RAD*stepLength)*outerOuterRadius, sinf(DEG2RAD*stepLength)*outerOuterRadius };
 
             // Assuming a linear interpolation such as `value = Lerp(start, end, t)`
             // We can find O2 by getting its 't' between O1.y and O0.y (which is always greater than 1)
             // We can solve for `t` using `t = (start - value)/(start - end)`
             // Since we know `end = 0` we can simplify it to `t = (start - value)/start`
             const f32 tOuter = (cap1O1.y - thick)/cap1O1.y;
-            vec2 cap1O2 = { cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, thick };
+            auto cap1O2 = vec2{ cap1O1.x + (cap1O0.x - cap1O1.x)*tOuter, thick };
 
             //vec2 cap1I0 = { innerInnerRadius, 0.0f }; // Not used
 
             const f32 capLongEdgeLength = outerOuterRadius - innerInnerRadius;
-            vec2 cap1I2 = { cap1O2.x - capLongEdgeLength, thick };
+            auto cap1I2 = vec2{ cap1O2.x - capLongEdgeLength, thick };
 
-            vec2 cap2O0 = { cosf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius };
-            vec2 cap2O1 = { cosf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius };
-            vec2 cap2O2 = { cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
+            auto cap2O0 = vec2{ cosf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle))*outerOuterRadius };
+            auto cap2O1 = vec2{ cosf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius, sinf(DEG2RAD*(endAngle - startAngle - stepLength))*outerOuterRadius };
+            auto cap2O2 = vec2{ cap2O1.x + (cap2O0.x - cap2O1.x)*tOuter, cap2O1.y + (cap2O0.y - cap2O1.y)*tOuter };
 
-            vec2 cap2I0 = { cosf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius, sinf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius };
-            vec2 cap2I2 = { cap2O2.x - cosf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength};
+            auto cap2I0 = vec2{ cosf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius, sinf(DEG2RAD*(endAngle - startAngle))*innerInnerRadius };
+            auto cap2I2 = vec2{ cap2O2.x - cosf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength, cap2O2.y - sinf(DEG2RAD*(endAngle - startAngle))*capLongEdgeLength};
 
             // The 't' of the intersection between I2 and O2 (`Lerp(I2, O2, t)`)
-            f32 tCapLongEdgeCross = -1.0f;
+            auto tCapLongEdgeCross = -1.0f;
             // Avoid division by zero
             if (cap2I2.y - cap2O2.y != 0.0f)
             {
@@ -3078,14 +3078,14 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
             cap2O2.x = cap2O2.x*cosres - cap2O2.y*sinres;
 
             // The 't' of the intersection between I0 and I2 (`Lerp(I0, I2, t)`)
-            f32 tCrossInner = -1.0f;
+            auto tCrossInner = -1.0f;
             // Avoid division by zero
             if (cap2I0.x - cap2I2.x != 0.0f) tCrossInner = (cap2I0.x - cap1I2.x)/(cap2I0.x - cap2I2.x);
             // Make sure `tCrossInner` is 0 when it should be (mitigate floating-point rounding woes)
             if (innerInnerRadius <= 0.0f) tCrossInner = 0.0f;
 
             // The 't' of the intersection between O0 and O2 (`Lerp(O0, O2, t)`)
-            f32 tCrossOuter = -1.0f;
+            auto tCrossOuter = -1.0f;
             // Avoid division by zero
             if (cap2O0.x - cap2O2.x != 0.0f) tCrossOuter = (cap2O0.x - cap1O2.x)/(cap2O0.x - cap2O2.x);
 
@@ -3133,7 +3133,7 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
 
 #if SUPPORT_QUADS_DRAW_MODE
     rlSetTexture(GetShapesTexture().id);
-    const Rectangle shapeRect = GetShapesTextureRectangle();
+    const auto shapeRect = GetShapesTextureRectangle();
 
     rlBegin(RL_QUADS);
 
@@ -3212,20 +3212,20 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                 const i32 innerStepsLeft = stepsBeforeInner - stepsBeforeOuter;
 
                 // Cap 1
-                const vec2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
-                const vec2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
-                const vec2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                const vec2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
-                const vec2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
-                const vec2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
+                const auto cap1OuterVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
+                const auto cap1OuterVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
+                const auto cap1InnerVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                const auto cap1InnerVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                const auto cap1InnerVertexEnd = vec2{ cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
+                const auto cap1OuterVertexEnd = vec2{ cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
 
                 // Cap 2
-                const vec2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
-                const vec2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
-                const vec2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                const vec2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
-                const vec2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
-                const vec2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
+                const auto cap2OuterVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
+                const auto cap2OuterVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
+                const auto cap2InnerVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                const auto cap2InnerVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft + 1)*stepLength))*outerInnerRadius };
+                const auto cap2InnerVertexEnd = vec2{ cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
+                const auto cap2OuterVertexEnd = vec2{ cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
 
                 const i32 stepsCount = (innerAnglesCrossEachOther)? totalStepsLeft/2 : innerStepsLeft;
 
@@ -3302,9 +3302,9 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                     // That point is then used instead to prevent the outline from intersecting itself
 
                     // Make `cap1InnerVertexEnd` the origin and the angle to `cap1OuterVertexEnd` 0 degrees
-                    const vec2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
-                    const vec2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
-                    const vec2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    const auto tempCap1OuterVertexEnd = vec2{ cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    const auto tempCap2InnerVertexEnd = vec2{ cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
+                    const auto tempCap2OuterVertexEnd = vec2{ cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
 
                     const f32 rotateBy = -atan2f(tempCap1OuterVertexEnd.y, tempCap1OuterVertexEnd.x);
                     // We only need the y coordinates, so only rotate the y coordinates
@@ -3312,13 +3312,13 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                     const f32 end = sinf(rotateBy)*tempCap2OuterVertexEnd.x + cosf(rotateBy)*tempCap2OuterVertexEnd.y;
                     const f32 tCross = start/(start - end);
 
-                    const vec2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
+                    const auto intersection = vec2{ cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
 
                     if ((segments%2) == 0)
                     {
                         // There are an even number of segments (which means there's an odd number of vertices), so there's 1 vertex exactly in the middle
 
-                        const vec2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        const auto middleInnerVertex = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
 
                         // Cap 1
                         rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
@@ -3350,8 +3350,8 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                     {
                         // There are an odd number of segments (which means there's an even number of vertices), so there are 2 vertices in the middle
 
-                        const vec2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
-                        const vec2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
+                        const auto middleInnerVertex1 = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        const auto middleInnerVertex2 = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
 
                         // Cap 1
                         rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
@@ -3425,8 +3425,8 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
             else
             {
                 // Cap 1
-                const vec2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
-                const vec2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
+                const auto cap1FirstInnerVertex = vec2{ center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
+                const auto cap1FirstOuterVertex = vec2{ center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
 
                 rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
                 rlVertex2f(cap1FirstInnerVertex.x, cap1FirstInnerVertex.y);
@@ -3441,8 +3441,8 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                 rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
                 // Cap 2
-                const vec2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
-                const vec2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
+                const auto cap2FirstInnerVertex = vec2{ center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
+                const auto cap2FirstOuterVertex = vec2{ center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
 
                 rlTexCoord2f(shapeRect.x/texShapes.width, (shapeRect.y + shapeRect.height)/texShapes.height);
                 rlVertex2f(cap2FirstInnerVertex.x, cap2FirstInnerVertex.y);
@@ -3549,20 +3549,20 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                 i32 innerStepsLeft = stepsBeforeInner - stepsBeforeOuter;
 
                 // Cap 1
-                vec2 cap1OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
-                vec2 cap1OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
-                vec2 cap1InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                vec2 cap1InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
-                vec2 cap1InnerVertexEnd = { cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
-                vec2 cap1OuterVertexEnd = { cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
+                auto cap1OuterVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*innerOuterRadius };
+                auto cap1OuterVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(startAngle + angle + stepLength))*innerOuterRadius };
+                auto cap1InnerVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                auto cap1InnerVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle + static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle + static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
+                auto cap1InnerVertexEnd = vec2{ cap1InnerVertexBeforeEnd.x + (cap1InnerVertexAfterEnd.x - cap1InnerVertexBeforeEnd.x)*tInner, cap1InnerVertexBeforeEnd.y + (cap1InnerVertexAfterEnd.y - cap1InnerVertexBeforeEnd.y)*tInner };
+                auto cap1OuterVertexEnd = vec2{ cap1OuterVertexBeforeEnd.x + (cap1OuterVertexAfterEnd.x - cap1OuterVertexBeforeEnd.x)*tOuter, cap1OuterVertexBeforeEnd.y + (cap1OuterVertexAfterEnd.y - cap1OuterVertexBeforeEnd.y)*tOuter };
 
                 // Cap 2
-                vec2 cap2OuterVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
-                vec2 cap2OuterVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
-                vec2 cap2InnerVertexBeforeEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
-                vec2 cap2InnerVertexAfterEnd = { center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
-                vec2 cap2InnerVertexEnd = { cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
-                vec2 cap2OuterVertexEnd = { cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
+                auto cap2OuterVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*innerOuterRadius };
+                auto cap2OuterVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius, center.y + sinf(DEG2RAD*(endAngle - angle - stepLength))*innerOuterRadius };
+                auto cap2InnerVertexBeforeEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>(innerStepsLeft)*stepLength))*outerInnerRadius };
+                auto cap2InnerVertexAfterEnd = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle - static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle - static_cast<f32>((innerStepsLeft + 1))*stepLength))*outerInnerRadius };
+                auto cap2InnerVertexEnd = vec2{ cap2InnerVertexBeforeEnd.x + (cap2InnerVertexAfterEnd.x - cap2InnerVertexBeforeEnd.x)*tInner, cap2InnerVertexBeforeEnd.y + (cap2InnerVertexAfterEnd.y - cap2InnerVertexBeforeEnd.y)*tInner };
+                auto cap2OuterVertexEnd = vec2{ cap2OuterVertexBeforeEnd.x + (cap2OuterVertexAfterEnd.x - cap2OuterVertexBeforeEnd.x)*tOuter, cap2OuterVertexBeforeEnd.y + (cap2OuterVertexAfterEnd.y - cap2OuterVertexBeforeEnd.y)*tOuter };
 
                 i32 stepsCount = (innerAnglesCrossEachOther)? totalStepsLeft/2 : innerStepsLeft;
 
@@ -3590,9 +3590,9 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                     // That point is then used instead to prevent the outline from intersecting itself
 
                     // Make `cap1InnerVertexEnd` the origin and the angle to `cap1OuterVertexEnd` 0 degrees
-                    vec2 tempCap1OuterVertexEnd = { cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
-                    vec2 tempCap2InnerVertexEnd = { cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
-                    vec2 tempCap2OuterVertexEnd = { cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    auto tempCap1OuterVertexEnd = vec2{ cap1OuterVertexEnd.x - cap1InnerVertexEnd.x, cap1OuterVertexEnd.y - cap1InnerVertexEnd.y };
+                    auto tempCap2InnerVertexEnd = vec2{ cap2InnerVertexEnd.x - cap1InnerVertexEnd.x, cap2InnerVertexEnd.y - cap1InnerVertexEnd.y };
+                    auto tempCap2OuterVertexEnd = vec2{ cap2OuterVertexEnd.x - cap1InnerVertexEnd.x, cap2OuterVertexEnd.y - cap1InnerVertexEnd.y };
 
                     f32 rotateBy = -atan2f(tempCap1OuterVertexEnd.y, tempCap1OuterVertexEnd.x);
                     // We only need the y coordinates, so only rotate the y coordinates
@@ -3600,13 +3600,13 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                     f32 end = sinf(rotateBy)*tempCap2OuterVertexEnd.x + cosf(rotateBy)*tempCap2OuterVertexEnd.y;
                     f32 tCross = start/(start - end);
 
-                    vec2 intersection = { cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
+                    auto intersection = vec2{ cap2InnerVertexEnd.x + (cap2OuterVertexEnd.x - cap2InnerVertexEnd.x)*tCross, cap2InnerVertexEnd.y + (cap2OuterVertexEnd.y - cap2InnerVertexEnd.y)*tCross };
 
                     if (segments%2 == 0)
                     {
                         // There are an even number of segments (which means there's an odd number of vertices), so there's 1 vertex exactly in the middle
 
-                        vec2 middleInnerVertex = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        auto middleInnerVertex = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
 
                         // Cap 1
                         rlVertex2f(intersection.x, intersection.y);
@@ -3630,8 +3630,8 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                     {
                         // There are an odd number of segments (which means there's an even number of vertices), so there are 2 vertices in the middle
 
-                        vec2 middleInnerVertex1 = { center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
-                        vec2 middleInnerVertex2 = { center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
+                        auto middleInnerVertex1 = vec2{ center.x + cosf(DEG2RAD*(startAngle + angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(startAngle + angle))*outerInnerRadius };
+                        auto middleInnerVertex2 = vec2{ center.x + cosf(DEG2RAD*(endAngle - angle))*outerInnerRadius, center.y + sinf(DEG2RAD*(endAngle - angle))*outerInnerRadius };
 
                         // Cap 1
                         rlVertex2f(intersection.x, intersection.y);
@@ -3685,8 +3685,8 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
             else
             {
                 // Cap 1
-                vec2 cap1FirstInnerVertex = { center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
-                vec2 cap1FirstOuterVertex = { center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
+                auto cap1FirstInnerVertex = vec2{ center.x + cosf(DEG2RAD*startAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*startAngle)*innerInnerRadius };
+                auto cap1FirstOuterVertex = vec2{ center.x + cosf(DEG2RAD*startAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*startAngle)*outerOuterRadius };
 
                 rlVertex2f(cap1FirstInnerVertex.x, cap1FirstInnerVertex.y);
                 rlVertex2f(cap1FirstOuterVertex.x, cap1FirstOuterVertex.y);
@@ -3697,8 +3697,8 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
                 rlVertex2f(cap1SecondInnerVertex.x, cap1SecondInnerVertex.y);
 
                 // Cap 2
-                vec2 cap2FirstInnerVertex = { center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
-                vec2 cap2FirstOuterVertex = { center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
+                auto cap2FirstInnerVertex = vec2{ center.x + cosf(DEG2RAD*endAngle)*innerInnerRadius, center.y + sinf(DEG2RAD*endAngle)*innerInnerRadius };
+                auto cap2FirstOuterVertex = vec2{ center.x + cosf(DEG2RAD*endAngle)*outerOuterRadius, center.y + sinf(DEG2RAD*endAngle)*outerOuterRadius };
 
                 rlVertex2f(cap2FirstInnerVertex.x, cap2FirstInnerVertex.y);
                 rlVertex2f(cap2SecondInnerVertex.x, cap2SecondInnerVertex.y);
@@ -3732,12 +3732,12 @@ void DrawRingLinesEx(vec2 center, f32 innerRadius, f32 outerRadius, f32 startAng
 //----------------------------------------------------------------------------------
 
 // Draw spline: linear, minimum 2 points
-void DrawSplineLinear(const vec2 *points, i32 pointCount, f32 thick, Color color)
+void DrawSplineLinear(const vec2 *points, const i32 pointCount, const f32 thick, const Color color)
 {
     if (pointCount < 2) return;
 
 #if SUPPORT_SPLINE_MITERS
-    vec2 prevNormal = vec2{-(points[1].y - points[0].y), (points[1].x - points[0].x)};
+    auto prevNormal = vec2{-(points[1].y - points[0].y), (points[1].x - points[0].x)};
     f32 prevLength = sqrtf(prevNormal.x*prevNormal.x + prevNormal.y*prevNormal.y);
 
     if (prevLength > 0.0f)
@@ -3751,7 +3751,7 @@ void DrawSplineLinear(const vec2 *points, i32 pointCount, f32 thick, Color color
         prevNormal.y = 0.0f;
     }
 
-    vec2 prevRadius = { 0.5f*thick*prevNormal.x, 0.5f*thick*prevNormal.y };
+    auto prevRadius = vec2{ 0.5f*thick*prevNormal.x, 0.5f*thick*prevNormal.y };
 
     for (i32 i = 0; i < pointCount - 1; i++)
     {
@@ -3775,7 +3775,7 @@ void DrawSplineLinear(const vec2 *points, i32 pointCount, f32 thick, Color color
         }
         else normal = prevNormal;
 
-        vec2 radius = { prevNormal.x + normal.x, prevNormal.y + normal.y };
+        auto radius = vec2{ prevNormal.x + normal.x, prevNormal.y + normal.y };
         f32 radiusLength = sqrtf(radius.x*radius.x + radius.y*radius.y);
 
         if (radiusLength > 0.0f)
@@ -3818,8 +3818,8 @@ void DrawSplineLinear(const vec2 *points, i32 pointCount, f32 thick, Color color
 #else   // !SUPPORT_SPLINE_MITERS
 
     vec2 delta{};
-    f32 length = 0.0f;
-    f32 scale = 0.0f;
+    auto length = 0.0f;
+    auto scale = 0.0f;
 
     for (i32 i = 0; i < pointCount - 1; i++)
     {
@@ -3828,7 +3828,7 @@ void DrawSplineLinear(const vec2 *points, i32 pointCount, f32 thick, Color color
 
         if (length > 0) scale = thick/(2*length);
 
-        const vec2 radius = { -scale*delta.y, scale*delta.x };
+        const auto radius = vec2{ -scale*delta.y, scale*delta.x };
         vec2 strip[4] = {
             { points[i].x - radius.x, points[i].y - radius.y },
             { points[i].x + radius.x, points[i].y + radius.y },
@@ -3846,15 +3846,15 @@ void DrawSplineLinear(const vec2 *points, i32 pointCount, f32 thick, Color color
 }
 
 // Draw spline: B-Spline, minimum 4 points
-void DrawSplineBasis(const vec2 *points, i32 pointCount, f32 thick, Color color)
+void DrawSplineBasis(const vec2 *points, const i32 pointCount, const f32 thick, const Color color)
 {
     if (pointCount < 4) return;
 
     f32 a[4] = { 0 };
     f32 b[4] = { 0 };
-    f32 dy = 0.0f;
-    f32 dx = 0.0f;
-    f32 size = 0.0f;
+    auto dy = 0.0f;
+    auto dx = 0.0f;
+    auto size = 0.0f;
 
     vec2 currentPoint{};
     vec2 nextPoint{};
@@ -3862,7 +3862,7 @@ void DrawSplineBasis(const vec2 *points, i32 pointCount, f32 thick, Color color)
 
     for (i32 i = 0; i < (pointCount - 3); i++)
     {
-        f32 t = 0.0f;
+        auto t = 0.0f;
         const vec2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
 
         a[0] = (-p1.x + 3.0f*p2.x - 3.0f*p3.x + p4.x)/6.0f;
@@ -3923,13 +3923,13 @@ void DrawSplineBasis(const vec2 *points, i32 pointCount, f32 thick, Color color)
 }
 
 // Draw spline: Catmull-Rom, minimum 4 points
-void DrawSplineCatmullRom(const vec2 *points, i32 pointCount, f32 thick, Color color)
+void DrawSplineCatmullRom(const vec2 *points, const i32 pointCount, const f32 thick, const Color color)
 {
     if (pointCount < 4) return;
 
-    f32 dy = 0.0f;
-    f32 dx = 0.0f;
-    f32 size = 0.0f;
+    auto dy = 0.0f;
+    auto dx = 0.0f;
+    auto size = 0.0f;
 
     vec2 currentPoint = points[1];
     vec2 nextPoint{};
@@ -3939,7 +3939,7 @@ void DrawSplineCatmullRom(const vec2 *points, i32 pointCount, f32 thick, Color c
 
     for (i32 i = 0; i < (pointCount - 3); i++)
     {
-        f32 t = 0.0f;
+        auto t = 0.0f;
         const vec2 p1 = points[i], p2 = points[i + 1], p3 = points[i + 2], p4 = points[i + 3];
 
         if (i > 0)
@@ -3990,7 +3990,7 @@ void DrawSplineCatmullRom(const vec2 *points, i32 pointCount, f32 thick, Color c
 }
 
 // Draw spline: Quadratic Bezier, minimum 3 points (1 control point): [p1, c2, p3, c4...]
-void DrawSplineBezierQuadratic(const vec2 *points, i32 pointCount, f32 thick, Color color)
+void DrawSplineBezierQuadratic(const vec2 *points, const i32 pointCount, const f32 thick, const Color color)
 {
     if (pointCount >= 3)
     {
@@ -4002,7 +4002,7 @@ void DrawSplineBezierQuadratic(const vec2 *points, i32 pointCount, f32 thick, Co
 }
 
 // Draw spline: Cubic Bezier, minimum 4 points (2 control points): [p1, c2, c3, p4, c5, c6...]
-void DrawSplineBezierCubic(const vec2 *points, i32 pointCount, f32 thick, Color color)
+void DrawSplineBezierCubic(const vec2 *points, const i32 pointCount, const f32 thick, const Color color)
 {
     if (pointCount >= 4)
     {
@@ -4014,18 +4014,18 @@ void DrawSplineBezierCubic(const vec2 *points, i32 pointCount, f32 thick, Color 
 }
 
 // Draw spline segment: Linear, 2 points
-void DrawSplineSegmentLinear(vec2 p1, vec2 p2, f32 thick, Color color)
+void DrawSplineSegmentLinear(const vec2 p1, const vec2 p2, const f32 thick, const Color color)
 {
     // NOTE: For the linear spline no subdivisions are used, only a single quad
 
-    const vec2 delta = { p2.x - p1.x, p2.y - p1.y };
+    const auto delta = vec2{ p2.x - p1.x, p2.y - p1.y };
     const f32 length = sqrtf(delta.x*delta.x + delta.y*delta.y);
 
     if ((length > 0) && (thick > 0))
     {
         const f32 scale = thick/(2*length);
 
-        const vec2 radius = { -scale*delta.y, scale*delta.x };
+        const auto radius = vec2{ -scale*delta.y, scale*delta.x };
         vec2 strip[4] = {
             { p1.x - radius.x, p1.y - radius.y },
             { p1.x + radius.x, p1.y + radius.y },
@@ -4038,13 +4038,13 @@ void DrawSplineSegmentLinear(vec2 p1, vec2 p2, f32 thick, Color color)
 }
 
 // Draw spline segment: B-Spline, 4 points
-void DrawSplineSegmentBasis(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 thick, Color color)
+void DrawSplineSegmentBasis(const vec2 p1, const vec2 p2, const vec2 p3, const vec2 p4, const f32 thick, const Color color)
 {
     const f32 step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
     vec2 currentPoint{};
     vec2 nextPoint{};
-    f32 t = 0.0f;
+    auto t = 0.0f;
 
     vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
@@ -4095,13 +4095,13 @@ void DrawSplineSegmentBasis(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 thick, Color
 }
 
 // Draw spline segment: Catmull-Rom, 4 points
-void DrawSplineSegmentCatmullRom(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 thick, Color color)
+void DrawSplineSegmentCatmullRom(const vec2 p1, const vec2 p2, const vec2 p3, const vec2 p4, const f32 thick, const Color color)
 {
     const f32 step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
     vec2 currentPoint = p1;
     vec2 nextPoint{};
-    f32 t = 0.0f;
+    auto t = 0.0f;
 
     vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
@@ -4141,13 +4141,13 @@ void DrawSplineSegmentCatmullRom(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 thick, 
 }
 
 // Draw spline segment: Quadratic Bezier, 2 points, 1 control point
-void DrawSplineSegmentBezierQuadratic(vec2 p1, vec2 c2, vec2 p3, f32 thick, Color color)
+void DrawSplineSegmentBezierQuadratic(const vec2 p1, const vec2 c2, const vec2 p3, const f32 thick, const Color color)
 {
     const f32 step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
     vec2 previous = p1;
     vec2 current{};
-    f32 t = 0.0f;
+    auto t = 0.0f;
 
     vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
@@ -4187,13 +4187,13 @@ void DrawSplineSegmentBezierQuadratic(vec2 p1, vec2 c2, vec2 p3, f32 thick, Colo
 }
 
 // Draw spline segment: Cubic Bezier, 2 points, 2 control points
-void DrawSplineSegmentBezierCubic(vec2 p1, vec2 c2, vec2 c3, vec2 p4, f32 thick, Color color)
+void DrawSplineSegmentBezierCubic(const vec2 p1, const vec2 c2, const vec2 c3, const vec2 p4, const f32 thick, const Color color)
 {
     const f32 step = 1.0f/SPLINE_SEGMENT_DIVISIONS;
 
     vec2 previous = p1;
     vec2 current{};
-    f32 t = 0.0f;
+    auto t = 0.0f;
 
     vec2 points[2*SPLINE_SEGMENT_DIVISIONS + 2]{};
 
@@ -4233,7 +4233,7 @@ void DrawSplineSegmentBezierCubic(vec2 p1, vec2 c2, vec2 c3, vec2 p4, f32 thick,
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Linear
-vec2 GetSplinePointLinear(vec2 startPos, vec2 endPos, f32 t)
+vec2 GetSplinePointLinear(const vec2 startPos, const vec2 endPos, const f32 t)
 {
     vec2 point{};
 
@@ -4244,7 +4244,7 @@ vec2 GetSplinePointLinear(vec2 startPos, vec2 endPos, f32 t)
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], B-Spline
-vec2 GetSplinePointBasis(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 t)
+vec2 GetSplinePointBasis(const vec2 p1, const vec2 p2, const vec2 p3, const vec2 p4, const f32 t)
 {
     vec2 point{};
 
@@ -4268,7 +4268,7 @@ vec2 GetSplinePointBasis(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 t)
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Catmull-Rom
-vec2 GetSplinePointCatmullRom(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 t)
+vec2 GetSplinePointCatmullRom(const vec2 p1, const vec2 p2, const vec2 p3, const vec2 p4, const f32 t)
 {
     vec2 point{};
 
@@ -4284,7 +4284,7 @@ vec2 GetSplinePointCatmullRom(vec2 p1, vec2 p2, vec2 p3, vec2 p4, f32 t)
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Quadratic Bezier
-vec2 GetSplinePointBezierQuadratic(vec2 startPos, vec2 controlPos, vec2 endPos, f32 t)
+vec2 GetSplinePointBezierQuadratic(const vec2 startPos, const vec2 controlPos, const vec2 endPos, const f32 t)
 {
     vec2 point{};
 
@@ -4299,7 +4299,7 @@ vec2 GetSplinePointBezierQuadratic(vec2 startPos, vec2 controlPos, vec2 endPos, 
 }
 
 // Get spline point for a given t [0.0f .. 1.0f], Cubic Bezier
-vec2 GetSplinePointBezierCubic(vec2 startPos, vec2 startControlPos, vec2 endControlPos, vec2 endPos, f32 t)
+vec2 GetSplinePointBezierCubic(const vec2 startPos, const vec2 startControlPos, const vec2 endControlPos, const vec2 endPos, const f32 t)
 {
     vec2 point{};
 
@@ -4319,9 +4319,9 @@ vec2 GetSplinePointBezierCubic(vec2 startPos, vec2 startControlPos, vec2 endCont
 //----------------------------------------------------------------------------------
 
 // Check if point is inside rectangle
-bool CheckCollisionPointRec(vec2 point, Rectangle rec)
+bool CheckCollisionPointRec(const vec2 point, const Rectangle rec)
 {
-    bool collision = false;
+    auto collision = false;
 
     if ((point.x >= rec.x) && (point.x < (rec.x + rec.width)) && (point.y >= rec.y) && (point.y < (rec.y + rec.height))) collision = true;
 
@@ -4329,9 +4329,9 @@ bool CheckCollisionPointRec(vec2 point, Rectangle rec)
 }
 
 // Check if point is inside circle
-bool CheckCollisionPointCircle(vec2 point, vec2 center, f32 radius)
+bool CheckCollisionPointCircle(const vec2 point, const vec2 center, const f32 radius)
 {
-    bool collision = false;
+    auto collision = false;
 
     const f32 distanceSquared = (point.x - center.x)*(point.x - center.x) + (point.y - center.y)*(point.y - center.y);
 
@@ -4341,9 +4341,9 @@ bool CheckCollisionPointCircle(vec2 point, vec2 center, f32 radius)
 }
 
 // Check if point is inside a triangle defined by three points (p1, p2, p3)
-bool CheckCollisionPointTriangle(vec2 point, vec2 p1, vec2 p2, vec2 p3)
+bool CheckCollisionPointTriangle(const vec2 point, const vec2 p1, const vec2 p2, const vec2 p3)
 {
-    bool collision = false;
+    auto collision = false;
 
     const f32 alpha = ((p2.y - p3.y)*(point.x - p3.x) + (p3.x - p2.x)*(point.y - p3.y)) /
                   ((p2.y - p3.y)*(p1.x - p3.x) + (p3.x - p2.x)*(p1.y - p3.y));
@@ -4360,9 +4360,9 @@ bool CheckCollisionPointTriangle(vec2 point, vec2 p1, vec2 p2, vec2 p3)
 
 // Check if point is within a polygon described by array of vertices
 // NOTE: Based on http://jeffreythompson.org/collision-detection/poly-point.php
-bool CheckCollisionPointPoly(vec2 point, const vec2 *points, i32 pointCount)
+bool CheckCollisionPointPoly(const vec2 point, const vec2 *points, const i32 pointCount)
 {
-    bool collision = false;
+    auto collision = false;
 
     if (pointCount > 2)
     {
@@ -4380,9 +4380,9 @@ bool CheckCollisionPointPoly(vec2 point, const vec2 *points, i32 pointCount)
 }
 
 // Check collision between two rectangles
-bool CheckCollisionRecs(Rectangle rec1, Rectangle rec2)
+bool CheckCollisionRecs(const Rectangle rec1, const Rectangle rec2)
 {
-    bool collision = false;
+    auto collision = false;
 
     if ((rec1.x < (rec2.x + rec2.width) && (rec1.x + rec1.width) > rec2.x) &&
         (rec1.y < (rec2.y + rec2.height) && (rec1.y + rec1.height) > rec2.y)) collision = true;
@@ -4391,9 +4391,9 @@ bool CheckCollisionRecs(Rectangle rec1, Rectangle rec2)
 }
 
 // Check collision between two circles
-bool CheckCollisionCircles(vec2 center1, f32 radius1, vec2 center2, f32 radius2)
+bool CheckCollisionCircles(const vec2 center1, const f32 radius1, const vec2 center2, const f32 radius2)
 {
-    bool collision = false;
+    auto collision = false;
 
     const f32 dx = center2.x - center1.x;      // X distance between centers
     const f32 dy = center2.y - center1.y;      // Y distance between centers
@@ -4408,9 +4408,9 @@ bool CheckCollisionCircles(vec2 center1, f32 radius1, vec2 center2, f32 radius2)
 
 // Check collision between circle and rectangle
 // NOTE: Reviewed version to take into account corner limit case
-bool CheckCollisionCircleRec(vec2 center, f32 radius, Rectangle rec)
+bool CheckCollisionCircleRec(const vec2 center, const f32 radius, const Rectangle rec)
 {
-    bool collision = false;
+    auto collision = false;
 
     const f32 recCenterX = rec.x + rec.width/2.0f;
     const f32 recCenterY = rec.y + rec.height/2.0f;
@@ -4436,9 +4436,9 @@ bool CheckCollisionCircleRec(vec2 center, f32 radius, Rectangle rec)
 
 // Check the collision between two lines defined by two points each, returns collision point by reference
 // REF: https://en.wikipedia.org/wiki/Line–line_intersection#Given_two_points_on_each_line_segment
-bool CheckCollisionLines(vec2 startPos1, vec2 endPos1, vec2 startPos2, vec2 endPos2, vec2 *collisionPoint)
+bool CheckCollisionLines(const vec2 startPos1, const vec2 endPos1, const vec2 startPos2, const vec2 endPos2, vec2 *collisionPoint)
 {
-    bool collision = false;
+    auto collision = false;
 
     const f32 rx = endPos1.x - startPos1.x;
     const f32 ry = endPos1.y - startPos1.y;
@@ -4471,9 +4471,9 @@ bool CheckCollisionLines(vec2 startPos1, vec2 endPos1, vec2 startPos2, vec2 endP
 }
 
 // Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold]
-bool CheckCollisionPointLine(vec2 point, vec2 p1, vec2 p2, i32 threshold)
+bool CheckCollisionPointLine(const vec2 point, const vec2 p1, const vec2 p2, const i32 threshold)
 {
-    bool collision = false;
+    auto collision = false;
 
     const f32 dxc = point.x - p1.x;
     const f32 dyc = point.y - p1.y;
@@ -4491,9 +4491,9 @@ bool CheckCollisionPointLine(vec2 point, vec2 p1, vec2 p2, i32 threshold)
 }
 
 // Check if circle collides with a line created between two points [p1] and [p2]
-bool CheckCollisionCircleLine(vec2 center, f32 radius, vec2 p1, vec2 p2)
+bool CheckCollisionCircleLine(const vec2 center, const f32 radius, const vec2 p1, const vec2 p2)
 {
-    bool collision = false;
+    auto collision = false;
 
     const f32 dx = p1.x - p2.x;
     const f32 dy = p1.y - p2.y;
@@ -4521,9 +4521,9 @@ bool CheckCollisionCircleLine(vec2 center, f32 radius, vec2 p1, vec2 p2)
 }
 
 // Get collision rectangle for two rectangles collision
-Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2)
+Rectangle GetCollisionRec(const Rectangle rec1, const Rectangle rec2)
 {
-    Rectangle overlap = { 0 };
+    auto overlap = Rectangle{ 0 };
 
     const f32 left = (rec1.x > rec2.x)? rec1.x : rec2.x;
     const f32 right1 = rec1.x + rec1.width;
@@ -4551,9 +4551,9 @@ Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2)
 
 // Cubic easing in-out
 // NOTE: Used by DrawLineBezier() only
-static f32 EaseCubicInOut(f32 t, f32 b, f32 c, f32 d)
+static f32 EaseCubicInOut(f32 t, const f32 b, const f32 c, const f32 d)
 {
-    f32 result = 0.0f;
+    auto result = 0.0f;
     t /= 0.5f*d;
     if (t < 1) result = 0.5f*c*t*t*t + b;
     else

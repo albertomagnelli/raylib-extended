@@ -24,13 +24,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera split screen");
 
     // Setup player 1 camera and screen
-    Camera cameraPlayer1 = {};
+    auto cameraPlayer1 = Camera{};
     cameraPlayer1.fovy = 45.0f;
     cameraPlayer1.up.y = 1.0f;
     cameraPlayer1.target.y = 1.0f;
@@ -40,7 +40,7 @@ i32 main()
     const RenderTexture screenPlayer1 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Setup player two camera and screen
-    Camera cameraPlayer2 = {};
+    auto cameraPlayer2 = Camera{};
     cameraPlayer2.fovy = 45.0f;
     cameraPlayer2.up.y = 1.0f;
     cameraPlayer2.target.y = 3.0f;
@@ -50,10 +50,10 @@ i32 main()
     const RenderTexture screenPlayer2 = LoadRenderTexture(screenWidth/2, screenHeight);
 
     // Build a flipped rectangle the size of the split view to use for drawing later
-    const Rectangle splitScreenRect = { 0.0f, 0.0f, static_cast<f32>(screenPlayer1.texture.width), static_cast<f32>(-screenPlayer1.texture.height) };
+    const auto splitScreenRect = Rectangle{ 0.0f, 0.0f, static_cast<f32>(screenPlayer1.texture.width), static_cast<f32>(-screenPlayer1.texture.height) };
 
     // Grid data
-    constexpr i32 count = 5;
+    constexpr auto count = 5;
     constexpr f32 spacing = 4;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

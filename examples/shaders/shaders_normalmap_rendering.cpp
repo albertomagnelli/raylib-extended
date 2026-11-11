@@ -35,13 +35,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - normalmap rendering");
 
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 0.0f, 2.0f, -4.0f };
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -61,7 +61,7 @@ i32 main()
     // shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
 
     // This example uses just 1 point light
-    vec3 lightPosition = { 0.0f, 1.0f, 0.0f };
+    auto lightPosition = vec3{ 0.0f, 1.0f, 0.0f };
     const i32 lightPosLoc = GetShaderLocation(shader, "lightPos");
 
     // Load a plane model that has proper normals and tangents
@@ -80,11 +80,11 @@ i32 main()
     SetTextureFilter(plane.materials[0].maps[MATERIAL_MAP_NORMAL].texture, TEXTURE_FILTER_TRILINEAR);
 
     // Specular exponent AKA shininess of the material
-    f32 specularExponent = 8.0f;
+    auto specularExponent = 8.0f;
     const i32 specularExponentLoc = GetShaderLocation(shader, "specularExponent");
 
     // Allow toggling the normal map on and off for comparison purposes
-    i32 useNormalMap = 1;
+    auto useNormalMap = 1;
     const i32 useNormalMapLoc = GetShaderLocation(shader, "useNormalMap");
 
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
@@ -96,7 +96,7 @@ i32 main()
         // Update
         //----------------------------------------------------------------------------------
         // Move the light around on the X and Z axis using WASD keys
-        vec3 direction = {};
+        auto direction = vec3{};
         if (IsKeyDown(KEY_W)) direction = ((direction) + (vec3{ 0.0f, 0.0f, 1.0f }));
         if (IsKeyDown(KEY_S)) direction = ((direction) + (vec3{ 0.0f, 0.0f, -1.0f }));
         if (IsKeyDown(KEY_D)) direction = ((direction) + (vec3{ -1.0f, 0.0f, 0.0f }));
@@ -150,7 +150,7 @@ i32 main()
             const char *toggleStr = (useNormalMap) ? "On" : "Off";
             DrawText(TextFormat("Use key [N] to toggle normal map: %s", toggleStr), 10, 10, 10, textColor);
 
-            constexpr i32 yOffset = 24;
+            constexpr auto yOffset = 24;
             DrawText("Use keys [W][A][S][D] to move the light", 10, 10 + yOffset*1, 10, BLACK);
             DrawText("Use keys [Up][Down] to change specular exponent", 10, 10 + yOffset*2, 10, BLACK);
             DrawText(TextFormat("Specular Exponent: %.2f", specularExponent), 10, 10 + yOffset*3, 10, BLUE);

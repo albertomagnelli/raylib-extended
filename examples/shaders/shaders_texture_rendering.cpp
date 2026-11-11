@@ -30,19 +30,19 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture rendering");
 
-    const Image imBlank = GenImageColor(1024, 1024, BLANK);
-    const Texture2D texture = LoadTextureFromImage(imBlank);  // Load blank texture to fill on shader
+    const auto imBlank = GenImageColor(1024, 1024, BLANK);
+    const auto texture = LoadTextureFromImage(imBlank);  // Load blank texture to fill on shader
     UnloadImage(imBlank);
 
     // NOTE: Using GLSL 330 shader version, on OpenGL ES 2.0 use GLSL 100 shader version
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/cubes_panning.fs", GLSL_VERSION));
 
-    f32 time = 0.0f;
+    auto time = 0.0f;
     const i32 timeLoc = GetShaderLocation(shader, "uTime");
     SetShaderValue(shader, timeLoc, &time, SHADER_UNIFORM_FLOAT);
 

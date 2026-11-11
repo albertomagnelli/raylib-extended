@@ -47,20 +47,20 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - lights bloom");
 
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ 0.0f, 5.0f, 9.0f };
     camera.target = vec3{ 0.0f, 0.5f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const auto target = LoadRenderTexture(screenWidth, screenHeight);
 
     // Forward multi-light shader and bloom post-process shader, both loaded from the
     // resources folder shared with the rest of the shaders examples. If the GLSL version
@@ -74,8 +74,8 @@ i32 main()
 
     // Load models from generated cube mesh and plane
     // NOTE: Meshes are automatically unloaded on UnloadModel()
-    const Model cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
-    const Model floor = LoadModelFromMesh(GenMeshPlane(14.0f, 14.0f, 1, 1));
+    const auto cube = LoadModelFromMesh(GenMeshCube(2.0f, 2.0f, 2.0f));
+    const auto floor = LoadModelFromMesh(GenMeshPlane(14.0f, 14.0f, 1, 1));
     cube.materials[0].shader = lightShader;
     floor.materials[0].shader = lightShader;
 
@@ -107,7 +107,7 @@ i32 main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        const f32 time = static_cast<f32>(GetTime());
+        const auto time = static_cast<f32>(GetTime());
 
         // Orbital path for each point light, its own radius/height offset by index
         for (i32 i = 0; i < MAX_LIGHTS; i++)
@@ -157,7 +157,7 @@ i32 main()
 
             ClearBackground(BLACK);
 
-            const Rectangle srcRec = { 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) };
+            const auto srcRec = Rectangle{ 0, 0, static_cast<f32>(target.texture.width), static_cast<f32>(-target.texture.height) };
 
             BeginShaderMode(bloomShader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)

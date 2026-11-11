@@ -39,23 +39,23 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bullet hell");
 
     // Bullets definition
-    Bullet *bullets = static_cast<Bullet *>(calloc(MAX_BULLETS, sizeof(Bullet))); // Bullets array
-    i32 bulletCount = 0;
-    i32 bulletDisabledCount = 0; // Used to calculate how many bullets are on screen
-    constexpr i32 bulletRadius = 10;
-    f32 bulletSpeed = 3.0f;
-    i32 bulletRows = 6;
+    auto bullets = static_cast<Bullet *>(calloc(MAX_BULLETS, sizeof(Bullet))); // Bullets array
+    auto bulletCount = 0;
+    auto bulletDisabledCount = 0; // Used to calculate how many bullets are on screen
+    constexpr auto bulletRadius = 10;
+    auto bulletSpeed = 3.0f;
+    auto bulletRows = 6;
     const Color bulletColor[2] = { RED, BLUE };
 
     // Spawner variables
     f32 baseDirection = 0;
-    i32 angleIncrement = 5; // After spawn all bullet rows, increment this value on the baseDirection for next the frame
+    auto angleIncrement = 5; // After spawn all bullet rows, increment this value on the baseDirection for next the frame
     f32 spawnCooldown = 2;
     f32 spawnCooldownTimer = spawnCooldown;
 
@@ -72,7 +72,7 @@ i32 main()
         DrawCircleLines(12, 12, static_cast<f32>(bulletRadius), BLACK);
     EndTextureMode();
 
-    bool drawInPerformanceMode = true; // Switch between DrawCircle() and DrawTexture()
+    auto drawInPerformanceMode = true; // Switch between DrawCircle() and DrawTexture()
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

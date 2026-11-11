@@ -43,7 +43,7 @@ typedef struct ActionInput {
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static i32 gamepadIndex = 0; // Gamepad default index
+static auto gamepadIndex = 0; // Gamepad default index
 static ActionInput actionInputs[MAX_ACTION] = {};
 
 //----------------------------------------------------------------------------------
@@ -63,18 +63,18 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input actions");
 
     // Set default actions
     char actionSet = 0;
     SetActionsDefault();
-    bool releaseAction = false;
+    auto releaseAction = false;
 
-    vec2 position = vec2{ 400.0f, 200.0f };
-    const vec2 size = vec2{ 40.0f, 40.0f };
+    auto position = vec2{ 400.0f, 200.0f };
+    const auto size = vec2{ 40.0f, 40.0f };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ i32 main()
 // NOTE: Combines key pressed and gamepad button pressed in one action
 static bool IsActionPressed(i32 action)
 {
-    bool result = false;
+    auto result = false;
 
     if (action < MAX_ACTION) result = (IsKeyPressed(actionInputs[action].key) || IsGamepadButtonPressed(gamepadIndex, actionInputs[action].button));
 
@@ -150,7 +150,7 @@ static bool IsActionPressed(i32 action)
 // NOTE: Combines key released and gamepad button released in one action
 static bool IsActionReleased(i32 action)
 {
-    bool result = false;
+    auto result = false;
 
     if (action < MAX_ACTION) result = (IsKeyReleased(actionInputs[action].key) || IsGamepadButtonReleased(gamepadIndex, actionInputs[action].button));
 
@@ -161,7 +161,7 @@ static bool IsActionReleased(i32 action)
 // NOTE: Combines key down and gamepad button down in one action
 static bool IsActionDown(i32 action)
 {
-    bool result = false;
+    auto result = false;
 
     if (action < MAX_ACTION) result = (IsKeyDown(actionInputs[action].key) || IsGamepadButtonDown(gamepadIndex, actionInputs[action].button));
 

@@ -78,8 +78,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - spotlight rendering");
     HideCursor();
@@ -96,7 +96,7 @@ i32 main()
         for (i32 n = 0; n < MAX_STARS; n++) UpdateStar(&stars[n]);
     }
 
-    i32 frameCounter = 0;
+    auto frameCounter = 0;
 
     // Use default vert shader
     const Shader shdrSpot = LoadShader({}, TextFormat("resources/shaders/glsl%i/spotlight.fs", GLSL_VERSION));
@@ -122,7 +122,7 @@ i32 main()
     // Tell the shader how wide the screen is so we can have
     // a pitch black half and a dimly lit half
     const u32 wLoc = GetShaderLocation(shdrSpot, "screenWidth");
-    f32 sw = static_cast<f32>(GetScreenWidth());
+    auto sw = static_cast<f32>(GetScreenWidth());
     SetShaderValue(shdrSpot, wLoc, &sw, SHADER_UNIFORM_FLOAT);
 
     // Randomize the locations and velocities of the spotlights
@@ -165,7 +165,7 @@ i32 main()
         {
             if (i == 0)
             {
-                const vec2 mp = GetMousePosition();
+                const auto mp = GetMousePosition();
                 spots[i].position.x = mp.x;
                 spots[i].position.y = screenHeight - mp.y;
             }

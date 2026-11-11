@@ -32,8 +32,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE); // Make the window resizable
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - tiled drawing");
@@ -87,7 +87,7 @@ i32 main()
         // Handle mouse
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            const vec2 mouse = GetMousePosition();
+            const auto mouse = GetMousePosition();
 
             // Check which pattern was clicked and set it as the active pattern
             for (i32 i = 0; i < SIZEOF(recPattern); i++)
@@ -177,8 +177,8 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
     if ((texture.id <= 0) || (scale <= 0.0f)) return;  // Wanna see a infinite loop?!...just delete this line!
     if ((source.width == 0) || (source.height == 0)) return;
 
-    const i32 tileWidth = static_cast<i32>(source.width*scale);
-    const i32 tileHeight = static_cast<i32>(source.height*scale);
+    const auto tileWidth = static_cast<i32>(source.width*scale);
+    const auto tileHeight = static_cast<i32>(source.height*scale);
     if ((dest.width < tileWidth) && (dest.height < tileHeight))
     {
         // Can fit only one tile
@@ -188,7 +188,7 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
     else if (dest.width <= tileWidth)
     {
         // Tiled vertically (one column)
-        i32 dy = 0;
+        auto dy = 0;
         for (;dy+tileHeight < dest.height; dy += tileHeight)
         {
             DrawTexturePro(texture, Rectangle{source.x, source.y, (dest.width/tileWidth)*source.width, source.height}, Rectangle{dest.x, dest.y + dy, dest.width, static_cast<f32>(tileHeight)}, origin, rotation, tint);
@@ -204,7 +204,7 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
     else if (dest.height <= tileHeight)
     {
         // Tiled horizontally (one row)
-        i32 dx = 0;
+        auto dx = 0;
         for (;dx+tileWidth < dest.width; dx += tileWidth)
         {
             DrawTexturePro(texture, Rectangle{source.x, source.y, source.width, (dest.height/tileHeight)*source.height}, Rectangle{dest.x + dx, dest.y, static_cast<f32>(tileWidth), dest.height}, origin, rotation, tint);
@@ -220,10 +220,10 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
     else
     {
         // Tiled both horizontally and vertically (rows and columns)
-        i32 dx = 0;
+        auto dx = 0;
         for (;dx+tileWidth < dest.width; dx += tileWidth)
         {
-            i32 dy = 0;
+            auto dy = 0;
             for (;dy+tileHeight < dest.height; dy += tileHeight)
             {
                 DrawTexturePro(texture, source, Rectangle{dest.x + dx, dest.y + dy, static_cast<f32>(tileWidth), static_cast<f32>(tileHeight)}, origin, rotation, tint);
@@ -239,7 +239,7 @@ void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, vec2 
         // Fit last column of tiles
         if (dx < dest.width)
         {
-            i32 dy = 0;
+            auto dy = 0;
             for (;dy+tileHeight < dest.height; dy += tileHeight)
             {
                 DrawTexturePro(texture, Rectangle{source.x, source.y, ((dest.width - dx)/tileWidth)*source.width, source.height},

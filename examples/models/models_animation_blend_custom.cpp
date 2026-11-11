@@ -53,13 +53,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blend custom");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 4.0f, 4.0f, 4.0f };     // Camera position
     camera.target = vec3{ 0.0f, 1.0f, 0.0f };       // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };           // Camera up vector (rotation towards target)
@@ -68,7 +68,7 @@ i32 main()
 
     // Load gltf model
     Model model = LoadModel("resources/models/gltf/greenman.glb");
-    const vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f }; // Set model position
 
     // Load skinning shader
     // WARNING: GPU skinning must be enabled in raylib with a compilation flag,
@@ -78,20 +78,20 @@ i32 main()
     model.materials[1].shader = skinningShader;
 
     // Load gltf model animations
-    i32 animCount = 0;
+    auto animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/greenman.glb", &animCount);
 
     // Use specific animation indices: 2-walk/move, 3-attack
-    i32 animIndex0 = 2; // Walk/Move animation (index 2)
-    i32 animIndex1 = 3; // Attack animation (index 3)
-    i32 animCurrentFrame0 = 0;
-    i32 animCurrentFrame1 = 0;
+    auto animIndex0 = 2; // Walk/Move animation (index 2)
+    auto animIndex1 = 3; // Attack animation (index 3)
+    auto animCurrentFrame0 = 0;
+    auto animCurrentFrame1 = 0;
 
     // Validate indices
     if (animIndex0 >= animCount) animIndex0 = 0;
     if (animIndex1 >= animCount) animIndex1 = (animCount > 1) ? 1 : 0;
 
-    bool upperBodyBlend = true;     // Toggle: true = upper/lower body blending, false = uniform blending (50/50)
+    auto upperBodyBlend = true;     // Toggle: true = upper/lower body blending, false = uniform blending (50/50)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             if (upperBodyBlend)
             {
                 const char *boneName = model->skeleton.bones[boneIndex].name;
-                const bool isUpperBody = IsUpperBodyBone(boneName);
+                const auto isUpperBody = IsUpperBodyBone(boneName);
 
                 // Upper body: use anim1 (attack), Lower body: use anim0 (walk)
                 // blend = 0.0 means full anim0 (walk), 1.0 means full anim1 (attack)
@@ -240,7 +240,7 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
             Transform *animTransform1 = &anim1->keyframePoses[frame1][boneIndex];
 
             // Blend the transforms
-            Transform blended = {};
+            auto blended = Transform{};
             blended.translation = glm::mix(animTransform0->translation, animTransform1->translation, boneBlendFactor);
             blended.rotation = glm::slerp(animTransform0->rotation, animTransform1->rotation, boneBlendFactor);
             blended.scale = glm::mix(animTransform0->scale, animTransform1->scale, boneBlendFactor);
@@ -260,14 +260,14 @@ static void UpdateModelAnimationBoneCustom(Model *model, ModelAnimation *anim0, 
         for (i32 m = 0; m < model->meshCount; m++)
         {
             const Mesh mesh = model->meshes[m];
-            vec3 animVertex = {};
-            vec3 animNormal = {};
+            auto animVertex = vec3{};
+            auto animNormal = vec3{};
             const i32 vertexValuesCount = mesh.vertexCount*3;
 
-            i32 boneIndex = 0;
-            i32 boneCounter = 0;
-            f32 boneWeight = 0.0f;
-            bool bufferUpdateRequired = false; // Flag to check when anim vertex information is updated
+            auto boneIndex = 0;
+            auto boneCounter = 0;
+            auto boneWeight = 0.0f;
+            auto bufferUpdateRequired = false; // Flag to check when anim vertex information is updated
 
             // Skip if missing bone data or missing anim buffers initialization
             if ((mesh.boneWeights == nullptr) || (mesh.boneIndices == nullptr) ||

@@ -54,12 +54,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera platformer");
 
-    Player player = {};
+    auto player = Player{};
     player.position = vec2{ 400, 280 };
     player.speed = 0;
     player.canJump = false;
@@ -73,7 +73,7 @@ i32 main()
 
     const i32 envItemsLength = sizeof(envItems)/sizeof(envItems[0]);
 
-    Camera2D camera = {};
+    auto camera = Camera2D{};
     camera.target = player.position;
     camera.offset = vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;
@@ -88,7 +88,7 @@ i32 main()
         UpdateCameraPlayerBoundsPush
     };
 
-    i32 cameraOption = 0;
+    auto cameraOption = 0;
     const i32 cameraUpdatersLength = sizeof(cameraUpdaters)/sizeof(cameraUpdaters[0]);
 
     const char *cameraDescriptions[] = {
@@ -107,7 +107,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const f32 deltaTime = GetFrameTime();
+        const auto deltaTime = GetFrameTime();
 
         UpdatePlayer(&player, envItems, envItemsLength, deltaTime);
 
@@ -138,7 +138,7 @@ i32 main()
 
                 for (i32 i = 0; i < envItemsLength; i++) DrawRectangleRec(envItems[i].rect, envItems[i].color);
 
-                const Rectangle playerRect = { player.position.x - 20, player.position.y - 40, 40.0f, 40.0f };
+                const auto playerRect = Rectangle{ player.position.x - 20, player.position.y - 40, 40.0f, 40.0f };
                 DrawRectangleRec(playerRect, RED);
 
                 DrawCircleV(player.position, 5.0f, GOLD);
@@ -176,7 +176,7 @@ void UpdatePlayer(Player *player, EnvItem *envItems, i32 envItemsLength, f32 del
         player->canJump = false;
     }
 
-    bool hitObstacle = false;
+    auto hitObstacle = false;
     for (i32 i = 0; i < envItemsLength; i++)
     {
         EnvItem *ei = envItems + i;
@@ -224,8 +224,8 @@ void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envI
         maxY = fmaxf(ei->rect.y + ei->rect.height, maxY);
     }
 
-    const vec2 max = GetWorldToScreen2D(vec2{ maxX, maxY }, *camera);
-    const vec2 min = GetWorldToScreen2D(vec2{ minX, minY }, *camera);
+    const auto max = GetWorldToScreen2D(vec2{ maxX, maxY }, *camera);
+    const auto min = GetWorldToScreen2D(vec2{ minX, minY }, *camera);
 
     if (max.x < width) camera->offset.x = width - (max.x - static_cast<f32>(width)/2);
     if (max.y < height) camera->offset.y = height - (max.y - static_cast<f32>(height)/2);
@@ -237,7 +237,7 @@ void UpdateCameraCenterSmoothFollow(Camera2D *camera, Player *player, EnvItem *e
 {
     static constexpr f32 minSpeed = 30;
     static constexpr f32 minEffectLength = 10;
-    static constexpr f32 fractionSpeed = 0.8f;
+    static constexpr auto fractionSpeed = 0.8f;
 
     camera->offset = vec2{ width/2.0f, height/2.0f };
     const vec2 diff = ((player->position) - (camera->target));
@@ -294,10 +294,10 @@ void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *env
 
 void UpdateCameraPlayerBoundsPush(Camera2D *camera, Player *player, EnvItem *envItems, i32 envItemsLength, f32 delta, i32 width, i32 height)
 {
-    static const vec2 bbox = { 0.2f, 0.2f };
+    static const auto bbox = vec2{ 0.2f, 0.2f };
 
-    const vec2 bboxWorldMin = GetScreenToWorld2D(vec2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height }, *camera);
-    const vec2 bboxWorldMax = GetScreenToWorld2D(vec2{ (1 + bbox.x)*0.5f*width, (1 + bbox.y)*0.5f*height }, *camera);
+    const auto bboxWorldMin = GetScreenToWorld2D(vec2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height }, *camera);
+    const auto bboxWorldMax = GetScreenToWorld2D(vec2{ (1 + bbox.x)*0.5f*width, (1 + bbox.y)*0.5f*height }, *camera);
     camera->offset = vec2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height };
 
     if (player->position.x < bboxWorldMin.x) camera->target.x = player->position.x;

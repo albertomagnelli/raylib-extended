@@ -26,8 +26,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - mouse painting");
 
@@ -48,19 +48,19 @@ i32 main()
         colorsRecs[i].height = 30;
     }
 
-    i32 colorSelected = 0;
+    auto colorSelected = 0;
     i32 colorSelectedPrev = colorSelected;
-    i32 colorMouseHover = 0;
-    f32 brushSize = 20.0f;
-    bool mouseWasPressed = false;
+    auto colorMouseHover = 0;
+    auto brushSize = 20.0f;
+    auto mouseWasPressed = false;
 
-    const Rectangle btnSaveRec = { 750, 10, 40, 30 };
-    bool btnSaveMouseHover = false;
-    bool showSaveMessage = false;
-    i32 saveMessageCounter = 0;
+    const auto btnSaveRec = Rectangle{ 750, 10, 40, 30 };
+    auto btnSaveMouseHover = false;
+    auto showSaveMessage = false;
+    auto saveMessageCounter = 0;
 
     // Create a RenderTexture2D to use as a canvas
-    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const auto target = LoadRenderTexture(screenWidth, screenHeight);
 
     // Clear render texture before entering the game loop
     BeginTextureMode(target);
@@ -75,7 +75,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mousePos = GetMousePosition();
+        const auto mousePos = GetMousePosition();
 
         // Move between colors with keys
         if (IsKeyPressed(KEY_RIGHT)) colorSelected++;
@@ -153,7 +153,7 @@ i32 main()
         // NOTE: Saving painted texture to a default named image
         if ((btnSaveMouseHover && IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) || IsKeyPressed(KEY_S))
         {
-            Image image = LoadImageFromTexture(target.texture);
+            auto image = LoadImageFromTexture(target.texture);
             ImageFlipVertical(&image);
             ExportImage(image, "my_amazing_texture_painting.png");
             UnloadImage(image);

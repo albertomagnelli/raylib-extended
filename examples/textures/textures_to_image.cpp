@@ -24,15 +24,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - to image");
 
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
 
     Image image = LoadImage("resources/raylib_logo.png");  // Load image data into CPU memory (RAM)
-    Texture2D texture = LoadTextureFromImage(image);       // Image converted to texture, GPU memory (RAM -> VRAM)
+    auto texture = LoadTextureFromImage(image);       // Image converted to texture, GPU memory (RAM -> VRAM)
     UnloadImage(image);                                    // Unload image data from CPU memory (RAM)
 
     image = LoadImageFromTexture(texture);                 // Load image from GPU texture (VRAM -> RAM)

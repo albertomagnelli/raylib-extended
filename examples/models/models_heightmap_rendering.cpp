@@ -22,13 +22,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - heightmap rendering");
 
     // Define our custom camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 18.0f, 21.0f, 18.0f };          // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };               // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };                   // Camera up vector (rotation towards target)
@@ -36,13 +36,13 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
     const Image image = LoadImage("resources/heightmap.png");     // Load heightmap image (RAM)
-    const Texture2D texture = LoadTextureFromImage(image);        // Convert image to texture (VRAM)
+    const auto texture = LoadTextureFromImage(image);        // Convert image to texture (VRAM)
 
-    const Mesh mesh = GenMeshHeightmap(image, vec3{ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
-    const Model model = LoadModelFromMesh(mesh);                  // Load model from generated mesh
+    const auto mesh = GenMeshHeightmap(image, vec3{ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
+    const auto model = LoadModelFromMesh(mesh);                  // Load model from generated mesh
 
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Set map diffuse texture
-    const vec3 mapPosition = { -8.0f, 0.0f, -8.0f };                 // Define model position
+    const auto mapPosition = vec3{ -8.0f, 0.0f, -8.0f };                 // Define model position
 
     UnloadImage(image);             // Unload heightmap image from RAM, already uploaded to VRAM
 

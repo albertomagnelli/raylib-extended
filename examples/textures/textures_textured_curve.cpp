@@ -26,18 +26,18 @@
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static Texture texRoad = {};
+static auto texRoad = Texture{};
 
-static bool showCurve = false;
+static auto showCurve = false;
 
 static f32 curveWidth = 50;
-static i32 curveSegments = 24;
+static auto curveSegments = 24;
 
-static vec2 curveStartPosition = {};
-static vec2 curveStartPositionTangent = {};
+static auto curveStartPosition = vec2{};
+static auto curveStartPositionTangent = vec2{};
 
-static vec2 curveEndPosition = {};
-static vec2 curveEndPositionTangent = {};
+static auto curveEndPosition = vec2{};
+static auto curveEndPositionTangent = vec2{};
 
 static vec2 *curveSelectedPoint = nullptr;
 
@@ -53,8 +53,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - textured curve");
@@ -98,7 +98,7 @@ i32 main()
         if (curveSelectedPoint != nullptr) *curveSelectedPoint = ((*curveSelectedPoint) + (GetMouseDelta()));
 
         // The mouse is down, and nothing was selected, so see if anything was picked
-        const vec2 mouse = GetMousePosition();
+        const auto mouse = GetMousePosition();
         if (CheckCollisionPointCircle(mouse, curveStartPosition, 6)) curveSelectedPoint = &curveStartPosition;
         else if (CheckCollisionPointCircle(mouse, curveStartPositionTangent, 6)) curveSelectedPoint = &curveStartPositionTangent;
         else if (CheckCollisionPointCircle(mouse, curveEndPosition, 6)) curveSelectedPoint = &curveEndPosition;
@@ -161,14 +161,14 @@ static void DrawTexturedCurve(void)
     const f32 step = 1.0f/curveSegments;
 
     vec2 previous = curveStartPosition;
-    vec2 previousTangent = {};
+    auto previousTangent = vec2{};
     f32 previousV = 0;
 
     // We can't compute a tangent for the first point, so we need to reuse the tangent from the first segment
-    bool tangentSet = false;
+    auto tangentSet = false;
 
-    vec2 current = {};
-    f32 t = 0.0f;
+    auto current = vec2{};
+    auto t = 0.0f;
 
     for (i32 i = 1; i <= curveSegments; i++)
     {
@@ -184,7 +184,7 @@ static void DrawTexturedCurve(void)
         current.x = a*curveStartPosition.x + b*curveStartPositionTangent.x + c*curveEndPositionTangent.x + d*curveEndPosition.x;
 
         // Vector from previous to current
-        const vec2 delta = { current.x - previous.x, current.y - previous.y };
+        const auto delta = vec2{ current.x - previous.x, current.y - previous.y };
 
         // The right hand normal to the delta vector
         const vec2 normal = glm::normalize(vec2{ -delta.y, delta.x });

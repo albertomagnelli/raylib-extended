@@ -28,15 +28,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - basic voxel");
 
     DisableCursor(); // Lock mouse to window center
 
     // Define the camera to look into our 3d world (first person)
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ -2.0f, 0.0f, -2.0f };        // Camera position at ground level
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };            // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };                // Camera up vector
@@ -44,8 +44,8 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;              // Camera projection type
 
     // Create a cube model
-    const Mesh cubeMesh = GenMeshCube(1.0f, 1.0f, 1.0f);       // Create a unit cube mesh
-    const Model cubeModel = LoadModelFromMesh(cubeMesh);       // Convert mesh to a model
+    const auto cubeMesh = GenMeshCube(1.0f, 1.0f, 1.0f);       // Create a unit cube mesh
+    const auto cubeModel = LoadModelFromMesh(cubeMesh);       // Convert mesh to a model
     cubeModel.materials[0].maps[MATERIAL_MAP_DIFFUSE].color = BEIGE;
 
     // Initialize voxel world - fill with voxels
@@ -76,13 +76,13 @@ i32 main()
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
             // Cast a ray from the screen center (where crosshair would be)
-            const vec2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
-            const Ray ray = GetScreenToWorldRay(screenCenter, camera);
+            const auto screenCenter = vec2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+            const auto ray = GetScreenToWorldRay(screenCenter, camera);
 
             // Check ray collision with all voxels
-            f32 closestDistance = 99999.0f;
-            vec3 closestVoxelPosition = { -1, -1, -1 };
-            bool voxelFound = false;
+            auto closestDistance = 99999.0f;
+            auto closestVoxelPosition = vec3{ -1, -1, -1 };
+            auto voxelFound = false;
             for (i32 x = 0; x < WORLD_SIZE; x++)
             {
                 for (i32 y = 0; y < WORLD_SIZE; y++)
@@ -92,14 +92,14 @@ i32 main()
                         if (!voxels[x][y][z]) continue; // Skip empty voxels
 
                         // Build a bounding box for this voxel
-                        const vec3 position = { static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) };
+                        const auto position = vec3{ static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) };
                         const BoundingBox box = {
                             vec3{ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
                             vec3{ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
                         };
 
                         // Check ray-box collision
-                        const RayCollision collision = GetRayCollisionBox(ray, box);
+                        const auto collision = GetRayCollisionBox(ray, box);
                         if (collision.hit && (collision.distance < closestDistance))
                         {
                             closestDistance = collision.distance;
@@ -139,7 +139,7 @@ i32 main()
                         {
                             if (!voxels[x][y][z]) continue;
 
-                            const vec3 position = { static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) };
+                            const auto position = vec3{ static_cast<f32>(x), static_cast<f32>(y), static_cast<f32>(z) };
                             DrawModel(cubeModel, position, 1.0f, BEIGE);
                             DrawCubeWires(position, 1.0f, 1.0f, 1.0f, BLACK);
                         }

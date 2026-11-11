@@ -43,14 +43,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - random sequence");
 
-    i32 rectCount = 20;
+    auto rectCount = 20;
     f32 rectSize = static_cast<f32>(screenWidth)/rectCount;
-    ColorRect *rectangles = GenerateRandomColorRectSequence(static_cast<f32>(rectCount), rectSize, static_cast<f32>(screenWidth), 0.75f*screenHeight);
+    auto rectangles = GenerateRandomColorRectSequence(static_cast<f32>(rectCount), rectSize, static_cast<f32>(screenWidth), 0.75f*screenHeight);
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ static ColorRect *GenerateRandomColorRectSequence(f32 rectCount, f32 rectWidth, 
 {
     ColorRect *rectangles = static_cast<ColorRect *>(calloc(static_cast<i32>(rectCount), sizeof(ColorRect)));
 
-    i32 *seq = LoadRandomSequence(static_cast<u32>(rectCount), 0, static_cast<u32>(rectCount) - 1);
+    auto seq = LoadRandomSequence(static_cast<u32>(rectCount), 0, static_cast<u32>(rectCount) - 1);
     const f32 rectSeqWidth = rectCount*rectWidth;
     const f32 startX = (screenWidth - rectSeqWidth)*0.5f;
 
@@ -156,7 +156,7 @@ static ColorRect *GenerateRandomColorRectSequence(f32 rectCount, f32 rectWidth, 
 
 static void ShuffleColorRectSequence(ColorRect *rectangles, i32 rectCount)
 {
-    i32 *seq = LoadRandomSequence(rectCount, 0, rectCount -  1);
+    auto seq = LoadRandomSequence(rectCount, 0, rectCount -  1);
 
     for (i32 i1 = 0; i1 < rectCount; i1++)
     {

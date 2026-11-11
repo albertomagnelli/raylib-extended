@@ -1,4 +1,4 @@
-﻿/*******************************************************************************************
+/*******************************************************************************************
 *
 *   raylib [shapes] example - lines drawing
 *
@@ -26,24 +26,24 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - lines drawing");
 
     // Hint text that shows before you click the screen
-    bool startText = true;
+    auto startText = true;
 
     // The mouse's position on the previous frame
-    vec2 mousePositionPrevious = GetMousePosition();
+    auto mousePositionPrevious = GetMousePosition();
 
     // The canvas to draw lines on
     const RenderTexture canvas = LoadRenderTexture(screenWidth, screenHeight);
 
     // The line's thickness
-    f32 lineThickness = 8.0f;
+    auto lineThickness = 8.0f;
     // The lines hue (in HSV, from 0-360)
-    f32 lineHue = 0.0f;
+    auto lineHue = 0.0f;
 
     // Clear the canvas to the background color
     BeginTextureMode(canvas);
@@ -70,8 +70,8 @@ i32 main()
         }
 
         // Store whether the left and right buttons are down
-        const bool leftButtonDown = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
-        const bool rightButtonDown = IsMouseButtonDown(MOUSE_BUTTON_RIGHT);
+        const auto leftButtonDown = IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+        const auto rightButtonDown = IsMouseButtonDown(MOUSE_BUTTON_RIGHT);
 
         if (leftButtonDown || rightButtonDown)
         {

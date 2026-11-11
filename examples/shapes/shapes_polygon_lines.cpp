@@ -24,13 +24,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - polygon lines");
 
-    i32 thick = 2;
-    f32 rotation = 0.0f;
+    auto thick = 2;
+    auto rotation = 0.0f;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

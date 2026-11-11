@@ -27,15 +27,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera mouse zoom");
 
-    Camera2D camera = {};
+    auto camera = Camera2D{};
     camera.zoom = 1.0f;
 
-    i32 zoomMode = 0;       // 0-Mouse Wheel, 1-Mouse Move
+    auto zoomMode = 0;       // 0-Mouse Wheel, 1-Mouse Move
 
     SetTargetFPS(60);       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -51,21 +51,21 @@ i32 main()
         // Translate based on mouse right click
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
-            vec2 delta = GetMouseDelta();
+            auto delta = GetMouseDelta();
             delta = ((delta) * (-1.0f/camera.zoom));
             camera.target = ((camera.target) + (delta));
         }
 
-        const vec2 renderScale = { static_cast<f32>(GetRenderWidth())/GetScreenWidth(), static_cast<f32>(GetRenderHeight())/GetScreenHeight() };
+        const auto renderScale = vec2{ static_cast<f32>(GetRenderWidth())/GetScreenWidth(), static_cast<f32>(GetRenderHeight())/GetScreenHeight() };
 
         if (zoomMode == 0)
         {
             // Zoom based on mouse wheel
-            const f32 wheel = GetMouseWheelMove();
+            const auto wheel = GetMouseWheelMove();
             if (wheel != 0)
             {
                 // Get the world point that is under the mouse
-                const vec2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+                const auto mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
                 camera.offset = ((GetMousePosition()) * (renderScale));
@@ -86,7 +86,7 @@ i32 main()
             if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
             {
                 // Get the world point that is under the mouse
-                const vec2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+                const auto mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
                 camera.offset = ((GetMousePosition()) * (renderScale));

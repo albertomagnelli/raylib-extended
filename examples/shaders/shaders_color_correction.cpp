@@ -38,8 +38,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - color correction");
 
@@ -52,12 +52,12 @@ i32 main()
 
     const Shader shdrColorCorrection = LoadShader({}, TextFormat("resources/shaders/glsl%i/color_correction.fs", GLSL_VERSION));
 
-    i32 imageIndex = 0;
-    i32 resetButtonClicked = 0;
+    auto imageIndex = 0;
+    auto resetButtonClicked = 0;
 
-    f32 contrast = 0.0f;
-    f32 saturation = 0.0f;
-    f32 brightness = 0.0f;
+    auto contrast = 0.0f;
+    auto saturation = 0.0f;
+    auto brightness = 0.0f;
 
     // Get shader locations
     const i32 contrastLoc = GetShaderLocation(shdrColorCorrection, "contrast");

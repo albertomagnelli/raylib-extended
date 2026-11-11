@@ -45,7 +45,7 @@ set(raylib_sources
     rtextures.cpp
     logging.cpp
     error.cpp
-    loggging.h
+    logging.h
     error.h
     )
 

@@ -66,13 +66,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [models] example - procedural decals");
 
-    Camera3D camera = {};
+    auto camera = Camera3D{};
     camera.position = vec3{ 0.0f, 2.5f, 5.0f };
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -80,15 +80,15 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;
 
     // Target model: a procedurally generated knot with a checkerboard skin
-    const Model model = LoadModelFromMesh(GenMeshTorus(0.8f, 1.8f, 32, 64));
+    const auto model = LoadModelFromMesh(GenMeshTorus(0.8f, 1.8f, 32, 64));
 
-    const Image checkerImage = GenImageChecked(512, 512, 32, 32, LIGHTGRAY, GRAY);
-    const Texture2D modelTexture = LoadTextureFromImage(checkerImage);
+    const auto checkerImage = GenImageChecked(512, 512, 32, 32, LIGHTGRAY, GRAY);
+    const auto modelTexture = LoadTextureFromImage(checkerImage);
     UnloadImage(checkerImage);
     SetTextureFilter(modelTexture, TEXTURE_FILTER_BILINEAR);
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = modelTexture;
 
-    const BoundingBox modelBBox = GetMeshBoundingBox(model.meshes[0]);
+    const auto modelBBox = GetMeshBoundingBox(model.meshes[0]);
     camera.target = glm::mix(modelBBox.min, modelBBox.max, 0.5f);
 
     const f32 modelSize = fminf(fminf(fabsf(modelBBox.max.x - modelBBox.min.x),
@@ -97,27 +97,27 @@ i32 main()
     const f32 decalSize = modelSize*0.35f;
 
     // Translucent cube previewing where the next decal will land
-    Model placementCube = LoadModelFromMesh(GenMeshCube(decalSize, decalSize, decalSize));
+    auto placementCube = LoadModelFromMesh(GenMeshCube(decalSize, decalSize, decalSize));
     placementCube.materials[0].maps[0].color = LIME;
 
     // Decal texture: a procedurally drawn target/bullseye, no image file needed
-    Image decalImage = GenImageColor(128, 128, BLANK);
+    auto decalImage = GenImageColor(128, 128, BLANK);
     ImageDrawCircle(&decalImage, 64, 64, 60, RED);
     ImageDrawCircle(&decalImage, 64, 64, 45, WHITE);
     ImageDrawCircle(&decalImage, 64, 64, 30, RED);
     ImageDrawCircle(&decalImage, 64, 64, 15, YELLOW);
 
-    const Texture2D decalTexture = LoadTextureFromImage(decalImage);
+    const auto decalTexture = LoadTextureFromImage(decalImage);
     UnloadImage(decalImage);
     SetTextureFilter(decalTexture, TEXTURE_FILTER_BILINEAR);
 
-    const Material decalMaterial = LoadMaterialDefault();
+    const auto decalMaterial = LoadMaterialDefault();
     decalMaterial.maps[MATERIAL_MAP_DIFFUSE].texture = decalTexture;
     decalMaterial.maps[MATERIAL_MAP_DIFFUSE].color = RAYWHITE;
 
-    bool showModel = true;
+    auto showModel = true;
     Model decals[MAX_DECALS] = {};
-    i32 decalCount = 0;
+    auto decalCount = 0;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -130,14 +130,14 @@ i32 main()
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) UpdateCamera(&camera, CAMERA_THIRD_PERSON);
 
         // Cast a ray from the mouse and keep the closest point it hits on the model
-        const Ray ray = GetScreenToWorldRay(GetMousePosition(), camera);
-        RayCollision collision = {};
+        const auto ray = GetScreenToWorldRay(GetMousePosition(), camera);
+        auto collision = RayCollision{};
 
         if (GetRayCollisionBox(ray, modelBBox).hit && (decalCount < MAX_DECALS))
         {
             for (i32 m = 0; m < model.meshCount; m++)
             {
-                const RayCollision meshHit = GetRayCollisionMesh(ray, model.meshes[m], model.transform);
+                const auto meshHit = GetRayCollisionMesh(ray, model.meshes[m], model.transform);
                 if (meshHit.hit && (!collision.hit || (meshHit.distance < collision.distance))) collision = meshHit;
             }
         }
@@ -145,7 +145,7 @@ i32 main()
         // Project a new decal at the hit point, facing along the surface normal
         if (collision.hit && IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && (decalCount < MAX_DECALS))
         {
-            constexpr f32 decalOffset = 0.01f;
+            constexpr auto decalOffset = 0.01f;
             const vec3 lookTarget = ((collision.point) + (collision.normal));
             mat4 splat = glm::lookAt(collision.point, lookTarget, vec3{ 0.0f, 1.0f, 0.0f });
             splat = ((glm::rotate(mat4(1.0f), DEG2RAD*static_cast<f32>(GetRandomValue(-180, 180)), vec3{0.0f, 0.0f, 1.0f})) * (splat));
@@ -281,7 +281,7 @@ static void FreeMeshBuilder(MeshBuilder *mb)
 // Converts a mesh builder's triangle soup into a standard uploaded raylib Mesh
 static Mesh BuildMesh(const MeshBuilder *mb)
 {
-    Mesh outMesh = {};
+    auto outMesh = Mesh{};
 
     outMesh.vertexCount = mb->vertexCount;
     outMesh.triangleCount = mb->vertexCount/3;
@@ -325,7 +325,7 @@ static Mesh GenMeshDecal(Model model, mat4 projection, f32 decalSize, f32 decalO
 {
     const mat4 invProj = glm::inverse(projection);
     MeshBuilder meshBuilders[2] = {};
-    i32 mbIndex = 0;
+    auto mbIndex = 0;
 
     // Gather triangles that land anywhere near the decal box; this is a loose, cheap
     // pre-filter meant to skip most of the model, the precise clip happens below
@@ -361,7 +361,7 @@ static Mesh GenMeshDecal(Model model, mat4 projection, f32 decalSize, f32 decalO
                 }
             }
 
-            i32 insideCount = 0;
+            auto insideCount = 0;
             for (auto & vertice : vertices)
             {
                 const auto v = vec3((projection)*vec4(vertice, 1.0f));
@@ -475,7 +475,7 @@ static Mesh GenMeshDecal(Model model, mat4 projection, f32 decalSize, f32 decalO
     }
 
     MeshBuilder *finalMesh = &meshBuilders[mbIndex];
-    Mesh decalMesh = {};
+    auto decalMesh = Mesh{};
 
     if (finalMesh->vertexCount > 0)
     {

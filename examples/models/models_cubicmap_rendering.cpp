@@ -22,13 +22,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - cubicmap rendering");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 16.0f, 14.0f, 16.0f };          // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };               // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };                   // Camera up vector (rotation towards target)
@@ -36,20 +36,20 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
     const Image image = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
-    const Texture2D cubicmap = LoadTextureFromImage(image);       // Convert image to texture to display (VRAM)
+    const auto cubicmap = LoadTextureFromImage(image);       // Convert image to texture to display (VRAM)
 
-    const Mesh mesh = GenMeshCubicmap(image, vec3{ 1.0f, 1.0f, 1.0f });
-    const Model model = LoadModelFromMesh(mesh);
+    const auto mesh = GenMeshCubicmap(image, vec3{ 1.0f, 1.0f, 1.0f });
+    const auto model = LoadModelFromMesh(mesh);
 
     // NOTE: By default each cube is mapped to one part of texture atlas
     const Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");    // Load map texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;          // Set map diffuse texture
 
-    const vec3 mapPosition = { -16.0f, 0.0f, -8.0f };        // Set model position
+    const auto mapPosition = vec3{ -16.0f, 0.0f, -8.0f };        // Set model position
 
     UnloadImage(image);     // Unload cubesmap image from RAM, already uploaded to VRAM
 
-    bool pause = false;     // Pause camera orbital rotation (and zoom)
+    auto pause = false;     // Pause camera orbital rotation (and zoom)
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

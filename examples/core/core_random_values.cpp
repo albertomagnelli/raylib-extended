@@ -22,14 +22,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - random values");
 
     // SetRandomSeed(0xaabbccff);   // Set a custom random seed if desired, by default: "time(NULL)"
 
-    i32 randValue = GetRandomValue(-8, 5);   // Get a random integer number between -8 and 5 (both included)
+    auto randValue = GetRandomValue(-8, 5);   // Get a random integer number between -8 and 5 (both included)
 
     u32 framesCounter = 0; // Variable used to count frames
 

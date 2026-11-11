@@ -52,8 +52,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image processing");
 
@@ -61,15 +61,15 @@ i32 main()
 
     Image imOrigin = LoadImage("resources/parrots.png");   // Loaded in CPU memory (RAM)
     ImageFormat(&imOrigin, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);         // Format image to RGBA 32bit (required for texture update) <-- ISSUE
-    const Texture2D texture = LoadTextureFromImage(imOrigin);    // Image converted to texture, GPU memory (VRAM)
+    const auto texture = LoadTextureFromImage(imOrigin);    // Image converted to texture, GPU memory (VRAM)
 
-    Image imCopy = ImageCopy(imOrigin);
+    auto imCopy = ImageCopy(imOrigin);
 
     i32 currentProcess = NONE;
-    bool textureReload = false;
+    auto textureReload = false;
 
     Rectangle toggleRecs[NUM_PROCESSES] = {};
-    i32 mouseHoverRec = -1;
+    auto mouseHoverRec = -1;
 
     for (i32 i = 0; i < NUM_PROCESSES; i++) toggleRecs[i] = Rectangle{ 40.0f, static_cast<f32>(50 + 32*i), 150.0f, 30.0f };
 
@@ -135,7 +135,7 @@ i32 main()
                 default: break;
             }
 
-            Color *pixels = LoadImageColors(imCopy);    // Load pixel data from image (RGBA 32bit)
+            auto pixels = LoadImageColors(imCopy);    // Load pixel data from image (RGBA 32bit)
             UpdateTexture(texture, pixels);             // Update texture with new image data
             UnloadImageColors(pixels);                  // Unload pixels data from RAM
 

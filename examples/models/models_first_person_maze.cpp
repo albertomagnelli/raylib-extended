@@ -24,13 +24,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - first person maze");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 0.2f, 0.4f, 0.2f };         // Camera position
     camera.target = vec3{ 0.185f, 0.4f, 0.0f };         // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -38,19 +38,19 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     const Image imMap = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
-    const Texture2D cubicmap = LoadTextureFromImage(imMap);       // Convert image to texture to display (VRAM)
-    const Mesh mesh = GenMeshCubicmap(imMap, vec3{ 1.0f, 1.0f, 1.0f });
-    const Model model = LoadModelFromMesh(mesh);
+    const auto cubicmap = LoadTextureFromImage(imMap);       // Convert image to texture to display (VRAM)
+    const auto mesh = GenMeshCubicmap(imMap, vec3{ 1.0f, 1.0f, 1.0f });
+    const auto model = LoadModelFromMesh(mesh);
 
     // NOTE: By default each cube is mapped to one part of texture atlas
     const Texture2D texture = LoadTexture("resources/cubicmap_atlas.png");    // Load map texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;          // Set map diffuse texture
 
     // Get map image data to be used for collision detection
-    Color *mapPixels = LoadImageColors(imMap);
+    auto mapPixels = LoadImageColors(imMap);
     UnloadImage(imMap);             // Unload image from RAM
 
-    const vec3 mapPosition = { -16.0f, 0.0f, -8.0f };// Set model position
+    const auto mapPosition = vec3{ -16.0f, 0.0f, -8.0f };// Set model position
 
     DisableCursor();                // Limit cursor to relative movement inside the window
 
@@ -67,11 +67,11 @@ i32 main()
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
         // Check player collision (we simplify to 2D collision detection)
-        const vec2 playerPos = { camera.position.x, camera.position.z };
-        constexpr f32 playerRadius = 0.1f;  // Collision radius (player is modelled as a cilinder for collision)
+        const auto playerPos = vec2{ camera.position.x, camera.position.z };
+        constexpr auto playerRadius = 0.1f;  // Collision radius (player is modelled as a cilinder for collision)
 
-        i32 playerCellX = static_cast<i32>(playerPos.x - mapPosition.x + 0.5f);
-        i32 playerCellY = static_cast<i32>(playerPos.y - mapPosition.z + 0.5f);
+        auto playerCellX = static_cast<i32>(playerPos.x - mapPosition.x + 0.5f);
+        auto playerCellY = static_cast<i32>(playerPos.y - mapPosition.z + 0.5f);
 
         // Out-of-limits security check
         if (playerCellX < 0) playerCellX = 0;

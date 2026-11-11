@@ -37,8 +37,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - texture waves");
 
@@ -57,12 +57,12 @@ i32 main()
     const i32 speedYLoc = GetShaderLocation(shader, "speedY");
 
     // Shader uniform values that can be updated at any time
-    f32 freqX = 25.0f;
-    f32 freqY = 25.0f;
-    f32 ampX = 5.0f;
-    f32 ampY = 5.0f;
-    f32 speedX = 8.0f;
-    f32 speedY = 8.0f;
+    auto freqX = 25.0f;
+    auto freqY = 25.0f;
+    auto ampX = 5.0f;
+    auto ampY = 5.0f;
+    auto speedX = 8.0f;
+    auto speedY = 8.0f;
 
     f32 screenSize[2] = { static_cast<f32>(GetScreenWidth()), static_cast<f32>(GetScreenHeight()) };
     SetShaderValue(shader, GetShaderLocation(shader, "size"), &screenSize, SHADER_UNIFORM_VEC2);
@@ -73,7 +73,7 @@ i32 main()
     SetShaderValue(shader, speedXLoc, &speedX, SHADER_UNIFORM_FLOAT);
     SetShaderValue(shader, speedYLoc, &speedY, SHADER_UNIFORM_FLOAT);
 
-    f32 seconds = 0.0f;
+    auto seconds = 0.0f;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     // -------------------------------------------------------------------------------------------------------------

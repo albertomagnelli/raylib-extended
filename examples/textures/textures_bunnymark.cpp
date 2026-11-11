@@ -39,19 +39,19 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - bunnymark");
 
     // Load bunny texture
     const Texture2D texBunny = LoadTexture("resources/raybunny.png");
 
-    Bunny *bunnies = static_cast<Bunny *>(malloc(MAX_BUNNIES*sizeof(Bunny)));    // Bunnies array
+    auto bunnies = static_cast<Bunny *>(malloc(MAX_BUNNIES*sizeof(Bunny)));    // Bunnies array
 
-    i32 bunniesCount = 0;           // Bunnies counter
+    auto bunniesCount = 0;           // Bunnies counter
 
-    bool paused = false;
+    auto paused = false;
 
     SetTargetFPS(0);               // Set our game to run with an uncapped framerate
     //--------------------------------------------------------------------------------------

@@ -27,23 +27,23 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ring drawing");
 
-    const vec2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
+    const auto center = vec2{(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
-    f32 innerRadius = 80.0f;
-    f32 outerRadius = 190.0f;
+    auto innerRadius = 80.0f;
+    auto outerRadius = 190.0f;
 
-    f32 startAngle = 0.0f;
-    f32 endAngle = 360.0f;
-    f32 segments = 0.0f;
+    auto startAngle = 0.0f;
+    auto endAngle = 360.0f;
+    auto segments = 0.0f;
 
-    bool drawRing = true;
-    bool drawRingLines = false;
-    bool drawCircleLines = false;
+    auto drawRing = true;
+    auto drawRingLines = false;
+    auto drawCircleLines = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ i32 main()
             GuiCheckBox(Rectangle{ 600, 380, 20, 20 }, "Draw CircleLines", &drawCircleLines);
             //------------------------------------------------------------------------------
 
-            const i32 minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
+            const auto minSegments = static_cast<i32>(ceilf((endAngle - startAngle)/90));
             DrawText(TextFormat("MODE: %s", (segments >= minSegments)? "MANUAL" : "AUTO"), 600, 270, 10, (segments >= minSegments)? MAROON : DARKGRAY);
 
             DrawFPS(10, 10);

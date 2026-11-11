@@ -40,13 +40,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - mesh instancing");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ -125.0f, 125.0f, -125.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.0f };                   // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };                       // Camera up vector (rotation towards target)
@@ -54,10 +54,10 @@ i32 main()
     camera.projection = CAMERA_PERSPECTIVE;                     // Camera projection type
 
     // Define mesh to be instanced
-    const Mesh cube = GenMeshCube(1.0f, 1.0f, 1.0f);
+    const auto cube = GenMeshCube(1.0f, 1.0f, 1.0f);
 
     // Define transforms to be uploaded to GPU for instances
-    mat4 *transforms = static_cast<mat4 *>(calloc(MAX_INSTANCES, sizeof(mat4)));   // Pre-multiplied transformations passed to rlgl
+    auto transforms = static_cast<mat4 *>(calloc(MAX_INSTANCES, sizeof(mat4)));   // Pre-multiplied transformations passed to rlgl
 
     // Translate and rotate cubes randomly
     for (i32 i = 0; i < MAX_INSTANCES; i++)
@@ -86,14 +86,14 @@ i32 main()
 
     // NOTE: We are assigning the intancing shader to material.shader
     // to be used on mesh drawing with DrawMeshInstanced()
-    Material matInstances = LoadMaterialDefault();
+    auto matInstances = LoadMaterialDefault();
     matInstances.shader = shader;
     matInstances.maps[MATERIAL_MAP_DIFFUSE].color = RED;
 
     // Load default material (using raylib intenral default shader) for non-instanced mesh drawing
     // WARNING: Default shader enables vertex color attribute BUT GenMeshCube() does not generate vertex colors, so,
     // when drawing the color attribute is disabled and a default color value is provided as input for thevertex attribute
-    const Material matDefault = LoadMaterialDefault();
+    const auto matDefault = LoadMaterialDefault();
     matDefault.maps[MATERIAL_MAP_DIFFUSE].color = BLUE;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second

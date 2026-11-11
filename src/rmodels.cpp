@@ -176,17 +176,17 @@ static Model LoadM3D(const char *filename);                                     
 static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, i32 *animCount);   // Load M3D animation data
 #endif
 #if SUPPORT_FILEFORMAT_OBJ || SUPPORT_FILEFORMAT_MTL
-static void ProcessMaterialsOBJ(Material *rayMaterials, tinyobj_material_t *materials, i32 materialCount);  // Process obj materials
+static void ProcessMaterialsOBJ(Material *rayMaterials, tinyobj_material_t *materials, const i32 materialCount);  // Process obj materials
 #endif
 
 // Update model vertex data (positions and normals)
-static void UpdateModelAnimationVertexBuffers(Model model);
+static void UpdateModelAnimationVertexBuffers(const Model model);
 
 //----------------------------------------------------------------------------------
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Draw a line in 3D world space
-void DrawLine3D(vec3 startPos, vec3 endPos, Color color)
+void DrawLine3D(const vec3 startPos, const vec3 endPos, const Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -197,7 +197,7 @@ void DrawLine3D(vec3 startPos, vec3 endPos, Color color)
 
 // Draw a point in 3D space, actually a small line
 // WARNING: OpenGL ES 2.0 does not support point mode drawing
-void DrawPoint3D(vec3 position, Color color)
+void DrawPoint3D(const vec3 position, const Color color)
 {
     rlPushMatrix();
         rlTranslatef(position.x, position.y, position.z);
@@ -210,7 +210,7 @@ void DrawPoint3D(vec3 position, Color color)
 }
 
 // Draw a circle in 3D world space
-void DrawCircle3D(vec3 center, f32 radius, vec3 rotationAxis, f32 rotationAngle, Color color)
+void DrawCircle3D(const vec3 center, const f32 radius, const vec3 rotationAxis, const f32 rotationAngle, const Color color)
 {
     rlPushMatrix();
         rlTranslatef(center.x, center.y, center.z);
@@ -229,7 +229,7 @@ void DrawCircle3D(vec3 center, f32 radius, vec3 rotationAxis, f32 rotationAngle,
 }
 
 // Draw a color-filled triangle (vertex in counter-clockwise order!)
-void DrawTriangle3D(vec3 v1, vec3 v2, vec3 v3, Color color)
+void DrawTriangle3D(const vec3 v1, const vec3 v2, const vec3 v3, const Color color)
 {
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -240,7 +240,7 @@ void DrawTriangle3D(vec3 v1, vec3 v2, vec3 v3, Color color)
 }
 
 // Draw a triangle strip defined by points
-void DrawTriangleStrip3D(const vec3 *points, i32 pointCount, Color color)
+void DrawTriangleStrip3D(const vec3 *points, const i32 pointCount, const Color color)
 {
     if (pointCount < 3) return; // Security check
 
@@ -267,11 +267,11 @@ void DrawTriangleStrip3D(const vec3 *points, i32 pointCount, Color color)
 
 // Draw cube
 // NOTE: Cube position is the center position
-void DrawCube(vec3 position, f32 width, f32 height, f32 length, Color color)
+void DrawCube(const vec3 position, const f32 width, const f32 height, const f32 length, const Color color)
 {
-    constexpr f32 x = 0.0f;
-    constexpr f32 y = 0.0f;
-    constexpr f32 z = 0.0f;
+    constexpr auto x = 0.0f;
+    constexpr auto y = 0.0f;
+    constexpr auto z = 0.0f;
 
     rlPushMatrix();
         // NOTE: Transformation is applied in inverse order (scale -> rotate -> translate)
@@ -346,17 +346,17 @@ void DrawCube(vec3 position, f32 width, f32 height, f32 length, Color color)
 }
 
 // Draw cube (Vector version)
-void DrawCubeV(vec3 position, vec3 size, Color color)
+void DrawCubeV(const vec3 position, const vec3 size, const Color color)
 {
     DrawCube(position, size.x, size.y, size.z, color);
 }
 
 // Draw cube wires
-void DrawCubeWires(vec3 position, f32 width, f32 height, f32 length, Color color)
+void DrawCubeWires(const vec3 position, const f32 width, const f32 height, const f32 length, const Color color)
 {
-    constexpr f32 x = 0.0f;
-    constexpr f32 y = 0.0f;
-    constexpr f32 z = 0.0f;
+    constexpr auto x = 0.0f;
+    constexpr auto y = 0.0f;
+    constexpr auto z = 0.0f;
 
     rlPushMatrix();
         rlTranslatef(position.x, position.y, position.z);
@@ -424,19 +424,19 @@ void DrawCubeWires(vec3 position, f32 width, f32 height, f32 length, Color color
 }
 
 // Draw cube wires (vector version)
-void DrawCubeWiresV(vec3 position, vec3 size, Color color)
+void DrawCubeWiresV(const vec3 position, const vec3 size, const Color color)
 {
     DrawCubeWires(position, size.x, size.y, size.z, color);
 }
 
 // Draw sphere
-void DrawSphere(vec3 centerPos, f32 radius, Color color)
+void DrawSphere(const vec3 centerPos, const f32 radius, const Color color)
 {
     DrawSphereEx(centerPos, radius, 16, 16, color);
 }
 
 // Draw sphere with defined rings and slices
-void DrawSphereEx(vec3 centerPos, f32 radius, i32 rings, i32 slices, Color color)
+void DrawSphereEx(const vec3 centerPos, const f32 radius, const i32 rings, const i32 slices, const Color color)
 {
 #if 0
     // Basic implementation, do not use it!
@@ -532,7 +532,7 @@ void DrawSphereEx(vec3 centerPos, f32 radius, i32 rings, i32 slices, Color color
 }
 
 // Draw sphere wires
-void DrawSphereWires(vec3 centerPos, f32 radius, i32 rings, i32 slices, Color color)
+void DrawSphereWires(const vec3 centerPos, const f32 radius, const i32 rings, const i32 slices, const Color color)
 {
     rlPushMatrix();
         // NOTE: Transformation is applied in inverse order (scale -> translate)
@@ -585,7 +585,7 @@ void DrawSphereWires(vec3 centerPos, f32 radius, i32 rings, i32 slices, Color co
 
 // Draw a cylinder
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinder(vec3 position, f32 radiusTop, f32 radiusBottom, f32 height, i32 sides, Color color)
+void DrawCylinder(const vec3 position, const f32 radiusTop, const f32 radiusBottom, const f32 height, i32 sides, const Color color)
 {
     if (sides < 3) sides = 3;
 
@@ -644,11 +644,11 @@ void DrawCylinder(vec3 position, f32 radiusTop, f32 radiusBottom, f32 height, i3
 
 // Draw a cylinder with base at startPos and top at endPos
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinderEx(vec3 startPos, vec3 endPos, f32 startRadius, f32 endRadius, i32 sides, Color color)
+void DrawCylinderEx(const vec3 startPos, const vec3 endPos, const f32 startRadius, const f32 endRadius, i32 sides, const Color color)
 {
     if (sides < 3) sides = 3;
 
-    const vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    const auto direction = vec3{ endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
@@ -665,16 +665,16 @@ void DrawCylinderEx(vec3 startPos, vec3 endPos, f32 startRadius, f32 endRadius, 
             // Compute the four vertices
             const f32 s1 = sinf(baseAngle*(i + 0))*startRadius;
             const f32 c1 = cosf(baseAngle*(i + 0))*startRadius;
-            const vec3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
+            const auto w1 = vec3{ startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
             const f32 s2 = sinf(baseAngle*(i + 1))*startRadius;
             const f32 c2 = cosf(baseAngle*(i + 1))*startRadius;
-            const vec3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
+            const auto w2 = vec3{ startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
             const f32 s3 = sinf(baseAngle*(i + 0))*endRadius;
             const f32 c3 = cosf(baseAngle*(i + 0))*endRadius;
-            const vec3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
+            const auto w3 = vec3{ endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
             const f32 s4 = sinf(baseAngle*(i + 1))*endRadius;
             const f32 c4 = cosf(baseAngle*(i + 1))*endRadius;
-            const vec3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
+            const auto w4 = vec3{ endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             if (startRadius > 0)
             {
@@ -703,7 +703,7 @@ void DrawCylinderEx(vec3 startPos, vec3 endPos, f32 startRadius, f32 endRadius, 
 
 // Draw a wired cylinder
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinderWires(vec3 position, f32 radiusTop, f32 radiusBottom, f32 height, i32 sides, Color color)
+void DrawCylinderWires(const vec3 position, const f32 radiusTop, const f32 radiusBottom, const f32 height, i32 sides, const Color color)
 {
     if (sides < 3) sides = 3;
 
@@ -735,11 +735,11 @@ void DrawCylinderWires(vec3 position, f32 radiusTop, f32 radiusBottom, f32 heigh
 
 // Draw a wired cylinder with base at startPos and top at endPos
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinderWiresEx(vec3 startPos, vec3 endPos, f32 startRadius, f32 endRadius, i32 slices, Color color)
+void DrawCylinderWiresEx(const vec3 startPos, const vec3 endPos, const f32 startRadius, const f32 endRadius, i32 slices, const Color color)
 {
     if (slices < 3) slices = 3;
 
-    const vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    const auto direction = vec3{ endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
@@ -756,16 +756,16 @@ void DrawCylinderWiresEx(vec3 startPos, vec3 endPos, f32 startRadius, f32 endRad
             // Compute the four vertices
             const f32 s1 = sinf(baseAngle*(i + 0))*startRadius;
             const f32 c1 = cosf(baseAngle*(i + 0))*startRadius;
-            const vec3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
+            const auto w1 = vec3{ startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
             const f32 s2 = sinf(baseAngle*(i + 1))*startRadius;
             const f32 c2 = cosf(baseAngle*(i + 1))*startRadius;
-            const vec3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
+            const auto w2 = vec3{ startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
             const f32 s3 = sinf(baseAngle*(i + 0))*endRadius;
             const f32 c3 = cosf(baseAngle*(i + 0))*endRadius;
-            const vec3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
+            const auto w3 = vec3{ endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
             const f32 s4 = sinf(baseAngle*(i + 1))*endRadius;
             const f32 c4 = cosf(baseAngle*(i + 1))*endRadius;
-            const vec3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
+            const auto w4 = vec3{ endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             rlVertex3f(w1.x, w1.y, w1.z);
             rlVertex3f(w2.x, w2.y, w2.z);
@@ -780,11 +780,11 @@ void DrawCylinderWiresEx(vec3 startPos, vec3 endPos, f32 startRadius, f32 endRad
 }
 
 // Draw a capsule with the center of its sphere caps at startPos and endPos
-void DrawCapsule(vec3 startPos, vec3 endPos, f32 radius, i32 rings, i32 slices, Color color)
+void DrawCapsule(const vec3 startPos, const vec3 endPos, const f32 radius, i32 rings, i32 slices, const Color color)
 {
     if (slices < 3) slices = 3;
     if (rings  < 1) rings  = 1;
-    vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    auto direction = vec3{ endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
 
     // draw a sphere if start and end points are the same
     const bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
@@ -919,11 +919,11 @@ void DrawCapsule(vec3 startPos, vec3 endPos, f32 radius, i32 rings, i32 slices, 
 }
 
 // Draw capsule wires with the center of its sphere caps at startPos and endPos
-void DrawCapsuleWires(vec3 startPos, vec3 endPos, f32 radius, i32 rings, i32 slices, Color color)
+void DrawCapsuleWires(const vec3 startPos, const vec3 endPos, const f32 radius, i32 rings, i32 slices, const Color color)
 {
     if (slices < 3) slices = 3;
     if (rings  < 1) rings = 1;
-    vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    auto direction = vec3{ endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
 
     // draw a sphere if start and end points are the same
     const bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
@@ -1050,7 +1050,7 @@ void DrawCapsuleWires(vec3 startPos, vec3 endPos, f32 radius, i32 rings, i32 sli
 }
 
 // Draw a plane
-void DrawPlane(vec3 centerPos, vec2 size, Color color)
+void DrawPlane(const vec3 centerPos, const vec2 size, const Color color)
 {
     // NOTE: Plane is always created on XZ ground
     rlPushMatrix();
@@ -1070,7 +1070,7 @@ void DrawPlane(vec3 centerPos, vec2 size, Color color)
 }
 
 // Draw a ray line
-void DrawRay(Ray ray, Color color)
+void DrawRay(const Ray ray, const Color color)
 {
     constexpr f32 scale = 10000;
 
@@ -1084,7 +1084,7 @@ void DrawRay(Ray ray, Color color)
 }
 
 // Draw a grid centered at (0, 0, 0)
-void DrawGrid(i32 slices, f32 spacing)
+void DrawGrid(const i32 slices, const f32 spacing)
 {
     const i32 halfSlices = slices/2;
 
@@ -1115,7 +1115,7 @@ Model LoadModel(std::string_view fileNameView)
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    Model model = { 0 };
+    auto model = Model{ 0 };
 
 #if SUPPORT_FILEFORMAT_OBJ
     if (IsFileExtension(fileName, ".obj")) model = LoadOBJ(fileName);
@@ -1161,9 +1161,9 @@ Model LoadModel(std::string_view fileNameView)
 // WARNING: A shallow copy of mesh is generated, passed by value,
 // as long as struct contains pointers to data and some values, get a copy
 // of mesh pointing to same data as original version... be careful!
-Model LoadModelFromMesh(Mesh mesh)
+Model LoadModelFromMesh(const Mesh mesh)
 {
-    Model model = { 0 };
+    auto model = Model{ 0 };
 
     model.transform = mat4(1.0f);
 
@@ -1182,9 +1182,9 @@ Model LoadModelFromMesh(Mesh mesh)
 }
 
 // Check if model is valid (loaded in GPU, VAO/VBOs)
-bool IsModelValid(Model model)
+bool IsModelValid(const Model model)
 {
-    bool result = false;
+    auto result = false;
 
     if ((model.meshes != nullptr) &&           // Validate model contains some mesh
         (model.materials != nullptr) &&        // Validate model contains some material (at least default one)
@@ -1243,7 +1243,7 @@ void UnloadModel(Model model)
 }
 
 // Compute model bounding box limits (considers all meshes)
-BoundingBox GetModelBoundingBox(Model model)
+BoundingBox GetModelBoundingBox(const Model model)
 {
     BoundingBox bounds{};
 
@@ -1254,7 +1254,7 @@ BoundingBox GetModelBoundingBox(Model model)
 
         for (i32 i = 1; i < model.meshCount; i++)
         {
-            const BoundingBox tempBounds = GetMeshBoundingBox(model.meshes[i]);
+            const auto tempBounds = GetMeshBoundingBox(model.meshes[i]);
 
             temp.x = (bounds.min.x < tempBounds.min.x)? bounds.min.x : tempBounds.min.x;
             temp.y = (bounds.min.y < tempBounds.min.y)? bounds.min.y : tempBounds.min.y;
@@ -1278,7 +1278,7 @@ BoundingBox GetModelBoundingBox(Model model)
 }
 
 // Upload vertex data into a VAO (if supported) and VBO
-void UploadMesh(Mesh *mesh, bool dynamic)
+void UploadMesh(Mesh *mesh, const bool dynamic)
 {
     if (mesh->vaoId > 0)
     {
@@ -1444,13 +1444,13 @@ void UploadMesh(Mesh *mesh, bool dynamic)
 }
 
 // Update mesh vertex data in GPU for a specific buffer index
-void UpdateMeshBuffer(Mesh mesh, i32 index, const void *data, i32 dataSize, i32 offset)
+void UpdateMeshBuffer(const Mesh mesh, const i32 index, const void *data, const i32 dataSize, const i32 offset)
 {
     rlUpdateVertexBuffer(mesh.vboId[index], data, dataSize, offset);
 }
 
 // Draw a 3d mesh with material and transform
-void DrawMesh(Mesh mesh, Material material, mat4 transform)
+void DrawMesh(const Mesh mesh, const Material material, const mat4 transform)
 {
 #if defined(GRAPHICS_API_OPENGL_11) || defined(GRAPHICS_API_OPENGL_SOFTWARE)
     #define GL_VERTEX_ARRAY         0x8074
@@ -1528,10 +1528,10 @@ void DrawMesh(Mesh mesh, Material material, mat4 transform)
     // NOTE: At this point the modelview matrix contains the view matrix (camera)
     // That's because BeginMode3D() sets it and there is no model-drawing function
     // that modifies it, all use rlPushMatrix() and rlPopMatrix()
-    mat4 matModel = mat4(1.0f);
-    const mat4 matView = rlGetMatrixModelview();
-    mat4 matModelView = mat4(1.0f);
-    const mat4 matProjection = rlGetMatrixProjection();
+    auto matModel = mat4(1.0f);
+    const auto matView = rlGetMatrixModelview();
+    auto matModelView = mat4(1.0f);
+    const auto matProjection = rlGetMatrixProjection();
 
     // Upload view and projection matrices (if locations available)
     if (material.shader.locs[SHADER_LOC_MATRIX_VIEW] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_VIEW], matView);
@@ -1650,13 +1650,13 @@ void DrawMesh(Mesh mesh, Material material, mat4 transform)
         if (mesh.indices != nullptr) rlEnableVertexBufferElement(mesh.vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES]);
     }
 
-    i32 eyeCount = 1;
+    auto eyeCount = 1;
     if (rlIsStereoRenderEnabled()) eyeCount = 2;
 
     for (i32 eye = 0; eye < eyeCount; eye++)
     {
         // Calculate model-view-projection matrix (MVP)
-        mat4 matModelViewProjection = mat4(1.0f);
+        auto matModelViewProjection = mat4(1.0f);
         if (eyeCount == 1) matModelViewProjection = ((matProjection) * (matModelView));
         else
         {
@@ -1704,7 +1704,7 @@ void DrawMesh(Mesh mesh, Material material, mat4 transform)
 }
 
 // Draw multiple mesh instances with material and different transforms
-void DrawMeshInstanced(Mesh mesh, Material material, const mat4 *transforms, i32 instances)
+void DrawMeshInstanced(const Mesh mesh, const Material material, const mat4 *transforms, const i32 instances)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     // Instancing required variables
@@ -1747,10 +1747,10 @@ void DrawMeshInstanced(Mesh mesh, Material material, const mat4 *transforms, i32
     // NOTE: At this point the modelview matrix contains the view matrix (camera)
     // That's because BeginMode3D() sets it and there is no model-drawing function
     // that modifies it, all use rlPushMatrix() and rlPopMatrix()
-    const mat4 matModel = mat4(1.0f);
-    const mat4 matView = rlGetMatrixModelview();
-    mat4 matModelView = mat4(1.0f);
-    const mat4 matProjection = rlGetMatrixProjection();
+    const auto matModel = mat4(1.0f);
+    const auto matView = rlGetMatrixModelview();
+    auto matModelView = mat4(1.0f);
+    const auto matProjection = rlGetMatrixProjection();
 
     // Upload view and projection matrices (if locations available)
     if (material.shader.locs[SHADER_LOC_MATRIX_VIEW] != -1) rlSetUniformMatrix(material.shader.locs[SHADER_LOC_MATRIX_VIEW], matView);
@@ -1889,13 +1889,13 @@ void DrawMeshInstanced(Mesh mesh, Material material, const mat4 *transforms, i32
         if (mesh.indices != nullptr) rlEnableVertexBufferElement(mesh.vboId[RL_DEFAULT_SHADER_ATTRIB_LOCATION_INDICES]);
     }
 
-    i32 eyeCount = 1;
+    auto eyeCount = 1;
     if (rlIsStereoRenderEnabled()) eyeCount = 2;
 
     for (i32 eye = 0; eye < eyeCount; eye++)
     {
         // Calculate model-view-projection matrix (MVP)
-        mat4 matModelViewProjection = mat4(1.0f);
+        auto matModelViewProjection = mat4(1.0f);
         if (eyeCount == 1) matModelViewProjection = ((matProjection) * (matModelView));
         else
         {
@@ -1970,12 +1970,12 @@ void UnloadMesh(Mesh mesh)
 }
 
 // Export mesh data to file
-bool ExportMesh(Mesh mesh, std::string_view fileNameView)
+bool ExportMesh(const Mesh mesh, std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    bool result = false;
+    auto result = false;
 
     if (IsFileExtension(fileName, ".obj"))
     {
@@ -1987,9 +1987,9 @@ bool ExportMesh(Mesh mesh, std::string_view fileNameView)
                        mesh.triangleCount*snprintf(nullptr, 0, "f %i/%i/%i %i/%i/%i %i/%i/%i\n", vc, vc, vc, vc, vc, vc, vc, vc, vc);
 
         // NOTE: Text data buffer size is estimated considering mesh data size
-        char *txtData = static_cast<char *>(calloc(dataSize + 1000, sizeof(char)));
+        auto txtData = static_cast<char *>(calloc(dataSize + 1000, sizeof(char)));
 
-        i32 byteCount = 0;
+        auto byteCount = 0;
         byteCount += sprintf(txtData + byteCount, "# //////////////////////////////////////////////////////////////////////////////////\n");
         byteCount += sprintf(txtData + byteCount, "# //                                                                              //\n");
         byteCount += sprintf(txtData + byteCount, "# // rMeshOBJ exporter v1.0 - Mesh exported as triangle faces and not optimized   //\n");
@@ -2065,21 +2065,21 @@ bool ExportMesh(Mesh mesh, std::string_view fileNameView)
 }
 
 // Export mesh as code file (.h) defining multiple arrays of vertex attributes
-bool ExportMeshAsCode(Mesh mesh, std::string_view fileNameView)
+bool ExportMeshAsCode(const Mesh mesh, std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
 
-    bool result = false;
+    auto result = false;
 
 #ifndef TEXT_BYTES_PER_LINE
     #define TEXT_BYTES_PER_LINE     20
 #endif
 
     // NOTE: Text data buffer size is fixed to 64MB
-    char *txtData = static_cast<char *>(calloc(64*1024*1024, sizeof(char)));  // 64 MB
+    auto txtData = static_cast<char *>(calloc(64*1024*1024, sizeof(char)));  // 64 MB
 
-    i32 byteCount = 0;
+    auto byteCount = 0;
     byteCount += sprintf(txtData + byteCount, "////////////////////////////////////////////////////////////////////////////////////////\n");
     byteCount += sprintf(txtData + byteCount, "//                                                                                    //\n");
     byteCount += sprintf(txtData + byteCount, "// MeshAsCode exporter v1.0 - Mesh vertex data exported as arrays                     //\n");
@@ -2166,7 +2166,7 @@ bool ExportMeshAsCode(Mesh mesh, std::string_view fileNameView)
 
 #if SUPPORT_FILEFORMAT_OBJ || SUPPORT_FILEFORMAT_MTL
 // Process obj materials
-static void ProcessMaterialsOBJ(Material *materials, tinyobj_material_t *mats, i32 materialCount)
+static void ProcessMaterialsOBJ(Material *materials, tinyobj_material_t *mats, const i32 materialCount)
 {
     // Init model mats
     for (i32 m = 0; m < materialCount; m++)
@@ -2233,7 +2233,7 @@ Material * LoadMaterials(std::string_view fileNameView, i32 *materialCount)
 // Load default material (Supports: DIFFUSE, SPECULAR, NORMAL maps)
 Material LoadMaterialDefault(void)
 {
-    Material material = { 0 };
+    auto material = Material{ 0 };
     material.maps = static_cast<MaterialMap *>(calloc(MAX_MATERIAL_MAPS, sizeof(MaterialMap)));
 
     // Using rlgl default shader
@@ -2252,9 +2252,9 @@ Material LoadMaterialDefault(void)
 }
 
 // Check if material is valid (map textures loaded in GPU)
-bool IsMaterialValid(Material material)
+bool IsMaterialValid(const Material material)
 {
-    bool result = false;
+    auto result = false;
 
     if ((material.maps != nullptr) && // Validate material contain some map
         (material.shader.id > 0)) result = true; // Validate material shader is valid
@@ -2285,13 +2285,13 @@ void UnloadMaterial(Material material)
 
 // Set texture for a material map type (MATERIAL_MAP_DIFFUSE, MATERIAL_MAP_SPECULAR...)
 // NOTE: Previous texture should be manually unloaded
-void SetMaterialTexture(Material *material, i32 mapType, Texture2D texture)
+void SetMaterialTexture(const Material *material, const i32 mapType, Texture2D texture)
 {
     material->maps[mapType].texture = texture;
 }
 
 // Set the material for a mesh
-void SetModelMeshMaterial(Model *model, i32 meshId, i32 materialId)
+void SetModelMeshMaterial(Model *model, const i32 meshId, const i32 materialId)
 {
     if (meshId >= model->meshCount) TRACELOG(LOG_WARNING, "MESH: Id greater than mesh count");
     else if (materialId >= model->materialCount) TRACELOG(LOG_WARNING, "MATERIAL: Id greater than material count");
@@ -2321,7 +2321,7 @@ ModelAnimation * LoadModelAnimations(std::string_view fileNameView, i32 *animCou
 
 // Update model animation data (bone matrices) for a specific pose
 // NOTE 1: Request frame could be fractional, using a lerp interpolation between two frames
-void UpdateModelAnimationBones(Model model, ModelAnimation anim, f32 frame)
+void UpdateModelAnimationBones(Model model, const ModelAnimation anim, const f32 frame)
 {
     if (model.boneMatrices == nullptr) return;
 
@@ -2331,7 +2331,7 @@ void UpdateModelAnimationBones(Model model, ModelAnimation anim, f32 frame)
     if ((anim.keyframeCount > 0) && (model.skeleton.bones != nullptr) && (anim.keyframePoses != nullptr))
     {
         // Get frame and blending from frame factor required
-        i32 currentFrame = static_cast<i32>(frame);
+        auto currentFrame = static_cast<i32>(frame);
         i32 nextFrame = currentFrame + 1;
         f32 blend = frame - currentFrame;
         blend = Clamp(blend, 0.0f, 1.0f);
@@ -2368,7 +2368,7 @@ void UpdateModelAnimationBones(Model model, ModelAnimation anim, f32 frame)
 // NOTE 1: Request frame could be fractional, using a lerp interpolation between two frames
 // NOTE 2: Updated vertex animation data is uploaded to GPU in case of CPU skinning,
 // for GPU skinning, bone matrices are uploaded to shader on DrawModelEx()
-void UpdateModelAnimation(Model model, ModelAnimation anim, f32 frame)
+void UpdateModelAnimation(const Model model, const ModelAnimation anim, const f32 frame)
 {
     if ((anim.keyframeCount > 0) && (model.skeleton.bones != nullptr) && (anim.keyframePoses != nullptr))
     {
@@ -2383,7 +2383,7 @@ void UpdateModelAnimation(Model model, ModelAnimation anim, f32 frame)
 // Update model animation data (bone matrices) for a specific pose,
 // defined by two different animations at specific frames blended together
 // NOTE 1: Request frames could be fractional, using a lerp interpolation between two frames
-void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, f32 frameA, ModelAnimation animB, f32 frameB, f32 blend)
+void UpdateModelAnimationBonesEx(Model model, const ModelAnimation animA, const f32 frameA, const ModelAnimation animB, const f32 frameB, const f32 blend)
 {
     if (model.boneMatrices == nullptr) return;
 
@@ -2476,7 +2476,7 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, f32 frameA, 
 // NOTE 1: Request frames could be fractional, using a lerp interpolation between two frames
 // NOTE 2: Updated vertex animation data is uploaded to GPU in case of CPU skinning,
 // for GPU skinning, bone matrices are uploaded to shader on DrawModelEx()
-void UpdateModelAnimationEx(Model model, ModelAnimation animA, f32 frameA, ModelAnimation animB, f32 frameB, f32 blend)
+void UpdateModelAnimationEx(const Model model, const ModelAnimation animA, const f32 frameA, const ModelAnimation animB, const f32 frameB, const f32 blend)
 {
     if (model.boneMatrices == nullptr) return;
 
@@ -2494,10 +2494,10 @@ void UpdateModelAnimationEx(Model model, ModelAnimation animA, f32 frameA, Model
 
 // Update model vertex animation buffers (positions and normals)
 // NOTE: Required for CPU skinning, uploads animated vertex buffers to GPU
-static void UpdateModelAnimationVertexBuffers(Model model)
+static void UpdateModelAnimationVertexBuffers(const Model model)
 {
     static mat4 boneNormalMatrices[256]{}; // Normal matrix per bone, bone indices are unsigned char
-    bool boneNormalsReady = false;
+    auto boneNormalsReady = false;
 
     for (i32 m = 0; m < model.meshCount; m++)
     {
@@ -2506,10 +2506,10 @@ static void UpdateModelAnimationVertexBuffers(Model model)
         vec3 animNormal{};
         const i32 vertexValuesCount = mesh->vertexCount*3;
 
-        i32 boneIndex = 0;
-        i32 boneCounter = 0;
-        f32 boneWeight = 0.0f;
-        bool bufferUpdateRequired = false; // Flag to check when anim vertex information is updated
+        auto boneIndex = 0;
+        auto boneCounter = 0;
+        auto boneWeight = 0.0f;
+        auto bufferUpdateRequired = false; // Flag to check when anim vertex information is updated
 
         // Skip if missing bone data or missing anim buffers initialization
         if ((mesh->boneWeights == nullptr) || (mesh->boneIndices == nullptr)) continue;
@@ -2590,7 +2590,7 @@ static void UpdateModelAnimationVertexBuffers(Model model)
 }
 
 // Unload animation array data
-void UnloadModelAnimations(ModelAnimation *animations, i32 animCount)
+void UnloadModelAnimations(ModelAnimation *animations, const i32 animCount)
 {
     for (i32 a = 0; a < animCount; a++)
     {
@@ -2605,7 +2605,7 @@ void UnloadModelAnimations(ModelAnimation *animations, i32 animCount)
 
 // Check model animation skeleton match
 // NOTE: Only number of bones and parent connections are checked
-bool IsModelAnimationValid(Model model, ModelAnimation anim)
+bool IsModelAnimationValid(const Model model, const ModelAnimation anim)
 {
     i32 result = true;
 
@@ -2616,16 +2616,16 @@ bool IsModelAnimationValid(Model model, ModelAnimation anim)
 
 #if SUPPORT_MESH_GENERATION
 // Generate polygonal mesh
-Mesh GenMeshPoly(i32 sides, f32 radius)
+Mesh GenMeshPoly(const i32 sides, const f32 radius)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     if (sides < 3) return mesh; // Security check
 
     const i32 vertexCount = sides*3;
 
     // Vertices definition
-    vec3 *vertices = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
+    auto vertices = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
 
     f32 d = 0.0f, dStep = 360.0f/sides;
     for (i32 v = 0; v < vertexCount - 2; v += 3)
@@ -2637,11 +2637,11 @@ Mesh GenMeshPoly(i32 sides, f32 radius)
     }
 
     // Normals definition
-    vec3 *normals = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
+    auto normals = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
     for (i32 n = 0; n < vertexCount; n++) normals[n] = vec3{ 0.0f, 1.0f, 0.0f }; // vec3.up;
 
     // TexCoords definition
-    vec2 *texcoords = static_cast<vec2 *>(calloc(vertexCount, sizeof(vec2)));
+    auto texcoords = static_cast<vec2 *>(calloc(vertexCount, sizeof(vec2)));
     for (i32 n = 0; n < vertexCount; n++) texcoords[n] = vec2{ 0.0f, 0.0f };
 
     mesh.vertexCount = vertexCount;
@@ -2685,9 +2685,9 @@ Mesh GenMeshPoly(i32 sides, f32 radius)
 }
 
 // Generate plane mesh (with subdivisions)
-Mesh GenMeshPlane(f32 width, f32 length, i32 resX, i32 resZ)
+Mesh GenMeshPlane(const f32 width, const f32 length, i32 resX, i32 resZ)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
 #define CUSTOM_MESH_GEN_PLANE
 #if defined(CUSTOM_MESH_GEN_PLANE)
@@ -2697,7 +2697,7 @@ Mesh GenMeshPlane(f32 width, f32 length, i32 resX, i32 resZ)
     // Vertices definition
     const i32 vertexCount = resX*resZ; // vertices get reused for the faces
 
-    vec3 *vertices = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
+    auto vertices = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
     for (i32 z = 0; z < resZ; z++)
     {
         // [-length/2, length/2]
@@ -2711,11 +2711,11 @@ Mesh GenMeshPlane(f32 width, f32 length, i32 resX, i32 resZ)
     }
 
     // Normals definition
-    vec3 *normals = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
+    auto normals = static_cast<vec3 *>(calloc(vertexCount, sizeof(vec3)));
     for (i32 n = 0; n < vertexCount; n++) normals[n] = vec3{ 0.0f, 1.0f, 0.0f }; // vec3.up;
 
     // TexCoords definition
-    vec2 *texcoords = static_cast<vec2 *>(calloc(vertexCount, sizeof(vec2)));
+    auto texcoords = static_cast<vec2 *>(calloc(vertexCount, sizeof(vec2)));
     for (i32 v = 0; v < resZ; v++)
     {
         for (i32 u = 0; u < resX; u++)
@@ -2726,8 +2726,8 @@ Mesh GenMeshPlane(f32 width, f32 length, i32 resX, i32 resZ)
 
     // Triangles definition (indices)
     const i32 numFaces = (resX - 1)*(resZ - 1);
-    i32 *triangles = static_cast<i32 *>(calloc(numFaces*6, sizeof(i32)));
-    i32 t = 0;
+    auto triangles = static_cast<i32 *>(calloc(numFaces*6, sizeof(i32)));
+    auto t = 0;
     for (i32 face = 0; face < numFaces; face++)
     {
         // Retrieve lower left corner from face ind
@@ -2818,9 +2818,9 @@ Mesh GenMeshPlane(f32 width, f32 length, i32 resX, i32 resZ)
 }
 
 // Generated cuboid mesh
-Mesh GenMeshCube(f32 width, f32 height, f32 length)
+Mesh GenMeshCube(const f32 width, const f32 height, const f32 length)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
 #define CUSTOM_MESH_GEN_CUBE
 #if defined(CUSTOM_MESH_GEN_CUBE)
@@ -2916,7 +2916,7 @@ Mesh GenMeshCube(f32 width, f32 height, f32 length)
 
     mesh.indices = static_cast<u16 *>(calloc(36, sizeof(u16)));
 
-    i32 k = 0;
+    auto k = 0;
 
     // Indices can be initialized right now
     for (i32 i = 0; i < 36; i += 6)
@@ -2945,7 +2945,7 @@ par_shapes_mesh *par_shapes_create_icosahedron();       // 20 sides polyhedron
 */
     // Platonic solid generation: cube (6 sides)
     // NOTE: No normals/texcoords generated by default
-    par_shapes_mesh *cube = par_shapes_create_cube();
+    auto cube = par_shapes_create_cube();
     cube->tcoords = PAR_MALLOC(f32, 2*cube->npoints);
     for (i32 i = 0; i < 2*cube->npoints; i++) cube->tcoords[i] = 0.0f;
     par_shapes_scale(cube, width, height, length);
@@ -2983,9 +2983,9 @@ par_shapes_mesh *par_shapes_create_icosahedron();       // 20 sides polyhedron
 }
 
 // Generate sphere mesh (standard sphere)
-Mesh GenMeshSphere(f32 radius, i32 rings, i32 slices)
+Mesh GenMeshSphere(const f32 radius, const i32 rings, const i32 slices)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     if ((rings >= 3) && (slices >= 3))
     {
@@ -3026,9 +3026,9 @@ Mesh GenMeshSphere(f32 radius, i32 rings, i32 slices)
 }
 
 // Generate hemisphere mesh (half sphere, no bottom cap)
-Mesh GenMeshHemiSphere(f32 radius, i32 rings, i32 slices)
+Mesh GenMeshHemiSphere(f32 radius, const i32 rings, const i32 slices)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     if ((rings >= 3) && (slices >= 3))
     {
@@ -3070,9 +3070,9 @@ Mesh GenMeshHemiSphere(f32 radius, i32 rings, i32 slices)
 }
 
 // Generate cylinder mesh
-Mesh GenMeshCylinder(f32 radius, f32 height, i32 slices)
+Mesh GenMeshCylinder(const f32 radius, const f32 height, const i32 slices)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     if (slices >= 3)
     {
@@ -3134,9 +3134,9 @@ Mesh GenMeshCylinder(f32 radius, f32 height, i32 slices)
 }
 
 // Generate cone/pyramid mesh
-Mesh GenMeshCone(f32 radius, f32 height, i32 slices)
+Mesh GenMeshCone(const f32 radius, const f32 height, const i32 slices)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     if (slices >= 3)
     {
@@ -3191,9 +3191,9 @@ Mesh GenMeshCone(f32 radius, f32 height, i32 slices)
 // Generate torus mesh
 // NOTE: The distance between the center of the hole and the center of the
 // tube is half size of the radius of the tube (radius*size/2)
-Mesh GenMeshTorus(f32 radius, f32 size, i32 radSeg, i32 sides)
+Mesh GenMeshTorus(f32 radius, const f32 size, const i32 radSeg, const i32 sides)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     if ((sides >= 3) && (radSeg >= 3))
     {
@@ -3237,9 +3237,9 @@ Mesh GenMeshTorus(f32 radius, f32 size, i32 radSeg, i32 sides)
 }
 
 // Generate trefoil knot mesh
-Mesh GenMeshKnot(f32 radius, f32 size, i32 radSeg, i32 sides)
+Mesh GenMeshKnot(f32 radius, const f32 size, const i32 radSeg, const i32 sides)
 {
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     if ((sides >= 3) && (radSeg >= 3))
     {
@@ -3282,16 +3282,16 @@ Mesh GenMeshKnot(f32 radius, f32 size, i32 radSeg, i32 sides)
 
 // Generate a mesh from heightmap
 // NOTE: Vertex data is uploaded to GPU
-Mesh GenMeshHeightmap(Image heightmap, vec3 size)
+Mesh GenMeshHeightmap(const Image heightmap, const vec3 size)
 {
     #define GRAY_VALUE(c) (static_cast<f32>((c.r + c.g + c.b))/3.0f)
 
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
     const i32 mapX = heightmap.width;
     const i32 mapZ = heightmap.height;
 
-    Color *pixels = LoadImageColors(heightmap);
+    auto pixels = LoadImageColors(heightmap);
 
     // NOTE: One vertex per pixel
     mesh.triangleCount = (mapX - 1)*(mapZ - 1)*2;    // One quad every four pixels
@@ -3303,11 +3303,11 @@ Mesh GenMeshHeightmap(Image heightmap, vec3 size)
     mesh.texcoords = static_cast<f32 *>(calloc(mesh.vertexCount*2, sizeof(f32)));
     mesh.colors = nullptr;
 
-    i32 vCounter = 0;       // Used to count vertices float by float
-    i32 tcCounter = 0;      // Used to count texcoords float by float
-    i32 nCounter = 0;       // Used to count normals float by float
+    auto vCounter = 0;       // Used to count vertices float by float
+    auto tcCounter = 0;      // Used to count texcoords float by float
+    auto nCounter = 0;       // Used to count normals float by float
 
-    const vec3 scaleFactor = { size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
+    const auto scaleFactor = vec3{ size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
 
     vec3 vA{};
     vec3 vB{};
@@ -3414,36 +3414,36 @@ Mesh GenMeshHeightmap(Image heightmap, vec3 size)
 
 // Generate a cubes mesh from pixel data
 // NOTE: Vertex data is uploaded to GPU
-Mesh GenMeshCubicmap(Image cubicmap, vec3 cubeSize)
+Mesh GenMeshCubicmap(const Image cubicmap, const vec3 cubeSize)
 {
     #define COLOR_EQUAL(col1, col2) ((col1.r == col2.r)&&(col1.g == col2.g)&&(col1.b == col2.b)&&(col1.a == col2.a))
 
-    Mesh mesh = { 0 };
+    auto mesh = Mesh{ 0 };
 
-    Color *pixels = LoadImageColors(cubicmap);
+    auto pixels = LoadImageColors(cubicmap);
 
     // NOTE: Max possible number of triangles numCubes*(12 triangles by cube)
     const i32 maxTriangles = cubicmap.width*cubicmap.height*12;
 
-    i32 vCounter = 0;       // Used to count vertices
-    i32 tcCounter = 0;      // Used to count texcoords
-    i32 nCounter = 0;       // Used to count normals
+    auto vCounter = 0;       // Used to count vertices
+    auto tcCounter = 0;      // Used to count texcoords
+    auto nCounter = 0;       // Used to count normals
 
     const f32 w = cubeSize.x;
     const f32 h = cubeSize.z;
     const f32 h2 = cubeSize.y;
 
-    vec3 *mapVertices = static_cast<vec3 *>(calloc(maxTriangles*3, sizeof(vec3)));
-    vec2 *mapTexcoords = static_cast<vec2 *>(calloc(maxTriangles*3, sizeof(vec2)));
-    vec3 *mapNormals = static_cast<vec3 *>(calloc(maxTriangles*3, sizeof(vec3)));
+    auto mapVertices = static_cast<vec3 *>(calloc(maxTriangles*3, sizeof(vec3)));
+    auto mapTexcoords = static_cast<vec2 *>(calloc(maxTriangles*3, sizeof(vec2)));
+    auto mapNormals = static_cast<vec3 *>(calloc(maxTriangles*3, sizeof(vec3)));
 
     // Define the 6 normals of the cube, combined accordingly later
-    const vec3 n1 = { 1.0f, 0.0f, 0.0f };
-    const vec3 n2 = { -1.0f, 0.0f, 0.0f };
-    const vec3 n3 = { 0.0f, 1.0f, 0.0f };
-    const vec3 n4 = { 0.0f, -1.0f, 0.0f };
-    const vec3 n5 = { 0.0f, 0.0f, -1.0f };
-    const vec3 n6 = { 0.0f, 0.0f, 1.0f };
+    const auto n1 = vec3{ 1.0f, 0.0f, 0.0f };
+    const auto n2 = vec3{ -1.0f, 0.0f, 0.0f };
+    const auto n3 = vec3{ 0.0f, 1.0f, 0.0f };
+    const auto n4 = vec3{ 0.0f, -1.0f, 0.0f };
+    const auto n5 = vec3{ 0.0f, 0.0f, -1.0f };
+    const auto n6 = vec3{ 0.0f, 0.0f, 1.0f };
 
     // NOTE: Using texture rectangles to define different
     // textures for top-bottom-front-back-right-left (6)
@@ -3454,26 +3454,26 @@ Mesh GenMeshCubicmap(Image cubicmap, vec3 cubeSize)
         f32 height;
     } RectangleF;
 
-    const RectangleF rightTexUV = { 0.0f, 0.0f, 0.5f, 0.5f };
-    const RectangleF leftTexUV = { 0.5f, 0.0f, 0.5f, 0.5f };
-    const RectangleF frontTexUV = { 0.0f, 0.0f, 0.5f, 0.5f };
-    const RectangleF backTexUV = { 0.5f, 0.0f, 0.5f, 0.5f };
-    const RectangleF topTexUV = { 0.0f, 0.5f, 0.5f, 0.5f };
-    const RectangleF bottomTexUV = { 0.5f, 0.5f, 0.5f, 0.5f };
+    const auto rightTexUV = RectangleF{ 0.0f, 0.0f, 0.5f, 0.5f };
+    const auto leftTexUV = RectangleF{ 0.5f, 0.0f, 0.5f, 0.5f };
+    const auto frontTexUV = RectangleF{ 0.0f, 0.0f, 0.5f, 0.5f };
+    const auto backTexUV = RectangleF{ 0.5f, 0.0f, 0.5f, 0.5f };
+    const auto topTexUV = RectangleF{ 0.0f, 0.5f, 0.5f, 0.5f };
+    const auto bottomTexUV = RectangleF{ 0.5f, 0.5f, 0.5f, 0.5f };
 
     for (i32 z = 0; z < cubicmap.height; ++z)
     {
         for (i32 x = 0; x < cubicmap.width; x++)
         {
             // Define the 8 vertex of the cube, to be combined accordingly later
-            const vec3 v1 = { w*(x - 0.5f), h2, h*(z - 0.5f) };
-            const vec3 v2 = { w*(x - 0.5f), h2, h*(z + 0.5f) };
-            const vec3 v3 = { w*(x + 0.5f), h2, h*(z + 0.5f) };
-            const vec3 v4 = { w*(x + 0.5f), h2, h*(z - 0.5f) };
-            const vec3 v5 = { w*(x + 0.5f), 0, h*(z - 0.5f) };
-            const vec3 v6 = { w*(x - 0.5f), 0, h*(z - 0.5f) };
-            const vec3 v7 = { w*(x - 0.5f), 0, h*(z + 0.5f) };
-            const vec3 v8 = { w*(x + 0.5f), 0, h*(z + 0.5f) };
+            const auto v1 = vec3{ w*(x - 0.5f), h2, h*(z - 0.5f) };
+            const auto v2 = vec3{ w*(x - 0.5f), h2, h*(z + 0.5f) };
+            const auto v3 = vec3{ w*(x + 0.5f), h2, h*(z + 0.5f) };
+            const auto v4 = vec3{ w*(x + 0.5f), h2, h*(z - 0.5f) };
+            const auto v5 = vec3{ w*(x + 0.5f), 0, h*(z - 0.5f) };
+            const auto v6 = vec3{ w*(x - 0.5f), 0, h*(z - 0.5f) };
+            const auto v7 = vec3{ w*(x - 0.5f), 0, h*(z + 0.5f) };
+            const auto v8 = vec3{ w*(x + 0.5f), 0, h*(z + 0.5f) };
 
             // Check pixel color to be WHITE -> draw full cube
             if (COLOR_EQUAL(pixels[z*cubicmap.width + x], WHITE))
@@ -3717,7 +3717,7 @@ Mesh GenMeshCubicmap(Image cubicmap, vec3 cubeSize)
     mesh.texcoords = static_cast<f32 *>(calloc(mesh.vertexCount*2, sizeof(f32)));
     mesh.colors = nullptr;
 
-    i32 fCounter = 0;
+    auto fCounter = 0;
 
     // Move vertices data
     for (i32 i = 0; i < vCounter; i++)
@@ -3764,7 +3764,7 @@ Mesh GenMeshCubicmap(Image cubicmap, vec3 cubeSize)
 
 // Compute mesh bounding box limits
 // NOTE: minVertex and maxVertex should be transformed by model transform matrix
-BoundingBox GetMeshBoundingBox(Mesh mesh)
+BoundingBox GetMeshBoundingBox(const Mesh mesh)
 {
     // Get min and max vertex to construct bounds (AABB)
     vec3 minVertex{};
@@ -3809,8 +3809,8 @@ void GenMeshTangents(Mesh *mesh)
     }
 
     // Allocate temporary arrays for tangents calculation
-    vec3 *tan1 = static_cast<vec3 *>(calloc(mesh->vertexCount, sizeof(vec3)));
-    vec3 *tan2 = static_cast<vec3 *>(calloc(mesh->vertexCount, sizeof(vec3)));
+    auto tan1 = static_cast<vec3 *>(calloc(mesh->vertexCount, sizeof(vec3)));
+    auto tan2 = static_cast<vec3 *>(calloc(mesh->vertexCount, sizeof(vec3)));
 
     if (tan1 == nullptr || tan2 == nullptr)
     {
@@ -3843,14 +3843,14 @@ void GenMeshTangents(Mesh *mesh)
         }
 
         // Get triangle vertices position
-        const vec3 v1 = { mesh->vertices[i0*3 + 0], mesh->vertices[i0*3 + 1], mesh->vertices[i0*3 + 2] };
-        const vec3 v2 = { mesh->vertices[i1*3 + 0], mesh->vertices[i1*3 + 1], mesh->vertices[i1*3 + 2] };
-        const vec3 v3 = { mesh->vertices[i2*3 + 0], mesh->vertices[i2*3 + 1], mesh->vertices[i2*3 + 2] };
+        const auto v1 = vec3{ mesh->vertices[i0*3 + 0], mesh->vertices[i0*3 + 1], mesh->vertices[i0*3 + 2] };
+        const auto v2 = vec3{ mesh->vertices[i1*3 + 0], mesh->vertices[i1*3 + 1], mesh->vertices[i1*3 + 2] };
+        const auto v3 = vec3{ mesh->vertices[i2*3 + 0], mesh->vertices[i2*3 + 1], mesh->vertices[i2*3 + 2] };
 
         // Get triangle texcoords
-        const vec2 uv1 = { mesh->texcoords[i0*2 + 0], mesh->texcoords[i0*2 + 1] };
-        const vec2 uv2 = { mesh->texcoords[i1*2 + 0], mesh->texcoords[i1*2 + 1] };
-        const vec2 uv3 = { mesh->texcoords[i2*2 + 0], mesh->texcoords[i2*2 + 1] };
+        const auto uv1 = vec2{ mesh->texcoords[i0*2 + 0], mesh->texcoords[i0*2 + 1] };
+        const auto uv2 = vec2{ mesh->texcoords[i1*2 + 0], mesh->texcoords[i1*2 + 1] };
+        const auto uv3 = vec2{ mesh->texcoords[i2*2 + 0], mesh->texcoords[i2*2 + 1] };
 
         // Calculate triangle edges
         const f32 x1 = v2.x - v1.x;
@@ -3871,8 +3871,8 @@ void GenMeshTangents(Mesh *mesh)
         const f32 r = (fabsf(div) < 0.0001f)? 0.0f : 1.0f/div;
 
         // Calculate tangent and bitangent directions
-        const vec3 sdir = { (t2*x1 - t1*x2)*r, (t2*y1 - t1*y2)*r, (t2*z1 - t1*z2)*r };
-        const vec3 tdir = { (s1*x2 - s2*x1)*r, (s1*y2 - s2*y1)*r, (s1*z2 - s2*z1)*r };
+        const auto sdir = vec3{ (t2*x1 - t1*x2)*r, (t2*y1 - t1*y2)*r, (t2*z1 - t1*z2)*r };
+        const auto tdir = vec3{ (s1*x2 - s2*x1)*r, (s1*y2 - s2*y1)*r, (s1*z2 - s2*z1)*r };
 
         // Accumulate tangents and bitangents for each vertex of the triangle
         tan1[i0] = ((tan1[i0]) + (sdir));
@@ -3887,7 +3887,7 @@ void GenMeshTangents(Mesh *mesh)
     // Calculate final tangents for each vertex
     for (i32 i = 0; i < mesh->vertexCount; i++)
     {
-        const vec3 normal = { mesh->normals[i*3 + 0], mesh->normals[i*3 + 1], mesh->normals[i*3 + 2] };
+        const auto normal = vec3{ mesh->normals[i*3 + 0], mesh->normals[i*3 + 1], mesh->normals[i*3 + 2] };
         vec3 tangent = tan1[i];
 
         // Handle zero tangent (can happen with degenerate UVs)
@@ -3959,16 +3959,16 @@ void GenMeshTangents(Mesh *mesh)
 }
 
 // Draw a model (with texture if set)
-void DrawModel(Model model, vec3 position, f32 scale, Color tint)
+void DrawModel(const Model model, const vec3 position, const f32 scale, const Color tint)
 {
-    const vec3 vScale = { scale, scale, scale };
-    const vec3 rotationAxis = { 0.0f, 1.0f, 0.0f };
+    const auto vScale = vec3{ scale, scale, scale };
+    const auto rotationAxis = vec3{ 0.0f, 1.0f, 0.0f };
 
     DrawModelEx(model, position, rotationAxis, 0.0f, vScale, tint);
 }
 
 // Draw a model with custom transform
-void DrawModelEx(Model model, vec3 position, vec3 rotationAxis, f32 rotationAngle, vec3 scale, Color tint)
+void DrawModelEx(Model model, const vec3 position, const vec3 rotationAxis, const f32 rotationAngle, const vec3 scale, const Color tint)
 {
     // Calculate transformation matrix from function parameters
     // Get transform matrix (rotation -> scale -> translation)
@@ -3988,7 +3988,7 @@ void DrawModelEx(Model model, vec3 position, vec3 rotationAxis, f32 rotationAngl
 
         // Applying color tint directly to material diffuse map,
         // because it comes as an input parameter to the function
-        Color colTinted = { 0 };
+        auto colTinted = Color{ 0 };
         colTinted.r = static_cast<u8>((static_cast<i32>(colDiffuse.r)*static_cast<i32>(tint.r))/255);
         colTinted.g = static_cast<u8>((static_cast<i32>(colDiffuse.g)*static_cast<i32>(tint.g))/255);
         colTinted.b = static_cast<u8>((static_cast<i32>(colDiffuse.b)*static_cast<i32>(tint.b))/255);
@@ -4012,7 +4012,7 @@ void DrawModelEx(Model model, vec3 position, vec3 rotationAxis, f32 rotationAngl
 }
 
 // Draw a model wires (with texture if set)
-void DrawModelWires(Model model, vec3 position, f32 scale, Color tint)
+void DrawModelWires(const Model model, const vec3 position, const f32 scale, const Color tint)
 {
     rlEnableWireMode();
 
@@ -4022,7 +4022,7 @@ void DrawModelWires(Model model, vec3 position, f32 scale, Color tint)
 }
 
 // Draw a model wires with custom transform
-void DrawModelWiresEx(Model model, vec3 position, vec3 rotationAxis, f32 rotationAngle, vec3 scale, Color tint)
+void DrawModelWiresEx(const Model model, const vec3 position, const vec3 rotationAxis, const f32 rotationAngle, const vec3 scale, const Color tint)
 {
     rlEnableWireMode();
 
@@ -4032,28 +4032,28 @@ void DrawModelWiresEx(Model model, vec3 position, vec3 rotationAxis, f32 rotatio
 }
 
 // Draw a billboard
-void DrawBillboard(Camera camera, Texture2D texture, vec3 position, f32 scale, Color tint)
+void DrawBillboard(const Camera camera, const Texture2D texture, const vec3 position, const f32 scale, const Color tint)
 {
-    const Rectangle rec = { 0.0f, 0.0f, static_cast<f32>(texture.width), static_cast<f32>(texture.height) };
+    const auto rec = Rectangle{ 0.0f, 0.0f, static_cast<f32>(texture.width), static_cast<f32>(texture.height) };
 
     DrawBillboardRec(camera, texture, rec, position, vec2{ scale*fabsf(rec.width/rec.height), scale }, tint);
 }
 
 // Draw a billboard (part of a texture defined by a rectangle)
-void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle rec, vec3 position, vec2 size, Color tint)
+void DrawBillboardRec(const Camera camera, const Texture2D texture, const Rectangle rec, const vec3 position, const vec2 size, const Color tint)
 {
     // NOTE: Billboard locked on axis-Y
-    const vec3 up = { 0.0f, 1.0f, 0.0f };
+    const auto up = vec3{ 0.0f, 1.0f, 0.0f };
 
     DrawBillboardPro(camera, texture, rec, position, up, size, size*0.5f, 0.0f, tint);
 }
 
 // Draw a billboard texture defined by source rectangle with scaling and rotation
-void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, vec3 position, vec3 up, vec2 size, vec2 origin, f32 rotation, Color tint)
+void DrawBillboardPro(const Camera camera, const Texture2D texture, Rectangle rec, const vec3 position, vec3 up, const vec2 size, vec2 origin, const f32 rotation, const Color tint)
 {
     // Compute the up vector and the right vector
     mat4 matView = glm::lookAt(camera.position, camera.target, camera.up);
-    vec3 right = { matView[0][0], matView[1][0], matView[2][0] };
+    auto right = vec3{ matView[0][0], matView[1][0], matView[2][0] };
     right = ((right) * (size.x));
     up = ((up) * (size.y));
 
@@ -4125,7 +4125,7 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, vec3 posi
 }
 
 // Draw a bounding box with wires
-void DrawBoundingBox(BoundingBox box, Color color)
+void DrawBoundingBox(const BoundingBox box, const Color color)
 {
     vec3 size{};
 
@@ -4133,15 +4133,15 @@ void DrawBoundingBox(BoundingBox box, Color color)
     size.y = fabsf(box.max.y - box.min.y);
     size.z = fabsf(box.max.z - box.min.z);
 
-    const vec3 center = { box.min.x + size.x/2.0f, box.min.y + size.y/2.0f, box.min.z + size.z/2.0f };
+    const auto center = vec3{ box.min.x + size.x/2.0f, box.min.y + size.y/2.0f, box.min.z + size.z/2.0f };
 
     DrawCubeWires(center, size.x, size.y, size.z, color);
 }
 
 // Check collision between two spheres
-bool CheckCollisionSpheres(vec3 center1, f32 radius1, vec3 center2, f32 radius2)
+bool CheckCollisionSpheres(const vec3 center1, const f32 radius1, const vec3 center2, const f32 radius2)
 {
-    bool collision = false;
+    auto collision = false;
 
     // Simple way to check for collision, checking distance between two points
     // Unfortunately, sqrtf() is a costly operation, so avoid it with following solution
@@ -4164,9 +4164,9 @@ bool CheckCollisionSpheres(vec3 center1, f32 radius1, vec3 center2, f32 radius2)
 
 // Check collision between two boxes
 // NOTE: Boxes are defined by two points minimum and maximum
-bool CheckCollisionBoxes(BoundingBox box1, BoundingBox box2)
+bool CheckCollisionBoxes(const BoundingBox box1, const BoundingBox box2)
 {
-    bool collision = true;
+    auto collision = true;
 
     if ((box1.max.x >= box2.min.x) && (box1.min.x <= box2.max.x))
     {
@@ -4179,9 +4179,9 @@ bool CheckCollisionBoxes(BoundingBox box1, BoundingBox box2)
 }
 
 // Check collision between box and sphere
-bool CheckCollisionBoxSphere(BoundingBox box, vec3 center, f32 radius)
+bool CheckCollisionBoxSphere(const BoundingBox box, const vec3 center, const f32 radius)
 {
-    bool collision = false;
+    auto collision = false;
 
     const vec3 closestPoint = {
         Clamp(center.x, box.min.x, box.max.x),
@@ -4195,9 +4195,9 @@ bool CheckCollisionBoxSphere(BoundingBox box, vec3 center, f32 radius)
 }
 
 // Get collision info between ray and sphere
-RayCollision GetRayCollisionSphere(Ray ray, vec3 center, f32 radius)
+RayCollision GetRayCollisionSphere(const Ray ray, const vec3 center, const f32 radius)
 {
-    RayCollision collision = { 0 };
+    auto collision = RayCollision{ 0 };
 
     const vec3 raySpherePos = ((center) - (ray.position));
     const f32 vector = glm::dot(raySpherePos, ray.direction);
@@ -4209,7 +4209,7 @@ RayCollision GetRayCollisionSphere(Ray ray, vec3 center, f32 radius)
     {
         vec3 point{};
         vec3 normal{};
-        f32 hitDistance = 0.0f;
+        auto hitDistance = 0.0f;
 
         // Check if ray origin is inside the sphere to calculate the correct collision point
         if (distanceToCenter < radius)
@@ -4246,9 +4246,9 @@ RayCollision GetRayCollisionSphere(Ray ray, vec3 center, f32 radius)
 }
 
 // Get collision info between ray and box
-RayCollision GetRayCollisionBox(Ray ray, BoundingBox box)
+RayCollision GetRayCollisionBox(Ray ray, const BoundingBox box)
 {
-    RayCollision collision = { 0 };
+    auto collision = RayCollision{ 0 };
 
     // NOTE: If ray.position is inside the box, the distance is negative (as if the ray was reversed)
     // Reversing ray.direction will give use the correct result
@@ -4306,9 +4306,9 @@ RayCollision GetRayCollisionBox(Ray ray, BoundingBox box)
 }
 
 // Get collision info between ray and mesh
-RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, mat4 transform)
+RayCollision GetRayCollisionMesh(Ray ray, const Mesh mesh, const mat4 transform)
 {
-    RayCollision collision = { 0 };
+    auto collision = RayCollision{ 0 };
 
     // Check if mesh vertex data on CPU for testing
     if (mesh.vertices != nullptr)
@@ -4330,7 +4330,7 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, mat4 transform)
             vec3 a{};
             vec3 b{};
             vec3 c{};
-            vec3 *vertdata = reinterpret_cast<vec3 *>(mesh.vertices);
+            auto vertdata = reinterpret_cast<vec3 *>(mesh.vertices);
 
             if (mesh.indices)
             {
@@ -4345,7 +4345,7 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, mat4 transform)
                 c = vertdata[i*3 + 2];
             }
 
-            const RayCollision triHitInfo = GetRayCollisionTriangle(ray, a, b, c);
+            const auto triHitInfo = GetRayCollisionTriangle(ray, a, b, c);
 
             if (triHitInfo.hit)
             {
@@ -4368,11 +4368,11 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, mat4 transform)
 // Get collision info between ray and triangle
 // NOTE: The points are expected to be in counter-clockwise winding
 // NOTE: Based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-RayCollision GetRayCollisionTriangle(Ray ray, vec3 p1, vec3 p2, vec3 p3)
+RayCollision GetRayCollisionTriangle(const Ray ray, const vec3 p1, const vec3 p2, const vec3 p3)
 {
     #define EPSILON 0.000001f        // A small number
 
-    RayCollision collision = { 0 };
+    auto collision = RayCollision{ 0 };
     vec3 edge1{};
     vec3 edge2{};
     vec3 p{};
@@ -4429,9 +4429,9 @@ RayCollision GetRayCollisionTriangle(Ray ray, vec3 p1, vec3 p2, vec3 p3)
 
 // Get collision info between ray and quad
 // NOTE: The points are expected to be in counter-clockwise winding
-RayCollision GetRayCollisionQuad(Ray ray, vec3 p1, vec3 p2, vec3 p3, vec3 p4)
+RayCollision GetRayCollisionQuad(const Ray ray, const vec3 p1, const vec3 p2, const vec3 p3, const vec3 p4)
 {
-    RayCollision collision = { 0 };
+    auto collision = RayCollision{ 0 };
 
     collision = GetRayCollisionTriangle(ray, p1, p2, p4);
 
@@ -4446,7 +4446,7 @@ RayCollision GetRayCollisionQuad(Ray ray, vec3 p1, vec3 p2, vec3 p3, vec3 p4)
 #if SUPPORT_FILEFORMAT_IQM || SUPPORT_FILEFORMAT_GLTF
 // Build pose from parent joints
 // NOTE: Required for animations loading (required by IQM and GLTF)
-static void BuildPoseFromParentJoints(BoneInfo *bones, i32 boneCount, Transform *transforms)
+static void BuildPoseFromParentJoints(const BoneInfo *bones, const i32 boneCount, Transform *transforms)
 {
     for (i32 i = 0; i < boneCount; i++)
     {
@@ -4475,17 +4475,17 @@ static void BuildPoseFromParentJoints(BoneInfo *bones, i32 boneCount, Transform 
 //  - The mesh is automatically triangulated by tinyobj
 static Model LoadOBJ(const char *fileName)
 {
-    tinyobj_attrib_t objAttributes = { 0 };
+    auto objAttributes = tinyobj_attrib_t{ 0 };
     tinyobj_shape_t *objShapes = nullptr;
     u32 objShapeCount = 0;
 
     tinyobj_material_t *objMaterials = nullptr;
     u32 objMaterialCount = 0;
 
-    Model model = { 0 };
+    auto model = Model{ 0 };
     model.transform = mat4(1.0f);
 
-    const std::string fileText = LoadFileText(fileName);
+    const auto fileText = LoadFileText(fileName);
 
     if (fileText.empty())
     {
@@ -4494,12 +4494,12 @@ static Model LoadOBJ(const char *fileName)
     }
 
     char currentDir[MAX_FILEPATH_LENGTH] = { 0 };
-    const std::string currentDirPath = GetWorkingDirectory();
+    const auto currentDirPath = GetWorkingDirectory();
     snprintf(currentDir, MAX_FILEPATH_LENGTH, "%s", currentDirPath.c_str()); // Save current working directory
-    const std::string workingDir = GetDirectoryPath(fileName);               // Switch to OBJ directory for material path correctness
+    const auto workingDir = GetDirectoryPath(fileName);               // Switch to OBJ directory for material path correctness
     if (CHDIR(workingDir.c_str()) != 0) TRACELOG(LOG_WARNING, "MODEL: [%s] Failed to change working directory", workingDir.c_str());
 
-    const u32 dataSize = static_cast<u32>(fileText.size());
+    const auto dataSize = static_cast<u32>(fileText.size());
 
     const u32 flags = TINYOBJ_FLAG_TRIANGULATE;
     const i32 ret = tinyobj_parse_obj(&objAttributes, &objShapes, &objShapeCount, &objMaterials, &objMaterialCount, fileText.c_str(), dataSize, flags);
@@ -4513,7 +4513,7 @@ static Model LoadOBJ(const char *fileName)
 
     u32 faceVertIndex = 0;
     u32 nextShape = 1;
-    i32 lastMaterial = -1;
+    auto lastMaterial = -1;
     u32 meshIndex = 0;
 
     // Count meshes
@@ -4560,7 +4560,7 @@ static Model LoadOBJ(const char *fileName)
     model.meshMaterial = static_cast<i32 *>(MemAlloc(sizeof(i32)*model.meshCount));
 
     // See how many verts are in each mesh
-    u32 *localMeshVertexCounts = static_cast<u32 *>(MemAlloc(sizeof(u32)*model.meshCount));
+    auto localMeshVertexCounts = static_cast<u32 *>(MemAlloc(sizeof(u32)*model.meshCount));
 
     faceVertIndex = 0;
     nextShapeEnd = objAttributes.num_face_num_verts;
@@ -4574,7 +4574,7 @@ static Model LoadOBJ(const char *fileName)
     // Walk all the faces
     for (u32 faceId = 0; faceId < objAttributes.num_faces; faceId++)
     {
-        bool newMesh = false; // Is a new mesh required?
+        auto newMesh = false; // Is a new mesh required?
         if (faceId >= nextShapeEnd)
         {
             // Try to find the last vert in the next shape
@@ -4644,7 +4644,7 @@ static Model LoadOBJ(const char *fileName)
     // Walk all the faces
     for (u32 faceId = 0; faceId < objAttributes.num_faces; faceId++)
     {
-        bool newMesh = false; // Is a new mesh required?
+        auto newMesh = false; // Is a new mesh required?
         if (faceId >= nextShapeEnd)
         {
             // Try to find the last vert in the next shape
@@ -4664,7 +4664,7 @@ static Model LoadOBJ(const char *fileName)
             meshIndex++;
         }
 
-        i32 matId = 0;
+        auto matId = 0;
         if ((lastMaterial >= 0) && (lastMaterial < static_cast<i32>(objMaterialCount))) matId = lastMaterial;
 
         model.meshMaterial[meshIndex] = matId;
@@ -4733,8 +4733,8 @@ static Model LoadIQM(const char *fileName)
     #define MESH_NAME_LENGTH        32          // Mesh name string length
     #define MATERIAL_NAME_LENGTH    32          // Material name string length
 
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
     u8 *fileDataPtr = fileData;
 
     // IQM file structs
@@ -4820,7 +4820,7 @@ static Model LoadIQM(const char *fileName)
         IQM_CUSTOM       = 0x10     // NOTE: Custom vertex values unused by default
     };
 
-    Model model = { 0 };
+    auto model = Model{ 0 };
 
     IQMMesh *imesh = nullptr;
     IQMTriangle *tri = nullptr;
@@ -4837,10 +4837,10 @@ static Model LoadIQM(const char *fileName)
     // In case file can not be read, return an empty model
     if (fileDataPtr == nullptr) return model;
 
-    const std::string basePath = GetDirectoryPath(fileName);
+    const auto basePath = GetDirectoryPath(fileName);
 
     // Read IQM header
-    IQMHeader *iqmHeader = reinterpret_cast<IQMHeader *>(fileDataPtr);
+    auto iqmHeader = reinterpret_cast<IQMHeader *>(fileDataPtr);
 
     if (memcmp(iqmHeader->magic, IQM_MAGIC, sizeof(IQM_MAGIC)) != 0)
     {
@@ -4912,7 +4912,7 @@ static Model LoadIQM(const char *fileName)
 
     for (i32 m = 0; m < model.meshCount; m++)
     {
-        i32 tcounter = 0;
+        auto tcounter = 0;
 
         for (u32 i = imesh[m].first_triangle; i < (imesh[m].first_triangle + imesh[m].num_triangles); i++)
         {
@@ -4945,7 +4945,7 @@ static Model LoadIQM(const char *fileName)
 
                 for (u32 m = 0; m < iqmHeader->num_meshes; m++)
                 {
-                    i32 vCounter = 0;
+                    auto vCounter = 0;
                     for (u32 i = imesh[m].first_vertex*3; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*3; i++)
                     {
                         model.meshes[m].vertices[vCounter] = vertex[i];
@@ -4963,7 +4963,7 @@ static Model LoadIQM(const char *fileName)
 
                 for (u32 m = 0; m < iqmHeader->num_meshes; m++)
                 {
-                    i32 vCounter = 0;
+                    auto vCounter = 0;
                     for (u32 i = imesh[m].first_vertex*3; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*3; i++)
                     {
                         model.meshes[m].normals[vCounter] = normal[i];
@@ -4981,7 +4981,7 @@ static Model LoadIQM(const char *fileName)
 
                 for (u32 m = 0; m < iqmHeader->num_meshes; m++)
                 {
-                    i32 vCounter = 0;
+                    auto vCounter = 0;
                     for (u32 i = imesh[m].first_vertex*2; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*2; i++)
                     {
                         model.meshes[m].texcoords[vCounter] = text[i];
@@ -4998,7 +4998,7 @@ static Model LoadIQM(const char *fileName)
 
                 for (u32 m = 0; m < iqmHeader->num_meshes; m++)
                 {
-                    i32 boneCounter = 0;
+                    auto boneCounter = 0;
                     for (u32 i = imesh[m].first_vertex*4; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*4; i++)
                     {
                         model.meshes[m].boneIndices[boneCounter] = blendi[i];
@@ -5015,7 +5015,7 @@ static Model LoadIQM(const char *fileName)
 
                 for (u32 m = 0; m < iqmHeader->num_meshes; m++)
                 {
-                    i32 boneCounter = 0;
+                    auto boneCounter = 0;
                     for (u32 i = imesh[m].first_vertex*4; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*4; i++)
                     {
                         model.meshes[m].boneWeights[boneCounter] = blendw[i]/255.0f;
@@ -5034,7 +5034,7 @@ static Model LoadIQM(const char *fileName)
                 {
                     model.meshes[m].colors = static_cast<u8 *>(calloc(model.meshes[m].vertexCount*4, sizeof(u8)));
 
-                    i32 vCounter = 0;
+                    auto vCounter = 0;
                     for (u32 i = imesh[m].first_vertex*4; i < (imesh[m].first_vertex + imesh[m].num_vertexes)*4; i++)
                     {
                         model.meshes[m].colors[vCounter] = color[i];
@@ -5107,8 +5107,8 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
     #define IQM_MAGIC       "INTERQUAKEMODEL"   // IQM file magic number
     #define IQM_VERSION     2                   // only IQM version 2 supported
 
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
     u8 *fileDataPtr = fileData;
 
     typedef struct IQMHeader {
@@ -5152,7 +5152,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
     if (fileDataPtr == nullptr) return nullptr;
 
     // Read IQM header
-    IQMHeader *iqmHeader = reinterpret_cast<IQMHeader *>(fileDataPtr);
+    auto iqmHeader = reinterpret_cast<IQMHeader *>(fileDataPtr);
 
     if (memcmp(iqmHeader->magic, IQM_MAGIC, sizeof(IQM_MAGIC)) != 0)
     {
@@ -5169,34 +5169,34 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
     }
 
     // Get bones data
-    IQMPose *poses = static_cast<IQMPose *>(calloc(iqmHeader->num_poses, sizeof(IQMPose)));
+    auto poses = static_cast<IQMPose *>(calloc(iqmHeader->num_poses, sizeof(IQMPose)));
     //fseek(iqmFile, iqmHeader->ofs_poses, SEEK_SET);
     //fread(poses, sizeof(IQMPose), iqmHeader->num_poses, iqmFile);
     memcpy(poses, fileDataPtr + iqmHeader->ofs_poses, iqmHeader->num_poses*sizeof(IQMPose));
 
     // Get animations data
     *animCount = iqmHeader->num_anims;
-    IQMAnim *anim = static_cast<IQMAnim *>(calloc(iqmHeader->num_anims, sizeof(IQMAnim)));
+    auto anim = static_cast<IQMAnim *>(calloc(iqmHeader->num_anims, sizeof(IQMAnim)));
     //fseek(iqmFile, iqmHeader->ofs_anims, SEEK_SET);
     //fread(anim, sizeof(IQMAnim), iqmHeader->num_anims, iqmFile);
     memcpy(anim, fileDataPtr + iqmHeader->ofs_anims, iqmHeader->num_anims*sizeof(IQMAnim));
 
-    ModelAnimation *animations = static_cast<ModelAnimation *>(calloc(iqmHeader->num_anims, sizeof(ModelAnimation)));
+    auto animations = static_cast<ModelAnimation *>(calloc(iqmHeader->num_anims, sizeof(ModelAnimation)));
 
     // frameposes
-    u16 *framedata = static_cast<u16 *>(calloc(iqmHeader->num_frames*iqmHeader->num_framechannels, sizeof(u16)));
+    auto framedata = static_cast<u16 *>(calloc(iqmHeader->num_frames*iqmHeader->num_framechannels, sizeof(u16)));
     //fseek(iqmFile, iqmHeader->ofs_frames, SEEK_SET);
     //fread(framedata, sizeof(unsigned short), iqmHeader->num_frames*iqmHeader->num_framechannels, iqmFile);
     memcpy(framedata, fileDataPtr + iqmHeader->ofs_frames, iqmHeader->num_frames*iqmHeader->num_framechannels*sizeof(u16));
 
     // joints
-    IQMJoint *joints = static_cast<IQMJoint *>(calloc(iqmHeader->num_joints, sizeof(IQMJoint)));
+    auto joints = static_cast<IQMJoint *>(calloc(iqmHeader->num_joints, sizeof(IQMJoint)));
     memcpy(joints, fileDataPtr + iqmHeader->ofs_joints, iqmHeader->num_joints*sizeof(IQMJoint));
 
     for (u32 a = 0; a < iqmHeader->num_anims; a++)
     {
         animations[a].boneCount = iqmHeader->num_poses;
-        BoneInfo *bones = static_cast<BoneInfo *>(calloc(iqmHeader->num_poses, sizeof(BoneInfo)));
+        auto bones = static_cast<BoneInfo *>(calloc(iqmHeader->num_poses, sizeof(BoneInfo)));
 
         animations[a].keyframeCount = anim[a].num_frames;
         animations[a].keyframePoses = static_cast<Transform * *>(calloc(anim[a].num_frames, sizeof(Transform *)));
@@ -5343,7 +5343,7 @@ static ModelAnimation *LoadModelAnimationsIQM(const char *fileName, i32 *animCou
 static cgltf_result LoadFileGLTFCallback(const struct cgltf_memory_options *memoryOptions, const struct cgltf_file_options *fileOptions, const char *path, cgltf_size *size, void **data)
 {
     i32 filesize;
-    u8 *filedata = LoadFileData(path, &filesize);
+    auto filedata = LoadFileData(path, &filesize);
 
     if (filedata == nullptr) return cgltf_result_io_error;
 
@@ -5354,15 +5354,15 @@ static cgltf_result LoadFileGLTFCallback(const struct cgltf_memory_options *memo
 }
 
 // Release file data callback for cgltf
-static void ReleaseFileGLTFCallback(const struct cgltf_memory_options *memoryOptions, const struct cgltf_file_options *fileOptions, void *data, cgltf_size size)
+static void ReleaseFileGLTFCallback(const struct cgltf_memory_options *memoryOptions, const struct cgltf_file_options *fileOptions, void *data, const cgltf_size size)
 {
     UnloadFileData(static_cast<u8 *>(data));
 }
 
 // Load image from different glTF provided methods (uri, path, buffer_view)
-static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPath)
+static Image LoadImageFromCgltfImage(const cgltf_image *cgltfImage, const char *texPath)
 {
-    Image image = { nullptr };
+    auto image = Image{ nullptr };
 
     if (cgltfImage == nullptr) return image;
 
@@ -5378,19 +5378,19 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
             // Data URI Format: data:<mediatype>;base64,<data>
 
             // Find the comma
-            i32 i = 0;
+            auto i = 0;
             while ((cgltfImage->uri[i] != ',') && (cgltfImage->uri[i] != 0)) i++;
 
             if (cgltfImage->uri[i] == 0) TRACELOG(LOG_WARNING, "IMAGE: glTF data URI is not a valid image");
             else
             {
-                i32 base64Size = static_cast<i32>(strlen(cgltfImage->uri + i + 1));
+                auto base64Size = static_cast<i32>(strlen(cgltfImage->uri + i + 1));
                 while (cgltfImage->uri[i + base64Size] == '=') base64Size--;          // Ignore optional paddings
                 const i32 numberOfEncodedBits = base64Size*6 - (base64Size*6)%8;      // Encoded bits minus extra bits, so it becomes a multiple of 8 bits
                 const i32 outSize = numberOfEncodedBits >> 3;                         // Actual encoded bytes
                 void *data = nullptr;
 
-                cgltf_options options = {};
+                auto options = cgltf_options{};
                 options.file.read = LoadFileGLTFCallback;
                 options.file.release = ReleaseFileGLTFCallback;
                 const cgltf_result result = cgltf_load_buffer_base64(&options, outSize, cgltfImage->uri + i + 1, &data);
@@ -5409,8 +5409,8 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
     }
     else if ((cgltfImage->buffer_view != nullptr) && (cgltfImage->buffer_view->buffer->data != nullptr)) // Check if image is provided as data buffer
     {
-        u8 *data = static_cast<u8 *>(calloc(cgltfImage->buffer_view->size, sizeof(u8)));
-        i32 offset = static_cast<i32>(cgltfImage->buffer_view->offset);
+        auto data = static_cast<u8 *>(calloc(cgltfImage->buffer_view->size, sizeof(u8)));
+        auto offset = static_cast<i32>(cgltfImage->buffer_view->offset);
         const i32 stride = static_cast<i32>(cgltfImage->buffer_view->stride)? static_cast<i32>(cgltfImage->buffer_view->stride) : 1;
 
         // Copy buffer data to memory for loading
@@ -5439,10 +5439,10 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
 }
 
 // Load bone info from GLTF skin data
-static BoneInfo *LoadBoneInfoGLTF(cgltf_skin skin, u32 *boneCount)
+static BoneInfo *LoadBoneInfoGLTF(const cgltf_skin skin, u32 *boneCount)
 {
     *boneCount = static_cast<u32>(skin.joints_count);
-    BoneInfo *bones = static_cast<BoneInfo *>(calloc(skin.joints_count, sizeof(BoneInfo)));
+    auto bones = static_cast<BoneInfo *>(calloc(skin.joints_count, sizeof(BoneInfo)));
 
     for (u32 i = 0; i < skin.joints_count; i++)
     {
@@ -5452,7 +5452,7 @@ static BoneInfo *LoadBoneInfoGLTF(cgltf_skin skin, u32 *boneCount)
         // Find parent bone index by walking up the node tree past any
         // non-joint ancestors (intermediate transform nodes used by some
         // DCC exporters), until we hit a node that is also in skin.joints.
-        i32 parentIndex = -1;
+        auto parentIndex = -1;
         cgltf_node *ancestor = node.parent;
         while (ancestor != nullptr && parentIndex == -1)
         {
@@ -5519,16 +5519,16 @@ static Model LoadGLTF(const char *fileName)
         }\
     }
 
-    Model model = { 0 };
+    auto model = Model{ 0 };
 
     // glTF file loading
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
 
     if (fileData == nullptr) return model;
 
     // glTF data loading
-    cgltf_options options = {};
+    auto options = cgltf_options{};
     options.file.read = LoadFileGLTFCallback;
     options.file.release = ReleaseFileGLTFCallback;
     cgltf_data *data = nullptr;
@@ -5551,8 +5551,8 @@ static Model LoadGLTF(const char *fileName)
         result = cgltf_load_buffers(&options, data, fileName);
         if (result != cgltf_result_success) TRACELOG(LOG_INFO, "MODEL: [%s] Failed to load mesh/material buffers", fileName);
 
-        i32 primitivesCount = 0;
-        bool dracoCompression = false;
+        auto primitivesCount = 0;
+        auto dracoCompression = false;
 
         // NOTE: Load every primitive in the glTF as a separate raylib Mesh
         // Determine total number of meshes needed from the node hierarchy
@@ -5601,7 +5601,7 @@ static Model LoadGLTF(const char *fileName)
         for (u32 i = 0, j = 1; i < data->materials_count; i++, j++)
         {
             model.materials[j] = LoadMaterialDefault();
-            const std::string texPath = GetDirectoryPath(fileName);
+            const auto texPath = GetDirectoryPath(fileName);
 
             // Check glTF material flow: PBR metallic/roughness flow
             // NOTE: Alternatively, materials can follow PBR specular/glossiness flow
@@ -5610,7 +5610,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load base color texture (albedo)
                 if (data->materials[i].pbr_metallic_roughness.base_color_texture.texture)
                 {
-                    const Image imAlbedo = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.base_color_texture.texture->image, texPath.c_str());
+                    const auto imAlbedo = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.base_color_texture.texture->image, texPath.c_str());
                     if (imAlbedo.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_ALBEDO].texture = LoadTextureFromImage(imAlbedo);
@@ -5626,11 +5626,11 @@ static Model LoadGLTF(const char *fileName)
                 // Load metallic/roughness texture
                 if (data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture)
                 {
-                    const Image imMetallicRoughness = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture->image, texPath.c_str());
+                    const auto imMetallicRoughness = LoadImageFromCgltfImage(data->materials[i].pbr_metallic_roughness.metallic_roughness_texture.texture->image, texPath.c_str());
                     if (imMetallicRoughness.data != nullptr)
                     {
-                        Image imMetallic = { nullptr };
-                        Image imRoughness = { nullptr };
+                        auto imMetallic = Image{ nullptr };
+                        auto imRoughness = Image{ nullptr };
 
                         imMetallic.data = calloc(imMetallicRoughness.width*imMetallicRoughness.height, 1);
                         imRoughness.data = calloc(imMetallicRoughness.width*imMetallicRoughness.height, 1);
@@ -5645,7 +5645,7 @@ static Model LoadGLTF(const char *fileName)
                         {
                             for (i32 y = 0; y < imRoughness.height; y++)
                             {
-                                const Color color = GetImageColor(imMetallicRoughness, x, y);
+                                const auto color = GetImageColor(imMetallicRoughness, x, y);
 
                                 (static_cast<u8 *>(imRoughness.data))[y*imRoughness.width + x] = color.g; // Roughness color channel
                                 (static_cast<u8 *>(imMetallic.data))[y*imMetallic.width + x] = color.b;   // Metallic color channel
@@ -5671,7 +5671,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load normal texture
                 if (data->materials[i].normal_texture.texture)
                 {
-                    const Image imNormal = LoadImageFromCgltfImage(data->materials[i].normal_texture.texture->image, texPath.c_str());
+                    const auto imNormal = LoadImageFromCgltfImage(data->materials[i].normal_texture.texture->image, texPath.c_str());
                     if (imNormal.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_NORMAL].texture = LoadTextureFromImage(imNormal);
@@ -5682,7 +5682,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load ambient occlusion texture
                 if (data->materials[i].occlusion_texture.texture)
                 {
-                    const Image imOcclusion = LoadImageFromCgltfImage(data->materials[i].occlusion_texture.texture->image, texPath.c_str());
+                    const auto imOcclusion = LoadImageFromCgltfImage(data->materials[i].occlusion_texture.texture->image, texPath.c_str());
                     if (imOcclusion.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_OCCLUSION].texture = LoadTextureFromImage(imOcclusion);
@@ -5693,7 +5693,7 @@ static Model LoadGLTF(const char *fileName)
                 // Load emissive texture
                 if (data->materials[i].emissive_texture.texture)
                 {
-                    const Image imEmissive = LoadImageFromCgltfImage(data->materials[i].emissive_texture.texture->image, texPath.c_str());
+                    const auto imEmissive = LoadImageFromCgltfImage(data->materials[i].emissive_texture.texture->image, texPath.c_str());
                     if (imEmissive.data != nullptr)
                     {
                         model.materials[j].maps[MATERIAL_MAP_EMISSION].texture = LoadTextureFromImage(imEmissive);
@@ -5722,7 +5722,7 @@ static Model LoadGLTF(const char *fileName)
         //
         // WARNING: The code below disregards the scenes defined in the file, all nodes are used
         //----------------------------------------------------------------------------------------------------
-        i32 meshIndex = 0;
+        auto meshIndex = 0;
         for (u32 i = 0; i < data->nodes_count; i++)
         {
             cgltf_node *node = &(data->nodes[i]);
@@ -5776,7 +5776,7 @@ static Model LoadGLTF(const char *fileName)
                                 f32 *vertices = model.meshes[meshIndex].vertices;
                                 for (u32 k = 0; k < attribute->count; k++)
                                 {
-                                    const vec3 vt = vec3((worldMatrix)*vec4(vec3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, 1.0f));
+                                    const auto vt = vec3((worldMatrix)*vec4(vec3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k+1] = vt.y;
                                     vertices[3*k+2] = vt.z;
@@ -5789,7 +5789,7 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].vertices = static_cast<f32 *>(calloc(attribute->count*3, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                u16 *temp = static_cast<u16 *>(calloc(attribute->count*3, sizeof(u16)));
+                                auto temp = static_cast<u16 *>(calloc(attribute->count*3, sizeof(u16)));
                                 LOAD_ATTRIBUTE(attribute, 3, u16, temp);
 
                                 // Convert data to raylib vertex data type (float) the matrix will scale it to the correct size as a float
@@ -5801,7 +5801,7 @@ static Model LoadGLTF(const char *fileName)
                                 f32 *vertices = model.meshes[meshIndex].vertices;
                                 for (u32 k = 0; k < attribute->count; k++)
                                 {
-                                    const vec3 vt = vec3((worldMatrix)*vec4(vec3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
+                                    const auto vt = vec3((worldMatrix)*vec4(vec3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5814,7 +5814,7 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].vertices = static_cast<f32 *>(calloc(attribute->count*3, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                short *temp = static_cast<short *>(calloc(attribute->count*3, sizeof(short)));
+                                auto temp = static_cast<short *>(calloc(attribute->count*3, sizeof(short)));
                                 LOAD_ATTRIBUTE(attribute, 3, short, temp);
 
                                 // Convert data to raylib vertex data type (float) the matrix will scale it to the correct size as a float
@@ -5826,7 +5826,7 @@ static Model LoadGLTF(const char *fileName)
                                 f32 *vertices = model.meshes[meshIndex].vertices;
                                 for (u32 k = 0; k < attribute->count; k++)
                                 {
-                                    const vec3 vt = vec3((worldMatrix)*vec4(vec3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
+                                    const auto vt = vec3((worldMatrix)*vec4(vec3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5854,7 +5854,7 @@ static Model LoadGLTF(const char *fileName)
                                 f32 *normals = model.meshes[meshIndex].normals;
                                 for (u32 k = 0; k < attribute->count; k++)
                                 {
-                                    const vec3 nt = vec3((worldMatrixNormals)*vec4(vec3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, 1.0f));
+                                    const auto nt = vec3((worldMatrixNormals)*vec4(vec3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, 1.0f));
                                     normals[3*k] = nt.x;
                                     normals[3*k+1] = nt.y;
                                     normals[3*k+2] = nt.z;
@@ -5866,7 +5866,7 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].normals = static_cast<f32 *>(calloc(attribute->count*3, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                short *temp = static_cast<short *>(calloc(attribute->count*3, sizeof(short)));
+                                auto temp = static_cast<short *>(calloc(attribute->count*3, sizeof(short)));
                                 LOAD_ATTRIBUTE(attribute, 3, short, temp);
 
                                 // Convert data to raylib normal data type (float)
@@ -5890,7 +5890,7 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].normals = static_cast<f32 *>(calloc(attribute->count*3, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                u8 *temp = static_cast<u8 *>(calloc(attribute->count*3, sizeof(u8)));
+                                auto temp = static_cast<u8 *>(calloc(attribute->count*3, sizeof(u8)));
                                 LOAD_ATTRIBUTE(attribute, 3, u8, temp);
 
                                 // Convert data to raylib normal data type (float)
@@ -5914,7 +5914,7 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].normals = static_cast<f32 *>(calloc(attribute->count*3, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                char *temp = static_cast<char *>(calloc(attribute->count*3, sizeof(char)));
+                                auto temp = static_cast<char *>(calloc(attribute->count*3, sizeof(char)));
                                 LOAD_ATTRIBUTE(attribute, 3, char, temp);
 
                                 // Convert data to raylib normal data type (float)
@@ -5954,7 +5954,7 @@ static Model LoadGLTF(const char *fileName)
                                 f32 *tangents = model.meshes[meshIndex].tangents;
                                 for (u32 k = 0; k < attribute->count; k++)
                                 {
-                                    const vec3 tt = vec3((worldMatrix)*vec4(vec3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, 1.0f));
+                                    const auto tt = vec3((worldMatrix)*vec4(vec3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, 1.0f));
                                     tangents[4*k] = tt.x;
                                     tangents[4*k+1] = tt.y;
                                     tangents[4*k+2] = tt.z;
@@ -5986,7 +5986,7 @@ static Model LoadGLTF(const char *fileName)
                                 texcoordPtr = static_cast<f32 *>(calloc(attribute->count*2, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                u8 *temp = static_cast<u8 *>(calloc(attribute->count*2, sizeof(u8)));
+                                auto temp = static_cast<u8 *>(calloc(attribute->count*2, sizeof(u8)));
                                 LOAD_ATTRIBUTE(attribute, 2, u8, temp);
 
                                 // Convert data to raylib texcoord data type (float)
@@ -6000,7 +6000,7 @@ static Model LoadGLTF(const char *fileName)
                                 texcoordPtr = static_cast<f32 *>(calloc(attribute->count*2, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                u16 *temp = static_cast<u16 *>(calloc(attribute->count*2, sizeof(u16)));
+                                auto temp = static_cast<u16 *>(calloc(attribute->count*2, sizeof(u16)));
                                 LOAD_ATTRIBUTE(attribute, 2, u16, temp);
 
                                 // Convert data to raylib texcoord data type (float)
@@ -6038,7 +6038,7 @@ static Model LoadGLTF(const char *fileName)
                                     model.meshes[meshIndex].colors = static_cast<u8 *>(calloc(attribute->count*4, sizeof(u8)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    u8 *temp = static_cast<u8 *>(calloc(attribute->count*3, sizeof(u8)));
+                                    auto temp = static_cast<u8 *>(calloc(attribute->count*3, sizeof(u8)));
                                     LOAD_ATTRIBUTE(attribute, 3, u8, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
@@ -6058,7 +6058,7 @@ static Model LoadGLTF(const char *fileName)
                                     model.meshes[meshIndex].colors = static_cast<u8 *>(calloc(attribute->count*4, sizeof(u8)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    u16 *temp = static_cast<u16 *>(calloc(attribute->count*3, sizeof(u16)));
+                                    auto temp = static_cast<u16 *>(calloc(attribute->count*3, sizeof(u16)));
                                     LOAD_ATTRIBUTE(attribute, 3, u16, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
@@ -6078,7 +6078,7 @@ static Model LoadGLTF(const char *fileName)
                                     model.meshes[meshIndex].colors = static_cast<u8 *>(calloc(attribute->count*4, sizeof(u8)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    f32 *temp = static_cast<f32 *>(calloc(attribute->count*3, sizeof(f32)));
+                                    auto temp = static_cast<f32 *>(calloc(attribute->count*3, sizeof(f32)));
                                     LOAD_ATTRIBUTE(attribute, 3, f32, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
@@ -6110,7 +6110,7 @@ static Model LoadGLTF(const char *fileName)
                                     model.meshes[meshIndex].colors = static_cast<u8 *>(calloc(attribute->count*4, sizeof(u8)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    u16 *temp = static_cast<u16 *>(calloc(attribute->count*4, sizeof(u16)));
+                                    auto temp = static_cast<u16 *>(calloc(attribute->count*4, sizeof(u16)));
                                     LOAD_ATTRIBUTE(attribute, 4, u16, temp);
 
                                     // Convert data to raylib color data type (4 bytes)
@@ -6124,7 +6124,7 @@ static Model LoadGLTF(const char *fileName)
                                     model.meshes[meshIndex].colors = static_cast<u8 *>(calloc(attribute->count*4, sizeof(u8)));
 
                                     // Load data into a temp buffer to be converted to raylib data type
-                                    f32 *temp = static_cast<f32 *>(calloc(attribute->count*4, sizeof(f32)));
+                                    auto temp = static_cast<f32 *>(calloc(attribute->count*4, sizeof(f32)));
                                     LOAD_ATTRIBUTE(attribute, 4, f32, temp);
 
                                     // Convert data to raylib color data type (4 bytes), color data must be normalized
@@ -6264,7 +6264,7 @@ static Model LoadGLTF(const char *fileName)
 
             for (u32 p = 0; p < mesh->primitives_count; p++)
             {
-                bool hasJoints = false;
+                auto hasJoints = false;
 
                 // NOTE: Only support primitives defined by triangles
                 if (mesh->primitives[p].type != cgltf_primitive_type_triangles) continue;
@@ -6300,11 +6300,11 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].boneIndices = static_cast<u8 *>(calloc(model.meshes[meshIndex].vertexCount*4, sizeof(u8)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                u16 *temp = static_cast<u16 *>(calloc(model.meshes[meshIndex].vertexCount*4, sizeof(u16)));
+                                auto temp = static_cast<u16 *>(calloc(model.meshes[meshIndex].vertexCount*4, sizeof(u16)));
                                 LOAD_ATTRIBUTE(attribute, 4, u16, temp);
 
                                 // Convert data to raylib color data type (4 bytes)
-                                bool boneIdOverflowWarning = false;
+                                auto boneIdOverflowWarning = false;
                                 for (i32 b = 0; b < model.meshes[meshIndex].vertexCount*4; b++)
                                 {
                                     if ((temp[b] > 255) && !boneIdOverflowWarning)
@@ -6335,7 +6335,7 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].boneWeights = static_cast<f32 *>(calloc(model.meshes[meshIndex].vertexCount*4, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                u8 *temp = static_cast<u8 *>(calloc(attribute->count*4, sizeof(u8)));
+                                auto temp = static_cast<u8 *>(calloc(attribute->count*4, sizeof(u8)));
                                 LOAD_ATTRIBUTE(attribute, 4, u8, temp);
 
                                 // Convert data to raylib bone weight data type (4 bytes)
@@ -6349,7 +6349,7 @@ static Model LoadGLTF(const char *fileName)
                                 model.meshes[meshIndex].boneWeights = static_cast<f32 *>(calloc(model.meshes[meshIndex].vertexCount*4, sizeof(f32)));
 
                                 // Load data into a temp buffer to be converted to raylib data type
-                                u16 *temp = static_cast<u16 *>(calloc(attribute->count*4, sizeof(u16)));
+                                auto temp = static_cast<u16 *>(calloc(attribute->count*4, sizeof(u16)));
                                 LOAD_ATTRIBUTE(attribute, 4, u16, temp);
 
                                 // Convert data to raylib bone weight data type
@@ -6378,7 +6378,7 @@ static Model LoadGLTF(const char *fileName)
                 // in this case, all the verts need to be attached to the parent bone so it will animate with the bone
                 if ((data->skins_count > 0) && !hasJoints && (node->parent != nullptr) && (node->parent->mesh == nullptr))
                 {
-                    i32 parentBoneId = -1;
+                    auto parentBoneId = -1;
                     for (u32 joint = 0; joint < model.skeleton.boneCount; joint++)
                     {
                         if (data->skins[0].joints[joint] == node->parent)
@@ -6434,15 +6434,15 @@ static Model LoadGLTF(const char *fileName)
 }
 
 // Get interpolated pose for bone sampler at a specific time. Returns true on success
-static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_accessor *input, cgltf_accessor *output, f32 time, void *data)
+static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, const cgltf_accessor *input, const cgltf_accessor *output, const f32 time, void *data)
 {
     if (interpolationType >= cgltf_interpolation_type_max_enum) return false;
 
     // Input and output should have the same count
-    f32 tstart = 0.0f;
-    f32 tend = 0.0f;
-    i32 keyframe = 0;       // Defaults to first pose
-    bool found = false;
+    auto tstart = 0.0f;
+    auto tend = 0.0f;
+    auto keyframe = 0;       // Defaults to first pose
+    auto found = false;
 
     for (i32 i = 0; i < static_cast<i32>(input->count) - 1; i++)
     {
@@ -6467,7 +6467,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
     {
         keyframe = static_cast<i32>(input->count) - 2;
 
-        f32 tfirst = 0.0f;
+        auto tfirst = 0.0f;
         if (!cgltf_accessor_read_float(input, 0, &tfirst, 1)) return false;
         if (time < tfirst) keyframe = 0;
 
@@ -6496,8 +6496,8 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 f32 tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 3);
-                const vec3 v1 = {tmp[0], tmp[1], tmp[2]};
-                vec3 *r = static_cast<vec3 *>(data);
+                const auto v1 = vec3{tmp[0], tmp[1], tmp[2]};
+                auto r = static_cast<vec3 *>(data);
 
                 *r = v1;
             } break;
@@ -6505,10 +6505,10 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 f32 tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 3);
-                const vec3 v1 = {tmp[0], tmp[1], tmp[2]};
+                const auto v1 = vec3{tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 3);
-                const vec3 v2 = {tmp[0], tmp[1], tmp[2]};
-                vec3 *r = static_cast<vec3 *>(data);
+                const auto v2 = vec3{tmp[0], tmp[1], tmp[2]};
+                auto r = static_cast<vec3 *>(data);
 
                 *r = glm::mix(v1, v2, t);
             } break;
@@ -6516,14 +6516,14 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 f32 tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, 3*keyframe+1, tmp, 3);
-                const vec3 v1 = {tmp[0], tmp[1], tmp[2]};
+                const auto v1 = vec3{tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*keyframe+2, tmp, 3);
-                const vec3 tangent1 = {tmp[0], tmp[1], tmp[2]};
+                const auto tangent1 = vec3{tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1)+1, tmp, 3);
-                const vec3 v2 = {tmp[0], tmp[1], tmp[2]};
+                const auto v2 = vec3{tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1), tmp, 3);
-                const vec3 tangent2 = {tmp[0], tmp[1], tmp[2]};
-                vec3 *r = static_cast<vec3 *>(data);
+                const auto tangent2 = vec3{tmp[0], tmp[1], tmp[2]};
+                auto r = static_cast<vec3 *>(data);
 
                 *r = Vector3CubicHermite(v1, tangent1, v2, tangent2, t);
             } break;
@@ -6539,7 +6539,7 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 f32 tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 4);
-                quat *r = static_cast<quat *>(data);
+                auto r = static_cast<quat *>(data);
 
                 *r = quat{tmp[3], tmp[0], tmp[1], tmp[2]};
             } break;
@@ -6547,10 +6547,10 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 f32 tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 4);
-                const quat q1 = {tmp[3], tmp[0], tmp[1], tmp[2]};
+                const auto q1 = quat{tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 4);
-                const quat q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
-                quat *r = static_cast<quat *>(data);
+                const auto q2 = quat{tmp[3], tmp[0], tmp[1], tmp[2]};
+                auto r = static_cast<quat *>(data);
 
                 *r = glm::slerp(q1, q2, t);
             } break;
@@ -6558,14 +6558,14 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 f32 tmp[4] = { 0.0f };
                 cgltf_accessor_read_float(output, 3*keyframe+1, tmp, 4);
-                quat q1 = {tmp[3], tmp[0], tmp[1], tmp[2]};
+                auto q1 = quat{tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*keyframe+2, tmp, 4);
-                quat outTangent1 = {0.0f, tmp[0], tmp[1], tmp[2]};
+                auto outTangent1 = quat{0.0f, tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1)+1, tmp, 4);
-                quat q2 = {tmp[3], tmp[0], tmp[1], tmp[2]};
+                auto q2 = quat{tmp[3], tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1), tmp, 4);
-                quat inTangent2 = {0.0f, tmp[0], tmp[1], tmp[2]};
-                quat *r = static_cast<quat *>(data);
+                auto inTangent2 = quat{0.0f, tmp[0], tmp[1], tmp[2]};
+                auto r = static_cast<quat *>(data);
 
                 q1 = glm::normalize(q1);
                 q2 = glm::normalize(q2);
@@ -6589,13 +6589,13 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
 static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCount)
 {
     // glTF file loading
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
 
     ModelAnimation *animations = nullptr;
 
     // glTF data loading
-    cgltf_options options = {};
+    auto options = cgltf_options{};
     options.file.read = LoadFileGLTFCallback;
     options.file.release = ReleaseFileGLTFCallback;
     cgltf_data *data = nullptr;
@@ -6622,8 +6622,8 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
             // joint ancestor. This handles exporters (e.g. wow.export) that
             // store bone offsets on dummy parent nodes rather than on the
             // joints themselves. Depends only on the skin, not the animation.
-            const i32 jointCount = static_cast<i32>(skin.joints_count);
-            mat4 *extOffset = static_cast<mat4 *>(calloc(jointCount, sizeof(mat4)));
+            const auto jointCount = static_cast<i32>(skin.joints_count);
+            auto extOffset = static_cast<mat4 *>(calloc(jointCount, sizeof(mat4)));
 
             if (extOffset == nullptr)
             {
@@ -6646,7 +6646,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
 
                 while (n != nullptr)
                 {
-                    bool isJoint = false;
+                    auto isJoint = false;
                     for (i32 jj = 0; jj < jointCount; jj++)
                     {
                         if (skin.joints[jj] == n)
@@ -6671,7 +6671,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
 
             for (u32 a = 0; a < data->animations_count; a++)
             {
-                BoneInfo *bones = LoadBoneInfoGLTF(skin, &animations[a].boneCount);
+                auto bones = LoadBoneInfoGLTF(skin, &animations[a].boneCount);
 
                 const cgltf_animation animData = data->animations[a];
 
@@ -6681,13 +6681,13 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                     cgltf_animation_channel *scale;
                 };
 
-                struct Channels *boneChannels = static_cast<struct Channels *>(calloc(animations[a].boneCount, sizeof(struct Channels)));
-                f32 animDuration = 0.0f;
+                auto boneChannels = static_cast<struct Channels *>(calloc(animations[a].boneCount, sizeof(struct Channels)));
+                auto animDuration = 0.0f;
 
                 for (u32 j = 0; j < animData.channels_count; j++)
                 {
                     const cgltf_animation_channel channel = animData.channels[j];
-                    i32 boneIndex = -1;
+                    auto boneIndex = -1;
 
                     for (u32 k = 0; k < skin.joints_count; k++)
                     {
@@ -6709,7 +6709,7 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
                     }
                     else TRACELOG(LOG_WARNING, "MODEL: [%s] Invalid interpolation curve encountered for GLTF animation.", fileName);
 
-                    f32 time = 0.0f;
+                    auto time = 0.0f;
                     result = static_cast<cgltf_result>(cgltf_accessor_read_float(channel.sampler->input, channel.sampler->input->count - 1, &time, 1));
                     if (!result)
                     {
@@ -6732,9 +6732,9 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
 
                     for (u32 k = 0; k < animations[a].boneCount; k++)
                     {
-                        vec3 translation = {skin.joints[k]->translation[0], skin.joints[k]->translation[1], skin.joints[k]->translation[2]};
-                        quat rotation = {skin.joints[k]->rotation[3], skin.joints[k]->rotation[0], skin.joints[k]->rotation[1], skin.joints[k]->rotation[2]};
-                        vec3 scale = {skin.joints[k]->scale[0], skin.joints[k]->scale[1], skin.joints[k]->scale[2]};
+                        auto translation = vec3{skin.joints[k]->translation[0], skin.joints[k]->translation[1], skin.joints[k]->translation[2]};
+                        auto rotation = quat{skin.joints[k]->rotation[3], skin.joints[k]->rotation[0], skin.joints[k]->rotation[1], skin.joints[k]->rotation[2]};
+                        auto scale = vec3{skin.joints[k]->scale[0], skin.joints[k]->scale[1], skin.joints[k]->scale[2]};
 
                         if (boneChannels[k].translate)
                         {
@@ -6803,14 +6803,14 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, i32 *animCo
 // Load VOX (MagicaVoxel) mesh data
 static Model LoadVOX(const char *fileName)
 {
-    Model model = { 0 };
+    auto model = Model{ 0 };
 
-    i32 nbvertices = 0;
-    i32 meshescount = 0;
+    auto nbvertices = 0;
+    auto meshescount = 0;
 
     // Read vox file into buffer
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
 
     if (fileData == nullptr)
     {
@@ -6819,7 +6819,7 @@ static Model LoadVOX(const char *fileName)
     }
 
     // Read and build voxarray description
-    VoxArray3D voxarray = { 0 };
+    auto voxarray = VoxArray3D{ 0 };
     const i32 ret = Vox_LoadFromMemory(fileData, dataSize, &voxarray);
 
     if (ret != VOX_SUCCESS)
@@ -6853,12 +6853,12 @@ static Model LoadVOX(const char *fileName)
 
     // Init model meshes
     i32 verticesRemain = voxarray.vertices.used;
-    constexpr i32 verticesMax = 65532; // 5461 voxels x 12 vertices per voxel -> 65532 (must be inf 65536)
+    constexpr auto verticesMax = 65532; // 5461 voxels x 12 vertices per voxel -> 65532 (must be inf 65536)
 
     // 6*4 = 12 vertices per voxel
-    vec3 *pvertices = reinterpret_cast<vec3 *>(voxarray.vertices.array);
-    vec3 *pnormals = reinterpret_cast<vec3 *>(voxarray.normals.array);
-    Color *pcolors = reinterpret_cast<Color *>(voxarray.colors.array);
+    auto pvertices = reinterpret_cast<vec3 *>(voxarray.vertices.array);
+    auto pnormals = reinterpret_cast<vec3 *>(voxarray.normals.array);
+    auto pcolors = reinterpret_cast<Color *>(voxarray.colors.array);
 
     u16 *pindices = voxarray.indices.array;    // 5461*6*6 = 196596 indices max per mesh
 
@@ -6912,14 +6912,14 @@ void m3d_freehook(void *data) { UnloadFileData(static_cast<u8 *>(data)); }
 // Load M3D mesh data
 static Model LoadM3D(const char *fileName)
 {
-    Model model = { 0 };
+    auto model = Model{ 0 };
 
     m3d_t *m3d = nullptr;
     m3dp_t *prop = nullptr;
     i32 i, j, k, l, n, mi = -2, vcolor = 0;
 
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
 
     if (fileData != nullptr)
     {
@@ -6998,13 +6998,13 @@ static Model LoadM3D(const char *fileName)
                     model.meshCount++;
 
                     // Create a second buffer for mesh re-allocation
-                    Mesh *tempMeshes = static_cast<Mesh *>(calloc(model.meshCount, sizeof(Mesh)));
+                    auto tempMeshes = static_cast<Mesh *>(calloc(model.meshCount, sizeof(Mesh)));
                     memcpy(tempMeshes, model.meshes, (model.meshCount - 1)*sizeof(Mesh));
                     free(model.meshes);
                     model.meshes = tempMeshes;
 
                     // Create a second buffer for material re-allocation
-                    i32 *tempMeshMaterial = static_cast<i32 *>(calloc(model.meshCount, sizeof(i32)));
+                    auto tempMeshMaterial = static_cast<i32 *>(calloc(model.meshCount, sizeof(i32)));
                     memcpy(tempMeshMaterial, model.meshMaterial, (model.meshCount - 1)*sizeof(i32));
                     free(model.meshMaterial);
                     model.meshMaterial = tempMeshMaterial;
@@ -7166,7 +7166,7 @@ static Model LoadM3D(const char *fileName)
                     {
                         if (prop->type >= 128)
                         {
-                            Image image = { nullptr };
+                            auto image = Image{ nullptr };
                             image.data = m3d->texture[prop->value.textureid].d;
                             image.width = m3d->texture[prop->value.textureid].w;
                             image.height = m3d->texture[prop->value.textureid].h;
@@ -7270,8 +7270,8 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, i32 *animCou
     i32 i = 0, j = 0;
     *animCount = 0;
 
-    i32 dataSize = 0;
-    u8 *fileData = LoadFileData(fileName, &dataSize);
+    auto dataSize = 0;
+    auto fileData = LoadFileData(fileName, &dataSize);
 
     if (fileData != nullptr)
     {
@@ -7299,7 +7299,7 @@ static ModelAnimation *LoadModelAnimationsM3D(const char *fileName, i32 *animCou
         for (u32 a = 0; a < m3d->numaction; a++)
         {
             animations[a].boneCount = m3d->numbone + 1;
-            BoneInfo *bones = static_cast<BoneInfo *>(calloc((m3d->numbone + 1), sizeof(BoneInfo)));
+            auto bones = static_cast<BoneInfo *>(calloc((m3d->numbone + 1), sizeof(BoneInfo)));
 
             animations[a].keyframeCount = m3d->action[a].durationmsec/M3D_ANIMDELAY;
             animations[a].keyframePoses = static_cast<Transform * *>(calloc(animations[a].keyframeCount, sizeof(Transform *)));

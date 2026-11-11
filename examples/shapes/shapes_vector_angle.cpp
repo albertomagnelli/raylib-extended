@@ -24,18 +24,18 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
+    constexpr auto screenWidth = 800;
 
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - vector angle");
 
-    const vec2 v0 = { screenWidth/2.0f, screenHeight/2.0f };
+    const auto v0 = vec2{ screenWidth/2.0f, screenHeight/2.0f };
     vec2 v1 = ((v0) + (vec2{ 100.0f, 80.0f }));
-    vec2 v2 = {};           // Updated with mouse position
+    auto v2 = vec2{};           // Updated with mouse position
 
-    f32 angle = 0.0f;             // Angle in degrees
-    i32 angleMode = 0;              // 0-Vector2Angle(), 1-Vector2LineAngle()
+    auto angle = 0.0f;             // Angle in degrees
+    auto angleMode = 0;              // 0-Vector2Angle(), 1-Vector2LineAngle()
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        f32 startangle = 0.0f;
+        auto startangle = 0.0f;
 
         if (angleMode == 0) startangle = -Vector2LineAngle(v0, v1)*RAD2DEG;
         if (angleMode == 1) startangle = 0.0f;

@@ -44,9 +44,9 @@ static void SquareCallback(void *framesOut, u32 frameCount);
 static void TriangleCallback(void *framesOut, u32 frameCount);
 static void SawtoothCallback(void *framesOut, u32 frameCount);
 
-static i32 waveFrequency = 440;
-static i32 newWaveFrequency = 440;
-static i32 waveIndex = 0;
+static auto waveFrequency = 440;
+static auto newWaveFrequency = 440;
+static auto waveIndex = 0;
 
 // Buffer to keep the last second of uploaded audio,
 // part of which will be drawn on the screen
@@ -61,8 +61,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - stream callback");
 
@@ -72,7 +72,7 @@ i32 main()
     SetAudioStreamBufferSizeDefault(BUFFER_SIZE);
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
-    const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
+    const auto stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
     PlayAudioStream(stream);
 
     // Configure it so that waveCallbacks[waveType] is called whenever stream is out of samples
@@ -133,8 +133,8 @@ i32 main()
             // Draw the last 10 ms of uploaded audio
             for (i32 i = 0; i < screenWidth - 1; i++)
             {
-                const vec2 startPos = {static_cast<f32>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
-                const vec2 endPos = { static_cast<f32>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
+                const auto startPos = vec2{static_cast<f32>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
+                const auto endPos = vec2{ static_cast<f32>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
                 DrawLineV(startPos, endPos, RED);
             }
 

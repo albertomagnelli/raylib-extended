@@ -24,20 +24,20 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - dashed line");
 
     // Line Properties
-    const vec2 lineStartPosition = { 20.0f, 50.0f };
-    vec2 lineEndPosition = { 780.0f, 400.0f };
-    f32 dashLength = 25.0f;
-    f32 blankLength = 15.0f;
+    const auto lineStartPosition = vec2{ 20.0f, 50.0f };
+    auto lineEndPosition = vec2{ 780.0f, 400.0f };
+    auto dashLength = 25.0f;
+    auto blankLength = 15.0f;
 
     // Color selection
     const Color lineColors[] = { RED, ORANGE, GOLD, GREEN, BLUE, VIOLET, PINK, BLACK };
-    i32 colorIndex = 0;
+    auto colorIndex = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

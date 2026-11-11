@@ -32,8 +32,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // NOTE: Try to enable MSAA 4X
 
@@ -59,12 +59,12 @@ i32 main()
 
     Music music = LoadMusicStream("resources/mini1111.xm");
     music.looping = false;
-    f32 pitch = 1.0f;
+    auto pitch = 1.0f;
 
     PlayMusicStream(music);
 
-    f32 timePlayed = 0.0f;
-    bool pause = false;
+    auto timePlayed = 0.0f;
+    auto pause = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

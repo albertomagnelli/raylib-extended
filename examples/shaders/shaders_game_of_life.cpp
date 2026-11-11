@@ -57,23 +57,23 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - game of life");
 
-    constexpr i32 menuWidth = 100;
+    constexpr auto menuWidth = 100;
     const i32 windowWidth = screenWidth - menuWidth;
     const i32 windowHeight = screenHeight;
 
-    constexpr i32 worldWidth = 2048;
-    constexpr i32 worldHeight = 2048;
+    constexpr auto worldWidth = 2048;
+    constexpr auto worldHeight = 2048;
 
-    constexpr i32 randomTiles = 8;      // Random preset: divide the world to compute random points in each tile
+    constexpr auto randomTiles = 8;      // Random preset: divide the world to compute random points in each tile
 
-    const Rectangle worldRectSource = { 0, 0, static_cast<f32>(worldWidth), static_cast<f32>(-worldHeight) };
-    const Rectangle worldRectDest = { 0, 0, static_cast<f32>(worldWidth), static_cast<f32>(worldHeight) };
-    const Rectangle textureOnScreen = { 0, 0, static_cast<f32>(windowWidth), static_cast<f32>(windowHeight) };
+    const auto worldRectSource = Rectangle{ 0, 0, static_cast<f32>(worldWidth), static_cast<f32>(-worldHeight) };
+    const auto worldRectDest = Rectangle{ 0, 0, static_cast<f32>(worldWidth), static_cast<f32>(worldHeight) };
+    const auto textureOnScreen = Rectangle{ 0, 0, static_cast<f32>(windowWidth), static_cast<f32>(windowHeight) };
 
     const PresetPattern presetPatterns[] = {
         { "Glider", { 0.5f, 0.5f } }, { "R-pentomino", { 0.5f, 0.5f } }, { "Acorn", { 0.5f,0.5f } },
@@ -84,18 +84,18 @@ i32 main()
 
     const i32 numberOfPresets = sizeof(presetPatterns)/sizeof(presetPatterns[0]);
 
-    i32 zoom = 1;
+    auto zoom = 1;
     f32 offsetX = (worldWidth - windowWidth)/2.0f;    // Centered on window
     f32 offsetY = (worldHeight - windowHeight)/2.0f;  // Centered on window
-    i32 framesPerStep = 1;
-    i32 frame = 0;
+    auto framesPerStep = 1;
+    auto frame = 0;
 
-    i32 preset = -1;            // No button pressed for preset
+    auto preset = -1;            // No button pressed for preset
     i32 mode = MODE_RUN;        // Starting mode: running
-    bool buttonZoomIn = false;  // Button states: false not pressed
-    bool buttonZomOut = false;
-    bool buttonFaster = false;
-    bool buttonSlower = false;
+    auto buttonZoomIn = false;  // Button states: false not pressed
+    auto buttonZomOut = false;
+    auto buttonFaster = false;
+    auto buttonSlower = false;
 
     // Load shader
     const Shader shdrGameOfLife = LoadShader({}, TextFormat("resources/shaders/glsl%i/game_of_life.fs", GLSL_VERSION));
@@ -106,8 +106,8 @@ i32 main()
     SetShaderValue(shdrGameOfLife, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
     // Define two textures: the current world and the previous world
-    RenderTexture2D world1 = LoadRenderTexture(worldWidth, worldHeight);
-    RenderTexture2D world2 = LoadRenderTexture(worldWidth, worldHeight);
+    auto world1 = LoadRenderTexture(worldWidth, worldHeight);
+    auto world2 = LoadRenderTexture(worldWidth, worldHeight);
     BeginTextureMode(world2);
         ClearBackground(RAYWHITE);
     EndTextureMode();
@@ -134,7 +134,7 @@ i32 main()
         frame++;
 
         // Change zoom: both by buttons or by mouse wheel
-        const f32 mouseWheelMove = GetMouseWheelMove();
+        const auto mouseWheelMove = GetMouseWheelMove();
         if (buttonZoomIn || (buttonZomOut && (zoom > 1)) || (mouseWheelMove != 0.0f))
         {
             FreeImageToDraw(&imageToDraw);  // Zoom change: free the image to draw to be recreated again
@@ -157,8 +157,8 @@ i32 main()
             FreeImageToDraw(&imageToDraw);  // Free the image to draw: no longer needed in these modes
 
             // Pan with mouse left button
-            static vec2 previousMousePosition = { 0.0f, 0.0f };
-            const vec2 mousePosition = GetMousePosition();
+            static auto previousMousePosition = vec2{ 0.0f, 0.0f };
+            const auto mousePosition = GetMousePosition();
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && (mousePosition.x < windowWidth))
             {
                 offsetX -= (mousePosition.x - previousMousePosition.x)/zoom;
@@ -170,15 +170,15 @@ i32 main()
         {
             const f32 offsetDecimalX = offsetX - floorf(offsetX);
             const f32 offsetDecimalY = offsetY - floorf(offsetY);
-            i32 sizeInWorldX = static_cast<i32>(ceilf((windowWidth + offsetDecimalX*zoom)/zoom));
-            i32 sizeInWorldY = static_cast<i32>(ceilf((windowHeight + offsetDecimalY*zoom)/zoom));
+            auto sizeInWorldX = static_cast<i32>(ceilf((windowWidth + offsetDecimalX*zoom)/zoom));
+            auto sizeInWorldY = static_cast<i32>(ceilf((windowHeight + offsetDecimalY*zoom)/zoom));
             if (offsetX + sizeInWorldX >= worldWidth) sizeInWorldX = worldWidth - static_cast<i32>(floorf(offsetX));
             if (offsetY + sizeInWorldY >= worldHeight) sizeInWorldY = worldHeight - static_cast<i32>(floorf(offsetY));
 
             // Create image to draw if not created yet
             if (imageToDraw == nullptr)
             {
-                const RenderTexture2D worldOnScreen = LoadRenderTexture(sizeInWorldX, sizeInWorldY);
+                const auto worldOnScreen = LoadRenderTexture(sizeInWorldX, sizeInWorldY);
                 BeginTextureMode(worldOnScreen);
                     DrawTexturePro(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<f32>(sizeInWorldX), -static_cast<f32>(sizeInWorldY) },
                             Rectangle{ 0, 0, static_cast<f32>(sizeInWorldX), static_cast<f32>(sizeInWorldY) }, vec2{ 0, 0 }, 0.0f, WHITE);
@@ -189,8 +189,8 @@ i32 main()
                 UnloadRenderTexture(worldOnScreen);
             }
 
-            const vec2 mousePosition = GetMousePosition();
-            static i32 firstColor = -1;
+            const auto mousePosition = GetMousePosition();
+            static auto firstColor = -1;
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && (mousePosition.x < windowWidth))
             {
                 i32 mouseX = static_cast<i32>(mousePosition.x + offsetDecimalX*zoom)/zoom;
@@ -269,7 +269,7 @@ i32 main()
         if (offsetY > worldHeight - static_cast<f32>(windowHeight)/zoom) offsetY = worldHeight - static_cast<f32>(windowHeight)/zoom;
 
         // Rectangles for drawing texture portion to screen
-        const Rectangle textureSourceToScreen = { offsetX, offsetY, static_cast<f32>(windowWidth)/zoom, static_cast<f32>(windowHeight)/zoom };
+        const auto textureSourceToScreen = Rectangle{ offsetX, offsetY, static_cast<f32>(windowWidth)/zoom, static_cast<f32>(windowHeight)/zoom };
         //----------------------------------------------------------------------------------
 
         // Draw to texture

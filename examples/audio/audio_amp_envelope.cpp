@@ -58,8 +58,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - amp envelope");
 
@@ -70,10 +70,10 @@ i32 main()
     f32 buffer[BUFFER_SIZE] = {};
 
     // Init raw audio stream (sample rate: 44100, sample size: 32bit-float, channels: 1-mono)
-    const AudioStream stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
+    const auto stream = LoadAudioStream(SAMPLE_RATE, 32, 1);
 
     // Init Phase
-    f32 audioTime = 0.0f;
+    auto audioTime = 0.0f;
 
     // Initialize the struct
     Envelope env = {
@@ -158,7 +158,7 @@ i32 main()
 //------------------------------------------------------------------------------------
 static void FillAudioBuffer(i32 i, f32 *buffer, f32 envelopeValue, f32 *audioTime)
 {
-    constexpr i32 frequency = 440;
+    constexpr auto frequency = 440;
     buffer[i] = envelopeValue*sinf(2.0f*PI*frequency*(*audioTime));
     *audioTime += (1.0f/SAMPLE_RATE);
 }
@@ -215,7 +215,7 @@ static void DrawADSRGraph(Envelope *env, Rectangle bounds)
     DrawRectangleLinesEx(bounds, 1, GRAY);
 
     // Fixed visual width for sustain stage since it's an amplitude not a time value
-    constexpr f32 sustainWidth = 1.0f;
+    constexpr auto sustainWidth = 1.0f;
 
     // Total time to visualize (sum of A, D, R + a padding for Sustain)
     const f32 totalTime = env->attackTime + env->decayTime + sustainWidth + env->releaseTime;
@@ -223,11 +223,11 @@ static void DrawADSRGraph(Envelope *env, Rectangle bounds)
     const f32 scaleX = bounds.width/totalTime;
     const f32 scaleY = bounds.height;
 
-    const vec2 start = { bounds.x, bounds.y + bounds.height };
-    const vec2 peak = { start.x + (env->attackTime*scaleX), bounds.y };
-    const vec2 sustain = { peak.x + (env->decayTime*scaleX), bounds.y + (1.0f - env->sustainLevel)*scaleY };
-    const vec2 rel = { sustain.x + (sustainWidth*scaleX), sustain.y };
-    const vec2 end = { rel.x + (env->releaseTime*scaleX), bounds.y + bounds.height };
+    const auto start = vec2{ bounds.x, bounds.y + bounds.height };
+    const auto peak = vec2{ start.x + (env->attackTime*scaleX), bounds.y };
+    const auto sustain = vec2{ peak.x + (env->decayTime*scaleX), bounds.y + (1.0f - env->sustainLevel)*scaleY };
+    const auto rel = vec2{ sustain.x + (sustainWidth*scaleX), sustain.y };
+    const auto end = vec2{ rel.x + (env->releaseTime*scaleX), bounds.y + bounds.height };
 
     DrawLineV(start, peak, SKYBLUE);
     DrawLineV(peak, sustain, BLUE);

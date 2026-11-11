@@ -28,8 +28,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - text file loading");
 
@@ -43,23 +43,23 @@ i32 main()
 
     // Loading text file from resources/text_file.txt
     constexpr const char *fileName = "resources/text_file.txt";
-    const std::string text = LoadFileText(fileName);
+    const auto text = LoadFileText(fileName);
 
     // Loading all the text lines
-    std::vector<std::string> lines = LoadTextLines(text);
-    const i32 lineCount = static_cast<i32>(lines.size());
+    auto lines = LoadTextLines(text);
+    const auto lineCount = static_cast<i32>(lines.size());
 
     // Stylistic choises
-    constexpr i32 fontSize = 20;
+    constexpr auto fontSize = 20;
     const i32 textTop = 25 + fontSize; // Top of the screen from where the text is rendered
     const i32 wrapWidth = screenWidth - 20;
 
     // Wrap the lines as needed
     for (i32 i = 0; i < lineCount; i++)
     {
-        i32 j = 0;
-        i32 lastSpace = 0;          // Keeping track of last valid space to insert '\n'
-        i32 lastWrapStart = 0;      // Keeping track of the start of this wrapped line.
+        auto j = 0;
+        auto lastSpace = 0;          // Keeping track of last valid space to insert '\n'
+        auto lastWrapStart = 0;      // Keeping track of the start of this wrapped line.
 
         while (j <= strlen(lines[i].c_str()))
         {
@@ -87,11 +87,11 @@ i32 main()
     }
 
     // Calculating the total height so that we can show a scrollbar
-    i32 textHeight = 0;
+    auto textHeight = 0;
 
     for (i32 i = 0; i < lineCount; i++)
     {
-        const vec2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<f32>(fontSize), 2);
+        const auto size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<f32>(fontSize), 2);
         textHeight += static_cast<i32>(size.y) + 10;
     }
 
@@ -109,7 +109,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const f32 scroll = GetMouseWheelMove();
+        const auto scroll = GetMouseWheelMove();
         cam.target.y -= scroll*fontSize*1.5f;   // Choosing an arbitrary speed for scroll
 
         if (cam.target.y < 0) cam.target.y = 0;  // Snapping to 0 if we go too far back

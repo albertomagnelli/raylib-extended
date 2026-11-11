@@ -41,8 +41,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - depth writing");
 
@@ -56,7 +56,7 @@ i32 main()
     };
 
     // Load custom render texture with writable depth texture buffer
-    const RenderTexture2D target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
+    const auto target = LoadRenderTextureDepthTex(screenWidth, screenHeight);
 
     // Load depth writing shader
     // NOTE: The shader inverts the depth buffer by writing into it by `gl_FragDepth = 1 - gl_FragCoord.z;`
@@ -117,7 +117,7 @@ i32 main()
 // Load custom render texture, create a writable depth texture buffer
 static RenderTexture2D LoadRenderTextureDepthTex(i32 width, i32 height)
 {
-    RenderTexture2D target = {};
+    auto target = RenderTexture2D{};
 
     target.id = rlLoadFramebuffer(); // Load an empty framebuffer
 

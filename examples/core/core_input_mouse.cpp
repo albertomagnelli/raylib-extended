@@ -22,12 +22,12 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse");
 
-    vec2 ballPosition = { -100.0f, -100.0f };
+    auto ballPosition = vec2{ -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

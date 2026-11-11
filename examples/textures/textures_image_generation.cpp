@@ -26,20 +26,20 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image generation");
 
-    const Image verticalGradient = GenImageGradientLinear(screenWidth, screenHeight, 0, RED, BLUE);
-    const Image horizontalGradient = GenImageGradientLinear(screenWidth, screenHeight, 90, RED, BLUE);
-    const Image diagonalGradient = GenImageGradientLinear(screenWidth, screenHeight, 45, RED, BLUE);
-    const Image radialGradient = GenImageGradientRadial(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
-    const Image squareGradient = GenImageGradientSquare(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
-    const Image checked = GenImageChecked(screenWidth, screenHeight, 32, 32, RED, BLUE);
-    const Image whiteNoise = GenImageWhiteNoise(screenWidth, screenHeight, 0.5f);
-    const Image perlinNoise = GenImagePerlinNoise(screenWidth, screenHeight, 50, 50, 4.0f);
-    const Image cellular = GenImageCellular(screenWidth, screenHeight, 32);
+    const auto verticalGradient = GenImageGradientLinear(screenWidth, screenHeight, 0, RED, BLUE);
+    const auto horizontalGradient = GenImageGradientLinear(screenWidth, screenHeight, 90, RED, BLUE);
+    const auto diagonalGradient = GenImageGradientLinear(screenWidth, screenHeight, 45, RED, BLUE);
+    const auto radialGradient = GenImageGradientRadial(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
+    const auto squareGradient = GenImageGradientSquare(screenWidth, screenHeight, 0.0f, WHITE, BLACK);
+    const auto checked = GenImageChecked(screenWidth, screenHeight, 32, 32, RED, BLUE);
+    const auto whiteNoise = GenImageWhiteNoise(screenWidth, screenHeight, 0.5f);
+    const auto perlinNoise = GenImagePerlinNoise(screenWidth, screenHeight, 50, 50, 4.0f);
+    const auto cellular = GenImageCellular(screenWidth, screenHeight, 32);
 
     Texture2D textures[NUM_TEXTURES] = {};
 
@@ -64,7 +64,7 @@ i32 main()
     UnloadImage(perlinNoise);
     UnloadImage(cellular);
 
-    i32 currentTexture = 0;
+    auto currentTexture = 0;
 
     SetTargetFPS(60);
     //---------------------------------------------------------------------------------------

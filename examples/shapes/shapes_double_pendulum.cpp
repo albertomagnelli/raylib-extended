@@ -36,8 +36,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_HIGHDPI);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - double pendulum");
@@ -47,10 +47,10 @@ i32 main()
     f32 theta1 = DEG2RAD*170, w1 = 0;
     constexpr f32 l2 = 15.0f, m2 = 0.1f;
     f32 theta2 = 0, w2 = 0;
-    constexpr f32 lengthScaler = 0.1f;
+    constexpr auto lengthScaler = 0.1f;
     const f32 totalM = m1 + m2;
 
-    vec2 previousPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
+    auto previousPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
     previousPosition.x += (static_cast<f32>(screenWidth)/2);
     previousPosition.y += (static_cast<f32>(screenHeight)/2 - 100);
 
@@ -59,12 +59,12 @@ i32 main()
     const f32 L2 = l2*lengthScaler;
 
     // Draw parameters
-    constexpr f32 lineThick = 20.0f;
-    constexpr f32 trailThick = 2.0f;
-    constexpr f32 fateAlpha = 0.01f;
+    constexpr auto lineThick = 20.0f;
+    constexpr auto trailThick = 2.0f;
+    constexpr auto fateAlpha = 0.01f;
 
     // Create framebuffer
-    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const auto target = LoadRenderTexture(screenWidth, screenHeight);
     SetTextureFilter(target.texture, TEXTURE_FILTER_BILINEAR);
 
     SetTargetFPS(60);
@@ -75,7 +75,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const f32 dt = GetFrameTime();
+        const auto dt = GetFrameTime();
         const f32 step = dt/SIMULATION_STEPS;
         const f32 step2 = step*step;
 
@@ -110,7 +110,7 @@ i32 main()
         }
 
         // Calculate position
-        vec2 currentPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
+        auto currentPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
         currentPosition.x += static_cast<f32>(screenWidth)/2;
         currentPosition.y += static_cast<f32>(screenHeight)/2 - 100;
 
@@ -141,7 +141,7 @@ i32 main()
             DrawRectanglePro(Rectangle{ screenWidth/2.0f, screenHeight/2.0f - 100, 10*l1, lineThick },
                 vec2{0, lineThick*0.5f}, 90 - RAD2DEG*theta1, RAYWHITE);
 
-            const vec2 endpoint1 = CalculatePendulumEndPoint(l1, theta1);
+            const auto endpoint1 = CalculatePendulumEndPoint(l1, theta1);
             DrawRectanglePro(Rectangle{ screenWidth/2.0f + endpoint1.x, screenHeight/2.0f - 100 + endpoint1.y, 10*l2, lineThick },
                 vec2{0, lineThick*0.5f}, 90 - RAD2DEG*theta2, RAYWHITE);
 
@@ -171,7 +171,7 @@ static vec2 CalculatePendulumEndPoint(f32 l, f32 theta)
 // Calculate double pendulum end point
 static vec2 CalculateDoublePendulumEndPoint(f32 l1, f32 theta1, f32 l2, f32 theta2)
 {
-    const vec2 endpoint1 = CalculatePendulumEndPoint(l1, theta1);
-    const vec2 endpoint2 = CalculatePendulumEndPoint(l2, theta2);
+    const auto endpoint1 = CalculatePendulumEndPoint(l1, theta1);
+    const auto endpoint2 = CalculatePendulumEndPoint(l2, theta2);
     return vec2{ endpoint1.x + endpoint2.x, endpoint1.y + endpoint2.y };
 }

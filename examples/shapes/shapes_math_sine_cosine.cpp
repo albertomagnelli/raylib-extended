@@ -32,19 +32,19 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - math sine cosine");
 
     vec2 sinePoints[WAVE_POINTS];
     vec2 cosPoints[WAVE_POINTS];
-    const vec2 center = { (screenWidth/2.0f) - 30.0f, screenHeight/2.0f };
-    const Rectangle start = { 20.0f, screenHeight - 120.f , 200.0f, 100.0f};
-    constexpr f32 radius = 130.0f;
-    f32 angle = 0.0f;
-    bool pause = false;
+    const auto center = vec2{ (screenWidth/2.0f) - 30.0f, screenHeight/2.0f };
+    const auto start = Rectangle{ 20.0f, screenHeight - 120.f , 200.0f, 100.0f};
+    constexpr auto radius = 130.0f;
+    auto angle = 0.0f;
+    auto pause = false;
 
     for (i32 i = 0; i < WAVE_POINTS; i++)
     {
@@ -66,18 +66,18 @@ i32 main()
         const f32 cosRad = cosf(angleRad);
         const f32 sinRad = sinf(angleRad);
 
-        const vec2 point = { center.x + cosRad*radius, center.y - sinRad*radius };
-        const vec2 limitMin = { center.x - radius, center.y - radius };
-        const vec2 limitMax = { center.x + radius, center.y + radius };
+        const auto point = vec2{ center.x + cosRad*radius, center.y - sinRad*radius };
+        const auto limitMin = vec2{ center.x - radius, center.y - radius };
+        const auto limitMax = vec2{ center.x + radius, center.y + radius };
 
         const f32 complementary = 90.0f - angle;
         const f32 supplementary = 180.0f - angle;
         const f32 explementary = 360.0f - angle;
 
-        const f32 tangent = Clamp(tanf(angleRad), -10.0f, 10.0f);
+        const auto tangent = Clamp(tanf(angleRad), -10.0f, 10.0f);
         const f32 cotangent = (fabsf(tangent) > 0.001f) ? Clamp(1.0f/tangent, -radius, radius) : 0.0f;
-        const vec2 tangentPoint = { center.x + radius, center.y - tangent*radius };
-        const vec2 cotangentPoint = { center.x + cotangent*radius, center.y - radius };
+        const auto tangentPoint = vec2{ center.x + radius, center.y - tangent*radius };
+        const auto cotangentPoint = vec2{ center.x + cotangent*radius, center.y - radius };
 
         angle = Wrap(angle + (!pause ? 1.0f : 0.0f), 0.0f, 360.0f);
         //----------------------------------------------------------------------------------

@@ -64,8 +64,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - digital clock");
@@ -240,8 +240,8 @@ static void DrawDisplayValue(vec2 position, i32 value, Color colorOn, Color colo
 // Parameter: segments, defines in binary the segments to be activated
 static void Draw7SDisplay(vec2 position, char segments, Color colorOn, Color colorOff)
 {
-    constexpr i32 segmentLen = 60;
-    constexpr i32 segmentThick = 20;
+    constexpr auto segmentLen = 60;
+    constexpr auto segmentThick = 20;
     const f32 offsetYAdjust = segmentThick*0.3f; // HACK: Adjust gap space between segment limits
 
     // Segment A

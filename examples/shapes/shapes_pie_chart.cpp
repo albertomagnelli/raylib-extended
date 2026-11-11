@@ -32,28 +32,28 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - pie chart");
 
-    i32 sliceCount = 7;
-    f32 donutInnerRadius = 25.0f;
+    auto sliceCount = 7;
+    auto donutInnerRadius = 25.0f;
     f32 values[MAX_PIE_SLICES] = { 300.0f, 100.0f, 450.0f, 350.0f, 600.0f, 380.0f, 750.0f }; // Initial slice values
     bool editingLabel[MAX_PIE_SLICES] = {};
     char labels[MAX_PIE_SLICES][32] = {}; // Slice label texts, editable
 
-    bool showValues = true;
-    bool showPercentages = false;
-    bool showDonut = false;
-    i32 hoveredSlice = -1;
-    Rectangle scrollPanelBounds = {};
-    vec2 scrollContentOffset = {};
-    Rectangle view = {};
+    auto showValues = true;
+    auto showPercentages = false;
+    auto showDonut = false;
+    auto hoveredSlice = -1;
+    auto scrollPanelBounds = Rectangle{};
+    auto scrollContentOffset = vec2{};
+    auto view = Rectangle{};
 
     // UI layout parameters
-    constexpr i32 panelWidth = 270;
-    constexpr i32 panelMargin = 5;
+    constexpr auto panelWidth = 270;
+    constexpr auto panelMargin = 5;
 
     // UI Panel top-left anchor
     const vec2 panelPos = {
@@ -69,12 +69,12 @@ i32 main()
     };
 
     // Pie chart geometry
-    const Rectangle canvas = { 0, 0, panelPos.x, static_cast<f32>(screenHeight) };
-    const vec2 center = { canvas.width/2.0f, canvas.height/2.0f };
-    constexpr f32 radius = 205.0f;
+    const auto canvas = Rectangle{ 0, 0, panelPos.x, static_cast<f32>(screenHeight) };
+    const auto center = vec2{ canvas.width/2.0f, canvas.height/2.0f };
+    constexpr auto radius = 205.0f;
 
     // Total value for percentage calculations
-    f32 totalValue = 0.0f;
+    auto totalValue = 0.0f;
 
     // Initialize slice labels
     for (i32 i = 0; i < MAX_PIE_SLICES; i++) snprintf(labels[i], 32, "Slice %02i", i + 1);
@@ -93,7 +93,7 @@ i32 main()
 
         // Check for mouse hover over slices
         hoveredSlice = -1; // Reset hovered slice
-        const vec2 mousePos = GetMousePosition();
+        const auto mousePos = GetMousePosition();
 
         if (CheckCollisionPointRec(mousePos, canvas)) // Only check if mouse is inside the canvas
         {
@@ -106,7 +106,7 @@ i32 main()
                 f32 angle = atan2f(dy, dx)*RAD2DEG;
                 if (angle < 0) angle += 360;
 
-                f32 currentAngle = 0.0f;
+                auto currentAngle = 0.0f;
                 for (i32 i = 0; i < sliceCount; i++)
                 {
                     const f32 sweep = (totalValue > 0)? (values[i]/totalValue)*360.0f : 0.0f;
@@ -129,13 +129,13 @@ i32 main()
             ClearBackground(RAYWHITE);
 
             // Draw the pie chart on the canvas
-            f32 startAngle = 0.0f;
+            auto startAngle = 0.0f;
             for (i32 i = 0; i < sliceCount; i++)
             {
                 const f32 sweepAngle = (totalValue > 0)? (values[i]/totalValue)*360.0f : 0.0f;
                 const f32 midAngle = startAngle + sweepAngle/2.0f; // Middle angle for label positioning
 
-                const Color color = ColorFromHSV(static_cast<f32>(i)/sliceCount*360.0f, 0.75f, 0.9f);
+                const auto color = ColorFromHSV(static_cast<f32>(i)/sliceCount*360.0f, 0.75f, 0.9f);
                 f32 currentRadius = radius;
 
                 // Make the hovered slice pop out by adding 20 pixels to its radius
@@ -154,7 +154,7 @@ i32 main()
                     else if (showPercentages) snprintf(labelText, 64, "%.0f%%", (values[i]/totalValue)*100.0f);
                     else labelText[0] = '\0';
 
-                    const vec2 textSize = MeasureTextEx(GetFontDefault(), labelText, 20, 1);
+                    const auto textSize = MeasureTextEx(GetFontDefault(), labelText, 20, 1);
                     const f32 labelRadius = showDonut? (donutInnerRadius + radius)/2.0f : radius*0.7f;
                     const vec2 labelPos = { center.x + cosf(midAngle*DEG2RAD)*labelRadius - textSize.x/2.0f,
                         center.y + sinf(midAngle*DEG2RAD)*labelRadius - textSize.y/2.0f };
@@ -199,10 +199,10 @@ i32 main()
 
                 for (i32 i = 0; i < sliceCount; i++)
                 {
-                    const i32 rowY = static_cast<i32>(contentY + 5 + i*35);
+                    const auto rowY = static_cast<i32>(contentY + 5 + i*35);
 
                     // Color indicator
-                    const Color color = ColorFromHSV(static_cast<f32>(i)/sliceCount*360.0f, 0.75f, 0.9f);
+                    const auto color = ColorFromHSV(static_cast<f32>(i)/sliceCount*360.0f, 0.75f, 0.9f);
                     DrawRectangle(static_cast<i32>(contentX + 15), rowY + 5, 20, 20, color);
 
                     // Label textbox

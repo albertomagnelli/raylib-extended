@@ -35,15 +35,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - custom uniform");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 8.0f, 8.0f, 8.0f };         // Camera position
     camera.target = vec3{ 0.0f, 1.5f, 0.0f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -54,7 +54,7 @@ i32 main()
     const Texture2D texture = LoadTexture("resources/models/barracks_diffuse.png");      // Load model texture (diffuse map)
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;                     // Set model diffuse texture
 
-    const vec3 position = { 0.0f, 0.0f, 0.0f };                                  // Set model position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f };                                  // Set model position
 
     // Load postprocessing shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
@@ -67,7 +67,7 @@ i32 main()
     f32 swirlCenter[2] = { static_cast<f32>(screenWidth)/2, static_cast<f32>(screenHeight)/2 };
 
     // Create a RenderTexture2D to be used for render to texture
-    const RenderTexture2D target = LoadRenderTexture(screenWidth, screenHeight);
+    const auto target = LoadRenderTexture(screenWidth, screenHeight);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ i32 main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        const vec2 mousePosition = GetMousePosition();
+        const auto mousePosition = GetMousePosition();
 
         swirlCenter[0] = mousePosition.x;
         swirlCenter[1] = screenHeight - mousePosition.y;

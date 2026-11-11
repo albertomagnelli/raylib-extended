@@ -39,27 +39,27 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - drag puzzle");
 
     // Rectangle
-    Rectangle rec = { screenWidth/2 - 250, screenHeight/2 + 50, 100.0f, 100.0f };
-    const Rectangle recArea = { screenWidth/2 - 60, screenHeight/2 - 110, 110.0f, 110.0f };
-    bool recPickedUp = false;
+    auto rec = Rectangle{ screenWidth/2 - 250, screenHeight/2 + 50, 100.0f, 100.0f };
+    const auto recArea = Rectangle{ screenWidth/2 - 60, screenHeight/2 - 110, 110.0f, 110.0f };
+    auto recPickedUp = false;
 
     // Circle
-    Circle circ = { { screenWidth/2.0f, screenHeight/2.0f + 100 }, 50.0f };
-    const Circle circArea = { { screenWidth/2.0f - 195, screenHeight/2.0f - 55 }, 55.0f };
-    bool circPickedUp = false;
+    auto circ = Circle{ { screenWidth/2.0f, screenHeight/2.0f + 100 }, 50.0f };
+    const auto circArea = Circle{ { screenWidth/2.0f - 195, screenHeight/2.0f - 55 }, 55.0f };
+    auto circPickedUp = false;
 
     // Triangle
-    Triangle tri = { { 600, 282 }, { 550, 369 }, { 650, 369 } };
-    const Triangle triArea = { { 600, 115 }, { 540, 222 }, { 660, 222 } };
-    bool triPickedUp = false;
+    auto tri = Triangle{ { 600, 282 }, { 550, 369 }, { 650, 369 } };
+    const auto triArea = Triangle{ { 600, 115 }, { 540, 222 }, { 660, 222 } };
+    auto triPickedUp = false;
 
-    vec2 mouseOffset = { 0.0f, 0.0f };  // Stores the offset of the mouse relative to the object's pivot point
+    auto mouseOffset = vec2{ 0.0f, 0.0f };  // Stores the offset of the mouse relative to the object's pivot point
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -69,10 +69,10 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mousePosition = GetMousePosition();
-        bool recPlaced = false;
-        bool circPlaced = false;
-        bool triPlaced = false;
+        const auto mousePosition = GetMousePosition();
+        auto recPlaced = false;
+        auto circPlaced = false;
+        auto triPlaced = false;
 
         // Detect object pickup input
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, rec))
@@ -102,7 +102,7 @@ i32 main()
             rec.x = mousePosition.x + mouseOffset.x;
             rec.y = mousePosition.y + mouseOffset.y;
         }
-        const Rectangle RecCol = GetCollisionRec(recArea, rec);
+        const auto RecCol = GetCollisionRec(recArea, rec);
         if (RecCol.width == rec.width && RecCol.height == rec.height) recPlaced = true;
 
         // Circle update
@@ -116,8 +116,8 @@ i32 main()
         // Triangle update
         if (triPickedUp)
         {
-            const vec2 v2Offset = { tri.v2.x - tri.v1.x, tri.v2.y - tri.v1.y };
-            const vec2 v3Offset = { tri.v3.x - tri.v1.x, tri.v3.y - tri.v1.y };
+            const auto v2Offset = vec2{ tri.v2.x - tri.v1.x, tri.v2.y - tri.v1.y };
+            const auto v3Offset = vec2{ tri.v3.x - tri.v1.x, tri.v3.y - tri.v1.y };
 
             tri.v1 = vec2{ mousePosition.x + mouseOffset.x, mousePosition.y + mouseOffset.y };
             tri.v2 = vec2{ tri.v1.x + v2Offset.x, tri.v1.y + v2Offset.y };

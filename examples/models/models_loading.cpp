@@ -35,13 +35,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - loading");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 50.0f, 50.0f, 50.0f };      // Camera position
     camera.target = vec3{ 0.0f, 12.0f, 0.0f };          // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -52,14 +52,14 @@ i32 main()
     Texture2D texture = LoadTexture("resources/models/obj/castle_diffuse.png"); // Load model texture
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set map diffuse texture
 
-    const vec3 position = { 0.0f, 0.0f, 0.0f };                  // Set model position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f };                  // Set model position
 
-    BoundingBox bounds = GetMeshBoundingBox(model.meshes[0]);   // Set model bounds
+    auto bounds = GetMeshBoundingBox(model.meshes[0]);   // Set model bounds
 
     // NOTE: bounds are calculated from the original size of the model,
     // if model is scaled on drawing, bounds must be also scaled
 
-    bool selected = false;          // Selected object flag
+    auto selected = false;          // Selected object flag
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ i32 main()
         // Load new models/textures on drag&drop
         if (IsFileDropped())
         {
-            FilePathList droppedFiles = LoadDroppedFiles();
+            auto droppedFiles = LoadDroppedFiles();
 
             if (droppedFiles.paths.size() == 1) // Only support one file dropped
             {

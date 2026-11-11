@@ -1,4 +1,4 @@
-﻿/*******************************************************************************************
+/*******************************************************************************************
 *
 *   raylib [core] example - 3d camera fps
 *
@@ -54,14 +54,14 @@ typedef struct {
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
-static vec2 sensitivity = { 0.001f, 0.001f };
+static auto sensitivity = vec2{ 0.001f, 0.001f };
 
-static Body player = {};
-static vec2 lookRotation = {};
-static f32 headTimer = 0.0f;
-static f32 walkLerp = 0.0f;
+static auto player = Body{};
+static auto lookRotation = vec2{};
+static auto headTimer = 0.0f;
+static auto walkLerp = 0.0f;
 static f32 headLerp = STAND_HEIGHT;
-static vec2 lean = {};
+static auto lean = vec2{};
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -77,14 +77,14 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera fps");
 
     // Initialize camera variables
     // NOTE: UpdateCameraFPS() takes care of the rest
-    Camera camera = {};
+    auto camera = Camera{};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
     camera.position = vec3{
@@ -105,16 +105,16 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const vec2 mouseDelta = GetMouseDelta();
+        const auto mouseDelta = GetMouseDelta();
         lookRotation.x -= mouseDelta.x*sensitivity.x;
         lookRotation.y += mouseDelta.y*sensitivity.y;
 
         const char sideway = (IsKeyDown(KEY_D) - IsKeyDown(KEY_A));
         const char forward = (IsKeyDown(KEY_W) - IsKeyDown(KEY_S));
-        const bool crouching = IsKeyDown(KEY_LEFT_CONTROL);
+        const auto crouching = IsKeyDown(KEY_LEFT_CONTROL);
         UpdateBody(&player, lookRotation.x, sideway, forward, IsKeyPressed(KEY_SPACE), crouching);
 
-        const f32 delta = GetFrameTime();
+        const auto delta = GetFrameTime();
         headLerp = Lerp(headLerp, (crouching ? CROUCH_HEIGHT : STAND_HEIGHT), 20.0f*delta);
         camera.position = vec3{
             player.position.x,
@@ -177,14 +177,14 @@ i32 main()
 // Update body considering current world state
 void UpdateBody(Body *body, f32 rot, char side, char forward, bool jumpPressed, bool crouchHold)
 {
-    vec2 input = vec2{ static_cast<f32>(side), static_cast<f32>(-forward) };
+    auto input = vec2{ static_cast<f32>(side), static_cast<f32>(-forward) };
 
 #if defined(NORMALIZE_INPUT)
     // Slow down diagonal movement
     if ((side != 0) && (forward != 0)) input = glm::normalize(input);
 #endif
 
-    const f32 delta = GetFrameTime();
+    const auto delta = GetFrameTime();
 
     if (!body->isGrounded) body->velocity.y -= GRAVITY*delta;
 
@@ -198,14 +198,14 @@ void UpdateBody(Body *body, f32 rot, char side, char forward, bool jumpPressed, 
         //PlaySound(fxJump);
     }
 
-    const vec3 front = vec3{ sinf(rot), 0.f, cosf(rot) };
-    const vec3 right = vec3{ cosf(-rot), 0.f, sinf(-rot) };
+    const auto front = vec3{ sinf(rot), 0.f, cosf(rot) };
+    const auto right = vec3{ cosf(-rot), 0.f, sinf(-rot) };
 
-    const vec3 desiredDir = vec3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
+    const auto desiredDir = vec3{ input.x*right.x + input.y*front.x, 0.0f, input.x*right.z + input.y*front.z, };
     body->dir = glm::mix(body->dir, desiredDir, CONTROL*delta);
 
     const f32 decel = (body->isGrounded ? FRICTION : AIR_DRAG);
-    vec3 hvel = vec3{ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
+    auto hvel = vec3{ body->velocity.x*decel, 0.0f, body->velocity.z*decel };
 
     const f32 hvelLength = glm::length(hvel); // Magnitude
     if (hvelLength < (MAX_SPEED*0.01f)) hvel = vec3{};
@@ -217,7 +217,7 @@ void UpdateBody(Body *body, f32 rot, char side, char forward, bool jumpPressed, 
     // a Player can make the speed faster by bringing the direction closer to horizontal velocity angle
     // More info here: https://youtu.be/v3zT3Z5apaM?t=165
     const f32 maxSpeed = (crouchHold? CROUCH_SPEED : MAX_SPEED);
-    const f32 accel = Clamp(maxSpeed - speed, 0.f, MAX_ACCEL*delta);
+    const auto accel = Clamp(maxSpeed - speed, 0.f, MAX_ACCEL*delta);
     hvel.x += body->dir.x*accel;
     hvel.z += body->dir.z*accel;
 
@@ -240,19 +240,19 @@ void UpdateBody(Body *body, f32 rot, char side, char forward, bool jumpPressed, 
 // Update camera for FPS behaviour
 static void UpdateCameraFPS(Camera *camera)
 {
-    const vec3 up = vec3{ 0.0f, 1.0f, 0.0f };
-    const vec3 targetOffset = vec3{ 0.0f, 0.0f, -1.0f };
+    const auto up = vec3{ 0.0f, 1.0f, 0.0f };
+    const auto targetOffset = vec3{ 0.0f, 0.0f, -1.0f };
 
     // Left and right
-    const vec3 yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
+    const auto yaw = Vector3RotateByAxisAngle(targetOffset, up, lookRotation.x);
 
     // Clamp view up
-    f32 maxAngleUp = Vector3Angle(up, yaw);
+    auto maxAngleUp = Vector3Angle(up, yaw);
     maxAngleUp -= 0.001f; // Avoid numerical errors
     if ( -(lookRotation.y) > maxAngleUp) { lookRotation.y = -maxAngleUp; }
 
     // Clamp view down
-    f32 maxAngleDown = Vector3Angle((-(up)), yaw);
+    auto maxAngleDown = Vector3Angle((-(up)), yaw);
     maxAngleDown *= -1.0f;  // Downwards angle is negative
     maxAngleDown += 0.001f; // Avoid numerical errors
     if ( -(lookRotation.y) < maxAngleDown) { lookRotation.y = -maxAngleDown; }
@@ -263,18 +263,18 @@ static void UpdateCameraFPS(Camera *camera)
     // Rotate view vector around right axis
     f32 pitchAngle = -lookRotation.y - lean.y;
     pitchAngle = Clamp(pitchAngle, -PI/2 + 0.0001f, PI/2 - 0.0001f); // Clamp angle so it doesn't go past straight up or straight down
-    const vec3 pitch = Vector3RotateByAxisAngle(yaw, right, pitchAngle);
+    const auto pitch = Vector3RotateByAxisAngle(yaw, right, pitchAngle);
 
     // Head animation
     // Rotate up direction around forward axis
     const f32 headSin = sinf(headTimer*PI);
     const f32 headCos = cosf(headTimer*PI);
-    constexpr f32 stepRotation = 0.01f;
+    constexpr auto stepRotation = 0.01f;
     camera->up = Vector3RotateByAxisAngle(up, pitch, headSin*stepRotation + lean.x);
 
     // Camera BOB
-    constexpr f32 bobSide = 0.1f;
-    constexpr f32 bobUp = 0.15f;
+    constexpr auto bobSide = 0.1f;
+    constexpr auto bobUp = 0.15f;
     vec3 bobbing = ((right) * (headSin*bobSide));
     bobbing.y = fabsf(headCos*bobUp);
 
@@ -285,9 +285,9 @@ static void UpdateCameraFPS(Camera *camera)
 // Draw game level
 static void DrawLevel(void)
 {
-    constexpr i32 floorExtent = 25;
-    constexpr f32 tileSize = 5.0f;
-    const Color tileColor1 = Color{ 150, 200, 200, 255 };
+    constexpr auto floorExtent = 25;
+    constexpr auto tileSize = 5.0f;
+    const auto tileColor1 = Color{ 150, 200, 200, 255 };
 
     // Floor tiles
     for (i32 y = -floorExtent; y < floorExtent; y++)
@@ -305,10 +305,10 @@ static void DrawLevel(void)
         }
     }
 
-    const vec3 towerSize = vec3{ 16.0f, 32.0f, 16.0f };
-    const Color towerColor = Color{ 150, 200, 200, 255 };
+    const auto towerSize = vec3{ 16.0f, 32.0f, 16.0f };
+    const auto towerColor = Color{ 150, 200, 200, 255 };
 
-    vec3 towerPos = vec3{ 16.0f, 16.0f, 16.0f };
+    auto towerPos = vec3{ 16.0f, 16.0f, 16.0f };
     DrawCubeV(towerPos, towerSize, towerColor);
     DrawCubeWiresV(towerPos, towerSize, DARKBLUE);
 

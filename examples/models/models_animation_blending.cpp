@@ -36,13 +36,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - animation blending");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 6.0f, 6.0f, 6.0f };     // Camera position
     camera.target = vec3{ 0.0f, 2.0f, 0.0f };       // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };           // Camera up vector (rotation towards target)
@@ -51,7 +51,7 @@ i32 main()
 
     // Load model
     const Model model = LoadModel("resources/models/gltf/robot.glb"); // Load character model
-    const vec3 position = { 0.0f, 0.0f, 0.0f };                       // Set model world position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f };                       // Set model world position
 
 #if SUPPORT_GPU_SKINNING
     // WARNING: SUPPORT_GPU_SKINNING is required to be enabled at raylib compile time (disabled by default)
@@ -68,39 +68,39 @@ i32 main()
 #endif
 
     // Load model animations
-    i32 animCount = 0;
+    auto animCount = 0;
     ModelAnimation *anims = LoadModelAnimations("resources/models/gltf/robot.glb", &animCount);
 
     // Animation playing variables
     // NOTE: Two animations are played with a smooth transition between them
-    i32 currentAnimPlaying = 0;         // Current animation playing (0 o 1)
-    i32 nextAnimToPlay = 1;             // Next animation to play (to transition)
-    bool animTransition = false;        // Flag to register anim transition state
+    auto currentAnimPlaying = 0;         // Current animation playing (0 o 1)
+    auto nextAnimToPlay = 1;             // Next animation to play (to transition)
+    auto animTransition = false;        // Flag to register anim transition state
 
-    i32 animIndex0 = 10;                // Current animation playing (walking)
-    f32 animCurrentFrame0 = 0.0f;     // Current animation frame (supporting interpolated frames)
-    f32 animFrameSpeed0 = 0.5f;       // Current animation play speed
-    i32 animIndex1 = 6;                 // Next animation to play (running)
-    f32 animCurrentFrame1 = 0.0f;     // Next animation frame (supporting interpolated frames)
-    f32 animFrameSpeed1 = 0.5f;       // Next animation play speed
+    auto animIndex0 = 10;                // Current animation playing (walking)
+    auto animCurrentFrame0 = 0.0f;     // Current animation frame (supporting interpolated frames)
+    auto animFrameSpeed0 = 0.5f;       // Current animation play speed
+    auto animIndex1 = 6;                 // Next animation to play (running)
+    auto animCurrentFrame1 = 0.0f;     // Next animation frame (supporting interpolated frames)
+    auto animFrameSpeed1 = 0.5f;       // Next animation play speed
 
-    f32 animBlendFactor = 0.0f;       // Blend factor from anim0[frame0] --> anim1[frame1], [0.0f..1.0f]
+    auto animBlendFactor = 0.0f;       // Blend factor from anim0[frame0] --> anim1[frame1], [0.0f..1.0f]
                                         // NOTE: 0.0f results in full anim0[] and 1.0f in full anim1[]
 
-    constexpr f32 animBlendTime = 2.0f;         // Time to blend from one playing animation to another (in seconds)
-    f32 animBlendTimeCounter = 0.0f;            // Time counter (delta time)
+    constexpr auto animBlendTime = 2.0f;         // Time to blend from one playing animation to another (in seconds)
+    auto animBlendTimeCounter = 0.0f;            // Time counter (delta time)
 
-    bool animPause = false;             // Pause animation
+    auto animPause = false;             // Pause animation
 
     // UI required variables
     std::vector<std::string> animNames;        // Pointers to animation names for dropdown box
     for (i32 i = 0; i < animCount; i++) animNames.push_back(anims[i].name);
 
-    bool dropdownEditMode0 = false;
-    bool dropdownEditMode1 = false;
-    f32 animFrameProgress0 = 0.0f;
-    f32 animFrameProgress1 = 0.0f;
-    f32 animBlendProgress = 0.0f;
+    auto dropdownEditMode0 = false;
+    auto dropdownEditMode1 = false;
+    auto animFrameProgress0 = 0.0f;
+    auto animFrameProgress1 = 0.0f;
+    auto animBlendProgress = 0.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

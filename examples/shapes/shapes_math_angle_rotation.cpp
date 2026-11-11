@@ -25,20 +25,20 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 720;
-    constexpr i32 screenHeight = 400;
+    constexpr auto screenWidth = 720;
+    constexpr auto screenHeight = 400;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - math angle rotation");
     SetTargetFPS(60);
 
-    const vec2 center = { screenWidth/2.0f, screenHeight/2.0f };
-    constexpr f32 lineLength = 150.0f;
+    const auto center = vec2{ screenWidth/2.0f, screenHeight/2.0f };
+    constexpr auto lineLength = 150.0f;
 
     // Predefined angles for fixed lines
     const i32 angles[] = { 0, 30, 60, 90 };
     const i32 numAngles = sizeof(angles)/sizeof(angles[0]);
 
-    f32 totalAngle = 0.0f; // Animated rotation angle
+    auto totalAngle = 0.0f; // Animated rotation angle
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -89,7 +89,7 @@ i32 main()
                                 center.y + sinf(animRad)*lineLength };
 
             // Cycle through HSV colors for animated line
-            const Color animCol = ColorFromHSV(fmodf(totalAngle, 360.0f), 0.8f, 0.9f);
+            const auto animCol = ColorFromHSV(fmodf(totalAngle, 360.0f), 0.8f, 0.9f);
             DrawLineEx(center, animEnd, 5.0f, animCol);
 
         EndDrawing();

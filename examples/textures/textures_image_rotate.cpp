@@ -24,8 +24,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image rotate");
 
@@ -48,7 +48,7 @@ i32 main()
     UnloadImage(image90);
     UnloadImage(imageNeg90);
 
-    i32 currentTexture = 0;
+    auto currentTexture = 0;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------

@@ -31,8 +31,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [text] example - font loading");
 
@@ -51,7 +51,7 @@ i32 main()
 
     SetTextLineSpacing(16);         // Set line spacing for multiline text (when line breaks are included '\n')
 
-    bool useTtf = false;
+    auto useTtf = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

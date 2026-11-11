@@ -24,8 +24,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - sprite button");
 
@@ -36,15 +36,15 @@ i32 main()
 
     // Define frame rectangle for drawing
     const f32 frameHeight = static_cast<f32>(button.height)/NUM_FRAMES;
-    Rectangle sourceRec = { 0, 0, static_cast<f32>(button.width), frameHeight };
+    auto sourceRec = Rectangle{ 0, 0, static_cast<f32>(button.width), frameHeight };
 
     // Define button bounds on screen
-    const Rectangle btnBounds = { screenWidth/2.0f - button.width/2.0f, screenHeight/2.0f - static_cast<f32>(button.height)/NUM_FRAMES/2.0f, static_cast<f32>(button.width), frameHeight };
+    const auto btnBounds = Rectangle{ screenWidth/2.0f - button.width/2.0f, screenHeight/2.0f - static_cast<f32>(button.height)/NUM_FRAMES/2.0f, static_cast<f32>(button.width), frameHeight };
 
-    i32 btnState = 0;               // Button state: 0-NORMAL, 1-MOUSE_HOVER, 2-PRESSED
-    bool btnAction = false;         // Button action should be activated
+    auto btnState = 0;               // Button state: 0-NORMAL, 1-MOUSE_HOVER, 2-PRESSED
+    auto btnAction = false;         // Button action should be activated
 
-    vec2 mousePoint = { 0.0f, 0.0f };
+    auto mousePoint = vec2{ 0.0f, 0.0f };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

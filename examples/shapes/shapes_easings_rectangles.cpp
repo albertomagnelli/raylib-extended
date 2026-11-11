@@ -35,8 +35,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings rectangles");
 
@@ -53,9 +53,9 @@ i32 main()
         }
     }
 
-    f32 rotation = 0.0f;
-    i32 framesCounter = 0;
-    i32 state = 0;                  // Rectangles animation state: 0-Playing, 1-Finished
+    auto rotation = 0.0f;
+    auto framesCounter = 0;
+    auto state = 0;                  // Rectangles animation state: 0-Playing, 1-Finished
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

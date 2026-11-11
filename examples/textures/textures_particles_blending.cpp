@@ -37,8 +37,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - particles blending");
 
@@ -56,7 +56,7 @@ i32 main()
         mouseTail[i].active = false;
     }
 
-    constexpr f32 gravity = 3.0f;
+    constexpr auto gravity = 3.0f;
 
     const Texture2D smoke = LoadTexture("resources/spark_flame.png");
 

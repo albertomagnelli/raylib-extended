@@ -29,8 +29,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - clipboard text");
 
@@ -47,13 +47,13 @@ i32 main()
     char inputBuffer[256] = "Hello from raylib!"; // Random initial string
 
     // UI required variables
-    bool textBoxEditMode = false;
+    auto textBoxEditMode = false;
 
-    bool btnCutPressed = false;
-    bool btnCopyPressed = false;
-    bool btnPastePressed = false;
-    bool btnClearPressed = false;
-    bool btnRandomPressed = false;
+    auto btnCutPressed = false;
+    auto btnCopyPressed = false;
+    auto btnPastePressed = false;
+    auto btnClearPressed = false;
+    auto btnRandomPressed = false;
 
     // Set UI style
     GuiSetStyle(DEFAULT, TEXT_SIZE, 20);

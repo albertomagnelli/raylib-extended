@@ -27,20 +27,20 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rounded rectangle drawing");
 
-    f32 roundness = 0.2f;
-    f32 width = 200.0f;
-    f32 height = 100.0f;
-    f32 segments = 0.0f;
-    f32 lineThick = 1.0f;
+    auto roundness = 0.2f;
+    auto width = 200.0f;
+    auto height = 100.0f;
+    auto segments = 0.0f;
+    auto lineThick = 1.0f;
 
-    bool drawRect = false;
-    bool drawRoundedRect = true;
-    bool drawRoundedLines = false;
+    auto drawRect = false;
+    auto drawRoundedRect = true;
+    auto drawRoundedLines = false;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ i32 main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Rectangle rec = { (static_cast<f32>(GetScreenWidth()) - width - 250)/2, (GetScreenHeight() - height)/2.0f, width, height };
+        const auto rec = Rectangle{ (static_cast<f32>(GetScreenWidth()) - width - 250)/2, (GetScreenHeight() - height)/2.0f, width, height };
         //----------------------------------------------------------------------------------
 
         // Draw

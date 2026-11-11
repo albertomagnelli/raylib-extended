@@ -71,8 +71,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - OpenGL interoperatibility");
 
@@ -137,7 +137,7 @@ i32 main()
 
                 glUniform1f(currentTimeLoc, GetTime());
 
-                vec4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
+                auto color = ColorNormalize(Color{ 255, 0, 0, 128 });
                 glUniform4fv(colorLoc, 1, reinterpret_cast<f32 *>(&color));
 
                 // Get the current modelview and projection matrix so the particle system is displayed and transformed

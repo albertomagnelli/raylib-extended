@@ -30,24 +30,24 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - directory files");
 
-    std::string directory = GetWorkingDirectory();
+    auto directory = GetWorkingDirectory();
 
     // Load file-paths on current working directory
     // NOTE: LoadDirectoryFiles() loads files and directories by default,
     // use LoadDirectoryFilesEx() for custom filters and recursive directories loading
     //FilePathList files = LoadDirectoryFiles(directory);
-    FilePathList files = LoadDirectoryFilesEx(directory, FILE_FILTER, false);
+    auto files = LoadDirectoryFilesEx(directory, FILE_FILTER, false);
 
     i32 btnBackPressed = false;
 
-    i32 listScrollIndex = 0;
-    i32 listItemActive = -1;
-    i32 listItemFocused = -1;
+    auto listScrollIndex = 0;
+    auto listItemActive = -1;
+    auto listItemFocused = -1;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------

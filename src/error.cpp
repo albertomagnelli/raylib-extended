@@ -3,12 +3,12 @@
 #include <string>
 #include <string_view>
 
-Error makeError(ErrorCode code, std::string_view message)
+Error makeError(const ErrorCode code, const std::string_view message)
 {
     return Error{code, std::string{message}};
 }
 
-std::string_view toString(ErrorCode code) noexcept
+std::string_view toString(const ErrorCode code) noexcept
 {
     switch (code)
     {

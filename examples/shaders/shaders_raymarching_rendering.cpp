@@ -31,13 +31,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - raymarching rendering");
 
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 2.5f, 2.5f, 3.0f };         // Camera position
     camera.target = vec3{ 0.0f, 0.0f, 0.7f };           // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -57,7 +57,7 @@ i32 main()
     f32 resolution[2] = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    f32 runTime = 0.0f;
+    auto runTime = 0.0f;
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
@@ -73,7 +73,7 @@ i32 main()
         f32 cameraPos[3] = { camera.position.x, camera.position.y, camera.position.z };
         f32 cameraTarget[3] = { camera.target.x, camera.target.y, camera.target.z };
 
-        const f32 deltaTime = GetFrameTime();
+        const auto deltaTime = GetFrameTime();
         runTime += deltaTime;
 
         // Set shader required uniform values

@@ -68,8 +68,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - rounded rectangle");
 
@@ -107,7 +107,7 @@ i32 main()
             ClearBackground(RAYWHITE);
 
             // Draw rectangle box with rounded corners using shader
-            Rectangle rec = { 50, 70, 110, 60 };
+            auto rec = Rectangle{ 50, 70, 110, 60 };
             DrawRectangleLines(static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 20, static_cast<i32>(rec.width) + 40, static_cast<i32>(rec.height) + 40, DARKGRAY);
             DrawText("Rounded rectangle", static_cast<i32>(rec.x) - 20, static_cast<i32>(rec.y) - 35, 10, DARKGRAY);
 

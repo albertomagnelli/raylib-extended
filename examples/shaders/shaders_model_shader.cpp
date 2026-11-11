@@ -35,15 +35,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);      // Enable Multi Sampling Anti Aliasing 4x (if available)
 
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - model shader");
 
     // Define the camera to look into our 3d world
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 4.0f, 4.0f, 4.0f };         // Camera position
     camera.target = vec3{ 0.0f, 1.0f, -1.0f };          // Camera looking at point
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };               // Camera up vector (rotation towards target)
@@ -60,7 +60,7 @@ i32 main()
     model.materials[0].shader = shader;                              // Set shader effect to 3d model
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Bind texture to model
 
-    const vec3 position = { 0.0f, 0.0f, 0.0f };  // Set model position
+    const auto position = vec3{ 0.0f, 0.0f, 0.0f };  // Set model position
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second

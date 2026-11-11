@@ -34,8 +34,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);  // Set MSAA 4X hint before windows creation
 
@@ -45,19 +45,19 @@ i32 main()
     const Texture2D texXboxPad = LoadTexture("resources/xbox.png");
 
     // Set axis deadzones
-    constexpr f32 leftStickDeadzoneX = 0.1f;
-    constexpr f32 leftStickDeadzoneY = 0.1f;
-    constexpr f32 rightStickDeadzoneX = 0.1f;
-    constexpr f32 rightStickDeadzoneY = 0.1f;
-    constexpr f32 leftTriggerDeadzone = -0.9f;
-    constexpr f32 rightTriggerDeadzone = -0.9f;
+    constexpr auto leftStickDeadzoneX = 0.1f;
+    constexpr auto leftStickDeadzoneY = 0.1f;
+    constexpr auto rightStickDeadzoneX = 0.1f;
+    constexpr auto rightStickDeadzoneY = 0.1f;
+    constexpr auto leftTriggerDeadzone = -0.9f;
+    constexpr auto rightTriggerDeadzone = -0.9f;
 
-    Rectangle vibrateButton = {};
+    auto vibrateButton = Rectangle{};
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
-    i32 gamepad = 0; // which gamepad to display
+    auto gamepad = 0; // which gamepad to display
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -66,7 +66,7 @@ i32 main()
         //----------------------------------------------------------------------------------
         if (IsKeyPressed(KEY_LEFT) && gamepad > 0) gamepad--;
         if (IsKeyPressed(KEY_RIGHT)) gamepad++;
-        const vec2 mousePosition = GetMousePosition();
+        const auto mousePosition = GetMousePosition();
 
         vibrateButton = Rectangle{ 10, 70.0f + 20*GetGamepadAxisCount(gamepad) + 20, 75, 24 };
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, vibrateButton)) SetGamepadVibration(gamepad, 1.0, 1.0, 1.0);
@@ -83,12 +83,12 @@ i32 main()
                 DrawText(TextFormat("GP%d: %s", gamepad, GetGamepadName(gamepad).c_str()), 10, 10, 10, BLACK);
 
                 // Get axis values
-                f32 leftStickX = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_X);
-                f32 leftStickY = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_Y);
-                f32 rightStickX = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_X);
-                f32 rightStickY = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_Y);
-                f32 leftTrigger = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_TRIGGER);
-                f32 rightTrigger = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_TRIGGER);
+                auto leftStickX = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_X);
+                auto leftStickY = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_Y);
+                auto rightStickX = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_X);
+                auto rightStickY = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_Y);
+                auto leftTrigger = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_TRIGGER);
+                auto rightTrigger = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_TRIGGER);
 
                 // Calculate deadzones
                 if (leftStickX > -leftStickDeadzoneX && leftStickX < leftStickDeadzoneX) leftStickX = 0.0f;

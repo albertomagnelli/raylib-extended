@@ -22,15 +22,15 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - window should close");
 
     SetExitKey(KEY_NULL);       // Disable KEY_ESCAPE to close window, X-button still works
 
-    bool exitWindowRequested = false;   // Flag to request window to exit
-    bool exitWindow = false;    // Flag to set window to exit
+    auto exitWindowRequested = false;   // Flag to request window to exit
+    auto exitWindow = false;    // Flag to set window to exit
 
     SetTargetFPS(60);           // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

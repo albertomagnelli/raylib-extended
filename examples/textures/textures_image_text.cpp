@@ -22,8 +22,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] example - image text");
 
@@ -32,7 +32,7 @@ i32 main()
     // When no codepoints are provided, LoadFontEx() loads a default set of codepoints
     // This set includes '@', which "KAISG.ttf" doesn't have a glyph for, causing a warning to be logged
     // We avoid this by just excluding it from the list of codepoints we load
-    i32 codepointCount = 0;
+    auto codepointCount = 0;
     i32 *codepoints = LoadCodepoints(" !\"#$%&'()*+,-./0123456789:;<=>?ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", &codepointCount);
     // TTF Font loading with custom generation parameters
     const Font font = LoadFontEx("resources/KAISG.ttf", 64, codepoints, codepointCount);
@@ -41,12 +41,12 @@ i32 main()
     // Draw over image using custom font
     ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", vec2{ 20.0f, 20.0f }, static_cast<f32>(font.baseSize), 0.0f, RED);
 
-    const Texture2D texture = LoadTextureFromImage(parrots);  // Image converted to texture, uploaded to GPU memory (VRAM)
+    const auto texture = LoadTextureFromImage(parrots);  // Image converted to texture, uploaded to GPU memory (VRAM)
     UnloadImage(parrots);                                     // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
-    const vec2 position = { static_cast<f32>(screenWidth)/2 - static_cast<f32>(texture.width)/2, static_cast<f32>(screenHeight)/2 - static_cast<f32>(texture.height)/2 - 20 };
+    const auto position = vec2{ static_cast<f32>(screenWidth)/2 - static_cast<f32>(texture.width)/2, static_cast<f32>(screenHeight)/2 - static_cast<f32>(texture.height)/2 - 20 };
 
-    bool showFont = false;
+    auto showFont = false;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ i32 main()
             else
             {
                 // Make the font atlas texture fit the screen, so we can see the whole thing
-                f32 scale = 1.0f;
+                auto scale = 1.0f;
 
                 const f32 atlasRatio = static_cast<f32>(font.texture.width)/static_cast<f32>(font.texture.height);
                 const f32 screenRatio = static_cast<f32>(screenWidth)/static_cast<f32>(screenHeight);

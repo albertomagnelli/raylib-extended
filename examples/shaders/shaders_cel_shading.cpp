@@ -42,13 +42,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - cel shading");
 
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 9.0f, 6.0f, 9.0f };
     camera.target = vec3{ 0.0f, 1.0f, 0.0f };
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };
@@ -69,7 +69,7 @@ i32 main()
     model.materials[0].shader = celShader;
 
     // numBands: controls toon quantization steps (2 = hard binary, 20 = near-smooth)
-    f32 numBands = 10.0f;
+    auto numBands = 10.0f;
     const i32 numBandsLoc = GetShaderLocation(celShader, "numBands");
     SetShaderValue(celShader, numBandsLoc, &numBands, SHADER_UNIFORM_FLOAT);
 
@@ -84,8 +84,8 @@ i32 main()
     Light lights[MAX_LIGHTS] = {};
     lights[0] = CreateLight(LIGHT_DIRECTIONAL, vec3{ 50.0f, 50.0f, 50.0f }, vec3{}, WHITE, celShader);
 
-    bool celEnabled = true;
-    bool outlineEnabled = true;
+    auto celEnabled = true;
+    auto outlineEnabled = true;
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ i32 main()
         SetShaderValue(celShader, numBandsLoc, &numBands, SHADER_UNIFORM_FLOAT);
 
         // Spin light opposite to CAMERA_ORBITAL (0.5 rad/s), angled 45 degrees off vertical
-        const f32 t = static_cast<f32>(GetTime());
+        const auto t = static_cast<f32>(GetTime());
         lights[0].position = vec3{ sinf(-t*0.3f)*5.0f, 5.0f, cosf(-t*0.3f)*5.0f };
 
         for (i32 i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(celShader, lights[i]);
@@ -134,7 +134,7 @@ i32 main()
                 if (outlineEnabled)
                 {
                     // Outline pass: cull front faces, draw extruded back faces as silhouette
-                    f32 thickness = 0.005f;
+                    auto thickness = 0.005f;
                     SetShaderValue(outlineShader, outlineThicknessLoc, &thickness, SHADER_UNIFORM_FLOAT);
 
                     rlSetCullFace(RL_CULL_FACE_FRONT);

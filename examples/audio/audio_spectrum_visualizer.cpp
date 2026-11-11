@@ -75,15 +75,15 @@ i32 main()
 {
     // Initialization
     //-----------------------------------------------------------------------------------     ---
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [audio] example - spectrum visualizer");
 
-    Image fftImage = GenImageColor(BUFFER_SIZE, TEXTURE_HEIGHT, WHITE);
-    const Texture2D fftTexture = LoadTextureFromImage(fftImage);
-    const RenderTexture2D bufferA = LoadRenderTexture(screenWidth, screenHeight);
-    vec2 iResolution = { static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
+    auto fftImage = GenImageColor(BUFFER_SIZE, TEXTURE_HEIGHT, WHITE);
+    const auto fftTexture = LoadTextureFromImage(fftImage);
+    const auto bufferA = LoadRenderTexture(screenWidth, screenHeight);
+    auto iResolution = vec2{ static_cast<f32>(screenWidth), static_cast<f32>(screenHeight) };
 
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/fft.fs", GLSL_VERSION));
 
@@ -99,7 +99,7 @@ i32 main()
     Wave wav = LoadWave("resources/country.mp3");
     WaveFormat(&wav, SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
 
-    const AudioStream audioStream = LoadAudioStream(SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
+    const auto audioStream = LoadAudioStream(SAMPLE_RATE, PER_SAMPLE_BIT_DEPTH, MONO);
     PlayAudioStream(audioStream);
 
     const i32 fftHistoryLen = static_cast<i32>(ceilf(FFT_HISTORICAL_SMOOTHING_DUR/WINDOW_TIME)) + 1;
@@ -116,7 +116,7 @@ i32 main()
     };
 
     u32 wavCursor = 0;
-    const short *wavPCM16 = static_cast<const short *>(wav.data);
+    auto wavPCM16 = static_cast<const short *>(wav.data);
 
     short chunkSamples[AUDIO_STREAM_RING_BUFFER_SIZE] = {};
     f32 audioSamples[FFT_WINDOW_SIZE] = {};
@@ -191,7 +191,7 @@ i32 main()
 // Cooley–Tukey FFT https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm#Data_reordering,_bit_reversal,_and_in-place_algorithms
 static void CooleyTukeyFFTSlow(FFTComplex *spectrum, i32 n)
 {
-    i32 j = 0;
+    auto j = 0;
     for (i32 i = 1; i < n - 1; i++)
     {
         i32 bit = n >> 1;
@@ -212,10 +212,10 @@ static void CooleyTukeyFFTSlow(FFTComplex *spectrum, i32 n)
     for (i32 len = 2; len <= n; len <<= 1)
     {
         const f32 angle = -2.0f*PI/len;
-        const FFTComplex twiddleUnit = { cosf(angle), sinf(angle) };
+        const auto twiddleUnit = FFTComplex{ cosf(angle), sinf(angle) };
         for (i32 i = 0; i < n; i += len)
         {
-            FFTComplex twiddleCurrent = { 1.0f, 0.0f };
+            auto twiddleCurrent = FFTComplex{ 1.0f, 0.0f };
             for (i32 j = 0; j < len/2; j++)
             {
                 const FFTComplex even = spectrum[i + j];

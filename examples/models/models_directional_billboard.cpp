@@ -29,13 +29,13 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [models] example - directional billboard");
 
     // Set up the camera
-    Camera camera = {};
+    auto camera = Camera{};
     camera.position = vec3{ 2.0f, 1.0f, 2.0f }; // Starting position
     camera.target = vec3{ 0.0f, 0.5f, 0.0f };   // Target position
     camera.up = vec3{ 0.0f, 1.0f, 0.0f };       // Up vector
@@ -46,7 +46,7 @@ i32 main()
     const Texture skillbot = LoadTexture("resources/skillbot.png");
 
     // Timer to update animation
-    f32 anim_timer = 0.0f;
+    auto anim_timer = 0.0f;
     // Animation frame
     u32 anim = 0;
 
@@ -74,7 +74,7 @@ i32 main()
         if (anim >= 4) anim = 0;
 
         // Find the current direction frame based on the camera position to the billboard object
-        f32 dir = static_cast<f32>(floor(((Vector2Angle(vec2{ 2.0f, 0.0f }, vec2{ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f));
+        auto dir = static_cast<f32>(floor(((Vector2Angle(vec2{ 2.0f, 0.0f }, vec2{ camera.position.x, camera.position.z })/PI)*4.0f) + 0.25f));
 
         // Correct frame index if angle is negative
         if (dir < 0.0f)

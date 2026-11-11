@@ -119,12 +119,12 @@ typedef struct {
 extern "C" {            // Prevents name mangling of functions
 #endif
 
-void ProcessGestureEvent(GestureEvent event);           // Process gesture event and translate it into gestures
+void ProcessGestureEvent(const GestureEvent event);           // Process gesture event and translate it into gestures
 void UpdateGestures(void);                              // Update gestures detected (must be called every frame)
 
 #if defined(RGESTURES_STANDALONE)
-void SetGesturesEnabled(u32 flags);            // Enable a set of gestures using flags
-bool IsGestureDetected(i32 gesture);                    // Check if gesture has been detected
+void SetGesturesEnabled(const u32 flags);            // Enable a set of gestures using flags
+bool IsGestureDetected(const i32 gesture);                    // Check if gesture has been detected
 i32 GetGestureDetected(void);                           // Get latest detected gesture
 
 f32 GetGestureHoldDuration(void);                     // Get gesture hold time in seconds
@@ -242,8 +242,8 @@ static GesturesData GESTURES = {
 //----------------------------------------------------------------------------------
 // Module Internal Functions Declaration
 //----------------------------------------------------------------------------------
-static f32 rgVector2Angle(vec2 initialPosition, vec2 finalPosition);
-static f32 rgVector2Distance(vec2 v1, vec2 v2);
+static f32 rgVector2Angle(const vec2 initialPosition, const vec2 finalPosition);
+static f32 rgVector2Distance(const vec2 v1, const vec2 v2);
 static f64 rgGetCurrentTime(void);
 
 //----------------------------------------------------------------------------------
@@ -251,20 +251,20 @@ static f64 rgGetCurrentTime(void);
 //----------------------------------------------------------------------------------
 
 // Enable only desired gestures to be detected
-void SetGesturesEnabled(u32 flags)
+void SetGesturesEnabled(const u32 flags)
 {
     GESTURES.enabledFlags = flags;
 }
 
 // Check if gesture have been detected
-bool IsGestureDetected(u32 gesture)
+bool IsGestureDetected(const u32 gesture)
 {
     if ((GESTURES.enabledFlags & GESTURES.current) == gesture) return true;
     else return false;
 }
 
 // Process gesture event and translate it into gestures
-void ProcessGestureEvent(GestureEvent event)
+void ProcessGestureEvent(const GestureEvent event)
 {
     // Reset required variables
     GESTURES.Touch.pointCount = event.pointCount;      // Required on UpdateGestures()
@@ -441,7 +441,7 @@ f32 GetGestureHoldDuration(void)
 {
     // NOTE: time is calculated on current gesture HOLD
 
-    f64 time = 0.0;
+    auto time = 0.0;
 
     if (GESTURES.current == GESTURE_HOLD) time = rgGetCurrentTime() - GESTURES.Hold.timeDuration;
 
@@ -486,7 +486,7 @@ f32 GetGesturePinchAngle(void)
 // Module Internal Functions Definition
 //----------------------------------------------------------------------------------
 // Get angle from two-points vector with X-axis
-static f32 rgVector2Angle(vec2 v1, vec2 v2)
+static f32 rgVector2Angle(const vec2 v1, const vec2 v2)
 {
     f32 angle = atan2f(v2.y - v1.y, v2.x - v1.x)*(180.0f/PI);
 
@@ -496,7 +496,7 @@ static f32 rgVector2Angle(vec2 v1, vec2 v2)
 }
 
 // Calculate distance between two vec2
-static f32 rgVector2Distance(vec2 v1, vec2 v2)
+static f32 rgVector2Distance(const vec2 v1, const vec2 v2)
 {
     f32 result;
 
@@ -527,7 +527,7 @@ static f64 rgGetCurrentTime(void)
 #endif
 #if defined(__linux__)
     // NOTE: Only for Linux-based systems
-    struct timespec now = {};
+    auto now = struct timespec{};
     clock_gettime(CLOCK_MONOTONIC, &now);
     unsigned long long nanoSeconds = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
 
@@ -537,8 +537,8 @@ static f64 rgGetCurrentTime(void)
     //#define CLOCK_REALTIME  CALENDAR_CLOCK    // returns UTC time since 1970-01-01
     //#define CLOCK_MONOTONIC SYSTEM_CLOCK      // returns the time since boot time
 
-    clock_serv_t cclock = {};
-    mach_timespec_t now = {};
+    auto cclock = clock_serv_t{};
+    auto now = mach_timespec_t{};
     host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &cclock);
 
     // NOTE: OS X does not have clock_gettime(), using clock_get_time()

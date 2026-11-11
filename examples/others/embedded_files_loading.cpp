@@ -27,8 +27,8 @@ i32 main()
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    constexpr i32 screenWidth = 800;
-    constexpr i32 screenHeight = 450;
+    constexpr auto screenWidth = 800;
+    constexpr auto screenHeight = 450;
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - embedded files loading");
 
@@ -45,7 +45,7 @@ i32 main()
     };
 
     // Wave converted to Sound to be played
-    const Sound sound = LoadSoundFromWave(wave);
+    const auto sound = LoadSoundFromWave(wave);
 
     // With a Wave loaded from file, after Sound is loaded, we can unload Wave
     // but in our case, Wave is embedded in executable, in program .data segment
@@ -63,7 +63,7 @@ i32 main()
     };
 
     // Image converted to Texture (VRAM) to be drawn
-    const Texture2D texture = LoadTextureFromImage(image);
+    const auto texture = LoadTextureFromImage(image);
 
     // With an Image loaded from file, after Texture is loaded, we can unload Image
     // but in our case, Image is embedded in executable, in program .data segment
