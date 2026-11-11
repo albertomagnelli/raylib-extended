@@ -42,7 +42,10 @@ set(raylib_sources
     rshapes.cpp
     rtext.cpp
     rtextures.cpp
-    )
+        loggging.h
+        logging.cpp
+        error.h
+)
 
 # Only build raudio if it's enabled
 if (NOT DEFINED SUPPORT_MODULE_RAUDIO OR SUPPORT_MODULE_RAUDIO)
