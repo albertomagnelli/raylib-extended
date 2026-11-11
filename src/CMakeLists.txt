@@ -45,6 +45,7 @@ set(raylib_sources
         loggging.h
         logging.cpp
         error.h
+        types.h
 )
 
 # Only build raudio if it's enabled
