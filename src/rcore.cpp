@@ -656,6 +656,9 @@ static void UpdateWindowProvidedSamples(void)
     CORE.Window.samples = providedSamples;
 
     if (providedSamples < requestedSamples) logMessage(LogLevel::warn, std::format("DISPLAY: Graphics device only provided MSAA x{}", providedSamples));
+#else
+    // MSAA is not supported by this graphics API
+    CORE.Window.samples = 0;
 #endif
 }
 
@@ -1303,11 +1306,6 @@ void UnloadVrStereoConfig(const VrStereoConfig config)
 // NOTE: If shader filename is NULL, using default vertex/fragment shaders
 Shader LoadShader(std::string_view vsFileNameView, std::string_view fsFileNameView)
 {
-    const std::string vsFileNameStr(vsFileNameView);
-    const char *vsFileName = vsFileNameStr.c_str();
-    const std::string fsFileNameStr(fsFileNameView);
-    const char *fsFileName = fsFileNameStr.c_str();
-
     auto shader = Shader{ 0 };
 
     std::string vShaderStr;
@@ -1592,6 +1590,8 @@ mat4 GetCameraMatrix2D(const Camera2D camera)
     const mat4 matScale = glm::scale(mat4(1.0f), vec3{camera.zoom, camera.zoom, 1.0f});
     const mat4 matTranslation = glm::translate(mat4(1.0f), vec3{camera.offset.x, camera.offset.y, 0.0f});
 
+    // NOTE: raylib matrices use row vectors (MatrixMultiply(A, B) = A * B), glm uses column
+    //       vectors, so the equivalent glm product is the reverse order
     matTransform = matTranslation*(matRotation*matScale)*matOrigin;
 
     return matTransform;
@@ -1771,7 +1771,7 @@ void WaitTime(const f64 seconds)
         Sleep(static_cast<unsigned long>((sleepSeconds*1000.0)));
     #endif
     #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
-        auto req = struct timespec{ 0 };
+        timespec req{};
         const time_t sec = sleepSeconds;
         const long nsec = (sleepSeconds - sec)*1000000000L;
         req.tv_sec = sec;
@@ -1971,6 +1971,7 @@ static LogLevel ToLogLevel(const i32 logType)
         case LOG_WARNING: return LogLevel::warn;
         case LOG_ERROR:   return LogLevel::error;
         case LOG_FATAL:   return LogLevel::fatal;
+        case LOG_NONE:    return LogLevel::off;
         default:          return LogLevel::info;
     }
 }
@@ -2018,8 +2019,11 @@ void TraceLog(const i32 logType, const std::string_view text, ...)
     std::string message;
     if (textLength >= 0)
     {
+        // Resize to textLength + 1 so vsnprintf() can write the terminating null byte
+        // inside the string storage, then drop it again
+        message.resize(static_cast<std::size_t>(textLength) + 1);
+        std::vsnprintf(message.data(), message.size(), formatStr.c_str(), args);
         message.resize(static_cast<std::size_t>(textLength));
-        std::vsnprintf(message.data(), message.size() + 1, formatStr.c_str(), args);
     }
 
     va_end(args);
@@ -2173,6 +2177,12 @@ bool ExportDataAsCode(const u8 *data, const i32 dataSize, std::string_view fileN
 
     auto result = false;
 
+    if ((data == nullptr) || (dataSize <= 0))
+    {
+        logMessage(LogLevel::warn, "FILEIO: Invalid data provided to export as code");
+        return false;
+    }
+
 #ifndef TEXT_BYTES_PER_LINE
     #define TEXT_BYTES_PER_LINE     20
 #endif
@@ -2255,9 +2265,8 @@ std::string LoadFileText(std::string_view fileNameView)
 
                     // WARNING: \r\n is converted to \n on reading, so,
                     // read bytes count gets reduced by the number of lines
-                    if (count < size) text = static_cast<char *>(realloc(text, count + 1));
-
-                    // Zero-terminate the string
+                    // NOTE: No realloc() is required: the buffer was allocated with size + 1 bytes,
+                    // so it is always large enough to hold the terminating null byte
                     text[count] = '\0';
                     textLength = count;
 
@@ -2865,9 +2874,9 @@ std::string GetApplicationDirectory(void)
     auto len = 0;
 
     #if defined(UNICODE)
-    u16 widePath[MAX_PATH];
-    len = GetModuleFileNameW(nullptr, static_cast<wchar_t *>(widePath), MAX_PATH);
-    len = WideCharToMultiByte(0, 0, static_cast<wchar_t *>(widePath), len, appDir, MAX_PATH, nullptr, nullptr);
+    wchar_t widePath[MAX_PATH];
+    len = GetModuleFileNameW(nullptr, widePath, MAX_PATH);
+    len = WideCharToMultiByte(0, 0, widePath, len, appDir, MAX_PATH, nullptr, nullptr);
     #else
     len = GetModuleFileNameA(nullptr, appDir, MAX_PATH);
     #endif
@@ -4244,7 +4253,7 @@ bool IsGamepadButtonPressed(const i32 gamepad, const i32 button)
 {
     auto pressed = false;
 
-    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button < MAX_GAMEPAD_BUTTONS))
+    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button >= 0) && (button < MAX_GAMEPAD_BUTTONS))
     {
         if ((CORE.Input.Gamepad.previousButtonState[gamepad][button] == 0) && (CORE.Input.Gamepad.currentButtonState[gamepad][button] == 1)) pressed = true;
     }
@@ -4257,7 +4266,7 @@ bool IsGamepadButtonDown(const i32 gamepad, const i32 button)
 {
     auto down = false;
 
-    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button < MAX_GAMEPAD_BUTTONS))
+    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button >= 0) && (button < MAX_GAMEPAD_BUTTONS))
     {
         if (CORE.Input.Gamepad.currentButtonState[gamepad][button] == 1) down = true;
     }
@@ -4270,7 +4279,7 @@ bool IsGamepadButtonReleased(const i32 gamepad, const i32 button)
 {
     auto released = false;
 
-    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button < MAX_GAMEPAD_BUTTONS))
+    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button >= 0) && (button < MAX_GAMEPAD_BUTTONS))
     {
         if ((CORE.Input.Gamepad.previousButtonState[gamepad][button] == 1) && (CORE.Input.Gamepad.currentButtonState[gamepad][button] == 0)) released = true;
     }
@@ -4283,7 +4292,7 @@ bool IsGamepadButtonUp(const i32 gamepad, const i32 button)
 {
     auto up = false;
 
-    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button < MAX_GAMEPAD_BUTTONS))
+    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (button >= 0) && (button < MAX_GAMEPAD_BUTTONS))
     {
         if (CORE.Input.Gamepad.currentButtonState[gamepad][button] == 0) up = true;
     }
@@ -4313,7 +4322,7 @@ f32 GetGamepadAxisMovement(const i32 gamepad, const i32 axis)
 {
     f32 value = ((axis == GAMEPAD_AXIS_LEFT_TRIGGER) || (axis == GAMEPAD_AXIS_RIGHT_TRIGGER))? -1.0f : 0.0f;
 
-    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (axis < MAX_GAMEPAD_AXES))
+    if ((gamepad >= 0) && (gamepad < MAX_GAMEPADS) && CORE.Input.Gamepad.ready[gamepad] && (axis >= 0) && (axis < MAX_GAMEPAD_AXES))
     {
         const f32 movement = (value < 0.0f)? CORE.Input.Gamepad.axisState[gamepad][axis] : fabsf(CORE.Input.Gamepad.axisState[gamepad][axis]);
 
@@ -4491,7 +4500,7 @@ vec2 GetTouchPosition(const i32 index)
 {
     auto position = vec2{ -1.0f, -1.0f };
 
-    if (index < MAX_TOUCH_POINTS) position = CORE.Input.Touch.position[index];
+    if ((index >= 0) && (index < MAX_TOUCH_POINTS)) position = CORE.Input.Touch.position[index];
     else logMessage(LogLevel::warn, std::format("INPUT: Required touch point out of range (Max touch points: {})", MAX_TOUCH_POINTS));
 
     return position;
@@ -4502,7 +4511,7 @@ i32 GetTouchPointId(const i32 index)
 {
     auto id = -1;
 
-    if (index < MAX_TOUCH_POINTS) id = CORE.Input.Touch.pointId[index];
+    if ((index >= 0) && (index < MAX_TOUCH_POINTS)) id = CORE.Input.Touch.pointId[index];
 
     return id;
 }
@@ -4533,7 +4542,7 @@ void InitTimer(void)
 #endif
 
 #if defined(__linux__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__EMSCRIPTEN__)
-    auto now = struct timespec{ 0 };
+    timespec now{};
 
     if (clock_gettime(CLOCK_MONOTONIC, &now) == 0) // Success
     {
@@ -4907,7 +4916,7 @@ std::string TextFormat(std::string_view textView, ...)
     if (text != nullptr)
     {
         va_list args;
-        va_start(args, text);
+        va_start(args, textView);
         i32 requiredByteCount = vsnprintf(currentBuffer, MAX_TEXT_BUFFER_LENGTH, text, args);
         va_end(args);
 
