@@ -1228,7 +1228,7 @@ void DrawText(std::string_view textView, int posX, int posY, int fontSize, Color
     // Check if default font has been loaded
     if (GetFontDefault().texture.id != 0)
     {
-        const Vector2 position = { static_cast<float>(posX), static_cast<float>(posY) };
+        const glm::vec2 position = { static_cast<float>(posX), static_cast<float>(posY) };
 
         constexpr int defaultFontSize = 10;   // Default Font chars height in pixel
         if (fontSize < defaultFontSize) fontSize = defaultFontSize;
@@ -1240,7 +1240,7 @@ void DrawText(std::string_view textView, int posX, int posY, int fontSize, Color
 
 // Draw text using Font
 // NOTE: chars spacing is NOT proportional to fontSize
-void DrawTextEx(Font font, std::string_view textView, Vector2 position, float fontSize, float spacing, Color tint)
+void DrawTextEx(Font font, std::string_view textView, glm::vec2 position, float fontSize, float spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -1271,7 +1271,7 @@ void DrawTextEx(Font font, std::string_view textView, Vector2 position, float fo
         {
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                DrawTextCodepoint(font, codepoint, Vector2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
+                DrawTextCodepoint(font, codepoint, glm::vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += (font.recs[index].width*scaleFactor + spacing);
@@ -1283,7 +1283,7 @@ void DrawTextEx(Font font, std::string_view textView, Vector2 position, float fo
 }
 
 // Draw text using Font and pro parameters (rotation)
-void DrawTextPro(Font font, std::string_view textView, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint)
+void DrawTextPro(Font font, std::string_view textView, glm::vec2 position, glm::vec2 origin, float rotation, float fontSize, float spacing, Color tint)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
@@ -1294,13 +1294,13 @@ void DrawTextPro(Font font, std::string_view textView, Vector2 position, Vector2
         rlRotatef(rotation, 0.0f, 0.0f, 1.0f);
         rlTranslatef(-origin.x, -origin.y, 0.0f);
 
-        DrawTextEx(font, text, Vector2{ 0.0f, 0.0f }, fontSize, spacing, tint);
+        DrawTextEx(font, text, glm::vec2{ 0.0f, 0.0f }, fontSize, spacing, tint);
 
     rlPopMatrix();
 }
 
 // Draw one character (codepoint)
-void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSize, Color tint)
+void DrawTextCodepoint(Font font, int codepoint, glm::vec2 position, float fontSize, Color tint)
 {
     // Character index position in sprite font
     // NOTE: In case a codepoint is not available in the font, index returned points to '?'
@@ -1320,11 +1320,11 @@ void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSiz
                          font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding };
 
     // Draw the character texture on the screen
-    DrawTexturePro(font.texture, srcRec, dstRec, Vector2{ 0, 0 }, 0.0f, tint);
+    DrawTexturePro(font.texture, srcRec, dstRec, glm::vec2{ 0, 0 }, 0.0f, tint);
 }
 
 // Draw multiple characters (codepoints)
-void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, Vector2 position, float fontSize, float spacing, Color tint)
+void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, glm::vec2 position, float fontSize, float spacing, Color tint)
 {
     float textOffsetY = 0;          // Offset between lines (on linebreak '\n')
     float textOffsetX = 0.0f;       // Offset X to next character to draw
@@ -1345,7 +1345,7 @@ void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, Ve
         {
             if ((codepoints[i] != ' ') && (codepoints[i] != '\t'))
             {
-                DrawTextCodepoint(font, codepoints[i], Vector2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
+                DrawTextCodepoint(font, codepoints[i], glm::vec2{ position.x + textOffsetX, position.y + textOffsetY }, fontSize, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += (font.recs[index].width*scaleFactor + spacing);
@@ -1366,7 +1366,7 @@ int MeasureText(std::string_view textView, int fontSize)
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    Vector2 textSize = { 0.0f, 0.0f };
+    glm::vec2 textSize = { 0.0f, 0.0f };
 
     // Check if default font has been loaded
     if (GetFontDefault().texture.id != 0)
@@ -1382,12 +1382,12 @@ int MeasureText(std::string_view textView, int fontSize)
 }
 
 // Measure string size for Font
-Vector2 MeasureTextEx(Font font, std::string_view textView, float fontSize, float spacing)
+glm::vec2 MeasureTextEx(Font font, std::string_view textView, float fontSize, float spacing)
 {
     const std::string textStr(textView);
     const char *text = textStr.c_str();
 
-    Vector2 textSize{};
+    glm::vec2 textSize{};
 
     if ((font.texture.id == 0) || (text == nullptr) || (text[0] == '\0')) return textSize; // Security check
 
@@ -1441,9 +1441,9 @@ Vector2 MeasureTextEx(Font font, std::string_view textView, float fontSize, floa
 }
 
 // Measure string size for an existing array of codepoints for Font
-Vector2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing)
+glm::vec2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing)
 {
-    Vector2 textSize{};
+    glm::vec2 textSize{};
 
     if ((font.texture.id == 0) || (codepoints == nullptr) || (length == 0)) return textSize; // Security check
 
@@ -2616,7 +2616,7 @@ static Font LoadBMFont(const char *fileName)
         {
             const Rectangle srcRec = { 0.0f, 0.0f, static_cast<float>(imWidth), static_cast<float>(imHeight) };
             const Rectangle dstRec = { 0.0f, static_cast<float>(imHeight)*static_cast<float>(i), static_cast<float>(imWidth), static_cast<float>(imHeight) };
-            ImageDrawImagePro(&fullFont, imFonts[i], srcRec, dstRec, Vector2{ 0 }, 0.0f, WHITE);
+            ImageDrawImagePro(&fullFont, imFonts[i], srcRec, dstRec, glm::vec2{ 0 }, 0.0f, WHITE);
         }
     }
 

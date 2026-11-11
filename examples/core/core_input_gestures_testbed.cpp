@@ -40,11 +40,11 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures testbed");
 
-    const Vector2 messagePosition = { 160, 7 };
+    const glm::vec2 messagePosition = { 160, 7 };
 
     // Last gesture variables definitions
     int lastGesture = 0;
-    const Vector2 lastGesturePosition = { 165, 130 };
+    const glm::vec2 lastGesturePosition = { 165, 130 };
 
     // Gesture log variables definitions
     // NOTE: The gesture log uses an array (as an inverted circular queue) to store the performed gestures
@@ -63,13 +63,13 @@ int main()
     Color gestureColor = { 0, 0, 0, 255 };
     const Rectangle logButton1 = { 53, 7, 48, 26 };
     const Rectangle logButton2 = { 108, 7, 36, 26 };
-    const Vector2 gestureLogPosition = { 10, 10 };
+    const glm::vec2 gestureLogPosition = { 10, 10 };
 
     // Protractor variables definitions
     constexpr float angleLength = 90.0f;
     float currentAngleDegrees = 0.0f;
-    Vector2 finalVector = { 0.0f, 0.0f };
-    const Vector2 protractorPosition = { 266.0f, 315.0f };
+    glm::vec2 finalVector = { 0.0f, 0.0f };
+    const glm::vec2 protractorPosition = { 266.0f, 315.0f };
 
     SetTargetFPS(60);   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -154,12 +154,12 @@ int main()
 
         const float currentAngleRadians = ((currentAngleDegrees + 90.0f)*PI/180); // Convert the current angle to Radians
         // Calculate the final vector for display
-        finalVector = Vector2{ (angleLength*sinf(currentAngleRadians)) + protractorPosition.x,
+        finalVector = glm::vec2{ (angleLength*sinf(currentAngleRadians)) + protractorPosition.x,
             (angleLength*cosf(currentAngleRadians)) + protractorPosition.y };
 
         // Handle touch and mouse pointer points
-        Vector2 touchPosition[MAX_TOUCH_COUNT] = {};
-        Vector2 mousePosition = {};
+        glm::vec2 touchPosition[MAX_TOUCH_COUNT] = {};
+        glm::vec2 mousePosition = {};
         if (currentGesture != GESTURE_NONE)
         {
             if (touchCount != 0)
@@ -189,13 +189,13 @@ int main()
             DrawRectangle(static_cast<int>(lastGesturePosition.x) + 40, static_cast<int>(lastGesturePosition.y) + 20, 20, 20, lastGesture == GESTURE_SWIPE_RIGHT ? RED : LIGHTGRAY);
             DrawRectangle(static_cast<int>(lastGesturePosition.x) + 20, static_cast<int>(lastGesturePosition.y) + 40, 20, 20, lastGesture == GESTURE_SWIPE_DOWN ? RED : LIGHTGRAY);
             DrawCircle(static_cast<int>(lastGesturePosition.x) + 80, static_cast<int>(lastGesturePosition.y) + 16, 10, lastGesture == GESTURE_TAP ? BLUE : LIGHTGRAY);
-            DrawRing( Vector2{lastGesturePosition.x + 103, lastGesturePosition.y + 16}, 6.0f, 11.0f, 0.0f, 360.0f, 0, lastGesture == GESTURE_DRAG ? LIME : LIGHTGRAY);
+            DrawRing( glm::vec2{lastGesturePosition.x + 103, lastGesturePosition.y + 16}, 6.0f, 11.0f, 0.0f, 360.0f, 0, lastGesture == GESTURE_DRAG ? LIME : LIGHTGRAY);
             DrawCircle(static_cast<int>(lastGesturePosition.x) + 80, static_cast<int>(lastGesturePosition.y) + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
             DrawCircle(static_cast<int>(lastGesturePosition.x) + 103, static_cast<int>(lastGesturePosition.y) + 43, 10, lastGesture == GESTURE_DOUBLETAP ? SKYBLUE : LIGHTGRAY);
-            DrawTriangle(Vector2{ lastGesturePosition.x + 122, lastGesturePosition.y + 16 }, Vector2{ lastGesturePosition.x + 137, lastGesturePosition.y + 26 }, Vector2{lastGesturePosition.x + 137, lastGesturePosition.y + 6 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
-            DrawTriangle(Vector2{ lastGesturePosition.x + 147, lastGesturePosition.y + 6 }, Vector2{ lastGesturePosition.x + 147, lastGesturePosition.y + 26 }, Vector2{ lastGesturePosition.x + 162, lastGesturePosition.y + 16 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
-            DrawTriangle(Vector2{ lastGesturePosition.x + 125, lastGesturePosition.y + 33 }, Vector2{ lastGesturePosition.x + 125, lastGesturePosition.y + 53 }, Vector2{ lastGesturePosition.x + 140, lastGesturePosition.y + 43 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
-            DrawTriangle(Vector2{ lastGesturePosition.x + 144, lastGesturePosition.y + 43 }, Vector2{ lastGesturePosition.x + 159, lastGesturePosition.y + 53 }, Vector2{ lastGesturePosition.x + 159, lastGesturePosition.y + 33 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
+            DrawTriangle(glm::vec2{ lastGesturePosition.x + 122, lastGesturePosition.y + 16 }, glm::vec2{ lastGesturePosition.x + 137, lastGesturePosition.y + 26 }, glm::vec2{lastGesturePosition.x + 137, lastGesturePosition.y + 6 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
+            DrawTriangle(glm::vec2{ lastGesturePosition.x + 147, lastGesturePosition.y + 6 }, glm::vec2{ lastGesturePosition.x + 147, lastGesturePosition.y + 26 }, glm::vec2{ lastGesturePosition.x + 162, lastGesturePosition.y + 16 }, lastGesture == GESTURE_PINCH_OUT? ORANGE : LIGHTGRAY);
+            DrawTriangle(glm::vec2{ lastGesturePosition.x + 125, lastGesturePosition.y + 33 }, glm::vec2{ lastGesturePosition.x + 125, lastGesturePosition.y + 53 }, glm::vec2{ lastGesturePosition.x + 140, lastGesturePosition.y + 43 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
+            DrawTriangle(glm::vec2{ lastGesturePosition.x + 144, lastGesturePosition.y + 43 }, glm::vec2{ lastGesturePosition.x + 159, lastGesturePosition.y + 53 }, glm::vec2{ lastGesturePosition.x + 159, lastGesturePosition.y + 33 }, lastGesture == GESTURE_PINCH_IN? VIOLET : LIGHTGRAY);
             for (i = 0; i < 4; i++) DrawCircle(static_cast<int>(lastGesturePosition.x) + 180, static_cast<int>(lastGesturePosition.y) + 7 + i*15, 5, touchCount <= i? LIGHTGRAY : gestureColor);
 
             // Draw gesture log
@@ -225,10 +225,10 @@ int main()
             const std::string angleStringTrim = TextSubtext(angleString, 0, angleStringDot + 3);
             DrawText( angleStringTrim, static_cast<int>(protractorPosition.x) + 55, static_cast<int>(protractorPosition.y) + 92, 20, gestureColor);
             DrawCircleV(protractorPosition, 80.0f, WHITE);
-            DrawLineEx(Vector2{ protractorPosition.x - 90, protractorPosition.y }, Vector2{ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);
-            DrawLineEx(Vector2{ protractorPosition.x, protractorPosition.y - 90 }, Vector2{ protractorPosition.x, protractorPosition.y + 90 }, 3.0f, LIGHTGRAY);
-            DrawLineEx(Vector2{ protractorPosition.x - 80, protractorPosition.y - 45 }, Vector2{ protractorPosition.x + 80, protractorPosition.y + 45 }, 3.0f, GREEN);
-            DrawLineEx(Vector2{ protractorPosition.x - 80, protractorPosition.y + 45 }, Vector2{ protractorPosition.x + 80, protractorPosition.y - 45 }, 3.0f, GREEN);
+            DrawLineEx(glm::vec2{ protractorPosition.x - 90, protractorPosition.y }, glm::vec2{ protractorPosition.x + 90, protractorPosition.y }, 3.0f, LIGHTGRAY);
+            DrawLineEx(glm::vec2{ protractorPosition.x, protractorPosition.y - 90 }, glm::vec2{ protractorPosition.x, protractorPosition.y + 90 }, 3.0f, LIGHTGRAY);
+            DrawLineEx(glm::vec2{ protractorPosition.x - 80, protractorPosition.y - 45 }, glm::vec2{ protractorPosition.x + 80, protractorPosition.y + 45 }, 3.0f, GREEN);
+            DrawLineEx(glm::vec2{ protractorPosition.x - 80, protractorPosition.y + 45 }, glm::vec2{ protractorPosition.x + 80, protractorPosition.y - 45 }, 3.0f, GREEN);
             DrawText("0", static_cast<int>(protractorPosition.x) + 96, static_cast<int>(protractorPosition.y) - 9, 20, BLACK);
             DrawText("30", static_cast<int>(protractorPosition.x) + 74, static_cast<int>(protractorPosition.y) - 68, 20, BLACK);
             DrawText("90", static_cast<int>(protractorPosition.x) - 11, static_cast<int>(protractorPosition.y) - 110, 20, BLACK);

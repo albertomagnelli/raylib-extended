@@ -46,7 +46,7 @@ features
   - Flexible Materials system, supporting classic maps and **PBR maps**
   - **Animated 3D models** supported (skeletal bones animation, GPU-skinning) (IQM, M3D, glTF)
   - Shaders support, including model shaders and **postprocessing** shaders
-  - **Powerful math foundation**: `Vector2/3/4`, `Quaternion` and `Matrix` are glm types, plus [raymath](https://github.com/raysan5/raylib/blob/master/src/raymath.h) helpers for the operations glm does not express directly
+  - **Powerful math foundation**: vectors are `glm::vec2`/`glm::vec3`/`glm::vec4`, `Quaternion` and `Matrix` are glm types, plus [raymath](https://github.com/raysan5/raylib/blob/master/src/raymath.h) helpers for the operations glm does not express directly
   - **C++ string API**: text parameters are `std::string_view`, text is returned as `std::string`, and string lists are `std::vector<std::string>`
   - Audio loading and playing with streaming support (WAV, QOA, OGG, MP3, FLAC, XM, MOD)
   - **VR stereo rendering** support with configurable HMD device parameters

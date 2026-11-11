@@ -41,11 +41,11 @@ int main()
     unsigned int gifFrameCounter = 0;    // GIF frames counter
     MsfGifState gifState = {};        // MSGIF context state
 
-    Vector2 circlePosition = { 0.0f, screenHeight/2.0f };
+    glm::vec2 circlePosition = { 0.0f, screenHeight/2.0f };
     float timeCounter = 0.0f;
 
     // Get sine wave points for line drawing
-    Vector2 sinePoints[MAX_SINEWAVE_POINTS] = {};
+    glm::vec2 sinePoints[MAX_SINEWAVE_POINTS] = {};
     for (int i = 0; i < MAX_SINEWAVE_POINTS; i++)
     {
         sinePoints[i].x = i*GetScreenWidth()/180.0f;

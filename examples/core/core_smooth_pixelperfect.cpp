@@ -54,7 +54,7 @@ int main()
     const Rectangle sourceRec = { 0.0f, 0.0f, static_cast<float>(target.texture.width), -static_cast<float>(target.texture.height) };
     Rectangle destRec = { (screenWidth - screenWidth/1.25f)/2.0f, (screenHeight - screenHeight/1.25f)/2.0f, screenWidth/1.25f, screenHeight/1.25f };
 
-    const Vector2 origin = { 0.0f, 0.0f };
+    const glm::vec2 origin = { 0.0f, 0.0f };
 
     float rotation = 0.0f;
 
@@ -79,7 +79,7 @@ int main()
         cameraY = cosf(static_cast<float>(GetTime()))*30.0f;
 
         // Set the camera's target to the values computed above
-        screenSpaceCamera.target = Vector2{ cameraX, cameraY };
+        screenSpaceCamera.target = glm::vec2{ cameraX, cameraY };
 
         // Round worldSpace coordinates, keep decimals into screenSpace coordinates
         worldSpaceCamera.target.x = truncf(screenSpaceCamera.target.x);

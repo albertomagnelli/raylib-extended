@@ -126,7 +126,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawRectanglePro(rec, Vector2{ rec.width/2, rec.height/2 }, rotation, Fade(BLACK, alpha));
+            DrawRectanglePro(rec, glm::vec2{ rec.width/2, rec.height/2 }, rotation, Fade(BLACK, alpha));
 
             DrawText("PRESS [SPACE] TO RESET BOX ANIMATION!", 10, GetScreenHeight() - 25, 20, LIGHTGRAY);
 

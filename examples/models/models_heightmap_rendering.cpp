@@ -29,20 +29,20 @@ int main()
 
     // Define our custom camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 18.0f, 21.0f, 18.0f };     // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };          // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };              // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 18.0f, 21.0f, 18.0f };   // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };        // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };            // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                    // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
     const Image image = LoadImage("resources/heightmap.png");     // Load heightmap image (RAM)
     const Texture2D texture = LoadTextureFromImage(image);        // Convert image to texture (VRAM)
 
-    const Mesh mesh = GenMeshHeightmap(image, Vector3{ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
+    const Mesh mesh = GenMeshHeightmap(image, glm::vec3{ 16, 8, 16 }); // Generate heightmap mesh (RAM and VRAM)
     const Model model = LoadModelFromMesh(mesh);                  // Load model from generated mesh
 
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Set map diffuse texture
-    const Vector3 mapPosition = { -8.0f, 0.0f, -8.0f };           // Define model position
+    const glm::vec3 mapPosition = { -8.0f, 0.0f, -8.0f };         // Define model position
 
     UnloadImage(image);             // Unload heightmap image from RAM, already uploaded to VRAM
 

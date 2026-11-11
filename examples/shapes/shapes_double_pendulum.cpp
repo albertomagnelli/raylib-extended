@@ -26,8 +26,8 @@
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-static Vector2 CalculatePendulumEndPoint(float l, float theta);
-static Vector2 CalculateDoublePendulumEndPoint(float l1, float theta1, float l2, float theta2);
+static glm::vec2 CalculatePendulumEndPoint(float l, float theta);
+static glm::vec2 CalculateDoublePendulumEndPoint(float l1, float theta1, float l2, float theta2);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -50,7 +50,7 @@ int main()
     constexpr float lengthScaler = 0.1f;
     const float totalM = m1 + m2;
 
-    Vector2 previousPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
+    glm::vec2 previousPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
     previousPosition.x += (static_cast<float>(screenWidth)/2);
     previousPosition.y += (static_cast<float>(screenHeight)/2 - 100);
 
@@ -110,7 +110,7 @@ int main()
         }
 
         // Calculate position
-        Vector2 currentPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
+        glm::vec2 currentPosition = CalculateDoublePendulumEndPoint(l1, theta1, l2, theta2);
         currentPosition.x += static_cast<float>(screenWidth)/2;
         currentPosition.y += static_cast<float>(screenHeight)/2 - 100;
 
@@ -135,15 +135,15 @@ int main()
             ClearBackground(BLACK);
 
             // Draw trails texture
-            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, Vector2{ 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, glm::vec2{ 0, 0 }, WHITE);
 
             // Draw double pendulum
             DrawRectanglePro(Rectangle{ screenWidth/2.0f, screenHeight/2.0f - 100, 10*l1, lineThick },
-                Vector2{0, lineThick*0.5f}, 90 - RAD2DEG*theta1, RAYWHITE);
+                glm::vec2{0, lineThick*0.5f}, 90 - RAD2DEG*theta1, RAYWHITE);
 
-            const Vector2 endpoint1 = CalculatePendulumEndPoint(l1, theta1);
+            const glm::vec2 endpoint1 = CalculatePendulumEndPoint(l1, theta1);
             DrawRectanglePro(Rectangle{ screenWidth/2.0f + endpoint1.x, screenHeight/2.0f - 100 + endpoint1.y, 10*l2, lineThick },
-                Vector2{0, lineThick*0.5f}, 90 - RAD2DEG*theta2, RAYWHITE);
+                glm::vec2{0, lineThick*0.5f}, 90 - RAD2DEG*theta2, RAYWHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -163,15 +163,15 @@ int main()
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Calculate pendulum end point
-static Vector2 CalculatePendulumEndPoint(float l, float theta)
+static glm::vec2 CalculatePendulumEndPoint(float l, float theta)
 {
-    return Vector2{ 10*l*sinf(theta), 10*l*cosf(theta) };
+    return glm::vec2{ 10*l*sinf(theta), 10*l*cosf(theta) };
 }
 
 // Calculate double pendulum end point
-static Vector2 CalculateDoublePendulumEndPoint(float l1, float theta1, float l2, float theta2)
+static glm::vec2 CalculateDoublePendulumEndPoint(float l1, float theta1, float l2, float theta2)
 {
-    const Vector2 endpoint1 = CalculatePendulumEndPoint(l1, theta1);
-    const Vector2 endpoint2 = CalculatePendulumEndPoint(l2, theta2);
-    return Vector2{ endpoint1.x + endpoint2.x, endpoint1.y + endpoint2.y };
+    const glm::vec2 endpoint1 = CalculatePendulumEndPoint(l1, theta1);
+    const glm::vec2 endpoint2 = CalculatePendulumEndPoint(l2, theta2);
+    return glm::vec2{ endpoint1.x + endpoint2.x, endpoint1.y + endpoint2.y };
 }

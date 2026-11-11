@@ -40,7 +40,7 @@ int main()
 
     // Draw one image over the other with a scaling of 1.5f
     ImageDrawImagePro(&parrots, cat, Rectangle{ 0, 0, static_cast<float>(cat.width), static_cast<float>(cat.height) },
-        Rectangle{ 30, 40, cat.width*1.5f, cat.height*1.5f }, Vector2{}, 0.0f, WHITE);
+        Rectangle{ 30, 40, cat.width*1.5f, cat.height*1.5f }, glm::vec2{}, 0.0f, WHITE);
     ImageCrop(&parrots, Rectangle{ 0, 50, static_cast<float>(parrots.width), static_cast<float>(parrots.height) - 100 }); // Crop resulting image
 
     // Draw on the image with a few image draw methods
@@ -54,7 +54,7 @@ int main()
     const Font font = LoadFont("resources/custom_jupiter_crash.png");
 
     // Draw over image using custom font
-    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", Vector2{ 300, 230 }, static_cast<float>(font.baseSize), -2, WHITE);
+    ImageDrawTextEx(&parrots, font, "PARROTS & CAT", glm::vec2{ 300, 230 }, static_cast<float>(font.baseSize), -2, WHITE);
 
     UnloadFont(font);       // Unload custom font (already drawn used on image)
 

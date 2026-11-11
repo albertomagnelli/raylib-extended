@@ -76,7 +76,7 @@ typedef struct {
     // Used to ignore Hover events which are interpreted as Touch events
     int32_t pointCount;                             // Number of touch points active
     int32_t pointId[MAX_TOUCH_POINTS];              // Point identifiers
-    Vector2 position[MAX_TOUCH_POINTS];             // Touch position on screen
+    glm::vec2 position[MAX_TOUCH_POINTS];           // Touch position on screen
 
     int32_t hoverPoints[MAX_TOUCH_POINTS];          // Hover Points
 } TouchRaw;
@@ -518,10 +518,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-Vector2 GetMonitorPosition(int monitor)
+glm::vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -571,18 +571,18 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-Vector2 GetWindowPosition(void)
+glm::vec2 GetWindowPosition(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowPosition() not implemented on target platform");
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
-Vector2 GetWindowScaleDPI(void)
+glm::vec2 GetWindowScaleDPI(void)
 {
     int density = AConfiguration_getDensity(platform.app->config);
     float scale = static_cast<float>(density)/160;
-    return Vector2{ scale, scale };
+    return glm::vec2{ scale, scale };
 }
 
 // Set clipboard text content
@@ -734,7 +734,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -783,7 +783,7 @@ void PollInputEvents(void)
     for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.previousTouchState[i] = CORE.Input.Touch.currentTouchState[i];
 
     // Reset touch positions
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys
@@ -1357,7 +1357,7 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
         touchRaw.pointId[i] = AMotionEvent_getPointerId(event, i);
 
         // Register touch points position
-        touchRaw.position[i] = Vector2{ AMotionEvent_getX(event, i), AMotionEvent_getY(event, i) };
+        touchRaw.position[i] = glm::vec2{ AMotionEvent_getX(event, i), AMotionEvent_getY(event, i) };
 
         // Normalize CORE.Input.Touch.position[i] for CORE.Window.screen.width and CORE.Window.screen.height
         float widthRatio = static_cast<float>((CORE.Window.screen.width + CORE.Window.renderOffset.x))/static_cast<float>(CORE.Window.display.width);
@@ -1478,7 +1478,7 @@ static int32_t AndroidInputCallback(struct android_app *app, AInputEvent *event)
 
     // Map touch[0] as mouse input for convenience
     CORE.Input.Mouse.currentPosition = CORE.Input.Touch.position[0];
-    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = glm::vec2{ 0.0f, 0.0f };
 
     return 0;
 }
@@ -1513,7 +1513,7 @@ static void SetupFramebuffer(int width, int height)
 
         // Screen scaling required
         float scaleRatio = static_cast<float>(CORE.Window.render.width)/static_cast<float>(CORE.Window.screen.width);
-        CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleRatio, scaleRatio, 1.0f});
+        CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleRatio, scaleRatio, 1.0f});
 
         // NOTE: Rendering to full display resolution
         // Above parameters need to be calculate for downscale matrix and offsets

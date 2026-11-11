@@ -90,7 +90,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Handle mouse
-        const Vector2 mouse = GetMousePosition();
+        const glm::vec2 mouse = GetMousePosition();
         int mouseInCell = -1;   // -1: outside any button; 0-7: rule cells; 8+: preset cells
 
         // Check mouse on rule cells

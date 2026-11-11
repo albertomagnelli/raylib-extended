@@ -42,7 +42,7 @@ typedef enum {
 // Struct to store example preset patterns
 typedef struct {
     const char *name;
-    Vector2 position;
+    glm::vec2 position;
 } PresetPattern;
 
 //----------------------------------------------------------------------------------
@@ -157,8 +157,8 @@ int main()
             FreeImageToDraw(&imageToDraw);  // Free the image to draw: no longer needed in these modes
 
             // Pan with mouse left button
-            static Vector2 previousMousePosition = { 0.0f, 0.0f };
-            const Vector2 mousePosition = GetMousePosition();
+            static glm::vec2 previousMousePosition = { 0.0f, 0.0f };
+            const glm::vec2 mousePosition = GetMousePosition();
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && (mousePosition.x < windowWidth))
             {
                 offsetX -= (mousePosition.x - previousMousePosition.x)/zoom;
@@ -181,7 +181,7 @@ int main()
                 const RenderTexture2D worldOnScreen = LoadRenderTexture(sizeInWorldX, sizeInWorldY);
                 BeginTextureMode(worldOnScreen);
                     DrawTexturePro(currentWorld->texture, Rectangle{ floorf(offsetX), floorf(offsetY), static_cast<float>(sizeInWorldX), -static_cast<float>(sizeInWorldY) },
-                            Rectangle{ 0, 0, static_cast<float>(sizeInWorldX), static_cast<float>(sizeInWorldY) }, Vector2{ 0, 0 }, 0.0f, WHITE);
+                            Rectangle{ 0, 0, static_cast<float>(sizeInWorldX), static_cast<float>(sizeInWorldY) }, glm::vec2{ 0, 0 }, 0.0f, WHITE);
                 EndTextureMode();
                 imageToDraw = static_cast<Image *>(RL_MALLOC(sizeof(Image)));
                 *imageToDraw = LoadImageFromTexture(worldOnScreen.texture);
@@ -189,7 +189,7 @@ int main()
                 UnloadRenderTexture(worldOnScreen);
             }
 
-            const Vector2 mousePosition = GetMousePosition();
+            const glm::vec2 mousePosition = GetMousePosition();
             static int firstColor = -1;
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && (mousePosition.x < windowWidth))
             {
@@ -284,7 +284,7 @@ int main()
             // Draw to texture
             BeginTextureMode(*currentWorld);
                 BeginShaderMode(shdrGameOfLife);
-                    DrawTexturePro(previousWorld->texture, worldRectSource, worldRectDest, Vector2{ 0, 0 }, 0.0f, RAYWHITE);
+                    DrawTexturePro(previousWorld->texture, worldRectSource, worldRectDest, glm::vec2{ 0, 0 }, 0.0f, RAYWHITE);
                 EndShaderMode();
             EndTextureMode();
         }
@@ -294,7 +294,7 @@ int main()
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            DrawTexturePro(currentWorld->texture, textureSourceToScreen, textureOnScreen, Vector2{ 0, 0 }, 0.0f, WHITE);
+            DrawTexturePro(currentWorld->texture, textureSourceToScreen, textureOnScreen, glm::vec2{ 0, 0 }, 0.0f, WHITE);
 
             DrawLine(windowWidth, 0, windowWidth, screenHeight, Color{ 218, 218, 218, 255 });
             DrawRectangle(windowWidth, 0, screenWidth - windowWidth, screenHeight, Color{ 232, 232, 232, 255 });

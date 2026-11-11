@@ -50,9 +50,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 2.0f, 4.0f, 6.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 0.5f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 2.0f, 4.0f, 6.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.5f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -71,10 +71,10 @@ int main()
 
     // Create lights
     Light lights[MAX_LIGHTS] = {};
-    lights[0] = CreateLight(LIGHT_POINT, Vector3{ -2, 1, -2 }, Vector3{}, YELLOW, shader);
-    lights[1] = CreateLight(LIGHT_POINT, Vector3{ 2, 1, 2 }, Vector3{}, RED, shader);
-    lights[2] = CreateLight(LIGHT_POINT, Vector3{ -2, 1, 2 }, Vector3{}, GREEN, shader);
-    lights[3] = CreateLight(LIGHT_POINT, Vector3{ 2, 1, -2 }, Vector3{}, BLUE, shader);
+    lights[0] = CreateLight(LIGHT_POINT, glm::vec3{ -2, 1, -2 }, glm::vec3{}, YELLOW, shader);
+    lights[1] = CreateLight(LIGHT_POINT, glm::vec3{ 2, 1, 2 }, glm::vec3{}, RED, shader);
+    lights[2] = CreateLight(LIGHT_POINT, glm::vec3{ -2, 1, 2 }, glm::vec3{}, GREEN, shader);
+    lights[3] = CreateLight(LIGHT_POINT, glm::vec3{ 2, 1, -2 }, glm::vec3{}, BLUE, shader);
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -110,8 +110,8 @@ int main()
 
                 BeginShaderMode(shader);
 
-                    DrawPlane(Vector3{}, Vector2{ 10.0, 10.0 }, WHITE);
-                    DrawCube(Vector3{}, 2.0, 4.0, 2.0, WHITE);
+                    DrawPlane(glm::vec3{}, glm::vec2{ 10.0, 10.0 }, WHITE);
+                    DrawCube(glm::vec3{}, 2.0, 4.0, 2.0, WHITE);
 
                 EndShaderMode();
 

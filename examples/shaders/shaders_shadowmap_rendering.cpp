@@ -50,19 +50,19 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - shadowmap rendering");
 
     Camera3D camera = {};
-    camera.position = Vector3{ 10.0f, 10.0f, 10.0f };
-    camera.target = Vector3{};
+    camera.position = glm::vec3{ 10.0f, 10.0f, 10.0f };
+    camera.target = glm::vec3{};
     camera.projection = CAMERA_PERSPECTIVE;
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
 
     const Shader shadowShader = LoadShader(TextFormat("resources/shaders/glsl%i/shadowmap.vs", GLSL_VERSION),
                                      TextFormat("resources/shaders/glsl%i/shadowmap.fs", GLSL_VERSION));
     shadowShader.locs[SHADER_LOC_VECTOR_VIEW] = GetShaderLocation(shadowShader, "viewPos");
 
-    Vector3 lightDir = glm::normalize(Vector3{ 0.35f, -1.0f, -0.35f });
+    glm::vec3 lightDir = glm::normalize(glm::vec3{ 0.35f, -1.0f, -0.35f });
     const Color lightColor = WHITE;
-    Vector4 lightColorNormalized = ColorNormalize(lightColor);
+    glm::vec4 lightColorNormalized = ColorNormalize(lightColor);
     const int lightDirLoc = GetShaderLocation(shadowShader, "lightDir");
     const int lightColLoc = GetShaderLocation(shadowShader, "lightColor");
     SetShaderValue(shadowShader, lightDirLoc, &lightDir, SHADER_UNIFORM_VEC3);
@@ -88,9 +88,9 @@ int main()
     // For the shadowmapping algorithm, we will be rendering everything from the light's point of view
     Camera3D lightCamera = {};
     lightCamera.position = ((lightDir) * (-15.0f));
-    lightCamera.target = Vector3{};
+    lightCamera.target = glm::vec3{};
     lightCamera.projection = CAMERA_ORTHOGRAPHIC; // Use an orthographic projection for directional lights
-    lightCamera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    lightCamera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     lightCamera.fovy = 20.0f;
 
     int frameCounter = 0;
@@ -114,7 +114,7 @@ int main()
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         // send the updated camera position to the shader so that it can calculate the correct lighting for the scene
-        Vector3 cameraPos = camera.position;
+        glm::vec3 cameraPos = camera.position;
         SetShaderValue(shadowShader, shadowShader.locs[SHADER_LOC_VECTOR_VIEW], &cameraPos, SHADER_UNIFORM_VEC3);
 
         frameCounter++;
@@ -257,7 +257,7 @@ static void UnloadShadowmapRenderTexture(RenderTexture2D target)
 // NOTE: Required  to be called several time to generate shadowmap
 static void DrawScene(Model cube, Model robot)
 {
-    DrawModelEx(cube, Vector3{}, Vector3{ 0.0f, 1.0f, 0.0f }, 0.0f, Vector3{ 10.0f, 1.0f, 10.0f }, BLUE);
-    DrawModelEx(cube, Vector3{ 1.5f, 1.0f, -1.5f }, Vector3{ 0.0f, 1.0f, 0.0f }, 0.0f, Vector3(1.0f), WHITE);
-    DrawModelEx(robot, Vector3{ 0.0f, 0.5f, 0.0f }, Vector3{ 0.0f, 1.0f, 0.0f }, 0.0f, Vector3{ 1.0f, 1.0f, 1.0f }, RED);
+    DrawModelEx(cube, glm::vec3{}, glm::vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, glm::vec3{ 10.0f, 1.0f, 10.0f }, BLUE);
+    DrawModelEx(cube, glm::vec3{ 1.5f, 1.0f, -1.5f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, glm::vec3(1.0f), WHITE);
+    DrawModelEx(robot, glm::vec3{ 0.0f, 0.5f, 0.0f }, glm::vec3{ 0.0f, 1.0f, 0.0f }, 0.0f, glm::vec3{ 1.0f, 1.0f, 1.0f }, RED);
 }

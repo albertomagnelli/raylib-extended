@@ -54,7 +54,7 @@ static void KeepWidthCentered(int screenWidth, int screenHeight, int gameWidth, 
 static void ResizeRenderSize(ViewportType viewportType, int *screenWidth, int *screenHeight, int gameWidth, int gameHeight, Rectangle *sourceRect, Rectangle *destRect, RenderTexture2D *target);
 
 // Example how to calculate position on RenderTexture
-static Vector2 Screen2RenderTexturePosition(Vector2 point, Rectangle *textureRect, Rectangle *scaledRect);
+static glm::vec2 Screen2RenderTexturePosition(glm::vec2 point, Rectangle *textureRect, Rectangle *scaledRect);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -70,12 +70,12 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [core] example - viewport scaling");
 
     // Preset resolutions that could be created by subdividing screen resolution
-    const Vector2 resolutionList[RESOLUTION_COUNT] = {
-        Vector2{ 64, 64 },
-        Vector2{ 256, 240 },
-        Vector2{ 320, 180 },
+    const glm::vec2 resolutionList[RESOLUTION_COUNT] = {
+        glm::vec2{ 64, 64 },
+        glm::vec2{ 256, 240 },
+        glm::vec2{ 320, 180 },
         // 4K doesn't work with integer scaling but included for example purposes with non-integer scaling
-        Vector2{ 3840, 2160 },
+        glm::vec2{ 3840, 2160 },
     };
 
     int resolutionIndex = 0;
@@ -105,7 +105,7 @@ int main()
         //----------------------------------------------------------------------------------
         if (IsWindowResized()) ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
 
-        const Vector2 mousePosition = GetMousePosition();
+        const glm::vec2 mousePosition = GetMousePosition();
         const bool mousePressed = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 
         // Check buttons and rescale
@@ -137,7 +137,7 @@ int main()
             ResizeRenderSize(viewportType, &screenWidth, &screenHeight, gameWidth, gameHeight, &sourceRect, &destRect, &target);
         }
 
-        const Vector2 textureMousePosition = Screen2RenderTexturePosition(mousePosition, &sourceRect, &destRect);
+        const glm::vec2 textureMousePosition = Screen2RenderTexturePosition(mousePosition, &sourceRect, &destRect);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -153,7 +153,7 @@ int main()
             ClearBackground(BLACK);
 
             // Draw our render texture with rotation applied
-            DrawTexturePro(target.texture, sourceRect, destRect, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(target.texture, sourceRect, destRect, glm::vec2{ 0.0f, 0.0f }, 0.0f, WHITE);
 
             // Draw Native resolution (GUI or anything)
             // Draw info box
@@ -165,7 +165,7 @@ int main()
             DrawText(TextFormat("Game Resolution: %d x %d", gameWidth, gameHeight), 15, 30, 10, BLACK);
 
             DrawText(TextFormat("Type: %s", ViewportTypeNames[viewportType]), 15, 45, 10, BLACK);
-            const Vector2 scaleRatio = Vector2{destRect.width/sourceRect.width, -destRect.height/sourceRect.height};
+            const glm::vec2 scaleRatio = glm::vec2{destRect.width/sourceRect.width, -destRect.height/sourceRect.height};
             if (scaleRatio.x < 0.001f || scaleRatio.y < 0.001f) DrawText(TextFormat("Scale ratio: INVALID"), 15, 60, 10, BLACK);
             else DrawText(TextFormat("Scale ratio: %.2f x %.2f", scaleRatio.x, scaleRatio.y), 15, 60, 10, BLACK);
 
@@ -312,10 +312,10 @@ static void ResizeRenderSize(ViewportType viewportType, int *screenWidth, int *s
 }
 
 // Example how to calculate position on RenderTexture
-static Vector2 Screen2RenderTexturePosition(Vector2 point, Rectangle *textureRect, Rectangle *scaledRect)
+static glm::vec2 Screen2RenderTexturePosition(glm::vec2 point, Rectangle *textureRect, Rectangle *scaledRect)
 {
-    const Vector2 relativePosition = {point.x - scaledRect->x, point.y - scaledRect->y};
-    const Vector2 ratio = {textureRect->width/scaledRect->width, -textureRect->height/scaledRect->height};
+    const glm::vec2 relativePosition = {point.x - scaledRect->x, point.y - scaledRect->y};
+    const glm::vec2 ratio = {textureRect->width/scaledRect->width, -textureRect->height/scaledRect->height};
 
-    return Vector2{relativePosition.x*ratio.x, relativePosition.y*ratio.x};
+    return glm::vec2{relativePosition.x*ratio.x, relativePosition.y*ratio.x};
 }

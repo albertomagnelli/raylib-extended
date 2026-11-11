@@ -55,7 +55,7 @@ int main()
     float resolution[2] = { static_cast<float>(screenWidth), static_cast<float>(screenHeight) };
     SetShaderValue(shader, resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    Vector2 circlePos = Vector2{40.0f, static_cast<float>(screenHeight)*0.5f};
+    glm::vec2 circlePos = glm::vec2{40.0f, static_cast<float>(screenHeight)*0.5f};
     float circleSpeed = 1.0f;
 
     // RenderTexture to apply the postprocessing later
@@ -96,7 +96,7 @@ int main()
                 // The shader will process every pixel of this texture
                 DrawTextureRec(target.texture,
                     Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
-                    Vector2{ 0, 0 }, WHITE);
+                    glm::vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             DrawRectangle(0, 0, screenWidth, 40, BLACK);

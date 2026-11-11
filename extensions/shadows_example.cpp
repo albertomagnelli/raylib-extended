@@ -407,7 +407,7 @@ int main()
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
-            const Vector2 mouseDelta = GetMouseDelta();
+            const glm::vec2 mouseDelta = GetMouseDelta();
             camera.yaw -= mouseDelta.x*0.005f;
             camera.pitch = std::clamp(camera.pitch + mouseDelta.y*0.005f, 0.08f, 1.45f);
         }

@@ -33,7 +33,7 @@ int main()
 
     Rectangle rec = { 100, 100, 200, 80 };
 
-    Vector2 mousePosition = {};
+    glm::vec2 mousePosition = {};
 
     bool mouseScaleReady = false;
     bool mouseScaleMode = false;
@@ -87,9 +87,9 @@ int main()
             if (mouseScaleReady)
             {
                 DrawRectangleLinesEx(rec, 1, RED);
-                DrawTriangle(Vector2{ rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height },
-                             Vector2{ rec.x + rec.width, rec.y + rec.height },
-                             Vector2{ rec.x + rec.width, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE }, RED);
+                DrawTriangle(glm::vec2{ rec.x + rec.width - MOUSE_SCALE_MARK_SIZE, rec.y + rec.height },
+                             glm::vec2{ rec.x + rec.width, rec.y + rec.height },
+                             glm::vec2{ rec.x + rec.width, rec.y + rec.height - MOUSE_SCALE_MARK_SIZE }, RED);
             }
 
         EndDrawing();

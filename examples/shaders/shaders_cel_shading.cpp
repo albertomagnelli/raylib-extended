@@ -49,9 +49,9 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - cel shading");
 
     Camera camera = {};
-    camera.position = Vector3{ 9.0f, 6.0f, 9.0f };
-    camera.target = Vector3{ 0.0f, 1.0f, 0.0f };
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    camera.position = glm::vec3{ 9.0f, 6.0f, 9.0f };
+    camera.target = glm::vec3{ 0.0f, 1.0f, 0.0f };
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -82,7 +82,7 @@ int main()
     // Single directional white light, angled so toon bands are visible on the model sides.
     // Spins opposite to CAMERA_ORBITAL (0.5 rad/s) so lighting changes as you watch.
     Light lights[MAX_LIGHTS] = {};
-    lights[0] = CreateLight(LIGHT_DIRECTIONAL, Vector3{ 50.0f, 50.0f, 50.0f }, Vector3{}, WHITE, celShader);
+    lights[0] = CreateLight(LIGHT_DIRECTIONAL, glm::vec3{ 50.0f, 50.0f, 50.0f }, glm::vec3{}, WHITE, celShader);
 
     bool celEnabled = true;
     bool outlineEnabled = true;
@@ -118,7 +118,7 @@ int main()
 
         // Spin light opposite to CAMERA_ORBITAL (0.5 rad/s), angled 45 degrees off vertical
         const float t = static_cast<float>(GetTime());
-        lights[0].position = Vector3{ sinf(-t*0.3f)*5.0f, 5.0f, cosf(-t*0.3f)*5.0f };
+        lights[0].position = glm::vec3{ sinf(-t*0.3f)*5.0f, 5.0f, cosf(-t*0.3f)*5.0f };
 
         for (int i = 0; i < MAX_LIGHTS; i++) UpdateLightValues(celShader, lights[i]);
         //----------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ int main()
 
                     model.materials[0].shader = outlineShader;
 
-                    DrawModel(model, Vector3{}, 0.75f, WHITE);
+                    DrawModel(model, glm::vec3{}, 0.75f, WHITE);
 
                     if (celEnabled) model.materials[0].shader = celShader; // Apply cel shader to model
                     else model.materials[0].shader = defaultShader; // Apply default shader to model
@@ -149,7 +149,7 @@ int main()
                     rlSetCullFace(RL_CULL_FACE_BACK);
                 }
 
-                DrawModel(model, Vector3{}, 0.75f, WHITE);
+                DrawModel(model, glm::vec3{}, 0.75f, WHITE);
                 DrawSphereEx(lights[0].position, 0.2f, 50, 50, YELLOW);  // Light position indicator
                 DrawGrid(10, 10.0f);
 

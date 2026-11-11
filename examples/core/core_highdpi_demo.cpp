@@ -63,7 +63,7 @@ int main()
         }
 
         const int currentMonitor = GetCurrentMonitor();
-        const Vector2 dpiScale = GetWindowScaleDPI();
+        const glm::vec2 dpiScale = GetWindowScaleDPI();
         cellSizePx = (static_cast<float>(cellSize))/dpiScale.x;
         //----------------------------------------------------------------------------------
 
@@ -107,8 +107,8 @@ int main()
             DrawTextCenter(TextFormat("Window is %d \"physical pixels\" wide", GetRenderWidth()), windowCenter, pixelGridDescY, 20, BLUE);
 
             constexpr const char *text = "Can you see this?";
-            const Vector2 size = MeasureTextEx(GetFontDefault(), text, 20, 3);
-            const Vector2 pos = Vector2{ GetScreenWidth() - size.x - 5, GetScreenHeight() - size.y - 5 };
+            const glm::vec2 size = MeasureTextEx(GetFontDefault(), text, 20, 3);
+            const glm::vec2 pos = glm::vec2{ GetScreenWidth() - size.x - 5, GetScreenHeight() - size.y - 5 };
             DrawTextEx(GetFontDefault(), text, pos, 20, 3, LIGHTGRAY);
 
         EndDrawing();
@@ -128,7 +128,7 @@ int main()
 //------------------------------------------------------------------------------------
 static void DrawTextCenter(std::string_view text, int x, int y, int fontSize, Color color)
 {
-    const Vector2 size = MeasureTextEx(GetFontDefault(), text, static_cast<float>(fontSize), 3);
-    const Vector2 pos = Vector2{ x - size.x/2, y - size.y/2 };
+    const glm::vec2 size = MeasureTextEx(GetFontDefault(), text, static_cast<float>(fontSize), 3);
+    const glm::vec2 pos = glm::vec2{ x - size.x/2, y - size.y/2 };
     DrawTextEx(GetFontDefault(), text, pos, static_cast<float>(fontSize), 3, color);
 }

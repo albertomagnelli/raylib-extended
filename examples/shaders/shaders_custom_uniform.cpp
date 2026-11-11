@@ -44,9 +44,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 8.0f, 8.0f, 8.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 1.5f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 8.0f, 8.0f, 8.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 1.5f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -54,7 +54,7 @@ int main()
     const Texture2D texture = LoadTexture("resources/models/barracks_diffuse.png");   // Load model texture (diffuse map)
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;                     // Set model diffuse texture
 
-    const Vector3 position = { 0.0f, 0.0f, 0.0f };                                    // Set model position
+    const glm::vec3 position = { 0.0f, 0.0f, 0.0f };                                  // Set model position
 
     // Load postprocessing shader
     // NOTE: Defining 0 (NULL) for vertex shader forces usage of internal default vertex shader
@@ -79,7 +79,7 @@ int main()
         //----------------------------------------------------------------------------------
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
-        const Vector2 mousePosition = GetMousePosition();
+        const glm::vec2 mousePosition = GetMousePosition();
 
         swirlCenter[0] = mousePosition.x;
         swirlCenter[1] = screenHeight - mousePosition.y;
@@ -107,7 +107,7 @@ int main()
             // Enable shader using the custom uniform
             BeginShaderMode(shader);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, Vector2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, glm::vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw some 2d text over drawn texture

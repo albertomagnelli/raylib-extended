@@ -46,8 +46,8 @@ int main()
     //SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);// | FLAG_WINDOW_TRANSPARENT);
     InitWindow(screenWidth, screenHeight, "raylib [core] example - window flags");
 
-    Vector2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
-    Vector2 ballSpeed = { 5.0f, 4.0f };
+    glm::vec2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    glm::vec2 ballSpeed = { 5.0f, 4.0f };
     constexpr float ballRadius = 20;
 
     int framesCounter = 0;

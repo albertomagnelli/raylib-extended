@@ -44,9 +44,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 4.0f, 4.0f, 4.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 1.0f, -1.0f };     // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 4.0f, 4.0f, 4.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 1.0f, -1.0f };   // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -60,7 +60,7 @@ int main()
     model.materials[0].shader = shader;                 // Set shader effect to 3d model
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture; // Bind texture to model
 
-    const Vector3 position = { 0.0f, 0.0f, 0.0f };    // Set model position
+    const glm::vec3 position = { 0.0f, 0.0f, 0.0f };  // Set model position
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second

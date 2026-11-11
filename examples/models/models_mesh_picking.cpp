@@ -35,9 +35,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 20.0f, 20.0f, 20.0f }; // Camera position
-    camera.target = Vector3{ 0.0f, 8.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.6f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 20.0f, 20.0f, 20.0f }; // Camera position
+    camera.target = glm::vec3{ 0.0f, 8.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.6f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -47,24 +47,24 @@ int main()
     const Texture2D texture = LoadTexture("resources/models/obj/turret_diffuse.png"); // Load model texture
     tower.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;            // Set model diffuse texture
 
-    const Vector3 towerPos = { 0.0f, 0.0f, 0.0f };                        // Set model position
+    const glm::vec3 towerPos = { 0.0f, 0.0f, 0.0f };                      // Set model position
     const BoundingBox towerBBox = GetMeshBoundingBox(tower.meshes[0]);    // Get mesh bounding box
 
     // Ground quad
-    const Vector3 g0 = Vector3{ -50.0f, 0.0f, -50.0f };
-    const Vector3 g1 = Vector3{ -50.0f, 0.0f,  50.0f };
-    const Vector3 g2 = Vector3{  50.0f, 0.0f,  50.0f };
-    const Vector3 g3 = Vector3{  50.0f, 0.0f, -50.0f };
+    const glm::vec3 g0 = glm::vec3{ -50.0f, 0.0f, -50.0f };
+    const glm::vec3 g1 = glm::vec3{ -50.0f, 0.0f,  50.0f };
+    const glm::vec3 g2 = glm::vec3{  50.0f, 0.0f,  50.0f };
+    const glm::vec3 g3 = glm::vec3{  50.0f, 0.0f, -50.0f };
 
     // Test triangle
-    const Vector3 ta = Vector3{ -25.0f, 0.5f, 0.0f };
-    const Vector3 tb = Vector3{ -4.0f, 2.5f, 1.0f };
-    const Vector3 tc = Vector3{ -8.0f, 6.5f, 0.0f };
+    const glm::vec3 ta = glm::vec3{ -25.0f, 0.5f, 0.0f };
+    const glm::vec3 tb = glm::vec3{ -4.0f, 2.5f, 1.0f };
+    const glm::vec3 tc = glm::vec3{ -8.0f, 6.5f, 0.0f };
 
-    Vector3 bary = { 0.0f, 0.0f, 0.0f };
+    glm::vec3 bary = { 0.0f, 0.0f, 0.0f };
 
     // Test sphere
-    const Vector3 sp = Vector3{ -30.0f, 5.0f, 5.0f };
+    const glm::vec3 sp = glm::vec3{ -30.0f, 5.0f, 5.0f };
     constexpr float sr = 4.0f;
 
     SetTargetFPS(60);                   // Set our game to run at 60 frames-per-second
@@ -190,7 +190,7 @@ int main()
                     DrawCube(collision.point, 0.3f, 0.3f, 0.3f, cursorColor);
                     DrawCubeWires(collision.point, 0.3f, 0.3f, 0.3f, RED);
 
-                    Vector3 normalEnd;
+                    glm::vec3 normalEnd;
                     normalEnd.x = collision.point.x + collision.normal.x;
                     normalEnd.y = collision.point.y + collision.normal.y;
                     normalEnd.z = collision.point.z + collision.normal.z;

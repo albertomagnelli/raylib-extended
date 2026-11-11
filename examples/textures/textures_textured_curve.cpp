@@ -33,13 +33,13 @@ static bool showCurve = false;
 static float curveWidth = 50;
 static int curveSegments = 24;
 
-static Vector2 curveStartPosition = {};
-static Vector2 curveStartPositionTangent = {};
+static glm::vec2 curveStartPosition = {};
+static glm::vec2 curveStartPositionTangent = {};
 
-static Vector2 curveEndPosition = {};
-static Vector2 curveEndPositionTangent = {};
+static glm::vec2 curveEndPosition = {};
+static glm::vec2 curveEndPositionTangent = {};
 
-static Vector2 *curveSelectedPoint = nullptr;
+static glm::vec2 *curveSelectedPoint = nullptr;
 
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
@@ -64,11 +64,11 @@ int main()
     SetTextureFilter(texRoad, TEXTURE_FILTER_BILINEAR);
 
     // Setup the curve
-    curveStartPosition = Vector2{ 80, 100 };
-    curveStartPositionTangent = Vector2{ 100, 300 };
+    curveStartPosition = glm::vec2{ 80, 100 };
+    curveStartPositionTangent = glm::vec2{ 100, 300 };
 
-    curveEndPosition = Vector2{ 700, 350 };
-    curveEndPositionTangent = Vector2{ 600, 100 };
+    curveEndPosition = glm::vec2{ 700, 350 };
+    curveEndPositionTangent = glm::vec2{ 600, 100 };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ int main()
         if (curveSelectedPoint != nullptr) *curveSelectedPoint = ((*curveSelectedPoint) + (GetMouseDelta()));
 
         // The mouse is down, and nothing was selected, so see if anything was picked
-        const Vector2 mouse = GetMousePosition();
+        const glm::vec2 mouse = GetMousePosition();
         if (CheckCollisionPointCircle(mouse, curveStartPosition, 6)) curveSelectedPoint = &curveStartPosition;
         else if (CheckCollisionPointCircle(mouse, curveStartPositionTangent, 6)) curveSelectedPoint = &curveStartPositionTangent;
         else if (CheckCollisionPointCircle(mouse, curveEndPosition, 6)) curveSelectedPoint = &curveEndPosition;
@@ -160,14 +160,14 @@ static void DrawTexturedCurve(void)
 {
     const float step = 1.0f/curveSegments;
 
-    Vector2 previous = curveStartPosition;
-    Vector2 previousTangent = {};
+    glm::vec2 previous = curveStartPosition;
+    glm::vec2 previousTangent = {};
     float previousV = 0;
 
     // We can't compute a tangent for the first point, so we need to reuse the tangent from the first segment
     bool tangentSet = false;
 
-    Vector2 current = {};
+    glm::vec2 current = {};
     float t = 0.0f;
 
     for (int i = 1; i <= curveSegments; i++)
@@ -184,10 +184,10 @@ static void DrawTexturedCurve(void)
         current.x = a*curveStartPosition.x + b*curveStartPositionTangent.x + c*curveEndPositionTangent.x + d*curveEndPosition.x;
 
         // Vector from previous to current
-        const Vector2 delta = { current.x - previous.x, current.y - previous.y };
+        const glm::vec2 delta = { current.x - previous.x, current.y - previous.y };
 
         // The right hand normal to the delta vector
-        const Vector2 normal = glm::normalize(Vector2{ -delta.y, delta.x });
+        const glm::vec2 normal = glm::normalize(glm::vec2{ -delta.y, delta.x });
 
         // The v texture coordinate of the segment (add up the length of all the segments so far)
         const float v = previousV + glm::length(delta) / static_cast<float>(texRoad.height * 2);
@@ -200,11 +200,11 @@ static void DrawTexturedCurve(void)
         }
 
         // Extend out the normals from the previous and current points to get the quad for this segment
-        const Vector2 prevPosNormal = ((previous) + (((previousTangent) * (curveWidth))));
-        const Vector2 prevNegNormal = ((previous) + (((previousTangent) * (-curveWidth))));
+        const glm::vec2 prevPosNormal = ((previous) + (((previousTangent) * (curveWidth))));
+        const glm::vec2 prevNegNormal = ((previous) + (((previousTangent) * (-curveWidth))));
 
-        const Vector2 currentPosNormal = ((current) + (((normal) * (curveWidth))));
-        const Vector2 currentNegNormal = ((current) + (((normal) * (-curveWidth))));
+        const glm::vec2 currentPosNormal = ((current) + (((normal) * (curveWidth))));
+        const glm::vec2 currentNegNormal = ((current) + (((normal) * (-curveWidth))));
 
         // Draw the segment as a quad
         rlSetTexture(texRoad.id);

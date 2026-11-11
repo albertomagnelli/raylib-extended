@@ -26,7 +26,7 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct Player {
-    Vector2 position;
+    glm::vec2 position;
     float speed;
     bool canJump;
 } Player;
@@ -60,7 +60,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera platformer");
 
     Player player = {};
-    player.position = Vector2{ 400, 280 };
+    player.position = glm::vec2{ 400, 280 };
     player.speed = 0;
     player.canJump = false;
     EnvItem envItems[] = {
@@ -75,7 +75,7 @@ int main()
 
     Camera2D camera = {};
     camera.target = player.position;
-    camera.offset = Vector2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
+    camera.offset = glm::vec2{ GetRenderWidth()/2.0f, GetRenderHeight()/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
@@ -119,7 +119,7 @@ int main()
         if (IsKeyPressed(KEY_R))
         {
             camera.zoom = 1.0f;
-            player.position = Vector2{ 400, 280 };
+            player.position = glm::vec2{ 400, 280 };
         }
 
         if (IsKeyPressed(KEY_C)) cameraOption = (cameraOption + 1)%cameraUpdatersLength;
@@ -180,7 +180,7 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
     for (int i = 0; i < envItemsLength; i++)
     {
         EnvItem *ei = envItems + i;
-        Vector2 *p = &(player->position);
+        glm::vec2 *p = &(player->position);
         if (ei->blocking &&
             ei->rect.x <= p->x &&
             ei->rect.x + ei->rect.width >= p->x &&
@@ -205,14 +205,14 @@ void UpdatePlayer(Player *player, EnvItem *envItems, int envItemsLength, float d
 
 void UpdateCameraCenter(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
 {
-    camera->offset = Vector2{ width/2.0f, height/2.0f };
+    camera->offset = glm::vec2{ width/2.0f, height/2.0f };
     camera->target = player->position;
 }
 
 void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
 {
     camera->target = player->position;
-    camera->offset = Vector2{ width/2.0f, height/2.0f };
+    camera->offset = glm::vec2{ width/2.0f, height/2.0f };
     float minX = 1000, minY = 1000, maxX = -1000, maxY = -1000;
 
     for (int i = 0; i < envItemsLength; i++)
@@ -224,8 +224,8 @@ void UpdateCameraCenterInsideMap(Camera2D *camera, Player *player, EnvItem *envI
         maxY = fmaxf(ei->rect.y + ei->rect.height, maxY);
     }
 
-    const Vector2 max = GetWorldToScreen2D(Vector2{ maxX, maxY }, *camera);
-    const Vector2 min = GetWorldToScreen2D(Vector2{ minX, minY }, *camera);
+    const glm::vec2 max = GetWorldToScreen2D(glm::vec2{ maxX, maxY }, *camera);
+    const glm::vec2 min = GetWorldToScreen2D(glm::vec2{ minX, minY }, *camera);
 
     if (max.x < width) camera->offset.x = width - (max.x - static_cast<float>(width)/2);
     if (max.y < height) camera->offset.y = height - (max.y - static_cast<float>(height)/2);
@@ -239,8 +239,8 @@ void UpdateCameraCenterSmoothFollow(Camera2D *camera, Player *player, EnvItem *e
     static constexpr float minEffectLength = 10;
     static constexpr float fractionSpeed = 0.8f;
 
-    camera->offset = Vector2{ width/2.0f, height/2.0f };
-    const Vector2 diff = ((player->position) - (camera->target));
+    camera->offset = glm::vec2{ width/2.0f, height/2.0f };
+    const glm::vec2 diff = ((player->position) - (camera->target));
     const float length = glm::length(diff);
 
     if (length > minEffectLength)
@@ -256,7 +256,7 @@ void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *env
     static int eveningOut = false;
     static float evenOutTarget;
 
-    camera->offset = Vector2{ width/2.0f, height/2.0f };
+    camera->offset = glm::vec2{ width/2.0f, height/2.0f };
     camera->target.x = player->position.x;
 
     if (eveningOut)
@@ -294,11 +294,11 @@ void UpdateCameraEvenOutOnLanding(Camera2D *camera, Player *player, EnvItem *env
 
 void UpdateCameraPlayerBoundsPush(Camera2D *camera, Player *player, EnvItem *envItems, int envItemsLength, float delta, int width, int height)
 {
-    static const Vector2 bbox = { 0.2f, 0.2f };
+    static const glm::vec2 bbox = { 0.2f, 0.2f };
 
-    const Vector2 bboxWorldMin = GetScreenToWorld2D(Vector2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height }, *camera);
-    const Vector2 bboxWorldMax = GetScreenToWorld2D(Vector2{ (1 + bbox.x)*0.5f*width, (1 + bbox.y)*0.5f*height }, *camera);
-    camera->offset = Vector2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height };
+    const glm::vec2 bboxWorldMin = GetScreenToWorld2D(glm::vec2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height }, *camera);
+    const glm::vec2 bboxWorldMax = GetScreenToWorld2D(glm::vec2{ (1 + bbox.x)*0.5f*width, (1 + bbox.y)*0.5f*height }, *camera);
+    camera->offset = glm::vec2{ (1 - bbox.x)*0.5f*width, (1 - bbox.y)*0.5f*height };
 
     if (player->position.x < bboxWorldMin.x) camera->target.x = player->position.x;
     if (player->position.y < bboxWorldMin.y) camera->target.y = player->position.y;

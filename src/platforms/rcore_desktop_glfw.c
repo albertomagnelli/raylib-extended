@@ -230,7 +230,7 @@ void ToggleFullscreen(void)
         // NOTE: On Wayland, GLFW_SCALE_FRAMEBUFFER handles scaling, skip manual resize
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
-            const Vector2 scaleDpi = GetWindowScaleDPI();
+            const glm::vec2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = static_cast<unsigned int>(roundf(CORE.Window.screen.width*scaleDpi.x));
             CORE.Window.screen.height = static_cast<unsigned int>(roundf(CORE.Window.screen.height*scaleDpi.y));
         }
@@ -318,7 +318,7 @@ void ToggleBorderlessWindowed(void)
                 // NOTE: On Wayland, GLFW_SCALE_FRAMEBUFFER handles scaling, skip manual resize
                 if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
                 {
-                    const Vector2 scaleDpi = GetWindowScaleDPI();
+                    const glm::vec2 scaleDpi = GetWindowScaleDPI();
                     CORE.Window.screen.width = static_cast<unsigned int>(roundf(CORE.Window.screen.width*scaleDpi.x));
                     CORE.Window.screen.height = static_cast<unsigned int>(roundf(CORE.Window.screen.height*scaleDpi.y));
                 }
@@ -728,7 +728,7 @@ void SetWindowMinSize(int width, int height)
     CORE.Window.screenMin.width = width;
     CORE.Window.screenMin.height = height;
 
-    Vector2 scaleDpi = { 1.0f, 1.0f };
+    glm::vec2 scaleDpi = { 1.0f, 1.0f };
 #if !defined(__APPLE__)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)) scaleDpi = GetWindowScaleDPI();
 #endif
@@ -747,7 +747,7 @@ void SetWindowMaxSize(int width, int height)
     CORE.Window.screenMax.width = width;
     CORE.Window.screenMax.height = height;
 
-    Vector2 scaleDpi = { 1.0f, 1.0f };
+    glm::vec2 scaleDpi = { 1.0f, 1.0f };
 #if !defined(__APPLE__)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)) scaleDpi = GetWindowScaleDPI();
 #endif
@@ -769,7 +769,7 @@ void SetWindowSize(int width, int height)
 #if !defined(__APPLE__)
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND))
     {
-        const Vector2 scaleDpi = GetWindowScaleDPI();
+        const glm::vec2 scaleDpi = GetWindowScaleDPI();
         width = static_cast<int>(roundf(static_cast<float>(width)*scaleDpi.x));
         height = static_cast<int>(roundf(static_cast<float>(height)*scaleDpi.y));
     }
@@ -937,9 +937,9 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-Vector2 GetMonitorPosition(int monitor)
+glm::vec2 GetMonitorPosition(int monitor)
 {
-    Vector2 position{};
+    glm::vec2 position{};
     
     int monitorCount = 0;
     GLFWmonitor **monitors = glfwGetMonitors(&monitorCount);
@@ -950,7 +950,7 @@ Vector2 GetMonitorPosition(int monitor)
         int y = 0;
         glfwGetMonitorPos(monitors[monitor], &x, &y);
 
-        position = Vector2{ static_cast<float>(x), static_cast<float>(y) };
+        position = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
     }
     else TRACELOG(LOG_WARNING, "GLFW: Failed to find selected monitor");
 
@@ -1059,20 +1059,20 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-Vector2 GetWindowPosition(void)
+glm::vec2 GetWindowPosition(void)
 {
-    Vector2 position{};
+    glm::vec2 position{};
     
     glfwGetWindowPos(platform.handle, &CORE.Window.position.x, &CORE.Window.position.y);
-    position = Vector2{ static_cast<float>(CORE.Window.position.x), static_cast<float>(CORE.Window.position.y) };
+    position = glm::vec2{ static_cast<float>(CORE.Window.position.x), static_cast<float>(CORE.Window.position.y) };
 
     return position;
 }
 
 // Get window scale DPI factor for current monitor
-Vector2 GetWindowScaleDPI(void)
+glm::vec2 GetWindowScaleDPI(void)
 {
-    Vector2 scale = { 1.0f, 1.0f };
+    glm::vec2 scale = { 1.0f, 1.0f };
     
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI) && !FLAG_IS_SET(CORE.Window.flags, FLAG_FULLSCREEN_MODE))
         glfwGetWindowContentScale(platform.handle, &scale.x, &scale.y);
@@ -1293,7 +1293,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    const Vector2 scale = CORE.Input.Mouse.scale;
+    const glm::vec2 scale = CORE.Input.Mouse.scale;
     CORE.Input.Mouse.currentPosition.x = roundf(static_cast<float>(x)/scale.x);
     CORE.Input.Mouse.currentPosition.y = roundf(static_cast<float>(y)/scale.y);
 
@@ -1350,7 +1350,7 @@ void PollInputEvents(void)
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = glm::vec2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1359,7 +1359,7 @@ void PollInputEvents(void)
     for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.previousTouchState[i] = CORE.Input.Touch.currentTouchState[i];
 
     // Reset touch positions
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
 
     // Map touch position to mouse position for convenience
     // WARNING: If the target desktop device supports touch screen, this behaviour should be reviewed!
@@ -1813,13 +1813,13 @@ int InitPlatform(void)
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
             // Set screen size to logical pixel size, considering content scaling
-            const Vector2 scaleDpi = GetWindowScaleDPI();
+            const glm::vec2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.render.width = static_cast<int>(roundf(CORE.Window.screen.width*scaleDpi.x));
             CORE.Window.render.height = static_cast<int>(roundf(CORE.Window.screen.height*scaleDpi.y));
             //TRACELOG(LOG_INFO, "DPI SCALING: %.2f, %.2f", scaleDpi.x, scaleDpi.y);
 
             // Screen scaling matrix is required in case desired screen area is different from display area
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleDpi.x, scaleDpi.y, 1.0f});
 
             // NOTE: On APPLE platforms system manage window and input scaling
             // Framebuffer scaling is activated with: glfwWindowHint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE);
@@ -2025,7 +2025,7 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
         // Set screen size to render size (physical pixel size)
         CORE.Window.screen.width = width;
         CORE.Window.screen.height = height;
-        CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{1.0f, 1.0f, 1.0f});
+        CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{1.0f, 1.0f, 1.0f});
         SetMouseScale(1.0f, 1.0f);
 
         // On Wayland with GLFW_SCALE_FRAMEBUFFER, the framebuffer is still scaled in fullscreen, use logical window size as screen and apply screenScale
@@ -2043,7 +2043,7 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
                 float scaleX = static_cast<float>(width)/winWidth;
                 float scaleY = static_cast<float>(height)/winHeight;
 
-                CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleX, scaleY, 1.0f});
+                CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleX, scaleY, 1.0f});
             }
         }
 #endif
@@ -2054,10 +2054,10 @@ static void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
         if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
         {
             // Set screen size to logical pixel size, considering content scaling
-            const Vector2 scaleDpi = GetWindowScaleDPI();
+            const glm::vec2 scaleDpi = GetWindowScaleDPI();
             CORE.Window.screen.width = static_cast<int>(roundf(static_cast<float>(width)/scaleDpi.x));
             CORE.Window.screen.height = static_cast<int>(roundf(static_cast<float>(height)/scaleDpi.y));
-            CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleDpi.x, scaleDpi.y, 1.0f});
+            CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleDpi.x, scaleDpi.y, 1.0f});
 #if !defined(__APPLE__) && !defined(_GLFW_WAYLAND)
             // On macOS and Linux-Wayland, mouse coords are already in logical space
             SetMouseScale(1.0f/scaleDpi.x, 1.0f/scaleDpi.y);
@@ -2086,7 +2086,7 @@ static void WindowContentScaleCallback(GLFWwindow *window, float scalex, float s
 
     // NOTE: On APPLE platforms system should manage window/input scaling and also framebuffer scaling
     // Framebuffer scaling is activated with: glfwWindowHint(GLFW_SCALE_FRAMEBUFFER, GLFW_TRUE);
-    CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scalex, scaley, 1.0f});
+    CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scalex, scaley, 1.0f});
 
 #if !defined(__APPLE__) && !defined(_GLFW_WAYLAND)
     // On macOS and Linux-Wayland, mouse coords are already in logical space

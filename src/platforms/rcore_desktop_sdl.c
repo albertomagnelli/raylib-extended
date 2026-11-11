@@ -1003,7 +1003,7 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-Vector2 GetMonitorPosition(int monitor)
+glm::vec2 GetMonitorPosition(int monitor)
 {
 #if defined(USING_VERSION_SDL3) // SDL3 Migration: Monitor is an id instead of index now, returns 0 on failure
     if (SDL_GetDisplayProperties(monitor) != 0) // Returns 0 on failure, so a value other than zero indicates that the monitor id is valid
@@ -1019,12 +1019,12 @@ Vector2 GetMonitorPosition(int monitor)
         if (SDL_GetDisplayUsableBounds(monitor, &displayBounds) == 0)
     #endif
         {
-            return Vector2{ static_cast<float>(displayBounds.x), static_cast<float>(displayBounds.y) };
+            return glm::vec2{ static_cast<float>(displayBounds.x), static_cast<float>(displayBounds.y) };
         }
         else TRACELOG(LOG_WARNING, "SDL: Failed to get selected display usable bounds");
     }
     else TRACELOG(LOG_WARNING, "SDL: Failed to find selected monitor");
-    return Vector2{ 0.0f, 0.0f };
+    return glm::vec2{ 0.0f, 0.0f };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -1150,20 +1150,20 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-Vector2 GetWindowPosition(void)
+glm::vec2 GetWindowPosition(void)
 {
     int x = 0;
     int y = 0;
 
     SDL_GetWindowPosition(platform.window, &x, &y);
 
-    return Vector2{ static_cast<float>(x), static_cast<float>(y) };
+    return glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Get window scale DPI factor for current monitor
-Vector2 GetWindowScaleDPI(void)
+glm::vec2 GetWindowScaleDPI(void)
 {
-    Vector2 scale = { 1.0f, 1.0f };
+    glm::vec2 scale = { 1.0f, 1.0f };
 
 #if defined(USING_VERSION_SDL3)
     // NOTE: SDL_GetWindowDisplayScale added on SDL3
@@ -1408,7 +1408,7 @@ void SetMousePosition(int x, int y)
 {
     SDL_WarpMouseInWindow(platform.window, x, y);
 
-    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -1446,8 +1446,8 @@ void PollInputEvents(void)
     // Register previous mouse position
     if (CORE.Input.Mouse.cursorLocked)
     {
-        CORE.Input.Mouse.currentPosition = Vector2{ 0.0f, 0.0f };
-        CORE.Input.Mouse.previousPosition = Vector2{ 0.0f, 0.0f };
+        CORE.Input.Mouse.currentPosition = glm::vec2{ 0.0f, 0.0f };
+        CORE.Input.Mouse.previousPosition = glm::vec2{ 0.0f, 0.0f };
     }
     else CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
 

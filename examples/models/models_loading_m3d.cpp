@@ -37,15 +37,15 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 1.5f, 1.5f, 1.5f };    // Camera position
-    camera.target = Vector3{ 0.0f, 0.4f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 1.5f, 1.5f, 1.5f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.4f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     // Load model
     const Model model = LoadModel("resources/models/m3d/cesium_man.m3d");             // Load the animated model mesh and basic data
-    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const glm::vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
 
     // Load animation data
     int animCount = 0;

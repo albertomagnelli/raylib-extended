@@ -50,7 +50,7 @@ int main()
 
             // Circle shapes and lines
             DrawCircle(screenWidth/5, 120, 35, DARKBLUE);
-            DrawCircleGradient(Vector2{ screenWidth/5.0f, 220.0f }, 60, GREEN, SKYBLUE);
+            DrawCircleGradient(glm::vec2{ screenWidth/5.0f, 220.0f }, 60, GREEN, SKYBLUE);
             DrawCircleLines(screenWidth/5, 340, 80, DARKBLUE);
             DrawEllipse(screenWidth/5, 120, 25, 20, YELLOW);
             DrawEllipseLines(screenWidth/5, 120, 30, 25, YELLOW);
@@ -61,16 +61,16 @@ int main()
             DrawRectangleLines(screenWidth/4*2 - 40, 320, 80, 60, ORANGE);  // NOTE: Uses QUADS internally, not lines
 
             // Triangle shapes and lines
-            DrawTriangle(Vector2{ screenWidth/4.0f *3.0f, 80.0f },
-                         Vector2{ screenWidth/4.0f *3.0f - 60.0f, 150.0f },
-                         Vector2{ screenWidth/4.0f *3.0f + 60.0f, 150.0f }, VIOLET);
+            DrawTriangle(glm::vec2{ screenWidth/4.0f *3.0f, 80.0f },
+                         glm::vec2{ screenWidth/4.0f *3.0f - 60.0f, 150.0f },
+                         glm::vec2{ screenWidth/4.0f *3.0f + 60.0f, 150.0f }, VIOLET);
 
-            DrawTriangleLines(Vector2{ screenWidth/4.0f*3.0f, 160.0f },
-                              Vector2{ screenWidth/4.0f*3.0f - 20.0f, 230.0f },
-                              Vector2{ screenWidth/4.0f*3.0f + 20.0f, 230.0f }, DARKBLUE);
+            DrawTriangleLines(glm::vec2{ screenWidth/4.0f*3.0f, 160.0f },
+                              glm::vec2{ screenWidth/4.0f*3.0f - 20.0f, 230.0f },
+                              glm::vec2{ screenWidth/4.0f*3.0f + 20.0f, 230.0f }, DARKBLUE);
 
             // Polygon shapes and lines
-            const Vector2 polyCenter{ screenWidth/4.0f*3, 330.0f };
+            const glm::vec2 polyCenter{ screenWidth/4.0f*3, 330.0f };
             DrawPoly(polyCenter, 6, 80, rotation, BROWN);
             DrawPolyLines(polyCenter, 6, 90, rotation, BROWN);
             DrawPolyLinesEx(polyCenter, 6, 85, rotation, 6, BEIGE);

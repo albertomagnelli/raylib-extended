@@ -34,8 +34,8 @@ int main()
     // NOTE: Textures MUST be loaded after Window initialization (OpenGL context is required)
     const Texture2D nPatchTexture = LoadTexture("resources/ninepatch_button.png");
 
-    Vector2 mousePosition = {};
-    const Vector2 origin = { 0.0f, 0.0f };
+    glm::vec2 mousePosition = {};
+    const glm::vec2 origin = { 0.0f, 0.0f };
 
     // Position and size of the n-patches
     Rectangle dstRec1 = { 480.0f, 160.0f, 32.0f, 32.0f };

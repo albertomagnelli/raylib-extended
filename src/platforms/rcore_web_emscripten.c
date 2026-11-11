@@ -817,10 +817,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-Vector2 GetMonitorPosition(int monitor)
+glm::vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -874,22 +874,22 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-Vector2 GetWindowPosition(void)
+glm::vec2 GetWindowPosition(void)
 {
     // Browser window position, top-left corner relative to the physical screen origin, expressed in CSS logical pixels
     // NOTE: Returned position is relative to the current monitor where the browser window is located
-    Vector2 position = { 0, 0 };
+    glm::vec2 position = { 0, 0 };
     position.x = static_cast<float>(EM_ASM_INT( { return window.screenX; }, 0));
     position.y = static_cast<float>(EM_ASM_INT( { return window.screenY; }, 0));
     return position;
 }
 
 // Get current monitor device pixel ratio
-Vector2 GetWindowScaleDPI(void)
+glm::vec2 GetWindowScaleDPI(void)
 {
     // Get device pixel ratio
     // NOTE: Returned scale is relative to the current monitor where the browser window is located
-    Vector2 scale = { 1.0f, 1.0f };
+    glm::vec2 scale = { 1.0f, 1.0f };
     scale.x = static_cast<float>(EM_ASM_DOUBLE( { return window.devicePixelRatio; } ));
     scale.y = scale.x;
     return scale;
@@ -1213,7 +1213,7 @@ void PollInputEvents(void)
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = glm::vec2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1224,7 +1224,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
 
     // Get number of gamepads connected
     int numGamepads = 0;
@@ -1495,7 +1495,7 @@ static EM_BOOL EmscriptenResizeCallback(int eventType, const EmscriptenUiEvent *
     // Set current screen size
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
-        Vector2 windowScaleDPI = GetWindowScaleDPI();
+        glm::vec2 windowScaleDPI = GetWindowScaleDPI();
 
         CORE.Window.screen.width = (unsigned int)(width/windowScaleDPI.x);
         CORE.Window.screen.height = (unsigned int)(height/windowScaleDPI.y);
@@ -1694,7 +1694,7 @@ static EM_BOOL EmscriptenMouseCallback(int eventType, const EmscriptenMouseEvent
         case EMSCRIPTEN_EVENT_MOUSELEAVE:
         {
             CORE.Input.Mouse.cursorOnScreen = false;
-            CORE.Input.Mouse.currentPosition = Vector2{ 0 };
+            CORE.Input.Mouse.currentPosition = glm::vec2{ 0 };
         } break;
         case EMSCRIPTEN_EVENT_MOUSEDOWN:
         {
@@ -1866,7 +1866,7 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
         CORE.Input.Touch.pointId[i] = touchEvent->touches[i].identifier;
 
         // Register touch points position
-        CORE.Input.Touch.position[i] = Vector2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
+        CORE.Input.Touch.position[i] = glm::vec2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
 
         // Normalize gestureEvent.position[x] for CORE.Window.screen.width and CORE.Window.screen.height
         CORE.Input.Touch.position[i].x *= (static_cast<float>(GetScreenWidth())/static_cast<float>(canvasWidth));

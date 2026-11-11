@@ -86,13 +86,13 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 5.0f, 2.0f, 5.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 2.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector
+    camera.position = glm::vec3{ 5.0f, 2.0f, 5.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    const Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
+    const glm::vec3 cubePosition = { 0.0f, 0.0f, 0.0f };
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
 
@@ -125,7 +125,7 @@ int main()
         BeginDrawing();
             ClearBackground(RAYWHITE);
             BeginShaderMode(distortion);
-                DrawTexturePro(target.texture, sourceRec, destRec, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
+                DrawTexturePro(target.texture, sourceRec, destRec, glm::vec2{ 0.0f, 0.0f }, 0.0f, WHITE);
             EndShaderMode();
             DrawFPS(10, 10);
         EndDrawing();

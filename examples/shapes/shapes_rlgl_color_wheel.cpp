@@ -46,9 +46,9 @@ int main()
     float value = 1.0f;
 
     // The center of the screen
-    const Vector2 center = { static_cast<float>(screenWidth)/2.0f, static_cast<float>(screenHeight)/2.0f };
+    const glm::vec2 center = { static_cast<float>(screenWidth)/2.0f, static_cast<float>(screenHeight)/2.0f };
     // The location of the color wheel
-    Vector2 circlePosition = center;
+    glm::vec2 circlePosition = center;
 
     // The currently selected color
     Color color = { 255, 255, 255, 255 };
@@ -78,7 +78,7 @@ int main()
         triangleCount = static_cast<unsigned int>(Clamp(static_cast<float>(triangleCount) + wheel, static_cast<float>(pointsMin), static_cast<float>(pointsMax)));
 
         const Rectangle sliderRectangle = { 42.0f, 16.0f + 64.0f + 45.0f, 64.0f, 16.0f };
-        const Vector2 mousePosition = GetMousePosition();
+        const glm::vec2 mousePosition = GetMousePosition();
 
         // Checks if the user is hovering over the value slider
         const bool sliderHover = (mousePosition.x >= sliderRectangle.x && mousePosition.y >= sliderRectangle.y && mousePosition.x < sliderRectangle.x + sliderRectangle.width && mousePosition.y < sliderRectangle.y + sliderRectangle.height);
@@ -103,7 +103,7 @@ int main()
             }
             else
             {
-                circlePosition = ((((((circlePosition) - (center))) * (Vector2{ 1.025f, 1.025f }))) + (center));
+                circlePosition = ((((((circlePosition) - (center))) * (glm::vec2{ 1.025f, 1.025f }))) + (center));
             }
         }
 
@@ -118,15 +118,15 @@ int main()
             }
             else
             {
-                circlePosition = ((((((circlePosition) - (center))) * (Vector2{ 0.975f, 0.975f }))) + (center));
+                circlePosition = ((((((circlePosition) - (center))) * (glm::vec2{ 0.975f, 0.975f }))) + (center));
             }
 
             const float distance = glm::distance(center, circlePosition)/pointScale;
-            const float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
+            const float angle = ((Vector2Angle(glm::vec2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
 
             if (distance > 1.0f)
             {
-                circlePosition = ((Vector2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI*2.0f))*pointScale }) + (center));
+                circlePosition = ((glm::vec2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI*2.0f))*pointScale }) + (center));
             }
         }
 
@@ -156,8 +156,8 @@ int main()
 
             const float distance = glm::distance(center, circlePosition)/pointScale;
 
-            const float angle = ((Vector2Angle(Vector2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
-            if (settingColor && distance > 1.0f) circlePosition = ((Vector2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI* 2.0f))*pointScale }) + (center));
+            const float angle = ((Vector2Angle(glm::vec2{ 0.0f, -pointScale }, ((center) - (circlePosition)))/PI + 1.0f)/2.0f);
+            if (settingColor && distance > 1.0f) circlePosition = ((glm::vec2{ sinf(angle*(PI*2.0f))*pointScale, -cosf(angle*(PI* 2.0f))*pointScale }) + (center));
 
             const float angle360 = angle*360.0f;
             const float valueActual = Clamp(distance, 0.0f, 1.0f);
@@ -178,13 +178,13 @@ int main()
             const float angleOffset = ((PI*2.0f)/static_cast<float>(triangleCount));
             const float angle = angleOffset*static_cast<float>(i);
             const float angleOffsetCalculated = (static_cast<float>(i) + 1)*angleOffset;
-            const Vector2 scale = Vector2{ pointScale, pointScale };
+            const glm::vec2 scale = glm::vec2{ pointScale, pointScale };
 
-            const Vector2 offset = ((Vector2{ sinf(angle), -cosf(angle) }) * (scale));
-            const Vector2 offset2 = ((Vector2{ sinf(angleOffsetCalculated), -cosf(angleOffsetCalculated) }) * (scale));
+            const glm::vec2 offset = ((glm::vec2{ sinf(angle), -cosf(angle) }) * (scale));
+            const glm::vec2 offset2 = ((glm::vec2{ sinf(angleOffsetCalculated), -cosf(angleOffsetCalculated) }) * (scale));
 
-            const Vector2 position = ((center) + (offset));
-            const Vector2 position2 = ((center) + (offset2));
+            const glm::vec2 position = ((center) + (offset));
+            const glm::vec2 position2 = ((center) + (offset2));
 
             const float angleNonRadian = (angle/(2.0f*PI))*360.0f;
             const float angleNonRadianOffset = (angleOffset/(2.0f*PI))*360.0f;
@@ -234,7 +234,7 @@ int main()
         DrawCircleLinesV(circlePosition, 4.0f, handleColor);
 
         // Draw the color in a preview, with a darkened outline.
-        DrawRectangleV(Vector2{ 8.0f, 8.0f }, Vector2{ 64.0f, 64.0f }, color);
+        DrawRectangleV(glm::vec2{ 8.0f, 8.0f }, glm::vec2{ 64.0f, 64.0f }, color);
         DrawRectangleLinesEx(Rectangle{ 8.0f, 8.0f, 64.0f, 64.0f }, 2.0f, ColorLerp(color, BLACK, 0.5f));
 
         // Draw current color as hex and decimal

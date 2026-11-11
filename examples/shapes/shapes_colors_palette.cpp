@@ -52,7 +52,7 @@ int main()
 
     int colorState[MAX_COLORS_COUNT] = {};           // Color state: 0-DEFAULT, 1-MOUSE_HOVER
 
-    Vector2 mousePoint = { 0.0f, 0.0f };
+    glm::vec2 mousePoint = { 0.0f, 0.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------

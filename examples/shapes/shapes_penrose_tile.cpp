@@ -29,7 +29,7 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct TurtleState {
-    Vector2 origin;
+    glm::vec2 origin;
     float angle;
 } TurtleState;
 
@@ -226,7 +226,7 @@ static void BuildProductionStep(PenroseLSystem *ls)
 // Draw penrose tile lines
 static void DrawPenroseLSystem(PenroseLSystem *ls)
 {
-    const Vector2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    const glm::vec2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
     TurtleState turtle = {
         .origin = {},
@@ -246,12 +246,12 @@ static void DrawPenroseLSystem(PenroseLSystem *ls)
         {
             for (int j = 0; j < repeats; j++)
             {
-                const Vector2 startPosWorld = turtle.origin;
+                const glm::vec2 startPosWorld = turtle.origin;
                 const float radAngle = DEG2RAD*turtle.angle;
                 turtle.origin.x += ls->drawLength*cosf(radAngle);
                 turtle.origin.y += ls->drawLength*sinf(radAngle);
-                const Vector2 startPosScreen = { startPosWorld.x + screenCenter.x, startPosWorld.y + screenCenter.y };
-                const Vector2 endPosScreen = { turtle.origin.x + screenCenter.x, turtle.origin.y + screenCenter.y };
+                const glm::vec2 startPosScreen = { startPosWorld.x + screenCenter.x, startPosWorld.y + screenCenter.y };
+                const glm::vec2 endPosScreen = { turtle.origin.x + screenCenter.x, turtle.origin.y + screenCenter.y };
 
                 DrawLineEx(startPosScreen, endPosScreen, 2, Fade(BLACK, 0.2f));
             }

@@ -30,7 +30,7 @@
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Begin portal mode 3D view
-static void BeginPortalMode3D(Vector3 eye, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topLeft, float nearPlane, float farPlane);
+static void BeginPortalMode3D(glm::vec3 eye, glm::vec3 bottomLeft, glm::vec3 bottomRight, glm::vec3 topLeft, float nearPlane, float farPlane);
 // End portal 3D mode and returns to default 2D orthographic mode
 static void EndPortalMode3D(void);
 
@@ -48,23 +48,23 @@ int main()
 
     // Camera to navigate the "real world" (Dimension A)
     Camera3D camera = {};
-    camera.position = Vector3{ 0.0f, 2.5f, 7.0f };
-    camera.target = Vector3{ 0.0f, 1.8f, 0.0f };
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    camera.position = glm::vec3{ 0.0f, 2.5f, 7.0f };
+    camera.target = glm::vec3{ 0.0f, 1.8f, 0.0f };
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
     // The archway opening, in Dimension A world space (used both to draw the frame and
     // as the window rectangle the oblique projection is built from)
-    const Vector3 archBottomLeft  = { -1.5f, 0.0f, 0.0f };
-    const Vector3 archBottomRight = {  1.5f, 0.0f, 0.0f };
-    const Vector3 archTopLeft     = { -1.5f, 4.0f, 0.0f };
+    const glm::vec3 archBottomLeft  = { -1.5f, 0.0f, 0.0f };
+    const glm::vec3 archBottomRight = {  1.5f, 0.0f, 0.0f };
+    const glm::vec3 archTopLeft     = { -1.5f, 4.0f, 0.0f };
 
     // The archway sits at portalA and looks out onto portalB, far away in world space.
     // Every frame, Dimension B gets rendered to a texture using the same relative eye
     // and window position, shifted by the offset between the two portals
-    const Vector3 portalA = { 0.0f, 0.0f, 0.0f };
-    const Vector3 portalB = { 0.0f, 0.0f, -60.0f };
+    const glm::vec3 portalA = { 0.0f, 0.0f, 0.0f };
+    const glm::vec3 portalB = { 0.0f, 0.0f, -60.0f };
     const RenderTexture2D portalView = LoadRenderTexture(480, 640);
 
     DisableCursor();        // Lock cursor for first-person free camera controls
@@ -81,11 +81,11 @@ int main()
 
         // Eye and window corners, shifted into Dimension B so they match the player's
         // actual position and viewing angle relative to the archway
-        const Vector3 offset = ((portalB) - (portalA));
-        const Vector3 eyeInB = ((camera.position) + (offset));
-        const Vector3 blInB = ((archBottomLeft) + (offset));
-        const Vector3 brInB = ((archBottomRight) + (offset));
-        const Vector3 tlInB = ((archTopLeft) + (offset));
+        const glm::vec3 offset = ((portalB) - (portalA));
+        const glm::vec3 eyeInB = ((camera.position) + (offset));
+        const glm::vec3 blInB = ((archBottomLeft) + (offset));
+        const glm::vec3 brInB = ((archBottomRight) + (offset));
+        const glm::vec3 tlInB = ((archTopLeft) + (offset));
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -101,7 +101,7 @@ int main()
                 DrawGrid(30, 0.8f);
 
                 // Floating pulsing core sphere
-                const Vector3 corePos = ((portalB) + (Vector3{ 0.0f, 2.0f + sinf(time * 2.5f) * 0.4f, -4.0f }));
+                const glm::vec3 corePos = ((portalB) + (glm::vec3{ 0.0f, 2.0f + sinf(time * 2.5f) * 0.4f, -4.0f }));
                 DrawSphere(corePos, 1.2f, PURPLE);
                 DrawSphereWires(corePos, 1.25f, 16, 16, MAGENTA);
 
@@ -109,7 +109,7 @@ int main()
                 for (int i = 0; i < 4; i++)
                 {
                     const float angle = time * 1.5f + i * (PI / 2.0f);
-                    const Vector3 pos = ((portalB) + (Vector3{
+                    const glm::vec3 pos = ((portalB) + (glm::vec3{
                         sinf(angle) * 2.5f,
                         2.0f + cosf(time * 3.0f + i) * 0.5f,
                         -4.0f + cosf(angle) * 2.5f }));
@@ -131,17 +131,17 @@ int main()
                 DrawGrid(20, 1.0f);
 
                 // Side pillars
-                DrawCube(Vector3{ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
-                DrawCubeWires(Vector3{ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
-                DrawCube(Vector3{ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
-                DrawCubeWires(Vector3{ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
+                DrawCube(glm::vec3{ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
+                DrawCubeWires(glm::vec3{ -3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
+                DrawCube(glm::vec3{ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, DARKGRAY);
+                DrawCubeWires(glm::vec3{ 3.5f, 2.0f, 0.0f }, 0.8f, 4.0f, 0.8f, ORANGE);
 
                 // Golden archway frame and solid base
-                DrawCubeWires(Vector3{ 0.0f, 2.0f, 0.0f }, 3.2f, 4.2f, 0.2f, GOLD);
-                DrawCube(Vector3{ 0.0f, 0.05f, 0.0f }, 3.4f, 0.1f, 0.6f, MAROON);
+                DrawCubeWires(glm::vec3{ 0.0f, 2.0f, 0.0f }, 3.2f, 4.2f, 0.2f, GOLD);
+                DrawCube(glm::vec3{ 0.0f, 0.05f, 0.0f }, 3.4f, 0.1f, 0.6f, MAROON);
 
                 // Solid backing wall, only ever seen if looking at the archway from behind
-                DrawCube(Vector3{ 0.0f, 2.0f, -0.05f }, 3.1f, 4.1f, 0.05f, MAROON);
+                DrawCube(glm::vec3{ 0.0f, 2.0f, -0.05f }, 3.1f, 4.1f, 0.05f, MAROON);
 
                 // The portal opening itself: a plain quad textured with the Dimension B
                 // render, filling the archway exactly, so nothing "leaks" outside its shape
@@ -190,17 +190,17 @@ int main()
 // rendering) - the key difference from a normal Camera3D is that the frustum is allowed
 // to be asymmetric, so perspective lines through the window line up correctly from any
 // eye position, instead of behaving like a flat image pasted onto the window
-static void BeginPortalMode3D(Vector3 eye, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topLeft, float nearPlane, float farPlane)
+static void BeginPortalMode3D(glm::vec3 eye, glm::vec3 bottomLeft, glm::vec3 bottomRight, glm::vec3 topLeft, float nearPlane, float farPlane)
 {
-    const Vector3 right = glm::normalize(((bottomRight) - (bottomLeft)));
-    const Vector3 up = glm::normalize(((topLeft) - (bottomLeft)));
-    const Vector3 normal = glm::normalize(glm::cross(right, up));
+    const glm::vec3 right = glm::normalize(((bottomRight) - (bottomLeft)));
+    const glm::vec3 up = glm::normalize(((topLeft) - (bottomLeft)));
+    const glm::vec3 normal = glm::normalize(glm::cross(right, up));
 
     // Vectors from the eye to 3 corners of the window, used to project the window onto
     // the near plane and read off how far it extends left/right/bottom/top of the eye
-    const Vector3 toBL = ((bottomLeft) - (eye));
-    const Vector3 toBR = ((bottomRight) - (eye));
-    const Vector3 toTL = ((topLeft) - (eye));
+    const glm::vec3 toBL = ((bottomLeft) - (eye));
+    const glm::vec3 toBR = ((bottomRight) - (eye));
+    const glm::vec3 toTL = ((topLeft) - (eye));
 
     float dist = -glm::dot(toBL, normal);
     if (dist < 0.01f) dist = 0.01f; // Keep the eye from crossing the window plane

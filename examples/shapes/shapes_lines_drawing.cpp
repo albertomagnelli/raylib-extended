@@ -35,7 +35,7 @@ int main()
     bool startText = true;
 
     // The mouse's position on the previous frame
-    Vector2 mousePositionPrevious = GetMousePosition();
+    glm::vec2 mousePositionPrevious = GetMousePosition();
 
     // The canvas to draw lines on
     const RenderTexture canvas = LoadRenderTexture(screenWidth, screenHeight);
@@ -114,7 +114,7 @@ int main()
         BeginDrawing();
 
             // Draw the render texture to the screen, flipped vertically to make it appear top-side up
-            DrawTextureRec(canvas.texture, Rectangle{ 0.0f, 0.0f, static_cast<float>(canvas.texture.width),static_cast<float>(-canvas.texture.height) }, Vector2{}, WHITE);
+            DrawTextureRec(canvas.texture, Rectangle{ 0.0f, 0.0f, static_cast<float>(canvas.texture.width),static_cast<float>(-canvas.texture.height) }, glm::vec2{}, WHITE);
 
             // Draw the preview circle
             if (!leftButtonDown) DrawCircleLinesV(GetMousePosition(), lineThickness/2.0f, Color{ 127, 127, 127, 127 });

@@ -38,17 +38,17 @@ int main()
 
     // Camera to look at the 3D world
     Camera3D subjectCamera = {};
-    subjectCamera.position = Vector3{ 5.0f, 5.0f, 5.0f };
-    subjectCamera.target = Vector3{ 0.0f, 0.0f, 0.0f };
-    subjectCamera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    subjectCamera.position = glm::vec3{ 5.0f, 5.0f, 5.0f };
+    subjectCamera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
+    subjectCamera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     subjectCamera.fovy = 45.0f;
     subjectCamera.projection = CAMERA_PERSPECTIVE;
 
     // Camera to observe the subject camera and 3D world
     Camera3D observerCamera = {};
-    observerCamera.position = Vector3{ 10.0f, 10.0f, 10.0f };
-    observerCamera.target = Vector3{ 0.0f, 0.0f, 0.0f };
-    observerCamera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    observerCamera.position = glm::vec3{ 10.0f, 10.0f, 10.0f };
+    observerCamera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
+    observerCamera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     observerCamera.fovy = 45.0f;
     observerCamera.projection = CAMERA_PERSPECTIVE;
 
@@ -79,7 +79,7 @@ int main()
         UpdateCamera(&observerCamera, CAMERA_FREE);
         UpdateCamera(&subjectCamera, CAMERA_ORBITAL);
 
-        if (IsKeyPressed(KEY_R)) observerCamera.target = Vector3{ 0.0f, 0.0f, 0.0f };
+        if (IsKeyPressed(KEY_R)) observerCamera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
 
         // Build LHS observer view texture
         BeginTextureMode(observerTarget);
@@ -89,8 +89,8 @@ int main()
             BeginMode3D(observerCamera);
 
                 DrawGrid(10, 1.0f);
-                DrawCube(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
-                DrawCubeWires(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
+                DrawCube(glm::vec3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
+                DrawCubeWires(glm::vec3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
                 DrawCameraPrism(subjectCamera, textureAspectRatio, GREEN);
 
             EndMode3D();
@@ -109,8 +109,8 @@ int main()
 
             BeginMode3D(subjectCamera);
 
-                DrawCube(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
-                DrawCubeWires(Vector3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
+                DrawCube(glm::vec3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, GOLD);
+                DrawCubeWires(glm::vec3{ 0.0f, 0.0f, 0.0f }, 2.0f, 2.0f, 2.0f, PINK);
                 DrawGrid(10, 1.0f);
 
             EndMode3D();
@@ -128,13 +128,13 @@ int main()
             ClearBackground(BLACK);
 
             // Draw observer texture LHS
-            DrawTexturePro(observerTarget.texture, observerSource, observerDest, Vector2{0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(observerTarget.texture, observerSource, observerDest, glm::vec2{0.0f, 0.0f }, 0.0f, WHITE);
 
             // Draw subject texture RHS
-            DrawTexturePro(subjectTarget.texture, subjectSource, subjectDest, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(subjectTarget.texture, subjectSource, subjectDest, glm::vec2{ 0.0f, 0.0f }, 0.0f, WHITE);
 
             // Draw the small crop overlay on top
-            DrawTexturePro(subjectTarget.texture, cropSource, cropDest, Vector2{ 0.0f, 0.0f }, 0.0f, WHITE);
+            DrawTexturePro(subjectTarget.texture, cropSource, cropDest, glm::vec2{ 0.0f, 0.0f }, 0.0f, WHITE);
             DrawRectangleLinesEx(cropDest, 2, BLACK);
 
             // Draw split screen divider line
@@ -162,7 +162,7 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
 {
     const float length = glm::distance(camera.position, camera.target);
     // Define the 4 corners of the camera's prism plane sliced at the target in Normalized Device Coordinates
-    const Vector3 planeNDC[4] = {
+    const glm::vec3 planeNDC[4] = {
         { -1.0f, -1.0f, 1.0f }, // Bottom Left
         {  1.0f, -1.0f, 1.0f }, // Bottom Right
         {  1.0f,  1.0f, 1.0f }, // Top Right
@@ -178,7 +178,7 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
     Matrix inverseViewProj = glm::inverse(viewProj);
 
     // Transform the 4 plane corners from NDC into world space
-    Vector3 corners[4];
+    glm::vec3 corners[4];
     for (int i = 0; i < 4; i++)
     {
         const float x = planeNDC[i].x;
@@ -192,7 +192,7 @@ static void DrawCameraPrism(Camera3D camera, float aspect, Color color)
         const float vz = inverseViewProj[0][2]*x + inverseViewProj[1][2]*y + inverseViewProj[2][2]*z + inverseViewProj[3][2];
         const float vw = inverseViewProj[0][3]*x + inverseViewProj[1][3]*y + inverseViewProj[2][3]*z + inverseViewProj[3][3];
 
-        corners[i] = Vector3{ vx/vw, vy/vw, vz/vw };
+        corners[i] = glm::vec3{ vx/vw, vy/vw, vz/vw };
     }
 
     // Draw the far plane sliced at the target

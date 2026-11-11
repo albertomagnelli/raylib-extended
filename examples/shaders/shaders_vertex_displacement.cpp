@@ -42,9 +42,9 @@ int main()
 
     // set up camera
     Camera camera = {};
-    camera.position = Vector3{20.0f, 5.0f, -20.0f};
-    camera.target = Vector3{0.0f, 0.0f, 0.0f};
-    camera.up = Vector3{0.0f, 1.0f, 0.0f};
+    camera.position = glm::vec3{20.0f, 5.0f, -20.0f};
+    camera.target = glm::vec3{0.0f, 0.0f, 0.0f};
+    camera.up = glm::vec3{0.0f, 1.0f, 0.0f};
     camera.fovy = 60.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -96,7 +96,7 @@ int main()
 
                 BeginShaderMode(shader);
                     // Draw plane model
-                    DrawModel(planeModel, Vector3{ 0.0f, 0.0f, 0.0f }, 1.0f, Color{255, 255, 255, 255});
+                    DrawModel(planeModel, glm::vec3{ 0.0f, 0.0f, 0.0f }, 1.0f, Color{255, 255, 255, 255});
                 EndShaderMode();
 
             EndMode3D();

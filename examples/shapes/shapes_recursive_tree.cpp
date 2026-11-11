@@ -25,8 +25,8 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct {
-    Vector2 start;
-    Vector2 end;
+    glm::vec2 start;
+    glm::vec2 end;
     float angle;
     float length;
 } Branch;
@@ -43,7 +43,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - recursive tree");
 
-    const Vector2 start = { (screenWidth/2.0f) - 125.0f, static_cast<float>(screenHeight) };
+    const glm::vec2 start = { (screenWidth/2.0f) - 125.0f, static_cast<float>(screenHeight) };
     float angle = 40.0f;
     float thick = 1.0f;
     float treeDepth = 10.0f;
@@ -64,7 +64,7 @@ int main()
         Branch branches[1030] = {};
         int count = 0;
 
-        const Vector2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
+        const glm::vec2 initialEnd = { start.x + length*sinf(0.0f), start.y - length*cosf(0.0f) };
         branches[count++] = Branch{start, initialEnd, 0.0f, length};
 
         for (int i = 0; i < count; i++)
@@ -76,14 +76,14 @@ int main()
 
             if (count < maxBranches && nextLength >= 2)
             {
-                const Vector2 branchStart = branch.end;
+                const glm::vec2 branchStart = branch.end;
 
                 const float angle1 = branch.angle + theta;
-                const Vector2 branchEnd1 = { branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
+                const glm::vec2 branchEnd1 = { branchStart.x + nextLength*sinf(angle1), branchStart.y - nextLength*cosf(angle1) };
                 branches[count++] = Branch{branchStart, branchEnd1, angle1, nextLength};
 
                 const float angle2 = branch.angle - theta;
-                const Vector2 branchEnd2 = { branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
+                const glm::vec2 branchEnd2 = { branchStart.x + nextLength*sinf(angle2), branchStart.y - nextLength*cosf(angle2) };
                 branches[count++] = Branch{branchStart, branchEnd2, angle2, nextLength};
             }
         }

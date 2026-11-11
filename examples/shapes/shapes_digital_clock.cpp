@@ -50,12 +50,12 @@ typedef struct {
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
 static void UpdateClock(Clock *clock); // Update clock time
-static void DrawClockAnalog(Clock clock, Vector2 position); // Draw analog clock at desired center position
-static void DrawClockDigital(Clock clock, Vector2 position); // Draw digital clock at desired position
+static void DrawClockAnalog(Clock clock, glm::vec2 position); // Draw analog clock at desired center position
+static void DrawClockDigital(Clock clock, glm::vec2 position); // Draw digital clock at desired position
 
-static void DrawDisplayValue(Vector2 position, int value, Color colorOn, Color colorOff);
-static void Draw7SDisplay(Vector2 position, char segments, Color colorOn, Color colorOff);
-static void DrawDisplaySegment(Vector2 center, int length, int thick, bool vertical, Color color);
+static void DrawDisplayValue(glm::vec2 position, int value, Color colorOn, Color colorOff);
+static void Draw7SDisplay(glm::vec2 position, char segments, Color colorOn, Color colorOff);
+static void DrawDisplaySegment(glm::vec2 center, int length, int thick, bool vertical, Color color);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -105,10 +105,10 @@ int main()
             ClearBackground(RAYWHITE);
 
             // Draw clock in selected mode
-            if (clockMode == CLOCK_ANALOG) DrawClockAnalog(clock, Vector2{ 400, 240 });
+            if (clockMode == CLOCK_ANALOG) DrawClockAnalog(clock, glm::vec2{ 400, 240 });
             else if (clockMode == CLOCK_DIGITAL)
             {
-                DrawClockDigital(clock, Vector2{ 30, 60 });
+                DrawClockDigital(clock, glm::vec2{ 30, 60 });
 
                 // Draw clock using default raylib font
                 // Get pointer to formated clock time string
@@ -163,7 +163,7 @@ static void UpdateClock(Clock *clock)
 
 // Draw analog clock
 // Parameter: position, refers to center position
-static void DrawClockAnalog(Clock clock, Vector2 position)
+static void DrawClockAnalog(Clock clock, glm::vec2 position)
 {
         // Draw clock base
         DrawCircleV(position, clock.second.length + 40.0f, LIGHTGRAY);
@@ -172,9 +172,9 @@ static void DrawClockAnalog(Clock clock, Vector2 position)
         // Draw clock minutes/seconds lines
         for (int i = 0; i < 60; i++)
         {
-            DrawLineEx(Vector2{ position.x + (clock.second.length + ((i%5)? 10 : 6))*cosf((6.0f*i - 90.0f)*DEG2RAD),
+            DrawLineEx(glm::vec2{ position.x + (clock.second.length + ((i%5)? 10 : 6))*cosf((6.0f*i - 90.0f)*DEG2RAD),
                 position.y + (clock.second.length + ((i%5)? 10 : 6))*sinf((6.0f*i - 90.0f)*DEG2RAD) },
-                Vector2{ position.x + (clock.second.length + 20)*cosf((6.0f*i - 90.0f)*DEG2RAD),
+                glm::vec2{ position.x + (clock.second.length + 20)*cosf((6.0f*i - 90.0f)*DEG2RAD),
                 position.y + (clock.second.length + 20)*sinf((6.0f*i - 90.0f)*DEG2RAD) }, ((i%5)? 1.0f : 3.0f), DARKGRAY);
 
             // Draw seconds numbers
@@ -184,40 +184,40 @@ static void DrawClockAnalog(Clock clock, Vector2 position)
 
         // Draw hand seconds
         DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.second.length), static_cast<float>(clock.second.thickness) },
-            Vector2{ 0.0f, clock.second.thickness/2.0f }, clock.second.angle, clock.second.color);
+            glm::vec2{ 0.0f, clock.second.thickness/2.0f }, clock.second.angle, clock.second.color);
 
         // Draw hand minutes
         DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.minute.length), static_cast<float>(clock.minute.thickness) },
-            Vector2{ 0.0f, clock.minute.thickness/2.0f }, clock.minute.angle, clock.minute.color);
+            glm::vec2{ 0.0f, clock.minute.thickness/2.0f }, clock.minute.angle, clock.minute.color);
 
         // Draw hand hours
         DrawRectanglePro(Rectangle{ position.x, position.y, static_cast<float>(clock.hour.length), static_cast<float>(clock.hour.thickness) },
-            Vector2{ 0.0f, clock.hour.thickness/2.0f }, clock.hour.angle, clock.hour.color);
+            glm::vec2{ 0.0f, clock.hour.thickness/2.0f }, clock.hour.angle, clock.hour.color);
 }
 
 // Draw digital clock
 // PARAM: position, refers to top-left corner
-static void DrawClockDigital(Clock clock, Vector2 position)
+static void DrawClockDigital(Clock clock, glm::vec2 position)
 {
     // Draw clock using custom 7-segments display (made of shapes)
-    DrawDisplayValue(Vector2{ position.x, position.y }, clock.hour.value/10, RED, Fade(LIGHTGRAY, 0.3f));
-    DrawDisplayValue(Vector2{ position.x + 120, position.y }, clock.hour.value%10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(glm::vec2{ position.x, position.y }, clock.hour.value/10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(glm::vec2{ position.x + 120, position.y }, clock.hour.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
     DrawCircle(static_cast<int>(position.x) + 240, static_cast<int>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
     DrawCircle(static_cast<int>(position.x) + 240, static_cast<int>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
-    DrawDisplayValue(Vector2{ position.x + 260, position.y }, clock.minute.value/10, RED, Fade(LIGHTGRAY, 0.3f));
-    DrawDisplayValue(Vector2{ position.x + 380, position.y }, clock.minute.value%10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(glm::vec2{ position.x + 260, position.y }, clock.minute.value/10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(glm::vec2{ position.x + 380, position.y }, clock.minute.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 
     DrawCircle(static_cast<int>(position.x) + 500, static_cast<int>(position.y) + 70, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
     DrawCircle(static_cast<int>(position.x) + 500, static_cast<int>(position.y) + 150, 12, (clock.second.value%2)? RED : Fade(LIGHTGRAY, 0.3f));
 
-    DrawDisplayValue(Vector2{ position.x + 520, position.y }, clock.second.value/10, RED, Fade(LIGHTGRAY, 0.3f));
-    DrawDisplayValue(Vector2{ position.x + 640, position.y }, clock.second.value%10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(glm::vec2{ position.x + 520, position.y }, clock.second.value/10, RED, Fade(LIGHTGRAY, 0.3f));
+    DrawDisplayValue(glm::vec2{ position.x + 640, position.y }, clock.second.value%10, RED, Fade(LIGHTGRAY, 0.3f));
 }
 
 // Draw 7-segment display with value
-static void DrawDisplayValue(Vector2 position, int value, Color colorOn, Color colorOff)
+static void DrawDisplayValue(glm::vec2 position, int value, Color colorOn, Color colorOff)
 {
     switch (value)
     {
@@ -238,37 +238,37 @@ static void DrawDisplayValue(Vector2 position, int value, Color colorOn, Color c
 // Draw seven segments display
 // Parameter: position, refers to top-left corner of display
 // Parameter: segments, defines in binary the segments to be activated
-static void Draw7SDisplay(Vector2 position, char segments, Color colorOn, Color colorOff)
+static void Draw7SDisplay(glm::vec2 position, char segments, Color colorOn, Color colorOff)
 {
     constexpr int segmentLen = 60;
     constexpr int segmentThick = 20;
     const float offsetYAdjust = segmentThick*0.3f; // HACK: Adjust gap space between segment limits
 
     // Segment A
-    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen/2.0f, position.y + segmentThick },
+    DrawDisplaySegment(glm::vec2{ position.x + segmentThick + segmentLen/2.0f, position.y + segmentThick },
         segmentLen, segmentThick, false, (segments & 0b00000001)? colorOn : colorOff);
     // Segment B
-    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
+    DrawDisplaySegment(glm::vec2{ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00000010)? colorOn : colorOff);
     // Segment C
-    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
+    DrawDisplaySegment(glm::vec2{ position.x + segmentThick + segmentLen + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00000100)? colorOn : colorOff);
     // Segment D
-    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen/2.0f, position.y + 5*segmentThick + 2*segmentLen - 4*offsetYAdjust },
+    DrawDisplaySegment(glm::vec2{ position.x + segmentThick + segmentLen/2.0f, position.y + 5*segmentThick + 2*segmentLen - 4*offsetYAdjust },
         segmentLen, segmentThick, false, (segments & 0b00001000)? colorOn : colorOff);
     // Segment E
-    DrawDisplaySegment(Vector2{ position.x + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
+    DrawDisplaySegment(glm::vec2{ position.x + segmentThick/2.0f, position.y + 4*segmentThick + segmentLen + segmentLen/2.0f - 3*offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00010000)? colorOn : colorOff);
     // Segment F
-    DrawDisplaySegment(Vector2{ position.x + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
+    DrawDisplaySegment(glm::vec2{ position.x + segmentThick/2.0f, position.y + 2*segmentThick + segmentLen/2.0f - offsetYAdjust },
         segmentLen, segmentThick, true, (segments & 0b00100000)? colorOn : colorOff);
     // Segment G
-    DrawDisplaySegment(Vector2{ position.x + segmentThick + segmentLen/2.0f, position.y + 3*segmentThick + segmentLen - 2*offsetYAdjust },
+    DrawDisplaySegment(glm::vec2{ position.x + segmentThick + segmentLen/2.0f, position.y + 3*segmentThick + segmentLen - 2*offsetYAdjust },
         segmentLen, segmentThick, false, (segments & 0b01000000)? colorOn : colorOff);
 }
 
 // Draw one 7-segment display segment, horizontal or vertical
-static void DrawDisplaySegment(Vector2 center, int length, int thick, bool vertical, Color color)
+static void DrawDisplaySegment(glm::vec2 center, int length, int thick, bool vertical, Color color)
 {
     if (!vertical)
     {
@@ -280,13 +280,13 @@ static void DrawDisplaySegment(Vector2 center, int length, int thick, bool verti
            \                               /
             \2___________________________4/
         */
-        Vector2 segmentPointsH[6] = {
-            Vector2{ center.x - length/2.0f - thick/2.0f,  center.y },  // Point 1
-            Vector2{ center.x - length/2.0f,  center.y + thick/2.0f },  // Point 2
-            Vector2{ center.x - length/2.0f, center.y - thick/2.0f },   // Point 3
-            Vector2{ center.x + length/2.0f,  center.y + thick/2.0f },  // Point 4
-            Vector2{ center.x + length/2.0f,  center.y - thick/2.0f },  // Point 5
-            Vector2{ center.x + length/2.0f + thick/2.0f,  center.y },  // Point 6
+        glm::vec2 segmentPointsH[6] = {
+            glm::vec2{ center.x - length/2.0f - thick/2.0f,  center.y },// Point 1
+            glm::vec2{ center.x - length/2.0f,  center.y + thick/2.0f },// Point 2
+            glm::vec2{ center.x - length/2.0f, center.y - thick/2.0f }, // Point 3
+            glm::vec2{ center.x + length/2.0f,  center.y + thick/2.0f },// Point 4
+            glm::vec2{ center.x + length/2.0f,  center.y - thick/2.0f },// Point 5
+            glm::vec2{ center.x + length/2.0f + thick/2.0f,  center.y },// Point 6
         };
 
         DrawTriangleStrip(segmentPointsH, 6, color);
@@ -294,13 +294,13 @@ static void DrawDisplaySegment(Vector2 center, int length, int thick, bool verti
     else
     {
         // Vertical segment points
-        Vector2 segmentPointsV[6] = {
-            Vector2{ center.x,  center.y - length/2.0f - thick/2.0f },  // Point 1
-            Vector2{ center.x - thick/2.0f,  center.y - length/2.0f },  // Point 2
-            Vector2{ center.x + thick/2.0f, center.y - length/2.0f },   // Point 3
-            Vector2{ center.x - thick/2.0f,  center.y + length/2.0f },  // Point 4
-            Vector2{ center.x + thick/2.0f,  center.y + length/2.0f },  // Point 5
-            Vector2{ center.x,  center.y + static_cast<float>(length)/2 + thick/2.0f },     // Point 6
+        glm::vec2 segmentPointsV[6] = {
+            glm::vec2{ center.x,  center.y - length/2.0f - thick/2.0f },// Point 1
+            glm::vec2{ center.x - thick/2.0f,  center.y - length/2.0f },// Point 2
+            glm::vec2{ center.x + thick/2.0f, center.y - length/2.0f }, // Point 3
+            glm::vec2{ center.x - thick/2.0f,  center.y + length/2.0f },// Point 4
+            glm::vec2{ center.x + thick/2.0f,  center.y + length/2.0f },// Point 5
+            glm::vec2{ center.x,  center.y + static_cast<float>(length)/2 + thick/2.0f },   // Point 6
         };
 
         DrawTriangleStrip(segmentPointsV, 6, color);

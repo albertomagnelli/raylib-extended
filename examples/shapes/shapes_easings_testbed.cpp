@@ -122,7 +122,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - easings testbed");
 
-    Vector2 ballPosition = { 100.0f, 100.0f };
+    glm::vec2 ballPosition = { 100.0f, 100.0f };
 
     float t = 0.0f;             // Current time (in any unit measure, but same unit as duration)
     float d = 300.0f;           // Total time it should take to complete (duration)

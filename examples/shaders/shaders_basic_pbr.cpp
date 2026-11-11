@@ -45,8 +45,8 @@ typedef enum {
 typedef struct {
     int type;
     int enabled;
-    Vector3 position;
-    Vector3 target;
+    glm::vec3 position;
+    glm::vec3 target;
     float color[4];
     float intensity;
 
@@ -68,7 +68,7 @@ static int lightCount = 0;     // Current number of dynamic lights that have bee
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
 // Create a light and get shader locations
-static Light CreateLight(int type, Vector3 position, Vector3 target, Color color, float intensity, Shader shader);
+static Light CreateLight(int type, glm::vec3 position, glm::vec3 target, Color color, float intensity, Shader shader);
 
 // Update light properties on shader
 // NOTE: Light shader locations should be available
@@ -89,9 +89,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 2.0f, 2.0f, 6.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 0.5f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 2.0f, 2.0f, 6.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.5f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -119,7 +119,7 @@ int main()
     // Setup ambient color and intensity parameters
     float ambientIntensity = 0.02f;
     const Color ambientColor = Color{ 26, 32, 135, 255 };
-    Vector3 ambientColorNormalized = Vector3{ ambientColor.r/255.0f, ambientColor.g/255.0f, ambientColor.b/255.0f };
+    glm::vec3 ambientColorNormalized = glm::vec3{ ambientColor.r/255.0f, ambientColor.g/255.0f, ambientColor.b/255.0f };
     SetShaderValue(shader, GetShaderLocation(shader, "ambientColor"), &ambientColorNormalized, SHADER_UNIFORM_VEC3);
     SetShaderValue(shader, GetShaderLocation(shader, "ambient"), &ambientIntensity, SHADER_UNIFORM_FLOAT);
 
@@ -175,15 +175,15 @@ int main()
 
     // Models texture tiling parameter can be stored in the Material struct if required (CURRENTLY NOT USED)
     // NOTE: Material.params[4] are available for generic parameters storage (float)
-    Vector2 carTextureTiling = Vector2{ 0.5f, 0.5f };
-    Vector2 floorTextureTiling = Vector2{ 0.5f, 0.5f };
+    glm::vec2 carTextureTiling = glm::vec2{ 0.5f, 0.5f };
+    glm::vec2 floorTextureTiling = glm::vec2{ 0.5f, 0.5f };
 
     // Create some lights
     Light lights[MAX_LIGHTS] = {};
-    lights[0] = CreateLight(LIGHT_POINT, Vector3{ -1.0f, 1.0f, -2.0f }, Vector3{ 0.0f, 0.0f, 0.0f }, YELLOW, 4.0f, shader);
-    lights[1] = CreateLight(LIGHT_POINT, Vector3{ 2.0f, 1.0f, 1.0f }, Vector3{ 0.0f, 0.0f, 0.0f }, GREEN, 3.3f, shader);
-    lights[2] = CreateLight(LIGHT_POINT, Vector3{ -2.0f, 1.0f, 1.0f }, Vector3{ 0.0f, 0.0f, 0.0f }, RED, 8.3f, shader);
-    lights[3] = CreateLight(LIGHT_POINT, Vector3{ 1.0f, 1.0f, -2.0f }, Vector3{ 0.0f, 0.0f, 0.0f }, BLUE, 2.0f, shader);
+    lights[0] = CreateLight(LIGHT_POINT, glm::vec3{ -1.0f, 1.0f, -2.0f }, glm::vec3{ 0.0f, 0.0f, 0.0f }, YELLOW, 4.0f, shader);
+    lights[1] = CreateLight(LIGHT_POINT, glm::vec3{ 2.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.0f }, GREEN, 3.3f, shader);
+    lights[2] = CreateLight(LIGHT_POINT, glm::vec3{ -2.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, 0.0f, 0.0f }, RED, 8.3f, shader);
+    lights[3] = CreateLight(LIGHT_POINT, glm::vec3{ 1.0f, 1.0f, -2.0f }, glm::vec3{ 0.0f, 0.0f, 0.0f }, BLUE, 2.0f, shader);
 
     // Setup material texture maps usage in shader
     // NOTE: By default, the texture maps are always used
@@ -227,18 +227,18 @@ int main()
 
                 // Set floor model texture tiling and emissive color parameters on shader
                 SetShaderValue(shader, textureTilingLoc, &floorTextureTiling, SHADER_UNIFORM_VEC2);
-                Vector4 floorEmissiveColor = ColorNormalize(floor.materials[0].maps[MATERIAL_MAP_EMISSION].color);
+                glm::vec4 floorEmissiveColor = ColorNormalize(floor.materials[0].maps[MATERIAL_MAP_EMISSION].color);
                 SetShaderValue(shader, emissiveColorLoc, &floorEmissiveColor, SHADER_UNIFORM_VEC4);
 
                 // Set floor metallic and roughness values
                 SetShaderValue(shader, metallicValueLoc, &floor.materials[0].maps[MATERIAL_MAP_METALNESS].value, SHADER_UNIFORM_FLOAT);
                 SetShaderValue(shader, roughnessValueLoc, &floor.materials[0].maps[MATERIAL_MAP_ROUGHNESS].value, SHADER_UNIFORM_FLOAT);
 
-                DrawModel(floor, Vector3{ 0.0f, 0.0f, 0.0f }, 5.0f, WHITE);   // Draw floor model
+                DrawModel(floor, glm::vec3{ 0.0f, 0.0f, 0.0f }, 5.0f, WHITE); // Draw floor model
 
                 // Set old car model texture tiling, emissive color and emissive intensity parameters on shader
                 SetShaderValue(shader, textureTilingLoc, &carTextureTiling, SHADER_UNIFORM_VEC2);
-                Vector4 carEmissiveColor = ColorNormalize(car.materials[0].maps[MATERIAL_MAP_EMISSION].color);
+                glm::vec4 carEmissiveColor = ColorNormalize(car.materials[0].maps[MATERIAL_MAP_EMISSION].color);
                 SetShaderValue(shader, emissiveColorLoc, &carEmissiveColor, SHADER_UNIFORM_VEC4);
                 float emissiveIntensity = 0.01f;
                 SetShaderValue(shader, emissiveIntensityLoc, &emissiveIntensity, SHADER_UNIFORM_FLOAT);
@@ -247,7 +247,7 @@ int main()
                 SetShaderValue(shader, metallicValueLoc, &car.materials[0].maps[MATERIAL_MAP_METALNESS].value, SHADER_UNIFORM_FLOAT);
                 SetShaderValue(shader, roughnessValueLoc, &car.materials[0].maps[MATERIAL_MAP_ROUGHNESS].value, SHADER_UNIFORM_FLOAT);
 
-                DrawModel(car, Vector3{ 0.0f, 0.0f, 0.0f }, 0.25f, WHITE);   // Draw car model
+                DrawModel(car, glm::vec3{ 0.0f, 0.0f, 0.0f }, 0.25f, WHITE); // Draw car model
 
                 // Draw spheres to show the lights positions
                 for (int i = 0; i < MAX_LIGHTS; i++)
@@ -301,7 +301,7 @@ int main()
 //----------------------------------------------------------------------------------
 // Create light with provided data
 // NOTE: It updated the global lightCount and it's limited to MAX_LIGHTS
-static Light CreateLight(int type, Vector3 position, Vector3 target, Color color, float intensity, Shader shader)
+static Light CreateLight(int type, glm::vec3 position, glm::vec3 target, Color color, float intensity, Shader shader)
 {
     Light light = {};
 

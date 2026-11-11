@@ -33,7 +33,7 @@
 //----------------------------------------------------------------------------------
 // Shadow geometry type
 typedef struct ShadowGeometry {
-    Vector2 vertices[4];
+    glm::vec2 vertices[4];
 } ShadowGeometry;
 
 // Light info type
@@ -42,7 +42,7 @@ typedef struct LightInfo {
     bool dirty;                 // Does this light need to be updated?
     bool valid;                 // Is this light in a valid position?
 
-    Vector2 position;           // Light position
+    glm::vec2 position;         // Light position
     RenderTexture mask;         // Alpha mask for the light
     float outerRadius;          // The distance the light touches
     Rectangle bounds;           // A cached rectangle of the light bounds to help with culling
@@ -62,7 +62,7 @@ static LightInfo lights[MAX_LIGHTS] = {};
 // Move a light and mark it as dirty so that we update it's mask next frame
 static void MoveLight(int slot, float x, float y);
 // Compute a shadow volume for the edge
-static void ComputeShadowVolumeForEdge(int slot, Vector2 sp, Vector2 ep);
+static void ComputeShadowVolumeForEdge(int slot, glm::vec2 sp, glm::vec2 ep);
 // Draw the light and shadows to the mask for a light
 static void DrawLightMask(int slot);
 // Setup a light
@@ -146,7 +146,7 @@ int main()
                 // Merge in all the light masks
                 for (int i = 0; i < MAX_LIGHTS; i++)
                 {
-                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, Vector2{}, WHITE);
+                    if (lights[i].active) DrawTextureRec(lights[i].mask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, glm::vec2{}, WHITE);
                 }
 
                 rlDrawRenderBatchActive();
@@ -164,10 +164,10 @@ int main()
             ClearBackground(BLACK);
 
             // Draw the tile background
-            DrawTextureRec(backgroundTexture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) }, Vector2{}, WHITE);
+            DrawTextureRec(backgroundTexture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), static_cast<float>(GetScreenHeight()) }, glm::vec2{}, WHITE);
 
             // Overlay the shadows from all the lights
-            DrawTextureRec(lightMask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, Vector2{}, ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
+            DrawTextureRec(lightMask.texture, Rectangle{ 0, 0, static_cast<float>(GetScreenWidth()), -static_cast<float>(GetScreenHeight()) }, glm::vec2{}, ColorAlpha(WHITE, showLines? 0.75f : 1.0f));
 
             // Draw the lights
             for (int i = 0; i < MAX_LIGHTS; i++)
@@ -236,17 +236,17 @@ static void MoveLight(int slot, float x, float y)
 
 // Compute a shadow volume for the edge
 // It takes the edge and projects it back by the light radius and turns it into a quad
-static void ComputeShadowVolumeForEdge(int slot, Vector2 sp, Vector2 ep)
+static void ComputeShadowVolumeForEdge(int slot, glm::vec2 sp, glm::vec2 ep)
 {
     if (lights[slot].shadowCount >= MAX_SHADOWS) return;
 
     const float extension = lights[slot].outerRadius*2;
 
-    const Vector2 spVector = glm::normalize(((sp) - (lights[slot].position)));
-    const Vector2 spProjection = ((sp) + (((spVector) * (extension))));
+    const glm::vec2 spVector = glm::normalize(((sp) - (lights[slot].position)));
+    const glm::vec2 spProjection = ((sp) + (((spVector) * (extension))));
 
-    const Vector2 epVector = glm::normalize(((ep) - (lights[slot].position)));
-    const Vector2 epProjection = ((ep) + (((epVector) * (extension))));
+    const glm::vec2 epVector = glm::normalize(((ep) - (lights[slot].position)));
+    const glm::vec2 epProjection = ((ep) + (((epVector) * (extension))));
 
     lights[slot].shadows[lights[slot].shadowCount].vertices[0] = sp;
     lights[slot].shadows[lights[slot].shadowCount].vertices[1] = ep;
@@ -293,8 +293,8 @@ static bool UpdateLight(int slot, Rectangle* boxes, int count)
         // Check the edges that are on the same side we are, and cast shadow volumes out from them
 
         // Top
-        Vector2 sp = Vector2{ boxes[i].x, boxes[i].y };
-        Vector2 ep = Vector2{ boxes[i].x + boxes[i].width, boxes[i].y };
+        glm::vec2 sp = glm::vec2{ boxes[i].x, boxes[i].y };
+        glm::vec2 ep = glm::vec2{ boxes[i].x + boxes[i].width, boxes[i].y };
 
         if (lights[slot].position.y > ep.y) ComputeShadowVolumeForEdge(slot, sp, ep);
 
@@ -314,10 +314,10 @@ static bool UpdateLight(int slot, Rectangle* boxes, int count)
         if (lights[slot].position.x > ep.x) ComputeShadowVolumeForEdge(slot, sp, ep);
 
         // The box itself
-        lights[slot].shadows[lights[slot].shadowCount].vertices[0] = Vector2{ boxes[i].x, boxes[i].y };
-        lights[slot].shadows[lights[slot].shadowCount].vertices[1] = Vector2{ boxes[i].x, boxes[i].y + boxes[i].height };
-        lights[slot].shadows[lights[slot].shadowCount].vertices[2] = Vector2{ boxes[i].x + boxes[i].width, boxes[i].y + boxes[i].height };
-        lights[slot].shadows[lights[slot].shadowCount].vertices[3] = Vector2{ boxes[i].x + boxes[i].width, boxes[i].y };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[0] = glm::vec2{ boxes[i].x, boxes[i].y };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[1] = glm::vec2{ boxes[i].x, boxes[i].y + boxes[i].height };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[2] = glm::vec2{ boxes[i].x + boxes[i].width, boxes[i].y + boxes[i].height };
+        lights[slot].shadows[lights[slot].shadowCount].vertices[3] = glm::vec2{ boxes[i].x + boxes[i].width, boxes[i].y };
         lights[slot].shadowCount++;
     }
 

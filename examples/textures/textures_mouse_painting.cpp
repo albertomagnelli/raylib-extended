@@ -75,7 +75,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Vector2 mousePos = GetMousePosition();
+        const glm::vec2 mousePos = GetMousePosition();
 
         // Move between colors with keys
         if (IsKeyPressed(KEY_RIGHT)) colorSelected++;
@@ -179,7 +179,7 @@ int main()
         ClearBackground(RAYWHITE);
 
         // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-        DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, Vector2{ 0, 0 }, WHITE);
+        DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, glm::vec2{ 0, 0 }, WHITE);
 
         // Draw drawing circle for reference
         if (mousePos.y > 50)

@@ -32,7 +32,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - ring drawing");
 
-    const Vector2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
+    const glm::vec2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
     float innerRadius = 80.0f;
     float outerRadius = 190.0f;

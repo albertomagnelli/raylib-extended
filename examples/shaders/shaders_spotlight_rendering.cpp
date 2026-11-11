@@ -48,8 +48,8 @@
 //----------------------------------------------------------------------------------
 // Spot data
 typedef struct Spot {
-    Vector2 position;
-    Vector2 speed;
+    glm::vec2 position;
+    glm::vec2 speed;
     float inner;
     float radius;
 
@@ -61,8 +61,8 @@ typedef struct Spot {
 
 // Stars in the star field have a position and velocity
 typedef struct Star {
-    Vector2 position;
-    Vector2 speed;
+    glm::vec2 position;
+    glm::vec2 speed;
 } Star;
 
 //--------------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ int main()
     {
         spots[i].position.x = static_cast<float>(GetRandomValue(64, screenWidth - 64));
         spots[i].position.y = static_cast<float>(GetRandomValue(64, screenHeight - 64));
-        spots[i].speed = Vector2{ 0, 0 };
+        spots[i].speed = glm::vec2{ 0, 0 };
 
         while ((fabs(spots[i].speed.x) + fabs(spots[i].speed.y)) < 2)
         {
@@ -165,7 +165,7 @@ int main()
         {
             if (i == 0)
             {
-                const Vector2 mp = GetMousePosition();
+                const glm::vec2 mp = GetMousePosition();
                 spots[i].position.x = mp.x;
                 spots[i].position.y = screenHeight - mp.y;
             }
@@ -238,7 +238,7 @@ int main()
 //--------------------------------------------------------------------------------------
 static void ResetStar(Star *star)
 {
-    star->position = Vector2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    star->position = glm::vec2{ GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
 
     star->speed.x = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
     star->speed.y = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
@@ -249,7 +249,7 @@ static void ResetStar(Star *star)
         star->speed.y = static_cast<float>(GetRandomValue(-1000, 1000))/100.0f;
     }
 
-    star->position = ((star->position) + (((star->speed) * (Vector2{ 8.0f, 8.0f }))));
+    star->position = ((star->position) + (((star->speed) * (glm::vec2{ 8.0f, 8.0f }))));
 }
 
 static void UpdateStar(Star *star)

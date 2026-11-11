@@ -131,8 +131,8 @@ int main()
             // Change zoom. If Mouse left -> zoom in. Mouse right -> zoom out
             zoom *= IsMouseButtonDown(MOUSE_BUTTON_LEFT)? zoomSpeed : 1.0f/zoomSpeed;
 
-            const Vector2 mousePos = GetMousePosition();
-            Vector2 offsetVelocity;
+            const glm::vec2 mousePos = GetMousePosition();
+            glm::vec2 offsetVelocity;
             // Find the velocity at which to change the camera. Take the distance of the mouse
             // from the center of the screen as the direction, and adjust magnitude based on the current zoom
             offsetVelocity.x = (mousePos.x/static_cast<float>(screenWidth) - 0.5f)*offsetSpeedMul/zoom;
@@ -175,7 +175,7 @@ int main()
             BeginShaderMode(shader);
                 // WARNING: If FLAG_WINDOW_HIGHDPI is enabled, HighDPI monitor scaling should be considered
                 // when rendering the RenderTexture2D to fit in the HighDPI scaled Window
-                DrawTextureEx(target.texture, Vector2{ 0.0f, 0.0f }, 0.0f, 1.0f, WHITE);
+                DrawTextureEx(target.texture, glm::vec2{ 0.0f, 0.0f }, 0.0f, 1.0f, WHITE);
             EndShaderMode();
 
             if (showControls)

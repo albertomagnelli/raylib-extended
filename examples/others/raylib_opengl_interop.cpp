@@ -137,7 +137,7 @@ int main()
 
                 glUniform1f(currentTimeLoc, GetTime());
 
-                Vector4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
+                glm::vec4 color = ColorNormalize(Color{ 255, 0, 0, 128 });
                 glUniform4fv(colorLoc, 1, reinterpret_cast<float *>(&color));
 
                 // Get the current modelview and projection matrix so the particle system is displayed and transformed

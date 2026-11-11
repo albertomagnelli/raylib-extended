@@ -59,7 +59,7 @@ int main()
     for (unsigned int i = 0; i < map.tilesY*map.tilesX; i++) map.tileIds[i] = GetRandomValue(0, 1);
 
     // Player position on the screen (pixel coordinates, not tile coordinates)
-    Vector2 playerPosition = { 180, 130 };
+    glm::vec2 playerPosition = { 180, 130 };
     int playerTileX = 0;
     int playerTileY = 0;
 
@@ -131,13 +131,13 @@ int main()
             }
 
             // Draw player
-            DrawRectangleV(playerPosition, Vector2{ PLAYER_SIZE, PLAYER_SIZE }, RED);
+            DrawRectangleV(playerPosition, glm::vec2{ PLAYER_SIZE, PLAYER_SIZE }, RED);
 
 
             // Draw fog of war (scaled to full map, bilinear filtering)
             DrawTexturePro(fogOfWar.texture, Rectangle{ 0, 0, static_cast<float>(fogOfWar.texture.width), static_cast<float>(-fogOfWar.texture.height) },
                            Rectangle{ 0, 0, static_cast<float>(map.tilesX)*MAP_TILE_SIZE, static_cast<float>(map.tilesY)*MAP_TILE_SIZE },
-                           Vector2{ 0, 0 }, 0.0f, WHITE);
+                           glm::vec2{ 0, 0 }, 0.0f, WHITE);
 
             // Draw player current tile
             DrawText(TextFormat("Current tile: [%i,%i]", playerTileX, playerTileY), 10, 10, 20, RAYWHITE);

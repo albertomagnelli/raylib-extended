@@ -55,7 +55,7 @@ int main()
 
     const int spacings[MAX_FONTS] = { 2, 4, 8, 4, 3, 4, 4, 1 };
 
-    Vector2 positions[MAX_FONTS] = {};
+    glm::vec2 positions[MAX_FONTS] = {};
 
     for (int i = 0; i < MAX_FONTS; i++)
     {

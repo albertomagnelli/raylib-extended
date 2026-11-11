@@ -55,24 +55,24 @@ bool SHOW_TEXT_BOUNDRY = false;
 //--------------------------------------------------------------------------------------
 // Configuration structure for waving the text
 typedef struct WaveTextConfig {
-    Vector3 waveRange;
-    Vector3 waveSpeed;
-    Vector3 waveOffset;
+    glm::vec3 waveRange;
+    glm::vec3 waveSpeed;
+    glm::vec3 waveOffset;
 } WaveTextConfig;
 
 //--------------------------------------------------------------------------------------
 // Module Functions Declaration
 //--------------------------------------------------------------------------------------
 // Draw a codepoint in 3D space
-static void DrawTextCodepoint3D(Font font, int codepoint, Vector3 position, float fontSize, bool backface, Color tint);
+static void DrawTextCodepoint3D(Font font, int codepoint, glm::vec3 position, float fontSize, bool backface, Color tint);
 // Draw a 2D text in 3D space
-static void DrawText3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint);
+static void DrawText3D(Font font, std::string_view text, glm::vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint);
 
 // Draw a 2D text in 3D space and wave the parts that start with '~~' and end with '~~'
 // This is a modified version of the original code by @Nighten found here https://github.com/NightenDushi/Raylib_DrawTextStyle
-static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig *config, float time, Color tint);
+static void DrawTextWave3D(Font font, std::string_view text, glm::vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig *config, float time, Color tint);
 // Measure a text in 3D ignoring the `~~` chars
-static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing);
+static glm::vec3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing);
 // Generates a nice color with a random hue
 static Color GenerateRandomColor(float s, float v);
 
@@ -94,16 +94,16 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera3D camera = {};
-    camera.position = Vector3{ -10.0f, 15.0f, -10.0f };   // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };          // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };              // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ -10.0f, 15.0f, -10.0f }; // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };        // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };            // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                    // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                 // Camera projection type
 
     int camera_mode = CAMERA_ORBITAL;
 
-    const Vector3 cubePosition = { 0.0f, 1.0f, 0.0f };
-    const Vector3 cubeSize = { 2.0f, 2.0f, 2.0f };
+    const glm::vec3 cubePosition = { 0.0f, 1.0f, 0.0f };
+    const glm::vec3 cubeSize = { 2.0f, 2.0f, 2.0f };
 
     // Use the default font
     Font font = GetFontDefault();
@@ -113,7 +113,7 @@ int main()
 
     // Set the text (using markdown!)
     char text[64] = "Hello ~~World~~ in 3D!";
-    Vector3 tbox = {};
+    glm::vec3 tbox = {};
     int layers = 1;
     int quads = 0;
     float layerDistance = 0.01f;
@@ -177,19 +177,19 @@ int main()
             spin = !spin;
             // we need to reset the camera when changing modes
             camera = {};
-            camera.target = Vector3{ 0.0f, 0.0f, 0.0f };          // Camera looking at point
-            camera.up = Vector3{ 0.0f, 1.0f, 0.0f };              // Camera up vector (rotation towards target)
+            camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };        // Camera looking at point
+            camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };            // Camera up vector (rotation towards target)
             camera.fovy = 45.0f;                                    // Camera field-of-view Y
             camera.projection = CAMERA_PERSPECTIVE;                 // Camera mode type
 
             if (spin)
             {
-                camera.position = Vector3{ -10.0f, 15.0f, -10.0f };   // Camera position
+                camera.position = glm::vec3{ -10.0f, 15.0f, -10.0f }; // Camera position
                 camera_mode = CAMERA_ORBITAL;
             }
             else
             {
-                camera.position = Vector3{ 10.0f, 10.0f, -10.0f };   // Camera position
+                camera.position = glm::vec3{ 10.0f, 10.0f, -10.0f }; // Camera position
                 camera_mode = CAMERA_FREE;
             }
         }
@@ -201,8 +201,8 @@ int main()
 
             // Check collision between ray and box
             const RayCollision collision = GetRayCollisionBox(ray,
-                            BoundingBox{Vector3{ cubePosition.x - cubeSize.x/2, cubePosition.y - cubeSize.y/2, cubePosition.z - cubeSize.z/2 },
-                                          Vector3{ cubePosition.x + cubeSize.x/2, cubePosition.y + cubeSize.y/2, cubePosition.z + cubeSize.z/2 }});
+                            BoundingBox{glm::vec3{ cubePosition.x - cubeSize.x/2, cubePosition.y - cubeSize.y/2, cubePosition.z - cubeSize.z/2 },
+                                          glm::vec3{ cubePosition.x + cubeSize.x/2, cubePosition.y + cubeSize.y/2, cubePosition.z + cubeSize.z/2 }});
             if (collision.hit)
             {
                 // Generate new random colors
@@ -300,11 +300,11 @@ int main()
                         {
                             Color clr = light;
                             if (multicolor) clr = multi[i];
-                            DrawTextWave3D(font, text, Vector3{ -tbox.x/2.0f, layerDistance*i, -4.5f }, fontSize, fontSpacing, lineSpacing, true, &wcfg, time, clr);
+                            DrawTextWave3D(font, text, glm::vec3{ -tbox.x/2.0f, layerDistance*i, -4.5f }, fontSize, fontSpacing, lineSpacing, true, &wcfg, time, clr);
                         }
 
                         // Draw the text boundary if set
-                        if (SHOW_TEXT_BOUNDRY) DrawCubeWiresV(Vector3{ 0.0f, 0.0f, -4.5f + tbox.z/2 }, tbox, dark);
+                        if (SHOW_TEXT_BOUNDRY) DrawCubeWiresV(glm::vec3{ 0.0f, 0.0f, -4.5f + tbox.z/2 }, tbox, dark);
                     rlPopMatrix();
 
                     // Don't draw the letter boundaries for the 3D text below
@@ -317,8 +317,8 @@ int main()
                         rlRotatef(180.0f, 0.0f, 1.0f, 0.0f);
                         std::string opt = TextFormat("< SIZE: %2.1f >", fontSize);
                         quads += TextLength(opt);
-                        Vector2 m = MeasureTextEx(GetFontDefault(), opt, 0.8f, 0.1f);
-                        Vector3 pos = { -m.x/2.0f, 0.01f, 2.0f};
+                        glm::vec2 m = MeasureTextEx(GetFontDefault(), opt, 0.8f, 0.1f);
+                        glm::vec3 pos = { -m.x/2.0f, 0.01f, 2.0f};
                         DrawText3D(GetFontDefault(), opt, pos, 0.8f, 0.1f, 0.0f, false, BLUE);
                         pos.z += 0.5f + m.y;
 
@@ -363,7 +363,7 @@ int main()
                     opt = "All the text displayed here is in 3D";
                     quads += 36;
                     m = MeasureTextEx(GetFontDefault(), opt, 1.0f, 0.05f);
-                    pos = Vector3{-m.x/2.0f, 0.01f, 2.0f};
+                    pos = glm::vec3{-m.x/2.0f, 0.01f, 2.0f};
                     DrawText3D(GetFontDefault(), opt, pos, 1.0f, 0.05f, 0.0f, false, DARKBLUE);
                     pos.z += 1.5f + m.y;
 
@@ -454,7 +454,7 @@ int main()
 // Module Functions Definitions
 //--------------------------------------------------------------------------------------
 // Draw codepoint at specified position in 3D space
-static void DrawTextCodepoint3D(Font font, int codepoint, Vector3 position, float fontSize, bool backface, Color tint)
+static void DrawTextCodepoint3D(Font font, int codepoint, glm::vec3 position, float fontSize, bool backface, Color tint)
 {
     // Character index position in sprite font
     // NOTE: In case a codepoint is not available in the font, index returned points to '?'
@@ -486,7 +486,7 @@ static void DrawTextCodepoint3D(Font font, int codepoint, Vector3 position, floa
         const float tw = (srcRec.x+srcRec.width)/font.texture.width;
         const float th = (srcRec.y+srcRec.height)/font.texture.height;
 
-        if (SHOW_LETTER_BOUNDRY) DrawCubeWiresV(Vector3{ position.x + width/2, position.y, position.z + height/2}, Vector3{ width, LETTER_BOUNDRY_SIZE, height }, LETTER_BOUNDRY_COLOR);
+        if (SHOW_LETTER_BOUNDRY) DrawCubeWiresV(glm::vec3{ position.x + width/2, position.y, position.z + height/2}, glm::vec3{ width, LETTER_BOUNDRY_SIZE, height }, LETTER_BOUNDRY_COLOR);
 
         rlCheckRenderBatchLimit(4 + 4*backface);
         rlSetTexture(font.texture.id);
@@ -521,7 +521,7 @@ static void DrawTextCodepoint3D(Font font, int codepoint, Vector3 position, floa
 }
 
 // Draw a 2D text in 3D space
-static void DrawText3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint)
+static void DrawText3D(Font font, std::string_view text, glm::vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, Color tint)
 {
     const int length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
@@ -550,7 +550,7 @@ static void DrawText3D(Font font, std::string_view text, Vector3 position, float
         {
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                DrawTextCodepoint3D(font, codepoint, Vector3{ position.x + textOffsetX, position.y, position.z + textOffsetY }, fontSize, backface, tint);
+                DrawTextCodepoint3D(font, codepoint, glm::vec3{ position.x + textOffsetX, position.y, position.z + textOffsetY }, fontSize, backface, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += font.recs[index].width*scale + fontSpacing;
@@ -563,7 +563,7 @@ static void DrawText3D(Font font, std::string_view text, Vector3 position, float
 
 // Draw a 2D text in 3D space and wave the parts that start with `~~` and end with `~~`
 // This is a modified version of the original code by @Nighten found here https://github.com/NightenDushi/Raylib_DrawTextStyle
-static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig* config, float time, Color tint)
+static void DrawTextWave3D(Font font, std::string_view text, glm::vec3 position, float fontSize, float fontSpacing, float lineSpacing, bool backface, WaveTextConfig* config, float time, Color tint)
 {
     const int length = TextLength(text);          // Total length in bytes of the text, scanned by codepoints in loop
 
@@ -603,7 +603,7 @@ static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, f
         {
             if ((codepoint != ' ') && (codepoint != '\t'))
             {
-                Vector3 pos = position;
+                glm::vec3 pos = position;
                 if (wave) // Apply the wave effect
                 {
                     pos.x += sinf(time*config->waveSpeed.x-k*config->waveOffset.x)*config->waveRange.x;
@@ -611,7 +611,7 @@ static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, f
                     pos.z += sinf(time*config->waveSpeed.z-k*config->waveOffset.z)*config->waveRange.z;
                 }
 
-                DrawTextCodepoint3D(font, codepoint, Vector3{ pos.x + textOffsetX, pos.y, pos.z + textOffsetY }, fontSize, backface, tint);
+                DrawTextCodepoint3D(font, codepoint, glm::vec3{ pos.x + textOffsetX, pos.y, pos.z + textOffsetY }, fontSize, backface, tint);
             }
 
             if (font.glyphs[index].advanceX == 0) textOffsetX += font.recs[index].width*scale + fontSpacing;
@@ -623,7 +623,7 @@ static void DrawTextWave3D(Font font, std::string_view text, Vector3 position, f
 }
 
 // Measure a text in 3D ignoring the `~~` chars
-static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing)
+static glm::vec3 MeasureTextWave3D(Font font, std::string_view text, float fontSize, float fontSpacing, float lineSpacing)
 {
     const int len = TextLength(text);
     int tempLen = 0;                // Used to count longer text line num chars
@@ -675,7 +675,7 @@ static Vector3 MeasureTextWave3D(Font font, std::string_view text, float fontSiz
 
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-    Vector3 vec = {};
+    glm::vec3 vec = {};
     vec.x = tempTextWidth + ((tempLen - 1)*fontSpacing); // Adds chars spacing to measure
     vec.y = 0.25f;
     vec.z = textHeight;

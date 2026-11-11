@@ -38,9 +38,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 5.0f, 5.0f, 5.0f }; // Camera position
-    camera.target = Vector3{ 0.0f, 2.0f, 0.0f };  // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };      // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 5.0f, 5.0f, 5.0f }; // Camera position
+    camera.target = glm::vec3{ 0.0f, 2.0f, 0.0f };// Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };    // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                            // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;         // Camera projection type
 
@@ -85,7 +85,7 @@ int main()
         }
     }
 
-    const Vector3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
+    const glm::vec3 position = { 0.0f, 0.0f, 0.0f }; // Set model position
     unsigned short angle = 0;           // Set angle for rotate character
 
     DisableCursor();                    // Limit cursor to relative movement inside the window
@@ -127,8 +127,8 @@ int main()
 
             BeginMode3D(camera);
                 // Draw character
-                const Quaternion characterRotate = glm::angleAxis(angle*DEG2RAD, glm::normalize(Vector3{ 0.0f, 1.0f, 0.0f }));
-                characterModel.transform = ((glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z})) * (glm::mat4_cast(characterRotate)));
+                const Quaternion characterRotate = glm::angleAxis(angle*DEG2RAD, glm::normalize(glm::vec3{ 0.0f, 1.0f, 0.0f }));
+                characterModel.transform = ((glm::translate(Matrix(1.0f), glm::vec3{position.x, position.y, position.z})) * (glm::mat4_cast(characterRotate)));
                 UpdateModelAnimation(characterModel, anim, static_cast<float>(animCurrentFrame));
                 DrawMesh(characterModel.meshes[0], characterModel.materials[1], characterModel.transform);
 
@@ -145,7 +145,7 @@ int main()
                     const Quaternion rotate = ((outRotation) * (glm::inverse(inRotation)));
                     Matrix matrixTransform = glm::mat4_cast(rotate);
                     // Translate socket to its position in the current animation
-                    matrixTransform = ((glm::translate(Matrix(1.0f), Vector3{transform->translation.x, transform->translation.y, transform->translation.z})) * (matrixTransform));
+                    matrixTransform = ((glm::translate(Matrix(1.0f), glm::vec3{transform->translation.x, transform->translation.y, transform->translation.z})) * (matrixTransform));
                     // Transform the socket using the transform of the character (angle and translate)
                     matrixTransform = ((characterModel.transform) * (matrixTransform));
 

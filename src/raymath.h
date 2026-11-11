@@ -2,7 +2,7 @@
 *
 *   raymath - raylib math glue on top of glm
 *
-*   Vector, matrix and quaternion arithmetic is provided by glm: Vector2, Vector3, Vector4,
+*   Vector, matrix and quaternion arithmetic is provided by glm: glm::vec2, glm::vec3, glm::vec4,
 *   Matrix and Quaternion are glm types (see raylib.h). This header keeps only the helpers
 *   glm does not provide:
 *
@@ -40,19 +40,18 @@
 #include <glm/gtc/type_ptr.hpp>
 
 // NOTE: raymath can be used standalone, without including raylib.h:
-// the math types are just glm aliases, so provide them here in that case.
-#if !defined(RL_VECTOR2_TYPE)
-    using Vector2 = glm::vec2;
-    using Vector3 = glm::vec3;
-    using Vector4 = glm::vec4;
-    using Quaternion = glm::quat;
+// vectors are glm::vec2/glm::vec3/glm::vec4 and the matrix/quaternion aliases
+// are just glm types, so provide them here in that case.
+#if !defined(RL_MATRIX_TYPE)
     using Matrix = glm::mat4;
 
-    #define RL_VECTOR2_TYPE
-    #define RL_VECTOR3_TYPE
-    #define RL_VECTOR4_TYPE
-    #define RL_QUATERNION_TYPE
     #define RL_MATRIX_TYPE
+#endif
+
+#if !defined(RL_QUATERNION_TYPE)
+    using Quaternion = glm::quat;
+
+    #define RL_QUATERNION_TYPE
 #endif
 
 #ifndef EPSILON
@@ -62,7 +61,7 @@
 //----------------------------------------------------------------------------------
 // Types
 //----------------------------------------------------------------------------------
-// float3, 3 components, used to upload a Vector3 to a shader uniform
+// float3, 3 components, used to upload a glm::vec3 to a shader uniform
 typedef struct float3 {
     float v[3];
 } float3;
@@ -107,16 +106,16 @@ inline bool FloatEquals(float x, float y)
 }
 
 //----------------------------------------------------------------------------------
-// Module Functions Definition - Vector2 helpers
+// Module Functions Definition - glm::vec2 helpers
 //----------------------------------------------------------------------------------
 // Calculate the 2d cross product of two vectors (scalar)
-inline float Vector2CrossProduct(Vector2 v1, Vector2 v2)
+inline float Vector2CrossProduct(glm::vec2 v1, glm::vec2 v2)
 {
     return (v1.x*v2.y - v1.y*v2.x);
 }
 
 // Calculate angle defined by a two vectors line (radians)
-inline float Vector2Angle(Vector2 v1, Vector2 v2)
+inline float Vector2Angle(glm::vec2 v1, glm::vec2 v2)
 {
     const float dot = v1.x*v2.x + v1.y*v2.y;
     const float det = v1.x*v2.y - v1.y*v2.x;
@@ -125,7 +124,7 @@ inline float Vector2Angle(Vector2 v1, Vector2 v2)
 }
 
 // Calculate angle between two vectors, in radians, clockwise from the X axis
-inline float Vector2LineAngle(Vector2 start, Vector2 end)
+inline float Vector2LineAngle(glm::vec2 start, glm::vec2 end)
 {
     return -std::atan2(end.y - start.y, end.x - start.x);
 }
@@ -133,15 +132,15 @@ inline float Vector2LineAngle(Vector2 start, Vector2 end)
 // Move Vector towards target
 // Rotate vector by angle
 // NOTE: raylib-specific 2D helper, glm::rotate() works on 3D vectors only
-inline Vector2 Vector2Rotate(Vector2 v, float angle)
+inline glm::vec2 Vector2Rotate(glm::vec2 v, float angle)
 {
     const float cosres = std::cos(angle);
     const float sinres = std::sin(angle);
 
-    return Vector2{v.x*cosres - v.y*sinres, v.x*sinres + v.y*cosres};
+    return glm::vec2{v.x*cosres - v.y*sinres, v.x*sinres + v.y*cosres};
 }
 
-inline Vector2 Vector2MoveTowards(Vector2 v, Vector2 target, float maxDistance)
+inline glm::vec2 Vector2MoveTowards(glm::vec2 v, glm::vec2 target, float maxDistance)
 {
     const float dx = target.x - v.x;
     const float dy = target.y - v.y;
@@ -151,89 +150,89 @@ inline Vector2 Vector2MoveTowards(Vector2 v, Vector2 target, float maxDistance)
 
     const float dist = std::sqrt(value);
 
-    return Vector2{v.x + dx/dist*maxDistance, v.y + dy/dist*maxDistance};
+    return glm::vec2{v.x + dx/dist*maxDistance, v.y + dy/dist*maxDistance};
 }
 
 //----------------------------------------------------------------------------------
-// Module Functions Definition - Vector3 helpers
+// Module Functions Definition - glm::vec3 helpers
 //----------------------------------------------------------------------------------
 // Calculate the perpendicular vector to another
-inline Vector3 Vector3Perpendicular(Vector3 v)
+inline glm::vec3 Vector3Perpendicular(glm::vec3 v)
 {
     float min = std::fabs(v.x);
-    Vector3 cardinalAxis{1.0f, 0.0f, 0.0f};
+    glm::vec3 cardinalAxis{1.0f, 0.0f, 0.0f};
 
     if (std::fabs(v.y) < min)
     {
         min = std::fabs(v.y);
-        cardinalAxis = Vector3{0.0f, 1.0f, 0.0f};
+        cardinalAxis = glm::vec3{0.0f, 1.0f, 0.0f};
     }
 
-    if (std::fabs(v.z) < min) cardinalAxis = Vector3{0.0f, 0.0f, 1.0f};
+    if (std::fabs(v.z) < min) cardinalAxis = glm::vec3{0.0f, 0.0f, 1.0f};
 
-    return Vector3{v.y*cardinalAxis.z - v.z*cardinalAxis.y,
+    return glm::vec3{v.y*cardinalAxis.z - v.z*cardinalAxis.y,
                    v.z*cardinalAxis.x - v.x*cardinalAxis.z,
                    v.x*cardinalAxis.y - v.y*cardinalAxis.x};
 }
 
 // Calculate angle between two vectors, returns degrees
-inline float Vector3Angle(Vector3 v1, Vector3 v2)
+inline float Vector3Angle(glm::vec3 v1, glm::vec3 v2)
 {
-    const Vector3 cross = glm::cross(v1, v2);
+    const glm::vec3 cross = glm::cross(v1, v2);
     return std::atan2(std::sqrt(glm::dot(cross, cross)), glm::dot(v1, v2));
 }
 
 // Calculate the projection of the vector v1 on to v2
-inline Vector3 Vector3Project(Vector3 v1, Vector3 v2)
+inline glm::vec3 Vector3Project(glm::vec3 v1, glm::vec3 v2)
 {
     const float v2Length = glm::dot(v2, v2);
 
     if (v2Length > 0.0f) return v2*(glm::dot(v1, v2)/v2Length);
 
-    return Vector3{};
+    return glm::vec3{};
 }
 
 // Calculate the rejection of the vector v1 on to v2
-inline Vector3 Vector3Reject(Vector3 v1, Vector3 v2)
+inline glm::vec3 Vector3Reject(glm::vec3 v1, glm::vec3 v2)
 {
     const float v2Length = glm::dot(v2, v2);
 
     if (v2Length > 0.0f) return v1 - v2*(glm::dot(v1, v2)/v2Length);
 
-    return Vector3{};
+    return glm::vec3{};
 }
 
 // Orthonormalize provided vectors, makes vectors normalized and orthogonal to each other
-inline void Vector3OrthoNormalize(Vector3 *v1, Vector3 *v2)
+inline void Vector3OrthoNormalize(glm::vec3 *v1, glm::vec3 *v2)
 {
     *v1 = glm::normalize(*v1);
 
-    Vector3 vn1 = glm::cross(*v1, *v2);
+    glm::vec3 vn1 = glm::cross(*v1, *v2);
     vn1 = glm::normalize(vn1);
 
     *v2 = glm::cross(vn1, *v1);
 }
 
 // Rotate vector by axis and angle using Euler-Rodrigues formula, angle in radians
-inline Vector3 Vector3RotateByAxisAngle(Vector3 v, Vector3 axis, float angle)
+inline glm::vec3 Vector3RotateByAxisAngle(glm::vec3 v, glm::vec3 axis, float angle)
 {
     axis = glm::normalize(axis);
 
     angle *= 0.5f;
     float a = std::sin(angle);
-    const Vector3 w = axis*a;
+    const glm::vec3 w = axis*a;
     a = std::cos(angle);
 
-    const Vector3 wv = glm::cross(w, v);
-    const Vector3 wwv = glm::cross(w, wv);
+    const glm::vec3 wv = glm::cross(w, v);
+    const glm::vec3 wwv = glm::cross(w, wv);
 
     return v + wv*(2.0f*a) + wwv*2.0f;
 }
 
 // Move Vector towards target
-inline Vector3 Vector3MoveTowards(Vector3 v, Vector3 target, float maxDistance)
+inline glm::vec3 Vector3MoveTowards(glm::vec3 v, glm::vec3 target, float maxDistance)
 {
-    const Vector3 dir = target - v;
+    const glm::vec3 dir = target - v;
     const float value = glm::dot(dir, dir);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
@@ -242,7 +241,7 @@ inline Vector3 Vector3MoveTowards(Vector3 v, Vector3 target, float maxDistance)
 }
 
 // Calculate the cubic Hermite interpolation between two values
-inline Vector3 Vector3CubicHermite(Vector3 v1, Vector3 tangent1, Vector3 v2, Vector3 tangent2, float amount)
+inline glm::vec3 Vector3CubicHermite(glm::vec3 v1, glm::vec3 tangent1, glm::vec3 v2, glm::vec3 tangent2, float amount)
 {
     const float t2 = amount*amount;
     const float t3 = t2*amount;
@@ -255,11 +254,11 @@ inline Vector3 Vector3CubicHermite(Vector3 v1, Vector3 tangent1, Vector3 v2, Vec
 }
 
 // Calculate barycenter of a triangle, given 4 points: p point in the triangle, a, b, c triangle vertices
-inline Vector3 Vector3Barycenter(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
+inline glm::vec3 Vector3Barycenter(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c)
 {
-    const Vector3 v0 = b - a;
-    const Vector3 v1 = c - a;
-    const Vector3 v2 = p - a;
+    const glm::vec3 v0 = b - a;
+    const glm::vec3 v1 = c - a;
+    const glm::vec3 v2 = p - a;
     const float d00 = glm::dot(v0, v0);
     const float d01 = glm::dot(v0, v1);
     const float d11 = glm::dot(v1, v1);
@@ -268,7 +267,7 @@ inline Vector3 Vector3Barycenter(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
 
     const float denom = d00*d11 - d01*d01;
 
-    Vector3 result{};
+    glm::vec3 result{};
     result.y = (d11*d20 - d01*d21)/denom;
     result.z = (d00*d21 - d01*d20)/denom;
     result.x = 1.0f - (result.z + result.y);
@@ -277,19 +276,19 @@ inline Vector3 Vector3Barycenter(Vector3 p, Vector3 a, Vector3 b, Vector3 c)
 }
 
 // Project point from world coordinate system to the normalized device coordinate (NDC) space
-inline Vector3 Vector3Unproject(const Vector3 source, const Matrix& projection, const Matrix& view)
+inline glm::vec3 Vector3Unproject(const glm::vec3 source, const Matrix& projection, const Matrix& view)
 {
     const Matrix matViewProjInv = glm::inverse(projection*view);
 
-    const Vector4 qtransformed = matViewProjInv*Vector4{source, 1.0f};
+    const glm::vec4 qtransformed = matViewProjInv*glm::vec4{source, 1.0f};
 
-    return Vector3{qtransformed.x/qtransformed.w,
+    return glm::vec3{qtransformed.x/qtransformed.w,
                    qtransformed.y/qtransformed.w,
                    qtransformed.z/qtransformed.w};
 }
 
-// Get Vector3 as float3, useful for shader uniforms
-inline float3 Vector3ToFloatV(Vector3 v)
+// Get glm::vec3 as float3, useful for shader uniforms
+inline float3 Vector3ToFloatV(glm::vec3 v)
 {
     float3 buffer{};
     buffer.v[0] = v.x;
@@ -300,12 +299,12 @@ inline float3 Vector3ToFloatV(Vector3 v)
 }
 
 //----------------------------------------------------------------------------------
-// Module Functions Definition - Vector4 helpers
+// Module Functions Definition - glm::vec4 helpers
 //----------------------------------------------------------------------------------
 // Move Vector towards target
-inline Vector4 Vector4MoveTowards(Vector4 v, Vector4 target, float maxDistance)
+inline glm::vec4 Vector4MoveTowards(glm::vec4 v, glm::vec4 target, float maxDistance)
 {
-    const Vector4 dir = target - v;
+    const glm::vec4 dir = target - v;
     const float value = glm::dot(dir, dir);
 
     if ((value == 0.0f) || ((maxDistance >= 0.0f) && (value <= maxDistance*maxDistance))) return target;
@@ -349,10 +348,10 @@ inline Quaternion QuaternionDivide(Quaternion q, float div)
 }
 
 // Calculate quaternion based on the rotation from one vector to another
-inline Quaternion QuaternionFromVector3ToVector3(Vector3 from, Vector3 to)
+inline Quaternion QuaternionFromVector3ToVector3(glm::vec3 from, glm::vec3 to)
 {
     const float cos2Theta = glm::dot(from, to);
-    const Vector3 cross = glm::cross(from, to);
+    const glm::vec3 cross = glm::cross(from, to);
 
     const float lengths = std::sqrt(glm::dot(cross, cross) + cos2Theta*cos2Theta); // |from|*|to|
 
@@ -425,9 +424,9 @@ inline Quaternion QuaternionFromEuler(float pitch, float yaw, float roll)
 }
 
 // Calculate Euler angles (pitch, yaw, roll) from a quaternion, in radians
-inline Vector3 QuaternionToEuler(Quaternion q)
+inline glm::vec3 QuaternionToEuler(Quaternion q)
 {
-    Vector3 result{};
+    glm::vec3 result{};
 
     // Pitch (y-axis rotation)
     float y0 = 2.0f*(q.w*q.y - q.z*q.x);
@@ -458,17 +457,17 @@ inline Vector3 QuaternionToEuler(Quaternion q)
 }
 
 // Calculate quaternion from axis and angle, angle in radians
-inline Quaternion QuaternionFromAxisAngle(Vector3 axis, float angle)
+inline Quaternion QuaternionFromAxisAngle(glm::vec3 axis, float angle)
 {
     return glm::angleAxis(angle, glm::normalize(axis));
 }
 
 // Calculate quaternion axis and angle, returns angle in radians
-inline void QuaternionToAxisAngle(Quaternion q, Vector3 *outAxis, float *outAngle)
+inline void QuaternionToAxisAngle(Quaternion q, glm::vec3 *outAxis, float *outAngle)
 {
     if (std::fabs(q.w) > 1.0f) q = glm::normalize(q);
 
-    Vector3 resAxis{0.0f, 0.0f, 0.0f};
+    glm::vec3 resAxis{0.0f, 0.0f, 0.0f};
     const float resAngle = 2.0f*std::acos(q.w);
     const float den = std::sqrt(1.0f - q.w*q.w);
 
@@ -493,7 +492,7 @@ inline void QuaternionToAxisAngle(Quaternion q, Vector3 *outAxis, float *outAngl
 // Module Functions Definition - Matrix helpers
 //----------------------------------------------------------------------------------
 // Create a rotation matrix from Euler angles (x, y, z), in radians
-inline Matrix MatrixRotateXYZ(Vector3 angle)
+inline Matrix MatrixRotateXYZ(glm::vec3 angle)
 {
     auto result = Matrix(1.0f);
 
@@ -520,7 +519,7 @@ inline Matrix MatrixRotateXYZ(Vector3 angle)
 }
 
 // Create a rotation matrix from Euler angles (x, y, z), applied in ZYX order, in radians
-inline Matrix MatrixRotateZYX(Vector3 angle)
+inline Matrix MatrixRotateZYX(glm::vec3 angle)
 {
     auto result = Matrix(1.0f);
 
@@ -547,30 +546,30 @@ inline Matrix MatrixRotateZYX(Vector3 angle)
 }
 
 // Compose a transformation matrix from translation, rotation and scale
-inline Matrix MatrixCompose(Vector3 translation, Quaternion rotation, Vector3 scale)
+inline Matrix MatrixCompose(glm::vec3 translation, Quaternion rotation, glm::vec3 scale)
 {
     Matrix result = glm::mat4_cast(rotation);
 
-    result[0] = Vector4{Vector3{result[0]}*scale.x, 0.0f};
-    result[1] = Vector4{Vector3{result[1]}*scale.y, 0.0f};
-    result[2] = Vector4{Vector3{result[2]}*scale.z, 0.0f};
-    result[3] = Vector4{translation, 1.0f};
+    result[0] = glm::vec4{glm::vec3{result[0]}*scale.x, 0.0f};
+    result[1] = glm::vec4{glm::vec3{result[1]}*scale.y, 0.0f};
+    result[2] = glm::vec4{glm::vec3{result[2]}*scale.z, 0.0f};
+    result[3] = glm::vec4{translation, 1.0f};
 
     return result;
 }
 
 // Decompose a transformation matrix into its rotational, translational and scaling components and remove shear
-inline void MatrixDecompose(Matrix mat, Vector3 *translation, Quaternion *rotation, Vector3 *scale)
+inline void MatrixDecompose(Matrix mat, glm::vec3 *translation, Quaternion *rotation, glm::vec3 *scale)
 {
     constexpr auto eps = static_cast<float>(1e-9);
 
     // Extract Translation
-    *translation = Vector3{mat[3][0], mat[3][1], mat[3][2]};
+    *translation = glm::vec3{mat[3][0], mat[3][1], mat[3][2]};
 
     // Matrix Columns - Rotation will be extracted into here
-    Vector3 matColumns[3] = {Vector3{mat[0][0], mat[0][1], mat[0][2]},
-                             Vector3{mat[1][0], mat[1][1], mat[1][2]},
-                             Vector3{mat[2][0], mat[2][1], mat[2][2]}};
+    glm::vec3 matColumns[3] = {glm::vec3{mat[0][0], mat[0][1], mat[0][2]},
+                             glm::vec3{mat[1][0], mat[1][1], mat[1][2]},
+                             glm::vec3{mat[2][0], mat[2][1], mat[2][2]}};
 
     // Shear Parameters XY, XZ, and YZ (extracted and ignored)
     float shear[3] = {0};
@@ -588,7 +587,7 @@ inline void MatrixDecompose(Matrix mat, Vector3 *translation, Quaternion *rotati
     matColumns[2] *= 1.0f/stabilizer;
 
     // X Scale
-    Vector3 scl;
+    glm::vec3 scl;
     scl.x = glm::length(matColumns[0]);
     if (scl.x > eps) matColumns[0] *= 1.0f/scl.x;
 

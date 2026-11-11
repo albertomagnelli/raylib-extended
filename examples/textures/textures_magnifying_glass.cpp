@@ -46,7 +46,7 @@ int main()
     // Set magnifying glass zoom
     camera.zoom = 2;
     // Offset by half the size of the magnifying glass to counteract drawing the texture centered on the mouse position
-    camera.offset = Vector2{ 128, 128 };
+    camera.offset = glm::vec2{ 128, 128 };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Vector2 mPos = GetMousePosition();
+        const glm::vec2 mPos = GetMousePosition();
         camera.target = mPos;
 
         //----------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ int main()
             EndTextureMode();
 
             // Draw magnifiedWorld to screen, centered on cursor
-            DrawTextureRec(magnifiedWorld.texture, Rectangle{0, 0, 256, -256}, Vector2{mPos.x - 128, mPos.y - 128}, WHITE);
+            DrawTextureRec(magnifiedWorld.texture, Rectangle{0, 0, 256, -256}, glm::vec2{mPos.x - 128, mPos.y - 128}, WHITE);
 
             // Draw the outer ring of the magnifying glass
             DrawRing(mPos, 126, 130, 0, 360, 64, BLACK);

@@ -92,7 +92,7 @@ int main()
 
     const Rectangle optionsBackground = { 510, 0, 290, 450 };
 
-    const Vector2 zoomPoint = {(static_cast<float>(screenWidth) - optionsBackground.width)/2.0f, static_cast<float>(screenHeight)/2.0f};
+    const glm::vec2 zoomPoint = {(static_cast<float>(screenWidth) - optionsBackground.width)/2.0f, static_cast<float>(screenHeight)/2.0f};
 
     GuiSetStyle(LABEL, TEXT_COLOR_NORMAL, ColorToInt(WHITE));
 
@@ -104,8 +104,8 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Vector2 mousePosScreen = GetMousePosition();
-        const Vector2 mouseWheelVec = GetMouseWheelMoveV();
+        const glm::vec2 mousePosScreen = GetMousePosition();
+        const glm::vec2 mouseWheelVec = GetMouseWheelMoveV();
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosScreen, optionsBackground)) disableMouseControl = true;
 
@@ -113,17 +113,17 @@ int main()
 
         if (!disableMouseControl) {
             if (mouseWheelVec.y != 0.0f) {
-                const Vector2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+                const glm::vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
                 camera.zoom *= exp2f(MOUSE_CAMERA_ZOOM_SPEED*mouseWheelVec.y); // Constant zoom rate
                 camera.zoom = Clamp(camera.zoom, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 
-                const Vector2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+                const glm::vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
                 camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
             }
 
             if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                const Vector2 mouseDelta = GetMouseDelta();
+                const glm::vec2 mouseDelta = GetMouseDelta();
                 camera.target.x -= mouseDelta.x/camera.zoom;
                 camera.target.y -= mouseDelta.y/camera.zoom;
 
@@ -148,37 +148,37 @@ int main()
 
         if (IsKeyDown(KEY_UP))
         {
-            const Vector2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const glm::vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
             camera.zoom *= exp2f(KEYBOARD_CAMERA_ZOOM_SPEED);
             camera.zoom = Clamp(camera.zoom, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 
-            const Vector2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const glm::vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
             camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
         }
         if (IsKeyDown(KEY_DOWN))
         {
-            const Vector2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const glm::vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
             camera.zoom *= exp2f(-KEYBOARD_CAMERA_ZOOM_SPEED);
             camera.zoom = Clamp(camera.zoom, CAMERA_ZOOM_MIN, CAMERA_ZOOM_MAX);
 
-            const Vector2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const glm::vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
             camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
         }
 
         if (IsKeyPressed(KEY_Z))
         {
-            const Vector2 zoomPoint = {(static_cast<float>(screenWidth) - optionsBackground.width)/2.0f, static_cast<float>(screenHeight)/2.0f};
-            const Vector2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const glm::vec2 zoomPoint = {(static_cast<float>(screenWidth) - optionsBackground.width)/2.0f, static_cast<float>(screenHeight)/2.0f};
+            const glm::vec2 prevWorldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
 
             camera.zoom = 1.0f;
 
-            const Vector2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
+            const glm::vec2 worldZoomPoint = GetScreenToWorld2D(zoomPoint, camera);
             camera.target = ((camera.target) + (((prevWorldZoomPoint) - (worldZoomPoint))));
         }
 
-        if (IsKeyPressed(KEY_C)) camera.target = Vector2{};
+        if (IsKeyPressed(KEY_C)) camera.target = glm::vec2{};
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -202,9 +202,9 @@ int main()
             const float ringOuterRadius = SHAPE_SIZE/2.0f;
             const float ringInnerRadius = ringOuterRadius*ringInnerRadiusScale;
 
-            const Vector2 triangleVertex0Offset = { 0.0f, SHAPE_SIZE*0.8f };
-            const Vector2 triangleVertex1Offset = { SHAPE_SIZE*0.6f, SHAPE_SIZE };
-            const Vector2 triangleVertex2Offset = { SHAPE_SIZE, 0.0f };
+            const glm::vec2 triangleVertex0Offset = { 0.0f, SHAPE_SIZE*0.8f };
+            const glm::vec2 triangleVertex1Offset = { SHAPE_SIZE*0.6f, SHAPE_SIZE };
+            const glm::vec2 triangleVertex2Offset = { SHAPE_SIZE, 0.0f };
 
             // ----------------------------------------
             // Draw*Lines()
@@ -222,39 +222,39 @@ int main()
 
             // Circle
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE);
-            DrawCircleV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
-            DrawCircleLinesV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, colorOutline);
+            DrawCircleV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
+            DrawCircleLinesV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, colorOutline);
 
             // Ellipse
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_ELLIPSE);
-            DrawEllipseV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
-            DrawEllipseLinesV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, colorOutline);
+            DrawEllipseV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
+            DrawEllipseLinesV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, colorOutline);
 
             // Circle Sector
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE_SECTOR);
-            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
-            DrawCircleSectorLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), colorOutline);
+            DrawCircleSector(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawCircleSectorLines(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), colorOutline);
 
             // Ring
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RING);
-            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
-            DrawRingLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), colorOutline);
+            DrawRing(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawRingLines(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), colorOutline);
 
             // Triangle
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_TRIANGLE);
-            DrawTriangle(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
-                         Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
-                         Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
+            DrawTriangle(glm::vec2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
+                         glm::vec2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
+                         glm::vec2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
                          COLOR_FILLED);
-            DrawTriangleLines(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
-                              Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
-                              Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
+            DrawTriangleLines(glm::vec2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
+                              glm::vec2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
+                              glm::vec2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
                               colorOutline);
 
             // Polygon
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_POLYGON);
-            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
-            DrawPolyLines(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, colorOutline);
+            DrawPoly(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
+            DrawPolyLines(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, colorOutline);
 
             // Group the shapes
             GuiGroupBox(Rectangle{ shapeOffset - BOX_SPACING, posY - BOX_SPACING, BOX_WIDTH, BOX_HEIGHT }, "Draw*Lines()");
@@ -276,39 +276,39 @@ int main()
 
             // Circle
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE);
-            DrawCircleV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
-            DrawCircleLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, lineThickness, colorOutline);
+            DrawCircleV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
+            DrawCircleLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, lineThickness, colorOutline);
 
             // Ellipse
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_ELLIPSE);
-            DrawEllipseV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
-            DrawEllipseLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, lineThickness, colorOutline);
+            DrawEllipseV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
+            DrawEllipseLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, lineThickness, colorOutline);
 
             // Circle Sector
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE_SECTOR);
-            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
-            DrawCircleSectorLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), lineThickness, colorOutline);
+            DrawCircleSector(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawCircleSectorLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), lineThickness, colorOutline);
 
             // Ring
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RING);
-            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
-            DrawRingLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), lineThickness, colorOutline);
+            DrawRing(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawRingLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), lineThickness, colorOutline);
 
             // Triangle
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_TRIANGLE);
-            DrawTriangle(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
-                         Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
-                         Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
+            DrawTriangle(glm::vec2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
+                         glm::vec2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
+                         glm::vec2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
                          COLOR_FILLED);
-            DrawTriangleLinesEx(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
-                                Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
-                                Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
+            DrawTriangleLinesEx(glm::vec2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
+                                glm::vec2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
+                                glm::vec2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
                                 lineThickness, colorOutline);
 
             // Polygon
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_POLYGON);
-            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
-            DrawPolyLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, lineThickness, colorOutline);
+            DrawPoly(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
+            DrawPolyLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, lineThickness, colorOutline);
 
             // Group the shapes
             GuiGroupBox(Rectangle{ shapeOffset - BOX_SPACING, posY - BOX_SPACING, BOX_WIDTH, BOX_HEIGHT }, "Draw*LinesEx() with *world space* pixel thickness");
@@ -332,39 +332,39 @@ int main()
 
             // Circle
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE);
-            DrawCircleV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
-            DrawCircleLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, constantThickness, colorOutline);
+            DrawCircleV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, COLOR_FILLED);
+            DrawCircleLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, constantThickness, colorOutline);
 
             // Ellipse
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_ELLIPSE);
-            DrawEllipseV(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
-            DrawEllipseLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, constantThickness, colorOutline);
+            DrawEllipseV(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, COLOR_FILLED);
+            DrawEllipseLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, radiusY, constantThickness, colorOutline);
 
             // Circle Sector
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_CIRCLE_SECTOR);
-            DrawCircleSector(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
-            DrawCircleSectorLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), constantThickness, colorOutline);
+            DrawCircleSector(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawCircleSectorLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, radiusX, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), constantThickness, colorOutline);
 
             // Ring
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_RING);
-            DrawRing(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
-            DrawRingLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), constantThickness, colorOutline);
+            DrawRing(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), COLOR_FILLED);
+            DrawRingLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, ringInnerRadius, ringOuterRadius, circleStartAngle, circleEndAngle, static_cast<int>(circleSegments), constantThickness, colorOutline);
 
             // Triangle
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_TRIANGLE);
-            DrawTriangle(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
-                         Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
-                         Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
+            DrawTriangle(glm::vec2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
+                         glm::vec2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
+                         glm::vec2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
                          COLOR_FILLED);
-            DrawTriangleLinesEx(Vector2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
-                                Vector2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
-                                Vector2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
+            DrawTriangleLinesEx(glm::vec2{ posX + triangleVertex0Offset.x, posY + triangleVertex0Offset.y },
+                                glm::vec2{ posX + triangleVertex1Offset.x, posY + triangleVertex1Offset.y },
+                                glm::vec2{ posX + triangleVertex2Offset.x, posY + triangleVertex2Offset.y },
                                 constantThickness, colorOutline);
 
             // Polygon
             posX = shapeOffset + shapePaddingX*static_cast<float>(ORDER_POLYGON);
-            DrawPoly(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
-            DrawPolyLinesEx(Vector2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, constantThickness, colorOutline);
+            DrawPoly(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, COLOR_FILLED);
+            DrawPolyLinesEx(glm::vec2{ posX + SHAPE_SIZE/2.0f, posY + SHAPE_SIZE/2.0f }, static_cast<int>(polygonSides), radiusX, 0.0f, constantThickness, colorOutline);
 
             // Group the shapes
             GuiGroupBox(Rectangle{ shapeOffset - BOX_SPACING, posY - BOX_SPACING, BOX_WIDTH, BOX_HEIGHT }, "Draw*LinesEx() with *screen space* pixel thickness");
@@ -375,14 +375,14 @@ int main()
             DrawRectangleRec(optionsBackground, Fade(DARKGRAY, 0.75f));
 
             DrawRectangleRec(Rectangle{ optionsBackground.x, 360, optionsBackground.width, 90 }, Fade(BLACK, 0.4f));
-            DrawLineEx(Vector2{ optionsBackground.x, 360 }, Vector2{ optionsBackground.x + optionsBackground.width, 360 }, 1.0f, BLACK);
+            DrawLineEx(glm::vec2{ optionsBackground.x, 360 }, glm::vec2{ optionsBackground.x + optionsBackground.width, 360 }, 1.0f, BLACK);
 
             DrawText("Move with the mouse or WASD keys", static_cast<int>(optionsBackground.x) + 10, 370, 10, ORANGE);
             DrawText("Zoom with the mouse or UP and DOWN keys", static_cast<int>(optionsBackground.x) + 10, 390, 10, ORANGE);
             DrawText("Press C to reset position", static_cast<int>(optionsBackground.x) + 10, 410, 10, ORANGE);
             DrawText("Press Z to reset zoom", static_cast<int>(optionsBackground.x) + 10, 430, 10, ORANGE);
 
-            DrawLineEx(Vector2{ optionsBackground.x, optionsBackground.y }, Vector2{ optionsBackground.x, optionsBackground.y + optionsBackground.height }, 1.0f, BLACK);
+            DrawLineEx(glm::vec2{ optionsBackground.x, optionsBackground.y }, glm::vec2{ optionsBackground.x, optionsBackground.y + optionsBackground.height }, 1.0f, BLACK);
 
             GuiSliderBar(Rectangle{ 605,  10, 150, 25 }, "Line Opacity"    , TextFormat("%d"  , static_cast<int>(lineOpacity)).c_str()      , &lineOpacity         ,  0     , 255);
             GuiSliderBar(Rectangle{ 605,  45, 150, 25 }, "Thickness"       , TextFormat("%.2f", lineThickness).c_str()         , &lineThickness       , -20.0f , 40.0f);

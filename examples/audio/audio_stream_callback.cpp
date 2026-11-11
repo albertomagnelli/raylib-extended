@@ -133,8 +133,8 @@ int main()
             // Draw the last 10 ms of uploaded audio
             for (int i = 0; i < screenWidth - 1; i++)
             {
-                const Vector2 startPos = {static_cast<float>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
-                const Vector2 endPos = { static_cast<float>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
+                const glm::vec2 startPos = {static_cast<float>(i), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + i*SAMPLE_RATE/100/screenWidth] };
+                const glm::vec2 endPos = { static_cast<float>(i + 1), 250 - 50*buffer[SAMPLE_RATE - SAMPLE_RATE/100 + (i + 1)*SAMPLE_RATE/100/screenWidth] };
                 DrawLineV(startPos, endPos, RED);
             }
 

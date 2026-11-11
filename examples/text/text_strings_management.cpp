@@ -29,8 +29,8 @@
 typedef struct TextParticle {
     std::string text;
     Rectangle rect;    // Boundary
-    Vector2 vel;       // Velocity
-    Vector2 ppos;      // Previous position
+    glm::vec2 vel;     // Velocity
+    glm::vec2 ppos;    // Previous position
     float padding;
     float borderWidth;
     float friction;
@@ -65,7 +65,7 @@ int main()
     TextParticle textParticles[MAX_TEXT_PARTICLES] = {};
     int particleCount = 0;
     TextParticle *grabbedTextParticle = nullptr;
-    Vector2 pressOffset = {};
+    glm::vec2 pressOffset = {};
 
     PrepareFirstTextParticle("raylib => fun videogames programming!", textParticles, &particleCount);
 
@@ -78,7 +78,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         const float delta = GetFrameTime();
-        const Vector2 mousePos = GetMousePosition();
+        const glm::vec2 mousePos = GetMousePosition();
 
         // Checks if a text particle was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -133,7 +133,7 @@ int main()
         {
             for (int i = 0; i < particleCount; i++)
             {
-                if (!textParticles[i].grabbed) textParticles[i].vel = Vector2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
+                if (!textParticles[i].grabbed) textParticles[i].vel = glm::vec2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
             }
         }
 

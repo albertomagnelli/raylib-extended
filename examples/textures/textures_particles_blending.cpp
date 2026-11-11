@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------------
 // Particle structure
 typedef struct {
-    Vector2 position;
+    glm::vec2 position;
     Color color;
     float alpha;
     float size;
@@ -48,7 +48,7 @@ int main()
     // Initialize particles
     for (int i = 0; i < MAX_PARTICLES; i++)
     {
-        mouseTail[i].position = Vector2{ 0, 0 };
+        mouseTail[i].position = glm::vec2{ 0, 0 };
         mouseTail[i].color = Color{ static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), static_cast<unsigned char>(GetRandomValue(0, 255)), 255 };
         mouseTail[i].alpha = 1.0f;
         mouseTail[i].size = static_cast<float>(GetRandomValue(1, 30))/20.0f;
@@ -119,7 +119,7 @@ int main()
                 {
                     if (mouseTail[i].active) DrawTexturePro(smoke, Rectangle{ 0.0f, 0.0f, static_cast<float>(smoke.width), static_cast<float>(smoke.height) },
                                                            Rectangle{ mouseTail[i].position.x, mouseTail[i].position.y, smoke.width*mouseTail[i].size, smoke.height*mouseTail[i].size },
-                                                           Vector2{ (smoke.width*mouseTail[i].size/2.0f), (smoke.height*mouseTail[i].size/2.0f) }, mouseTail[i].rotation,
+                                                           glm::vec2{ (smoke.width*mouseTail[i].size/2.0f), (smoke.height*mouseTail[i].size/2.0f) }, mouseTail[i].rotation,
                                                            Fade(mouseTail[i].color, mouseTail[i].alpha));
                 }
 

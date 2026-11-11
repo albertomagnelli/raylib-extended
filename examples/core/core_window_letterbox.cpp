@@ -63,11 +63,11 @@ int main()
         }
 
         // Update virtual mouse (clamped mouse value behind game screen)
-        const Vector2 mouse = GetMousePosition();
-        Vector2 virtualMouse = {};
+        const glm::vec2 mouse = GetMousePosition();
+        glm::vec2 virtualMouse = {};
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.5f)/scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.5f)/scale;
-        virtualMouse = glm::clamp(virtualMouse, Vector2{ 0, 0 }, Vector2{ static_cast<float>(gameScreenWidth), static_cast<float>(gameScreenHeight) });
+        virtualMouse = glm::clamp(virtualMouse, glm::vec2{ 0, 0 }, glm::vec2{ static_cast<float>(gameScreenWidth), static_cast<float>(gameScreenHeight) });
 
         // Apply the same transformation as the virtual mouse to the real mouse (i.e. to work with raygui)
         //SetMouseOffset(-(GetScreenWidth() - (gameScreenWidth*scale))*0.5f, -(GetScreenHeight() - (gameScreenHeight*scale))*0.5f);
@@ -93,7 +93,7 @@ int main()
             // Draw render texture to screen, properly scaled
             DrawTexturePro(target.texture, Rectangle{ 0.0f, 0.0f, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) },
                            Rectangle{ (GetScreenWidth() - (static_cast<float>(gameScreenWidth)*scale))*0.5f, (GetScreenHeight() - (static_cast<float>(gameScreenHeight)*scale))*0.5f,
-                           static_cast<float>(gameScreenWidth)*scale, static_cast<float>(gameScreenHeight)*scale }, Vector2{ 0, 0 }, 0.0f, WHITE);
+                           static_cast<float>(gameScreenWidth)*scale, static_cast<float>(gameScreenHeight)*scale }, glm::vec2{ 0, 0 }, 0.0f, WHITE);
         EndDrawing();
         //--------------------------------------------------------------------------------------
     }

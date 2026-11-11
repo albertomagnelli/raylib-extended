@@ -138,7 +138,7 @@ typedef struct {
     int keyboardFd;                     // File descriptor for the evdev keyboard
 
     // Mouse data
-    Vector2 eventWheelMove;             // Registers the event mouse wheel variation
+    glm::vec2 eventWheelMove;           // Registers the event mouse wheel variation
     // NOTE: currentButtonState[] can't be written directly due to multithreading, app could miss the update
     char currentButtonStateEvdev[MAX_MOUSE_BUTTONS]; // Holds the new mouse state for the next polling event to grab
     bool cursorRelative;                // Relative cursor mode
@@ -147,7 +147,7 @@ typedef struct {
     Rectangle absRange;                 // Range of values for absolute pointing devices (touchscreens)
     int touchSlot;                      // Hold the touch slot number of the currently being sent multitouch block
     bool touchActive[MAX_TOUCH_POINTS]; // Track which touch points are currently active
-    Vector2 touchPosition[MAX_TOUCH_POINTS]; // Track touch positions for each slot
+    glm::vec2 touchPosition[MAX_TOUCH_POINTS]; // Track touch positions for each slot
     int touchId[MAX_TOUCH_POINTS];      // Track touch IDs for each slot
 
     // Gamepad data
@@ -428,10 +428,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-Vector2 GetMonitorPosition(int monitor)
+glm::vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -533,15 +533,15 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-Vector2 GetWindowPosition(void)
+glm::vec2 GetWindowPosition(void)
 {
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
-Vector2 GetWindowScaleDPI(void)
+glm::vec2 GetWindowScaleDPI(void)
 {
-    return Vector2{ 1.0f, 1.0f };
+    return glm::vec2{ 1.0f, 1.0f };
 }
 
 // Set clipboard text content
@@ -1071,7 +1071,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -1124,13 +1124,13 @@ void PollInputEvents(void)
         (CORE.Input.Keyboard.currentKeyState[CORE.Input.Keyboard.exitKey] == 1)) CORE.Window.shouldClose = true;
 
     // Register previous mouse position
-    if (platform.cursorRelative) CORE.Input.Mouse.currentPosition = Vector2{ 0.0f, 0.0f };
+    if (platform.cursorRelative) CORE.Input.Mouse.currentPosition = glm::vec2{ 0.0f, 0.0f };
     else CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
 
     // Register previous mouse states
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
     CORE.Input.Mouse.currentWheelMove = platform.eventWheelMove;
-    platform.eventWheelMove = Vector2{ 0.0f, 0.0f };
+    platform.eventWheelMove = glm::vec2{ 0.0f, 0.0f };
 
     for (int i = 0; i < MAX_MOUSE_BUTTONS; i++)
     {
@@ -2720,7 +2720,7 @@ static void SetupFramebuffer(int width, int height)
 
         // Screen scaling required
         float scaleRatio = static_cast<float>(CORE.Window.render.width)/static_cast<float>(CORE.Window.screen.width);
-        CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scaleRatio, scaleRatio, 1.0f});
+        CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scaleRatio, scaleRatio, 1.0f});
 
         // NOTE: Rendering to full display resolution,
         // calculate above parameters for downscale matrix and offsets

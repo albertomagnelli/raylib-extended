@@ -78,14 +78,14 @@ static void EndScissorModeShape(void)
 
 // Two example mask shapes, drawn in WHITE (the color is irrelevant here,
 // only the stencil write from pass 1 matters)
-typedef struct { Vector2 center; float radius; } CircleMask;
+typedef struct { glm::vec2 center; float radius; } CircleMask;
 static void DrawCircleMask(void *userData)
 {
     CircleMask *m = static_cast<CircleMask *>(userData);
     DrawCircleV(m->center, m->radius, WHITE);
 }
 
-typedef struct { Vector2 center; float radius; int sides; } PolyMask;
+typedef struct { glm::vec2 center; float radius; int sides; } PolyMask;
 static void DrawPolyMask(void *userData)
 {
     PolyMask *m = static_cast<PolyMask *>(userData);
@@ -104,8 +104,8 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [others] example - scissor shapes");
 
-    Vector2 circleCenter = { screenWidth/2.0f - 120, screenHeight/2.0f };
-    const Vector2 hexCenter = { screenWidth/2.0f + 120, screenHeight/2.0f };
+    glm::vec2 circleCenter = { screenWidth/2.0f - 120, screenHeight/2.0f };
+    const glm::vec2 hexCenter = { screenWidth/2.0f + 120, screenHeight/2.0f };
     constexpr float maskRadius = 100.0f;
 
     SetTargetFPS(60);

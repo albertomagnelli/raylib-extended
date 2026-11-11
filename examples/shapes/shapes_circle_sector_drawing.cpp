@@ -32,7 +32,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - circle sector drawing");
 
-    const Vector2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
+    const glm::vec2 center = {(GetScreenWidth() - 300)/2.0f, GetScreenHeight()/2.0f };
 
     float outerRadius = 180.0f;
     float startAngle = 0.0f;

@@ -919,7 +919,7 @@ Wave LoadWaveFromMemory(std::string_view fileTypeView, const unsigned char *file
 }
 
 // Check if wave data is valid (data loaded and parameters)
-bool IsWaveValid(Wave wave)
+bool IsWaveValid(const Wave& wave)
 {
     bool result = false;
 
@@ -950,7 +950,7 @@ Sound LoadSound(std::string_view fileNameView)
 
 // Load sound from wave data
 // NOTE: Wave data must be unallocated manually
-Sound LoadSoundFromWave(Wave wave)
+Sound LoadSoundFromWave(const Wave& wave)
 {
     Sound sound = { nullptr };
 
@@ -991,7 +991,7 @@ Sound LoadSoundFromWave(Wave wave)
 
 // Load sound alias, clone sound from existing sound data, clone does not own wave data
 // NOTE: Wave data must be unallocated manually and will be shared across all clones
-Sound LoadSoundAlias(Sound source)
+Sound LoadSoundAlias(const Sound& source)
 {
     Sound sound = { nullptr };
 
@@ -1022,7 +1022,7 @@ Sound LoadSoundAlias(Sound source)
 }
 
 // Check if sound is valid (data loaded and buffers initialized)
-bool IsSoundValid(Sound sound)
+bool IsSoundValid(const Sound& sound)
 {
     bool result = false;
 
@@ -1036,20 +1036,20 @@ bool IsSoundValid(Sound sound)
 }
 
 // Unload wave data
-void UnloadWave(Wave wave)
+void UnloadWave(const Wave& wave)
 {
     RL_FREE(wave.data);
     //TRACELOG(LOG_INFO, "WAVE: Unloaded wave data from RAM");
 }
 
 // Unload sound
-void UnloadSound(Sound sound)
+void UnloadSound(const Sound& sound)
 {
     UnloadAudioBuffer(sound.stream.buffer);
     //TRACELOG(LOG_INFO, "SOUND: Unloaded sound data from RAM");
 }
 
-void UnloadSoundAlias(Sound alias)
+void UnloadSoundAlias(const Sound& alias)
 {
     // Untrack and unload the sound buffer, not the sample data, it is shared with the source for the alias
     if (alias.stream.buffer != nullptr)
@@ -1064,7 +1064,7 @@ void UnloadSoundAlias(Sound alias)
 // Update sound buffer with new data
 // PARAMS: [data], format must match sound.stream.sampleSize, default 32 bit float - stereo
 // PARAMS: [frameCount] must not exceed sound.frameCount
-void UpdateSound(Sound sound, const void *data, int frameCount)
+void UpdateSound(const Sound& sound, const void *data, int frameCount)
 {
     if (sound.stream.buffer != nullptr)
     {
@@ -1075,7 +1075,7 @@ void UpdateSound(Sound sound, const void *data, int frameCount)
 }
 
 // Export wave data to file
-bool ExportWave(Wave wave, std::string_view fileNameView)
+bool ExportWave(const Wave& wave, std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
@@ -1136,7 +1136,7 @@ bool ExportWave(Wave wave, std::string_view fileNameView)
 }
 
 // Export wave sample data to code (.h)
-bool ExportWaveAsCode(Wave wave, std::string_view fileNameView)
+bool ExportWaveAsCode(const Wave& wave, std::string_view fileNameView)
 {
     const std::string fileNameStr(fileNameView);
     const char *fileName = fileNameStr.c_str();
@@ -1206,31 +1206,31 @@ bool ExportWaveAsCode(Wave wave, std::string_view fileNameView)
 }
 
 // Play a sound
-void PlaySound(Sound sound)
+void PlaySound(const Sound& sound)
 {
     PlayAudioBuffer(sound.stream.buffer);
 }
 
 // Pause a sound
-void PauseSound(Sound sound)
+void PauseSound(const Sound& sound)
 {
     PauseAudioBuffer(sound.stream.buffer);
 }
 
 // Resume a paused sound
-void ResumeSound(Sound sound)
+void ResumeSound(const Sound& sound)
 {
     ResumeAudioBuffer(sound.stream.buffer);
 }
 
 // Stop reproducing a sound
-void StopSound(Sound sound)
+void StopSound(const Sound& sound)
 {
     StopAudioBuffer(sound.stream.buffer);
 }
 
 // Check if sound is playing
-bool IsSoundPlaying(Sound sound)
+bool IsSoundPlaying(const Sound& sound)
 {
     bool result = false;
 
@@ -1240,19 +1240,19 @@ bool IsSoundPlaying(Sound sound)
 }
 
 // Set volume for a sound
-void SetSoundVolume(Sound sound, float volume)
+void SetSoundVolume(const Sound& sound, float volume)
 {
     SetAudioBufferVolume(sound.stream.buffer, volume);
 }
 
 // Set pitch for a sound
-void SetSoundPitch(Sound sound, float pitch)
+void SetSoundPitch(const Sound& sound, float pitch)
 {
     SetAudioBufferPitch(sound.stream.buffer, pitch);
 }
 
 // Set pan for a sound
-void SetSoundPan(Sound sound, float pan)
+void SetSoundPan(const Sound& sound, float pan)
 {
     SetAudioBufferPan(sound.stream.buffer, pan);
 }
@@ -1293,7 +1293,7 @@ void WaveFormat(Wave *wave, int sampleRate, int sampleSize, int channels)
 }
 
 // Copy a wave to a new wave
-Wave WaveCopy(Wave wave)
+Wave WaveCopy(const Wave& wave)
 {
     Wave copy = { 0 };
 
@@ -1329,7 +1329,7 @@ void WaveCrop(Wave *wave, int initFrame, int finalFrame)
 // Load samples data from wave as a floats array
 // NOTE 1: Returned sample values are normalized to range [-1..1]
 // NOTE 2: Sample data allocated should be freed with UnloadWaveSamples()
-float *LoadWaveSamples(Wave wave)
+float *LoadWaveSamples(const Wave& wave)
 {
     float *samples = static_cast<float *>(RL_CALLOC(wave.frameCount*wave.channels*sizeof(float), 1));
 
@@ -2069,31 +2069,31 @@ void UpdateMusicStream(Music music)
 }
 
 // Check if any music is playing
-bool IsMusicStreamPlaying(Music music)
+bool IsMusicStreamPlaying(const Music& music)
 {
     return IsAudioStreamPlaying(music.stream);
 }
 
 // Set volume for music
-void SetMusicVolume(Music music, float volume)
+void SetMusicVolume(const Music& music, float volume)
 {
     SetAudioStreamVolume(music.stream, volume);
 }
 
 // Set pitch for music
-void SetMusicPitch(Music music, float pitch)
+void SetMusicPitch(const Music& music, float pitch)
 {
     SetAudioBufferPitch(music.stream.buffer, pitch);
 }
 
 // Set pan for music
-void SetMusicPan(Music music, float pan)
+void SetMusicPan(const Music& music, float pan)
 {
     SetAudioBufferPan(music.stream.buffer, pan);
 }
 
 // Get music time length (in seconds)
-float GetMusicTimeLength(Music music)
+float GetMusicTimeLength(const Music& music)
 {
     float totalSeconds = 0.0f;
 
@@ -2103,7 +2103,7 @@ float GetMusicTimeLength(Music music)
 }
 
 // Get current music time played (in seconds)
-float GetMusicTimePlayed(Music music)
+float GetMusicTimePlayed(const Music& music)
 {
     float secondsPlayed = 0.0f;
     if (music.stream.buffer != nullptr)
@@ -2162,7 +2162,7 @@ AudioStream LoadAudioStream(unsigned int sampleRate, unsigned int sampleSize, un
 }
 
 // Check if an audio stream is valid (buffers initialized)
-bool IsAudioStreamValid(AudioStream stream)
+bool IsAudioStreamValid(const AudioStream& stream)
 {
     return ((stream.buffer != nullptr) &&    // Validate stream buffer
             (stream.sampleRate > 0) &&    // Validate sample rate is supported
@@ -2171,7 +2171,7 @@ bool IsAudioStreamValid(AudioStream stream)
 }
 
 // Unload audio stream and free memory
-void UnloadAudioStream(AudioStream stream)
+void UnloadAudioStream(const AudioStream& stream)
 {
     UnloadAudioBuffer(stream.buffer);
 
@@ -2181,7 +2181,7 @@ void UnloadAudioStream(AudioStream stream)
 // Update audio stream buffers with data
 // NOTE 1: Only updates one buffer of the stream source: dequeue -> update -> queue
 // NOTE 2: To dequeue a buffer it needs to be processed: IsAudioStreamProcessed()
-void UpdateAudioStream(AudioStream stream, const void *data, int frameCount)
+void UpdateAudioStream(const AudioStream& stream, const void *data, int frameCount)
 {
     ma_mutex_lock(&AUDIO.System.lock);
     UpdateAudioStreamInLockedState(stream, data, frameCount);
@@ -2189,7 +2189,7 @@ void UpdateAudioStream(AudioStream stream, const void *data, int frameCount)
 }
 
 // Check if any audio stream buffers requires refill
-bool IsAudioStreamProcessed(AudioStream stream)
+bool IsAudioStreamProcessed(const AudioStream& stream)
 {
     bool result = false;
 
@@ -2204,49 +2204,49 @@ bool IsAudioStreamProcessed(AudioStream stream)
 }
 
 // Play audio stream
-void PlayAudioStream(AudioStream stream)
+void PlayAudioStream(const AudioStream& stream)
 {
     PlayAudioBuffer(stream.buffer);
 }
 
 // Play audio stream
-void PauseAudioStream(AudioStream stream)
+void PauseAudioStream(const AudioStream& stream)
 {
     PauseAudioBuffer(stream.buffer);
 }
 
 // Resume audio stream playing
-void ResumeAudioStream(AudioStream stream)
+void ResumeAudioStream(const AudioStream& stream)
 {
     ResumeAudioBuffer(stream.buffer);
 }
 
 // Check if audio stream is playing
-bool IsAudioStreamPlaying(AudioStream stream)
+bool IsAudioStreamPlaying(const AudioStream& stream)
 {
     return IsAudioBufferPlaying(stream.buffer);
 }
 
 // Stop audio stream
-void StopAudioStream(AudioStream stream)
+void StopAudioStream(const AudioStream& stream)
 {
     StopAudioBuffer(stream.buffer);
 }
 
 // Set volume for audio stream (1.0 is max level)
-void SetAudioStreamVolume(AudioStream stream, float volume)
+void SetAudioStreamVolume(const AudioStream& stream, float volume)
 {
     SetAudioBufferVolume(stream.buffer, volume);
 }
 
 // Set pitch for audio stream (1.0 is base level)
-void SetAudioStreamPitch(AudioStream stream, float pitch)
+void SetAudioStreamPitch(const AudioStream& stream, float pitch)
 {
     SetAudioBufferPitch(stream.buffer, pitch);
 }
 
 // Set pan for audio stream
-void SetAudioStreamPan(AudioStream stream, float pan)
+void SetAudioStreamPan(const AudioStream& stream, float pan)
 {
     SetAudioBufferPan(stream.buffer, pan);
 }
@@ -2258,7 +2258,7 @@ void SetAudioStreamBufferSizeDefault(int size)
 }
 
 // Audio thread callback to request new data
-void SetAudioStreamCallback(AudioStream stream, AudioCallback callback)
+void SetAudioStreamCallback(const AudioStream& stream, AudioCallback callback)
 {
     if (stream.buffer != nullptr)
     {
@@ -2271,7 +2271,7 @@ void SetAudioStreamCallback(AudioStream stream, AudioCallback callback)
 // Add processor to audio stream. Contrary to buffers, the order of processors is important
 // The new processor must be added at the end. As there aren't supposed to be a lot of processors attached to
 // a given stream, iterate through the list to find the end. That way there is no need to keep a pointer to the last element
-void AttachAudioStreamProcessor(AudioStream stream, AudioCallback process)
+void AttachAudioStreamProcessor(const AudioStream& stream, AudioCallback process)
 {
     ma_mutex_lock(&AUDIO.System.lock);
 
@@ -2293,7 +2293,7 @@ void AttachAudioStreamProcessor(AudioStream stream, AudioCallback process)
 }
 
 // Remove processor from audio stream
-void DetachAudioStreamProcessor(AudioStream stream, AudioCallback process)
+void DetachAudioStreamProcessor(const AudioStream& stream, AudioCallback process)
 {
     ma_mutex_lock(&AUDIO.System.lock);
 

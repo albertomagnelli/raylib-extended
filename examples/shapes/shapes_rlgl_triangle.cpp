@@ -33,8 +33,8 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - rlgl triangle");
 
     // Starting postions and rendered triangle positions
-    const Vector2 startingPositions[3] = {{ 400.0f, 150.0f }, { 300.0f, 300.0f }, { 500.0f, 300.0f }};
-    Vector2 trianglePositions[3] = { startingPositions[0], startingPositions[1], startingPositions[2] };
+    const glm::vec2 startingPositions[3] = {{ 400.0f, 150.0f }, { 300.0f, 300.0f }, { 500.0f, 300.0f }};
+    glm::vec2 trianglePositions[3] = { startingPositions[0], startingPositions[1], startingPositions[2] };
 
     // Currently selected vertex, -1 means none
     int triangleIndex = -1;
@@ -66,9 +66,9 @@ int main()
         // If the user has selected a vertex, offset it by the mouse's delta this frame
         if (triangleIndex != -1)
         {
-            Vector2 *position = &trianglePositions[triangleIndex];
+            glm::vec2 *position = &trianglePositions[triangleIndex];
 
-            const Vector2 mouseDelta = GetMouseDelta();
+            const glm::vec2 mouseDelta = GetMouseDelta();
             position->x += mouseDelta.x;
             position->y += mouseDelta.y;
         }

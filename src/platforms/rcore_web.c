@@ -726,10 +726,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-Vector2 GetMonitorPosition(int monitor)
+glm::vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -779,20 +779,20 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-Vector2 GetWindowPosition(void)
+glm::vec2 GetWindowPosition(void)
 {
     // NOTE: Returned position is relative to the current monitor where the browser window is located
-    Vector2 position = { 0, 0 };
+    glm::vec2 position = { 0, 0 };
     position.x = static_cast<float>(EM_ASM_INT( { return window.screenX; }, 0));
     position.y = static_cast<float>(EM_ASM_INT( { return window.screenY; }, 0));
     return position;
 }
 
 // Get window scale DPI factor for current monitor
-Vector2 GetWindowScaleDPI(void)
+glm::vec2 GetWindowScaleDPI(void)
 {
     // NOTE: Returned scale is relative to the current monitor where the browser window is located
-    Vector2 scale = { 1.0f, 1.0f };
+    glm::vec2 scale = { 1.0f, 1.0f };
     scale.x = static_cast<float>(EM_ASM_DOUBLE( { return window.devicePixelRatio; } ));
     scale.y = scale.x;
     return scale;
@@ -1061,7 +1061,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
 
     if (CORE.Input.Mouse.cursorLocked) CORE.Input.Mouse.lockedPosition = CORE.Input.Mouse.currentPosition;
 
@@ -1118,7 +1118,7 @@ void PollInputEvents(void)
 
     // Register previous mouse wheel state
     CORE.Input.Mouse.previousWheelMove = CORE.Input.Mouse.currentWheelMove;
-    CORE.Input.Mouse.currentWheelMove = Vector2{ 0.0f, 0.0f };
+    CORE.Input.Mouse.currentWheelMove = glm::vec2{ 0.0f, 0.0f };
 
     // Register previous mouse position
     CORE.Input.Mouse.previousPosition = CORE.Input.Mouse.currentPosition;
@@ -1129,7 +1129,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
 
     // Gamepad support using emscripten API
     // NOTE: GLFW3 joystick functionality not available in web
@@ -1567,7 +1567,7 @@ static void WindowSizeCallback(GLFWwindow *window, int width, int height)
     // Set current screen size
     if (FLAG_IS_SET(CORE.Window.flags, FLAG_WINDOW_HIGHDPI))
     {
-        Vector2 windowScaleDPI = GetWindowScaleDPI();
+        glm::vec2 windowScaleDPI = GetWindowScaleDPI();
 
         CORE.Window.screen.width = static_cast<unsigned int>((width/windowScaleDPI.x));
         CORE.Window.screen.height = static_cast<unsigned int>((height/windowScaleDPI.y));
@@ -1584,7 +1584,7 @@ static void WindowSizeCallback(GLFWwindow *window, int width, int height)
 // GLFW3: Called on window content (framebuffer) scaled
 static void WindowContentScaleCallback(GLFWwindow *window, float scalex, float scaley)
 {
-    CORE.Window.screenScale = glm::scale(Matrix(1.0f), Vector3{scalex, scaley, 1.0f});
+    CORE.Window.screenScale = glm::scale(Matrix(1.0f), glm::vec3{scalex, scaley, 1.0f});
 }
 
 // GLFW3: Called on windows minimized/restored
@@ -1747,7 +1747,7 @@ static void MouseMoveCallback(GLFWwindow *window, double x, double y)
 // GLFW3: Called on mouse wheel scrolling
 static void MouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset)
 {
-    CORE.Input.Mouse.currentWheelMove = Vector2{ static_cast<float>(xoffset), static_cast<float>(yoffset) };
+    CORE.Input.Mouse.currentWheelMove = glm::vec2{ static_cast<float>(xoffset), static_cast<float>(yoffset) };
 }
 
 // GLFW3: Called on mouse entering the window
@@ -1846,7 +1846,7 @@ static EM_BOOL EmscriptenTouchCallback(int eventType, const EmscriptenTouchEvent
         CORE.Input.Touch.pointId[i] = touchEvent->touches[i].identifier;
 
         // Register touch points position
-        CORE.Input.Touch.position[i] = Vector2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
+        CORE.Input.Touch.position[i] = glm::vec2{touchEvent->touches[i].targetX, touchEvent->touches[i].targetY};
 
         // Normalize gestureEvent.position[x] for CORE.Window.screen.width and CORE.Window.screen.height
         CORE.Input.Touch.position[i].x *= (static_cast<float>(GetScreenWidth())/static_cast<float>(canvasWidth));

@@ -46,13 +46,13 @@ int main()
     const Font font2 = LoadFont("resources/custom_alagard.png");        // Font loading
     const Font font3 = LoadFont("resources/custom_jupiter_crash.png");  // Font loading
 
-    const Vector2 fontPosition1 = { screenWidth/2.0f - MeasureTextEx(font1, msg1, static_cast<float>(font1.baseSize), -3).x/2,
+    const glm::vec2 fontPosition1 = { screenWidth/2.0f - MeasureTextEx(font1, msg1, static_cast<float>(font1.baseSize), -3).x/2,
                               screenHeight/2.0f - font1.baseSize/2.0f - 80.0f };
 
-    const Vector2 fontPosition2 = { screenWidth/2.0f - MeasureTextEx(font2, msg2, static_cast<float>(font2.baseSize), -2.0f).x/2.0f,
+    const glm::vec2 fontPosition2 = { screenWidth/2.0f - MeasureTextEx(font2, msg2, static_cast<float>(font2.baseSize), -2.0f).x/2.0f,
                               screenHeight/2.0f - font2.baseSize/2.0f - 10.0f };
 
-    const Vector2 fontPosition3 = { screenWidth/2.0f - MeasureTextEx(font3, msg3, static_cast<float>(font3.baseSize), 2.0f).x/2.0f,
+    const glm::vec2 fontPosition3 = { screenWidth/2.0f - MeasureTextEx(font3, msg3, static_cast<float>(font3.baseSize), 2.0f).x/2.0f,
                               screenHeight/2.0f - font3.baseSize/2.0f + 50.0f };
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

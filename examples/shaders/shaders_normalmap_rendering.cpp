@@ -42,9 +42,9 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - normalmap rendering");
 
     Camera camera = {};
-    camera.position = Vector3{ 0.0f, 2.0f, -4.0f };
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    camera.position = glm::vec3{ 0.0f, 2.0f, -4.0f };
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -61,7 +61,7 @@ int main()
     // shader.locs[SHADER_LOC_MATRIX_MODEL] = GetShaderLocation(shader, "matModel");
 
     // This example uses just 1 point light
-    Vector3 lightPosition = { 0.0f, 1.0f, 0.0f };
+    glm::vec3 lightPosition = { 0.0f, 1.0f, 0.0f };
     const int lightPosLoc = GetShaderLocation(shader, "lightPos");
 
     // Load a plane model that has proper normals and tangents
@@ -96,11 +96,11 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         // Move the light around on the X and Z axis using WASD keys
-        Vector3 direction = {};
-        if (IsKeyDown(KEY_W)) direction = ((direction) + (Vector3{ 0.0f, 0.0f, 1.0f }));
-        if (IsKeyDown(KEY_S)) direction = ((direction) + (Vector3{ 0.0f, 0.0f, -1.0f }));
-        if (IsKeyDown(KEY_D)) direction = ((direction) + (Vector3{ -1.0f, 0.0f, 0.0f }));
-        if (IsKeyDown(KEY_A)) direction = ((direction) + (Vector3{ 1.0f, 0.0f, 0.0f }));
+        glm::vec3 direction = {};
+        if (IsKeyDown(KEY_W)) direction = ((direction) + (glm::vec3{ 0.0f, 0.0f, 1.0f }));
+        if (IsKeyDown(KEY_S)) direction = ((direction) + (glm::vec3{ 0.0f, 0.0f, -1.0f }));
+        if (IsKeyDown(KEY_D)) direction = ((direction) + (glm::vec3{ -1.0f, 0.0f, 0.0f }));
+        if (IsKeyDown(KEY_A)) direction = ((direction) + (glm::vec3{ 1.0f, 0.0f, 0.0f }));
 
         direction = glm::normalize(direction);
         lightPosition = ((lightPosition) + (((direction) * (GetFrameTime()*3.0f))));
@@ -113,7 +113,7 @@ int main()
         if (IsKeyPressed(KEY_N)) useNormalMap = !useNormalMap;
 
         // Spin plane model at a constant rate
-        plane.transform = glm::rotate(Matrix(1.0f), static_cast<float>(GetTime())*0.5f, Vector3{0.0f, 1.0f, 0.0f});
+        plane.transform = glm::rotate(Matrix(1.0f), static_cast<float>(GetTime())*0.5f, glm::vec3{0.0f, 1.0f, 0.0f});
 
         // Update shader values
         float lightPos[3] = {lightPosition.x, lightPosition.y, lightPosition.z};
@@ -137,7 +137,7 @@ int main()
 
                 BeginShaderMode(shader);
 
-                    DrawModel(plane, Vector3{}, 2.0f, WHITE);
+                    DrawModel(plane, glm::vec3{}, 2.0f, WHITE);
 
                 EndShaderMode();
 

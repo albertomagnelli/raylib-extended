@@ -73,7 +73,7 @@ int main()
     marchLocs.screenCenter = GetShaderLocation(shdrRaymarch, "screenCenter");
 
     // Transfer screenCenter position to shader. Which is used to calculate ray direction
-    Vector2 screenCenter = { screenWidth/2.0f, screenHeight/2.0f };
+    glm::vec2 screenCenter = { screenWidth/2.0f, screenHeight/2.0f };
     SetShaderValue(shdrRaymarch, marchLocs.screenCenter , &screenCenter , SHADER_UNIFORM_VEC2);
 
     // Use Customized function to create writable depth texture buffer
@@ -81,9 +81,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {
-        .position = Vector3{ 0.5f, 1.0f, 1.5f },    // Camera position
-        .target = Vector3{ 0.0f, 0.5f, 0.0f },      // Camera looking at point
-        .up = Vector3{ 0.0f, 1.0f, 0.0f },          // Camera up vector (rotation towards target)
+        .position = glm::vec3{ 0.5f, 1.0f, 1.5f },  // Camera position
+        .target = glm::vec3{ 0.0f, 0.5f, 0.0f },    // Camera looking at point
+        .up = glm::vec3{ 0.0f, 1.0f, 0.0f },        // Camera up vector (rotation towards target)
         .fovy = 45.0f,                                // Camera field-of-view Y
         .projection = CAMERA_PERSPECTIVE              // Camera projection type
     };
@@ -105,7 +105,7 @@ int main()
         SetShaderValue(shdrRaymarch, marchLocs.camPos, &(camera.position), RL_SHADER_UNIFORM_VEC3);
 
         // Update Camera Looking Vector. Vector length determines FOV
-        Vector3 camDir = ((glm::normalize(((camera.target) - (camera.position)))) * (camDist));
+        glm::vec3 camDir = ((glm::normalize(((camera.target) - (camera.position)))) * (camDist));
         SetShaderValue(shdrRaymarch, marchLocs.camDir, &(camDir), RL_SHADER_UNIFORM_VEC3);
         //----------------------------------------------------------------------------------
 
@@ -124,10 +124,10 @@ int main()
             // Rasterize Scene
             BeginMode3D(camera);
                 BeginShaderMode(shdrRaster);
-                    DrawCubeWiresV(Vector3{ 0.0f, 0.5f, 1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, RED);
-                    DrawCubeV(Vector3{ 0.0f, 0.5f, 1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, PURPLE);
-                    DrawCubeWiresV(Vector3{ 0.0f, 0.5f, -1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, DARKGREEN);
-                    DrawCubeV(Vector3{ 0.0f, 0.5f, -1.0f }, Vector3{ 1.0f, 1.0f, 1.0f }, YELLOW);
+                    DrawCubeWiresV(glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, RED);
+                    DrawCubeV(glm::vec3{ 0.0f, 0.5f, 1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, PURPLE);
+                    DrawCubeWiresV(glm::vec3{ 0.0f, 0.5f, -1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, DARKGREEN);
+                    DrawCubeV(glm::vec3{ 0.0f, 0.5f, -1.0f }, glm::vec3{ 1.0f, 1.0f, 1.0f }, YELLOW);
                     DrawGrid(10, 1.0f);
                 EndShaderMode();
             EndMode3D();
@@ -137,7 +137,7 @@ int main()
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{ 0, 0 }, WHITE);
+            DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, glm::vec2{ 0, 0 }, WHITE);
 
             DrawFPS(10, 10);
         EndDrawing();

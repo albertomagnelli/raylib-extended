@@ -46,8 +46,8 @@
 typedef struct {   
     int type;
     bool enabled;
-    Vector3 position;
-    Vector3 target;
+    glm::vec3 position;
+    glm::vec3 target;
     Color color;
     float attenuation;
     
@@ -73,7 +73,7 @@ extern "C" {            // Prevents name mangling of functions
 //----------------------------------------------------------------------------------
 // Module Functions Declaration
 //----------------------------------------------------------------------------------
-Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shader shader);   // Create a light and get shader locations
+Light CreateLight(int type, glm::vec3 position, glm::vec3 target, Color color, Shader shader); // Create a light and get shader locations
 void UpdateLightValues(Shader shader, Light light);         // Send light properties to shader
 
 #ifdef __cplusplus
@@ -118,7 +118,7 @@ static int lightsCount = 0;    // Current amount of created lights
 //----------------------------------------------------------------------------------
 
 // Create a light and get shader locations
-Light CreateLight(int type, Vector3 position, Vector3 target, Color color, Shader shader)
+Light CreateLight(int type, glm::vec3 position, glm::vec3 target, Color color, Shader shader)
 {
     Light light = { 0 };
 

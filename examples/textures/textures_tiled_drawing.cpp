@@ -23,7 +23,7 @@
 #define COLOR_SIZE       16       // Size of the color select buttons
 
 // Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest
-void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, float scale, Color tint);
+void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, glm::vec2 origin, float rotation, float scale, Color tint);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -87,7 +87,7 @@ int main()
         // Handle mouse
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            const Vector2 mouse = GetMousePosition();
+            const glm::vec2 mouse = GetMousePosition();
 
             // Check which pattern was clicked and set it as the active pattern
             for (int i = 0; i < SIZEOF(recPattern); i++)
@@ -131,7 +131,7 @@ int main()
 
             // Draw the tiled area
             DrawTextureTiled(texPattern, recPattern[activePattern], Rectangle{static_cast<float>(OPT_WIDTH)+MARGIN_SIZE, static_cast<float>(MARGIN_SIZE), GetScreenWidth() - OPT_WIDTH - 2.0f*MARGIN_SIZE, GetScreenHeight() - 2.0f*MARGIN_SIZE},
-                Vector2{0.0f, 0.0f}, rotation, scale, colors[activeCol]);
+                glm::vec2{0.0f, 0.0f}, rotation, scale, colors[activeCol]);
 
             // Draw options
             DrawRectangle(MARGIN_SIZE, MARGIN_SIZE, OPT_WIDTH - MARGIN_SIZE, GetScreenHeight() - 2*MARGIN_SIZE, ColorAlpha(LIGHTGRAY, 0.5f));
@@ -172,7 +172,7 @@ int main()
 }
 
 // Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest
-void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, Vector2 origin, float rotation, float scale, Color tint)
+void DrawTextureTiled(Texture2D texture, Rectangle source, Rectangle dest, glm::vec2 origin, float rotation, float scale, Color tint)
 {
     if ((texture.id <= 0) || (scale <= 0.0f)) return;  // Wanna see a infinite loop?!...just delete this line!
     if ((source.width == 0) || (source.height == 0)) return;

@@ -29,9 +29,9 @@
 //----------------------------------------------------------------------------------
 // Ball data type
 typedef struct Ball {
-    Vector2 position;
-    Vector2 speed;
-    Vector2 prevPosition;
+    glm::vec2 position;
+    glm::vec2 speed;
+    glm::vec2 prevPosition;
     float radius;
     float friction;
     float elasticity;
@@ -67,11 +67,11 @@ int main()
 
     int ballCount = 1;
     Ball *grabbedBall = nullptr;       // A pointer to the current ball that is grabbed
-    Vector2 pressOffset = {};    // Mouse press offset relative to the ball that grabbedd
+    glm::vec2 pressOffset = {};  // Mouse press offset relative to the ball that grabbedd
 
     float gravity = 100;            // World gravity
     
-    Vector2 windowPosition = GetWindowPosition();
+    glm::vec2 windowPosition = GetWindowPosition();
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //---------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ int main()
         // Update
         //----------------------------------------------------------------------------------
         const float delta = GetFrameTime();
-        const Vector2 mousePos = GetMousePosition();
+        const glm::vec2 mousePos = GetMousePosition();
 
         // Checks if a ball was grabbed
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -133,7 +133,7 @@ int main()
         }
 
         // Get window position change for shaking
-        const Vector2 windowPositionDelta = ((windowPosition) - (GetWindowPosition()));
+        const glm::vec2 windowPositionDelta = ((windowPosition) - (GetWindowPosition()));
         
         if (glm::length(windowPositionDelta) > 5.0f)
         {
@@ -148,7 +148,7 @@ int main()
         {
             for (int i = 0; i < ballCount; i++)
             {
-                if (!balls[i].grabbed) balls[i].speed = Vector2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
+                if (!balls[i].grabbed) balls[i].speed = glm::vec2{ static_cast<float>(GetRandomValue(-2000, 2000)), static_cast<float>(GetRandomValue(-2000, 2000)) };
             }
         }
 

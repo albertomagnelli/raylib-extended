@@ -118,10 +118,10 @@ static void DrawScene(const CameraController &camera)
     DrawGrid(40, 1.0f);
 
     // A few boxes to judge the movement smoothness
-    const Vector3 centerBox = { 0.0f, 0.5f, 0.0f };
-    const Vector3 blueBox = { -6.0f, 2.0f, 4.0f };
-    const Vector3 greenBox = { 7.0f, 1.0f, -5.0f };
-    const Vector3 goldBox = { 4.0f, 6.0f, 8.0f };
+    const glm::vec3 centerBox = { 0.0f, 0.5f, 0.0f };
+    const glm::vec3 blueBox = { -6.0f, 2.0f, 4.0f };
+    const glm::vec3 greenBox = { 7.0f, 1.0f, -5.0f };
+    const glm::vec3 goldBox = { 4.0f, 6.0f, 8.0f };
 
     DrawCube(centerBox, 2.0f, 1.0f, 2.0f, MAROON);
     DrawCubeWires(centerBox, 2.0f, 1.0f, 2.0f, ORANGE);
@@ -136,14 +136,14 @@ static void DrawScene(const CameraController &camera)
     DrawCubeWires(goldBox, 2.0f, 2.0f, 2.0f, YELLOW);
 
     // The pivot the controller moves: the camera position in first-person/free, the look-at point in third-person/orbit
-    const Vector3 pivot = camera.GetTarget();
-    const Vector3 pivotOnGround = { pivot.x, 0.0f, pivot.z };
+    const glm::vec3 pivot = camera.GetTarget();
+    const glm::vec3 pivotOnGround = { pivot.x, 0.0f, pivot.z };
 
     DrawSphere(pivot, 0.25f, RED);
     DrawLine3D(pivot, pivotOnGround, RED);
 
     // Camera basis vectors: forward (red), right (green), up (blue)
-    const Vector3 position = camera.GetPosition();
+    const glm::vec3 position = camera.GetPosition();
     DrawLine3D(position, position + camera.GetForward()*2.0f, RED);
     DrawLine3D(position, position + camera.GetRight()*2.0f, GREEN);
     DrawLine3D(position, position + camera.GetUp()*2.0f, BLUE);
@@ -154,8 +154,8 @@ static void DrawHud(const CameraController &camera, const char **modeNames, int 
 {
     const char *mode = modeNames[static_cast<int>(camera.GetMode())%modeCount];
 
-    const Vector3 position = camera.GetPosition();
-    const Vector3 velocity = camera.GetVelocity();
+    const glm::vec3 position = camera.GetPosition();
+    const glm::vec3 velocity = camera.GetVelocity();
 
     const int providedSamples = GetWindowSamples();
 

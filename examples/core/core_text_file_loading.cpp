@@ -91,7 +91,7 @@ int main()
 
     for (int i = 0; i < lineCount; i++)
     {
-        const Vector2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
+        const glm::vec2 size = MeasureTextEx(GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);
         textHeight += static_cast<int>(size.y) + 10;
     }
 
@@ -133,7 +133,7 @@ int main()
                 for (int i = 0, t = textTop; i < lineCount; i++)
                 {
                     // Each time we go through and calculate the height of the text to move the cursor appropriately
-                    Vector2 size;
+                    glm::vec2 size;
                     if(strcmp(lines[i].c_str(), "")){
                         // Fix for empty line in the text file
                         size = MeasureTextEx( GetFontDefault(), lines[i], static_cast<float>(fontSize), 2);

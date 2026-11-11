@@ -198,7 +198,9 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 
-// raylib's math vocabulary is glm: these aliases are the public API types.
+// raylib's math vocabulary is glm: vectors are the glm::vec2/glm::vec3/glm::vec4
+// types directly, no raylib-specific aliases. Matrix and Quaternion keep their
+// raylib names because they read better in the API.
 // The C ABI layout is unchanged (vec2/3/4 and mat4 are bit-identical to the
 // structs raylib used to declare), so exported symbols keep working.
 #include <glm/glm.hpp>
@@ -208,24 +210,15 @@
 #include <string_view>
 #include <vector>
 
-static_assert(sizeof(glm::vec2) == 8,  "glm::vec2 must match the raylib Vector2 ABI");
-static_assert(sizeof(glm::vec3) == 12, "glm::vec3 must match the raylib Vector3 ABI");
-static_assert(sizeof(glm::vec4) == 16, "glm::vec4 must match the raylib Vector4 ABI");
-static_assert(sizeof(glm::mat4) == 64, "glm::mat4 must match the raylib Matrix ABI");
-static_assert(sizeof(glm::quat) == 16, "glm::quat must match the raylib Quaternion ABI");
+static_assert(sizeof(glm::vec2) == 8,  "glm::vec2 must be 8 bytes (x, y)");
+static_assert(sizeof(glm::vec3) == 12, "glm::vec3 must be 12 bytes (x, y, z)");
+static_assert(sizeof(glm::vec4) == 16, "glm::vec4 must be 16 bytes (x, y, z, w)");
+static_assert(sizeof(glm::mat4) == 64, "glm::mat4 must be 64 bytes (4x4 floats)");
+static_assert(sizeof(glm::quat) == 16, "glm::quat must be 16 bytes (w, x, y, z)");
 
 #if defined(GLM_FORCE_DEFAULT_ALIGNED_GENTYPES)
     #error "GLM_FORCE_DEFAULT_ALIGNED_GENTYPES changes the raylib type layout and is not supported"
 #endif
-
-// Vector2, 2 components
-using Vector2 = glm::vec2;
-
-// Vector3, 3 components
-using Vector3 = glm::vec3;
-
-// Vector4, 4 components
-using Vector4 = glm::vec4;
 
 // Quaternion, 4 components (rotation, w is the scalar part, as in glm)
 using Quaternion = glm::quat;
@@ -327,9 +320,9 @@ typedef struct Font {
 
 // Camera, defines position/orientation in 3d space
 typedef struct Camera3D {
-    Vector3 position;       // Camera position
-    Vector3 target;         // Camera target it looks-at
-    Vector3 up;             // Camera up vector (rotation over its axis)
+    glm::vec3 position;     // Camera position
+    glm::vec3 target;       // Camera target it looks-at
+    glm::vec3 up;           // Camera up vector (rotation over its axis)
     float fovy;             // Camera field-of-view aperture in Y (degrees) in perspective, used as near plane height in world units in orthographic
     int projection;         // Camera projection: CAMERA_PERSPECTIVE or CAMERA_ORTHOGRAPHIC
 } Camera3D;
@@ -338,8 +331,8 @@ typedef Camera3D Camera;    // Camera type fallback, defaults to Camera3D
 
 // Camera2D, defines position/orientation in 2d space
 typedef struct Camera2D {
-    Vector2 offset;         // Camera offset (screen space offset from window origin, unscaled by DPI, real pixel size)
-    Vector2 target;         // Camera target (world space target point that is mapped to screen space offset)
+    glm::vec2 offset;       // Camera offset (screen space offset from window origin, unscaled by DPI, real pixel size)
+    glm::vec2 target;       // Camera target (world space target point that is mapped to screen space offset)
     float rotation;         // Camera rotation in degrees (pivots around target)
     float zoom;             // Camera zoom (scaling around target), must not be set to 0, set to 1.0f for no scale
 } Camera2D;
@@ -395,9 +388,9 @@ typedef struct Material {
 
 // Transform, vertex transformation data
 typedef struct Transform {
-    Vector3 translation;    // Translation
+    glm::vec3 translation;  // Translation
     Quaternion rotation;    // Rotation
-    Vector3 scale;          // Scale
+    glm::vec3 scale;        // Scale
 } Transform;
 
 // Anim pose, an array of Transform[]
@@ -445,22 +438,22 @@ typedef struct ModelAnimation {
 
 // Ray, ray for raycasting
 typedef struct Ray {
-    Vector3 position;       // Ray position (origin)
-    Vector3 direction;      // Ray direction (normalized)
+    glm::vec3 position;     // Ray position (origin)
+    glm::vec3 direction;    // Ray direction (normalized)
 } Ray;
 
 // RayCollision, ray hit information
 typedef struct RayCollision {
     bool hit;               // Did the ray hit something?
     float distance;         // Distance to the nearest hit
-    Vector3 point;          // Point of the nearest hit
-    Vector3 normal;         // Surface normal of hit
+    glm::vec3 point;        // Point of the nearest hit
+    glm::vec3 normal;       // Surface normal of hit
 } RayCollision;
 
 // BoundingBox
 typedef struct BoundingBox {
-    Vector3 min;            // Minimum vertex box-corner
-    Vector3 max;            // Maximum vertex box-corner
+    glm::vec3 min;          // Minimum vertex box-corner
+    glm::vec3 max;          // Maximum vertex box-corner
 } BoundingBox;
 
 // Wave, audio wave data
@@ -1022,14 +1015,14 @@ RLAPI int GetRenderWidth();                                   // Get current ren
 RLAPI int GetRenderHeight();                                  // Get current render height (it considers HiDPI)
 RLAPI int GetMonitorCount();                                  // Get number of connected monitors
 RLAPI int GetCurrentMonitor();                                // Get current monitor where window is placed
-RLAPI Vector2 GetMonitorPosition(int monitor);                    // Get specified monitor position
+RLAPI glm::vec2 GetMonitorPosition(int monitor);                  // Get specified monitor position
 RLAPI int GetMonitorWidth(int monitor);                           // Get specified monitor width (current video mode used by monitor)
 RLAPI int GetMonitorHeight(int monitor);                          // Get specified monitor height (current video mode used by monitor)
 RLAPI int GetMonitorPhysicalWidth(int monitor);                   // Get specified monitor physical width in millimetres
 RLAPI int GetMonitorPhysicalHeight(int monitor);                  // Get specified monitor physical height in millimetres
 RLAPI int GetMonitorRefreshRate(int monitor);                     // Get specified monitor refresh rate
-RLAPI Vector2 GetWindowPosition();                            // Get window position XY on monitor
-RLAPI Vector2 GetWindowScaleDPI();                            // Get window scale DPI factor
+RLAPI glm::vec2 GetWindowPosition();                          // Get window position XY on monitor
+RLAPI glm::vec2 GetWindowScaleDPI();                          // Get window scale DPI factor
 RLAPI std::string GetMonitorName(int monitor);                    // Get the human-readable, UTF-8 encoded name of the specified monitor
 RLAPI void SetClipboardText(std::string_view text);                    // Set clipboard text content
 RLAPI std::string GetClipboardText();                         // Get clipboard text content
@@ -1082,12 +1075,12 @@ RLAPI void SetShaderValueTexture(Shader shader, int locIndex, Texture2D texture)
 RLAPI void UnloadShader(Shader shader);                                    // Unload shader from GPU memory (VRAM)
 
 // Screen-space-related functions
-RLAPI Ray GetScreenToWorldRay(Vector2 position, Camera camera);         // Get a ray trace from screen position (i.e mouse)
-RLAPI Ray GetScreenToWorldRayEx(Vector2 position, Camera camera, int width, int height); // Get a ray trace from screen position (i.e mouse) in a viewport
-RLAPI Vector2 GetWorldToScreen(Vector3 position, Camera camera);        // Get screen space position for a 3d world space position
-RLAPI Vector2 GetWorldToScreenEx(Vector3 position, Camera camera, int width, int height); // Get sized screen space position for a 3d world space position
-RLAPI Vector2 GetWorldToScreen2D(Vector2 position, Camera2D camera);    // Get screen space position for a 2d camera world space position
-RLAPI Vector2 GetScreenToWorld2D(Vector2 position, Camera2D camera);    // Get world space position for a 2d camera screen space position
+RLAPI Ray GetScreenToWorldRay(glm::vec2 position, Camera camera);       // Get a ray trace from screen position (i.e mouse)
+RLAPI Ray GetScreenToWorldRayEx(glm::vec2 position, Camera camera, int width, int height); // Get a ray trace from screen position (i.e mouse) in a viewport
+RLAPI glm::vec2 GetWorldToScreen(glm::vec3 position, Camera camera);      // Get screen space position for a 3d world space position
+RLAPI glm::vec2 GetWorldToScreenEx(glm::vec3 position, Camera camera, int width, int height); // Get sized screen space position for a 3d world space position
+RLAPI glm::vec2 GetWorldToScreen2D(glm::vec2 position, Camera2D camera);  // Get screen space position for a 2d camera world space position
+RLAPI glm::vec2 GetScreenToWorld2D(glm::vec2 position, Camera2D camera);  // Get world space position for a 2d camera screen space position
 RLAPI Matrix GetCameraMatrix(Camera camera);                            // Get camera transform matrix (view matrix)
 RLAPI Matrix GetCameraMatrix2D(Camera2D camera);                        // Get camera 2d transform matrix
 
@@ -1228,19 +1221,19 @@ RLAPI bool IsMouseButtonReleased(int button);                 // Check if mouse 
 RLAPI bool IsMouseButtonUp(int button);                       // Check if mouse button is NOT being pressed
 RLAPI int GetMouseX();                                    // Get mouse position X
 RLAPI int GetMouseY();                                    // Get mouse position Y
-RLAPI Vector2 GetMousePosition();                         // Get mouse position XY
-RLAPI Vector2 GetMouseDelta();                            // Get mouse delta between frames
+RLAPI glm::vec2 GetMousePosition();                       // Get mouse position XY
+RLAPI glm::vec2 GetMouseDelta();                          // Get mouse delta between frames
 RLAPI void SetMousePosition(int x, int y);                    // Set mouse position XY
 RLAPI void SetMouseOffset(int offsetX, int offsetY);          // Set mouse offset
 RLAPI void SetMouseScale(float scaleX, float scaleY);         // Set mouse scaling
 RLAPI float GetMouseWheelMove();                          // Get mouse wheel movement for X or Y, whichever is larger
-RLAPI Vector2 GetMouseWheelMoveV();                       // Get mouse wheel movement for both X and Y
+RLAPI glm::vec2 GetMouseWheelMoveV();                     // Get mouse wheel movement for both X and Y
 RLAPI void SetMouseCursor(int cursor);                        // Set mouse cursor
 
 // Input-related functions: touch
 RLAPI int GetTouchX();                                    // Get touch position X for touch point 0 (relative to screen size)
 RLAPI int GetTouchY();                                    // Get touch position Y for touch point 0 (relative to screen size)
-RLAPI Vector2 GetTouchPosition(int index);                    // Get touch position XY for a touch point index (relative to screen size)
+RLAPI glm::vec2 GetTouchPosition(int index);                  // Get touch position XY for a touch point index (relative to screen size)
 RLAPI int GetTouchPointId(int index);                         // Get touch point identifier for provided index
 RLAPI int GetTouchPointCount();                           // Get number of touch points
 
@@ -1251,16 +1244,16 @@ RLAPI void SetGesturesEnabled(unsigned int flags);            // Enable a set of
 RLAPI bool IsGestureDetected(unsigned int gesture);           // Check if gesture has been detected
 RLAPI int GetGestureDetected();                           // Get latest detected gesture
 RLAPI float GetGestureHoldDuration();                     // Get gesture hold time in seconds
-RLAPI Vector2 GetGestureDragVector();                     // Get gesture drag vector
+RLAPI glm::vec2 GetGestureDragVector();                   // Get gesture drag vector
 RLAPI float GetGestureDragAngle();                        // Get gesture drag angle
-RLAPI Vector2 GetGesturePinchVector();                    // Get gesture pinch delta
+RLAPI glm::vec2 GetGesturePinchVector();                  // Get gesture pinch delta
 RLAPI float GetGesturePinchAngle();                       // Get gesture pinch angle
 
 //------------------------------------------------------------------------------------
 // Camera System Functions (Module: rcamera)
 //------------------------------------------------------------------------------------
 RLAPI void UpdateCamera(Camera *camera, int mode);            // Update camera position for selected mode
-RLAPI void UpdateCameraPro(Camera *camera, Vector3 movement, Vector3 rotation, float zoom); // Update camera movement/rotation
+RLAPI void UpdateCameraPro(Camera *camera, glm::vec3 movement, glm::vec3 rotation, float zoom); // Update camera movement/rotation
 
 //------------------------------------------------------------------------------------
 // Basic Shapes Drawing Functions (Module: shapes)
@@ -1274,23 +1267,23 @@ RLAPI Rectangle GetShapesTextureRectangle();        // Get texture source rectan
 
 // Basic shapes drawing functions
 RLAPI void DrawPixel(int posX, int posY, Color color);                                                   // Draw a pixel using geometry [Can be slow, use with care]
-RLAPI void DrawPixelV(Vector2 position, Color color);                                                    // Draw a pixel using geometry (Vector version) [Can be slow, use with care]
+RLAPI void DrawPixelV(glm::vec2 position, Color color);                                                  // Draw a pixel using geometry (Vector version) [Can be slow, use with care]
 RLAPI void DrawLine(int startPosX, int startPosY, int endPosX, int endPosY, Color color);                // Draw a line
-RLAPI void DrawLineV(Vector2 startPos, Vector2 endPos, Color color);                                     // Draw a line (using gl lines)
-RLAPI void DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color);                       // Draw a line (using triangles/quads)
-RLAPI void DrawLineStrip(const Vector2 *points, int pointCount, Color color);                            // Draw lines sequence (using gl lines)
-RLAPI void DrawLineBezier(Vector2 startPos, Vector2 endPos, float thick, Color color);                   // Draw line segment cubic-bezier in-out interpolation
-RLAPI void DrawLineDashed(Vector2 startPos, Vector2 endPos, int dashSize, int spaceSize, Color color);   // Draw a dashed line
-RLAPI void DrawTriangle(Vector2 v1, Vector2 v2, Vector2 v3, Color color);                                // Draw a color-filled triangle, counter-clockwise vertex order
-RLAPI void DrawTriangleGradient(Vector2 v1, Vector2 v2, Vector2 v3, Color c1, Color c2, Color c3);       // Draw triangle with interpolated colors, counter-clockwise vertex/color order
-RLAPI void DrawTriangleLines(Vector2 v1, Vector2 v2, Vector2 v3, Color color);                           // Draw triangle outline, counter-clockwise vertex order
-RLAPI void DrawTriangleLinesEx(Vector2 v1, Vector2 v2, Vector2 v3, float thick, Color color);            // Draw triangle outline with line thickness, counter-clockwise vertex order
-RLAPI void DrawTriangleFan(const Vector2 *points, int pointCount, Color color);                          // Draw a triangle fan defined by points (first vertex is the center)
-RLAPI void DrawTriangleStrip(const Vector2 *points, int pointCount, Color color);                        // Draw a triangle strip defined by points
+RLAPI void DrawLineV(glm::vec2 startPos, glm::vec2 endPos, Color color);                                   // Draw a line (using gl lines)
+RLAPI void DrawLineEx(glm::vec2 startPos, glm::vec2 endPos, float thick, Color color);                     // Draw a line (using triangles/quads)
+RLAPI void DrawLineStrip(const glm::vec2 *points, int pointCount, Color color);                          // Draw lines sequence (using gl lines)
+RLAPI void DrawLineBezier(glm::vec2 startPos, glm::vec2 endPos, float thick, Color color);                 // Draw line segment cubic-bezier in-out interpolation
+RLAPI void DrawLineDashed(glm::vec2 startPos, glm::vec2 endPos, int dashSize, int spaceSize, Color color); // Draw a dashed line
+RLAPI void DrawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color);                              // Draw a color-filled triangle, counter-clockwise vertex order
+RLAPI void DrawTriangleGradient(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color c1, Color c2, Color c3);     // Draw triangle with interpolated colors, counter-clockwise vertex/color order
+RLAPI void DrawTriangleLines(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color);                         // Draw triangle outline, counter-clockwise vertex order
+RLAPI void DrawTriangleLinesEx(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, float thick, Color color);          // Draw triangle outline with line thickness, counter-clockwise vertex order
+RLAPI void DrawTriangleFan(const glm::vec2 *points, int pointCount, Color color);                        // Draw a triangle fan defined by points (first vertex is the center)
+RLAPI void DrawTriangleStrip(const glm::vec2 *points, int pointCount, Color color);                      // Draw a triangle strip defined by points
 RLAPI void DrawRectangle(int posX, int posY, int width, int height, Color color);                        // Draw a color-filled rectangle
-RLAPI void DrawRectangleV(Vector2 position, Vector2 size, Color color);                                  // Draw a color-filled rectangle (Vector version)
+RLAPI void DrawRectangleV(glm::vec2 position, glm::vec2 size, Color color);                                // Draw a color-filled rectangle (Vector version)
 RLAPI void DrawRectangleRec(Rectangle rec, Color color);                                                 // Draw a color-filled rectangle
-RLAPI void DrawRectanglePro(Rectangle rec, Vector2 origin, float rotation, Color color);                 // Draw a color-filled rectangle with pro parameters
+RLAPI void DrawRectanglePro(Rectangle rec, glm::vec2 origin, float rotation, Color color);               // Draw a color-filled rectangle with pro parameters
 RLAPI void DrawRectangleGradientV(int posX, int posY, int width, int height, Color top, Color bottom);   // Draw a vertical-gradient-filled rectangle
 RLAPI void DrawRectangleGradientH(int posX, int posY, int width, int height, Color left, Color right);   // Draw a horizontal-gradient-filled rectangle
 RLAPI void DrawRectangleGradientEx(Rectangle rec, Color col1, Color col2, Color col3, Color col4);       // Draw a gradient-filled rectangle with custom vertex colors, counter-clockwise color order
@@ -1299,57 +1292,57 @@ RLAPI void DrawRectangleLinesEx(Rectangle rec, float thick, Color color);       
 RLAPI void DrawRectangleRounded(Rectangle rec, float roundness, int segments, Color color);              // Draw rectangle with rounded edges
 RLAPI void DrawRectangleRoundedLines(Rectangle rec, float roundness, int segments, Color color);         // Draw rectangle lines with rounded edges
 RLAPI void DrawRectangleRoundedLinesEx(Rectangle rec, float roundness, int segments, float thick, Color color); // Draw rectangle lines with rounded edges outline and line thickness
-RLAPI void DrawPoly(Vector2 center, int sides, float radius, float rotation, Color color);               // Draw a polygon of n sides
-RLAPI void DrawPolyLines(Vector2 center, int sides, float radius, float rotation, Color color);          // Draw a polygon outline of n sides
-RLAPI void DrawPolyLinesEx(Vector2 center, int sides, float radius, float rotation, float thick, Color color); // Draw a polygon outline of n sides with line thickness
+RLAPI void DrawPoly(glm::vec2 center, int sides, float radius, float rotation, Color color);             // Draw a polygon of n sides
+RLAPI void DrawPolyLines(glm::vec2 center, int sides, float radius, float rotation, Color color);        // Draw a polygon outline of n sides
+RLAPI void DrawPolyLinesEx(glm::vec2 center, int sides, float radius, float rotation, float thick, Color color); // Draw a polygon outline of n sides with line thickness
 RLAPI void DrawCircle(int centerX, int centerY, float radius, Color color);                              // Draw a color-filled circle
-RLAPI void DrawCircleV(Vector2 center, float radius, Color color);                                       // Draw a color-filled circle (Vector version)
-RLAPI void DrawCircleGradient(Vector2 center, float radius, Color inner, Color outer);                   // Draw a gradient-filled circle
-RLAPI void DrawCircleSector(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw a piece of a circle
-RLAPI void DrawCircleSectorLines(Vector2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline
-RLAPI void DrawCircleSectorLinesEx(Vector2 center, float radius, float startAngle, float endAngle, int segments, float thick, Color color); // Draw circle sector outline with thickness
+RLAPI void DrawCircleV(glm::vec2 center, float radius, Color color);                                     // Draw a color-filled circle (Vector version)
+RLAPI void DrawCircleGradient(glm::vec2 center, float radius, Color inner, Color outer);                 // Draw a gradient-filled circle
+RLAPI void DrawCircleSector(glm::vec2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw a piece of a circle
+RLAPI void DrawCircleSectorLines(glm::vec2 center, float radius, float startAngle, float endAngle, int segments, Color color); // Draw circle sector outline
+RLAPI void DrawCircleSectorLinesEx(glm::vec2 center, float radius, float startAngle, float endAngle, int segments, float thick, Color color); // Draw circle sector outline with thickness
 RLAPI void DrawCircleLines(int centerX, int centerY, float radius, Color color);                         // Draw circle outline
-RLAPI void DrawCircleLinesV(Vector2 center, float radius, Color color);                                  // Draw circle outline (Vector version)
-RLAPI void DrawCircleLinesEx(Vector2 center, float radius, float thick, Color color);                    // Draw circle outline with line thickness
+RLAPI void DrawCircleLinesV(glm::vec2 center, float radius, Color color);                                // Draw circle outline (Vector version)
+RLAPI void DrawCircleLinesEx(glm::vec2 center, float radius, float thick, Color color);                  // Draw circle outline with line thickness
 RLAPI void DrawEllipse(int centerX, int centerY, float radiusH, float radiusV, Color color);             // Draw ellipse
-RLAPI void DrawEllipseV(Vector2 center, float radiusH, float radiusV, Color color);                      // Draw ellipse (Vector version)
+RLAPI void DrawEllipseV(glm::vec2 center, float radiusH, float radiusV, Color color);                    // Draw ellipse (Vector version)
 RLAPI void DrawEllipseLines(int centerX, int centerY, float radiusH, float radiusV, Color color);        // Draw ellipse outline
-RLAPI void DrawEllipseLinesV(Vector2 center, float radiusH, float radiusV, Color color);                 // Draw ellipse outline (Vector version)
-RLAPI void DrawEllipseLinesEx(Vector2 center, float radiusH, float radiusV, float thick, Color color);   // Draw ellipse outline with line thickness
-RLAPI void DrawRing(Vector2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color); // Draw ring
-RLAPI void DrawRingLines(Vector2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color); // Draw ring outline
-RLAPI void DrawRingLinesEx(Vector2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, float thick, Color color); // Draw ring outline with line thickness
+RLAPI void DrawEllipseLinesV(glm::vec2 center, float radiusH, float radiusV, Color color);               // Draw ellipse outline (Vector version)
+RLAPI void DrawEllipseLinesEx(glm::vec2 center, float radiusH, float radiusV, float thick, Color color); // Draw ellipse outline with line thickness
+RLAPI void DrawRing(glm::vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color); // Draw ring
+RLAPI void DrawRingLines(glm::vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, Color color); // Draw ring outline
+RLAPI void DrawRingLinesEx(glm::vec2 center, float innerRadius, float outerRadius, float startAngle, float endAngle, int segments, float thick, Color color); // Draw ring outline with line thickness
 
 // Splines drawing functions
-RLAPI void DrawSplineLinear(const Vector2 *points, int pointCount, float thick, Color color);            // Draw spline: Linear, minimum 2 points
-RLAPI void DrawSplineBasis(const Vector2 *points, int pointCount, float thick, Color color);             // Draw spline: B-Spline, minimum 4 points
-RLAPI void DrawSplineCatmullRom(const Vector2 *points, int pointCount, float thick, Color color);        // Draw spline: Catmull-Rom, minimum 4 points
-RLAPI void DrawSplineBezierQuadratic(const Vector2 *points, int pointCount, float thick, Color color);   // Draw spline: Quadratic Bezier, minimum 3 points (1 control point): [p1, c2, p3, c4...]
-RLAPI void DrawSplineBezierCubic(const Vector2 *points, int pointCount, float thick, Color color);       // Draw spline: Cubic Bezier, minimum 4 points (2 control points): [p1, c2, c3, p4, c5, c6...]
-RLAPI void DrawSplineSegmentLinear(Vector2 p1, Vector2 p2, float thick, Color color);                    // Draw spline segment: Linear, 2 points
-RLAPI void DrawSplineSegmentBasis(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, float thick, Color color); // Draw spline segment: B-Spline, 4 points
-RLAPI void DrawSplineSegmentCatmullRom(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, float thick, Color color); // Draw spline segment: Catmull-Rom, 4 points
-RLAPI void DrawSplineSegmentBezierQuadratic(Vector2 p1, Vector2 c2, Vector2 p3, float thick, Color color); // Draw spline segment: Quadratic Bezier, 2 points, 1 control point
-RLAPI void DrawSplineSegmentBezierCubic(Vector2 p1, Vector2 c2, Vector2 c3, Vector2 p4, float thick, Color color); // Draw spline segment: Cubic Bezier, 2 points, 2 control points
+RLAPI void DrawSplineLinear(const glm::vec2 *points, int pointCount, float thick, Color color);          // Draw spline: Linear, minimum 2 points
+RLAPI void DrawSplineBasis(const glm::vec2 *points, int pointCount, float thick, Color color);           // Draw spline: B-Spline, minimum 4 points
+RLAPI void DrawSplineCatmullRom(const glm::vec2 *points, int pointCount, float thick, Color color);      // Draw spline: Catmull-Rom, minimum 4 points
+RLAPI void DrawSplineBezierQuadratic(const glm::vec2 *points, int pointCount, float thick, Color color); // Draw spline: Quadratic Bezier, minimum 3 points (1 control point): [p1, c2, p3, c4...]
+RLAPI void DrawSplineBezierCubic(const glm::vec2 *points, int pointCount, float thick, Color color);     // Draw spline: Cubic Bezier, minimum 4 points (2 control points): [p1, c2, c3, p4, c5, c6...]
+RLAPI void DrawSplineSegmentLinear(glm::vec2 p1, glm::vec2 p2, float thick, Color color);                  // Draw spline segment: Linear, 2 points
+RLAPI void DrawSplineSegmentBasis(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float thick, Color color); // Draw spline segment: B-Spline, 4 points
+RLAPI void DrawSplineSegmentCatmullRom(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float thick, Color color); // Draw spline segment: Catmull-Rom, 4 points
+RLAPI void DrawSplineSegmentBezierQuadratic(glm::vec2 p1, glm::vec2 c2, glm::vec2 p3, float thick, Color color); // Draw spline segment: Quadratic Bezier, 2 points, 1 control point
+RLAPI void DrawSplineSegmentBezierCubic(glm::vec2 p1, glm::vec2 c2, glm::vec2 c3, glm::vec2 p4, float thick, Color color); // Draw spline segment: Cubic Bezier, 2 points, 2 control points
 
 // Spline segment point evaluation functions, for a provided t [0.0f .. 1.0f]
-RLAPI Vector2 GetSplinePointLinear(Vector2 startPos, Vector2 endPos, float t);                           // Get (evaluate) spline point: Linear
-RLAPI Vector2 GetSplinePointBasis(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, float t);              // Get (evaluate) spline point: B-Spline
-RLAPI Vector2 GetSplinePointCatmullRom(Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, float t);         // Get (evaluate) spline point: Catmull-Rom
-RLAPI Vector2 GetSplinePointBezierQuadratic(Vector2 p1, Vector2 c2, Vector2 p3, float t);                // Get (evaluate) spline point: Quadratic Bezier
-RLAPI Vector2 GetSplinePointBezierCubic(Vector2 p1, Vector2 c2, Vector2 c3, Vector2 p4, float t);        // Get (evaluate) spline point: Cubic Bezier
+RLAPI glm::vec2 GetSplinePointLinear(glm::vec2 startPos, glm::vec2 endPos, float t);                         // Get (evaluate) spline point: Linear
+RLAPI glm::vec2 GetSplinePointBasis(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float t);            // Get (evaluate) spline point: B-Spline
+RLAPI glm::vec2 GetSplinePointCatmullRom(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, float t);       // Get (evaluate) spline point: Catmull-Rom
+RLAPI glm::vec2 GetSplinePointBezierQuadratic(glm::vec2 p1, glm::vec2 c2, glm::vec2 p3, float t);              // Get (evaluate) spline point: Quadratic Bezier
+RLAPI glm::vec2 GetSplinePointBezierCubic(glm::vec2 p1, glm::vec2 c2, glm::vec2 c3, glm::vec2 p4, float t);      // Get (evaluate) spline point: Cubic Bezier
 
 // Basic shapes collision detection functions
 RLAPI bool CheckCollisionRecs(Rectangle rec1, Rectangle rec2);                                           // Check collision between two rectangles
-RLAPI bool CheckCollisionCircles(Vector2 center1, float radius1, Vector2 center2, float radius2);        // Check collision between two circles
-RLAPI bool CheckCollisionCircleRec(Vector2 center, float radius, Rectangle rec);                         // Check collision between circle and rectangle
-RLAPI bool CheckCollisionCircleLine(Vector2 center, float radius, Vector2 p1, Vector2 p2);               // Check if circle collides with a line created between two points [p1] and [p2]
-RLAPI bool CheckCollisionPointRec(Vector2 point, Rectangle rec);                                         // Check if point is inside rectangle
-RLAPI bool CheckCollisionPointCircle(Vector2 point, Vector2 center, float radius);                       // Check if point is inside circle
-RLAPI bool CheckCollisionPointTriangle(Vector2 point, Vector2 p1, Vector2 p2, Vector2 p3);               // Check if point is inside a triangle
-RLAPI bool CheckCollisionPointLine(Vector2 point, Vector2 p1, Vector2 p2, int threshold);                // Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold]
-RLAPI bool CheckCollisionPointPoly(Vector2 point, const Vector2 *points, int pointCount);                // Check if point is within a polygon described by array of vertices
-RLAPI bool CheckCollisionLines(Vector2 startPos1, Vector2 endPos1, Vector2 startPos2, Vector2 endPos2, Vector2 *collisionPoint); // Check the collision between two lines defined by two points each, returns collision point by reference
+RLAPI bool CheckCollisionCircles(glm::vec2 center1, float radius1, glm::vec2 center2, float radius2);      // Check collision between two circles
+RLAPI bool CheckCollisionCircleRec(glm::vec2 center, float radius, Rectangle rec);                       // Check collision between circle and rectangle
+RLAPI bool CheckCollisionCircleLine(glm::vec2 center, float radius, glm::vec2 p1, glm::vec2 p2);             // Check if circle collides with a line created between two points [p1] and [p2]
+RLAPI bool CheckCollisionPointRec(glm::vec2 point, Rectangle rec);                                       // Check if point is inside rectangle
+RLAPI bool CheckCollisionPointCircle(glm::vec2 point, glm::vec2 center, float radius);                     // Check if point is inside circle
+RLAPI bool CheckCollisionPointTriangle(glm::vec2 point, glm::vec2 p1, glm::vec2 p2, glm::vec2 p3);             // Check if point is inside a triangle
+RLAPI bool CheckCollisionPointLine(glm::vec2 point, glm::vec2 p1, glm::vec2 p2, int threshold);              // Check if point belongs to line created between two points [p1] and [p2] with defined margin in pixels [threshold]
+RLAPI bool CheckCollisionPointPoly(glm::vec2 point, const glm::vec2 *points, int pointCount);              // Check if point is within a polygon described by array of vertices
+RLAPI bool CheckCollisionLines(glm::vec2 startPos1, glm::vec2 endPos1, glm::vec2 startPos2, glm::vec2 endPos2, glm::vec2 *collisionPoint); // Check the collision between two lines defined by two points each, returns collision point by reference
 RLAPI Rectangle GetCollisionRec(Rectangle rec1, Rectangle rec2);                                         // Get collision rectangle for two rectangles collision
 
 //------------------------------------------------------------------------------------
@@ -1424,36 +1417,36 @@ RLAPI Color GetImageColor(Image image, int x, int y);                           
 // NOTE: Image software-rendering functions (CPU)
 RLAPI void ImageClearBackground(Image *dst, Color color);                                                // Clear image background with provided color
 RLAPI void ImageDrawPixel(Image *dst, int posX, int posY, Color color);                                  // Draw pixel within an image
-RLAPI void ImageDrawPixelV(Image *dst, Vector2 position, Color color);                                   // Draw pixel within an image (Vector version)
+RLAPI void ImageDrawPixelV(Image *dst, glm::vec2 position, Color color);                                 // Draw pixel within an image (Vector version)
 RLAPI void ImageDrawLine(Image *dst, int startPosX, int startPosY, int endPosX, int endPosY, Color color); // Draw line within an image
-RLAPI void ImageDrawLineV(Image *dst, Vector2 start, Vector2 end, Color color);                          // Draw line within an image (Vector version)
-RLAPI void ImageDrawLineEx(Image *dst, Vector2 start, Vector2 end, int thick, Color color);              // Draw a line defining thickness within an image
-RLAPI void ImageDrawLineStrip(Image *dst, const Vector2 *points, int pointCount, Color color);           // Draw a lines sequence within an image
-RLAPI void ImageDrawTriangle(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);               // Draw triangle within an image
-RLAPI void ImageDrawTriangleGradient(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color c1, Color c2, Color c3); // Draw triangle with interpolated colors within an image
-RLAPI void ImageDrawTriangleLines(Image *dst, Vector2 v1, Vector2 v2, Vector2 v3, Color color);          // Draw triangle outline within an image
-RLAPI void ImageDrawTriangleFan(Image *dst, const Vector2 *points, int pointCount, Color color);         // Draw a triangle fan defined by points within an image (first vertex is the center)
-RLAPI void ImageDrawTriangleStrip(Image *dst, const Vector2 *points, int pointCount, Color color);       // Draw a triangle strip defined by points within an image
+RLAPI void ImageDrawLineV(Image *dst, glm::vec2 start, glm::vec2 end, Color color);                        // Draw line within an image (Vector version)
+RLAPI void ImageDrawLineEx(Image *dst, glm::vec2 start, glm::vec2 end, int thick, Color color);            // Draw a line defining thickness within an image
+RLAPI void ImageDrawLineStrip(Image *dst, const glm::vec2 *points, int pointCount, Color color);         // Draw a lines sequence within an image
+RLAPI void ImageDrawTriangle(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color);             // Draw triangle within an image
+RLAPI void ImageDrawTriangleGradient(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color c1, Color c2, Color c3); // Draw triangle with interpolated colors within an image
+RLAPI void ImageDrawTriangleLines(Image *dst, glm::vec2 v1, glm::vec2 v2, glm::vec2 v3, Color color);        // Draw triangle outline within an image
+RLAPI void ImageDrawTriangleFan(Image *dst, const glm::vec2 *points, int pointCount, Color color);       // Draw a triangle fan defined by points within an image (first vertex is the center)
+RLAPI void ImageDrawTriangleStrip(Image *dst, const glm::vec2 *points, int pointCount, Color color);     // Draw a triangle strip defined by points within an image
 RLAPI void ImageDrawRectangle(Image *dst, int posX, int posY, int width, int height, Color color);       // Draw rectangle within an image
-RLAPI void ImageDrawRectangleV(Image *dst, Vector2 position, Vector2 size, Color color);                 // Draw rectangle within an image (Vector version)
+RLAPI void ImageDrawRectangleV(Image *dst, glm::vec2 position, glm::vec2 size, Color color);               // Draw rectangle within an image (Vector version)
 RLAPI void ImageDrawRectangleRec(Image *dst, Rectangle rec, Color color);                                // Draw rectangle within an image
-RLAPI void ImageDrawRectanglePro(Image *dst, Rectangle rec, Vector2 origin, float rotation, Color color); // Draw a color-filled rectangle with pro parameters within and image
+RLAPI void ImageDrawRectanglePro(Image *dst, Rectangle rec, glm::vec2 origin, float rotation, Color color); // Draw a color-filled rectangle with pro parameters within and image
 RLAPI void ImageDrawRectangleLines(Image *dst, int posX, int posY, int width, int height, Color color);  // Draw rectangle lines within an image
 RLAPI void ImageDrawRectangleLinesEx(Image *dst, Rectangle rec, int thick, Color color);                 // Draw rectangle lines within an image with line thickness
 RLAPI void ImageDrawRectangleGradientEx(Image *dst, Rectangle rec, Color col1, Color col2, Color col3, Color col4); // Draw rectangle with gradient colors within an image, counter-clockwise color order
 RLAPI void ImageDrawCircle(Image *dst, int centerX, int centerY, int radius, Color color);               // Draw a filled circle within an image
-RLAPI void ImageDrawCircleV(Image *dst, Vector2 center, int radius, Color color);                        // Draw a filled circle within an image (Vector version)
+RLAPI void ImageDrawCircleV(Image *dst, glm::vec2 center, int radius, Color color);                      // Draw a filled circle within an image (Vector version)
 RLAPI void ImageDrawCircleLines(Image *dst, int centerX, int centerY, int radius, Color color);          // Draw circle outline within an image
-RLAPI void ImageDrawCircleLinesV(Image *dst, Vector2 center, int radius, Color color);                   // Draw circle outline within an image (Vector version)
-RLAPI void ImageDrawCircleGradient(Image *dst, Vector2 center, float radius, Color inner, Color outer);  // Draw a gradient-filled circle within an image
+RLAPI void ImageDrawCircleLinesV(Image *dst, glm::vec2 center, int radius, Color color);                 // Draw circle outline within an image (Vector version)
+RLAPI void ImageDrawCircleGradient(Image *dst, glm::vec2 center, float radius, Color inner, Color outer);// Draw a gradient-filled circle within an image
 
 RLAPI void ImageDrawImage(Image *dst, Image src, int posX, int posY, Color tint);                      // Draw an image within an image
-RLAPI void ImageDrawImageEx(Image *dst, Image src, Vector2 position, float rotation, float scale, Color tint); // Draw an image with scaling and rotation within an image
-RLAPI void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, Vector2 position, Color tint);     // Draw a part of an image defined by a rectangle within an image
-RLAPI void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Vector2 origin, float rotation, Color tint); // Draw a part of an image defined by a rectangle into destination rectangle, with scaling and rotation, within an image
+RLAPI void ImageDrawImageEx(Image *dst, Image src, glm::vec2 position, float rotation, float scale, Color tint); // Draw an image with scaling and rotation within an image
+RLAPI void ImageDrawImageRec(Image *dst, Image src, Rectangle srcRec, glm::vec2 position, Color tint);   // Draw a part of an image defined by a rectangle within an image
+RLAPI void ImageDrawImagePro(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, glm::vec2 origin, float rotation, Color tint); // Draw a part of an image defined by a rectangle into destination rectangle, with scaling and rotation, within an image
 RLAPI void ImageDrawText(Image *dst, std::string_view text, int posX, int posY, int fontSize, Color color);   // Draw text (using default font) within an image (destination)
-RLAPI void ImageDrawTextEx(Image *dst, Font font, std::string_view text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
-RLAPI void ImageDrawTextPro(Image *dst, Font font, std::string_view text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
+RLAPI void ImageDrawTextEx(Image *dst, Font font, std::string_view text, glm::vec2 position, float fontSize, float spacing, Color tint); // Draw text (custom sprite font) within an image (destination)
+RLAPI void ImageDrawTextPro(Image *dst, Font font, std::string_view text, glm::vec2 position, glm::vec2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
 
 // Texture loading functions
 // NOTE: These functions require GPU access
@@ -1476,19 +1469,19 @@ RLAPI void SetTextureWrap(Texture2D texture, int wrap);                         
 
 // Texture drawing functions
 RLAPI void DrawTexture(Texture2D texture, int posX, int posY, Color tint);                               // Draw a Texture2D
-RLAPI void DrawTextureV(Texture2D texture, Vector2 position, Color tint);                                // Draw a Texture2D with position defined as Vector2
-RLAPI void DrawTextureEx(Texture2D texture, Vector2 position, float rotation, float scale, Color tint);  // Draw a Texture2D with rotation and scale
-RLAPI void DrawTextureRec(Texture2D texture, Rectangle rec, Vector2 position, Color tint);               // Draw a part of a texture defined by a rectangle
-RLAPI void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, Vector2 origin, float rotation, Color tint); // Draw a part of a texture defined by a source rectangle to destination rectangle, with scaling and rotation
-RLAPI void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstrec, Vector2 origin, float rotation, Color tint); // Draw a texture (or part of it) that stretches or shrinks nicely
+RLAPI void DrawTextureV(Texture2D texture, glm::vec2 position, Color tint);                              // Draw a Texture2D with position defined as glm::vec2
+RLAPI void DrawTextureEx(Texture2D texture, glm::vec2 position, float rotation, float scale, Color tint);// Draw a Texture2D with rotation and scale
+RLAPI void DrawTextureRec(Texture2D texture, Rectangle rec, glm::vec2 position, Color tint);             // Draw a part of a texture defined by a rectangle
+RLAPI void DrawTexturePro(Texture2D texture, Rectangle srcrec, Rectangle dstrec, glm::vec2 origin, float rotation, Color tint); // Draw a part of a texture defined by a source rectangle to destination rectangle, with scaling and rotation
+RLAPI void DrawTextureNPatch(Texture2D texture, NPatchInfo nPatchInfo, Rectangle dstrec, glm::vec2 origin, float rotation, Color tint); // Draw a texture (or part of it) that stretches or shrinks nicely
 
 // Color/pixel related functions
 RLAPI bool ColorIsEqual(Color col1, Color col2);                            // Check if two colors are equal
 RLAPI Color Fade(Color color, float alpha);                                 // Get color with alpha applied, alpha goes from 0.0f to 1.0f
 RLAPI int ColorToInt(Color color);                                          // Get hexadecimal value for a Color (0xRRGGBBAA)
-RLAPI Vector4 ColorNormalize(Color color);                                  // Get Color normalized as float [0..1]
-RLAPI Color ColorFromNormalized(Vector4 normalized);                        // Get Color from normalized values [0..1]
-RLAPI Vector3 ColorToHSV(Color color);                                      // Get HSV values for a Color, hue [0..360], saturation/value [0..1]
+RLAPI glm::vec4 ColorNormalize(Color color);                                // Get Color normalized as float [0..1]
+RLAPI Color ColorFromNormalized(glm::vec4 normalized);                      // Get Color from normalized values [0..1]
+RLAPI glm::vec3 ColorToHSV(Color color);                                    // Get HSV values for a Color, hue [0..360], saturation/value [0..1]
 RLAPI Color ColorFromHSV(float hue, float saturation, float value);         // Get a Color from HSV values, hue [0..360], saturation/value [0..1]
 RLAPI Color ColorTint(Color color, Color tint);                             // Get color multiplied with another color
 RLAPI Color ColorBrightness(Color color, float factor);                     // Get color with brightness correction, brightness factor goes from -1.0f to 1.0f
@@ -1521,16 +1514,16 @@ RLAPI bool ExportFontAsCode(Font font, std::string_view fileName);              
 // Text drawing functions
 RLAPI void DrawFPS(int posX, int posY);                                                     // Draw current FPS
 RLAPI void DrawText(std::string_view text, int posX, int posY, int fontSize, Color color);       // Draw text (using default font)
-RLAPI void DrawTextEx(Font font, std::string_view text, Vector2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
-RLAPI void DrawTextPro(Font font, std::string_view text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
-RLAPI void DrawTextCodepoint(Font font, int codepoint, Vector2 position, float fontSize, Color tint); // Draw one character (codepoint)
-RLAPI void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, Vector2 position, float fontSize, float spacing, Color tint); // Draw multiple characters (codepoint)
+RLAPI void DrawTextEx(Font font, std::string_view text, glm::vec2 position, float fontSize, float spacing, Color tint); // Draw text using font and additional parameters
+RLAPI void DrawTextPro(Font font, std::string_view text, glm::vec2 position, glm::vec2 origin, float rotation, float fontSize, float spacing, Color tint); // Draw text using Font and pro parameters (rotation)
+RLAPI void DrawTextCodepoint(Font font, int codepoint, glm::vec2 position, float fontSize, Color tint); // Draw one character (codepoint)
+RLAPI void DrawTextCodepoints(Font font, const int *codepoints, int codepointCount, glm::vec2 position, float fontSize, float spacing, Color tint); // Draw multiple characters (codepoint)
 
 // Text font info functions
 RLAPI void SetTextLineSpacing(int spacing);                                                 // Set vertical line spacing when drawing with line-breaks
 RLAPI int MeasureText(std::string_view text, int fontSize);                                      // Measure string width for default font
-RLAPI Vector2 MeasureTextEx(Font font, std::string_view text, float fontSize, float spacing);    // Measure string size for Font
-RLAPI Vector2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing); // Measure string size for an existing array of codepoints for Font
+RLAPI glm::vec2 MeasureTextEx(Font font, std::string_view text, float fontSize, float spacing);  // Measure string size for Font
+RLAPI glm::vec2 MeasureTextCodepoints(Font font, const int *codepoints, int length, float fontSize, float spacing); // Measure string size for an existing array of codepoints for Font
 RLAPI int GetGlyphIndex(Font font, int codepoint);                                          // Get glyph index position in font for a codepoint (unicode character), fallback to '?' if not found
 RLAPI GlyphInfo GetGlyphInfo(Font font, int codepoint);                                     // Get glyph font info data for a codepoint (unicode character), fallback to '?' if not found
 RLAPI Rectangle GetGlyphAtlasRec(Font font, int codepoint);                                 // Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found
@@ -1572,25 +1565,25 @@ RLAPI float TextToFloat(std::string_view text);                                 
 //------------------------------------------------------------------------------------
 
 // Basic geometric 3D shapes drawing functions
-RLAPI void DrawLine3D(Vector3 startPos, Vector3 endPos, Color color);                                    // Draw a line in 3D world space
-RLAPI void DrawPoint3D(Vector3 position, Color color);                                                   // Draw a point in 3D space, actually a small line
-RLAPI void DrawCircle3D(Vector3 center, float radius, Vector3 rotationAxis, float rotationAngle, Color color); // Draw a circle in 3D world space
-RLAPI void DrawTriangle3D(Vector3 v1, Vector3 v2, Vector3 v3, Color color);                              // Draw a color-filled triangle, counter-clockwise vertex order
-RLAPI void DrawTriangleStrip3D(const Vector3 *points, int pointCount, Color color);                      // Draw a triangle strip defined by points
-RLAPI void DrawCube(Vector3 position, float width, float height, float length, Color color);             // Draw cube
-RLAPI void DrawCubeV(Vector3 position, Vector3 size, Color color);                                       // Draw cube (Vector version)
-RLAPI void DrawCubeWires(Vector3 position, float width, float height, float length, Color color);        // Draw cube wires
-RLAPI void DrawCubeWiresV(Vector3 position, Vector3 size, Color color);                                  // Draw cube wires (Vector version)
-RLAPI void DrawSphere(Vector3 centerPos, float radius, Color color);                                     // Draw sphere
-RLAPI void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color color);            // Draw sphere with defined rings and slices
-RLAPI void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Color color);         // Draw sphere wires
-RLAPI void DrawCylinder(Vector3 position, float radiusTop, float radiusBottom, float height, int sides, Color color); // Draw a cylinder/cone
-RLAPI void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float endRadius, int sides, Color color); // Draw a cylinder with base at startPos and top at endPos
-RLAPI void DrawCylinderWires(Vector3 position, float radiusTop, float radiusBottom, float height, int sides, Color color); // Draw a cylinder/cone wires
-RLAPI void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, float endRadius, int sides, Color color); // Draw a cylinder wires with base at startPos and top at endPos
-RLAPI void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int slices, Color color); // Draw a capsule with the center of its sphere caps at startPos and endPos
-RLAPI void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings, int slices, Color color); // Draw capsule wireframe with the center of its sphere caps at startPos and endPos
-RLAPI void DrawPlane(Vector3 centerPos, Vector2 size, Color color);                                      // Draw a plane XZ
+RLAPI void DrawLine3D(glm::vec3 startPos, glm::vec3 endPos, Color color);                                  // Draw a line in 3D world space
+RLAPI void DrawPoint3D(glm::vec3 position, Color color);                                                 // Draw a point in 3D space, actually a small line
+RLAPI void DrawCircle3D(glm::vec3 center, float radius, glm::vec3 rotationAxis, float rotationAngle, Color color); // Draw a circle in 3D world space
+RLAPI void DrawTriangle3D(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, Color color);                            // Draw a color-filled triangle, counter-clockwise vertex order
+RLAPI void DrawTriangleStrip3D(const glm::vec3 *points, int pointCount, Color color);                    // Draw a triangle strip defined by points
+RLAPI void DrawCube(glm::vec3 position, float width, float height, float length, Color color);           // Draw cube
+RLAPI void DrawCubeV(glm::vec3 position, glm::vec3 size, Color color);                                     // Draw cube (Vector version)
+RLAPI void DrawCubeWires(glm::vec3 position, float width, float height, float length, Color color);      // Draw cube wires
+RLAPI void DrawCubeWiresV(glm::vec3 position, glm::vec3 size, Color color);                                // Draw cube wires (Vector version)
+RLAPI void DrawSphere(glm::vec3 centerPos, float radius, Color color);                                   // Draw sphere
+RLAPI void DrawSphereEx(glm::vec3 centerPos, float radius, int rings, int slices, Color color);          // Draw sphere with defined rings and slices
+RLAPI void DrawSphereWires(glm::vec3 centerPos, float radius, int rings, int slices, Color color);       // Draw sphere wires
+RLAPI void DrawCylinder(glm::vec3 position, float radiusTop, float radiusBottom, float height, int sides, Color color); // Draw a cylinder/cone
+RLAPI void DrawCylinderEx(glm::vec3 startPos, glm::vec3 endPos, float startRadius, float endRadius, int sides, Color color); // Draw a cylinder with base at startPos and top at endPos
+RLAPI void DrawCylinderWires(glm::vec3 position, float radiusTop, float radiusBottom, float height, int sides, Color color); // Draw a cylinder/cone wires
+RLAPI void DrawCylinderWiresEx(glm::vec3 startPos, glm::vec3 endPos, float startRadius, float endRadius, int sides, Color color); // Draw a cylinder wires with base at startPos and top at endPos
+RLAPI void DrawCapsule(glm::vec3 startPos, glm::vec3 endPos, float radius, int rings, int slices, Color color); // Draw a capsule with the center of its sphere caps at startPos and endPos
+RLAPI void DrawCapsuleWires(glm::vec3 startPos, glm::vec3 endPos, float radius, int rings, int slices, Color color); // Draw capsule wireframe with the center of its sphere caps at startPos and endPos
+RLAPI void DrawPlane(glm::vec3 centerPos, glm::vec2 size, Color color);                                    // Draw a plane XZ
 RLAPI void DrawRay(Ray ray, Color color);                                                                // Draw a ray line
 RLAPI void DrawGrid(int slices, float spacing);                                                          // Draw a grid (centered at (0, 0, 0))
 
@@ -1606,14 +1599,14 @@ RLAPI void UnloadModel(Model model);                                            
 RLAPI BoundingBox GetModelBoundingBox(Model model);                                         // Compute model bounding box limits (considers all meshes)
 
 // Model drawing functions
-RLAPI void DrawModel(Model model, Vector3 position, float scale, Color tint);               // Draw a model (with texture if set)
-RLAPI void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, Vector3 scale, Color tint); // Draw a model with custom transform
-RLAPI void DrawModelWires(Model model, Vector3 position, float scale, Color tint);          // Draw a model wires (with texture if set)
-RLAPI void DrawModelWiresEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, Vector3 scale, Color tint); // Draw a model wires with custom transform
+RLAPI void DrawModel(Model model, glm::vec3 position, float scale, Color tint);             // Draw a model (with texture if set)
+RLAPI void DrawModelEx(Model model, glm::vec3 position, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 scale, Color tint); // Draw a model with custom transform
+RLAPI void DrawModelWires(Model model, glm::vec3 position, float scale, Color tint);        // Draw a model wires (with texture if set)
+RLAPI void DrawModelWiresEx(Model model, glm::vec3 position, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 scale, Color tint); // Draw a model wires with custom transform
 RLAPI void DrawBoundingBox(BoundingBox box, Color color);                                   // Draw bounding box (wires)
-RLAPI void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float scale, Color tint); // Draw a billboard texture
-RLAPI void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle rec, Vector3 position, Vector2 size, Color tint); // Draw a billboard texture defined by rectangle
-RLAPI void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 position, Vector3 up, Vector2 size, Vector2 origin, float rotation, Color tint); // Draw a billboard texture defined by source rectangle with scaling and rotation
+RLAPI void DrawBillboard(Camera camera, Texture2D texture, glm::vec3 position, float scale, Color tint); // Draw a billboard texture
+RLAPI void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle rec, glm::vec3 position, glm::vec2 size, Color tint); // Draw a billboard texture defined by rectangle
+RLAPI void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, glm::vec3 position, glm::vec3 up, glm::vec2 size, glm::vec2 origin, float rotation, Color tint); // Draw a billboard texture defined by source rectangle with scaling and rotation
 
 // Mesh management functions
 RLAPI void UploadMesh(Mesh *mesh, bool dynamic);                                            // Upload mesh vertex data in GPU and provide VAO/VBO ids
@@ -1636,8 +1629,8 @@ RLAPI Mesh GenMeshCylinder(float radius, float height, int slices);             
 RLAPI Mesh GenMeshCone(float radius, float height, int slices);                             // Generate cone/pyramid mesh
 RLAPI Mesh GenMeshTorus(float radius, float size, int radSeg, int sides);                   // Generate torus mesh
 RLAPI Mesh GenMeshKnot(float radius, float size, int radSeg, int sides);                    // Generate trefoil knot mesh
-RLAPI Mesh GenMeshHeightmap(Image heightmap, Vector3 size);                                 // Generate heightmap mesh from image data
-RLAPI Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize);                               // Generate cubes-based map mesh from image data
+RLAPI Mesh GenMeshHeightmap(Image heightmap, glm::vec3 size);                               // Generate heightmap mesh from image data
+RLAPI Mesh GenMeshCubicmap(Image cubicmap, glm::vec3 cubeSize);                             // Generate cubes-based map mesh from image data
 
 // Material loading/unloading functions
 RLAPI Material *LoadMaterials(std::string_view fileName, int *materialCount);                    // Load materials from model file
@@ -1655,14 +1648,14 @@ RLAPI void UnloadModelAnimations(ModelAnimation *animations, int animCount);    
 RLAPI bool IsModelAnimationValid(Model model, ModelAnimation anim);                         // Check model animation skeleton match
 
 // Collision detection functions
-RLAPI bool CheckCollisionSpheres(Vector3 center1, float radius1, Vector3 center2, float radius2); // Check collision between two spheres
+RLAPI bool CheckCollisionSpheres(glm::vec3 center1, float radius1, glm::vec3 center2, float radius2); // Check collision between two spheres
 RLAPI bool CheckCollisionBoxes(BoundingBox box1, BoundingBox box2);                         // Check collision between two bounding boxes
-RLAPI bool CheckCollisionBoxSphere(BoundingBox box, Vector3 center, float radius);          // Check collision between box and sphere
-RLAPI RayCollision GetRayCollisionSphere(Ray ray, Vector3 center, float radius);            // Get collision info between ray and sphere
+RLAPI bool CheckCollisionBoxSphere(BoundingBox box, glm::vec3 center, float radius);        // Check collision between box and sphere
+RLAPI RayCollision GetRayCollisionSphere(Ray ray, glm::vec3 center, float radius);          // Get collision info between ray and sphere
 RLAPI RayCollision GetRayCollisionBox(Ray ray, BoundingBox box);                            // Get collision info between ray and box
 RLAPI RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform);               // Get collision info between ray and mesh
-RLAPI RayCollision GetRayCollisionTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3);    // Get collision info between ray and triangle
-RLAPI RayCollision GetRayCollisionQuad(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4); // Get collision info between ray and quad
+RLAPI RayCollision GetRayCollisionTriangle(Ray ray, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);  // Get collision info between ray and triangle
+RLAPI RayCollision GetRayCollisionQuad(Ray ray, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 p4); // Get collision info between ray and quad
 
 //------------------------------------------------------------------------------------
 // Audio Loading and Playing Functions (Module: audio)

@@ -38,9 +38,9 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - raymarching rendering");
 
     Camera camera = {};
-    camera.position = Vector3{ 2.5f, 2.5f, 3.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.7f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 2.5f, 2.5f, 3.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.7f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 65.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 

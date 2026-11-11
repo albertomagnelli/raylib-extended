@@ -80,7 +80,7 @@ int main()
                 // Center vertically
                 const Rectangle source = { 0.0f, static_cast<float>(i)*frameHeight, frameWidth, frameHeight };
                 const Rectangle dest = { screenWidth/2.0f, (screenHeight/2.0f) + (i*stackSpacing) - (stackSpacing*stackCount/2.0f), scaledWidth, scaledHeight };
-                const Vector2 origin = { scaledWidth/2.0f, scaledHeight/2.0f };
+                const glm::vec2 origin = { scaledWidth/2.0f, scaledHeight/2.0f };
 
                 DrawTexturePro(booth, source, dest, origin, rotation, WHITE);
             }

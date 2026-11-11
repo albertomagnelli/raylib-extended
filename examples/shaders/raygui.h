@@ -536,6 +536,18 @@
     } Font;
 #endif
 
+//----------------------------------------------------------------------------------
+// raylib compatibility
+// NOTE: raylib exposes the glm vector types directly; raygui keeps its historical
+// Vector2/Vector3 names local to this header so the vendored source is unchanged.
+//----------------------------------------------------------------------------------
+#if defined(__cplusplus) && !defined(RAYGUI_STANDALONE)
+    #include <glm/glm.hpp>
+
+    using Vector2 = glm::vec2;
+    using Vector3 = glm::vec3;
+#endif
+
 // Style property
 // NOTE: Used when exporting style as code for convenience
 typedef struct GuiStyleProp {

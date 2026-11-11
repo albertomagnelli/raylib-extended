@@ -44,7 +44,7 @@ int main()
     int btnState = 0;               // Button state: 0-NORMAL, 1-MOUSE_HOVER, 2-PRESSED
     bool btnAction = false;         // Button action should be activated
 
-    Vector2 mousePoint = { 0.0f, 0.0f };
+    glm::vec2 mousePoint = { 0.0f, 0.0f };
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ int main()
 
             ClearBackground(RAYWHITE);
 
-            DrawTextureRec(button, sourceRec, Vector2{ btnBounds.x, btnBounds.y }, WHITE); // Draw button frame
+            DrawTextureRec(button, sourceRec, glm::vec2{ btnBounds.x, btnBounds.y }, WHITE); // Draw button frame
 
         EndDrawing();
         //----------------------------------------------------------------------------------

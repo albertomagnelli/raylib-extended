@@ -45,7 +45,7 @@ typedef enum { SHAPE_SPHERE = 0, SHAPE_CUBE, SHAPE_CYLINDER, SHAPE_TORUS } Shape
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 static void ChangeShape(Model *model, BoundingBox *bbox, ShapeType *currentShape, ShapeType newShape, Texture2D canvasTexture);
-static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV);
+static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, glm::vec2 *outUV);
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -60,9 +60,9 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [models] example - mesh uv painting");
 
     Camera3D camera = {};
-    camera.position = Vector3{ 0.0f, 3.5f, 6.5f };
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };
+    camera.position = glm::vec3{ 0.0f, 3.5f, 6.5f };
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
@@ -79,7 +79,7 @@ int main()
     ToolMode currentTool = TOOL_PAINT;
     Color activeColor = RED;
     int brushRadius = 12;
-    Vector2 lastHitUV = {};
+    glm::vec2 lastHitUV = {};
     bool hasLastHit = false;
 
     const Color palette[PALETTE_COUNT] = { RED, ORANGE, GOLD, LIME, SKYBLUE, PURPLE, DARKGRAY, WHITE };
@@ -93,7 +93,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Vector2 mousePos = GetMousePosition();
+        const glm::vec2 mousePos = GetMousePosition();
         const bool isMouseOverUI = CheckCollisionPointRec(mousePos, uiPanelRec);
 
         if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT)) UpdateCamera(&camera, CAMERA_THIRD_PERSON);
@@ -101,7 +101,7 @@ int main()
         if (!isMouseOverUI && IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
             const Ray ray = GetScreenToWorldRay(mousePos, camera);
-            Vector2 hitUV = {};
+            glm::vec2 hitUV = {};
 
             if (GetMeshHitUV(ray, model, modelBBox, &hitUV))
             {
@@ -115,7 +115,7 @@ int main()
                     {
                         const int lastPx = static_cast<int>(lastHitUV.x * CANVAS_SIZE);
                         const int lastPy = static_cast<int>(lastHitUV.y * CANVAS_SIZE);
-                        const float dist = glm::distance(Vector2{ static_cast<float>(lastPx), static_cast<float>(lastPy) }, Vector2{ static_cast<float>(px), static_cast<float>(py) });
+                        const float dist = glm::distance(glm::vec2{ static_cast<float>(lastPx), static_cast<float>(lastPy) }, glm::vec2{ static_cast<float>(px), static_cast<float>(py) });
                         const int steps = static_cast<int>(dist / 2.0f) + 1;
 
                         for (int i = 0; i <= steps; i++)
@@ -150,7 +150,7 @@ int main()
             ClearBackground(Color{ 30, 32, 40, 255 });
 
             BeginMode3D(camera);
-                DrawModel(model, Vector3{}, 1.0f, WHITE);
+                DrawModel(model, glm::vec3{}, 1.0f, WHITE);
                 DrawGrid(10, 1.0f);
             EndMode3D();
 
@@ -256,13 +256,13 @@ static void ChangeShape(Model *model, BoundingBox *bbox, ShapeType *currentShape
     *model = LoadModelFromMesh(mesh);
 
     // GenMeshCylinder builds upward from y = 0; shift it down to center on the origin
-    if (newShape == SHAPE_CYLINDER) model->transform = glm::translate(Matrix(1.0f), Vector3{0.0f, -1.25f, 0.0f});
+    if (newShape == SHAPE_CYLINDER) model->transform = glm::translate(Matrix(1.0f), glm::vec3{0.0f, -1.25f, 0.0f});
 
     model->materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = canvasTexture;
 
     BoundingBox box = GetMeshBoundingBox(model->meshes[0]);
-    box.min = Vector3((model->transform)*Vector4(box.min, 1.0f));
-    box.max = Vector3((model->transform)*Vector4(box.max, 1.0f));
+    box.min = glm::vec3((model->transform)*glm::vec4(box.min, 1.0f));
+    box.max = glm::vec3((model->transform)*glm::vec4(box.max, 1.0f));
     *bbox = box;
 
     *currentShape = newShape;
@@ -270,14 +270,14 @@ static void ChangeShape(Model *model, BoundingBox *bbox, ShapeType *currentShape
 
 // Raycasts against the model's mesh triangles and returns the UV coordinate of the
 // closest hit, interpolated from the hit triangle's vertices with barycentric weights
-static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
+static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, glm::vec2 *outUV)
 {
     if (!GetRayCollisionBox(ray, bbox).hit) return false; // Fast reject
 
     const Mesh mesh = model.meshes[0];
     float closestDistance = 1e9f;
     bool found = false;
-    Vector2 hitUV = {};
+    glm::vec2 hitUV = {};
 
     for (int tri = 0; tri < mesh.triangleCount; tri++)
     {
@@ -291,9 +291,9 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
         }
         else { i0 = 3*tri; i1 = 3*tri + 1; i2 = 3*tri + 2; }
 
-        const Vector3 a = Vector3((model.transform)*Vector4(Vector3{ mesh.vertices[3*i0], mesh.vertices[3*i0 + 1], mesh.vertices[3*i0 + 2] }, 1.0f));
-        const Vector3 b = Vector3((model.transform)*Vector4(Vector3{ mesh.vertices[3*i1], mesh.vertices[3*i1 + 1], mesh.vertices[3*i1 + 2] }, 1.0f));
-        const Vector3 c = Vector3((model.transform)*Vector4(Vector3{ mesh.vertices[3*i2], mesh.vertices[3*i2 + 1], mesh.vertices[3*i2 + 2] }, 1.0f));
+        const glm::vec3 a = glm::vec3((model.transform)*glm::vec4(glm::vec3{ mesh.vertices[3*i0], mesh.vertices[3*i0 + 1], mesh.vertices[3*i0 + 2] }, 1.0f));
+        const glm::vec3 b = glm::vec3((model.transform)*glm::vec4(glm::vec3{ mesh.vertices[3*i1], mesh.vertices[3*i1 + 1], mesh.vertices[3*i1 + 2] }, 1.0f));
+        const glm::vec3 c = glm::vec3((model.transform)*glm::vec4(glm::vec3{ mesh.vertices[3*i2], mesh.vertices[3*i2 + 1], mesh.vertices[3*i2 + 2] }, 1.0f));
 
         const RayCollision hit = GetRayCollisionTriangle(ray, a, b, c);
 
@@ -302,11 +302,11 @@ static bool GetMeshHitUV(Ray ray, Model model, BoundingBox bbox, Vector2 *outUV)
             closestDistance = hit.distance;
             found = true;
 
-            const Vector2 uvA = { mesh.texcoords[2*i0], mesh.texcoords[2*i0 + 1] };
-            const Vector2 uvB = { mesh.texcoords[2*i1], mesh.texcoords[2*i1 + 1] };
-            const Vector2 uvC = { mesh.texcoords[2*i2], mesh.texcoords[2*i2 + 1] };
+            const glm::vec2 uvA = { mesh.texcoords[2*i0], mesh.texcoords[2*i0 + 1] };
+            const glm::vec2 uvB = { mesh.texcoords[2*i1], mesh.texcoords[2*i1 + 1] };
+            const glm::vec2 uvC = { mesh.texcoords[2*i2], mesh.texcoords[2*i2 + 1] };
 
-            const Vector3 w = Vector3Barycenter(hit.point, a, b, c);
+            const glm::vec3 w = Vector3Barycenter(hit.point, a, b, c);
 
             hitUV.x = w.x*uvA.x + w.y*uvB.x + w.z*uvC.x;
             hitUV.y = w.x*uvA.y + w.y*uvB.y + w.z*uvC.y;

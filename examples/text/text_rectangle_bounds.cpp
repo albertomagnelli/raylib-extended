@@ -53,7 +53,7 @@ tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet ris
     const float maxWidth = screenWidth - 50.0f;
     const float maxHeight = screenHeight - 160.0f;
 
-    Vector2 lastMouse = { 0.0f, 0.0f }; // Stores last mouse coordinates
+    glm::vec2 lastMouse = { 0.0f, 0.0f }; // Stores last mouse coordinates
     Color borderColor = MAROON;         // Container border color
     const Font font = GetFontDefault();       // Get default system font
 
@@ -67,7 +67,7 @@ tempor incididunt ut labore et dolore magna aliqua. Nec ullamcorper sit amet ris
         //----------------------------------------------------------------------------------
         if (IsKeyPressed(KEY_SPACE)) wordWrap = !wordWrap;
 
-        const Vector2 mouse = GetMousePosition();
+        const glm::vec2 mouse = GetMousePosition();
 
         // Check if the mouse is inside the container and toggle border color
         if (CheckCollisionPointRec(mouse, container)) borderColor = Fade(MAROON, 0.4f);
@@ -252,7 +252,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 // Draw current character glyph
                 if ((codepoint != ' ') && (codepoint != '\t'))
                 {
-                    DrawTextCodepoint(font, codepoint, Vector2{ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
+                    DrawTextCodepoint(font, codepoint, glm::vec2{ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
                 }
             }
 

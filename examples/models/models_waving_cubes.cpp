@@ -33,9 +33,9 @@ int main()
 
     // Initialize the camera
     Camera3D camera = {};
-    camera.position = Vector3{ 30.0f, 20.0f, 30.0f }; // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 30.0f, 20.0f, 30.0f }; // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 70.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -84,7 +84,7 @@ int main()
                             const float scatter = sinf(blockScale*20.0f + static_cast<float>(time*4.0f));
 
                             // Calculate the cube position
-                            const Vector3 cubePos = {
+                            const glm::vec3 cubePos = {
                                 (x - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter,
                                 (y - static_cast<float>(numBlocks)/2)*(scale*2.0f) + scatter,
                                 (z - static_cast<float>(numBlocks)/2)*(scale*3.0f) + scatter

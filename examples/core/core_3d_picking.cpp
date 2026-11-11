@@ -29,14 +29,14 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 10.0f, 10.0f, 10.0f }; // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 10.0f, 10.0f, 10.0f }; // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
-    const Vector3 cubePosition = { 0.0f, 1.0f, 0.0f };
-    const Vector3 cubeSize = { 2.0f, 2.0f, 2.0f };
+    const glm::vec3 cubePosition = { 0.0f, 1.0f, 0.0f };
+    const glm::vec3 cubeSize = { 2.0f, 2.0f, 2.0f };
 
     Ray ray = {};                    // Picking line ray
     RayCollision collision = {};     // Ray collision hit info
@@ -66,8 +66,8 @@ int main()
 
                 // Check collision between ray and box
                 collision = GetRayCollisionBox(ray,
-                            BoundingBox{Vector3{ cubePosition.x - cubeSize.x/2, cubePosition.y - cubeSize.y/2, cubePosition.z - cubeSize.z/2 },
-                                          Vector3{ cubePosition.x + cubeSize.x/2, cubePosition.y + cubeSize.y/2, cubePosition.z + cubeSize.z/2 }});
+                            BoundingBox{glm::vec3{ cubePosition.x - cubeSize.x/2, cubePosition.y - cubeSize.y/2, cubePosition.z - cubeSize.z/2 },
+                                          glm::vec3{ cubePosition.x + cubeSize.x/2, cubePosition.y + cubeSize.y/2, cubePosition.z + cubeSize.z/2 }});
             }
             else collision.hit = false;
         }

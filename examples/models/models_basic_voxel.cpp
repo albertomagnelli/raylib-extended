@@ -37,9 +37,9 @@ int main()
 
     // Define the camera to look into our 3d world (first person)
     Camera3D camera = {};
-    camera.position = Vector3{ -2.0f, 0.0f, -2.0f };  // Camera position at ground level
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector
+    camera.position = glm::vec3{ -2.0f, 0.0f, -2.0f };// Camera position at ground level
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector
     camera.fovy = 45.0f;                                 // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;              // Camera projection type
 
@@ -76,12 +76,12 @@ int main()
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
             // Cast a ray from the screen center (where crosshair would be)
-            const Vector2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+            const glm::vec2 screenCenter = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
             const Ray ray = GetScreenToWorldRay(screenCenter, camera);
 
             // Check ray collision with all voxels
             float closestDistance = 99999.0f;
-            Vector3 closestVoxelPosition = { -1, -1, -1 };
+            glm::vec3 closestVoxelPosition = { -1, -1, -1 };
             bool voxelFound = false;
             for (int x = 0; x < WORLD_SIZE; x++)
             {
@@ -92,10 +92,10 @@ int main()
                         if (!voxels[x][y][z]) continue; // Skip empty voxels
 
                         // Build a bounding box for this voxel
-                        const Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                        const glm::vec3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
                         const BoundingBox box = {
-                            Vector3{ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
-                            Vector3{ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
+                            glm::vec3{ position.x - 0.5f, position.y - 0.5f, position.z - 0.5f },
+                            glm::vec3{ position.x + 0.5f, position.y + 0.5f, position.z + 0.5f }
                         };
 
                         // Check ray-box collision
@@ -103,7 +103,7 @@ int main()
                         if (collision.hit && (collision.distance < closestDistance))
                         {
                             closestDistance = collision.distance;
-                            closestVoxelPosition = Vector3{ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                            closestVoxelPosition = glm::vec3{ static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
                             voxelFound = true;
                         }
                     }
@@ -139,7 +139,7 @@ int main()
                         {
                             if (!voxels[x][y][z]) continue;
 
-                            const Vector3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
+                            const glm::vec3 position = { static_cast<float>(x), static_cast<float>(y), static_cast<float>(z) };
                             DrawModel(cubeModel, position, 1.0f, BEIGE);
                             DrawCubeWires(position, 1.0f, 1.0f, 1.0f, BLACK);
                         }

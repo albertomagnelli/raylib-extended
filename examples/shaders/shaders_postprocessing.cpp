@@ -81,9 +81,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 2.0f, 3.0f, 2.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 1.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 2.0f, 3.0f, 2.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 1.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -91,7 +91,7 @@ int main()
     const Texture2D texture = LoadTexture("resources/models/church_diffuse.png"); // Load model texture (diffuse map)
     model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = texture;        // Set model diffuse texture
 
-    const Vector3 position = { 0.0f, 0.0f, 0.0f };            // Set model position
+    const glm::vec3 position = { 0.0f, 0.0f, 0.0f };          // Set model position
 
     // Load all postpro shaders
     // NOTE 1: All postpro shader use the base vertex shader (DEFAULT_VERTEX_SHADER)
@@ -151,7 +151,7 @@ int main()
             // Render generated texture using selected postprocessing shader
             BeginShaderMode(shaders[currentShader]);
                 // NOTE: Render texture must be y-flipped due to default OpenGL coordinates (left-bottom)
-                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, Vector2{ 0, 0 }, WHITE);
+                DrawTextureRec(target.texture, Rectangle{ 0, 0, static_cast<float>(target.texture.width), static_cast<float>(-target.texture.height) }, glm::vec2{ 0, 0 }, WHITE);
             EndShaderMode();
 
             // Draw 2d shapes and text over drawn texture

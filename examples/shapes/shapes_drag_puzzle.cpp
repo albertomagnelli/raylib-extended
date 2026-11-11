@@ -22,14 +22,14 @@
 // Types and Structures Definition
 //----------------------------------------------------------------------------------
 typedef struct {
-    Vector2 center;
+    glm::vec2 center;
     float radius;
 } Circle;
 
 typedef struct {
-    Vector2 v1;
-    Vector2 v2;
-    Vector2 v3;
+    glm::vec2 v1;
+    glm::vec2 v2;
+    glm::vec2 v3;
 } Triangle;
 
 //------------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ int main()
     const Triangle triArea = { { 600, 115 }, { 540, 222 }, { 660, 222 } };
     bool triPickedUp = false;
 
-    Vector2 mouseOffset = { 0.0f, 0.0f };    // Stores the offset of the mouse relative to the object's pivot point
+    glm::vec2 mouseOffset = { 0.0f, 0.0f };  // Stores the offset of the mouse relative to the object's pivot point
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Vector2 mousePosition = GetMousePosition();
+        const glm::vec2 mousePosition = GetMousePosition();
         bool recPlaced = false;
         bool circPlaced = false;
         bool triPlaced = false;
@@ -78,17 +78,17 @@ int main()
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mousePosition, rec))
         {
             recPickedUp = true;
-            mouseOffset = Vector2{ rec.x - mousePosition.x, rec.y - mousePosition.y };
+            mouseOffset = glm::vec2{ rec.x - mousePosition.x, rec.y - mousePosition.y };
         }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointCircle(mousePosition, circ.center, circ.radius))
         {
             circPickedUp = true;
-            mouseOffset = Vector2{ circ.center.x - mousePosition.x, circ.center.y - mousePosition.y };
+            mouseOffset = glm::vec2{ circ.center.x - mousePosition.x, circ.center.y - mousePosition.y };
         }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointTriangle(mousePosition, tri.v1, tri.v2, tri.v3))
         {
             triPickedUp = true;
-            mouseOffset = Vector2{ tri.v1.x - mousePosition.x, tri.v1.y - mousePosition.y }; // Uses v1 as the pivot point
+            mouseOffset = glm::vec2{ tri.v1.x - mousePosition.x, tri.v1.y - mousePosition.y }; // Uses v1 as the pivot point
         }
 
         // Detect object drop input
@@ -116,12 +116,12 @@ int main()
         // Triangle update
         if (triPickedUp)
         {
-            const Vector2 v2Offset = { tri.v2.x - tri.v1.x, tri.v2.y - tri.v1.y };
-            const Vector2 v3Offset = { tri.v3.x - tri.v1.x, tri.v3.y - tri.v1.y };
+            const glm::vec2 v2Offset = { tri.v2.x - tri.v1.x, tri.v2.y - tri.v1.y };
+            const glm::vec2 v3Offset = { tri.v3.x - tri.v1.x, tri.v3.y - tri.v1.y };
 
-            tri.v1 = Vector2{ mousePosition.x + mouseOffset.x, mousePosition.y + mouseOffset.y };
-            tri.v2 = Vector2{ tri.v1.x + v2Offset.x, tri.v1.y + v2Offset.y };
-            tri.v3 = Vector2{ tri.v1.x + v3Offset.x, tri.v1.y + v3Offset.y };
+            tri.v1 = glm::vec2{ mousePosition.x + mouseOffset.x, mousePosition.y + mouseOffset.y };
+            tri.v2 = glm::vec2{ tri.v1.x + v2Offset.x, tri.v1.y + v2Offset.y };
+            tri.v3 = glm::vec2{ tri.v1.x + v3Offset.x, tri.v1.y + v3Offset.y };
         }
         if (
             CheckCollisionPointTriangle(tri.v1, triArea.v1, triArea.v2, triArea.v3) &&

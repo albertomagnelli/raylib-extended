@@ -30,8 +30,8 @@ int main()
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - bouncing ball");
 
-    Vector2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
-    Vector2 ballSpeed = { 5.0f, 4.0f };
+    glm::vec2 ballPosition = { GetScreenWidth()/2.0f, GetScreenHeight()/2.0f };
+    glm::vec2 ballSpeed = { 5.0f, 4.0f };
     constexpr int ballRadius = 20;
     constexpr float gravity = 0.2f;
 

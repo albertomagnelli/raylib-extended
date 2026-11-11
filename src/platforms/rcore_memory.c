@@ -235,10 +235,10 @@ int GetCurrentMonitor(void)
 }
 
 // Get selected monitor position
-Vector2 GetMonitorPosition(int monitor)
+glm::vec2 GetMonitorPosition(int monitor)
 {
     TRACELOG(LOG_WARNING, "GetMonitorPosition() not implemented on target platform");
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get selected monitor width (currently used by monitor)
@@ -284,17 +284,17 @@ std::string GetMonitorName(int monitor)
 }
 
 // Get window position XY on monitor
-Vector2 GetWindowPosition(void)
+glm::vec2 GetWindowPosition(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowPosition() not implemented on target platform");
-    return Vector2{ 0, 0 };
+    return glm::vec2{ 0, 0 };
 }
 
 // Get window scale DPI factor for current monitor
-Vector2 GetWindowScaleDPI(void)
+glm::vec2 GetWindowScaleDPI(void)
 {
     TRACELOG(LOG_WARNING, "GetWindowScaleDPI() not implemented on target platform");
-    return Vector2{ 1.0f, 1.0f };
+    return glm::vec2{ 1.0f, 1.0f };
 }
 
 // Set clipboard text content
@@ -431,7 +431,7 @@ void SetGamepadVibration(int gamepad, float leftMotor, float rightMotor, float d
 // Set mouse position XY
 void SetMousePosition(int x, int y)
 {
-    CORE.Input.Mouse.currentPosition = Vector2{ static_cast<float>(x), static_cast<float>(y) };
+    CORE.Input.Mouse.currentPosition = glm::vec2{ static_cast<float>(x), static_cast<float>(y) };
 }
 
 // Set mouse cursor
@@ -473,7 +473,7 @@ void PollInputEvents(void)
     // Reset touch positions
     // TODO: It resets on target platform the mouse position and not filled again until a move-event,
     // so, if mouse is not moved it returns a (0, 0) position... this behaviour should be reviewed!
-    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = Vector2{ 0, 0 };
+    //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = glm::vec2{ 0, 0 };
 
     // Register previous keys states
     // NOTE: Android supports up to 260 keys

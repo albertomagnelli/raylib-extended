@@ -74,8 +74,8 @@ int main()
     const Shader shader = LoadShader({}, TextFormat("resources/shaders/glsl%i/sdf.fs", GLSL_VERSION));
     SetTextureFilter(fontSDF.texture, TEXTURE_FILTER_BILINEAR);    // Required for SDF font
 
-    Vector2 fontPosition = { 40, screenHeight/2.0f - 50 };
-    Vector2 textSize = { 0.0f, 0.0f };
+    glm::vec2 fontPosition = { 40, screenHeight/2.0f - 50 };
+    glm::vec2 textSize = { 0.0f, 0.0f };
     float fontSize = 16.0f;
     int currentFont = 0;            // 0 - fontDefault, 1 - fontSDF
 

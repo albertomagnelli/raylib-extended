@@ -31,15 +31,15 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 0.2f, 0.4f, 0.2f };    // Camera position
-    camera.target = Vector3{ 0.185f, 0.4f, 0.0f };    // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 0.2f, 0.4f, 0.2f };  // Camera position
+    camera.target = glm::vec3{ 0.185f, 0.4f, 0.0f };  // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     const Image imMap = LoadImage("resources/cubicmap.png");      // Load cubicmap image (RAM)
     const Texture2D cubicmap = LoadTextureFromImage(imMap);       // Convert image to texture to display (VRAM)
-    const Mesh mesh = GenMeshCubicmap(imMap, Vector3{ 1.0f, 1.0f, 1.0f });
+    const Mesh mesh = GenMeshCubicmap(imMap, glm::vec3{ 1.0f, 1.0f, 1.0f });
     const Model model = LoadModelFromMesh(mesh);
 
     // NOTE: By default each cube is mapped to one part of texture atlas
@@ -50,7 +50,7 @@ int main()
     Color *mapPixels = LoadImageColors(imMap);
     UnloadImage(imMap);             // Unload image from RAM
 
-    const Vector3 mapPosition = { -16.0f, 0.0f, -8.0f };  // Set model position
+    const glm::vec3 mapPosition = { -16.0f, 0.0f, -8.0f };// Set model position
 
     DisableCursor();                // Limit cursor to relative movement inside the window
 
@@ -62,12 +62,12 @@ int main()
     {
         // Update
         //----------------------------------------------------------------------------------
-        const Vector3 oldCamPos = camera.position;    // Store old camera position
+        const glm::vec3 oldCamPos = camera.position;  // Store old camera position
 
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
         // Check player collision (we simplify to 2D collision detection)
-        const Vector2 playerPos = { camera.position.x, camera.position.z };
+        const glm::vec2 playerPos = { camera.position.x, camera.position.z };
         constexpr float playerRadius = 0.1f;  // Collision radius (player is modelled as a cilinder for collision)
 
         int playerCellX = static_cast<int>(playerPos.x - mapPosition.x + 0.5f);
@@ -112,7 +112,7 @@ int main()
                 DrawModel(model, mapPosition, 1.0f, WHITE);                     // Draw maze map
             EndMode3D();
 
-            DrawTextureEx(cubicmap, Vector2{ GetScreenWidth() - cubicmap.width*4.0f - 20, 20.0f }, 0.0f, 4.0f, WHITE);
+            DrawTextureEx(cubicmap, glm::vec2{ GetScreenWidth() - cubicmap.width*4.0f - 20, 20.0f }, 0.0f, 4.0f, WHITE);
             DrawRectangleLines(GetScreenWidth() - cubicmap.width*4 - 20, 20, cubicmap.width*4, cubicmap.height*4, GREEN);
 
             // Draw player position radar

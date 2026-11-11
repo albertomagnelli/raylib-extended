@@ -70,9 +70,9 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shaders] example - deferred rendering");
 
     Camera camera = {};
-    camera.position = Vector3{ 5.0f, 4.0f, 5.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 1.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 5.0f, 4.0f, 5.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 1.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 60.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -147,18 +147,18 @@ int main()
     // Create lights
     //--------------------------------------------------------------------------------------
     Light lights[MAX_LIGHTS] = {};
-    lights[0] = CreateLight(LIGHT_POINT, Vector3{ -2, 1, -2 }, Vector3{}, YELLOW, deferredShader);
-    lights[1] = CreateLight(LIGHT_POINT, Vector3{ 2, 1, 2 }, Vector3{}, RED, deferredShader);
-    lights[2] = CreateLight(LIGHT_POINT, Vector3{ -2, 1, 2 }, Vector3{}, GREEN, deferredShader);
-    lights[3] = CreateLight(LIGHT_POINT, Vector3{ 2, 1, -2 }, Vector3{}, BLUE, deferredShader);
+    lights[0] = CreateLight(LIGHT_POINT, glm::vec3{ -2, 1, -2 }, glm::vec3{}, YELLOW, deferredShader);
+    lights[1] = CreateLight(LIGHT_POINT, glm::vec3{ 2, 1, 2 }, glm::vec3{}, RED, deferredShader);
+    lights[2] = CreateLight(LIGHT_POINT, glm::vec3{ -2, 1, 2 }, glm::vec3{}, GREEN, deferredShader);
+    lights[3] = CreateLight(LIGHT_POINT, glm::vec3{ 2, 1, -2 }, glm::vec3{}, BLUE, deferredShader);
 
     constexpr float CUBE_SCALE = 0.25;
-    Vector3 cubePositions[MAX_CUBES] = {};
+    glm::vec3 cubePositions[MAX_CUBES] = {};
     float cubeRotations[MAX_CUBES] = {};
 
     for (int i = 0; i < MAX_CUBES; i++)
     {
-        cubePositions[i] = Vector3{
+        cubePositions[i] = glm::vec3{
             static_cast<float>(rand()%10) - 5,
             static_cast<float>(rand()%5),
             static_cast<float>(rand()%10) - 5,
@@ -216,13 +216,13 @@ int main()
                 // will not work, as they won't immediately load the shader program
                 rlEnableShader(gbufferShader.id);
                     // When drawing a model here, make sure that the material's shaders are set to the gbuffer shader!
-                    DrawModel(model, Vector3{}, 1.0f, WHITE);
-                    DrawModel(cube, Vector3{ 0.0, 1.0f, 0.0 }, 1.0f, WHITE);
+                    DrawModel(model, glm::vec3{}, 1.0f, WHITE);
+                    DrawModel(cube, glm::vec3{ 0.0, 1.0f, 0.0 }, 1.0f, WHITE);
 
                     for (int i = 0; i < MAX_CUBES; i++)
                     {
-                        const Vector3 position = cubePositions[i];
-                        DrawModelEx(cube, position, Vector3{ 1, 1, 1 }, cubeRotations[i], Vector3{ CUBE_SCALE, CUBE_SCALE, CUBE_SCALE }, WHITE);
+                        const glm::vec3 position = cubePositions[i];
+                        DrawModelEx(cube, position, glm::vec3{ 1, 1, 1 }, cubeRotations[i], glm::vec3{ CUBE_SCALE, CUBE_SCALE, CUBE_SCALE }, WHITE);
                     }
                 rlDisableShader();
             EndMode3D();
@@ -283,7 +283,7 @@ int main()
                         .id = gBuffer.positionTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, glm::vec2{}, RAYWHITE);
 
                     DrawText("POSITION TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;
@@ -293,7 +293,7 @@ int main()
                         .id = gBuffer.normalTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, glm::vec2{}, RAYWHITE);
 
                     DrawText("NORMAL TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;
@@ -303,7 +303,7 @@ int main()
                         .id = gBuffer.albedoSpecTextureId,
                         .width = screenWidth,
                         .height = screenHeight,
-                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, Vector2{}, RAYWHITE);
+                    }, Rectangle{ 0, 0, static_cast<float>(screenWidth), static_cast<float>(-screenHeight) }, glm::vec2{}, RAYWHITE);
 
                     DrawText("ALBEDO TEXTURE", 10, screenHeight - 30, 20, DARKGREEN);
                 } break;

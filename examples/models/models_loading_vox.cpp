@@ -53,9 +53,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 10.0f, 10.0f, 10.0f }; // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 10.0f, 10.0f, 10.0f }; // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -73,17 +73,17 @@ int main()
 
         // Compute model translation matrix to center model on draw position (0, 0 , 0)
         const BoundingBox bb = GetModelBoundingBox(models[i]);
-        Vector3 center = {};
+        glm::vec3 center = {};
         center.x = bb.min.x + (((bb.max.x - bb.min.x)/2));
         center.z = bb.min.z + (((bb.max.z - bb.min.z)/2));
 
-        const Matrix matTranslate = glm::translate(Matrix(1.0f), Vector3{-center.x, 0, -center.z});
+        const Matrix matTranslate = glm::translate(Matrix(1.0f), glm::vec3{-center.x, 0, -center.z});
         models[i].transform = matTranslate;
     }
 
     int currentModel = 0;
-    const Vector3 modelpos = {};
-    Vector3 camerarot = {};
+    const glm::vec3 modelpos = {};
+    glm::vec3 camerarot = {};
 
     // Load voxel shader
     const Shader shader = LoadShader(TextFormat("resources/shaders/glsl%i/voxel_lighting.vs", GLSL_VERSION),
@@ -107,10 +107,10 @@ int main()
 
     // Create lights
     Light lights[MAX_LIGHTS] = {};
-    lights[0] = CreateLight(LIGHT_POINT, Vector3{ -20, 20, -20 }, Vector3{}, GRAY, shader);
-    lights[1] = CreateLight(LIGHT_POINT, Vector3{ 20, -20, 20 }, Vector3{}, GRAY, shader);
-    lights[2] = CreateLight(LIGHT_POINT, Vector3{ -20, 20, 20 }, Vector3{}, GRAY, shader);
-    lights[3] = CreateLight(LIGHT_POINT, Vector3{ 20, -20, -20 }, Vector3{}, GRAY, shader);
+    lights[0] = CreateLight(LIGHT_POINT, glm::vec3{ -20, 20, -20 }, glm::vec3{}, GRAY, shader);
+    lights[1] = CreateLight(LIGHT_POINT, glm::vec3{ 20, -20, 20 }, glm::vec3{}, GRAY, shader);
+    lights[2] = CreateLight(LIGHT_POINT, glm::vec3{ -20, 20, 20 }, glm::vec3{}, GRAY, shader);
+    lights[3] = CreateLight(LIGHT_POINT, glm::vec3{ 20, -20, -20 }, glm::vec3{}, GRAY, shader);
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ int main()
         //----------------------------------------------------------------------------------
         if (IsMouseButtonDown(MOUSE_BUTTON_MIDDLE))
         {
-            const Vector2 mouseDelta = GetMouseDelta();
+            const glm::vec2 mouseDelta = GetMouseDelta();
             camerarot.x = mouseDelta.x*0.05f;
             camerarot.y = mouseDelta.y*0.05f;
         }
@@ -134,7 +134,7 @@ int main()
 
         // Update camere movement, custom controls
         UpdateCameraPro(&camera,
-            Vector3{ (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))*0.1f - (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))*0.1f, // Move forward-backward
+            glm::vec3{ (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP))*0.1f - (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN))*0.1f, // Move forward-backward
                        (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT))*0.1f - (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT))*0.1f, // Move right-left
                        0.0f }, // Move up-down
             camerarot, // Camera rotation

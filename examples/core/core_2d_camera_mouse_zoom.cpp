@@ -51,12 +51,12 @@ int main()
         // Translate based on mouse right click
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
         {
-            Vector2 delta = GetMouseDelta();
+            glm::vec2 delta = GetMouseDelta();
             delta = ((delta) * (-1.0f/camera.zoom));
             camera.target = ((camera.target) + (delta));
         }
 
-        const Vector2 renderScale = { static_cast<float>(GetRenderWidth())/GetScreenWidth(), static_cast<float>(GetRenderHeight())/GetScreenHeight() };
+        const glm::vec2 renderScale = { static_cast<float>(GetRenderWidth())/GetScreenWidth(), static_cast<float>(GetRenderHeight())/GetScreenHeight() };
 
         if (zoomMode == 0)
         {
@@ -65,7 +65,7 @@ int main()
             if (wheel != 0)
             {
                 // Get the world point that is under the mouse
-                const Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+                const glm::vec2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
                 camera.offset = ((GetMousePosition()) * (renderScale));
@@ -86,7 +86,7 @@ int main()
             if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
             {
                 // Get the world point that is under the mouse
-                const Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+                const glm::vec2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
 
                 // Set the offset to where the mouse is, mouse is scaled to viewport space, but offset is in unscaled pixels
                 camera.offset = ((GetMousePosition()) * (renderScale));
@@ -126,10 +126,10 @@ int main()
             EndMode2D();
 
             // Draw mouse reference
-            //Vector2 mousePos = GetWorldToScreen2D(GetMousePosition(), camera)
+            //glm::vec2 mousePos = GetWorldToScreen2D(GetMousePosition(), camera)
             DrawCircleV(GetMousePosition(), 4, DARKGRAY);
             DrawTextEx(GetFontDefault(), TextFormat("[%i, %i]", GetMouseX(), GetMouseY()),
-                ((GetMousePosition()) + (Vector2{ -44, -24 })), 20, 2, BLACK);
+                ((GetMousePosition()) + (glm::vec2{ -44, -24 })), 20, 2, BLACK);
 
             DrawText("[1][2] Select mouse zoom mode (Wheel or Move)", 20, 20, 20, DARKGRAY);
             if (zoomMode == 0) DrawText("Mouse left button drag to move, mouse wheel to zoom", 20, 50, 20, DARKGRAY);

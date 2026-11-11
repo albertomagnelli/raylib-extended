@@ -48,7 +48,7 @@
 #if SUPPORT_MODULE_RMODELS
 
 #include "rlgl.h"           // OpenGL abstraction layer to OpenGL 1.1, 2.1, 3.3+ or ES2
-#include "raymath.h"        // Required for: Vector3, Quaternion and Matrix functionality
+#include "raymath.h"        // Required for: glm::vec3, Quaternion and Matrix functionality
 
 #include <stdio.h>          // Required for: sprintf(), snprintf()
 #include <stdlib.h>         // Required for: malloc(), calloc(), free()
@@ -186,7 +186,7 @@ static void UpdateModelAnimationVertexBuffers(Model model);
 // Module Functions Definition
 //----------------------------------------------------------------------------------
 // Draw a line in 3D world space
-void DrawLine3D(Vector3 startPos, Vector3 endPos, Color color)
+void DrawLine3D(glm::vec3 startPos, glm::vec3 endPos, Color color)
 {
     rlBegin(RL_LINES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -197,7 +197,7 @@ void DrawLine3D(Vector3 startPos, Vector3 endPos, Color color)
 
 // Draw a point in 3D space, actually a small line
 // WARNING: OpenGL ES 2.0 does not support point mode drawing
-void DrawPoint3D(Vector3 position, Color color)
+void DrawPoint3D(glm::vec3 position, Color color)
 {
     rlPushMatrix();
         rlTranslatef(position.x, position.y, position.z);
@@ -210,7 +210,7 @@ void DrawPoint3D(Vector3 position, Color color)
 }
 
 // Draw a circle in 3D world space
-void DrawCircle3D(Vector3 center, float radius, Vector3 rotationAxis, float rotationAngle, Color color)
+void DrawCircle3D(glm::vec3 center, float radius, glm::vec3 rotationAxis, float rotationAngle, Color color)
 {
     rlPushMatrix();
         rlTranslatef(center.x, center.y, center.z);
@@ -229,7 +229,7 @@ void DrawCircle3D(Vector3 center, float radius, Vector3 rotationAxis, float rota
 }
 
 // Draw a color-filled triangle (vertex in counter-clockwise order!)
-void DrawTriangle3D(Vector3 v1, Vector3 v2, Vector3 v3, Color color)
+void DrawTriangle3D(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, Color color)
 {
     rlBegin(RL_TRIANGLES);
         rlColor4ub(color.r, color.g, color.b, color.a);
@@ -240,7 +240,7 @@ void DrawTriangle3D(Vector3 v1, Vector3 v2, Vector3 v3, Color color)
 }
 
 // Draw a triangle strip defined by points
-void DrawTriangleStrip3D(const Vector3 *points, int pointCount, Color color)
+void DrawTriangleStrip3D(const glm::vec3 *points, int pointCount, Color color)
 {
     if (pointCount < 3) return; // Security check
 
@@ -267,7 +267,7 @@ void DrawTriangleStrip3D(const Vector3 *points, int pointCount, Color color)
 
 // Draw cube
 // NOTE: Cube position is the center position
-void DrawCube(Vector3 position, float width, float height, float length, Color color)
+void DrawCube(glm::vec3 position, float width, float height, float length, Color color)
 {
     constexpr float x = 0.0f;
     constexpr float y = 0.0f;
@@ -346,13 +346,13 @@ void DrawCube(Vector3 position, float width, float height, float length, Color c
 }
 
 // Draw cube (Vector version)
-void DrawCubeV(Vector3 position, Vector3 size, Color color)
+void DrawCubeV(glm::vec3 position, glm::vec3 size, Color color)
 {
     DrawCube(position, size.x, size.y, size.z, color);
 }
 
 // Draw cube wires
-void DrawCubeWires(Vector3 position, float width, float height, float length, Color color)
+void DrawCubeWires(glm::vec3 position, float width, float height, float length, Color color)
 {
     constexpr float x = 0.0f;
     constexpr float y = 0.0f;
@@ -424,19 +424,19 @@ void DrawCubeWires(Vector3 position, float width, float height, float length, Co
 }
 
 // Draw cube wires (vector version)
-void DrawCubeWiresV(Vector3 position, Vector3 size, Color color)
+void DrawCubeWiresV(glm::vec3 position, glm::vec3 size, Color color)
 {
     DrawCubeWires(position, size.x, size.y, size.z, color);
 }
 
 // Draw sphere
-void DrawSphere(Vector3 centerPos, float radius, Color color)
+void DrawSphere(glm::vec3 centerPos, float radius, Color color)
 {
     DrawSphereEx(centerPos, radius, 16, 16, color);
 }
 
 // Draw sphere with defined rings and slices
-void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color color)
+void DrawSphereEx(glm::vec3 centerPos, float radius, int rings, int slices, Color color)
 {
 #if 0
     // Basic implementation, do not use it!
@@ -496,9 +496,9 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
             const float cosslice = cosf(sliceangle);
             const float sinslice = sinf(sliceangle);
 
-            Vector3 vertices[4]{}; // Required to store face vertices
-            vertices[2] = Vector3{ 0, 1, 0 };
-            vertices[3] = Vector3{ sinring, cosring, 0 };
+            glm::vec3 vertices[4]{}; // Required to store face vertices
+            vertices[2] = glm::vec3{ 0, 1, 0 };
+            vertices[3] = glm::vec3{ sinring, cosring, 0 };
 
             for (int i = 0; i < rings; i++)
             {
@@ -506,8 +506,8 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
                 {
                     vertices[0] = vertices[2]; // Rotate around y axis to set up vertices for next face
                     vertices[1] = vertices[3];
-                    vertices[2] = Vector3{ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
-                    vertices[3] = Vector3{ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
+                    vertices[2] = glm::vec3{ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
+                    vertices[3] = glm::vec3{ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
 
                     rlNormal3f(vertices[0].x, vertices[0].y, vertices[0].z);
                     rlVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -525,14 +525,14 @@ void DrawSphereEx(Vector3 centerPos, float radius, int rings, int slices, Color 
                 }
 
                 vertices[2] = vertices[3]; // Rotate around z axis to set up  starting vertices for next ring
-                vertices[3] = Vector3{ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
+                vertices[3] = glm::vec3{ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
             }
         rlEnd();
     rlPopMatrix();
 }
 
 // Draw sphere wires
-void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Color color)
+void DrawSphereWires(glm::vec3 centerPos, float radius, int rings, int slices, Color color)
 {
     rlPushMatrix();
         // NOTE: Transformation is applied in inverse order (scale -> translate)
@@ -550,9 +550,9 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
             const float cosslice = cosf(sliceangle);
             const float sinslice = sinf(sliceangle);
 
-            Vector3 vertices[4]{}; // Required to store face vertices
-            vertices[2] = Vector3{ 0, 1, 0 };
-            vertices[3] = Vector3{ sinring, cosring, 0 };
+            glm::vec3 vertices[4]{}; // Required to store face vertices
+            vertices[2] = glm::vec3{ 0, 1, 0 };
+            vertices[3] = glm::vec3{ sinring, cosring, 0 };
 
             for (int i = 0; i < rings; i++)
             {
@@ -560,8 +560,8 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
                 {
                     vertices[0] = vertices[2]; // Rotate around y axis to set up vertices for next face
                     vertices[1] = vertices[3];
-                    vertices[2] = Vector3{ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
-                    vertices[3] = Vector3{ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
+                    vertices[2] = glm::vec3{ cosslice*vertices[2].x - sinslice*vertices[2].z, vertices[2].y, sinslice*vertices[2].x + cosslice*vertices[2].z }; // Rotation matrix around y axis
+                    vertices[3] = glm::vec3{ cosslice*vertices[3].x - sinslice*vertices[3].z, vertices[3].y, sinslice*vertices[3].x + cosslice*vertices[3].z };
 
                     // Longitude Lines
                     rlVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -577,7 +577,7 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
                 }
 
                 vertices[2] = vertices[3]; // Rotate around z axis to set up  starting vertices for next ring
-                vertices[3] = Vector3{ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
+                vertices[3] = glm::vec3{ cosring*vertices[3].x + sinring*vertices[3].y, -sinring*vertices[3].x + cosring*vertices[3].y, vertices[3].z }; // Rotation matrix around z axis
             }
         rlEnd();
     rlPopMatrix();
@@ -585,7 +585,7 @@ void DrawSphereWires(Vector3 centerPos, float radius, int rings, int slices, Col
 
 // Draw a cylinder
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinder(Vector3 position, float radiusTop, float radiusBottom, float height, int sides, Color color)
+void DrawCylinder(glm::vec3 position, float radiusTop, float radiusBottom, float height, int sides, Color color)
 {
     if (sides < 3) sides = 3;
 
@@ -644,16 +644,16 @@ void DrawCylinder(Vector3 position, float radiusTop, float radiusBottom, float h
 
 // Draw a cylinder with base at startPos and top at endPos
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float endRadius, int sides, Color color)
+void DrawCylinderEx(glm::vec3 startPos, glm::vec3 endPos, float startRadius, float endRadius, int sides, Color color)
 {
     if (sides < 3) sides = 3;
 
-    const Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    const glm::vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
-    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
+    const glm::vec3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const glm::vec3 b2 = glm::normalize(glm::cross(b1, direction));
 
     const float baseAngle = (2.0f*PI)/sides;
 
@@ -665,16 +665,16 @@ void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float e
             // Compute the four vertices
             const float s1 = sinf(baseAngle*(i + 0))*startRadius;
             const float c1 = cosf(baseAngle*(i + 0))*startRadius;
-            const Vector3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
+            const glm::vec3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
             const float s2 = sinf(baseAngle*(i + 1))*startRadius;
             const float c2 = cosf(baseAngle*(i + 1))*startRadius;
-            const Vector3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
+            const glm::vec3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
             const float s3 = sinf(baseAngle*(i + 0))*endRadius;
             const float c3 = cosf(baseAngle*(i + 0))*endRadius;
-            const Vector3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
+            const glm::vec3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
             const float s4 = sinf(baseAngle*(i + 1))*endRadius;
             const float c4 = cosf(baseAngle*(i + 1))*endRadius;
-            const Vector3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
+            const glm::vec3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             if (startRadius > 0)
             {
@@ -703,7 +703,7 @@ void DrawCylinderEx(Vector3 startPos, Vector3 endPos, float startRadius, float e
 
 // Draw a wired cylinder
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinderWires(Vector3 position, float radiusTop, float radiusBottom, float height, int sides, Color color)
+void DrawCylinderWires(glm::vec3 position, float radiusTop, float radiusBottom, float height, int sides, Color color)
 {
     if (sides < 3) sides = 3;
 
@@ -735,16 +735,16 @@ void DrawCylinderWires(Vector3 position, float radiusTop, float radiusBottom, fl
 
 // Draw a wired cylinder with base at startPos and top at endPos
 // NOTE: It could be also used for pyramid and cone
-void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, float endRadius, int slices, Color color)
+void DrawCylinderWiresEx(glm::vec3 startPos, glm::vec3 endPos, float startRadius, float endRadius, int slices, Color color)
 {
     if (slices < 3) slices = 3;
 
-    const Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    const glm::vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
     if ((direction.x == 0) && (direction.y == 0) && (direction.z == 0)) return; // Security check
 
     // Construct a basis of the base and the top face:
-    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
+    const glm::vec3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const glm::vec3 b2 = glm::normalize(glm::cross(b1, direction));
 
     const float baseAngle = (2.0f*PI)/slices;
 
@@ -756,16 +756,16 @@ void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, fl
             // Compute the four vertices
             const float s1 = sinf(baseAngle*(i + 0))*startRadius;
             const float c1 = cosf(baseAngle*(i + 0))*startRadius;
-            const Vector3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
+            const glm::vec3 w1 = { startPos.x + s1*b1.x + c1*b2.x, startPos.y + s1*b1.y + c1*b2.y, startPos.z + s1*b1.z + c1*b2.z };
             const float s2 = sinf(baseAngle*(i + 1))*startRadius;
             const float c2 = cosf(baseAngle*(i + 1))*startRadius;
-            const Vector3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
+            const glm::vec3 w2 = { startPos.x + s2*b1.x + c2*b2.x, startPos.y + s2*b1.y + c2*b2.y, startPos.z + s2*b1.z + c2*b2.z };
             const float s3 = sinf(baseAngle*(i + 0))*endRadius;
             const float c3 = cosf(baseAngle*(i + 0))*endRadius;
-            const Vector3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
+            const glm::vec3 w3 = { endPos.x + s3*b1.x + c3*b2.x, endPos.y + s3*b1.y + c3*b2.y, endPos.z + s3*b1.z + c3*b2.z };
             const float s4 = sinf(baseAngle*(i + 1))*endRadius;
             const float c4 = cosf(baseAngle*(i + 1))*endRadius;
-            const Vector3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
+            const glm::vec3 w4 = { endPos.x + s4*b1.x + c4*b2.x, endPos.y + s4*b1.y + c4*b2.y, endPos.z + s4*b1.z + c4*b2.z };
 
             rlVertex3f(w1.x, w1.y, w1.z);
             rlVertex3f(w2.x, w2.y, w2.z);
@@ -780,21 +780,21 @@ void DrawCylinderWiresEx(Vector3 startPos, Vector3 endPos, float startRadius, fl
 }
 
 // Draw a capsule with the center of its sphere caps at startPos and endPos
-void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int slices, Color color)
+void DrawCapsule(glm::vec3 startPos, glm::vec3 endPos, float radius, int rings, int slices, Color color)
 {
     if (slices < 3) slices = 3;
     if (rings  < 1) rings  = 1;
-    Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    glm::vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
 
     // draw a sphere if start and end points are the same
     const bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
-    if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
+    if (sphereCase) direction = glm::vec3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
-    Vector3 b0 = glm::normalize(direction);
-    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
-    Vector3 capCenter = endPos;
+    glm::vec3 b0 = glm::normalize(direction);
+    const glm::vec3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const glm::vec3 b2 = glm::normalize(glm::cross(b1, direction));
+    glm::vec3 capCenter = endPos;
 
     const float baseSliceAngle = (2.0f*PI)/slices;
     const float baseRingAngle  = PI*0.5f/rings;
@@ -814,14 +814,14 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
                     // Compute the four vertices
                     const float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
                     const float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    const Vector3 w1 = Vector3{
+                    const glm::vec3 w1 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
                     const float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
                     const float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    const Vector3 w2 = Vector3{
+                    const glm::vec3 w2 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
@@ -829,14 +829,14 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
 
                     const float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
                     const float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    const Vector3 w3 = Vector3{
+                    const glm::vec3 w3 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
                     const float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
                     const float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    const Vector3 w4 = Vector3{
+                    const glm::vec3 w4 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
@@ -876,14 +876,14 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
                 // compute the four vertices
                 const float ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
                 const float ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
-                const Vector3 w1 = {
+                const glm::vec3 w1 = {
                     startPos.x + ringSin1*b1.x + ringCos1*b2.x,
                     startPos.y + ringSin1*b1.y + ringCos1*b2.y,
                     startPos.z + ringSin1*b1.z + ringCos1*b2.z
                 };
                 const float ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
                 const float ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
-                const Vector3 w2 = {
+                const glm::vec3 w2 = {
                     startPos.x + ringSin2*b1.x + ringCos2*b2.x,
                     startPos.y + ringSin2*b1.y + ringCos2*b2.y,
                     startPos.z + ringSin2*b1.z + ringCos2*b2.z
@@ -891,14 +891,14 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
 
                 const float ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
                 const float ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
-                const Vector3 w3 = {
+                const glm::vec3 w3 = {
                     endPos.x + ringSin3*b1.x + ringCos3*b2.x,
                     endPos.y + ringSin3*b1.y + ringCos3*b2.y,
                     endPos.z + ringSin3*b1.z + ringCos3*b2.z
                 };
                 const float ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
                 const float ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
-                const Vector3 w4 = {
+                const glm::vec3 w4 = {
                     endPos.x + ringSin4*b1.x + ringCos4*b2.x,
                     endPos.y + ringSin4*b1.y + ringCos4*b2.y,
                     endPos.z + ringSin4*b1.z + ringCos4*b2.z
@@ -919,21 +919,21 @@ void DrawCapsule(Vector3 startPos, Vector3 endPos, float radius, int rings, int 
 }
 
 // Draw capsule wires with the center of its sphere caps at startPos and endPos
-void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings, int slices, Color color)
+void DrawCapsuleWires(glm::vec3 startPos, glm::vec3 endPos, float radius, int rings, int slices, Color color)
 {
     if (slices < 3) slices = 3;
     if (rings  < 1) rings = 1;
-    Vector3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
+    glm::vec3 direction = { endPos.x - startPos.x, endPos.y - startPos.y, endPos.z - startPos.z };
 
     // draw a sphere if start and end points are the same
     const bool sphereCase = (direction.x == 0) && (direction.y == 0) && (direction.z == 0);
-    if (sphereCase) direction = Vector3{0.0f, 1.0f, 0.0f};
+    if (sphereCase) direction = glm::vec3{0.0f, 1.0f, 0.0f};
 
     // Construct a basis of the base and the caps:
-    Vector3 b0 = glm::normalize(direction);
-    const Vector3 b1 = glm::normalize(Vector3Perpendicular(direction));
-    const Vector3 b2 = glm::normalize(glm::cross(b1, direction));
-    Vector3 capCenter = endPos;
+    glm::vec3 b0 = glm::normalize(direction);
+    const glm::vec3 b1 = glm::normalize(Vector3Perpendicular(direction));
+    const glm::vec3 b2 = glm::normalize(glm::cross(b1, direction));
+    glm::vec3 capCenter = endPos;
 
     const float baseSliceAngle = (2.0f*PI)/slices;
     const float baseRingAngle  = PI*0.5f/rings;
@@ -953,14 +953,14 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
                     // Compute the four vertices
                     const float ringSin1 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
                     const float ringCos1 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 0 ));
-                    const Vector3 w1 = Vector3{
+                    const glm::vec3 w1 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin1*b1.x + ringCos1*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin1*b1.y + ringCos1*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin1*b1.z + ringCos1*b2.z)*radius
                     };
                     const float ringSin2 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
                     const float ringCos2 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 0 ));
-                    const Vector3 w2 = Vector3{
+                    const glm::vec3 w2 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 0 ))*b0.x + ringSin2*b1.x + ringCos2*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 0 ))*b0.y + ringSin2*b1.y + ringCos2*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 0 ))*b0.z + ringSin2*b1.z + ringCos2*b2.z)*radius
@@ -968,14 +968,14 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
 
                     const float ringSin3 = sinf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
                     const float ringCos3 = cosf(baseSliceAngle*(j + 0))*cosf(baseRingAngle*( i + 1 ));
-                    const Vector3 w3 = Vector3{
+                    const glm::vec3 w3 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin3*b1.x + ringCos3*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin3*b1.y + ringCos3*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin3*b1.z + ringCos3*b2.z)*radius
                     };
                     const float ringSin4 = sinf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
                     const float ringCos4 = cosf(baseSliceAngle*(j + 1))*cosf(baseRingAngle*( i + 1 ));
-                    const Vector3 w4 = Vector3{
+                    const glm::vec3 w4 = glm::vec3{
                         capCenter.x + (sinf(baseRingAngle*( i + 1 ))*b0.x + ringSin4*b1.x + ringCos4*b2.x)*radius,
                         capCenter.y + (sinf(baseRingAngle*( i + 1 ))*b0.y + ringSin4*b1.y + ringCos4*b2.y)*radius,
                         capCenter.z + (sinf(baseRingAngle*( i + 1 ))*b0.z + ringSin4*b1.z + ringCos4*b2.z)*radius
@@ -1008,14 +1008,14 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
                 // compute the four vertices
                 const float ringSin1 = sinf(baseSliceAngle*(j + 0))*radius;
                 const float ringCos1 = cosf(baseSliceAngle*(j + 0))*radius;
-                const Vector3 w1 = {
+                const glm::vec3 w1 = {
                     startPos.x + ringSin1*b1.x + ringCos1*b2.x,
                     startPos.y + ringSin1*b1.y + ringCos1*b2.y,
                     startPos.z + ringSin1*b1.z + ringCos1*b2.z
                 };
                 const float ringSin2 = sinf(baseSliceAngle*(j + 1))*radius;
                 const float ringCos2 = cosf(baseSliceAngle*(j + 1))*radius;
-                const Vector3 w2 = {
+                const glm::vec3 w2 = {
                     startPos.x + ringSin2*b1.x + ringCos2*b2.x,
                     startPos.y + ringSin2*b1.y + ringCos2*b2.y,
                     startPos.z + ringSin2*b1.z + ringCos2*b2.z
@@ -1023,14 +1023,14 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
 
                 const float ringSin3 = sinf(baseSliceAngle*(j + 0))*radius;
                 const float ringCos3 = cosf(baseSliceAngle*(j + 0))*radius;
-                const Vector3 w3 = {
+                const glm::vec3 w3 = {
                     endPos.x + ringSin3*b1.x + ringCos3*b2.x,
                     endPos.y + ringSin3*b1.y + ringCos3*b2.y,
                     endPos.z + ringSin3*b1.z + ringCos3*b2.z
                 };
                 const float ringSin4 = sinf(baseSliceAngle*(j + 1))*radius;
                 const float ringCos4 = cosf(baseSliceAngle*(j + 1))*radius;
-                const Vector3 w4 = {
+                const glm::vec3 w4 = {
                     endPos.x + ringSin4*b1.x + ringCos4*b2.x,
                     endPos.y + ringSin4*b1.y + ringCos4*b2.y,
                     endPos.z + ringSin4*b1.z + ringCos4*b2.z
@@ -1050,7 +1050,7 @@ void DrawCapsuleWires(Vector3 startPos, Vector3 endPos, float radius, int rings,
 }
 
 // Draw a plane
-void DrawPlane(Vector3 centerPos, Vector2 size, Color color)
+void DrawPlane(glm::vec3 centerPos, glm::vec2 size, Color color)
 {
     // NOTE: Plane is always created on XZ ground
     rlPushMatrix();
@@ -1249,7 +1249,7 @@ BoundingBox GetModelBoundingBox(Model model)
 
     if (model.meshCount > 0)
     {
-        Vector3 temp{};
+        glm::vec3 temp{};
         bounds = GetMeshBoundingBox(model.meshes[0]);
 
         for (int i = 1; i < model.meshCount; i++)
@@ -1271,8 +1271,8 @@ BoundingBox GetModelBoundingBox(Model model)
     // Apply model.transform to bounding box
     // WARNING: Current BoundingBox structure design does not support rotation transformations,
     // in those cases is up to the user to calculate the proper box bounds (8 vertices transformed)
-    bounds.min = Vector3((model.transform)*Vector4(bounds.min, 1.0f));
-    bounds.max = Vector3((model.transform)*Vector4(bounds.max, 1.0f));
+    bounds.min = glm::vec3((model.transform)*glm::vec4(bounds.min, 1.0f));
+    bounds.max = glm::vec3((model.transform)*glm::vec4(bounds.max, 1.0f));
 
     return bounds;
 }
@@ -1777,7 +1777,7 @@ void DrawMeshInstanced(Mesh mesh, Material material, const Matrix *transforms, i
         for (unsigned int i = 0; i < 4; i++)
         {
             rlEnableVertexAttribute(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i);
-            rlSetVertexAttribute(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i, 4, RL_FLOAT, 0, sizeof(Matrix), i*sizeof(Vector4));
+            rlSetVertexAttribute(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i, 4, RL_FLOAT, 0, sizeof(Matrix), i*sizeof(glm::vec4));
             rlSetVertexAttributeDivisor(material.shader.locs[SHADER_LOC_VERTEX_INSTANCETRANSFORM] + i, 1);
         }
     }
@@ -2353,10 +2353,10 @@ void UpdateModelAnimationBones(Model model, ModelAnimation anim, float frame)
             // Compute runtime bone matrix from model current pose
             //-----------------------------------------------------------------------------------
             Transform *bindPoseTransform = &model.skeleton.bindPose[boneIndex];
-            bindPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})) * (((glm::mat4_cast(bindPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})))));
+            bindPoseMatrix = ((glm::translate(Matrix(1.0f), glm::vec3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})) * (((glm::mat4_cast(bindPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), glm::vec3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})))));
 
             Transform *currentPoseTransform = &model.currentPose[boneIndex];
-            currentPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})) * (((glm::mat4_cast(currentPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})))));
+            currentPoseMatrix = ((glm::translate(Matrix(1.0f), glm::vec3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})) * (((glm::mat4_cast(currentPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), glm::vec3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})))));
 
             model.boneMatrices[boneIndex] = ((currentPoseMatrix) * (glm::inverse(bindPoseMatrix)));
             //-----------------------------------------------------------------------------------
@@ -2413,14 +2413,14 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
         for (unsigned int boneIndex = 0; boneIndex < model.skeleton.boneCount; boneIndex++)
         {
             // Get frame-interpolation for first animation
-            const Vector3 frameATranslation = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].translation, animA.keyframePoses[nextFrameA][boneIndex].translation, blendA);
+            const glm::vec3 frameATranslation = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].translation, animA.keyframePoses[nextFrameA][boneIndex].translation, blendA);
             const Quaternion frameARotation = glm::slerp(animA.keyframePoses[currentFrameA][boneIndex].rotation, animA.keyframePoses[nextFrameA][boneIndex].rotation, blendA);
-            const Vector3 frameAScale = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].scale, animA.keyframePoses[nextFrameA][boneIndex].scale, blendA);
+            const glm::vec3 frameAScale = glm::mix(animA.keyframePoses[currentFrameA][boneIndex].scale, animA.keyframePoses[nextFrameA][boneIndex].scale, blendA);
 
             // Get frame-interpolation for second animation
-            const Vector3 frameBTranslation = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].translation, animB.keyframePoses[nextFrameB][boneIndex].translation, blendB);
+            const glm::vec3 frameBTranslation = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].translation, animB.keyframePoses[nextFrameB][boneIndex].translation, blendB);
             const Quaternion frameBRotation = glm::slerp(animB.keyframePoses[currentFrameB][boneIndex].rotation, animB.keyframePoses[nextFrameB][boneIndex].rotation, blendB);
-            const Vector3 frameBScale = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].scale, animB.keyframePoses[nextFrameB][boneIndex].scale, blendB);
+            const glm::vec3 frameBScale = glm::mix(animB.keyframePoses[currentFrameB][boneIndex].scale, animB.keyframePoses[nextFrameB][boneIndex].scale, blendB);
 
             // Compute interpolated pose between both animations frames
             // NOTE: Storing animation frame data in model.currentPose
@@ -2431,36 +2431,36 @@ void UpdateModelAnimationBonesEx(Model model, ModelAnimation animA, float frameA
             // Compute runtime bone matrix from model current pose
             //-----------------------------------------------------------------------------------
             Transform *bindPoseTransform = &model.skeleton.bindPose[boneIndex];
-            bindPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})) * (((glm::mat4_cast(bindPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})))));
+            bindPoseMatrix = ((glm::translate(Matrix(1.0f), glm::vec3{bindPoseTransform->translation.x, bindPoseTransform->translation.y, bindPoseTransform->translation.z})) * (((glm::mat4_cast(bindPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), glm::vec3{bindPoseTransform->scale.x, bindPoseTransform->scale.y, bindPoseTransform->scale.z})))));
 
             Transform *currentPoseTransform = &model.currentPose[boneIndex];
-            currentPoseMatrix = ((glm::translate(Matrix(1.0f), Vector3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})) * (((glm::mat4_cast(currentPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), Vector3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})))));
+            currentPoseMatrix = ((glm::translate(Matrix(1.0f), glm::vec3{currentPoseTransform->translation.x, currentPoseTransform->translation.y, currentPoseTransform->translation.z})) * (((glm::mat4_cast(currentPoseTransform->rotation)) * (glm::scale(Matrix(1.0f), glm::vec3{currentPoseTransform->scale.x, currentPoseTransform->scale.y, currentPoseTransform->scale.z})))));
 
             model.boneMatrices[boneIndex] = ((currentPoseMatrix) * (glm::inverse(bindPoseMatrix)));
             //-----------------------------------------------------------------------------------
 
             /*
-            Vector3 outATranslation = animA.keyframePoses[currentFrameA][boneIndex].translation;
+            glm::vec3 outATranslation = animA.keyframePoses[currentFrameA][boneIndex].translation;
             Quaternion outARotation = animA.keyframePoses[currentFrameA][boneIndex].rotation;
-            Vector3 outAScale = animA.keyframePoses[currentFrameA][boneIndex].scale;
+            glm::vec3 outAScale = animA.keyframePoses[currentFrameA][boneIndex].scale;
 
-            Vector3 outBTranslation = animB.keyframePoses[currentFrameB][boneIndex].translation;
+            glm::vec3 outBTranslation = animB.keyframePoses[currentFrameB][boneIndex].translation;
             Quaternion outBRotation = animB.keyframePoses[currentFrameB][boneIndex].rotation;
-            Vector3 outBScale = animB.keyframePoses[currentFrameB][boneIndex].scale;
+            glm::vec3 outBScale = animB.keyframePoses[currentFrameB][boneIndex].scale;
 
             // Invert bind pose transformation
-            Vector3 invBindTranslation = Vector3RotateByQuaternion(
+            glm::vec3 invBindTranslation = Vector3RotateByQuaternion(
                 Vector3Negate(model.skeleton.bindPose[boneIndex].translation),
                 QuaternionInvert(model.skeleton.bindPose[boneIndex].rotation));
             Quaternion invBindRotation = QuaternionInvert(model.skeleton.bindPose[boneIndex].rotation);
-            Vector3 invBindScale = Vector3Divide(Vector3{ 1.0f, 1.0f, 1.0f }, model.skeleton.bindPose[boneIndex].scale);
+            glm::vec3 invBindScale = Vector3Divide(glm::vec3{ 1.0f, 1.0f, 1.0f }, model.skeleton.bindPose[boneIndex].scale);
 
-            Vector3 boneTranslation = Vector3Add(Vector3RotateByQuaternion(
+            glm::vec3 boneTranslation = Vector3Add(Vector3RotateByQuaternion(
                 Vector3Multiply(model.currentPose[boneIndex].scale, invBindTranslation),
                     model.currentPose[boneIndex].rotation),
                     model.currentPose[boneIndex].translation);
             Quaternion boneRotation = QuaternionMultiply(model.currentPose[boneIndex].rotation, invBindRotation);
-            Vector3 boneScale = Vector3Multiply(model.currentPose[boneIndex].scale, invBindScale);
+            glm::vec3 boneScale = Vector3Multiply(model.currentPose[boneIndex].scale, invBindScale);
 
             model.boneMatrices[boneIndex] = MatrixMultiply(
                 MatrixMultiply(QuaternionToMatrix(boneRotation),
@@ -2502,8 +2502,8 @@ static void UpdateModelAnimationVertexBuffers(Model model)
     for (int m = 0; m < model.meshCount; m++)
     {
         Mesh *mesh = model.meshes + m; // don't copy the mesh, we may need to allocate buffers
-        Vector3 animVertex{};
-        Vector3 animNormal{};
+        glm::vec3 animVertex{};
+        glm::vec3 animNormal{};
         const int vertexValuesCount = mesh->vertexCount*3;
 
         int boneIndex = 0;
@@ -2560,8 +2560,8 @@ static void UpdateModelAnimationVertexBuffers(Model model)
 
                 // Early stop when no transformation will be applied
                 if (boneWeight == 0.0f) continue;
-                animVertex = Vector3{ mesh->vertices[vCounter], mesh->vertices[vCounter + 1], mesh->vertices[vCounter + 2] };
-                animVertex = Vector3((model.boneMatrices[boneIndex])*Vector4(animVertex, 1.0f));
+                animVertex = glm::vec3{ mesh->vertices[vCounter], mesh->vertices[vCounter + 1], mesh->vertices[vCounter + 2] };
+                animVertex = glm::vec3((model.boneMatrices[boneIndex])*glm::vec4(animVertex, 1.0f));
                 mesh->animVertices[vCounter] += animVertex.x*boneWeight;
                 mesh->animVertices[vCounter + 1] += animVertex.y*boneWeight;
                 mesh->animVertices[vCounter + 2] += animVertex.z*boneWeight;
@@ -2571,8 +2571,8 @@ static void UpdateModelAnimationVertexBuffers(Model model)
                 // NOTE: Using meshes.baseNormals (default normal) to calculate meshes.normals (animated normals)
                 if ((mesh->normals != nullptr) && (mesh->animNormals != nullptr ))
                 {
-                    animNormal = Vector3{ mesh->normals[vCounter], mesh->normals[vCounter + 1], mesh->normals[vCounter + 2] };
-                    animNormal = Vector3((glm::transpose(glm::inverse(model.boneMatrices[boneIndex])))*Vector4(animNormal, 1.0f));
+                    animNormal = glm::vec3{ mesh->normals[vCounter], mesh->normals[vCounter + 1], mesh->normals[vCounter + 2] };
+                    animNormal = glm::vec3((glm::transpose(glm::inverse(model.boneMatrices[boneIndex])))*glm::vec4(animNormal, 1.0f));
                     mesh->animNormals[vCounter] += animNormal.x*boneWeight;
                     mesh->animNormals[vCounter + 1] += animNormal.y*boneWeight;
                     mesh->animNormals[vCounter + 2] += animNormal.z*boneWeight;
@@ -2625,24 +2625,24 @@ Mesh GenMeshPoly(int sides, float radius)
     const int vertexCount = sides*3;
 
     // Vertices definition
-    Vector3 *vertices = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
+    glm::vec3 *vertices = static_cast<glm::vec3 *>(RL_CALLOC(vertexCount, sizeof(glm::vec3)));
 
     float d = 0.0f, dStep = 360.0f/sides;
     for (int v = 0; v < vertexCount - 2; v += 3)
     {
-        vertices[v] = Vector3{ 0.0f, 0.0f, 0.0f };
-        vertices[v + 1] = Vector3{ sinf(DEG2RAD*d)*radius, 0.0f, cosf(DEG2RAD*d)*radius };
-        vertices[v + 2] = Vector3{ sinf(DEG2RAD*(d+dStep))*radius, 0.0f, cosf(DEG2RAD*(d+dStep))*radius };
+        vertices[v] = glm::vec3{ 0.0f, 0.0f, 0.0f };
+        vertices[v + 1] = glm::vec3{ sinf(DEG2RAD*d)*radius, 0.0f, cosf(DEG2RAD*d)*radius };
+        vertices[v + 2] = glm::vec3{ sinf(DEG2RAD*(d+dStep))*radius, 0.0f, cosf(DEG2RAD*(d+dStep))*radius };
         d += dStep;
     }
 
     // Normals definition
-    Vector3 *normals = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
-    for (int n = 0; n < vertexCount; n++) normals[n] = Vector3{ 0.0f, 1.0f, 0.0f };   // Vector3.up;
+    glm::vec3 *normals = static_cast<glm::vec3 *>(RL_CALLOC(vertexCount, sizeof(glm::vec3)));
+    for (int n = 0; n < vertexCount; n++) normals[n] = glm::vec3{ 0.0f, 1.0f, 0.0f }; // glm::vec3.up;
 
     // TexCoords definition
-    Vector2 *texcoords = static_cast<Vector2 *>(RL_CALLOC(vertexCount, sizeof(Vector2)));
-    for (int n = 0; n < vertexCount; n++) texcoords[n] = Vector2{ 0.0f, 0.0f };
+    glm::vec2 *texcoords = static_cast<glm::vec2 *>(RL_CALLOC(vertexCount, sizeof(glm::vec2)));
+    for (int n = 0; n < vertexCount; n++) texcoords[n] = glm::vec2{ 0.0f, 0.0f };
 
     mesh.vertexCount = vertexCount;
     mesh.triangleCount = sides;
@@ -2697,7 +2697,7 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
     // Vertices definition
     const int vertexCount = resX*resZ; // vertices get reused for the faces
 
-    Vector3 *vertices = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
+    glm::vec3 *vertices = static_cast<glm::vec3 *>(RL_CALLOC(vertexCount, sizeof(glm::vec3)));
     for (int z = 0; z < resZ; z++)
     {
         // [-length/2, length/2]
@@ -2706,21 +2706,21 @@ Mesh GenMeshPlane(float width, float length, int resX, int resZ)
         {
             // [-width/2, width/2]
             const float xPos = (static_cast<float>(x)/(resX - 1) - 0.5f)*width;
-            vertices[x + z*resX] = Vector3{ xPos, 0.0f, zPos };
+            vertices[x + z*resX] = glm::vec3{ xPos, 0.0f, zPos };
         }
     }
 
     // Normals definition
-    Vector3 *normals = static_cast<Vector3 *>(RL_CALLOC(vertexCount, sizeof(Vector3)));
-    for (int n = 0; n < vertexCount; n++) normals[n] = Vector3{ 0.0f, 1.0f, 0.0f };   // Vector3.up;
+    glm::vec3 *normals = static_cast<glm::vec3 *>(RL_CALLOC(vertexCount, sizeof(glm::vec3)));
+    for (int n = 0; n < vertexCount; n++) normals[n] = glm::vec3{ 0.0f, 1.0f, 0.0f }; // glm::vec3.up;
 
     // TexCoords definition
-    Vector2 *texcoords = static_cast<Vector2 *>(RL_CALLOC(vertexCount, sizeof(Vector2)));
+    glm::vec2 *texcoords = static_cast<glm::vec2 *>(RL_CALLOC(vertexCount, sizeof(glm::vec2)));
     for (int v = 0; v < resZ; v++)
     {
         for (int u = 0; u < resX; u++)
         {
-            texcoords[u + v*resX] = Vector2{ static_cast<float>(u)/(resX - 1), static_cast<float>(v)/(resZ - 1) };
+            texcoords[u + v*resX] = glm::vec2{ static_cast<float>(u)/(resX - 1), static_cast<float>(v)/(resZ - 1) };
         }
     }
 
@@ -3282,7 +3282,7 @@ Mesh GenMeshKnot(float radius, float size, int radSeg, int sides)
 
 // Generate a mesh from heightmap
 // NOTE: Vertex data is uploaded to GPU
-Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
+Mesh GenMeshHeightmap(Image heightmap, glm::vec3 size)
 {
     #define GRAY_VALUE(c) (static_cast<float>((c.r + c.g + c.b))/3.0f)
 
@@ -3307,12 +3307,12 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
     int tcCounter = 0;      // Used to count texcoords float by float
     int nCounter = 0;       // Used to count normals float by float
 
-    const Vector3 scaleFactor = { size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
+    const glm::vec3 scaleFactor = { size.x/(mapX - 1), size.y/255.0f, size.z/(mapZ - 1) };
 
-    Vector3 vA{};
-    Vector3 vB{};
-    Vector3 vC{};
-    Vector3 vN{};
+    glm::vec3 vA{};
+    glm::vec3 vB{};
+    glm::vec3 vC{};
+    glm::vec3 vN{};
 
     for (int z = 0; z < mapZ-1; z++)
     {
@@ -3414,7 +3414,7 @@ Mesh GenMeshHeightmap(Image heightmap, Vector3 size)
 
 // Generate a cubes mesh from pixel data
 // NOTE: Vertex data is uploaded to GPU
-Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
+Mesh GenMeshCubicmap(Image cubicmap, glm::vec3 cubeSize)
 {
     #define COLOR_EQUAL(col1, col2) ((col1.r == col2.r)&&(col1.g == col2.g)&&(col1.b == col2.b)&&(col1.a == col2.a))
 
@@ -3433,17 +3433,17 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
     const float h = cubeSize.z;
     const float h2 = cubeSize.y;
 
-    Vector3 *mapVertices = static_cast<Vector3 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector3)));
-    Vector2 *mapTexcoords = static_cast<Vector2 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector2)));
-    Vector3 *mapNormals = static_cast<Vector3 *>(RL_CALLOC(maxTriangles*3, sizeof(Vector3)));
+    glm::vec3 *mapVertices = static_cast<glm::vec3 *>(RL_CALLOC(maxTriangles*3, sizeof(glm::vec3)));
+    glm::vec2 *mapTexcoords = static_cast<glm::vec2 *>(RL_CALLOC(maxTriangles*3, sizeof(glm::vec2)));
+    glm::vec3 *mapNormals = static_cast<glm::vec3 *>(RL_CALLOC(maxTriangles*3, sizeof(glm::vec3)));
 
     // Define the 6 normals of the cube, combined accordingly later
-    const Vector3 n1 = { 1.0f, 0.0f, 0.0f };
-    const Vector3 n2 = { -1.0f, 0.0f, 0.0f };
-    const Vector3 n3 = { 0.0f, 1.0f, 0.0f };
-    const Vector3 n4 = { 0.0f, -1.0f, 0.0f };
-    const Vector3 n5 = { 0.0f, 0.0f, -1.0f };
-    const Vector3 n6 = { 0.0f, 0.0f, 1.0f };
+    const glm::vec3 n1 = { 1.0f, 0.0f, 0.0f };
+    const glm::vec3 n2 = { -1.0f, 0.0f, 0.0f };
+    const glm::vec3 n3 = { 0.0f, 1.0f, 0.0f };
+    const glm::vec3 n4 = { 0.0f, -1.0f, 0.0f };
+    const glm::vec3 n5 = { 0.0f, 0.0f, -1.0f };
+    const glm::vec3 n6 = { 0.0f, 0.0f, 1.0f };
 
     // NOTE: Using texture rectangles to define different
     // textures for top-bottom-front-back-right-left (6)
@@ -3466,14 +3466,14 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
         for (int x = 0; x < cubicmap.width; x++)
         {
             // Define the 8 vertex of the cube, to be combined accordingly later
-            const Vector3 v1 = { w*(x - 0.5f), h2, h*(z - 0.5f) };
-            const Vector3 v2 = { w*(x - 0.5f), h2, h*(z + 0.5f) };
-            const Vector3 v3 = { w*(x + 0.5f), h2, h*(z + 0.5f) };
-            const Vector3 v4 = { w*(x + 0.5f), h2, h*(z - 0.5f) };
-            const Vector3 v5 = { w*(x + 0.5f), 0, h*(z - 0.5f) };
-            const Vector3 v6 = { w*(x - 0.5f), 0, h*(z - 0.5f) };
-            const Vector3 v7 = { w*(x - 0.5f), 0, h*(z + 0.5f) };
-            const Vector3 v8 = { w*(x + 0.5f), 0, h*(z + 0.5f) };
+            const glm::vec3 v1 = { w*(x - 0.5f), h2, h*(z - 0.5f) };
+            const glm::vec3 v2 = { w*(x - 0.5f), h2, h*(z + 0.5f) };
+            const glm::vec3 v3 = { w*(x + 0.5f), h2, h*(z + 0.5f) };
+            const glm::vec3 v4 = { w*(x + 0.5f), h2, h*(z - 0.5f) };
+            const glm::vec3 v5 = { w*(x + 0.5f), 0, h*(z - 0.5f) };
+            const glm::vec3 v6 = { w*(x - 0.5f), 0, h*(z - 0.5f) };
+            const glm::vec3 v7 = { w*(x - 0.5f), 0, h*(z + 0.5f) };
+            const glm::vec3 v8 = { w*(x + 0.5f), 0, h*(z + 0.5f) };
 
             // Check pixel color to be WHITE -> draw full cube
             if (COLOR_EQUAL(pixels[z*cubicmap.width + x], WHITE))
@@ -3499,12 +3499,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n3;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = Vector2{ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 1] = Vector2{ topTexUV.x, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 2] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 3] = Vector2{ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 4] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 5] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y };
+                mapTexcoords[tcCounter] = glm::vec2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 1] = glm::vec2{ topTexUV.x, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 2] = glm::vec2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 3] = glm::vec2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 4] = glm::vec2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 5] = glm::vec2{ topTexUV.x + topTexUV.width, topTexUV.y };
                 tcCounter += 6;
 
                 // Define bottom triangles (2 tris, 6 vertex --> v6-v8-v7, v6-v5-v8)
@@ -3524,12 +3524,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n4;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 1] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 2] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 3] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 4] = Vector2{ bottomTexUV.x, bottomTexUV.y };
-                mapTexcoords[tcCounter + 5] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter] = glm::vec2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 1] = glm::vec2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 2] = glm::vec2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 3] = glm::vec2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 4] = glm::vec2{ bottomTexUV.x, bottomTexUV.y };
+                mapTexcoords[tcCounter + 5] = glm::vec2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
                 tcCounter += 6;
 
                 // Checking cube on bottom of current cube
@@ -3553,12 +3553,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n6;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = Vector2{ frontTexUV.x, frontTexUV.y };
-                    mapTexcoords[tcCounter + 1] = Vector2{ frontTexUV.x, frontTexUV.y + frontTexUV.height };
-                    mapTexcoords[tcCounter + 2] = Vector2{ frontTexUV.x + frontTexUV.width, frontTexUV.y };
-                    mapTexcoords[tcCounter + 3] = Vector2{ frontTexUV.x + frontTexUV.width, frontTexUV.y };
-                    mapTexcoords[tcCounter + 4] = Vector2{ frontTexUV.x, frontTexUV.y + frontTexUV.height };
-                    mapTexcoords[tcCounter + 5] = Vector2{ frontTexUV.x + frontTexUV.width, frontTexUV.y + frontTexUV.height };
+                    mapTexcoords[tcCounter] = glm::vec2{ frontTexUV.x, frontTexUV.y };
+                    mapTexcoords[tcCounter + 1] = glm::vec2{ frontTexUV.x, frontTexUV.y + frontTexUV.height };
+                    mapTexcoords[tcCounter + 2] = glm::vec2{ frontTexUV.x + frontTexUV.width, frontTexUV.y };
+                    mapTexcoords[tcCounter + 3] = glm::vec2{ frontTexUV.x + frontTexUV.width, frontTexUV.y };
+                    mapTexcoords[tcCounter + 4] = glm::vec2{ frontTexUV.x, frontTexUV.y + frontTexUV.height };
+                    mapTexcoords[tcCounter + 5] = glm::vec2{ frontTexUV.x + frontTexUV.width, frontTexUV.y + frontTexUV.height };
                     tcCounter += 6;
                 }
 
@@ -3583,12 +3583,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n5;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = Vector2{ backTexUV.x + backTexUV.width, backTexUV.y };
-                    mapTexcoords[tcCounter + 1] = Vector2{ backTexUV.x, backTexUV.y + backTexUV.height };
-                    mapTexcoords[tcCounter + 2] = Vector2{ backTexUV.x + backTexUV.width, backTexUV.y + backTexUV.height };
-                    mapTexcoords[tcCounter + 3] = Vector2{ backTexUV.x + backTexUV.width, backTexUV.y };
-                    mapTexcoords[tcCounter + 4] = Vector2{ backTexUV.x, backTexUV.y };
-                    mapTexcoords[tcCounter + 5] = Vector2{ backTexUV.x, backTexUV.y + backTexUV.height };
+                    mapTexcoords[tcCounter] = glm::vec2{ backTexUV.x + backTexUV.width, backTexUV.y };
+                    mapTexcoords[tcCounter + 1] = glm::vec2{ backTexUV.x, backTexUV.y + backTexUV.height };
+                    mapTexcoords[tcCounter + 2] = glm::vec2{ backTexUV.x + backTexUV.width, backTexUV.y + backTexUV.height };
+                    mapTexcoords[tcCounter + 3] = glm::vec2{ backTexUV.x + backTexUV.width, backTexUV.y };
+                    mapTexcoords[tcCounter + 4] = glm::vec2{ backTexUV.x, backTexUV.y };
+                    mapTexcoords[tcCounter + 5] = glm::vec2{ backTexUV.x, backTexUV.y + backTexUV.height };
                     tcCounter += 6;
                 }
 
@@ -3613,12 +3613,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n1;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = Vector2{ rightTexUV.x, rightTexUV.y };
-                    mapTexcoords[tcCounter + 1] = Vector2{ rightTexUV.x, rightTexUV.y + rightTexUV.height };
-                    mapTexcoords[tcCounter + 2] = Vector2{ rightTexUV.x + rightTexUV.width, rightTexUV.y };
-                    mapTexcoords[tcCounter + 3] = Vector2{ rightTexUV.x + rightTexUV.width, rightTexUV.y };
-                    mapTexcoords[tcCounter + 4] = Vector2{ rightTexUV.x, rightTexUV.y + rightTexUV.height };
-                    mapTexcoords[tcCounter + 5] = Vector2{ rightTexUV.x + rightTexUV.width, rightTexUV.y + rightTexUV.height };
+                    mapTexcoords[tcCounter] = glm::vec2{ rightTexUV.x, rightTexUV.y };
+                    mapTexcoords[tcCounter + 1] = glm::vec2{ rightTexUV.x, rightTexUV.y + rightTexUV.height };
+                    mapTexcoords[tcCounter + 2] = glm::vec2{ rightTexUV.x + rightTexUV.width, rightTexUV.y };
+                    mapTexcoords[tcCounter + 3] = glm::vec2{ rightTexUV.x + rightTexUV.width, rightTexUV.y };
+                    mapTexcoords[tcCounter + 4] = glm::vec2{ rightTexUV.x, rightTexUV.y + rightTexUV.height };
+                    mapTexcoords[tcCounter + 5] = glm::vec2{ rightTexUV.x + rightTexUV.width, rightTexUV.y + rightTexUV.height };
                     tcCounter += 6;
                 }
 
@@ -3643,12 +3643,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                     mapNormals[nCounter + 5] = n2;
                     nCounter += 6;
 
-                    mapTexcoords[tcCounter] = Vector2{ leftTexUV.x, leftTexUV.y };
-                    mapTexcoords[tcCounter + 1] = Vector2{ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
-                    mapTexcoords[tcCounter + 2] = Vector2{ leftTexUV.x + leftTexUV.width, leftTexUV.y };
-                    mapTexcoords[tcCounter + 3] = Vector2{ leftTexUV.x, leftTexUV.y };
-                    mapTexcoords[tcCounter + 4] = Vector2{ leftTexUV.x, leftTexUV.y + leftTexUV.height };
-                    mapTexcoords[tcCounter + 5] = Vector2{ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
+                    mapTexcoords[tcCounter] = glm::vec2{ leftTexUV.x, leftTexUV.y };
+                    mapTexcoords[tcCounter + 1] = glm::vec2{ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
+                    mapTexcoords[tcCounter + 2] = glm::vec2{ leftTexUV.x + leftTexUV.width, leftTexUV.y };
+                    mapTexcoords[tcCounter + 3] = glm::vec2{ leftTexUV.x, leftTexUV.y };
+                    mapTexcoords[tcCounter + 4] = glm::vec2{ leftTexUV.x, leftTexUV.y + leftTexUV.height };
+                    mapTexcoords[tcCounter + 5] = glm::vec2{ leftTexUV.x + leftTexUV.width, leftTexUV.y + leftTexUV.height };
                     tcCounter += 6;
                 }
             }
@@ -3672,12 +3672,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n4;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = Vector2{ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 1] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 2] = Vector2{ topTexUV.x, topTexUV.y + topTexUV.height };
-                mapTexcoords[tcCounter + 3] = Vector2{ topTexUV.x, topTexUV.y };
-                mapTexcoords[tcCounter + 4] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y };
-                mapTexcoords[tcCounter + 5] = Vector2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter] = glm::vec2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 1] = glm::vec2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 2] = glm::vec2{ topTexUV.x, topTexUV.y + topTexUV.height };
+                mapTexcoords[tcCounter + 3] = glm::vec2{ topTexUV.x, topTexUV.y };
+                mapTexcoords[tcCounter + 4] = glm::vec2{ topTexUV.x + topTexUV.width, topTexUV.y };
+                mapTexcoords[tcCounter + 5] = glm::vec2{ topTexUV.x + topTexUV.width, topTexUV.y + topTexUV.height };
                 tcCounter += 6;
 
                 // Define bottom triangles (2 tris, 6 vertex --> v6-v8-v7, v6-v5-v8)
@@ -3697,12 +3697,12 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
                 mapNormals[nCounter + 5] = n3;
                 nCounter += 6;
 
-                mapTexcoords[tcCounter] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 1] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 2] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 3] = Vector2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
-                mapTexcoords[tcCounter + 4] = Vector2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
-                mapTexcoords[tcCounter + 5] = Vector2{ bottomTexUV.x, bottomTexUV.y };
+                mapTexcoords[tcCounter] = glm::vec2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 1] = glm::vec2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 2] = glm::vec2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 3] = glm::vec2{ bottomTexUV.x + bottomTexUV.width, bottomTexUV.y };
+                mapTexcoords[tcCounter + 4] = glm::vec2{ bottomTexUV.x, bottomTexUV.y + bottomTexUV.height };
+                mapTexcoords[tcCounter + 5] = glm::vec2{ bottomTexUV.x, bottomTexUV.y };
                 tcCounter += 6;
             }
         }
@@ -3767,18 +3767,18 @@ Mesh GenMeshCubicmap(Image cubicmap, Vector3 cubeSize)
 BoundingBox GetMeshBoundingBox(Mesh mesh)
 {
     // Get min and max vertex to construct bounds (AABB)
-    Vector3 minVertex{};
-    Vector3 maxVertex{};
+    glm::vec3 minVertex{};
+    glm::vec3 maxVertex{};
 
     if (mesh.vertices != nullptr)
     {
-        minVertex = Vector3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
-        maxVertex = Vector3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
+        minVertex = glm::vec3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
+        maxVertex = glm::vec3{ mesh.vertices[0], mesh.vertices[1], mesh.vertices[2] };
 
         for (int i = 1; i < mesh.vertexCount; i++)
         {
-            minVertex = glm::min(minVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
-            maxVertex = glm::max(maxVertex, Vector3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
+            minVertex = glm::min(minVertex, glm::vec3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
+            maxVertex = glm::max(maxVertex, glm::vec3{ mesh.vertices[i*3], mesh.vertices[i*3 + 1], mesh.vertices[i*3 + 2] });
         }
     }
 
@@ -3809,8 +3809,8 @@ void GenMeshTangents(Mesh *mesh)
     }
 
     // Allocate temporary arrays for tangents calculation
-    Vector3 *tan1 = static_cast<Vector3 *>(RL_CALLOC(mesh->vertexCount, sizeof(Vector3)));
-    Vector3 *tan2 = static_cast<Vector3 *>(RL_CALLOC(mesh->vertexCount, sizeof(Vector3)));
+    glm::vec3 *tan1 = static_cast<glm::vec3 *>(RL_CALLOC(mesh->vertexCount, sizeof(glm::vec3)));
+    glm::vec3 *tan2 = static_cast<glm::vec3 *>(RL_CALLOC(mesh->vertexCount, sizeof(glm::vec3)));
 
     if (tan1 == nullptr || tan2 == nullptr)
     {
@@ -3843,14 +3843,14 @@ void GenMeshTangents(Mesh *mesh)
         }
 
         // Get triangle vertices position
-        const Vector3 v1 = { mesh->vertices[i0*3 + 0], mesh->vertices[i0*3 + 1], mesh->vertices[i0*3 + 2] };
-        const Vector3 v2 = { mesh->vertices[i1*3 + 0], mesh->vertices[i1*3 + 1], mesh->vertices[i1*3 + 2] };
-        const Vector3 v3 = { mesh->vertices[i2*3 + 0], mesh->vertices[i2*3 + 1], mesh->vertices[i2*3 + 2] };
+        const glm::vec3 v1 = { mesh->vertices[i0*3 + 0], mesh->vertices[i0*3 + 1], mesh->vertices[i0*3 + 2] };
+        const glm::vec3 v2 = { mesh->vertices[i1*3 + 0], mesh->vertices[i1*3 + 1], mesh->vertices[i1*3 + 2] };
+        const glm::vec3 v3 = { mesh->vertices[i2*3 + 0], mesh->vertices[i2*3 + 1], mesh->vertices[i2*3 + 2] };
 
         // Get triangle texcoords
-        const Vector2 uv1 = { mesh->texcoords[i0*2 + 0], mesh->texcoords[i0*2 + 1] };
-        const Vector2 uv2 = { mesh->texcoords[i1*2 + 0], mesh->texcoords[i1*2 + 1] };
-        const Vector2 uv3 = { mesh->texcoords[i2*2 + 0], mesh->texcoords[i2*2 + 1] };
+        const glm::vec2 uv1 = { mesh->texcoords[i0*2 + 0], mesh->texcoords[i0*2 + 1] };
+        const glm::vec2 uv2 = { mesh->texcoords[i1*2 + 0], mesh->texcoords[i1*2 + 1] };
+        const glm::vec2 uv3 = { mesh->texcoords[i2*2 + 0], mesh->texcoords[i2*2 + 1] };
 
         // Calculate triangle edges
         const float x1 = v2.x - v1.x;
@@ -3871,8 +3871,8 @@ void GenMeshTangents(Mesh *mesh)
         const float r = (fabsf(div) < 0.0001f)? 0.0f : 1.0f/div;
 
         // Calculate tangent and bitangent directions
-        const Vector3 sdir = { (t2*x1 - t1*x2)*r, (t2*y1 - t1*y2)*r, (t2*z1 - t1*z2)*r };
-        const Vector3 tdir = { (s1*x2 - s2*x1)*r, (s1*y2 - s2*y1)*r, (s1*z2 - s2*z1)*r };
+        const glm::vec3 sdir = { (t2*x1 - t1*x2)*r, (t2*y1 - t1*y2)*r, (t2*z1 - t1*z2)*r };
+        const glm::vec3 tdir = { (s1*x2 - s2*x1)*r, (s1*y2 - s2*y1)*r, (s1*z2 - s2*z1)*r };
 
         // Accumulate tangents and bitangents for each vertex of the triangle
         tan1[i0] = ((tan1[i0]) + (sdir));
@@ -3887,15 +3887,15 @@ void GenMeshTangents(Mesh *mesh)
     // Calculate final tangents for each vertex
     for (int i = 0; i < mesh->vertexCount; i++)
     {
-        const Vector3 normal = { mesh->normals[i*3 + 0], mesh->normals[i*3 + 1], mesh->normals[i*3 + 2] };
-        Vector3 tangent = tan1[i];
+        const glm::vec3 normal = { mesh->normals[i*3 + 0], mesh->normals[i*3 + 1], mesh->normals[i*3 + 2] };
+        glm::vec3 tangent = tan1[i];
 
         // Handle zero tangent (can happen with degenerate UVs)
         if (glm::length(tangent) < 0.0001f)
         {
             // Create a tangent perpendicular to the normal
-            if (fabsf(normal.z) > 0.707f) tangent = Vector3{ 1.0f, 0.0f, 0.0f };
-            else tangent = glm::normalize(Vector3{ -normal.y, normal.x, 0.0f });
+            if (fabsf(normal.z) > 0.707f) tangent = glm::vec3{ 1.0f, 0.0f, 0.0f };
+            else tangent = glm::normalize(glm::vec3{ -normal.y, normal.x, 0.0f });
 
             mesh->tangents[i*4 + 0] = tangent.x;
             mesh->tangents[i*4 + 1] = tangent.y;
@@ -3906,14 +3906,14 @@ void GenMeshTangents(Mesh *mesh)
 
         // Gram-Schmidt orthogonalization to make tangent orthogonal to normal
         // T_prime = T - N*dot(N, T)
-        Vector3 orthogonalized = ((tangent) - (((normal) * (glm::dot(normal, tangent)))));
+        glm::vec3 orthogonalized = ((tangent) - (((normal) * (glm::dot(normal, tangent)))));
 
         // Handle cases where orthogonalized vector is too small
         if (glm::length(orthogonalized) < 0.0001f)
         {
             // Create a tangent perpendicular to the normal
-            if (fabsf(normal.z) > 0.707f) orthogonalized = Vector3{ 1.0f, 0.0f, 0.0f };
-            else orthogonalized = glm::normalize(Vector3{ -normal.y, normal.x, 0.0f });
+            if (fabsf(normal.z) > 0.707f) orthogonalized = glm::vec3{ 1.0f, 0.0f, 0.0f };
+            else orthogonalized = glm::normalize(glm::vec3{ -normal.y, normal.x, 0.0f });
         }
         else
         {
@@ -3959,22 +3959,22 @@ void GenMeshTangents(Mesh *mesh)
 }
 
 // Draw a model (with texture if set)
-void DrawModel(Model model, Vector3 position, float scale, Color tint)
+void DrawModel(Model model, glm::vec3 position, float scale, Color tint)
 {
-    const Vector3 vScale = { scale, scale, scale };
-    const Vector3 rotationAxis = { 0.0f, 1.0f, 0.0f };
+    const glm::vec3 vScale = { scale, scale, scale };
+    const glm::vec3 rotationAxis = { 0.0f, 1.0f, 0.0f };
 
     DrawModelEx(model, position, rotationAxis, 0.0f, vScale, tint);
 }
 
 // Draw a model with custom transform
-void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, Vector3 scale, Color tint)
+void DrawModelEx(Model model, glm::vec3 position, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 scale, Color tint)
 {
     // Calculate transformation matrix from function parameters
     // Get transform matrix (rotation -> scale -> translation)
-    const Matrix matScale = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
+    const Matrix matScale = glm::scale(Matrix(1.0f), glm::vec3{scale.x, scale.y, scale.z});
     const Matrix matRotation = glm::rotate(Matrix(1.0f), rotationAngle*DEG2RAD, rotationAxis);
-    const Matrix matTranslation = glm::translate(Matrix(1.0f), Vector3{position.x, position.y, position.z});
+    const Matrix matTranslation = glm::translate(Matrix(1.0f), glm::vec3{position.x, position.y, position.z});
 
     const Matrix matTransform = ((matTranslation) * (((matRotation) * (matScale))));
 
@@ -4012,7 +4012,7 @@ void DrawModelEx(Model model, Vector3 position, Vector3 rotationAxis, float rota
 }
 
 // Draw a model wires (with texture if set)
-void DrawModelWires(Model model, Vector3 position, float scale, Color tint)
+void DrawModelWires(Model model, glm::vec3 position, float scale, Color tint)
 {
     rlEnableWireMode();
 
@@ -4022,7 +4022,7 @@ void DrawModelWires(Model model, Vector3 position, float scale, Color tint)
 }
 
 // Draw a model wires with custom transform
-void DrawModelWiresEx(Model model, Vector3 position, Vector3 rotationAxis, float rotationAngle, Vector3 scale, Color tint)
+void DrawModelWiresEx(Model model, glm::vec3 position, glm::vec3 rotationAxis, float rotationAngle, glm::vec3 scale, Color tint)
 {
     rlEnableWireMode();
 
@@ -4032,28 +4032,28 @@ void DrawModelWiresEx(Model model, Vector3 position, Vector3 rotationAxis, float
 }
 
 // Draw a billboard
-void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float scale, Color tint)
+void DrawBillboard(Camera camera, Texture2D texture, glm::vec3 position, float scale, Color tint)
 {
     const Rectangle rec = { 0.0f, 0.0f, static_cast<float>(texture.width), static_cast<float>(texture.height) };
 
-    DrawBillboardRec(camera, texture, rec, position, Vector2{ scale*fabsf(rec.width/rec.height), scale }, tint);
+    DrawBillboardRec(camera, texture, rec, position, glm::vec2{ scale*fabsf(rec.width/rec.height), scale }, tint);
 }
 
 // Draw a billboard (part of a texture defined by a rectangle)
-void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle rec, Vector3 position, Vector2 size, Color tint)
+void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle rec, glm::vec3 position, glm::vec2 size, Color tint)
 {
     // NOTE: Billboard locked on axis-Y
-    const Vector3 up = { 0.0f, 1.0f, 0.0f };
+    const glm::vec3 up = { 0.0f, 1.0f, 0.0f };
 
     DrawBillboardPro(camera, texture, rec, position, up, size, size*0.5f, 0.0f, tint);
 }
 
 // Draw a billboard texture defined by source rectangle with scaling and rotation
-void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 position, Vector3 up, Vector2 size, Vector2 origin, float rotation, Color tint)
+void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, glm::vec3 position, glm::vec3 up, glm::vec2 size, glm::vec2 origin, float rotation, Color tint)
 {
     // Compute the up vector and the right vector
     Matrix matView = glm::lookAt(camera.position, camera.target, camera.up);
-    Vector3 right = { matView[0][0], matView[1][0], matView[2][0] };
+    glm::vec3 right = { matView[0][0], matView[1][0], matView[2][0] };
     right = ((right) * (size.x));
     up = ((up) * (size.y));
 
@@ -4086,13 +4086,13 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
     //    |             .             |
     //  0 +---------------------------> 1
     //                right
-    Vector3 forward;
+    glm::vec3 forward;
     if (rotation != 0.0) forward = glm::cross(right, up);
 
-    const Vector3 origin3D = ((((glm::normalize(right)) * (origin.x))) + (((glm::normalize(up)) * (origin.y))));
+    const glm::vec3 origin3D = ((((glm::normalize(right)) * (origin.x))) + (((glm::normalize(up)) * (origin.y))));
 
-    Vector3 points[4];
-    points[0] = Vector3{};
+    glm::vec3 points[4];
+    points[0] = glm::vec3{};
     points[1] = right;
     points[2] = ((up) + (right));
     points[3] = up;
@@ -4104,11 +4104,11 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
         points[i] = ((points[i]) + (position));
     }
 
-    Vector2 texcoords[4];
-    texcoords[0] = Vector2{ rec.x/texture.width, (rec.y + rec.height)/texture.height };
-    texcoords[1] = Vector2{ (rec.x + rec.width)/texture.width, (rec.y + rec.height)/texture.height };
-    texcoords[2] = Vector2{ (rec.x + rec.width)/texture.width, rec.y/texture.height };
-    texcoords[3] = Vector2{ rec.x/texture.width, rec.y/texture.height };
+    glm::vec2 texcoords[4];
+    texcoords[0] = glm::vec2{ rec.x/texture.width, (rec.y + rec.height)/texture.height };
+    texcoords[1] = glm::vec2{ (rec.x + rec.width)/texture.width, (rec.y + rec.height)/texture.height };
+    texcoords[2] = glm::vec2{ (rec.x + rec.width)/texture.width, rec.y/texture.height };
+    texcoords[3] = glm::vec2{ rec.x/texture.width, rec.y/texture.height };
 
     rlSetTexture(texture.id);
     rlBegin(RL_QUADS);
@@ -4127,19 +4127,19 @@ void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle rec, Vector3 p
 // Draw a bounding box with wires
 void DrawBoundingBox(BoundingBox box, Color color)
 {
-    Vector3 size{};
+    glm::vec3 size{};
 
     size.x = fabsf(box.max.x - box.min.x);
     size.y = fabsf(box.max.y - box.min.y);
     size.z = fabsf(box.max.z - box.min.z);
 
-    const Vector3 center = { box.min.x + size.x/2.0f, box.min.y + size.y/2.0f, box.min.z + size.z/2.0f };
+    const glm::vec3 center = { box.min.x + size.x/2.0f, box.min.y + size.y/2.0f, box.min.z + size.z/2.0f };
 
     DrawCubeWires(center, size.x, size.y, size.z, color);
 }
 
 // Check collision between two spheres
-bool CheckCollisionSpheres(Vector3 center1, float radius1, Vector3 center2, float radius2)
+bool CheckCollisionSpheres(glm::vec3 center1, float radius1, glm::vec3 center2, float radius2)
 {
     bool collision = false;
 
@@ -4179,11 +4179,11 @@ bool CheckCollisionBoxes(BoundingBox box1, BoundingBox box2)
 }
 
 // Check collision between box and sphere
-bool CheckCollisionBoxSphere(BoundingBox box, Vector3 center, float radius)
+bool CheckCollisionBoxSphere(BoundingBox box, glm::vec3 center, float radius)
 {
     bool collision = false;
 
-    const Vector3 closestPoint = {
+    const glm::vec3 closestPoint = {
         Clamp(center.x, box.min.x, box.max.x),
         Clamp(center.y, box.min.y, box.max.y),
         Clamp(center.z, box.min.z, box.max.z)
@@ -4195,11 +4195,11 @@ bool CheckCollisionBoxSphere(BoundingBox box, Vector3 center, float radius)
 }
 
 // Get collision info between ray and sphere
-RayCollision GetRayCollisionSphere(Ray ray, Vector3 center, float radius)
+RayCollision GetRayCollisionSphere(Ray ray, glm::vec3 center, float radius)
 {
     RayCollision collision = { 0 };
 
-    const Vector3 raySpherePos = ((center) - (ray.position));
+    const glm::vec3 raySpherePos = ((center) - (ray.position));
     const float vector = glm::dot(raySpherePos, ray.direction);
     const float distanceToCenter = glm::length(raySpherePos);
     const float d = radius*radius - (distanceToCenter*distanceToCenter - vector*vector);
@@ -4207,8 +4207,8 @@ RayCollision GetRayCollisionSphere(Ray ray, Vector3 center, float radius)
     // Check if the ray's line intersects with the sphere
     if (d >= 0.0f)
     {
-        Vector3 point{};
-        Vector3 normal{};
+        glm::vec3 point{};
+        glm::vec3 normal{};
         float hitDistance = 0.0f;
 
         // Check if ray origin is inside the sphere to calculate the correct collision point
@@ -4316,7 +4316,7 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
         // Transform the ray into model space by the inverse of the transform, 
         // so it can be tested against the untransformed vertex data
         const Matrix inverseMatrix = glm::inverse(transform);
-        ray.position = Vector3((inverseMatrix)*Vector4(ray.position, 1.0f));
+        ray.position = glm::vec3((inverseMatrix)*glm::vec4(ray.position, 1.0f));
 
         // Direction does not get translation, just rotation
         const Quaternion invRot = glm::quat_cast(glm::mat3(inverseMatrix));
@@ -4327,10 +4327,10 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
         // Test against all triangles in mesh
         for (int i = 0; i < triangleCount; i++)
         {
-            Vector3 a{};
-            Vector3 b{};
-            Vector3 c{};
-            Vector3 *vertdata = reinterpret_cast<Vector3 *>(mesh.vertices);
+            glm::vec3 a{};
+            glm::vec3 b{};
+            glm::vec3 c{};
+            glm::vec3 *vertdata = reinterpret_cast<glm::vec3 *>(mesh.vertices);
 
             if (mesh.indices)
             {
@@ -4358,7 +4358,7 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
     // Set the hit point and normal back in world space
     if (collision.hit)
     {
-        collision.point = Vector3((transform)*Vector4(collision.point, 1.0f));
+        collision.point = glm::vec3((transform)*glm::vec4(collision.point, 1.0f));
         collision.normal = ((glm::quat_cast(glm::mat3(transform)))*(collision.normal));
     }
 
@@ -4368,16 +4368,16 @@ RayCollision GetRayCollisionMesh(Ray ray, Mesh mesh, Matrix transform)
 // Get collision info between ray and triangle
 // NOTE: The points are expected to be in counter-clockwise winding
 // NOTE: Based on https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
-RayCollision GetRayCollisionTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3)
+RayCollision GetRayCollisionTriangle(Ray ray, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
 {
     #define EPSILON 0.000001f        // A small number
 
     RayCollision collision = { 0 };
-    Vector3 edge1{};
-    Vector3 edge2{};
-    Vector3 p{};
-    Vector3 q{};
-    Vector3 tv{};
+    glm::vec3 edge1{};
+    glm::vec3 edge2{};
+    glm::vec3 p{};
+    glm::vec3 q{};
+    glm::vec3 tv{};
     float det = 0.0f, invDet = 0.0f, u = 0.0f, v = 0.0f, t = 0.0f;
 
     // Find vectors for two edges sharing V1
@@ -4429,7 +4429,7 @@ RayCollision GetRayCollisionTriangle(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3
 
 // Get collision info between ray and quad
 // NOTE: The points are expected to be in counter-clockwise winding
-RayCollision GetRayCollisionQuad(Ray ray, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
+RayCollision GetRayCollisionQuad(Ray ray, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3, glm::vec3 p4)
 {
     RayCollision collision = { 0 };
 
@@ -5776,7 +5776,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, 1.0f));
+                                    const glm::vec3 vt = glm::vec3((worldMatrix)*glm::vec4(glm::vec3{ vertices[3*k], vertices[3*k+1], vertices[3*k+2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k+1] = vt.y;
                                     vertices[3*k+2] = vt.z;
@@ -5801,7 +5801,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
+                                    const glm::vec3 vt = glm::vec3((worldMatrix)*glm::vec4(glm::vec3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5826,7 +5826,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *vertices = model.meshes[meshIndex].vertices;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 vt = Vector3((worldMatrix)*Vector4(Vector3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
+                                    const glm::vec3 vt = glm::vec3((worldMatrix)*glm::vec4(glm::vec3{ vertices[3*k], vertices[3*k + 1], vertices[3*k + 2] }, 1.0f));
                                     vertices[3*k] = vt.x;
                                     vertices[3*k + 1] = vt.y;
                                     vertices[3*k + 2] = vt.z;
@@ -5854,7 +5854,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 nt = Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, 1.0f));
+                                    const glm::vec3 nt = glm::vec3((worldMatrixNormals)*glm::vec4(glm::vec3{ normals[3*k], normals[3*k+1], normals[3*k+2] }, 1.0f));
                                     normals[3*k] = nt.x;
                                     normals[3*k+1] = nt.y;
                                     normals[3*k+2] = nt.z;
@@ -5878,7 +5878,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
+                                    const glm::vec3 nt = glm::normalize(glm::vec3((worldMatrixNormals)*glm::vec4(glm::vec3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5902,7 +5902,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
+                                    const glm::vec3 nt = glm::normalize(glm::vec3((worldMatrixNormals)*glm::vec4(glm::vec3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5926,7 +5926,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *normals = model.meshes[meshIndex].normals;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 nt = glm::normalize(Vector3((worldMatrixNormals)*Vector4(Vector3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
+                                    const glm::vec3 nt = glm::normalize(glm::vec3((worldMatrixNormals)*glm::vec4(glm::vec3{ normals[3*k], normals[3*k + 1], normals[3*k + 2] }, 1.0f)));
                                     normals[3*k] = nt.x;
                                     normals[3*k + 1] = nt.y;
                                     normals[3*k + 2] = nt.z;
@@ -5954,7 +5954,7 @@ static Model LoadGLTF(const char *fileName)
                                 float *tangents = model.meshes[meshIndex].tangents;
                                 for (unsigned int k = 0; k < attribute->count; k++)
                                 {
-                                    const Vector3 tt = Vector3((worldMatrix)*Vector4(Vector3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, 1.0f));
+                                    const glm::vec3 tt = glm::vec3((worldMatrix)*glm::vec4(glm::vec3{ tangents[4*k], tangents[4*k+1], tangents[4*k+2] }, 1.0f));
                                     tangents[4*k] = tt.x;
                                     tangents[4*k+1] = tt.y;
                                     tangents[4*k+2] = tt.z;
@@ -6496,8 +6496,8 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 3);
-                const Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
-                Vector3 *r = static_cast<Vector3 *>(data);
+                const glm::vec3 v1 = {tmp[0], tmp[1], tmp[2]};
+                glm::vec3 *r = static_cast<glm::vec3 *>(data);
 
                 *r = v1;
             } break;
@@ -6505,10 +6505,10 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, keyframe, tmp, 3);
-                const Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
+                const glm::vec3 v1 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, keyframe+1, tmp, 3);
-                const Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
-                Vector3 *r = static_cast<Vector3 *>(data);
+                const glm::vec3 v2 = {tmp[0], tmp[1], tmp[2]};
+                glm::vec3 *r = static_cast<glm::vec3 *>(data);
 
                 *r = glm::mix(v1, v2, t);
             } break;
@@ -6516,14 +6516,14 @@ static bool GetPoseAtTimeGLTF(cgltf_interpolation_type interpolationType, cgltf_
             {
                 float tmp[3] = { 0.0f };
                 cgltf_accessor_read_float(output, 3*keyframe+1, tmp, 3);
-                const Vector3 v1 = {tmp[0], tmp[1], tmp[2]};
+                const glm::vec3 v1 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*keyframe+2, tmp, 3);
-                const Vector3 tangent1 = {tmp[0], tmp[1], tmp[2]};
+                const glm::vec3 tangent1 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1)+1, tmp, 3);
-                const Vector3 v2 = {tmp[0], tmp[1], tmp[2]};
+                const glm::vec3 v2 = {tmp[0], tmp[1], tmp[2]};
                 cgltf_accessor_read_float(output, 3*(keyframe+1), tmp, 3);
-                const Vector3 tangent2 = {tmp[0], tmp[1], tmp[2]};
-                Vector3 *r = static_cast<Vector3 *>(data);
+                const glm::vec3 tangent2 = {tmp[0], tmp[1], tmp[2]};
+                glm::vec3 *r = static_cast<glm::vec3 *>(data);
 
                 *r = Vector3CubicHermite(v1, tangent1, v2, tangent2, t);
             } break;
@@ -6659,9 +6659,9 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                     if (isJoint) break;
 
                     // Compose the intermediate node's local TRS (scale, then rotation, then translation)
-                    const Matrix nodeScale = glm::scale(Matrix(1.0f), Vector3{n->scale[0], n->scale[1], n->scale[2]});
+                    const Matrix nodeScale = glm::scale(Matrix(1.0f), glm::vec3{n->scale[0], n->scale[1], n->scale[2]});
                     const Matrix nodeRotation = glm::mat4_cast(Quaternion{n->rotation[3], n->rotation[0], n->rotation[1], n->rotation[2]});
-                    const Matrix nodeTranslation = glm::translate(Matrix(1.0f), Vector3{n->translation[0], n->translation[1], n->translation[2]});
+                    const Matrix nodeTranslation = glm::translate(Matrix(1.0f), glm::vec3{n->translation[0], n->translation[1], n->translation[2]});
                     const Matrix nodeTransform = ((nodeTranslation) * (((nodeRotation) * (nodeScale))));
 
                     extOffset[k] = ((nodeTransform) * (extOffset[k]));
@@ -6732,9 +6732,9 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
 
                     for (unsigned int k = 0; k < animations[a].boneCount; k++)
                     {
-                        Vector3 translation = {skin.joints[k]->translation[0], skin.joints[k]->translation[1], skin.joints[k]->translation[2]};
+                        glm::vec3 translation = {skin.joints[k]->translation[0], skin.joints[k]->translation[1], skin.joints[k]->translation[2]};
                         Quaternion rotation = {skin.joints[k]->rotation[3], skin.joints[k]->rotation[0], skin.joints[k]->rotation[1], skin.joints[k]->rotation[2]};
-                        Vector3 scale = {skin.joints[k]->scale[0], skin.joints[k]->scale[1], skin.joints[k]->scale[2]};
+                        glm::vec3 scale = {skin.joints[k]->scale[0], skin.joints[k]->scale[1], skin.joints[k]->scale[2]};
 
                         if (boneChannels[k].translate)
                         {
@@ -6763,9 +6763,9 @@ static ModelAnimation *LoadModelAnimationsGLTF(const char *fileName, int *animCo
                         // Compose joint local TRS, then prepend the static
                         // intermediate non-joint offsets so the final TRS is
                         // expressed relative to the joint's skeleton parent.
-                        const Matrix S = glm::scale(Matrix(1.0f), Vector3{scale.x, scale.y, scale.z});
+                        const Matrix S = glm::scale(Matrix(1.0f), glm::vec3{scale.x, scale.y, scale.z});
                         const Matrix R = glm::mat4_cast(rotation);
-                        const Matrix T = glm::translate(Matrix(1.0f), Vector3{translation.x, translation.y, translation.z});
+                        const Matrix T = glm::translate(Matrix(1.0f), glm::vec3{translation.x, translation.y, translation.z});
                         const Matrix jointLocal = ((T) * (((R) * (S))));
                         const Matrix combined = ((extOffset[k]) * (jointLocal));
 
@@ -6856,8 +6856,8 @@ static Model LoadVOX(const char *fileName)
     constexpr int verticesMax = 65532; // 5461 voxels x 12 vertices per voxel -> 65532 (must be inf 65536)
 
     // 6*4 = 12 vertices per voxel
-    Vector3 *pvertices = reinterpret_cast<Vector3 *>(voxarray.vertices.array);
-    Vector3 *pnormals = reinterpret_cast<Vector3 *>(voxarray.normals.array);
+    glm::vec3 *pvertices = reinterpret_cast<glm::vec3 *>(voxarray.vertices.array);
+    glm::vec3 *pnormals = reinterpret_cast<glm::vec3 *>(voxarray.normals.array);
     Color *pcolors = reinterpret_cast<Color *>(voxarray.colors.array);
 
     unsigned short *pindices = voxarray.indices.array;    // 5461*6*6 = 196596 indices max per mesh

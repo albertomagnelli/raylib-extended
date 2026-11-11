@@ -30,11 +30,11 @@
 //----------------------------------------------------------------------------------
 // Rounded rectangle data
 typedef struct {
-    Vector4 cornerRadius; // Individual corner radius (top-left, top-right, bottom-left, bottom-right)
+    glm::vec4 cornerRadius; // Individual corner radius (top-left, top-right, bottom-left, bottom-right)
 
     // Shadow variables
     float shadowRadius;
-    Vector2 shadowOffset;
+    glm::vec2 shadowOffset;
     float shadowScale;
 
     // Border variables
@@ -56,7 +56,7 @@ typedef struct {
 // Module Functions Declaration
 //------------------------------------------------------------------------------------
 // Create a rounded rectangle and set uniform locations
-static RoundedRectangle CreateRoundedRectangle(Vector4 cornerRadius, float shadowRadius, Vector2 shadowOffset, float shadowScale, float borderThickness, Shader shader);
+static RoundedRectangle CreateRoundedRectangle(glm::vec4 cornerRadius, float shadowRadius, glm::vec2 shadowOffset, float shadowScale, float borderThickness, Shader shader);
 
 // Update rounded rectangle uniforms
 static void UpdateRoundedRectangle(RoundedRectangle rec, Shader shader);
@@ -79,9 +79,9 @@ int main()
 
     // Create a rounded rectangle
     const RoundedRectangle roundedRectangle = CreateRoundedRectangle(
-        Vector4{ 5.0f, 10.0f, 15.0f, 20.0f },     // Corner radius
+        glm::vec4{ 5.0f, 10.0f, 15.0f, 20.0f },   // Corner radius
         20.0f,                                      // Shadow radius
-        Vector2{ 0.0f, -5.0f },                   // Shadow offset
+        glm::vec2{ 0.0f, -5.0f },                 // Shadow offset
         0.95f,                                      // Shadow scale
         5.0f,                                       // Border thickness
         shader                                      // Shader
@@ -196,7 +196,7 @@ int main()
 //------------------------------------------------------------------------------------
 
 // Create a rounded rectangle and set uniform locations
-RoundedRectangle CreateRoundedRectangle(Vector4 cornerRadius, float shadowRadius, Vector2 shadowOffset, float shadowScale, float borderThickness, Shader shader)
+RoundedRectangle CreateRoundedRectangle(glm::vec4 cornerRadius, float shadowRadius, glm::vec2 shadowOffset, float shadowScale, float borderThickness, Shader shader)
 {
     RoundedRectangle rec;
     rec.cornerRadius = cornerRadius;

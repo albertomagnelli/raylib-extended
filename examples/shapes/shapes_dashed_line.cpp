@@ -30,8 +30,8 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - dashed line");
 
     // Line Properties
-    const Vector2 lineStartPosition = { 20.0f, 50.0f };
-    Vector2 lineEndPosition = { 780.0f, 400.0f };
+    const glm::vec2 lineStartPosition = { 20.0f, 50.0f };
+    glm::vec2 lineEndPosition = { 780.0f, 400.0f };
     float dashLength = 25.0f;
     float blankLength = 15.0f;
 

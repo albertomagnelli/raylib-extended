@@ -21,7 +21,7 @@
 
 typedef struct TextureCollection {
     Texture2D texture;
-    Vector2 position;
+    glm::vec2 position;
 } TextureCollection;
 
 //------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ int main()
                     DrawTexturePro(collection[i].texture,
                         Rectangle{0,0,static_cast<float>(collection[i].texture.width), static_cast<float>(collection[i].texture.height)},
                         Rectangle{collection[i].position.x,collection[i].position.y, static_cast<float>(collection[i].texture.width), static_cast<float>(collection[i].texture.height)},
-                        Vector2{collection[i].texture.width*0.5f, collection[i].texture.height*0.5f},
+                        glm::vec2{collection[i].texture.width*0.5f, collection[i].texture.height*0.5f},
                         0.0f, WHITE);
                 }
             }

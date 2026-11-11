@@ -31,7 +31,7 @@ int main()
     InitWindow(screenWidth, screenHeight, "raylib [shapes] example - math angle rotation");
     SetTargetFPS(60);
 
-    const Vector2 center = { screenWidth/2.0f, screenHeight/2.0f };
+    const glm::vec2 center = { screenWidth/2.0f, screenHeight/2.0f };
     constexpr float lineLength = 150.0f;
 
     // Predefined angles for fixed lines
@@ -61,7 +61,7 @@ int main()
             for (int i = 0; i < numAngles; i++)
             {
                 const float rad = angles[i]*DEG2RAD;
-                const Vector2 end = { center.x + cosf(rad)*lineLength,
+                const glm::vec2 end = { center.x + cosf(rad)*lineLength,
                                 center.y + sinf(rad)*lineLength };
 
                 // Gradient color from green → cyan → blue → magenta
@@ -78,14 +78,14 @@ int main()
                 DrawLineEx(center, end, 5.0f, col);
 
                 // Draw angle label slightly offset along the line
-                const Vector2 textPos = { center.x + cosf(rad)*(lineLength + 20),
+                const glm::vec2 textPos = { center.x + cosf(rad)*(lineLength + 20),
                                     center.y + sinf(rad)*(lineLength + 20) };
                 DrawText(TextFormat("%d°", angles[i]), static_cast<int>(textPos.x), static_cast<int>(textPos.y), 20, col);
             }
 
             // Draw animated rotating line with changing color
             const float animRad = totalAngle*DEG2RAD;
-            const Vector2 animEnd = { center.x + cosf(animRad)*lineLength,
+            const glm::vec2 animEnd = { center.x + cosf(animRad)*lineLength,
                                 center.y + sinf(animRad)*lineLength };
 
             // Cycle through HSV colors for animated line

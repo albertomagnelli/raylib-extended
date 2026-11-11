@@ -11,7 +11,7 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
 - Vendored `src/external/*` compile as C++ with warning fixes only — no rewrites.
 
 ## Names
-- Global PascalCase API stays: `DrawTexture()`, `Vector3`, `rlEnableDepthTest()` … no namespaces, no classes-as-API.
+- Global PascalCase API stays: `DrawTexture()`, `Quaternion`, `rlEnableDepthTest()` … no namespaces, no classes-as-API.
 - Plain `enum`s stay (not `enum class`).
 
 ## C++ vocabulary
@@ -22,8 +22,8 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
 - Prefer `std::string_view` / `std::string` over `const char *` (see the Text APIs entry below).
 
 ## Types & math
-- The math types are glm: `Vector2 = glm::vec2`, `Vector3 = glm::vec3`, `Vector4 = glm::vec4`,
-  `Quaternion = glm::quat`, `Matrix = glm::mat4`. `Color` and `Rectangle` are plain structs with
+- The math types are glm: vectors are used as `glm::vec2`, `glm::vec3` and `glm::vec4` directly
+  (no raylib aliases), `Quaternion = glm::quat`, `Matrix = glm::mat4`. `Color` and `Rectangle` are plain structs with
   constructors (defaulted components keep the old C partial-init semantics: `Color c = { 255 }`).
 - New code uses glm vocabulary directly: `a + b`, `glm::normalize(v)`, `glm::cross(a, b)`,
   `glm::lookAt(...)`, `q * v`, `m * v`, `glm::inverse(m)`.
@@ -37,7 +37,7 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
 - **Multiplication order**: raylib's `MatrixMultiply(A, B)` means "apply A, then B", i.e. glm
   `B * A`. Do not translate it to `A * B`.
 - Quaternions are glm `(w, x, y, z)`. glTF/binary data is `(x, y, z, w)` and must be reordered on load.
-- No compound literals in `.cpp` files: `(Vector2){ 1, 2 }` → `Vector2{ 1, 2 }`.
+- No compound literals in `.cpp` files: `(glm::vec2){ 1, 2 }` → `glm::vec2{ 1, 2 }`.
   `CLITERAL(Color){ ... }` still expands to `Color{ ... }` for the color macros.
 
 ## Memory & resources
@@ -51,7 +51,7 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
   arguments passed through them need `.c_str()`.
 
 ## Examples
-- `int main()` (no `(void)`), constructor-init for structs, `Vector2{}` literals,
+- `int main()` (no `(void)`), constructor-init for structs, `glm::vec2{}` literals,
   `const` locals kept as-is. One file per example, `.cpp` extension.
 - Text is passed as string literals or `std::string`; APIs accept `std::string_view`, so no
   `.c_str()` is needed for normal calls. Only varargs (`TextFormat`, `TraceLog`) need it.

@@ -47,9 +47,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ -125.0f, 125.0f, -125.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };              // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };                  // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ -125.0f, 125.0f, -125.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };            // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };                // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                        // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;                     // Camera projection type
 
@@ -62,8 +62,8 @@ int main()
     // Translate and rotate cubes randomly
     for (int i = 0; i < MAX_INSTANCES; i++)
     {
-        const Matrix translation = glm::translate(Matrix(1.0f), Vector3{static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50))});
-        const Vector3 axis = glm::normalize(Vector3{ static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)) });
+        const Matrix translation = glm::translate(Matrix(1.0f), glm::vec3{static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50)), static_cast<float>(GetRandomValue(-50, 50))});
+        const glm::vec3 axis = glm::normalize(glm::vec3{ static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)), static_cast<float>(GetRandomValue(0, 360)) });
         const float angle = static_cast<float>(GetRandomValue(0, 180))*DEG2RAD;
         const Matrix rotation = glm::rotate(Matrix(1.0f), angle, axis);
 
@@ -82,7 +82,7 @@ int main()
     SetShaderValue(shader, ambientLoc, std::initializer_list<float>{ 0.2f, 0.2f, 0.2f, 1.0f }.begin(), SHADER_UNIFORM_VEC4);
 
     // Create one light
-    CreateLight(LIGHT_DIRECTIONAL, Vector3{ 50.0f, 50.0f, 0.0f }, Vector3{}, WHITE, shader);
+    CreateLight(LIGHT_DIRECTIONAL, glm::vec3{ 50.0f, 50.0f, 0.0f }, glm::vec3{}, WHITE, shader);
 
     // NOTE: We are assigning the intancing shader to material.shader
     // to be used on mesh drawing with DrawMeshInstanced()
@@ -120,7 +120,7 @@ int main()
             BeginMode3D(camera);
 
                 // Draw cube mesh with default material (BLUE)
-                DrawMesh(cube, matDefault, glm::translate(Matrix(1.0f), Vector3{-10.0f, 0.0f, 0.0f}));
+                DrawMesh(cube, matDefault, glm::translate(Matrix(1.0f), glm::vec3{-10.0f, 0.0f, 0.0f}));
 
                 // Draw meshes instanced using material containing instancing shader (RED + lighting),
                 // transforms[] for the instances should be provided, they are dynamically
@@ -128,7 +128,7 @@ int main()
                 DrawMeshInstanced(cube, matInstances, transforms, MAX_INSTANCES);
 
                 // Draw cube mesh with default material (BLUE)
-                DrawMesh(cube, matDefault, glm::translate(Matrix(1.0f), Vector3{10.0f, 0.0f, 0.0f}));
+                DrawMesh(cube, matDefault, glm::translate(Matrix(1.0f), glm::vec3{10.0f, 0.0f, 0.0f}));
 
             EndMode3D();
 

@@ -27,7 +27,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input mouse");
 
-    Vector2 ballPosition = { -100.0f, -100.0f };
+    glm::vec2 ballPosition = { -100.0f, -100.0f };
     Color ballColor = DARKBLUE;
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second

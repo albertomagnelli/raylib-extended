@@ -40,15 +40,15 @@ int main()
     constexpr float clockFaceSpacing = 8.0f;
     constexpr float sectionSpacing = 16.0f;
 
-    const Vector2 TL = Vector2{   0.0f,  90.0f }; // Top-left corner
-    const Vector2 TR = Vector2{  90.0f, 180.0f }; // Top-right corner
-    const Vector2 BR = Vector2{ 180.0f, 270.0f }; // Bottom-right corner
-    const Vector2 BL = Vector2{   0.0f, 270.0f }; // Bottom-left corner
-    const Vector2 HH = Vector2{   0.0f, 180.0f }; // Horizontal line
-    const Vector2 VV = Vector2{  90.0f, 270.0f }; // Vertical line
-    const Vector2 ZZ = Vector2{ 135.0f, 135.0f }; // Not relevant
+    const glm::vec2 TL = glm::vec2{   0.0f,  90.0f }; // Top-left corner
+    const glm::vec2 TR = glm::vec2{  90.0f, 180.0f }; // Top-right corner
+    const glm::vec2 BR = glm::vec2{ 180.0f, 270.0f }; // Bottom-right corner
+    const glm::vec2 BL = glm::vec2{   0.0f, 270.0f }; // Bottom-left corner
+    const glm::vec2 HH = glm::vec2{   0.0f, 180.0f }; // Horizontal line
+    const glm::vec2 VV = glm::vec2{  90.0f, 270.0f }; // Vertical line
+    const glm::vec2 ZZ = glm::vec2{ 135.0f, 135.0f }; // Not relevant
 
-    const Vector2 digitAngles[10][24] = {
+    const glm::vec2 digitAngles[10][24] = {
         /* 0 */ { TL,HH,HH,TR, /* */ VV,TL,TR,VV,/* */ VV,VV,VV,VV,/* */ VV,VV,VV,VV,/* */ VV,BL,BR,VV,/* */ BL,HH,HH,BR },
         /* 1 */ { TL,HH,TR,ZZ, /* */ BL,TR,VV,ZZ,/* */ ZZ,VV,VV,ZZ,/* */ ZZ,VV,VV,ZZ,/* */ TL,BR,BL,TR,/* */ BL,HH,HH,BR },
         /* 2 */ { TL,HH,HH,TR, /* */ BL,HH,TR,VV,/* */ TL,HH,BR,VV,/* */ VV,TL,HH,BR,/* */ VV,BL,HH,TR,/* */ BL,HH,HH,BR },
@@ -65,9 +65,9 @@ int main()
     constexpr float handsMoveDuration = 0.5f;
 
     int prevSeconds = -1;
-    Vector2 currentAngles[6][24] = {};
-    Vector2 srcAngles[6][24] = {};
-    Vector2 dstAngles[6][24] = {};
+    glm::vec2 currentAngles[6][24] = {};
+    glm::vec2 srcAngles[6][24] = {};
+    glm::vec2 dstAngles[6][24] = {};
 
     float handsMoveTimer = 0.0f;
     int hourMode = 24;
@@ -156,7 +156,7 @@ int main()
                 {
                     for (int col = 0; col < 4; col++)
                     {
-                        const Vector2 centre = Vector2{
+                        const glm::vec2 centre = glm::vec2{
                             xOffset + col*(clockFaceSize+clockFaceSpacing) + clockFaceSize*0.5f,
                             100 + row*(clockFaceSize+clockFaceSpacing) + clockFaceSize*0.5f
                         };
@@ -166,7 +166,7 @@ int main()
                         // Big hand
                         DrawRectanglePro(
                             Rectangle{centre.x, centre.y, clockFaceSize*0.5f + 4.0f, 4.0f},
-                            Vector2{ 2.0f, 2.0f },
+                            glm::vec2{ 2.0f, 2.0f },
                             currentAngles[digit][row*4+col].x,
                             handsColor
                         );
@@ -174,7 +174,7 @@ int main()
                         // Little hand
                         DrawRectanglePro(
                             Rectangle{centre.x, centre.y, clockFaceSize*0.5f + 2.0f, 4.0f},
-                            Vector2{ 2.0f, 2.0f },
+                            glm::vec2{ 2.0f, 2.0f },
                             currentAngles[digit][row*4 + col].y,
                             handsColor
                         );
@@ -184,8 +184,8 @@ int main()
                 xOffset += (clockFaceSize+clockFaceSpacing)*4;
                 if ((digit%2) == 1)
                 {
-                    DrawRing(Vector2{xOffset + 4.0f, 160.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
-                    DrawRing(Vector2{xOffset + 4.0f, 225.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
+                    DrawRing(glm::vec2{xOffset + 4.0f, 160.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
+                    DrawRing(glm::vec2{xOffset + 4.0f, 225.0f}, 6.0f, 8.0f, 0.0f, 360.0f, 24, handsColor);
                     xOffset += sectionSpacing;
                 }
             }

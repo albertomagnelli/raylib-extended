@@ -173,8 +173,8 @@ int main()
     Font fontAsian = LoadFont("resources/noto_cjk.fnt"); // Requires "resources/noto_cjk.png"
     const Font fontEmoji = LoadFont("resources/symbola.fnt"); // Requires "resources/symbola.png"
 
-    Vector2 hoveredPos = { 0.0f, 0.0f };
-    Vector2 selectedPos = { 0.0f, 0.0f };
+    glm::vec2 hoveredPos = { 0.0f, 0.0f };
+    glm::vec2 selectedPos = { 0.0f, 0.0f };
 
     // Set a random set of emojis when starting up
     RandomizeEmoji();
@@ -197,8 +197,8 @@ int main()
             selectedPos = hoveredPos;
         }
 
-        const Vector2 mouse = GetMousePosition();
-        Vector2 position = { 28.8f, 10.0f };
+        const glm::vec2 mouse = GetMousePosition();
+        glm::vec2 position = { 28.8f, 10.0f };
         hovered = -1;
         //----------------------------------------------------------------------------------
 
@@ -245,7 +245,7 @@ int main()
                     TextIsEqual(messages[message].language, "Japanese")) font = &fontAsian;
 
                 // Calculate size for the message box (approximate the height and width)
-                Vector2 sz = MeasureTextEx(*font, messages[message].text, static_cast<float>(font->baseSize), 1.0f);
+                glm::vec2 sz = MeasureTextEx(*font, messages[message].text, static_cast<float>(font->baseSize), 1.0f);
                 if (sz.x > 300) { sz.y *= sz.x/300; sz.x = 300; }
                 else if (sz.x < 160) sz.x = 160;
 
@@ -253,7 +253,7 @@ int main()
                 msgRect.y -= msgRect.height;
 
                 // Coordinates for the chat bubble triangle
-                Vector2 a = { selectedPos.x, msgRect.y + msgRect.height }, b = {a.x + 8, a.y + 10}, c= { a.x + 10, a.y };
+                glm::vec2 a = { selectedPos.x, msgRect.y + msgRect.height }, b = {a.x + 8, a.y + 10}, c= { a.x + 10, a.y };
 
                 // Don't go outside the screen
                 if (msgRect.x < 10) msgRect.x += 28;
@@ -265,7 +265,7 @@ int main()
                     b.y = a.y - 10;
 
                     // Swap values so we can actually render the triangle :(
-                    const Vector2 tmp = a;
+                    const glm::vec2 tmp = a;
                     a = b;
                     b = tmp;
                 }
@@ -447,7 +447,7 @@ static void DrawTextBoxedSelectable(Font font, const char *text, Rectangle rec, 
                 // Draw current character glyph
                 if ((codepoint != ' ') && (codepoint != '\t'))
                 {
-                    DrawTextCodepoint(font, codepoint, Vector2{ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
+                    DrawTextCodepoint(font, codepoint, glm::vec2{ rec.x + textOffsetX, rec.y + textOffsetY }, fontSize, isGlyphSelected? selectTint : tint);
                 }
             }
 

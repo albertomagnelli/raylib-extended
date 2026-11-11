@@ -29,7 +29,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [core] example - input gestures");
 
-    Vector2 touchPosition = { 0, 0 };
+    glm::vec2 touchPosition = { 0, 0 };
     const Rectangle touchArea = { 220, 10, screenWidth - 230.0f, screenHeight - 20.0f };
 
     int gesturesCount = 0;

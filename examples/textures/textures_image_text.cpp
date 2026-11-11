@@ -39,12 +39,12 @@ int main()
     UnloadCodepoints(codepoints);
 
     // Draw over image using custom font
-    ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", Vector2{ 20.0f, 20.0f }, static_cast<float>(font.baseSize), 0.0f, RED);
+    ImageDrawTextEx(&parrots, font, "[Parrots font drawing]", glm::vec2{ 20.0f, 20.0f }, static_cast<float>(font.baseSize), 0.0f, RED);
 
     const Texture2D texture = LoadTextureFromImage(parrots);  // Image converted to texture, uploaded to GPU memory (VRAM)
     UnloadImage(parrots);   // Once image has been converted to texture and uploaded to VRAM, it can be unloaded from RAM
 
-    const Vector2 position = { static_cast<float>(screenWidth)/2 - static_cast<float>(texture.width)/2, static_cast<float>(screenHeight)/2 - static_cast<float>(texture.height)/2 - 20 };
+    const glm::vec2 position = { static_cast<float>(screenWidth)/2 - static_cast<float>(texture.width)/2, static_cast<float>(screenHeight)/2 - static_cast<float>(texture.height)/2 - 20 };
 
     bool showFont = false;
 
@@ -72,7 +72,7 @@ int main()
                 DrawTextureV(texture, position, WHITE);
 
                 // Draw text directly using sprite font
-                DrawTextEx(font, "[Parrots font drawing]", Vector2{ position.x + 20,
+                DrawTextEx(font, "[Parrots font drawing]", glm::vec2{ position.x + 20,
                            position.y + 20 + 280 }, static_cast<float>(font.baseSize), 0.0f, WHITE);
             }
             else
@@ -88,7 +88,7 @@ int main()
                 const float width = static_cast<float>(font.texture.width) * scale;
                 const float height = static_cast<float>(font.texture.height) * scale;
 
-                DrawTextureEx(font.texture, Vector2{ (static_cast<float>(screenWidth) - width)/2, (static_cast<float>(screenHeight) - height)/2 }, 0, scale, BLACK);
+                DrawTextureEx(font.texture, glm::vec2{ (static_cast<float>(screenWidth) - width)/2, (static_cast<float>(screenHeight) - height)/2 }, 0, scale, BLACK);
             }
 
             DrawText("PRESS SPACE to SHOW FONT ATLAS USED", 290, 420, 10, DARKGRAY);

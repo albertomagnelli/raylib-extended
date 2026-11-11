@@ -50,9 +50,9 @@ int main()
 
     // Define the camera to look into our 3d world
     Camera camera = {};
-    camera.position = Vector3{ 4.0f, 6.0f, 8.0f };    // Camera position
-    camera.target = Vector3{ 0.0f, 0.0f, 0.0f };      // Camera looking at point
-    camera.up = Vector3{ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.position = glm::vec3{ 4.0f, 6.0f, 8.0f };  // Camera position
+    camera.target = glm::vec3{ 0.0f, 0.0f, 0.0f };    // Camera looking at point
+    camera.up = glm::vec3{ 0.0f, 1.0f, 0.0f };        // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
@@ -102,7 +102,7 @@ int main()
                 light,
                 Rectangle{ 0, 0, static_cast<float>(light.width), static_cast<float>(light.height) },
                 Rectangle{ 0, 0, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
-                Vector2{ static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
+                glm::vec2{ static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
                 0.0,
                 RED
             );
@@ -110,7 +110,7 @@ int main()
                 light,
                 Rectangle{ 0, 0, static_cast<float>(light.width), static_cast<float>(light.height) },
                 Rectangle{ static_cast<float>(MAP_SIZE)*0.8f, static_cast<float>(MAP_SIZE)/2.0f, 2.0f*MAP_SIZE, 2.0f*MAP_SIZE },
-                Vector2{ static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
+                glm::vec2{ static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
                 0.0,
                 BLUE
             );
@@ -118,7 +118,7 @@ int main()
                 light,
                 Rectangle{ 0, 0, static_cast<float>(light.width), static_cast<float>(light.height) },
                 Rectangle{ static_cast<float>(MAP_SIZE)*0.8f, static_cast<float>(MAP_SIZE)*0.8f, static_cast<float>(MAP_SIZE), static_cast<float>(MAP_SIZE) },
-                Vector2{ static_cast<float>(MAP_SIZE)/2.0f, static_cast<float>(MAP_SIZE)/2.0f },
+                glm::vec2{ static_cast<float>(MAP_SIZE)/2.0f, static_cast<float>(MAP_SIZE)/2.0f },
                 0.0,
                 GREEN
             );
@@ -152,7 +152,7 @@ int main()
 
             DrawTexturePro(lightmap.texture, Rectangle{ 0, 0, -MAP_SIZE, -MAP_SIZE },
                 Rectangle{ static_cast<float>(GetRenderWidth()) - MAP_SIZE*8 - 10, 10, static_cast<float>(MAP_SIZE)*8, static_cast<float>(MAP_SIZE)*8 },
-                Vector2{ 0.0, 0.0 }, 0.0, WHITE);
+                glm::vec2{ 0.0, 0.0 }, 0.0, WHITE);
 
             DrawText(TextFormat("LIGHTMAP: %ix%i pixels", MAP_SIZE, MAP_SIZE), GetRenderWidth() - 130, 20 + MAP_SIZE*8, 10, GREEN);
 

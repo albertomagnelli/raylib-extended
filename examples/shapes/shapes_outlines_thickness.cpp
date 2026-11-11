@@ -62,7 +62,7 @@ int main()
             DrawText("DrawRectangleRoundedLinesEx()", 290, 160, 10, BLACK);
 
             DrawCircle(655, 290, 110, LIGHTGRAY);
-            DrawCircleLinesEx(Vector2{ 655, 290 }, 110, thick, BLUE);
+            DrawCircleLinesEx(glm::vec2{ 655, 290 }, 110, thick, BLUE);
             DrawText("DrawCircleLinesEx()", 545, 160, 10, BLACK);
 
         EndDrawing();

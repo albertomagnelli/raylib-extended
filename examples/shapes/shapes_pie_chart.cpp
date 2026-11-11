@@ -48,7 +48,7 @@ int main()
     bool showDonut = false;
     int hoveredSlice = -1;
     Rectangle scrollPanelBounds = {};
-    Vector2 scrollContentOffset = {};
+    glm::vec2 scrollContentOffset = {};
     Rectangle view = {};
 
     // UI layout parameters
@@ -56,7 +56,7 @@ int main()
     constexpr int panelMargin = 5;
 
     // UI Panel top-left anchor
-    const Vector2 panelPos = {
+    const glm::vec2 panelPos = {
         static_cast<float>(screenWidth) - panelMargin - panelWidth,
         static_cast<float>(panelMargin)
     };
@@ -70,7 +70,7 @@ int main()
 
     // Pie chart geometry
     const Rectangle canvas = { 0, 0, panelPos.x, static_cast<float>(screenHeight) };
-    const Vector2 center = { canvas.width/2.0f, canvas.height/2.0f };
+    const glm::vec2 center = { canvas.width/2.0f, canvas.height/2.0f };
     constexpr float radius = 205.0f;
 
     // Total value for percentage calculations
@@ -93,7 +93,7 @@ int main()
 
         // Check for mouse hover over slices
         hoveredSlice = -1; // Reset hovered slice
-        const Vector2 mousePos = GetMousePosition();
+        const glm::vec2 mousePos = GetMousePosition();
 
         if (CheckCollisionPointRec(mousePos, canvas)) // Only check if mouse is inside the canvas
         {
@@ -154,9 +154,9 @@ int main()
                     else if (showPercentages) snprintf(labelText, 64, "%.0f%%", (values[i]/totalValue)*100.0f);
                     else labelText[0] = '\0';
 
-                    const Vector2 textSize = MeasureTextEx(GetFontDefault(), labelText, 20, 1);
+                    const glm::vec2 textSize = MeasureTextEx(GetFontDefault(), labelText, 20, 1);
                     const float labelRadius = showDonut? (donutInnerRadius + radius)/2.0f : radius*0.7f;
-                    const Vector2 labelPos = { center.x + cosf(midAngle*DEG2RAD)*labelRadius - textSize.x/2.0f,
+                    const glm::vec2 labelPos = { center.x + cosf(midAngle*DEG2RAD)*labelRadius - textSize.x/2.0f,
                         center.y + sinf(midAngle*DEG2RAD)*labelRadius - textSize.y/2.0f };
                     DrawText(labelText, static_cast<int>(labelPos.x), static_cast<int>(labelPos.y), 20, WHITE);
                 }
