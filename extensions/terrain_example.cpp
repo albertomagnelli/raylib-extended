@@ -698,6 +698,45 @@ static void ExportHeightmapPng(const HeightmapData &heightmap, const char *fileN
     printf("INFO  heightmap exported: %s (%ix%i px)\n", fileName, heightmap.size, heightmap.size);
 }
 
+#define HUD_FONT_SIZE       22              // HUD font height in pixels
+
+// The default 10 pixel bitmap font looks blocky when it is scaled up, so a real TTF is tried first
+static Font LoadHudFont()
+{
+    static const char *candidates[] = {
+        "../examples/text/resources/anonymous_pro_bold.ttf",
+        "examples/text/resources/anonymous_pro_bold.ttf",
+        "resources/anonymous_pro_bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"
+    };
+
+    for (const char *path : candidates)
+    {
+        if (!FileExists(path)) continue;
+
+        Font font = LoadFontEx(path, HUD_FONT_SIZE, nullptr, 0);
+
+        if (!IsFontValid(font)) continue;
+
+        SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
+        printf("INFO  HUD font: %s at %i px\n", path, HUD_FONT_SIZE);
+
+        return font;
+    }
+
+    Font font = GetFontDefault();
+    SetTextureFilter(font.texture, TEXTURE_FILTER_BILINEAR);
+
+    printf("INFO  HUD font: default bitmap font (no TTF found)\n");
+
+    return font;
+}
+
+static void DrawHudText(const Font &font, const std::string_view text, const f32 x, const f32 y, const Color color)
+{
+    DrawTextEx(font, text, vec2{ x, y }, HUD_FONT_SIZE, 1.0f, color);
+}
+
 // Print a self check line and count the failures
 static i32 checkFailures = 0;
 static void PrintCheck(const bool ok, const char *format, ...)
@@ -750,6 +789,8 @@ i32 main(const i32 argc, char **argv)
         CloseWindow();
         return EXIT_FAILURE;
     }
+
+    const Font hudFont = LoadHudFont();
 
     std::mt19937 random(4242);
     std::uniform_real_distribution<f32> uniformOffset(-500.0f, 500.0f);
@@ -980,17 +1021,20 @@ i32 main(const i32 argc, char **argv)
             rlDisableDepthTest();
 
             // HUD
-            DrawText(TextFormat("%.2f ms/frame (%.0f fps)", frameTimeMs, (frameTimeMs > 0.0f)? 1000.0f/frameTimeMs : 0.0f), 20, 20, 20, RAYWHITE);
-            DrawText(TextFormat("heightmap %ix%i   octaves %i   erosion %i passes   generated in %.0f ms",
+            DrawRectangle(10, 10, 1180, 176, Color{ 0, 0, 0, 90 });
+            DrawRectangle(10, screenHeight - 52, 1250, 34, Color{ 0, 0, 0, 90 });
+
+            DrawHudText(hudFont, TextFormat("%.2f ms/frame (%.0f fps)", frameTimeMs, (frameTimeMs > 0.0f)? 1000.0f/frameTimeMs : 0.0f), 20.0f, 20.0f, RAYWHITE);
+            DrawHudText(hudFont, TextFormat("heightmap %ix%i   octaves %i   erosion %i passes   generated in %.0f ms",
                                 heightmap.size, heightmap.size, OCTAVE_COUNT, EROSION_ITERATIONS, static_cast<double>(heightmap.generationMilliseconds)),
-                     20, 52, 20, RAYWHITE);
-            DrawText(TextFormat("height min %.3f  max %.3f  mean %.3f  deviation %.3f", heightmap.minimum, heightmap.maximum, heightmap.mean, heightmap.deviation), 20, 78, 20, LIGHTGRAY);
-            DrawText(TextFormat("grid %ix%i quads = %u triangles   height scale %.0f   terrace basin + %i levels, mountain rim",
-                                GRID_QUADS, GRID_QUADS, grid.indexCount/3, TERRAIN_HEIGHT, 7), 20, 104, 20, LIGHTGRAY);
-            DrawText(TextFormat("view: %s", (debugView == 0)? "shaded" : ((debugView == 1)? "heightmap" : "normals")), 20, 130, 20, LIGHTGRAY);
-            DrawText(TextFormat("camera %.0f / %.0f / %.0f   altitude above terrain %.0f   speed %.0f",
-                                cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraPosition.y - terrainHeight, flightSpeed), 20, 156, 20, LIGHTGRAY);
-            DrawText("WASD: fly, E/Q: up/down, RMB: look, wheel: speed, T: view, F: wireframe, K: save heightmap PNG, G: regenerate, R: reset", 20, screenHeight - 40, 20, DARKGRAY);
+                     20.0f, 48.0f, RAYWHITE);
+            DrawHudText(hudFont, TextFormat("height min %.3f  max %.3f  mean %.3f  deviation %.3f", heightmap.minimum, heightmap.maximum, heightmap.mean, heightmap.deviation), 20.0f, 76.0f, LIGHTGRAY);
+            DrawHudText(hudFont, TextFormat("grid %ix%i quads = %u triangles   height scale %.0f   terrace basin + %i levels, mountain rim",
+                                GRID_QUADS, GRID_QUADS, grid.indexCount/3, TERRAIN_HEIGHT, 7), 20.0f, 104.0f, LIGHTGRAY);
+            DrawHudText(hudFont, TextFormat("view: %s", (debugView == 0)? "shaded" : ((debugView == 1)? "heightmap" : "normals")), 20.0f, 132.0f, LIGHTGRAY);
+            DrawHudText(hudFont, TextFormat("camera %.0f / %.0f / %.0f   altitude above terrain %.0f   speed %.0f",
+                                cameraPosition.x, cameraPosition.y, cameraPosition.z, cameraPosition.y - terrainHeight, flightSpeed), 20.0f, 160.0f, LIGHTGRAY);
+            DrawHudText(hudFont, "WASD: fly, E/Q: up/down, RMB: look, wheel: speed, T: view, F: wireframe, K: save PNG, G: regenerate, R: reset", 20.0f, static_cast<f32>(screenHeight) - 42.0f, LIGHTGRAY);
 
             if (autoMode && ((frame%15) == 0))
             {

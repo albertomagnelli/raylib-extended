@@ -60,3 +60,12 @@ target_link_libraries(terrain_example PRIVATE raylib)
 
 set_target_properties(terrain_example PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+
+# Skydome example, day/night sky with drifting clouds and a rotating star field (needs OPENGL_VERSION 4.3 or 4.6)
+add_executable(skydome_example skydome_example.cpp)
+
+target_include_directories(skydome_example PRIVATE "${CMAKE_CURRENT_LIST_DIR}")
+target_link_libraries(skydome_example PRIVATE raylib glm::glm)
+
+set_target_properties(skydome_example PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
