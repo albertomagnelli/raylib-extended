@@ -615,7 +615,7 @@ void SetWindowSamples(i32 samples)
 {
     if (CORE.Window.ready)
     {
-        logMessage(LogLevel::warn, "WINDOW: MSAA samples can only be configured before window initialization");
+        LogWarning("WINDOW: MSAA samples can only be configured before window initialization");
         return;
     }
 
@@ -655,7 +655,7 @@ static void UpdateWindowProvidedSamples()
     glGetIntegerv(GL_SAMPLES, &providedSamples);
     CORE.Window.samples = providedSamples;
 
-    if (providedSamples < requestedSamples) logMessage(LogLevel::warn, std::format("DISPLAY: Graphics device only provided MSAA x{}", providedSamples));
+    if (providedSamples < requestedSamples) LogWarning("DISPLAY: Graphics device only provided MSAA x{}", providedSamples);
 #else
     // MSAA is not supported by this graphics API
     CORE.Window.samples = 0;
@@ -668,57 +668,57 @@ void InitWindow(i32 width, i32 height, std::string_view titleView)
     const std::string titleStr(titleView);
     const char *title = titleStr.c_str();
 
-    logMessage(LogLevel::info, std::format("Initializing raylib {}", RAYLIB_VERSION));
+    LogInfo("Initializing raylib {}", RAYLIB_VERSION);
 
 #if defined(PLATFORM_DESKTOP_GLFW)
-    logMessage(LogLevel::info, "Platform backend: DESKTOP (GLFW)");
+    LogInfo("Platform backend: DESKTOP (GLFW)");
 #elif defined(PLATFORM_DESKTOP_SDL)
-    logMessage(LogLevel::info, "Platform backend: DESKTOP (SDL)");
+    LogInfo("Platform backend: DESKTOP (SDL)");
 #elif defined(PLATFORM_DESKTOP_RGFW)
-    logMessage(LogLevel::info, "Platform backend: DESKTOP (RGFW)");
+    LogInfo("Platform backend: DESKTOP (RGFW)");
 #elif defined(PLATFORM_DESKTOP_WIN32)
-    logMessage(LogLevel::info, "Platform backend: DESKTOP (WIN32)");
+    LogInfo("Platform backend: DESKTOP (WIN32)");
 #elif defined(PLATFORM_WEB_RGFW)
-    logMessage(LogLevel::info, "Platform backend: WEB (RGFW) (HTML5)");
+    LogInfo("Platform backend: WEB (RGFW) (HTML5)");
 #elif defined(PLATFORM_WEB)
-    logMessage(LogLevel::info, "Platform backend: WEB (HTML5)");
+    LogInfo("Platform backend: WEB (HTML5)");
 #elif defined(PLATFORM_DRM)
-    logMessage(LogLevel::info, "Platform backend: NATIVE DRM");
+    LogInfo("Platform backend: NATIVE DRM");
 #elif defined(PLATFORM_ANDROID)
-    logMessage(LogLevel::info, "Platform backend: ANDROID");
+    LogInfo("Platform backend: ANDROID");
 #elif defined(PLATFORM_MEMORY)
-    logMessage(LogLevel::info, "Platform backend: MEMORY (No OS)");
+    LogInfo("Platform backend: MEMORY (No OS)");
 #else
-    logMessage(LogLevel::info, "Platform backend: CUSTOM");
+    LogInfo("Platform backend: CUSTOM");
 #endif
 
-    logMessage(LogLevel::info, "Supported raylib modules:");
-    logMessage(LogLevel::info, "    > rcore:..... loaded (mandatory)");
-    logMessage(LogLevel::info, "    > rlgl:...... loaded (mandatory)");
+    LogInfo("Supported raylib modules:");
+    LogInfo("    > rcore:..... loaded (mandatory)");
+    LogInfo("    > rlgl:...... loaded (mandatory)");
 #if SUPPORT_MODULE_RSHAPES
-    logMessage(LogLevel::info, "    > rshapes:... loaded (optional)");
+    LogInfo("    > rshapes:... loaded (optional)");
 #else
-    logMessage(LogLevel::info, "    > rshapes:... not loaded (optional)");
+    LogInfo("    > rshapes:... not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RTEXTURES
-    logMessage(LogLevel::info, "    > rtextures:. loaded (optional)");
+    LogInfo("    > rtextures:. loaded (optional)");
 #else
-    logMessage(LogLevel::info, "    > rtextures:. not loaded (optional)");
+    LogInfo("    > rtextures:. not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RTEXT
-    logMessage(LogLevel::info, "    > rtext:..... loaded (optional)");
+    LogInfo("    > rtext:..... loaded (optional)");
 #else
-    logMessage(LogLevel::info, "    > rtext:..... not loaded (optional)");
+    LogInfo("    > rtext:..... not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RMODELS
-    logMessage(LogLevel::info, "    > rmodels:... loaded (optional)");
+    LogInfo("    > rmodels:... loaded (optional)");
 #else
-    logMessage(LogLevel::info, "    > rmodels:... not loaded (optional)");
+    LogInfo("    > rmodels:... not loaded (optional)");
 #endif
 #if SUPPORT_MODULE_RAUDIO
-    logMessage(LogLevel::info, "    > raudio:.... loaded (optional)");
+     LogInfo("    > raudio:.... loaded (optional)");
 #else
-    logMessage(LogLevel::info, "    > raudio:.... not loaded (optional)");
+    LogInfo("    > raudio:.... not loaded (optional)");
 #endif
 
     // Initialize window data
@@ -745,7 +745,7 @@ void InitWindow(i32 width, i32 height, std::string_view titleView)
 
     if (result != 0)
     {
-        logMessage(LogLevel::warn, "SYSTEM: Failed to initialize platform");
+        LogWarning("SYSTEM: Failed to initialize platform");
         return;
     }
 
@@ -809,7 +809,7 @@ void InitWindow(i32 width, i32 height, std::string_view titleView)
     SetRandomSeed(get_rand_32());
 #endif
 
-    logMessage(LogLevel::info, std::format("SYSTEM: Working Directory: {}", GetWorkingDirectory().c_str()));
+    LogInfo("SYSTEM: Working Directory: {}", GetWorkingDirectory().c_str());
 }
 
 // Close window and unload OpenGL context
@@ -829,7 +829,7 @@ void CloseWindow()
     // Clear CORE data, in case new window is initialized
     CORE = CoreData{};
     
-    logMessage(LogLevel::info, "Window closed successfully");
+    LogInfo("Window closed successfully");
 }
 
 // Check if window has been initialized successfully
@@ -1287,7 +1287,7 @@ VrStereoConfig LoadVrStereoConfig(const VrDeviceInfo device)
         config.eyeViewportLeft[3] = device.vResolution;
         */
     }
-    else logMessage(LogLevel::warn, "RLGL: VR Simulator not supported on OpenGL 1.1");
+    else LogWarning("RLGL: VR Simulator not supported on OpenGL 1.1");
 
     return config;
 }
@@ -1295,7 +1295,7 @@ VrStereoConfig LoadVrStereoConfig(const VrDeviceInfo device)
 // Unload VR stereo config properties
 void UnloadVrStereoConfig(const VrStereoConfig config)
 {
-    logMessage(LogLevel::info, "UnloadVrStereoConfig not implemented in rcore.c");
+    LogInfo("UnloadVrStereoConfig not implemented in rcore.c");
 }
 
 //----------------------------------------------------------------------------------
@@ -1314,7 +1314,7 @@ Shader LoadShader(std::string_view vsFileNameView, std::string_view fsFileNameVi
     if (!vsFileNameView.empty()) vShaderStr = LoadFileText(vsFileNameView);
     if (!fsFileNameView.empty()) fShaderStr = LoadFileText(fsFileNameView);
 
-    if (vShaderStr.empty() && fShaderStr.empty()) logMessage(LogLevel::warn, "SHADER: Shader files provided are not valid, using default shader");
+    if (vShaderStr.empty() && fShaderStr.empty()) LogWarning("SHADER: Shader files provided are not valid, using default shader");
 
     shader = LoadShaderFromMemory(vShaderStr, fShaderStr);
 
@@ -1678,7 +1678,7 @@ void SetTargetFPS(const i32 fps)
     if (fps < 1) CORE.Time.target = 0.0;
     else CORE.Time.target = 1.0/static_cast<f64>(fps);
 
-    logMessage(LogLevel::info, std::format("TIMER: Target time per frame: {:02.03f} milliseconds", static_cast<f32>(CORE.Time.target)*1000.0f));
+    LogInfo("TIMER: Target time per frame: {:02.03f} milliseconds", static_cast<f32>(CORE.Time.target)*1000.0f);
 }
 
 // Get current FPS
@@ -1828,7 +1828,7 @@ i32 GetRandomValue(i32 min, i32 max)
     // NOTE: Depending on the library it can be as low as 32767
     if (static_cast<u32>((max - min)) > static_cast<u32>(RAND_MAX))
     {
-        logMessage(LogLevel::warn, std::format("Invalid GetRandomValue() arguments, range should not be higher than {}", RAND_MAX));
+        LogWarning(std::format("Invalid GetRandomValue() arguments, range should not be higher than {}", RAND_MAX));
     }
 
     // NOTE: This one-line approach produces a non-uniform distribution,
@@ -1920,7 +1920,7 @@ void TakeScreenshot(std::string_view fileNameView)
 
 #if SUPPORT_MODULE_RTEXTURES
     // Security check to (partially) avoid malicious code
-    if (strchr(fileName, '\'') != nullptr) { logMessage(LogLevel::warn, "SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
+    if (strchr(fileName, '\'') != nullptr) { LogWarning("SYSTEM: Provided fileName could be potentially malicious, avoid [\'] character"); return; }
 
     // Apply content scaling if required
     auto scale = vec2{ 1.0f, 1.0f };
@@ -1936,10 +1936,10 @@ void TakeScreenshot(std::string_view fileNameView)
     ExportImage(image, path); // WARNING: Module required: rtextures
     free(imgData);
 
-    if (FileExists(path)) logMessage(LogLevel::info, std::format("SYSTEM: [{}] Screenshot taken successfully", path));
-    else logMessage(LogLevel::warn, std::format("SYSTEM: [{}] Screenshot could not be saved", path));
+    if (FileExists(path)) LogInfo("SYSTEM: [{}] Screenshot taken successfully", path);
+    else LogWarning("SYSTEM: [{}] Screenshot could not be saved", path);
 #else
-    logMessage(LogLevel::warn, "IMAGE: ExportImage() requires module: rtextures");
+    LogWarning("IMAGE: ExportImage() requires module: rtextures");
 #endif
 }
 
@@ -1949,7 +1949,7 @@ void TakeScreenshot(std::string_view fileNameView)
 // To configure window states after creation, use SetWindowState()
 void SetConfigFlags(const u32 flags)
 {
-    if (CORE.Window.ready) logMessage(LogLevel::warn, "WINDOW: SetConfigFlags called after window initialization, Use \"SetWindowState\" to set flags instead");
+    if (CORE.Window.ready) LogWarning("WINDOW: SetConfigFlags called after window initialization, Use \"SetWindowState\" to set flags instead");
 
     // Selected flags are set but not evaluated at this point,
     // flag evaluation happens at InitWindow() or SetWindowState()
@@ -1960,47 +1960,47 @@ void SetConfigFlags(const u32 flags)
 // Module Functions Definition: Logging system
 //----------------------------------------------------------------------------------
 // Map raylib log levels to the engine log levels
-static LogLevel ToLogLevel(const i32 logType)
+static logging::Logger::LogLevel ToLogLevel(const i32 logType)
 {
     switch (logType)
     {
-        case LOG_ALL:     return LogLevel::trace;
-        case LOG_TRACE:   return LogLevel::trace;
-        case LOG_DEBUG:   return LogLevel::debug;
-        case LOG_INFO:    return LogLevel::info;
-        case LOG_WARNING: return LogLevel::warn;
-        case LOG_ERROR:   return LogLevel::error;
-        case LOG_FATAL:   return LogLevel::fatal;
-        case LOG_NONE:    return LogLevel::off;
-        default:          return LogLevel::info;
+        case LOG_ALL:     return logging::Logger::LogLevel::TRACE;
+        case LOG_TRACE:   return logging::Logger::LogLevel::TRACE;
+        case LOG_DEBUG:   return logging::Logger::LogLevel::DEBUG;
+        case LOG_INFO:    return logging::Logger::LogLevel::INFO;
+        case LOG_WARNING: return logging::Logger::LogLevel::WARN;
+        case LOG_ERROR:   return logging::Logger::LogLevel::ERROR;
+        case LOG_FATAL:   return logging::Logger::LogLevel::FATAL;
+        case LOG_NONE:    return logging::Logger::LogLevel::INVALID;
+        default:          return logging::Logger::LogLevel::INFO;
     }
 }
 
 // Map engine log levels back to raylib log levels
-static i32 ToRaylibLogLevel(const LogLevel level)
+static i32 ToRaylibLogLevel(const logging::Logger::LogLevel level)
 {
     switch (level)
     {
-        case LogLevel::trace:   return LOG_TRACE;
-        case LogLevel::debug:   return LOG_DEBUG;
-        case LogLevel::info:    return LOG_INFO;
-        case LogLevel::warn: return LOG_WARNING;
-        case LogLevel::error:   return LOG_ERROR;
-        case LogLevel::fatal:   return LOG_FATAL;
+        case logging::Logger::LogLevel::TRACE:   return LOG_TRACE;
+        case logging::Logger::LogLevel::DEBUG:   return LOG_DEBUG;
+        case logging::Logger::LogLevel::INFO:    return LOG_INFO;
+        case logging::Logger::LogLevel::WARN:    return LOG_WARNING;
+        case logging::Logger::LogLevel::ERROR:   return LOG_ERROR;
+        case logging::Logger::LogLevel::FATAL:   return LOG_FATAL;
         default:                return LOG_NONE;
     }
 }
 
 // Bridge from the engine logging pipeline to the public TraceLogCallback
 // NOTE: The callback receives the fully formatted line (timestamp and level included)
-static void TraceLogBridge(const LogLevel level, const std::string_view line, void *userData)
+static void TraceLogBridge(const logging::Logger::LogLevel level, const std::string_view line, void *userData)
 {
     (void)userData;
     if (traceLog != nullptr) traceLog(ToRaylibLogLevel(level), line);
 }
 
 // Set the current threshold (minimum) log level
-void SetTraceLogLevel(const i32 logType) { setLogLevel(ToLogLevel(logType)); }
+void SetTraceLogLevel(const i32 logType) { logging::Logger::setLogLevel(ToLogLevel(logType)); }
 
 // Show trace log messages (LOG_INFO, LOG_WARNING, LOG_ERROR, LOG_DEBUG)
 // NOTE: printf-style varargs adapter, the formatted message is forwarded to the logging system
@@ -2028,18 +2028,17 @@ void TraceLog(const i32 logType, const std::string_view text, ...)
 
     va_end(args);
 
-    logMessage(ToLogLevel(logType), message);
+    logging::Logger::logMessage(ToLogLevel(logType), message);
 
     if (logType == LOG_FATAL) exit(EXIT_FAILURE);  // If fatal logging, exit program
 }
 
 // Set custom trace log
-void SetTraceLogCallback(const TraceLogCallback callback)
+void SetTraceLogCallback(const TraceLogCallback logCallback)
 {
-    traceLog = callback;
-    setLogCallback((callback != nullptr)? TraceLogBridge : nullptr, nullptr);
+    traceLog = logCallback;
+    logging::Logger::setCallback((logCallback != nullptr)? TraceLogBridge : nullptr, nullptr);
 }
-
 //----------------------------------------------------------------------------------
 // Module Functions Definition: Memory management
 //----------------------------------------------------------------------------------
@@ -2103,7 +2102,7 @@ u8 * LoadFileData(std::string_view fileNameView, i32 *dataSize)
                     // dataSize is unified along raylib as a 'int' type, so, for file-sizes >INT_MAX (2147483647 bytes) there is a limitation
                     if (count > 2147483647)
                     {
-                        logMessage(LogLevel::warn, std::format("FILEIO: [{}] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName));
+                        LogWarning("FILEIO: [{}] File is bigger than 2147483647 bytes, avoid using LoadFileData()", fileName);
 
                         free(data);
                         data = nullptr;
@@ -2112,19 +2111,19 @@ u8 * LoadFileData(std::string_view fileNameView, i32 *dataSize)
                     {
                         *dataSize = static_cast<i32>(count);
 
-                        if ((*dataSize) != size) logMessage(LogLevel::warn, std::format("FILEIO: [{}] File partially loaded ({} bytes out of {})", fileName, *dataSize, size));
-                        else logMessage(LogLevel::info, std::format("FILEIO: [{}] File loaded successfully", fileName));
+                        if ((*dataSize) != size) LogWarning("FILEIO: [{}] File partially loaded ({} bytes out of {})", fileName, *dataSize, size);
+                        else LogInfo("FILEIO: [{}] File loaded successfully", fileName);
                     }
                 }
-                else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
+                else LogWarning("FILEIO: [{}] Failed to allocated memory for file reading", fileName);
             }
-            else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to read file", fileName));
+            else LogWarning("FILEIO: [{}] Failed to read file", fileName);
 
             fclose(file);
         }
-        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open file", fileName));
+        else LogWarning("FILEIO: [{}] Failed to open file", fileName);
     }
-    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
+    else LogWarning("FILEIO: File name provided is not valid");
 
     return data;
 }
@@ -2155,16 +2154,16 @@ bool SaveFileData(std::string_view fileNameView, const void *data, const i32 dat
             // and expects a size_t input value but as dataSize is limited to INT_MAX (2147483647 bytes), there shouldn't be a problem
             const auto count = static_cast<i32>(fwrite(data, sizeof(u8), dataSize, file));
 
-            if (count == 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to write file", fileName));
-            else if (count != dataSize) logMessage(LogLevel::warn, std::format("FILEIO: [{}] File partially written", fileName));
-            else logMessage(LogLevel::info, std::format("FILEIO: [{}] File saved successfully", fileName));
+            if (count == 0) LogWarning(std::format("FILEIO: [{}] Failed to write file", fileName));
+            else if (count != dataSize) LogWarning(std::format("FILEIO: [{}] File partially written", fileName));
+            else LogInfo("FILEIO: [{}] File saved successfully", fileName);
 
             const i32 closed = fclose(file);
             if (closed == 0) result = true;
         }
-        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open file", fileName));
+        else LogWarning(std::format("FILEIO: [{}] Failed to open file", fileName));
     }
-    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
+    else LogWarning("FILEIO: File name provided is not valid");
 
     return result;
 }
@@ -2179,7 +2178,7 @@ bool ExportDataAsCode(const u8 *data, const i32 dataSize, std::string_view fileN
 
     if ((data == nullptr) || (dataSize <= 0))
     {
-        logMessage(LogLevel::warn, "FILEIO: Invalid data provided to export as code");
+        LogWarning("FILEIO: Invalid data provided to export as code");
         return false;
     }
 
@@ -2225,8 +2224,8 @@ bool ExportDataAsCode(const u8 *data, const i32 dataSize, std::string_view fileN
 
     free(txtData);
 
-    if (result != 0) logMessage(LogLevel::info, std::format("FILEIO: [{}] Data as code exported successfully", fileName));
-    else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to export data as code", fileName));
+    if (result != 0) LogInfo("FILEIO: [{}] Data as code exported successfully", fileName);
+    else LogWarning(std::format("FILEIO: [{}] Failed to export data as code", fileName));
 
     return result;
 }
@@ -2271,17 +2270,17 @@ std::string LoadFileText(std::string_view fileNameView)
                     text[count] = '\0';
                     textLength = count;
 
-                    logMessage(LogLevel::info, std::format("FILEIO: [{}] Text file loaded successfully", fileName));
+                    LogInfo("FILEIO: [{}] Text file loaded successfully", fileName);
                 }
-                else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
+                else LogWarning(std::format("FILEIO: [{}] Failed to allocated memory for file reading", fileName));
             }
-            else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to read text file", fileName));
+            else LogWarning(std::format("FILEIO: [{}] Failed to read text file", fileName));
 
             fclose(file);
         }
-        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open text file", fileName));
+        else LogWarning(std::format("FILEIO: [{}] Failed to open text file", fileName));
     }
-    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
+    else LogWarning("FILEIO: File name provided is not valid");
 
     std::string fileText;
     if (text != nullptr) fileText.assign(text, textLength);
@@ -2316,15 +2315,15 @@ bool SaveFileText(std::string_view fileNameView, std::string_view textView)
         {
             const i32 count = fprintf(file, "%s", text);
 
-            if (count < 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to write text file", fileName));
-            else logMessage(LogLevel::info, std::format("FILEIO: [{}] Text file saved successfully", fileName));
+            if (count < 0) LogWarning(std::format("FILEIO: [{}] Failed to write text file", fileName));
+            else LogInfo("FILEIO: [{}] Text file saved successfully", fileName);
 
             const i32 closed = fclose(file);
             if (closed == 0) result = true;
         }
-        else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to open text file", fileName));
+        else LogWarning(std::format("FILEIO: [{}] Failed to open text file", fileName));
     }
-    else logMessage(LogLevel::warn, "FILEIO: File name provided is not valid");
+    else LogWarning("FILEIO: File name provided is not valid");
 
     return result;
 }
@@ -2443,12 +2442,12 @@ i32 FileMove(std::string_view srcPathView, std::string_view dstPathView)
             if (FileExists(dstPath) && (GetFileLength(srcPath) == GetFileLength(dstPath)))
             {
                 result = FileRemove(srcPath);
-                if (result != 0) logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to remove source file after copy", srcPath));
+                if (result != 0) LogWarning(std::format("FILEIO: [{}] Failed to remove source file after copy", srcPath));
             }
-            else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Failed to copy file to [{}]", srcPath, dstPath));
+            else LogWarning("FILEIO: [{}] Failed to copy file to [{}]", srcPath, dstPath);
         }
     }
-	else logMessage(LogLevel::warn, std::format("FILEIO: [{}] Source file does not exist", srcPath));
+	else LogWarning(std::format("FILEIO: [{}] Source file does not exist", srcPath));
 
     return result;
 }
@@ -2485,7 +2484,7 @@ i32 FileTextReplace(std::string_view fileNameView, std::string_view searchView, 
         }
     }
 #else
-    logMessage(LogLevel::warn, "FILE: File text replace requires [rtext] module");
+    LogWarning("FILE: File text replace requires [rtext] module");
 #endif
 
     return result;
@@ -2667,7 +2666,7 @@ i32 GetFileLength(std::string_view fileNameView)
         const i32 fileSize = static_cast<i32>(ftell(file));
 
         // Check for size overflow (INT_MAX)
-        if (fileSize > 2147483647) logMessage(LogLevel::warn, std::format("[{}] File size overflows expected limit, do not use GetFileLength()", fileName));
+        if (fileSize > 2147483647) LogWarning(std::format("[{}] File size overflows expected limit, do not use GetFileLength()", fileName));
         else size = static_cast<i32>(fileSize);
 
         fclose(file);
@@ -2817,7 +2816,7 @@ std::string GetDirectoryPath(std::string_view filePathView)
             }
             else
             {
-                logMessage(LogLevel::warn, "FILEIO: Directory path too long");
+                LogWarning("FILEIO: Directory path too long");
                 dirPath[0] = '\0';
             }
         }
@@ -2852,7 +2851,7 @@ std::string GetPrevDirectoryPath(std::string_view dirPathView)
             if (!isFile)
             {
                 if (i < MAX_FILEPATH_LENGTH) memcpy(prevDirPath, dirPath, i);
-                else logMessage(LogLevel::warn, "FILEIO: Directory path too long");
+                else LogWarning("FILEIO: Directory path too long");
                 break;
             }
             else isFile = false;
@@ -3017,7 +3016,7 @@ FilePathList LoadDirectoryFilesEx(std::string_view basePathView, std::string_vie
         // WARNING: basePath is always prepended to scanned paths
         ScanDirectoryFiles(basePath, &files, filter, scanSubdirs);
     }
-    else logMessage(LogLevel::warn, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
+    else LogWarning(std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
 
     return files;
 }
@@ -3072,8 +3071,8 @@ i32 ChangeDirectory(std::string_view dirPathView)
     // depending on the filesystem, other errors can be returned
     const i32 result = CHDIR(dirPath);
 
-    if (result != 0) logMessage(LogLevel::warn, std::format("SYSTEM: Failed to change to directory: {}", dirPath));
-    else logMessage(LogLevel::info, std::format("SYSTEM: Working Directory: {}", dirPath));
+    if (result != 0) LogWarning(std::format("SYSTEM: Failed to change to directory: {}", dirPath));
+    else LogInfo("SYSTEM: Working Directory: {}", dirPath);
 
     return result;
 }
@@ -3255,7 +3254,7 @@ u32 GetDirectoryFileCountEx(std::string_view basePathView, std::string_view filt
                 // Don't add to count if path too long
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
                 {
-                    logMessage(LogLevel::warn, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
+                    LogWarning("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath);
                 }
                 else if (IsPathFile(path))
                 {
@@ -3271,7 +3270,7 @@ u32 GetDirectoryFileCountEx(std::string_view basePathView, std::string_view filt
         }
         closedir(dir);
     }
-    else logMessage(LogLevel::warn, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
+    else LogWarning(std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
     return fileCounter;
 }
 
@@ -3295,7 +3294,7 @@ u8 *CompressData(const u8 *data, const i32 dataSize, i32 *compDataSize)
     *compDataSize = sdeflate(sdefl, compData, data, dataSize, COMPRESSION_QUALITY_DEFLATE);   // Compression level 8, same as stbiw
     free(sdefl);
 
-    logMessage(LogLevel::info, std::format("SYSTEM: Compress data: Original size: {} -> Comp. size: {}", dataSize, *compDataSize));
+    LogInfo("SYSTEM: Compress data: Original size: {} -> Comp. size: {}", dataSize, *compDataSize);
 #endif
 
     return compData;
@@ -3319,7 +3318,7 @@ u8 *DecompressData(const u8 *compData, const i32 compDataSize, i32 *dataSize)
     memset(data0, 0, MAX_DECOMPRESSION_SIZE*1024*1024); // Wipe memory, is memset() safe?
     free(data0);
 
-    logMessage(LogLevel::info, std::format("SYSTEM: Decompress data: Comp. size: {} -> Original size: {}", compDataSize, size));
+    LogInfo("SYSTEM: Decompress data: Comp. size: {} -> Original size: {}", compDataSize, size);
 
     *dataSize = size;
 #endif
@@ -3376,7 +3375,7 @@ std::string EncodeDataBase64(const u8 *data, const i32 dataSize, i32 *outputSize
     encodedData[outputCount] = '\0';
     outputCount++;
 
-    if (outputCount != estimatedOutputSize) logMessage(LogLevel::warn, "BASE64: Output size differs from estimation");
+    if (outputCount != estimatedOutputSize) LogWarning("BASE64: Output size differs from estimation");
 
     *outputSize = estimatedOutputSize;
 
@@ -3429,7 +3428,7 @@ u8 * DecodeDataBase64(std::string_view textView, i32 *outputSize)
         // Every 4 sextets must generate 3 octets
         if ((i + 2) >= dataSize)
         {
-            logMessage(LogLevel::warn, "BASE64: Decoding error: Input data size is not valid");
+            LogWarning("BASE64: Decoding error: Input data size is not valid");
             break;
         }
 
@@ -3442,7 +3441,7 @@ u8 * DecodeDataBase64(std::string_view textView, i32 *outputSize)
 
         if ((outputCount + 3) > maxOutputSize)
         {
-            logMessage(LogLevel::warn, "BASE64: Decoding error: Output data size is too small");
+            LogWarning("BASE64: Decoding error: Output data size is too small");
             break;
         }
 
@@ -3453,7 +3452,7 @@ u8 * DecodeDataBase64(std::string_view textView, i32 *outputSize)
         i += 4;
     }
 
-    if (estimatedOutputSize != (outputCount - padding)) logMessage(LogLevel::warn, "BASE64: Decoded size differs from estimation");
+    if (estimatedOutputSize != (outputCount - padding)) LogWarning("BASE64: Decoded size differs from estimation");
 
     *outputSize = estimatedOutputSize;
     return decodedData;
@@ -3854,7 +3853,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
     list.events = static_cast<AutomationEvent *>(calloc(MAX_AUTOMATION_EVENTS, sizeof(AutomationEvent)));
     list.capacity = MAX_AUTOMATION_EVENTS;
 
-    if (fileNameView.empty()) logMessage(LogLevel::info, "AUTOMATION: New empty events list loaded successfully");
+    if (fileNameView.empty()) LogInfo("AUTOMATION: New empty events list loaded successfully");
     else
     {
         // Load automation events file (binary)
@@ -3870,7 +3869,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
         if ((fileId[0] == 'r') && (fileId[1] == 'A') && (fileId[2] == 'E') && (fileId[1] == ' '))
         {
             fread(&eventCount, sizeof(int), 1, raeFile);
-            logMessage(LogLevel::warn, std::format("Events loaded: {}\n", eventCount));
+            LogWarning(std::format("Events loaded: {}\n", eventCount));
             fread(events, sizeof(AutomationEvent), eventCount, raeFile);
         }
 
@@ -3888,7 +3887,7 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
             char eventDesc[64] = { 0 };
 
             char *result = fgets(buffer, 256, raeFile);
-            if (result != buffer) logMessage(LogLevel::warn, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
+            if (result != buffer) LogWarning(std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
 
             while (!feof(raeFile))
             {
@@ -3904,27 +3903,27 @@ AutomationEventList LoadAutomationEventList(std::string_view fileNameView)
 
                             counter++;
                         }
-                        else logMessage(LogLevel::warn, std::format("AUTOMATION: Event goes beyond automated list capacity (MAX: {}): {}", list.capacity, buffer));
+                        else LogWarning("AUTOMATION: Event goes beyond automated list capacity (MAX: {}): {}", list.capacity, buffer);
                     } break;
                     default: break;
                 }
 
                 result = fgets(buffer, 256, raeFile);
-                if (result != buffer) logMessage(LogLevel::warn, std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
+                if (result != buffer) LogWarning(std::format("AUTOMATION: [{}] Issue reading line to buffer", fileName));
             }
 
             if (counter != list.count)
             {
-                logMessage(LogLevel::warn, std::format("AUTOMATION: Events read from file [{}] do not mach event count specified [{}]", counter, list.count));
+                LogWarning(std::format("AUTOMATION: Events read from file [{}] do not mach event count specified [{}]", counter, list.count));
                 list.count = counter;
             }
 
             fclose(raeFile);
 
-            logMessage(LogLevel::info, "AUTOMATION: Events file loaded successfully");
+            LogInfo("AUTOMATION: Events file loaded successfully");
         }
 
-        logMessage(LogLevel::info, std::format("AUTOMATION: Events loaded from file: {}", list.count));
+        LogInfo("AUTOMATION: Events loaded from file: {}", list.count);
     }
 #endif
     return list;
@@ -4105,7 +4104,7 @@ void PlayAutomationEvent(const AutomationEvent event)
             default: break;
         }
 
-        logMessage(LogLevel::info, std::format("AUTOMATION PLAY: Frame: {} | Event type: {} | Event parameters: {}, {}, {}", event.frame, event.type, event.params[0], event.params[1], event.params[2]));
+        LogInfo("AUTOMATION PLAY: Frame: {} | Event type: {} | Event parameters: {}, {}, {}", event.frame, event.type, event.params[0], event.params[1], event.params[2]);
     }
 #endif
 }
@@ -4510,7 +4509,7 @@ vec2 GetTouchPosition(const i32 index)
     auto position = vec2{ -1.0f, -1.0f };
 
     if ((index >= 0) && (index < MAX_TOUCH_POINTS)) position = CORE.Input.Touch.position[index];
-    else logMessage(LogLevel::warn, std::format("INPUT: Required touch point out of range (Max touch points: {})", MAX_TOUCH_POINTS));
+    else LogWarning(std::format("INPUT: Required touch point out of range (Max touch points: {})", MAX_TOUCH_POINTS));
 
     return position;
 }
@@ -4557,7 +4556,7 @@ void InitTimer()
     {
         CORE.Time.base = static_cast<unsigned long long>(now.tv_sec)*1000000000LLU + static_cast<unsigned long long>(now.tv_nsec);
     }
-    else logMessage(LogLevel::warn, "TIMER: Hi-resolution timer not available");
+    else LogWarning("TIMER: Hi-resolution timer not available");
 #endif
 
     CORE.Time.previous = GetTime(); // Get time as double
@@ -4610,7 +4609,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 
                 if ((pathLength < 0) || (pathLength >= MAX_FILEPATH_LENGTH))
                 {
-                    logMessage(LogLevel::warn, std::format("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath));
+                    LogWarning("FILEIO: Path longer than {} characters ({}...)", MAX_FILEPATH_LENGTH, basePath);
                 }
                 else if (IsPathFile(path))
                 {
@@ -4634,7 +4633,7 @@ static void ScanDirectoryFiles(const char *basePath, FilePathList *files, const 
 
         closedir(dir);
     }
-    else logMessage(LogLevel::warn, std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
+    else LogWarning(std::format("FILEIO: Directory cannot be opened ({})", basePath));  // Maybe it's a file...
 }
 
 #if SUPPORT_AUTOMATION_EVENTS
@@ -4658,7 +4657,7 @@ static void RecordAutomationEvent()
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_KEY_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+            LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_KEY_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
         }
 
@@ -4673,7 +4672,7 @@ static void RecordAutomationEvent()
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_KEY_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+            LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_KEY_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
         }
 
@@ -4694,7 +4693,7 @@ static void RecordAutomationEvent()
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_BUTTON_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+            LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_BUTTON_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
         }
 
@@ -4709,7 +4708,7 @@ static void RecordAutomationEvent()
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_BUTTON_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+            LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_BUTTON_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
         }
 
@@ -4726,7 +4725,7 @@ static void RecordAutomationEvent()
         currentEventList->events[currentEventList->count].params[1] = static_cast<i32>(CORE.Input.Mouse.currentPosition.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
-        logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+        LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
         currentEventList->count++;
 
         if (currentEventList->count == currentEventList->capacity) return;    // Security check
@@ -4742,7 +4741,7 @@ static void RecordAutomationEvent()
         currentEventList->events[currentEventList->count].params[1] = static_cast<i32>(CORE.Input.Mouse.currentWheelMove.y);
         currentEventList->events[currentEventList->count].params[2] = 0;
 
-        logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_WHEEL_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+        LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_MOUSE_WHEEL_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
         currentEventList->count++;
 
         if (currentEventList->count == currentEventList->capacity) return;    // Security check
@@ -4762,7 +4761,7 @@ static void RecordAutomationEvent()
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+            LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
         }
 
@@ -4777,7 +4776,7 @@ static void RecordAutomationEvent()
             currentEventList->events[currentEventList->count].params[1] = 0;
             currentEventList->events[currentEventList->count].params[2] = 0;
 
-            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+            LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
         }
 
@@ -4793,7 +4792,7 @@ static void RecordAutomationEvent()
             currentEventList->events[currentEventList->count].params[1] = static_cast<i32>(CORE.Input.Touch.position[id].x);
             currentEventList->events[currentEventList->count].params[2] = static_cast<i32>(CORE.Input.Touch.position[id].y);
 
-            logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+            LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_TOUCH_POSITION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
             currentEventList->count++;
         }
 
@@ -4835,7 +4834,7 @@ static void RecordAutomationEvent()
                 currentEventList->events[currentEventList->count].params[1] = button;
                 currentEventList->events[currentEventList->count].params[2] = 0;
 
-                logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_BUTTON_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+                LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_BUTTON_UP | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
                 currentEventList->count++;
             }
 
@@ -4850,7 +4849,7 @@ static void RecordAutomationEvent()
                 currentEventList->events[currentEventList->count].params[1] = button;
                 currentEventList->events[currentEventList->count].params[2] = 0;
 
-                logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_BUTTON_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+                LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_BUTTON_DOWN | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
                 currentEventList->count++;
             }
 
@@ -4869,7 +4868,7 @@ static void RecordAutomationEvent()
                 currentEventList->events[currentEventList->count].params[1] = axis;
                 currentEventList->events[currentEventList->count].params[2] = static_cast<i32>(CORE.Input.Gamepad.axisState[gamepad][axis]*32768.0f);
 
-                logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_AXIS_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+                LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_GAMEPAD_AXIS_MOTION | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
                 currentEventList->count++;
             }
 
@@ -4890,7 +4889,7 @@ static void RecordAutomationEvent()
         currentEventList->events[currentEventList->count].params[1] = 0;
         currentEventList->events[currentEventList->count].params[2] = 0;
 
-        logMessage(LogLevel::info, std::format("AUTOMATION: Frame: {} | Event type: INPUT_GESTURE | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]));
+        LogInfo("AUTOMATION: Frame: {} | Event type: INPUT_GESTURE | Event parameters: {}, {}, {}", currentEventList->events[currentEventList->count].frame, currentEventList->events[currentEventList->count].params[0], currentEventList->events[currentEventList->count].params[1], currentEventList->events[currentEventList->count].params[2]);
         currentEventList->count++;
 
         if (currentEventList->count == currentEventList->capacity) return;    // Security check

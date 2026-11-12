@@ -586,18 +586,18 @@ typedef enum {
 extern "C" {            // Prevents name mangling of functions
 #endif
 
-RLAPI void rlMatrixMode(const i32 mode);                            // Choose the current matrix to be transformed
+RLAPI void rlMatrixMode( i32 mode);                            // Choose the current matrix to be transformed
 RLAPI void rlPushMatrix();                                // Push the current matrix to stack
 RLAPI void rlPopMatrix();                                 // Pop latest inserted matrix from stack
 RLAPI void rlLoadIdentity();                              // Reset current matrix to identity matrix
-RLAPI void rlTranslatef(const f32 x, const f32 y, const f32 z);           // Multiply the current matrix by a translation matrix
-RLAPI void rlRotatef(const f32 angle, f32 x, f32 y, f32 z); // Multiply the current matrix by a rotation matrix
-RLAPI void rlScalef(const f32 x, const f32 y, const f32 z);               // Multiply the current matrix by a scaling matrix
-RLAPI void rlMultMatrixf(const f32 *matf);                  // Multiply the current matrix by another matrix
-RLAPI void rlFrustum(const f32 left, const f32 right, const f32 bottom, const f32 top, const f32 znear, const f32 zfar);
-RLAPI void rlOrtho(const f32 left, const f32 right, const f32 bottom, const f32 top, const f32 znear, const f32 zfar);
-RLAPI void rlViewport(const i32 x, const i32 y, const i32 width, const i32 height);  // Set the viewport area
-RLAPI void rlSetClipPlanes(const f32 nearPlane, const f32 farPlane); // Set clip planes distances
+RLAPI void rlTranslatef( f32 x, f32 y, f32 z);           // Multiply the current matrix by a translation matrix
+RLAPI void rlRotatef( f32 angle, f32 x, f32 y, f32 z); // Multiply the current matrix by a rotation matrix
+RLAPI void rlScalef( f32 x, f32 y, f32 z);               // Multiply the current matrix by a scaling matrix
+RLAPI void rlMultMatrixf( f32 *matf);                  // Multiply the current matrix by another matrix
+RLAPI void rlFrustum( f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar);
+RLAPI void rlOrtho( f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar);
+RLAPI void rlViewport( i32 x, i32 y, i32 width, i32 height);  // Set the viewport area
+RLAPI void rlSetClipPlanes( f32 nearPlane, f32 farPlane); // Set clip planes distances
 RLAPI f32 rlGetCullDistanceNear();                     // Get cull plane distance near
 RLAPI f32 rlGetCullDistanceFar();                      // Get cull plane distance far
 
@@ -606,14 +606,14 @@ RLAPI f32 rlGetCullDistanceFar();                      // Get cull plane distanc
 //------------------------------------------------------------------------------------
 RLAPI void rlBegin(i32 mode);                                                              // Initialize drawing mode (how to organize vertex)
 RLAPI void rlEnd();                                                                    // Finish vertex providing
-RLAPI void rlVertex2i(const i32 x, const i32 y);                                                       // Define one vertex (position) - 2 int
-RLAPI void rlVertex2f(const f32 x, const f32 y);                                                   // Define one vertex (position) - 2 float
-RLAPI void rlVertex3f(const f32 x, const f32 y, const f32 z);                                          // Define one vertex (position) - 3 float
-RLAPI void rlTexCoord2f(const f32 x, const f32 y);                                                 // Define one vertex (texture coordinate) - 2 float
-RLAPI void rlNormal3f(const f32 x, const f32 y, const f32 z);                                          // Define one vertex (normal) - 3 float
-RLAPI void rlColor4ub(const u8 r, const u8 g, const u8 b, const u8 a); // Define one vertex (color) - 4 byte
-RLAPI void rlColor3f(const f32 x, const f32 y, const f32 z);                                           // Define one vertex (color) - 3 float
-RLAPI void rlColor4f(const f32 x, const f32 y, const f32 z, const f32 w);                                  // Define one vertex (color) - 4 float
+RLAPI void rlVertex2i( i32 x, i32 y);                                                       // Define one vertex (position) - 2 int
+RLAPI void rlVertex2f( f32 x, f32 y);                                                   // Define one vertex (position) - 2 float
+RLAPI void rlVertex3f( f32 x, f32 y, f32 z);                                          // Define one vertex (position) - 3 float
+RLAPI void rlTexCoord2f( f32 x, f32 y);                                                 // Define one vertex (texture coordinate) - 2 float
+RLAPI void rlNormal3f( f32 x, f32 y, f32 z);                                          // Define one vertex (normal) - 3 float
+RLAPI void rlColor4ub( u8 r, u8 g, u8 b, u8 a); // Define one vertex (color) - 4 byte
+RLAPI void rlColor3f( f32 x, f32 y, f32 z);                                           // Define one vertex (color) - 3 float
+RLAPI void rlColor4f( f32 x, f32 y, f32 z, f32 w);                                  // Define one vertex (color) - 4 float
 
 //------------------------------------------------------------------------------------
 // Functions Declaration - OpenGL style functions (common to 1.1, 3.3+, ES2)
@@ -622,37 +622,37 @@ RLAPI void rlColor4f(const f32 x, const f32 y, const f32 z, const f32 w);       
 //------------------------------------------------------------------------------------
 
 // Vertex buffers state
-RLAPI bool rlEnableVertexArray(const u32 vaoId);                  // Enable vertex array (VAO, if supported)
+RLAPI bool rlEnableVertexArray( u32 vaoId);                  // Enable vertex array (VAO, if supported)
 RLAPI void rlDisableVertexArray();                               // Disable vertex array (VAO, if supported)
-RLAPI void rlEnableVertexBuffer(const u32 id);                    // Enable vertex buffer (VBO)
+RLAPI void rlEnableVertexBuffer( u32 id);                    // Enable vertex buffer (VBO)
 RLAPI void rlDisableVertexBuffer();                              // Disable vertex buffer (VBO)
-RLAPI void rlEnableVertexBufferElement(const u32 id);             // Enable vertex buffer element (VBO element)
+RLAPI void rlEnableVertexBufferElement( u32 id);             // Enable vertex buffer element (VBO element)
 RLAPI void rlDisableVertexBufferElement();                       // Disable vertex buffer element (VBO element)
-RLAPI void rlEnableVertexAttribute(const u32 index);              // Enable vertex attribute index
-RLAPI void rlDisableVertexAttribute(const u32 index);             // Disable vertex attribute index
-RLAPI void rlEnableStatePointer(const i32 vertexAttribType, const void *buffer); // Enable attribute state pointer
-RLAPI void rlDisableStatePointer(const i32 vertexAttribType);              // Disable attribute state pointer
+RLAPI void rlEnableVertexAttribute( u32 index);              // Enable vertex attribute index
+RLAPI void rlDisableVertexAttribute( u32 index);             // Disable vertex attribute index
+RLAPI void rlEnableStatePointer( i32 vertexAttribType, void *buffer); // Enable attribute state pointer
+RLAPI void rlDisableStatePointer( i32 vertexAttribType);              // Disable attribute state pointer
 
 // Textures state
-RLAPI void rlActiveTextureSlot(const i32 slot);                              // Select and active a texture slot
-RLAPI void rlEnableTexture(const u32 id);                           // Enable texture
+RLAPI void rlActiveTextureSlot( i32 slot);                              // Select and active a texture slot
+RLAPI void rlEnableTexture( u32 id);                           // Enable texture
 RLAPI void rlDisableTexture();                                     // Disable texture
-RLAPI void rlEnableTextureCubemap(const u32 id);                    // Enable texture cubemap
+RLAPI void rlEnableTextureCubemap( u32 id);                    // Enable texture cubemap
 RLAPI void rlDisableTextureCubemap();                              // Disable texture cubemap
-RLAPI void rlTextureParameters(const u32 id, const i32 param, const i32 value); // Set texture parameters (filter, wrap)
-RLAPI void rlCubemapParameters(const u32 id, const i32 param, const i32 value); // Set cubemap parameters (filter, wrap)
+RLAPI void rlTextureParameters( u32 id, i32 param, i32 value); // Set texture parameters (filter, wrap)
+RLAPI void rlCubemapParameters( u32 id, i32 param, i32 value); // Set cubemap parameters (filter, wrap)
 
 // Shader state
-RLAPI void rlEnableShader(const u32 id);             // Enable shader program
+RLAPI void rlEnableShader( u32 id);             // Enable shader program
 RLAPI void rlDisableShader();                       // Disable shader program
 
 // Framebuffer state
-RLAPI void rlEnableFramebuffer(const u32 id);                                                                                                // Enable render texture (fbo)
+RLAPI void rlEnableFramebuffer( u32 id);                                                                                                // Enable render texture (fbo)
 RLAPI void rlDisableFramebuffer();                                                                                                          // Disable render texture (fbo), return to default framebuffer
 RLAPI u32 rlGetActiveFramebuffer();                                                                                                // Get the currently active render texture (fbo), 0 for default framebuffer
-RLAPI void rlActiveDrawBuffers(const i32 count);                                                                                                      // Activate multiple draw color buffers
-RLAPI void rlBlitFramebuffer(const i32 srcX, const i32 srcY, const i32 srcWidth, const i32 srcHeight, const i32 dstX, const i32 dstY, const i32 dstWidth, const i32 dstHeight, const i32 bufferMask); // Blit active framebuffer to main framebuffer
-RLAPI void rlBindFramebuffer(const u32 target, const u32 framebuffer);                                                                    // Bind framebuffer (FBO)
+RLAPI void rlActiveDrawBuffers( i32 count);                                                                                                      // Activate multiple draw color buffers
+RLAPI void rlBlitFramebuffer( i32 srcX, i32 srcY, i32 srcWidth, i32 srcHeight, i32 dstX, i32 dstY, i32 dstWidth, i32 dstHeight, i32 bufferMask); // Blit active framebuffer to main framebuffer
+RLAPI void rlBindFramebuffer( u32 target, u32 framebuffer);                                                                    // Bind framebuffer (FBO)
 
 // General render state
 RLAPI void rlEnableColorBlend();                       // Enable color blending
@@ -663,18 +663,18 @@ RLAPI void rlEnableDepthMask();                        // Enable depth write
 RLAPI void rlDisableDepthMask();                       // Disable depth write
 RLAPI void rlEnableBackfaceCulling();                  // Enable backface culling
 RLAPI void rlDisableBackfaceCulling();                 // Disable backface culling
-RLAPI void rlColorMask(const bool r, const bool g, const bool b, const bool a);    // Color mask control
-RLAPI void rlSetCullFace(const i32 mode);                        // Set face culling mode
+RLAPI void rlColorMask( bool r, bool g, bool b, bool a);    // Color mask control
+RLAPI void rlSetCullFace( i32 mode);                        // Set face culling mode
 RLAPI void rlEnableScissorTest();                      // Enable scissor test
 RLAPI void rlDisableScissorTest();                     // Disable scissor test
-RLAPI void rlScissor(const i32 x, const i32 y, const i32 width, const i32 height); // Scissor test
+RLAPI void rlScissor( i32 x, i32 y, i32 width, i32 height); // Scissor test
 RLAPI void rlEnablePointMode();                        // Enable point mode
 RLAPI void rlDisablePointMode();                       // Disable point mode
-RLAPI void rlSetPointSize(const f32 size);                     // Set the point drawing size
+RLAPI void rlSetPointSize( f32 size);                     // Set the point drawing size
 RLAPI f32 rlGetPointSize();                          // Get the point drawing size
 RLAPI void rlEnableWireMode();                         // Enable wire mode
 RLAPI void rlDisableWireMode();                        // Disable wire mode
-RLAPI void rlSetLineWidth(const f32 width);                    // Set the line drawing width
+RLAPI void rlSetLineWidth( f32 width);                    // Set the line drawing width
 RLAPI f32 rlGetLineWidth();                          // Get the line drawing width
 RLAPI void rlEnableSmoothLines();                      // Enable line aliasing
 RLAPI void rlDisableSmoothLines();                     // Disable line aliasing
@@ -682,25 +682,25 @@ RLAPI void rlEnableStereoRender();                     // Enable stereo renderin
 RLAPI void rlDisableStereoRender();                    // Disable stereo rendering
 RLAPI bool rlIsStereoRenderEnabled();                  // Check if stereo render is enabled
 
-RLAPI void rlClearColor(const u8 r, const u8 g, const u8 b, const u8 a);                                  // Clear color buffer with color
+RLAPI void rlClearColor( u8 r, u8 g, u8 b, u8 a);                                  // Clear color buffer with color
 RLAPI void rlClearScreenBuffers();                                                                                        // Clear used screen buffers (color and depth)
 RLAPI void rlCheckErrors();                                                                                               // Check and log OpenGL error codes
-RLAPI void rlSetBlendMode(const i32 mode);                                                                                          // Set blending mode
-RLAPI void rlSetBlendFactors(const i32 glSrcFactor, const i32 glDstFactor, const i32 glEquation);                                               // Set blending mode factor and equation (using OpenGL factors)
-RLAPI void rlSetBlendFactorsSeparate(const i32 glSrcRGB, const i32 glDstRGB, const i32 glSrcAlpha, const i32 glDstAlpha, const i32 glEqRGB, const i32 glEqAlpha); // Set blending mode factors and equations separately (using OpenGL factors)
+RLAPI void rlSetBlendMode( i32 mode);                                                                                          // Set blending mode
+RLAPI void rlSetBlendFactors( i32 glSrcFactor, i32 glDstFactor, i32 glEquation);                                               // Set blending mode factor and equation (using OpenGL factors)
+RLAPI void rlSetBlendFactorsSeparate( i32 glSrcRGB, i32 glDstRGB, i32 glSrcAlpha, i32 glDstAlpha, i32 glEqRGB, i32 glEqAlpha); // Set blending mode factors and equations separately (using OpenGL factors)
 
 //------------------------------------------------------------------------------------
 // Functions Declaration - rlgl functionality
 //------------------------------------------------------------------------------------
 // rlgl initialization functions
-RLAPI void rlglInit(const i32 width, const i32 height);                  // Initialize rlgl (buffers, shaders, textures, states)
+RLAPI void rlglInit( i32 width, i32 height);                  // Initialize rlgl (buffers, shaders, textures, states)
 RLAPI void rlglClose();                                  // De-initialize rlgl (buffers, shaders, textures)
 RLAPI void rlLoadExtensions(void *loader);                   // Load OpenGL extensions (loader function required)
 RLAPI void *rlGetProcAddress(std::string_view procName);     // Get OpenGL procedure address
 RLAPI i32 rlGetVersion();                                // Get current OpenGL version
-RLAPI void rlSetFramebufferWidth(const i32 width);                 // Set current framebuffer width
+RLAPI void rlSetFramebufferWidth( i32 width);                 // Set current framebuffer width
 RLAPI i32 rlGetFramebufferWidth();                       // Get default framebuffer width
-RLAPI void rlSetFramebufferHeight(const i32 height);               // Set current framebuffer height
+RLAPI void rlSetFramebufferHeight( i32 height);               // Set current framebuffer height
 RLAPI i32 rlGetFramebufferHeight();                      // Get default framebuffer height
 
 RLAPI u32 rlGetTextureIdDefault();         // Get default texture id
@@ -710,94 +710,94 @@ RLAPI i32 *rlGetShaderLocsDefault();                // Get default shader locati
 // Render batch management
 // NOTE: rlgl provides a default render batch to behave like OpenGL 1.1 immediate mode
 // but this render batch API is exposed in case of custom batches are required
-RLAPI rlRenderBatch rlLoadRenderBatch(const i32 numBuffers, const i32 bufferElements); // Load a render batch system
+RLAPI rlRenderBatch rlLoadRenderBatch( i32 numBuffers, i32 bufferElements); // Load a render batch system
 RLAPI void rlUnloadRenderBatch(rlRenderBatch batch);                       // Unload render batch system
 RLAPI void rlDrawRenderBatch(rlRenderBatch *batch);                        // Draw render batch data (Update->Draw->Reset)
 RLAPI void rlSetRenderBatchActive(rlRenderBatch *batch);                   // Set the active render batch for rlgl (NULL for default internal)
 RLAPI void rlDrawRenderBatchActive();                                  // Update and draw internal render batch
-RLAPI bool rlCheckRenderBatchLimit(const i32 vCount);                            // Check internal buffer overflow for a given number of vertex
+RLAPI bool rlCheckRenderBatchLimit( i32 vCount);                            // Check internal buffer overflow for a given number of vertex
 
-RLAPI void rlSetTexture(const u32 id);               // Set current texture for render batch and check buffers limits
+RLAPI void rlSetTexture( u32 id);               // Set current texture for render batch and check buffers limits
 
 //------------------------------------------------------------------------------------------------------------------------
 
 // Vertex buffers management
 RLAPI u32 rlLoadVertexArray();                                                                           // Load vertex array (vao) if supported
-RLAPI u32 rlLoadVertexBuffer(const void *buffer, const i32 size, const bool dynamic);                                    // Load a vertex buffer object
-RLAPI u32 rlLoadVertexBufferElement(const void *buffer, const i32 size, const bool dynamic);                             // Load vertex buffer elements object
-RLAPI void rlUpdateVertexBuffer(const u32 bufferId, const void *data, const i32 dataSize, const i32 offset);                   // Update vertex buffer object data on GPU buffer
-RLAPI void rlUpdateVertexBufferElements(const u32 id, const void *data, const i32 dataSize, const i32 offset);                 // Update vertex buffer elements data on GPU buffer
+RLAPI u32 rlLoadVertexBuffer( void *buffer, i32 size, bool dynamic);                                    // Load a vertex buffer object
+RLAPI u32 rlLoadVertexBufferElement( void *buffer, i32 size, bool dynamic);                             // Load vertex buffer elements object
+RLAPI void rlUpdateVertexBuffer( u32 bufferId, void *data, i32 dataSize, i32 offset);                   // Update vertex buffer object data on GPU buffer
+RLAPI void rlUpdateVertexBufferElements( u32 id, void *data, i32 dataSize, i32 offset);                 // Update vertex buffer elements data on GPU buffer
 RLAPI void rlUnloadVertexArray(u32 vaoId);                                                                   // Unload vertex array (vao)
 RLAPI void rlUnloadVertexBuffer(u32 vboId);                                                                  // Unload vertex buffer object
-RLAPI void rlSetVertexAttribute(const u32 index, const i32 compSize, const i32 type, const bool normalized, const i32 stride, const i32 offset); // Set vertex attribute data configuration
-RLAPI void rlSetVertexAttributeDivisor(const u32 index, const i32 divisor);                                              // Set vertex attribute data divisor
-RLAPI void rlSetVertexAttributeDefault(const i32 locIndex, const void *value, const i32 attribType, const i32 count);                   // Set vertex attribute default value, when attribute to provided
-RLAPI void rlDrawVertexArray(const i32 offset, const i32 count);                                                                  // Draw vertex array (currently active vao)
-RLAPI void rlDrawVertexArrayElements(const i32 offset, const i32 count, const void *buffer);                                      // Draw vertex array elements
-RLAPI void rlDrawVertexArrayInstanced(const i32 offset, const i32 count, const i32 instances);                                          // Draw vertex array (currently active vao) with instancing
-RLAPI void rlDrawVertexArrayElementsInstanced(const i32 offset, const i32 count, const void *buffer, const i32 instances);              // Draw vertex array elements with instancing
+RLAPI void rlSetVertexAttribute( u32 index, i32 compSize, i32 type, bool normalized, i32 stride, i32 offset); // Set vertex attribute data configuration
+RLAPI void rlSetVertexAttributeDivisor( u32 index, i32 divisor);                                              // Set vertex attribute data divisor
+RLAPI void rlSetVertexAttributeDefault( i32 locIndex, void *value, i32 attribType, i32 count);                   // Set vertex attribute default value, when attribute to provided
+RLAPI void rlDrawVertexArray( i32 offset, i32 count);                                                                  // Draw vertex array (currently active vao)
+RLAPI void rlDrawVertexArrayElements( i32 offset, i32 count, void *buffer);                                      // Draw vertex array elements
+RLAPI void rlDrawVertexArrayInstanced( i32 offset, i32 count, i32 instances);                                          // Draw vertex array (currently active vao) with instancing
+RLAPI void rlDrawVertexArrayElementsInstanced( i32 offset, i32 count, void *buffer, i32 instances);              // Draw vertex array elements with instancing
 
 // Textures management
-RLAPI u32 rlLoadTexture(const void *data, const i32 width, const i32 height, const i32 format, const i32 mipmapCount);                     // Load texture data
-RLAPI u32 rlLoadTextureDepth(const i32 width, const i32 height, bool useRenderBuffer);                                         // Load depth texture/renderbuffer (to be attached to fbo)
-RLAPI u32 rlLoadTextureCubemap(const void *data, const i32 size, const i32 format, const i32 mipmapCount);                           // Load texture cubemap data
-RLAPI void rlUpdateTexture(const u32 id, const i32 offsetX, const i32 offsetY, const i32 width, const i32 height, const i32 format, const void *data); // Update texture with new data on GPU
-RLAPI void rlGetGlTextureFormats(const i32 format, u32 *glInternalFormat, u32 *glFormat, u32 *glType); // Get OpenGL internal formats
-RLAPI std::string rlGetPixelFormatName(const u32 format);                                                                // Get name string for pixel format
+RLAPI u32 rlLoadTexture( void *data, i32 width, i32 height, i32 format, i32 mipmapCount);                     // Load texture data
+RLAPI u32 rlLoadTextureDepth( i32 width, i32 height, bool useRenderBuffer);                                         // Load depth texture/renderbuffer (to be attached to fbo)
+RLAPI u32 rlLoadTextureCubemap( void *data, i32 size, i32 format, i32 mipmapCount);                           // Load texture cubemap data
+RLAPI void rlUpdateTexture( u32 id, i32 offsetX, i32 offsetY, i32 width, i32 height, i32 format, const void *data); // Update texture with new data on GPU
+RLAPI void rlGetGlTextureFormats( i32 format, u32 *glInternalFormat, u32 *glFormat, u32 *glType); // Get OpenGL internal formats
+RLAPI std::string rlGetPixelFormatName( u32 format);                                                                // Get name string for pixel format
 RLAPI void rlUnloadTexture(u32 id);                                                                                // Unload texture from GPU memory
-RLAPI void rlGenTextureMipmaps(const u32 id, const i32 width, const i32 height, const i32 format, i32 *mipmaps);                           // Generate mipmap data for selected texture
-RLAPI void *rlReadTexturePixels(const u32 id, const i32 width, const i32 height, const i32 format);                                        // Read texture pixel data
-RLAPI u8 *rlReadScreenPixels(const i32 width, const i32 height);                                                             // Read screen pixel data (color buffer)
+RLAPI void rlGenTextureMipmaps( u32 id, i32 width, i32 height, i32 format, i32 *mipmaps);                           // Generate mipmap data for selected texture
+RLAPI void *rlReadTexturePixels( u32 id, i32 width, i32 height, i32 format);                                        // Read texture pixel data
+RLAPI u8 *rlReadScreenPixels( i32 width, i32 height);                                                             // Read screen pixel data (color buffer)
 
 // Framebuffer management (fbo)
 RLAPI u32 rlLoadFramebuffer();                                                                     // Load an empty framebuffer
-RLAPI void rlFramebufferAttach(const u32 id, const u32 texId, const i32 attachType, const i32 texType, const i32 mipLevel); // Attach texture/renderbuffer to a framebuffer
-RLAPI bool rlFramebufferComplete(const u32 id);                                                              // Verify framebuffer is complete
+RLAPI void rlFramebufferAttach( u32 id, u32 texId, i32 attachType, i32 texType, i32 mipLevel); // Attach texture/renderbuffer to a framebuffer
+RLAPI bool rlFramebufferComplete( u32 id);                                                              // Verify framebuffer is complete
 RLAPI void rlUnloadFramebuffer(u32 id);                                                                // Delete framebuffer from GPU
 // WARNING: Copy and resize framebuffer functionality only defined for software backend
-RLAPI void rlCopyFramebuffer(const i32 x, const i32 y, const i32 width, const i32 height, const i32 format, const void *pixels); // Copy framebuffer pixel data to internal buffer
-RLAPI void rlResizeFramebuffer(const i32 width, const i32 height);                                       // Resize internal framebuffer
+RLAPI void rlCopyFramebuffer( i32 x, i32 y, i32 width, i32 height, i32 format, void *pixels); // Copy framebuffer pixel data to internal buffer
+RLAPI void rlResizeFramebuffer( i32 width, i32 height);                                       // Resize internal framebuffer
 
 // Shaders management
-RLAPI u32 rlLoadShader(std::string_view code, const i32 type);                         // Load (compile) shader and return shader id (type: RL_VERTEX_SHADER, RL_FRAGMENT_SHADER, RL_COMPUTE_SHADER)
+RLAPI u32 rlLoadShader(std::string_view code, i32 type);                         // Load (compile) shader and return shader id (type: RL_VERTEX_SHADER, RL_FRAGMENT_SHADER, RL_COMPUTE_SHADER)
 RLAPI u32 rlLoadShaderProgram(std::string_view vsCode, std::string_view fsCode); // Load shader from code strings
-RLAPI u32 rlLoadShaderProgramEx(const u32 vsId, const u32 fsId);           // Load shader program, using already loaded shader ids
-RLAPI u32 rlLoadShaderProgramCompute(const u32 csId);                         // Load compute shader program
-RLAPI void rlUnloadShader(const u32 id);                                               // Unload shader, loaded with rlLoadShader()
-RLAPI void rlUnloadShaderProgram(const u32 id);                                        // Unload shader program
-RLAPI i32 rlGetLocationUniform(const u32 id, std::string_view uniformName);            // Get shader location uniform, requires shader program id
-RLAPI i32 rlGetLocationAttrib(const u32 id, std::string_view attribName);              // Get shader location attribute, requires shader program id
-RLAPI void rlSetUniform(const i32 locIndex, const void *value, const i32 uniformType, const i32 count);     // Set shader value uniform
-RLAPI void rlSetUniformMatrix(const i32 locIndex, const mat4 mat);                                    // Set shader value matrix
-RLAPI void rlSetUniformMatrices(const i32 locIndex, const mat4 *mat, const i32 count);                // Set shader value matrices
-RLAPI void rlSetUniformSampler(const i32 locIndex, const u32 textureId);                     // Set shader value sampler
-RLAPI void rlSetShader(const u32 id, i32 *locs);                                       // Set shader currently active (id and locations)
+RLAPI u32 rlLoadShaderProgramEx( u32 vsId, u32 fsId);           // Load shader program, using already loaded shader ids
+RLAPI u32 rlLoadShaderProgramCompute( u32 csId);                         // Load compute shader program
+RLAPI void rlUnloadShader( u32 id);                                               // Unload shader, loaded with rlLoadShader()
+RLAPI void rlUnloadShaderProgram( u32 id);                                        // Unload shader program
+RLAPI i32 rlGetLocationUniform( u32 id, std::string_view uniformName);            // Get shader location uniform, requires shader program id
+RLAPI i32 rlGetLocationAttrib( u32 id, std::string_view attribName);              // Get shader location attribute, requires shader program id
+RLAPI void rlSetUniform( i32 locIndex, const void *value, i32 uniformType, i32 count);     // Set shader value uniform
+RLAPI void rlSetUniformMatrix( i32 locIndex, mat4 mat);                                    // Set shader value matrix
+RLAPI void rlSetUniformMatrices( i32 locIndex, mat4 *mat, i32 count);                // Set shader value matrices
+RLAPI void rlSetUniformSampler( i32 locIndex, u32 textureId);                     // Set shader value sampler
+RLAPI void rlSetShader( u32 id, i32 *locs);                                       // Set shader currently active (id and locations)
 
 // Compute shader management
-RLAPI void rlComputeShaderDispatch(const u32 groupX, const u32 groupY, const u32 groupZ); // Dispatch compute shader (equivalent to *draw* for graphics pipeline)
+RLAPI void rlComputeShaderDispatch( u32 groupX, u32 groupY, u32 groupZ); // Dispatch compute shader (equivalent to *draw* for graphics pipeline)
 
 // Shader buffer storage object management (ssbo)
-RLAPI u32 rlLoadShaderBuffer(const u32 size, const void *data, const i32 usageHint);                                                   // Load shader storage buffer object (SSBO)
+RLAPI u32 rlLoadShaderBuffer( u32 size, void *data, i32 usageHint);                                                   // Load shader storage buffer object (SSBO)
 RLAPI void rlUnloadShaderBuffer(u32 ssboId);                                                                                        // Unload shader storage buffer object (SSBO)
-RLAPI void rlUpdateShaderBuffer(const u32 id, const void *data, const u32 dataSize, const u32 offset);                              // Update SSBO buffer data
-RLAPI void rlBindShaderBuffer(const u32 id, const u32 index);                                                                          // Bind SSBO buffer
-RLAPI void rlReadShaderBuffer(const u32 id, const void *dest, const u32 count, const u32 offset);                                         // Read SSBO buffer data (GPU->CPU)
-RLAPI void rlCopyShaderBuffer(const u32 destId, const u32 srcId, const u32 destOffset, const u32 srcOffset, const u32 count); // Copy SSBO data between buffers
-RLAPI u32 rlGetShaderBufferSize(const u32 id);                                                                                   // Get SSBO buffer size
+RLAPI void rlUpdateShaderBuffer( u32 id, void *data, u32 dataSize, u32 offset);                              // Update SSBO buffer data
+RLAPI void rlBindShaderBuffer( u32 id, u32 index);                                                                          // Bind SSBO buffer
+RLAPI void rlReadShaderBuffer( u32 id, void *dest, u32 count, u32 offset);                                         // Read SSBO buffer data (GPU->CPU)
+RLAPI void rlCopyShaderBuffer( u32 destId, u32 srcId, u32 destOffset, u32 srcOffset, u32 count); // Copy SSBO data between buffers
+RLAPI u32 rlGetShaderBufferSize( u32 id);                                                                                   // Get SSBO buffer size
 
 // Buffer management
-RLAPI void rlBindImageTexture(const u32 id, const u32 index, const i32 format, const bool readonly);  // Bind image texture
+RLAPI void rlBindImageTexture( u32 id, u32 index, i32 format, bool readonly);  // Bind image texture
 
 // Matrix state management
 RLAPI mat4 rlGetMatrixModelview();                                  // Get internal modelview matrix
 RLAPI mat4 rlGetMatrixProjection();                                 // Get internal projection matrix
 RLAPI mat4 rlGetMatrixTransform();                                  // Get internal accumulated transform matrix
-RLAPI mat4 rlGetMatrixProjectionStereo(const i32 eye);                        // Get internal projection matrix for stereo render (selected eye)
-RLAPI mat4 rlGetMatrixViewOffsetStereo(const i32 eye);                        // Get internal view offset matrix for stereo render (selected eye)
+RLAPI mat4 rlGetMatrixProjectionStereo( i32 eye);                        // Get internal projection matrix for stereo render (selected eye)
+RLAPI mat4 rlGetMatrixViewOffsetStereo( i32 eye);                        // Get internal view offset matrix for stereo render (selected eye)
 RLAPI void rlSetMatrixProjection(mat4 proj);                            // Set a custom projection matrix (replaces internal projection matrix)
-RLAPI void rlSetMatrixModelview(const mat4 view);                             // Set a custom modelview matrix (replaces internal modelview matrix)
-RLAPI void rlSetMatrixProjectionStereo(const mat4 right, const mat4 left);          // Set eyes projection matrices for stereo rendering
-RLAPI void rlSetMatrixViewOffsetStereo(const mat4 right, const mat4 left);          // Set eyes view offsets matrices for stereo rendering
+RLAPI void rlSetMatrixModelview( mat4 view);                             // Set a custom modelview matrix (replaces internal modelview matrix)
+RLAPI void rlSetMatrixProjectionStereo( mat4 right, mat4 left);          // Set eyes projection matrices for stereo rendering
+RLAPI void rlSetMatrixViewOffsetStereo( mat4 right, mat4 left);          // Set eyes view offsets matrices for stereo rendering
 
 // Quick and dirty cube/quad buffers load->draw->unload
 RLAPI void rlLoadDrawCube();     // Load and draw a cube
@@ -885,7 +885,7 @@ RLAPI void rlLoadDrawQuad();     // Load and draw a quad
     // TODO: Avoid raylib platform-dependent code on rlgl, it should be a completely portable library
     #if defined(PLATFORM_DRM)           // Use CONFIG_DRM?
     typedef void (GL_APIENTRYP PFNGLDRAWARRAYSINSTANCEDEXTPROC) (GLenum mode, GLint start, GLsizei count, GLsizei primcount);
-    typedef void (GL_APIENTRYP PFNGLDRAWELEMENTSINSTANCEDEXTPROC) (GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei primcount);
+    typedef void (GL_APIENTRYP PFNGLDRAWELEMENTSINSTANCEDEXTPROC) (GLenum mode, GLsizei count, GLenum type, void *indices, GLsizei primcount);
     typedef void (GL_APIENTRYP PFNGLVERTEXATTRIBDIVISOREXTPROC) (GLuint index, GLuint divisor);
     #endif
 #endif
@@ -1122,21 +1122,21 @@ static PFNGLVERTEXATTRIBDIVISOREXTPROC glVertexAttribDivisor = nullptr;
 static void rlLoadShaderDefault();      // Load default shader
 static void rlUnloadShaderDefault();    // Unload default shader
 #if RLGL_SHOW_GL_DETAILS_INFO
-static const char *rlGetCompressedFormatName(const i32 format); // Get compressed format official GL identifier name
+static char *rlGetCompressedFormatName( i32 format); // Get compressed format official GL identifier name
 #endif
 #endif
 
-static i32 rlGetPixelDataSize(const i32 width, const i32 height, const i32 format);   // Get pixel data size in bytes (image or texture)
+static i32 rlGetPixelDataSize( i32 width, i32 height, i32 format);   // Get pixel data size in bytes (image or texture)
 
 static mat4 rlMatrixIdentity();                       // Get identity matrix
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
 // Auxiliar matrix math functions
 typedef struct rl_float16 { f32 v[16]; } rl_float16;
-static rl_float16 rlMatrixToFloatV(const mat4 mat);             // Get float array of matrix data
+static rl_float16 rlMatrixToFloatV( mat4 mat);             // Get float array of matrix data
 #define rlMatrixToFloat(mat) (rlMatrixToFloatV(mat).v)      // Get float vector for mat4
-static mat4 rlMatrixMultiply(const mat4 left, const mat4 right);    // Multiply two matrices
-static mat4 rlMatrixTranspose(const mat4 mat);                // Transposes provided matrix
-static mat4 rlMatrixInvert(const mat4 mat);                   // Invert provided matrix
+static mat4 rlMatrixMultiply( mat4 left, mat4 right);    // Multiply two matrices
+static mat4 rlMatrixTranspose( mat4 mat);                // Transposes provided matrix
+static mat4 rlMatrixInvert( mat4 mat);                   // Invert provided matrix
 #endif
 
 //----------------------------------------------------------------------------------
@@ -1146,7 +1146,7 @@ static mat4 rlMatrixInvert(const mat4 mat);                   // Invert provided
 #if defined(GRAPHICS_API_OPENGL_11)
 // Fallback to OpenGL 1.1 function calls
 //---------------------------------------
-void rlMatrixMode(const i32 mode)
+void rlMatrixMode( i32 mode)
 {
     switch (mode)
     {
@@ -1157,12 +1157,12 @@ void rlMatrixMode(const i32 mode)
     }
 }
 
-void rlFrustum(const f32 left, const f32 right, const f32 bottom, const f32 top, const f32 znear, const f32 zfar)
+void rlFrustum( f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar)
 {
     glFrustum(left, right, bottom, top, znear, zfar);
 }
 
-void rlOrtho(const f32 left, const f32 right, const f32 bottom, const f32 top, const f32 znear, const f32 zfar)
+void rlOrtho( f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar)
 {
     glOrtho(left, right, bottom, top, znear, zfar);
 }
@@ -1170,14 +1170,14 @@ void rlOrtho(const f32 left, const f32 right, const f32 bottom, const f32 top, c
 void rlPushMatrix() { glPushMatrix(); }
 void rlPopMatrix() { glPopMatrix(); }
 void rlLoadIdentity() { glLoadIdentity(); }
-void rlTranslatef(const f32 x, const f32 y, const f32 z) { glTranslatef(x, y, z); }
-void rlRotatef(const f32 angle, f32 x, f32 y, f32 z) { glRotatef(angle, x, y, z); }
-void rlScalef(const f32 x, const f32 y, const f32 z) { glScalef(x, y, z); }
-void rlMultMatrixf(const f32 *matf) { glMultMatrixf(matf); }
+void rlTranslatef( f32 x, f32 y, f32 z) { glTranslatef(x, y, z); }
+void rlRotatef( f32 angle, f32 x, f32 y, f32 z) { glRotatef(angle, x, y, z); }
+void rlScalef( f32 x, f32 y, f32 z) { glScalef(x, y, z); }
+void rlMultMatrixf( f32 *matf) { glMultMatrixf(matf); }
 #endif
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
 // Choose the current matrix to be transformed
-void rlMatrixMode(const i32 mode)
+void rlMatrixMode( i32 mode)
 {
     if (mode == RL_PROJECTION) RLGL.State.currentMatrix = &RLGL.State.projection;
     else if (mode == RL_MODELVIEW) RLGL.State.currentMatrix = &RLGL.State.modelview;
@@ -1210,7 +1210,7 @@ void rlPopMatrix()
 {
     if (RLGL.State.stackCounter > 0)
     {
-        const mat4 mat = RLGL.State.stack[RLGL.State.stackCounter - 1];
+        mat4 mat = RLGL.State.stack[RLGL.State.stackCounter - 1];
         *RLGL.State.currentMatrix = mat;
         RLGL.State.stackCounter--;
     }
@@ -1229,7 +1229,7 @@ void rlLoadIdentity()
 }
 
 // Multiply the current matrix by a translation matrix
-void rlTranslatef(const f32 x, const f32 y, const f32 z)
+void rlTranslatef( f32 x, f32 y, f32 z)
 {
     auto matTranslation = rlMatrixIdentity();
 
@@ -1244,24 +1244,24 @@ void rlTranslatef(const f32 x, const f32 y, const f32 z)
 
 // Multiply the current matrix by a rotation matrix
 // NOTE: The provided angle must be in degrees
-void rlRotatef(const f32 angle, f32 x, f32 y, f32 z)
+void rlRotatef( f32 angle, f32 x, f32 y, f32 z)
 {
     auto matRotation = rlMatrixIdentity();
 
     // Axis vector (x, y, z) normalization
-    const f32 lengthSquared = x*x + y*y + z*z;
+    f32 lengthSquared = x*x + y*y + z*z;
     if ((lengthSquared != 1.0f) && (lengthSquared != 0.0f))
     {
-        const f32 inverseLength = 1.0f/sqrtf(lengthSquared);
+        f32 inverseLength = 1.0f/sqrtf(lengthSquared);
         x *= inverseLength;
         y *= inverseLength;
         z *= inverseLength;
     }
 
     // Rotation matrix generation
-    const f32 sinres = sinf(DEG2RAD*angle);
-    const f32 cosres = cosf(DEG2RAD*angle);
-    const f32 t = 1.0f - cosres;
+    f32 sinres = sinf(DEG2RAD*angle);
+    f32 cosres = cosf(DEG2RAD*angle);
+    f32 t = 1.0f - cosres;
 
     matRotation[0][0] = x*x*t + cosres;
     matRotation[0][1] = y*x*t + z*sinres;
@@ -1288,7 +1288,7 @@ void rlRotatef(const f32 angle, f32 x, f32 y, f32 z)
 }
 
 // Multiply the current matrix by a scaling matrix
-void rlScalef(const f32 x, const f32 y, const f32 z)
+void rlScalef( f32 x, f32 y, f32 z)
 {
     auto matScale = rlMatrixIdentity();
 
@@ -1302,7 +1302,7 @@ void rlScalef(const f32 x, const f32 y, const f32 z)
 }
 
 // Multiply the current matrix by another matrix
-void rlMultMatrixf(const f32 *matf)
+void rlMultMatrixf( f32 *matf)
 {
     // Matrix creation from array (both are column-major, matf[col*4 + row])
     mat4 mat{};
@@ -1315,13 +1315,13 @@ void rlMultMatrixf(const f32 *matf)
 }
 
 // Multiply the current matrix by a perspective matrix generated by parameters
-void rlFrustum(const f32 left, const f32 right, const f32 bottom, const f32 top, const f32 znear, const f32 zfar)
+void rlFrustum( f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar)
 {
     mat4 matFrustum{};
 
-    const f32 rl = right - left;
-    const f32 tb = top - bottom;
-    const f32 fn = zfar - znear;
+    f32 rl = right - left;
+    f32 tb = top - bottom;
+    f32 fn = zfar - znear;
 
     matFrustum[0][0] = (znear*2.0f)/rl;
     matFrustum[0][1] = 0.0f;
@@ -1347,15 +1347,15 @@ void rlFrustum(const f32 left, const f32 right, const f32 bottom, const f32 top,
 }
 
 // Multiply the current matrix by an orthographic matrix generated by parameters
-void rlOrtho(const f32 left, const f32 right, const f32 bottom, const f32 top, const f32 znear, const f32 zfar)
+void rlOrtho( f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar)
 {
     // NOTE: If left-right and top-botton values are equal it could create a division by zero,
     // response to it is platform/compiler dependent
     mat4 matOrtho{};
 
-    const f32 rl = right - left;
-    const f32 tb = top - bottom;
-    const f32 fn = zfar - znear;
+    f32 rl = right - left;
+    f32 tb = top - bottom;
+    f32 fn = zfar - znear;
 
     matOrtho[0][0] = 2.0f/rl;
     matOrtho[0][1] = 0.0f;
@@ -1379,13 +1379,13 @@ void rlOrtho(const f32 left, const f32 right, const f32 bottom, const f32 top, c
 #endif
 
 // Set the viewport area (transformation from normalized device coordinates to window coordinates)
-void rlViewport(const i32 x, const i32 y, const i32 width, const i32 height)
+void rlViewport( i32 x, i32 y, i32 width, i32 height)
 {
     glViewport(x, y, width, height);
 }
 
 // Set clip planes distances
-void rlSetClipPlanes(const f32 nearPlane, const f32 farPlane)
+void rlSetClipPlanes( f32 nearPlane, f32 farPlane)
 {
     rlCullDistanceNear = nearPlane;
     rlCullDistanceFar = farPlane;
@@ -1421,14 +1421,14 @@ void rlBegin(i32 mode)
 }
 
 void rlEnd() { glEnd(); }
-void rlVertex2i(const i32 x, const i32 y) { glVertex2i(x, y); }
-void rlVertex2f(const f32 x, const f32 y) { glVertex2f(x, y); }
-void rlVertex3f(const f32 x, const f32 y, const f32 z) { glVertex3f(x, y, z); }
-void rlTexCoord2f(const f32 x, const f32 y) { glTexCoord2f(x, y); }
-void rlNormal3f(const f32 x, const f32 y, const f32 z) { glNormal3f(x, y, z); }
-void rlColor4ub(const u8 r, const u8 g, const u8 b, const u8 a) { glColor4ub(r, g, b, a); }
-void rlColor3f(const f32 x, const f32 y, const f32 z) { glColor3f(x, y, z); }
-void rlColor4f(const f32 x, const f32 y, const f32 z, const f32 w) { glColor4f(x, y, z, w); }
+void rlVertex2i( i32 x, i32 y) { glVertex2i(x, y); }
+void rlVertex2f( f32 x, f32 y) { glVertex2f(x, y); }
+void rlVertex3f( f32 x, f32 y, f32 z) { glVertex3f(x, y, z); }
+void rlTexCoord2f( f32 x, f32 y) { glTexCoord2f(x, y); }
+void rlNormal3f( f32 x, f32 y, f32 z) { glNormal3f(x, y, z); }
+void rlColor4ub( u8 r, u8 g, u8 b, u8 a) { glColor4ub(r, g, b, a); }
+void rlColor3f( f32 x, f32 y, f32 z) { glColor3f(x, y, z); }
+void rlColor4f( f32 x, f32 y, f32 z, f32 w) { glColor4f(x, y, z, w); }
 #endif
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
 // Initialize drawing mode (how to organize vertex)
@@ -1475,7 +1475,7 @@ void rlEnd()
 
 // Define one vertex (position)
 // NOTE: Vertex position data is the basic information required for drawing
-void rlVertex3f(const f32 x, const f32 y, const f32 z)
+void rlVertex3f( f32 x, f32 y, f32 z)
 {
     f32 tx = x;
     f32 ty = y;
@@ -1539,20 +1539,20 @@ void rlVertex3f(const f32 x, const f32 y, const f32 z)
 }
 
 // Define one vertex (position)
-void rlVertex2f(const f32 x, const f32 y)
+void rlVertex2f( f32 x, f32 y)
 {
     rlVertex3f(x, y, RLGL.currentBatch->currentDepth);
 }
 
 // Define one vertex (position)
-void rlVertex2i(const i32 x, const i32 y)
+void rlVertex2i( i32 x, i32 y)
 {
     rlVertex3f(static_cast<f32>(x), static_cast<f32>(y), RLGL.currentBatch->currentDepth);
 }
 
 // Define one vertex (texture coordinate)
 // NOTE: Texture coordinates are limited to QUADS only
-void rlTexCoord2f(const f32 x, const f32 y)
+void rlTexCoord2f( f32 x, f32 y)
 {
     RLGL.State.texcoordx = x;
     RLGL.State.texcoordy = y;
@@ -1560,7 +1560,7 @@ void rlTexCoord2f(const f32 x, const f32 y)
 
 // Define one vertex (normal)
 // NOTE: Normals limited to TRIANGLES only?
-void rlNormal3f(const f32 x, const f32 y, const f32 z)
+void rlNormal3f( f32 x, f32 y, f32 z)
 {
     f32 normalx = x;
     f32 normaly = y;
@@ -1591,7 +1591,7 @@ void rlNormal3f(const f32 x, const f32 y, const f32 z)
 }
 
 // Define one vertex (color)
-void rlColor4ub(const u8 x, const u8 y, const u8 z, const u8 w)
+void rlColor4ub( u8 x, u8 y, u8 z, u8 w)
 {
     RLGL.State.colorr = x;
     RLGL.State.colorg = y;
@@ -1600,13 +1600,13 @@ void rlColor4ub(const u8 x, const u8 y, const u8 z, const u8 w)
 }
 
 // Define one vertex (color)
-void rlColor4f(const f32 r, const f32 g, const f32 b, const f32 a)
+void rlColor4f( f32 r, f32 g, f32 b, f32 a)
 {
     rlColor4ub(static_cast<u8>(r*255), static_cast<u8>(g*255), static_cast<u8>(b*255), static_cast<u8>(a*255));
 }
 
 // Define one vertex (color)
-void rlColor3f(const f32 x, const f32 y, const f32 z)
+void rlColor3f( f32 x, f32 y, f32 z)
 {
     rlColor4ub(static_cast<u8>(x*255), static_cast<u8>(y*255), static_cast<u8>(z*255), 255);
 }
@@ -1618,7 +1618,7 @@ void rlColor3f(const f32 x, const f32 y, const f32 z)
 //--------------------------------------------------------------------------------------
 
 // Set current texture to use
-void rlSetTexture(const u32 id)
+void rlSetTexture( u32 id)
 {
     if (id == 0)
     {
@@ -1674,7 +1674,7 @@ void rlSetTexture(const u32 id)
 }
 
 // Select and active a texture slot
-void rlActiveTextureSlot(const i32 slot)
+void rlActiveTextureSlot( i32 slot)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glActiveTexture(GL_TEXTURE0 + slot);
@@ -1682,7 +1682,7 @@ void rlActiveTextureSlot(const i32 slot)
 }
 
 // Enable texture
-void rlEnableTexture(const u32 id)
+void rlEnableTexture( u32 id)
 {
 #if defined(GRAPHICS_API_OPENGL_11)
     glEnable(GL_TEXTURE_2D);
@@ -1700,7 +1700,7 @@ void rlDisableTexture()
 }
 
 // Enable texture cubemap
-void rlEnableTextureCubemap(const u32 id)
+void rlEnableTextureCubemap( u32 id)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
@@ -1716,7 +1716,7 @@ void rlDisableTextureCubemap()
 }
 
 // Set texture parameters (wrap mode/filter mode)
-void rlTextureParameters(const u32 id, const i32 param, const i32 value)
+void rlTextureParameters( u32 id, i32 param, i32 value)
 {
     glBindTexture(GL_TEXTURE_2D, id);
 
@@ -1761,7 +1761,7 @@ void rlTextureParameters(const u32 id, const i32 param, const i32 value)
 }
 
 // Set cubemap parameters (wrap mode/filter mode)
-void rlCubemapParameters(const u32 id, const i32 param, const i32 value)
+void rlCubemapParameters( u32 id, i32 param, i32 value)
 {
 #if !defined(GRAPHICS_API_OPENGL_11)
     glBindTexture(GL_TEXTURE_CUBE_MAP, id);
@@ -1804,7 +1804,7 @@ void rlCubemapParameters(const u32 id, const i32 param, const i32 value)
 }
 
 // Enable shader program
-void rlEnableShader(const u32 id)
+void rlEnableShader( u32 id)
 {
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2))
     glUseProgram(id);
@@ -1820,7 +1820,7 @@ void rlDisableShader()
 }
 
 // Enable rendering to texture (fbo)
-void rlEnableFramebuffer(const u32 id)
+void rlEnableFramebuffer( u32 id)
 {
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2) || defined(GRAPHICS_API_OPENGL_SOFTWARE))
     glBindFramebuffer(GL_FRAMEBUFFER, id);
@@ -1846,7 +1846,7 @@ void rlDisableFramebuffer()
 }
 
 // Blit active framebuffer to main framebuffer
-void rlBlitFramebuffer(const i32 srcX, const i32 srcY, const i32 srcWidth, const i32 srcHeight, const i32 dstX, const i32 dstY, const i32 dstWidth, const i32 dstHeight, const i32 bufferMask)
+void rlBlitFramebuffer( i32 srcX, i32 srcY, i32 srcWidth, i32 srcHeight, i32 dstX, i32 dstY, i32 dstWidth, i32 dstHeight, i32 bufferMask)
 {
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES3))
     glBlitFramebuffer(srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight, bufferMask, GL_NEAREST);
@@ -1854,7 +1854,7 @@ void rlBlitFramebuffer(const i32 srcX, const i32 srcY, const i32 srcWidth, const
 }
 
 // Bind framebuffer object (fbo)
-void rlBindFramebuffer(const u32 target, const u32 framebuffer)
+void rlBindFramebuffer( u32 target, u32 framebuffer)
 {
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2) || defined(GRAPHICS_API_OPENGL_SOFTWARE))
     glBindFramebuffer(target, framebuffer);
@@ -1863,7 +1863,7 @@ void rlBindFramebuffer(const u32 target, const u32 framebuffer)
 
 // Activate multiple draw color buffers
 // NOTE: One color buffer is always active by default
-void rlActiveDrawBuffers(const i32 count)
+void rlActiveDrawBuffers( i32 count)
 {
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES3))
     // NOTE: Maximum number of draw buffers supported is implementation dependent,
@@ -1923,10 +1923,10 @@ void rlEnableBackfaceCulling() { glEnable(GL_CULL_FACE); }
 void rlDisableBackfaceCulling() { glDisable(GL_CULL_FACE); }
 
 // Set color mask active for screen read/draw
-void rlColorMask(const bool r, const bool g, const bool b, const bool a) { glColorMask(r, g, b, a); }
+void rlColorMask( bool r, bool g, bool b, bool a) { glColorMask(r, g, b, a); }
 
 // Set face culling mode
-void rlSetCullFace(const i32 mode)
+void rlSetCullFace( i32 mode)
 {
     switch (mode)
     {
@@ -1943,7 +1943,7 @@ void rlEnableScissorTest() { glEnable(GL_SCISSOR_TEST); }
 void rlDisableScissorTest() { glDisable(GL_SCISSOR_TEST); }
 
 // Scissor test
-void rlScissor(const i32 x, const i32 y, const i32 width, const i32 height) { glScissor(x, y, width, height); }
+void rlScissor( i32 x, i32 y, i32 width, i32 height) { glScissor(x, y, width, height); }
 
 // Enable wire mode
 void rlEnableWireMode()
@@ -1983,7 +1983,7 @@ void rlDisablePointMode()
 }
 
 // Set the line drawing width
-void rlSetLineWidth(const f32 width) { glLineWidth(width); }
+void rlSetLineWidth( f32 width) { glLineWidth(width); }
 
 // Get the line drawing width
 f32 rlGetLineWidth()
@@ -1994,7 +1994,7 @@ f32 rlGetLineWidth()
 }
 
 // Set the point drawing size
-void rlSetPointSize(const f32 size)
+void rlSetPointSize( f32 size)
 {
 #if defined(GRAPHICS_API_OPENGL_11)
     glPointSize(size);
@@ -2055,13 +2055,13 @@ bool rlIsStereoRenderEnabled()
 }
 
 // Clear color buffer with color
-void rlClearColor(const u8 r, const u8 g, const u8 b, const u8 a)
+void rlClearColor( u8 r, u8 g, u8 b, u8 a)
 {
     // Color values clamp to 0.0f(0) and 1.0f(255)
-    const f32 cr = static_cast<f32>(r)/255;
-    const f32 cg = static_cast<f32>(g)/255;
-    const f32 cb = static_cast<f32>(b)/255;
-    const f32 ca = static_cast<f32>(a)/255;
+    f32 cr = static_cast<f32>(r)/255;
+    f32 cg = static_cast<f32>(g)/255;
+    f32 cb = static_cast<f32>(b)/255;
+    f32 ca = static_cast<f32>(a)/255;
 
     glClearColor(cr, cg, cb, ca);
 }
@@ -2080,7 +2080,7 @@ void rlCheckErrors()
     auto check = 1;
     while (check)
     {
-        const GLenum err = glGetError();
+        GLenum err = glGetError();
         switch (err)
         {
             case GL_NO_ERROR: check = 0; break;
@@ -2098,7 +2098,7 @@ void rlCheckErrors()
 }
 
 // Set blend mode
-void rlSetBlendMode(const i32 mode)
+void rlSetBlendMode( i32 mode)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     if ((RLGL.State.currentBlendMode != mode) || ((mode == RL_BLEND_CUSTOM || mode == RL_BLEND_CUSTOM_SEPARATE) && RLGL.State.glCustomBlendModeModified))
@@ -2134,7 +2134,7 @@ void rlSetBlendMode(const i32 mode)
 }
 
 // Set blending mode factor and equation
-void rlSetBlendFactors(const i32 glSrcFactor, const i32 glDstFactor, const i32 glEquation)
+void rlSetBlendFactors( i32 glSrcFactor, i32 glDstFactor, i32 glEquation)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     if ((RLGL.State.glBlendSrcFactor != glSrcFactor) ||
@@ -2151,7 +2151,7 @@ void rlSetBlendFactors(const i32 glSrcFactor, const i32 glDstFactor, const i32 g
 }
 
 // Set blending mode factor and equation separately for RGB and alpha
-void rlSetBlendFactorsSeparate(const i32 glSrcRGB, const i32 glDstRGB, const i32 glSrcAlpha, const i32 glDstAlpha, const i32 glEqRGB, const i32 glEqAlpha)
+void rlSetBlendFactorsSeparate( i32 glSrcRGB, i32 glDstRGB, i32 glSrcAlpha, i32 glDstAlpha, i32 glEqRGB, i32 glEqAlpha)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     if ((RLGL.State.glBlendSrcFactorRGB != glSrcRGB) ||
@@ -2216,7 +2216,7 @@ static void GLAPIENTRY rlDebugMessageCallback(const GLenum source, const GLenum 
         default: break;
     }
 
-    constexpr const char *msgSeverity = "DEFAULT";
+    const char *msgSeverity = "DEFAULT";
     switch (severity)
     {
         case GL_DEBUG_SEVERITY_LOW: msgSeverity = "LOW"; break;
@@ -2238,7 +2238,7 @@ static void GLAPIENTRY rlDebugMessageCallback(const GLenum source, const GLenum 
 //----------------------------------------------------------------------------------
 
 // Initialize rlgl: OpenGL extensions, default buffers/shaders/textures, OpenGL states
-void rlglInit(const i32 width, const i32 height)
+void rlglInit( i32 width, i32 height)
 {
     isGpuReady = true;
 
@@ -2448,10 +2448,10 @@ void rlLoadExtensions(void *loader)
 
     // Get supported extensions list
     GLint numExt = 0;
-    auto extList = static_cast<const char **>(calloc(512, sizeof(const char *))); // Allocate 512 strings pointers (2 KB)
-    auto extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));     // One big const string
+    auto extList = static_cast<const char **>(calloc(512, sizeof( char *))); // Allocate 512 strings pointers (2 KB)
+    auto extensions = reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));     // One big string
 
-    // NOTE: String duplication rquired because glGetString() returns a const string
+    // NOTE: String duplication rquired because glGetString() returns a string
     auto extensionsLength = static_cast<i32>(strlen(extensions));                              // Get extensions string size in bytes
     auto extensionsDup = static_cast<char *>(calloc(extensionsLength + 1, sizeof(char))); // Allocate space for copy with additional EOL byte
     snprintf(extensionsDup, extensionsLength, "%s", extensions);
@@ -2654,7 +2654,7 @@ void rlLoadExtensions(void *loader)
 // Get OpenGL procedure address
 void *rlGetProcAddress(std::string_view procNameView)
 {
-    const std::string procNameStr(procNameView);
+    std::string procNameStr(procNameView);
     const char *procName = procNameStr.c_str();
 
     void *func = nullptr;
@@ -2693,7 +2693,7 @@ i32 rlGetVersion()
 }
 
 // Set current framebuffer width
-void rlSetFramebufferWidth(const i32 width)
+void rlSetFramebufferWidth( i32 width)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     RLGL.State.framebufferWidth = width;
@@ -2701,7 +2701,7 @@ void rlSetFramebufferWidth(const i32 width)
 }
 
 // Set current framebuffer height
-void rlSetFramebufferHeight(const i32 height)
+void rlSetFramebufferHeight( i32 height)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     RLGL.State.framebufferHeight = height;
@@ -2762,7 +2762,7 @@ i32 *rlGetShaderLocsDefault()
 // Render batch management
 //------------------------------------------------------------------------------------------------
 // Load render batch
-rlRenderBatch rlLoadRenderBatch(const i32 numBuffers, const i32 bufferElements)
+rlRenderBatch rlLoadRenderBatch( i32 numBuffers, i32 bufferElements)
 {
     auto batch = rlRenderBatch{ 0 };
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return batch; }
@@ -2999,8 +2999,8 @@ void rlDrawRenderBatch(rlRenderBatch *batch)
 
     // Draw batch vertex buffers (considering VR stereo if required)
     //------------------------------------------------------------------------------------------------------------
-    const mat4 matProjection = RLGL.State.projection;
-    const mat4 matModelView = RLGL.State.modelview;
+    mat4 matProjection = RLGL.State.projection;
+    mat4 matModelView = RLGL.State.modelview;
 
     auto eyeCount = 1;
     if (RLGL.State.stereoRender) eyeCount = 2;
@@ -3025,7 +3025,7 @@ void rlDrawRenderBatch(rlRenderBatch *batch)
             glUseProgram(RLGL.State.currentShaderId);
 
             // Create modelview-projection matrix and upload to shader
-            const auto matMVP = rlMatrixMultiply(RLGL.State.modelview, RLGL.State.projection);
+            auto matMVP = rlMatrixMultiply(RLGL.State.modelview, RLGL.State.projection);
             glUniformMatrix4fv(RLGL.State.currentShaderLocs[RL_SHADER_LOC_MATRIX_MVP], 1, false, rlMatrixToFloat(matMVP));
 
             if (RLGL.State.currentShaderLocs[RL_SHADER_LOC_MATRIX_PROJECTION] != -1)
@@ -3190,7 +3190,7 @@ void rlDrawRenderBatchActive()
 
 // Check internal buffer overflow for a given number of vertex
 // and force a rlRenderBatch draw call if required
-bool rlCheckRenderBatchLimit(const i32 vCount)
+bool rlCheckRenderBatchLimit( i32 vCount)
 {
     auto overflow = false;
 
@@ -3201,8 +3201,8 @@ bool rlCheckRenderBatchLimit(const i32 vCount)
         overflow = true;
 
         // Store current primitive drawing mode and texture id
-        const i32 currentMode = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].mode;
-        const i32 currentTexture = static_cast<i32>(RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].textureId);
+        i32 currentMode = RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].mode;
+        i32 currentTexture = static_cast<i32>(RLGL.currentBatch->draws[RLGL.currentBatch->drawCounter - 1].textureId);
 
         rlDrawRenderBatch(RLGL.currentBatch);    // NOTE: Stereo rendering is checked inside
 
@@ -3218,7 +3218,7 @@ bool rlCheckRenderBatchLimit(const i32 vCount)
 // Textures data management
 //-----------------------------------------------------------------------------------------
 // Convert image data to OpenGL texture (returns OpenGL valid Id)
-u32 rlLoadTexture(const void *data, const i32 width, const i32 height, const i32 format, const i32 mipmapCount)
+u32 rlLoadTexture( void *data, i32 width, i32 height, i32 format, i32 mipmapCount)
 {
     u32 id = 0;
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return id; }
@@ -3284,7 +3284,7 @@ u32 rlLoadTexture(const void *data, const i32 width, const i32 height, const i32
     // Load the different mipmap levels
     for (i32 i = 0; i < mipmapCount; i++)
     {
-        const u32 mipSize = rlGetPixelDataSize(mipWidth, mipHeight, format);
+        u32 mipSize = rlGetPixelDataSize(mipWidth, mipHeight, format);
 
         u32 glInternalFormat, glFormat, glType;
         rlGetGlTextureFormats(format, &glInternalFormat, &glFormat, &glType);
@@ -3390,7 +3390,7 @@ u32 rlLoadTexture(const void *data, const i32 width, const i32 height, const i32
 
 // Load depth texture/renderbuffer (to be attached to fbo)
 // WARNING: OpenGL ES 2.0 requires GL_OES_depth_texture and WebGL requires WEBGL_depth_texture extensions
-u32 rlLoadTextureDepth(const i32 width, const i32 height, bool useRenderBuffer)
+u32 rlLoadTextureDepth( i32 width, i32 height, bool useRenderBuffer)
 {
     u32 id = 0;
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return id; }
@@ -3463,7 +3463,7 @@ u32 rlLoadTextureDepth(const i32 width, const i32 height, bool useRenderBuffer)
 // Load texture cubemap
 // NOTE: Cubemap data is expected to be 6 images in a single data array (one after the other),
 // expected the following convention: +X, -X, +Y, -Y, +Z, -Z
-u32 rlLoadTextureCubemap(const void *data, const i32 size, const i32 format, const i32 mipmapCount)
+u32 rlLoadTextureCubemap( void *data, i32 size, i32 format, i32 mipmapCount)
 {
     u32 id = 0;
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return id; }
@@ -3488,8 +3488,8 @@ u32 rlLoadTextureCubemap(const void *data, const i32 size, const i32 format, con
         // Load cubemap faces/mipmaps
         for (i32 i = 0; i < 6*mipmapCount; i++)
         {
-            const i32 mipmapLevel = i/6;
-            const i32 face = i%6;
+            i32 mipmapLevel = i/6;
+            i32 face = i%6;
 
             if (data == nullptr)
             {
@@ -3560,7 +3560,7 @@ u32 rlLoadTextureCubemap(const void *data, const i32 size, const i32 format, con
 
 // Update already loaded texture in GPU with new data
 // WARNING: Not possible to know safely if internal texture format is the expected one...
-void rlUpdateTexture(const u32 id, const i32 offsetX, const i32 offsetY, const i32 width, const i32 height, const i32 format, const void *data)
+void rlUpdateTexture( u32 id, i32 offsetX, i32 offsetY, i32 width, i32 height, i32 format, const void *data)
 {
     glBindTexture(GL_TEXTURE_2D, id);
 
@@ -3575,7 +3575,7 @@ void rlUpdateTexture(const u32 id, const i32 offsetX, const i32 offsetY, const i
 }
 
 // Get OpenGL internal formats and data type from raylib PixelFormat
-void rlGetGlTextureFormats(const i32 format, u32 *glInternalFormat, u32 *glFormat, u32 *glType)
+void rlGetGlTextureFormats( i32 format, u32 *glInternalFormat, u32 *glFormat, u32 *glType)
 {
     *glInternalFormat = 0;
     *glFormat = 0;
@@ -3655,7 +3655,7 @@ void rlUnloadTexture(u32 id)
 
 // Generate mipmap data for selected texture
 // NOTE: Only supports GPU mipmap generation
-void rlGenTextureMipmaps(const u32 id, const i32 width, const i32 height, const i32 format, i32 *mipmaps)
+void rlGenTextureMipmaps( u32 id, i32 width, i32 height, i32 format, i32 *mipmaps)
 {
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return; }
 
@@ -3688,7 +3688,7 @@ void rlGenTextureMipmaps(const u32 id, const i32 width, const i32 height, const 
 }
 
 // Read texture pixel data
-void *rlReadTexturePixels(const u32 id, const i32 width, const i32 height, const i32 format)
+void *rlReadTexturePixels( u32 id, i32 width, i32 height, i32 format)
 {
     void *pixels = nullptr;
 
@@ -3710,7 +3710,7 @@ void *rlReadTexturePixels(const u32 id, const i32 width, const i32 height, const
 
     u32 glInternalFormat, glFormat, glType;
     rlGetGlTextureFormats(format, &glInternalFormat, &glFormat, &glType);
-    const u32 size = rlGetPixelDataSize(width, height, format);
+    u32 size = rlGetPixelDataSize(width, height, format);
 
     if ((glInternalFormat != 0) && (format < RL_PIXELFORMAT_COMPRESSED_DXT1_RGB))
     {
@@ -3760,7 +3760,7 @@ void *rlReadTexturePixels(const u32 id, const i32 width, const i32 height, const
 }
 
 // Copy framebuffer pixel data to internal buffer
-void rlCopyFramebuffer(const i32 x, const i32 y, const i32 width, const i32 height, const i32 format, const void *pixels)
+void rlCopyFramebuffer( i32 x, i32 y, i32 width, i32 height, i32 format, void *pixels)
 {
 #if defined(GRAPHICS_API_OPENGL_SOFTWARE)
     u32 glInternalFormat, glFormat, glType;
@@ -3770,7 +3770,7 @@ void rlCopyFramebuffer(const i32 x, const i32 y, const i32 width, const i32 heig
 }
 
 // Resize internal framebuffer
-void rlResizeFramebuffer(const i32 width, const i32 height)
+void rlResizeFramebuffer( i32 width, i32 height)
 {
 #if defined(GRAPHICS_API_OPENGL_SOFTWARE)
     swResize(width, height);
@@ -3778,7 +3778,7 @@ void rlResizeFramebuffer(const i32 width, const i32 height)
 }
 
 // Read screen pixel data (color buffer)
-u8 *rlReadScreenPixels(const i32 width, const i32 height)
+u8 *rlReadScreenPixels( i32 width, i32 height)
 {
     auto imgData = static_cast<u8 *>(calloc(width*height*4, sizeof(u8)));
 
@@ -3796,12 +3796,12 @@ u8 *rlReadScreenPixels(const i32 width, const i32 height)
     {
         for (i32 x = 0; x < (width*4); x += 4)
         {
-            const u32 s = ((height - 1) - y)*width*4 + x;
-            const u32 e = y*width*4 + x;
+            u32 s = ((height - 1) - y)*width*4 + x;
+            u32 e = y*width*4 + x;
 
-            const u8 r = imgData[s];
-            const u8 g = imgData[s+1];
-            const u8 b = imgData[s+2];
+            u8 r = imgData[s];
+            u8 g = imgData[s+1];
+            u8 b = imgData[s+2];
 
             imgData[s] = imgData[e];
             imgData[s+1] = imgData[e+1];
@@ -3837,7 +3837,7 @@ u32 rlLoadFramebuffer()
 
 // Attach color buffer texture to a framebuffer object (unloads previous attachment)
 // NOTE: Attach type: 0-Color, 1-Depth renderbuffer, 2-Depth texture
-void rlFramebufferAttach(const u32 id, const u32 texId, const i32 attachType, const i32 texType, const i32 mipLevel)
+void rlFramebufferAttach( u32 id, u32 texId, i32 attachType, i32 texType, i32 mipLevel)
 {
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2) || defined(GRAPHICS_API_OPENGL_SOFTWARE))
     glBindFramebuffer(GL_FRAMEBUFFER, id);
@@ -3875,14 +3875,14 @@ void rlFramebufferAttach(const u32 id, const u32 texId, const i32 attachType, co
 }
 
 // Verify render texture is complete
-bool rlFramebufferComplete(const u32 id)
+bool rlFramebufferComplete( u32 id)
 {
     auto result = false;
 
 #if (defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2) || defined(GRAPHICS_API_OPENGL_SOFTWARE))
     glBindFramebuffer(GL_FRAMEBUFFER, id);
 
-    const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 
     if (status != GL_FRAMEBUFFER_COMPLETE)
     {
@@ -3921,7 +3921,7 @@ void rlUnloadFramebuffer(u32 id)
     auto depthId = 0;
     glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &depthId);
 
-    const auto depthIdU = static_cast<u32>(depthId);
+    auto depthIdU = static_cast<u32>(depthId);
     if (depthType == GL_RENDERBUFFER) glDeleteRenderbuffers(1, &depthIdU);
     else if (depthType == GL_TEXTURE) glDeleteTextures(1, &depthIdU);
 
@@ -3938,7 +3938,7 @@ void rlUnloadFramebuffer(u32 id)
 // Vertex data management
 //-----------------------------------------------------------------------------------------
 // Load a new attributes buffer
-u32 rlLoadVertexBuffer(const void *buffer, const i32 size, const bool dynamic)
+u32 rlLoadVertexBuffer( void *buffer, i32 size, bool dynamic)
 {
     u32 id = 0;
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return id; }
@@ -3953,7 +3953,7 @@ u32 rlLoadVertexBuffer(const void *buffer, const i32 size, const bool dynamic)
 }
 
 // Load a new attributes element buffer
-u32 rlLoadVertexBufferElement(const void *buffer, const i32 size, const bool dynamic)
+u32 rlLoadVertexBufferElement( void *buffer, i32 size, bool dynamic)
 {
     u32 id = 0;
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return id; }
@@ -3968,7 +3968,7 @@ u32 rlLoadVertexBufferElement(const void *buffer, const i32 size, const bool dyn
 }
 
 // Enable vertex buffer (VBO)
-void rlEnableVertexBuffer(const u32 id)
+void rlEnableVertexBuffer( u32 id)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -3984,7 +3984,7 @@ void rlDisableVertexBuffer()
 }
 
 // Enable vertex buffer element (VBO element)
-void rlEnableVertexBufferElement(const u32 id)
+void rlEnableVertexBufferElement( u32 id)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
@@ -4001,7 +4001,7 @@ void rlDisableVertexBufferElement()
 
 // Update vertex buffer with new data
 // NOTE: dataSize and offset must be provided in bytes
-void rlUpdateVertexBuffer(const u32 id, const void *data, const i32 dataSize, const i32 offset)
+void rlUpdateVertexBuffer( u32 id, void *data, i32 dataSize, i32 offset)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -4011,7 +4011,7 @@ void rlUpdateVertexBuffer(const u32 id, const void *data, const i32 dataSize, co
 
 // Update vertex buffer elements with new data
 // NOTE: dataSize and offset must be provided in bytes
-void rlUpdateVertexBufferElements(const u32 id, const void *data, const i32 dataSize, const i32 offset)
+void rlUpdateVertexBufferElements( u32 id, void *data, i32 dataSize, i32 offset)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
@@ -4020,7 +4020,7 @@ void rlUpdateVertexBufferElements(const u32 id, const void *data, const i32 data
 }
 
 // Enable vertex array object (VAO)
-bool rlEnableVertexArray(const u32 vaoId)
+bool rlEnableVertexArray( u32 vaoId)
 {
     auto result = false;
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
@@ -4042,7 +4042,7 @@ void rlDisableVertexArray()
 }
 
 // Enable vertex attribute index
-void rlEnableVertexAttribute(const u32 index)
+void rlEnableVertexAttribute( u32 index)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glEnableVertexAttribArray(index);
@@ -4050,7 +4050,7 @@ void rlEnableVertexAttribute(const u32 index)
 }
 
 // Disable vertex attribute index
-void rlDisableVertexAttribute(const u32 index)
+void rlDisableVertexAttribute( u32 index)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glDisableVertexAttribArray(index);
@@ -4058,13 +4058,13 @@ void rlDisableVertexAttribute(const u32 index)
 }
 
 // Draw vertex array
-void rlDrawVertexArray(const i32 offset, const i32 count)
+void rlDrawVertexArray( i32 offset, i32 count)
 {
     glDrawArrays(GL_TRIANGLES, offset, count);
 }
 
 // Draw vertex array elements
-void rlDrawVertexArrayElements(const i32 offset, const i32 count, const void *buffer)
+void rlDrawVertexArrayElements( i32 offset, i32 count, void *buffer)
 {
     // NOTE: Added pointer math separately from function to avoid UBSAN complaining
     auto bufferPtr = static_cast<const u16 *>(buffer);
@@ -4074,7 +4074,7 @@ void rlDrawVertexArrayElements(const i32 offset, const i32 count, const void *bu
 }
 
 // Draw vertex array instanced
-void rlDrawVertexArrayInstanced(const i32 offset, const i32 count, const i32 instances)
+void rlDrawVertexArrayInstanced( i32 offset, i32 count, i32 instances)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glDrawArraysInstanced(GL_TRIANGLES, offset, count, instances);
@@ -4082,7 +4082,7 @@ void rlDrawVertexArrayInstanced(const i32 offset, const i32 count, const i32 ins
 }
 
 // Draw vertex array elements instanced
-void rlDrawVertexArrayElementsInstanced(const i32 offset, const i32 count, const void *buffer, const i32 instances)
+void rlDrawVertexArrayElementsInstanced( i32 offset, i32 count, void *buffer, i32 instances)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     // NOTE: Added pointer math separately from function to avoid UBSAN complaining
@@ -4094,7 +4094,7 @@ void rlDrawVertexArrayElementsInstanced(const i32 offset, const i32 count, const
 }
 
 // Enable vertex state pointer
-void rlEnableStatePointer(const i32 vertexAttribType, const void *buffer)
+void rlEnableStatePointer( i32 vertexAttribType, void *buffer)
 {
 #if defined(GRAPHICS_API_OPENGL_11)
     if (buffer != nullptr) glEnableClientState(vertexAttribType);
@@ -4111,7 +4111,7 @@ void rlEnableStatePointer(const i32 vertexAttribType, const void *buffer)
 }
 
 // Disable vertex state pointer
-void rlDisableStatePointer(const i32 vertexAttribType)
+void rlDisableStatePointer( i32 vertexAttribType)
 {
 #if defined(GRAPHICS_API_OPENGL_11)
     glDisableClientState(vertexAttribType);
@@ -4132,7 +4132,7 @@ u32 rlLoadVertexArray()
 }
 
 // Set vertex attribute
-void rlSetVertexAttribute(const u32 index, const i32 compSize, const i32 type, const bool normalized, const i32 stride, const i32 offset)
+void rlSetVertexAttribute( u32 index, i32 compSize, i32 type, bool normalized, i32 stride, i32 offset)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     // NOTE: Data type could be: GL_BYTE, GL_UNSIGNED_BYTE, GL_SHORT, GL_UNSIGNED_SHORT, GL_INT, GL_UNSIGNED_INT
@@ -4140,13 +4140,13 @@ void rlSetVertexAttribute(const u32 index, const i32 compSize, const i32 type, c
     //  - GL_HALF_FLOAT, GL_FLOAT, GL_DOUBLE, GL_FIXED,
     //  - GL_INT_2_10_10_10_REV, GL_UNSIGNED_INT_2_10_10_10_REV, GL_UNSIGNED_INT_10F_11F_11F_REV
 
-    const size_t offsetNative = offset;
+    size_t offsetNative = offset;
     glVertexAttribPointer(index, compSize, type, normalized, stride, reinterpret_cast<void *>(offsetNative));
 #endif
 }
 
 // Set vertex attribute divisor
-void rlSetVertexAttributeDivisor(const u32 index, const i32 divisor)
+void rlSetVertexAttributeDivisor( u32 index, i32 divisor)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glVertexAttribDivisor(index, divisor);
@@ -4178,7 +4178,7 @@ void rlUnloadVertexBuffer(u32 vboId)
 // Shaders management
 //-----------------------------------------------------------------------------------------------
 // Load (compile) shader and return shader id
-u32 rlLoadShader(std::string_view codeView, const i32 type)
+u32 rlLoadShader(std::string_view codeView, i32 type)
 {
     const std::string codeStr(codeView);
     const char *code = codeStr.c_str();
@@ -4330,7 +4330,7 @@ u32 rlLoadShaderProgram(std::string_view vsCodeView, std::string_view fsCodeView
 }
 
 // Load shader program from already loaded shader ids
-u32 rlLoadShaderProgramEx(const u32 vsId, const u32 fsId)
+u32 rlLoadShaderProgramEx( u32 vsId, u32 fsId)
 {
     u32 programId = 0;
     if (!isGpuReady) { TRACELOG(RL_LOG_WARNING, "GL: GPU is not ready to load data, trying to load before InitWindow()?"); return programId; }
@@ -4395,7 +4395,7 @@ u32 rlLoadShaderProgramEx(const u32 vsId, const u32 fsId)
 }
 
 // Load compute shader program
-u32 rlLoadShaderProgramCompute(const u32 csId)
+u32 rlLoadShaderProgramCompute( u32 csId)
 {
     u32 programId = 0;
 
@@ -4448,7 +4448,7 @@ u32 rlLoadShaderProgramCompute(const u32 csId)
 }
 
 // Delete shader
-void rlUnloadShader(const u32 id)
+void rlUnloadShader( u32 id)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glDeleteShader(id);
@@ -4458,7 +4458,7 @@ void rlUnloadShader(const u32 id)
 }
 
 // Unload shader program
-void rlUnloadShaderProgram(const u32 id)
+void rlUnloadShaderProgram( u32 id)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glDeleteProgram(id);
@@ -4469,7 +4469,7 @@ void rlUnloadShaderProgram(const u32 id)
 
 // Get shader location uniform
 // NOTE: First parameter refers to shader program id
-i32 rlGetLocationUniform(const u32 id, std::string_view uniformNameView)
+i32 rlGetLocationUniform( u32 id, std::string_view uniformNameView)
 {
     const std::string uniformNameStr(uniformNameView);
     const char *uniformName = uniformNameStr.c_str();
@@ -4486,7 +4486,7 @@ i32 rlGetLocationUniform(const u32 id, std::string_view uniformNameView)
 
 // Get shader location attribute
 // NOTE: First parameter refers to shader program id
-i32 rlGetLocationAttrib(const u32 id, std::string_view attribNameView)
+i32 rlGetLocationAttrib( u32 id, std::string_view attribNameView)
 {
     const std::string attribNameStr(attribNameView);
     const char *attribName = attribNameStr.c_str();
@@ -4502,7 +4502,7 @@ i32 rlGetLocationAttrib(const u32 id, std::string_view attribNameView)
 }
 
 // Set shader value uniform
-void rlSetUniform(const i32 locIndex, const void *value, const i32 uniformType, const i32 count)
+void rlSetUniform( i32 locIndex, const void *value, i32 uniformType, i32 count)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     switch (uniformType)
@@ -4528,7 +4528,7 @@ void rlSetUniform(const i32 locIndex, const void *value, const i32 uniformType, 
 }
 
 // Set shader value attribute
-void rlSetVertexAttributeDefault(const i32 locIndex, const void *value, const i32 attribType, const i32 count)
+void rlSetVertexAttributeDefault( i32 locIndex, void *value, i32 attribType, i32 count)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     switch (attribType)
@@ -4543,7 +4543,7 @@ void rlSetVertexAttributeDefault(const i32 locIndex, const void *value, const i3
 }
 
 // Set shader value uniform matrix
-void rlSetUniformMatrix(const i32 locIndex, const mat4 mat)
+void rlSetUniformMatrix( i32 locIndex, mat4 mat)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     glUniformMatrix4fv(locIndex, 1, false, rlMatrixToFloat(mat));
@@ -4551,7 +4551,7 @@ void rlSetUniformMatrix(const i32 locIndex, const mat4 mat)
 }
 
 // Set shader value uniform matrix
-void rlSetUniformMatrices(const i32 locIndex, const mat4 *matrices, const i32 count)
+void rlSetUniformMatrices( i32 locIndex, mat4 *matrices, i32 count)
 {
 #if defined(GRAPHICS_API_OPENGL_33)
     glUniformMatrix4fv(locIndex, count, true, reinterpret_cast<const f32 *>(matrices));
@@ -4563,7 +4563,7 @@ void rlSetUniformMatrices(const i32 locIndex, const mat4 *matrices, const i32 co
 }
 
 // Set shader value uniform sampler
-void rlSetUniformSampler(const i32 locIndex, const u32 textureId)
+void rlSetUniformSampler( i32 locIndex, u32 textureId)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     // Check if texture is already active
@@ -4591,7 +4591,7 @@ void rlSetUniformSampler(const i32 locIndex, const u32 textureId)
 }
 
 // Set shader currently active (id and locations)
-void rlSetShader(const u32 id, i32 *locs)
+void rlSetShader( u32 id, i32 *locs)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     if (RLGL.State.currentShaderId != id)
@@ -4604,7 +4604,7 @@ void rlSetShader(const u32 id, i32 *locs)
 }
 
 // Dispatch compute shader (equivalent to *draw* for graphics pilepine)
-void rlComputeShaderDispatch(const u32 groupX, const u32 groupY, const u32 groupZ)
+void rlComputeShaderDispatch( u32 groupX, u32 groupY, u32 groupZ)
 {
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
     glDispatchCompute(groupX, groupY, groupZ);
@@ -4612,7 +4612,7 @@ void rlComputeShaderDispatch(const u32 groupX, const u32 groupY, const u32 group
 }
 
 // Load shader storage buffer object (SSBO)
-u32 rlLoadShaderBuffer(const u32 size, const void *data, const i32 usageHint)
+u32 rlLoadShaderBuffer( u32 size, void *data, i32 usageHint)
 {
     u32 ssbo = 0;
 
@@ -4640,7 +4640,7 @@ void rlUnloadShaderBuffer(u32 ssboId)
 }
 
 // Update SSBO buffer data
-void rlUpdateShaderBuffer(const u32 id, const void *data, const u32 dataSize, const u32 offset)
+void rlUpdateShaderBuffer( u32 id, void *data, u32 dataSize, u32 offset)
 {
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
@@ -4649,7 +4649,7 @@ void rlUpdateShaderBuffer(const u32 id, const void *data, const u32 dataSize, co
 }
 
 // Get SSBO buffer size
-u32 rlGetShaderBufferSize(const u32 id)
+u32 rlGetShaderBufferSize( u32 id)
 {
     u32 result = 0;
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
@@ -4662,7 +4662,7 @@ u32 rlGetShaderBufferSize(const u32 id)
 }
 
 // Read SSBO buffer data (GPU->CPU)
-void rlReadShaderBuffer(const u32 id, void *dest, const u32 count, const u32 offset)
+void rlReadShaderBuffer( u32 id, void *dest, u32 count, u32 offset)
 {
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, id);
@@ -4671,7 +4671,7 @@ void rlReadShaderBuffer(const u32 id, void *dest, const u32 count, const u32 off
 }
 
 // Bind SSBO buffer
-void rlBindShaderBuffer(const u32 id, const u32 index)
+void rlBindShaderBuffer( u32 id, u32 index)
 {
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, index, id);
@@ -4679,7 +4679,7 @@ void rlBindShaderBuffer(const u32 id, const u32 index)
 }
 
 // Copy SSBO buffer data
-void rlCopyShaderBuffer(const u32 destId, const u32 srcId, const u32 destOffset, const u32 srcOffset, const u32 count)
+void rlCopyShaderBuffer( u32 destId, u32 srcId, u32 destOffset, u32 srcOffset, u32 count)
 {
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
     glBindBuffer(GL_COPY_READ_BUFFER, srcId);
@@ -4689,7 +4689,7 @@ void rlCopyShaderBuffer(const u32 destId, const u32 srcId, const u32 destOffset,
 }
 
 // Bind image texture
-void rlBindImageTexture(const u32 id, const u32 index, const i32 format, const bool readonly)
+void rlBindImageTexture( u32 id, u32 index, i32 format, bool readonly)
 {
 #if defined(GRAPHICS_API_OPENGL_43) || defined(GRAPHICS_API_OPENGL_46)
     u32 glInternalFormat = 0, glFormat = 0, glType = 0;
@@ -4776,7 +4776,7 @@ mat4 rlGetMatrixTransform()
 }
 
 // Get internal projection matrix for stereo render (selected eye)
-mat4 rlGetMatrixProjectionStereo(const i32 eye)
+mat4 rlGetMatrixProjectionStereo( i32 eye)
 {
     auto mat = rlMatrixIdentity();
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
@@ -4786,7 +4786,7 @@ mat4 rlGetMatrixProjectionStereo(const i32 eye)
 }
 
 // Get internal view offset matrix for stereo render (selected eye)
-mat4 rlGetMatrixViewOffsetStereo(const i32 eye)
+mat4 rlGetMatrixViewOffsetStereo( i32 eye)
 {
     auto mat = rlMatrixIdentity();
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
@@ -4796,7 +4796,7 @@ mat4 rlGetMatrixViewOffsetStereo(const i32 eye)
 }
 
 // Set a custom modelview matrix (replaces internal modelview matrix)
-void rlSetMatrixModelview(const mat4 view)
+void rlSetMatrixModelview( mat4 view)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     RLGL.State.modelview = view;
@@ -4812,7 +4812,7 @@ void rlSetMatrixProjection(mat4 projection)
 }
 
 // Set eyes projection matrices for stereo rendering
-void rlSetMatrixProjectionStereo(const mat4 right, const mat4 left)
+void rlSetMatrixProjectionStereo( mat4 right, mat4 left)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     RLGL.State.projectionStereo[0] = right;
@@ -4821,7 +4821,7 @@ void rlSetMatrixProjectionStereo(const mat4 right, const mat4 left)
 }
 
 // Set eyes view offsets matrices for stereo rendering
-void rlSetMatrixViewOffsetStereo(const mat4 right, const mat4 left)
+void rlSetMatrixViewOffsetStereo( mat4 right, mat4 left)
 {
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
     RLGL.State.viewOffsetStereo[0] = right;
@@ -4949,7 +4949,7 @@ void rlLoadDrawCube()
 }
 
 // Get name string for pixel format
-std::string rlGetPixelFormatName(const u32 format)
+std::string rlGetPixelFormatName( u32 format)
 {
 
     switch (format)
@@ -5146,7 +5146,7 @@ static void rlUnloadShaderDefault()
 
 #if RLGL_SHOW_GL_DETAILS_INFO
 // Get compressed format official GL identifier name
-static const char *rlGetCompressedFormatName(const i32 format)
+static char *rlGetCompressedFormatName( i32 format)
 {
     switch (format)
     {
@@ -5224,7 +5224,7 @@ static const char *rlGetCompressedFormatName(const i32 format)
 
 // Get pixel data size in bytes (image or texture)
 // NOTE: Size depends on pixel format
-static i32 rlGetPixelDataSize(const i32 width, const i32 height, const i32 format)
+static i32 rlGetPixelDataSize( i32 width, i32 height, i32 format)
 {
     auto dataSize = 0;       // Size in bytes
     auto bpp = 0;            // Bits per pixel
@@ -5253,9 +5253,9 @@ static i32 rlGetPixelDataSize(const i32 width, const i32 height, const i32 forma
         case RL_PIXELFORMAT_COMPRESSED_PVRT_RGB:
         case RL_PIXELFORMAT_COMPRESSED_PVRT_RGBA: // 8 bytes per each 4x4 block
         {
-            const i32 blockWidth = (width + 3)/4;
-            const i32 blockHeight = (height + 3)/4;
-            const unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*8;
+            i32 blockWidth = (width + 3)/4;
+            i32 blockHeight = (height + 3)/4;
+            unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*8;
             if (dataSizeBytes < INT_MAX) dataSize = static_cast<i32>(dataSizeBytes);
 
         } break;
@@ -5264,17 +5264,17 @@ static i32 rlGetPixelDataSize(const i32 width, const i32 height, const i32 forma
         case RL_PIXELFORMAT_COMPRESSED_ETC2_EAC_RGBA:
         case RL_PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA: // 16 bytes per each 4x4 block
         {
-            const i32 blockWidth = (width + 3)/4;
-            const i32 blockHeight = (height + 3)/4;
-            const unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*16;
+            i32 blockWidth = (width + 3)/4;
+            i32 blockHeight = (height + 3)/4;
+            unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*16;
             if (dataSizeBytes < INT_MAX) dataSize = static_cast<i32>(dataSizeBytes);
 
         } break;
         case RL_PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA: // 4 bytes per each 4x4 block
         {
-            const i32 blockWidth = (width + 3)/4;
-            const i32 blockHeight = (height + 3)/4;
-            const unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*4;
+            i32 blockWidth = (width + 3)/4;
+            i32 blockHeight = (height + 3)/4;
+            unsigned long long dataSizeBytes = static_cast<unsigned long long>(blockWidth)*blockHeight*4;
             if (dataSizeBytes < INT_MAX) dataSize = static_cast<i32>(dataSizeBytes);
 
         } break;
@@ -5285,7 +5285,7 @@ static i32 rlGetPixelDataSize(const i32 width, const i32 height, const i32 forma
     if ((format >= RL_PIXELFORMAT_UNCOMPRESSED_GRAYSCALE) &&
         (format <= RL_PIXELFORMAT_UNCOMPRESSED_R16G16B16A16))
     {
-        const unsigned long long dataSizeBytes = (static_cast<unsigned long long>(width)*height*bpp) >> 3;  // Get size in bytes (dividing by 8)
+        unsigned long long dataSizeBytes = (static_cast<unsigned long long>(width)*height*bpp) >> 3;  // Get size in bytes (dividing by 8)
         if (dataSizeBytes < INT_MAX) dataSize = static_cast<i32>(dataSizeBytes);
         else TRACELOG(LOG_WARNING, "Requested image size is larger than 2GB, it can not be allocated");
     }
@@ -5309,7 +5309,7 @@ static mat4 rlMatrixIdentity()
 #if defined(GRAPHICS_API_OPENGL_33) || defined(GRAPHICS_API_OPENGL_ES2)
 // Get float array of matrix data
 // Explicit conversion to column-major memory layout
-static rl_float16 rlMatrixToFloatV(const mat4 mat)
+static rl_float16 rlMatrixToFloatV( mat4 mat)
 {
     auto result = rl_float16{ 0 };
 
@@ -5335,7 +5335,7 @@ static rl_float16 rlMatrixToFloatV(const mat4 mat)
 
 // Get two matrix multiplication
 // NOTE: When multiplying matrices... the order matters!
-static mat4 rlMatrixMultiply(const mat4 left, const mat4 right)
+static mat4 rlMatrixMultiply( mat4 left, mat4 right)
 {
     mat4 result{};
 
@@ -5360,7 +5360,7 @@ static mat4 rlMatrixMultiply(const mat4 left, const mat4 right)
 }
 
 // Transposes provided matrix
-static mat4 rlMatrixTranspose(const mat4 mat)
+static mat4 rlMatrixTranspose( mat4 mat)
 {
     mat4 result{};
 
@@ -5385,31 +5385,31 @@ static mat4 rlMatrixTranspose(const mat4 mat)
 }
 
 // Invert provided matrix
-static mat4 rlMatrixInvert(const mat4 mat)
+static mat4 rlMatrixInvert( mat4 mat)
 {
     mat4 result{};
 
     // Cache the matrix values (speed optimization)
-    const f32 a00 = mat[0][0], a01 = mat[0][1], a02 = mat[0][2], a03 = mat[0][3];
-    const f32 a10 = mat[1][0], a11 = mat[1][1], a12 = mat[1][2], a13 = mat[1][3];
-    const f32 a20 = mat[2][0], a21 = mat[2][1], a22 = mat[2][2], a23 = mat[2][3];
-    const f32 a30 = mat[3][0], a31 = mat[3][1], a32 = mat[3][2], a33 = mat[3][3];
+    f32 a00 = mat[0][0], a01 = mat[0][1], a02 = mat[0][2], a03 = mat[0][3];
+    f32 a10 = mat[1][0], a11 = mat[1][1], a12 = mat[1][2], a13 = mat[1][3];
+    f32 a20 = mat[2][0], a21 = mat[2][1], a22 = mat[2][2], a23 = mat[2][3];
+    f32 a30 = mat[3][0], a31 = mat[3][1], a32 = mat[3][2], a33 = mat[3][3];
 
-    const f32 b00 = a00*a11 - a01*a10;
-    const f32 b01 = a00*a12 - a02*a10;
-    const f32 b02 = a00*a13 - a03*a10;
-    const f32 b03 = a01*a12 - a02*a11;
-    const f32 b04 = a01*a13 - a03*a11;
-    const f32 b05 = a02*a13 - a03*a12;
-    const f32 b06 = a20*a31 - a21*a30;
-    const f32 b07 = a20*a32 - a22*a30;
-    const f32 b08 = a20*a33 - a23*a30;
-    const f32 b09 = a21*a32 - a22*a31;
-    const f32 b10 = a21*a33 - a23*a31;
-    const f32 b11 = a22*a33 - a23*a32;
+    f32 b00 = a00*a11 - a01*a10;
+    f32 b01 = a00*a12 - a02*a10;
+    f32 b02 = a00*a13 - a03*a10;
+    f32 b03 = a01*a12 - a02*a11;
+    f32 b04 = a01*a13 - a03*a11;
+    f32 b05 = a02*a13 - a03*a12;
+    f32 b06 = a20*a31 - a21*a30;
+    f32 b07 = a20*a32 - a22*a30;
+    f32 b08 = a20*a33 - a23*a30;
+    f32 b09 = a21*a32 - a22*a31;
+    f32 b10 = a21*a33 - a23*a31;
+    f32 b11 = a22*a33 - a23*a32;
 
     // Calculate the invert determinant (inlined to avoid double-caching)
-    const f32 invDet = 1.0f/(b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
+    f32 invDet = 1.0f/(b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
 
     result[0][0] = (a11*b11 - a12*b10 + a13*b09)*invDet;
     result[0][1] = (-a01*b11 + a02*b10 - a03*b09)*invDet;

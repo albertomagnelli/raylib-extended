@@ -1,84 +1,134 @@
 #pragma once
 
 /// @file logging.h
-/// Levelbasiertes Logging mit optionalem Callback- und Datei-Sink.
+/// Levelbasiertes Logging mit optionalem Callback.
 ///
-/// Standardausgabe ist `stderr`. Ist ein Callback gesetzt, ersetzt er die
-/// Konsolenausgabe (der Datei-Sink bleibt aktiv). Logging ist thread-sicher.
-///
-/// Hinweis: Log-Funktionen allokieren und sind daher die einzige Ausnahme von
-/// der `noexcept`-Regel des Engine-Codes.
+/// Die Ausgabe erfolgt auf `std::cout`. Ist ein Callback gesetzt, ersetzt er
+/// die Konsolenausgabe. Das Logging ist thread-sicher.
 
+#include <atomic>
+#include <cstdint>
+#include <cstring>
 #include <format>
+#include <iostream>
+#include <mutex>
+#include <sstream>
+#include <string>
 #include <string_view>
 #include <utility>
 
-#include "types.h"
-#include "error.h"
+#define FILENAME   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#define LogFatal   (logging::Logger{logging::Logger::LogLevel::FATAL,   FILENAME, __LINE__})
+#define LogError   (logging::Logger{logging::Logger::LogLevel::ERROR,   FILENAME, __LINE__})
+#define LogAlert   (logging::Logger{logging::Logger::LogLevel::ALERT,   FILENAME, __LINE__})
+#define LogWarning (logging::Logger{logging::Logger::LogLevel::WARN,    FILENAME, __LINE__})
+#define LogInfo    (logging::Logger{logging::Logger::LogLevel::INFO,    FILENAME, __LINE__})
+#define LogDebug   (logging::Logger{logging::Logger::LogLevel::DEBUG,   FILENAME, __LINE__})
+#define LogTrace   (logging::Logger{logging::Logger::LogLevel::TRACE,   FILENAME, __LINE__})
 
-enum class LogLevel : u8 {
-    trace = 0,
-    debug,
-    info,
-    warn,
-    error,
-    fatal,
-    off,  ///< Schaltet Logging ab (nur als Grenzwert sinnvoll).
-};
+namespace logging {
+  class Logger {
+    public:
+      enum class LogLevel : uint8_t {
+        FATAL   = 0,
+        ERROR   = 1,
+        ALERT   = 2,
+        WARN    = 3,
+        INFO    = 4,
+        DEBUG   = 5,
+        TRACE   = 6,
+        INVALID = 7
+      };
 
-[[nodiscard]] std::string_view toString(LogLevel level) noexcept;
+      enum class OutColor : uint8_t {
+        C_RESET = 0,
+        C_RED = 1,
+        C_GREEN = 2,
+        C_YELLOW = 3,
+        C_BLUE = 4,
+        C_MAGENTA = 5,
+        C_GREY = 6
+      };
 
-/// Empfaengt die fertig formatierte Zeile (ohne Zeilenumbruch).
-using LogCallback = void (*)(LogLevel level, std::string_view line, void* userData);
+      /// Empfaengt die fertig formatierte Zeile (ohne Zeilenumbruch).
+      using LogCallback = void (*)(LogLevel level, std::string_view line, void *userData);
 
-void setLogLevel(const LogLevel level) noexcept;
-[[nodiscard]] LogLevel logLevel() noexcept;
-[[nodiscard]] bool logEnabled(LogLevel level) noexcept;
+      Logger(LogLevel logLevel, const std::string &filename, int32_t line);
+      ~Logger();
 
-/// Ersetzt die Konsolenausgabe. `nullptr` stellt `stderr` wieder her.
-void setLogCallback(const LogCallback callback, void* userData = nullptr) noexcept;
+      Logger(const Logger &) = delete;
+      Logger &operator=(const Logger &) = delete;
 
-/// Oeffnet eine Logdatei (wird bei jedem Aufruf neu angelegt).
-[[nodiscard]] Status setLogFile(std::string_view path);
-void closeLogFile() noexcept;
+      template<typename... TT>
+      void operator()(const char *fmt_str, TT &&... args);
 
-/// Schreibt eine bereits formatierte Zeile.
-void logMessage(const LogLevel level, const std::string_view message);
+      template<typename... TT>
+      void operator()(const std::string &fmt_str, TT &&... args);
 
-template <class... Args>
-void log(const LogLevel level, const std::format_string<Args...> formatString, Args&&... args) {
-    if (!logEnabled(level)) {
-        return;
-    }
-    logMessage(level, std::format(formatString, std::forward<Args>(args)...));
-}
+      template<typename T>
+      Logger &operator<<(const T &data);
 
-template <class... Args>
-void trace(const std::format_string<Args...> formatString, Args&&... args) {
-    log(LogLevel::trace, formatString, std::forward<Args>(args)...);
-}
+      Logger &operator<<(std::ostream &(*f)(std::ostream &));
 
-template <class... Args>
-void debug(const std::format_string<Args...> formatString, Args&&... args) {
-    log(LogLevel::debug, formatString, std::forward<Args>(args)...);
-}
+      /// Setzt den Schwellwert (Minimum) fuer die Ausgabe.
+      static void setLogLevel(LogLevel level) noexcept;
+      [[nodiscard]] static LogLevel logLevel() noexcept;
+      [[nodiscard]] static bool logEnabled(LogLevel level) noexcept;
 
-template <class... Args>
-void info(const std::format_string<Args...> formatString, Args&&... args) {
-    log(LogLevel::info, formatString, std::forward<Args>(args)...);
-}
+      /// Ersetzt die Konsolenausgabe. `nullptr` stellt die Konsole wieder her.
+      static void setCallback(LogCallback callback, void *userData = nullptr) noexcept;
 
-template <class... Args>
-void warn(const std::format_string<Args...> formatString, Args&&... args) {
-    log(LogLevel::warn, formatString, std::forward<Args>(args)...);
-}
+      /// Schreibt eine bereits formatierte Zeile.
+      static void logMessage(LogLevel level, std::string_view message);
 
-template <class... Args>
-void error(const std::format_string<Args...> formatString, Args&&... args) {
-    log(LogLevel::error, formatString, std::forward<Args>(args)...);
-}
+    private:
+      template<typename... Args>
+      void printFormat(const char *fmt_str, Args &&... args) {
+        if (!logEnabled(currentLogLevel)) return;
 
-template <class... Args>
-void fatal(const std::format_string<Args...> formatString, Args&&... args) {
-    log(LogLevel::fatal, formatString, std::forward<Args>(args)...);
+        std::string formattedString;
+        if constexpr (sizeof...(Args) == 0) formattedString = fmt_str;
+        else formattedString = std::vformat(fmt_str, std::make_format_args(args...));
+
+        emit(currentLogLevel, formattedString, currentFileName, currentLine);
+      }
+
+      static void emit(LogLevel level, std::string_view message, std::string_view filename, int32_t line);
+
+      static OutColor    currentColor;
+      static LogLevel    currentLogLevel;
+      static std::atomic<LogLevel> maxLogLevel;
+      static int32_t     currentLine;
+      static std::string currentFileName;
+
+      static LogCallback callback;
+      static void       *callbackUserData;
+
+      static std::mutex mutex;
+
+      std::lock_guard<std::mutex> lock{mutex};
+  };
+
+  template<typename... TT>
+  void Logger::operator()(const char *fmt_str, TT &&... args) {
+    printFormat(fmt_str, std::forward<TT>(args)...);
+  }
+
+  template<typename... TT>
+  void Logger::operator()(const std::string &fmt_str, TT &&... args) {
+    printFormat(fmt_str.c_str(), std::forward<TT>(args)...);
+  }
+
+  template<typename T>
+  Logger &Logger::operator<<(const T &data) {
+    if (!logEnabled(currentLogLevel)) return *this;
+
+    std::ostringstream dataStream;
+    dataStream << data;
+
+    if (dataStream.str().empty()) return *this;
+    printFormat("{}", dataStream.str());
+
+    return *this;
+  }
 }

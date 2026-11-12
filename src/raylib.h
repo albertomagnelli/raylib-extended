@@ -1589,7 +1589,7 @@ RLAPI void DrawBillboardPro(const Camera camera, const Texture2D texture, Rectan
 RLAPI void UploadMesh(Mesh *mesh, const bool dynamic);                                                   // Upload mesh vertex data in GPU and provide VAO/VBO ids
 RLAPI void UpdateMeshBuffer(const Mesh mesh, const i32 index, const void *data, const i32 dataSize, const i32 offset);     // Update mesh vertex data in GPU for a specific buffer index
 RLAPI void UnloadMesh(Mesh mesh);                                                                  // Unload mesh data from CPU and GPU
-RLAPI void DrawMesh(const Mesh mesh, const Material material, const mat4 transform);                                 // Draw a 3d mesh with material and transform
+RLAPI void DrawMesh(const Mesh& mesh, const Material& material, const mat4& transform);                                 // Draw a 3d mesh with material and transform
 RLAPI void DrawMeshInstanced(const Mesh mesh, const Material material, const mat4 *transforms, const i32 instances); // Draw multiple mesh instances with material and different transforms
 RLAPI BoundingBox GetMeshBoundingBox(const Mesh mesh);                                                   // Compute mesh bounding box limits
 RLAPI void GenMeshTangents(Mesh *mesh);                                                            // Compute mesh tangents

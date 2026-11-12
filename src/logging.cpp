@@ -1,150 +1,124 @@
 #include "logging.h"
 
-#include <algorithm>
-#include <array>
-#include <atomic>
-#include <chrono>
-#include <cstdio>
 #include <ctime>
-#include <format>
-#include <fstream>
 #include <iterator>
-#include <mutex>
-#include <string>
-
-#if defined(_WIN32)
-#    include <windows.h>
-#endif
-
+#include <string_view>
 
 namespace {
+  [[nodiscard]] constexpr std::string_view levelName(const logging::Logger::LogLevel level) noexcept {
+    switch (level) {
+      case logging::Logger::LogLevel::FATAL: return "FATAL";
+      case logging::Logger::LogLevel::ERROR: return "ERROR";
+      case logging::Logger::LogLevel::ALERT: return "ALERT";
+      case logging::Logger::LogLevel::WARN:  return "WARN";
+      case logging::Logger::LogLevel::INFO:  return "INFO";
+      case logging::Logger::LogLevel::DEBUG: return "DEBUG";
+      case logging::Logger::LogLevel::TRACE: return "TRACE";
+      default:                               return "INVALID";
+    }
+  }
 
-constexpr std::array<std::string_view, 7> kLevelNames{"TRACE", "DEBUG", "INFO", "WARN",
-                                                      "ERROR", "FATAL", "OFF"};
-
-constexpr std::array<const char*, 7> kLevelColors{"\x1b[90m",   "\x1b[36m", "\x1b[32m", "\x1b[33m",
-                                                  "\x1b[31m",   "\x1b[1;31m", ""};
-
-constexpr auto kColorReset = "\x1b[0m";
-
-std::atomic<LogLevel> g_level{LogLevel::info};
-std::mutex g_mutex;
-LogCallback g_callback = nullptr;
-void* g_callbackUser = nullptr;
-std::ofstream g_file;
-
-[[nodiscard]] constexpr std::size_t levelIndex(LogLevel level) noexcept {
-    const auto index = static_cast<std::size_t>(level);
-    return index < kLevelNames.size() ? index : kLevelNames.size() - 1;
+  [[nodiscard]] constexpr const char *levelColor(const logging::Logger::LogLevel level) noexcept {
+    switch (level) {
+      case logging::Logger::LogLevel::FATAL: return "\033[41m";
+      case logging::Logger::LogLevel::ERROR: return "\033[31m";
+      case logging::Logger::LogLevel::ALERT: return "\033[35m";
+      case logging::Logger::LogLevel::WARN:  return "\033[33m";
+      case logging::Logger::LogLevel::INFO:  return "\033[32m";
+      case logging::Logger::LogLevel::DEBUG: return "\033[94m";
+      case logging::Logger::LogLevel::TRACE: return "\033[36m";
+      default:                               return "";
+    }
+  }
 }
 
-void ensureConsoleSetup() noexcept {
-#if defined(_WIN32)
-    static std::once_flag flag;
-    std::call_once(flag, [] {
-        for (const DWORD which : {STD_ERROR_HANDLE, STD_OUTPUT_HANDLE}) {
-            HANDLE handle = ::GetStdHandle(which);
-            DWORD mode = 0;
-            if (handle != INVALID_HANDLE_VALUE && ::GetConsoleMode(handle, &mode) != 0) {
-                ::SetConsoleMode(handle, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-            }
-        }
-    });
-#endif
-}
+namespace logging {
+  Logger::OutColor    Logger::currentColor{OutColor::C_RESET};
+  std::atomic<Logger::LogLevel> Logger::maxLogLevel{LogLevel::INFO};
+  Logger::LogLevel    Logger::currentLogLevel{LogLevel::INFO};
+  int32_t             Logger::currentLine{-1};
+  std::string         Logger::currentFileName{};
+  Logger::LogCallback Logger::callback{nullptr};
+  void               *Logger::callbackUserData{nullptr};
+  std::mutex          Logger::mutex{};
 
-void appendTimestamp(std::string& out) {
-    const auto now = std::chrono::system_clock::now();
-    const auto seconds = std::chrono::system_clock::to_time_t(now);
-    const auto millis =
-        std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+  Logger::Logger(const LogLevel logLevel, const std::string &filename, const int32_t line) {
+    currentLogLevel = logLevel;
+    currentFileName = filename;
+    currentLine     = line;
+  }
 
-    std::tm local{};
+  Logger::~Logger() {
+    currentColor = OutColor::C_RESET;
+  }
+
+  Logger &Logger::operator<<(std::ostream &(*f)(std::ostream &)) {
+    if (!logEnabled(currentLogLevel)) return *this;
+
+    std::cout << f;
+
+    return *this;
+  }
+
+  void Logger::setLogLevel(const LogLevel level) noexcept {
+    maxLogLevel.store(level, std::memory_order_relaxed);
+  }
+
+  Logger::LogLevel Logger::logLevel() noexcept {
+    return maxLogLevel.load(std::memory_order_relaxed);
+  }
+
+  bool Logger::logEnabled(const LogLevel level) noexcept {
+    const auto threshold = maxLogLevel.load(std::memory_order_relaxed);
+    return (threshold != LogLevel::INVALID) && (level != LogLevel::INVALID) && (level <= threshold);
+  }
+
+  void Logger::setCallback(const LogCallback logCallback, void *userData) noexcept {
+    const std::lock_guard<std::mutex> guard(mutex);
+    callback         = logCallback;
+    callbackUserData = userData;
+  }
+
+  void Logger::logMessage(const LogLevel level, const std::string_view message) {
+    if (!logEnabled(level)) return;
+
+    const std::lock_guard<std::mutex> guard(mutex);
+    emit(level, message, {}, -1);
+  }
+
+  void Logger::emit(const LogLevel level, const std::string_view message, const std::string_view filename, const int32_t line) {
+    if (!logEnabled(level)) return;
+
+    const time_t rawTime = std::time(nullptr);
+    std::tm timeInfo{};
 #if defined(_WIN32)
-    ::localtime_s(&local, &seconds);
+    localtime_s(&timeInfo, &rawTime);
 #else
-    ::localtime_r(&seconds, &local);
+    localtime_r(&rawTime, &timeInfo);
 #endif
 
-    std::format_to(std::back_inserter(out), "{:02}:{:02}:{:02}.{:03}", local.tm_hour, local.tm_min,
-                   local.tm_sec, static_cast<int>(millis.count()));
-}
+    std::string out;
+    out.reserve(message.size() + 80);
+    std::format_to(std::back_inserter(out), "{:02}.{:02}.{:04} {:02}:{:02}:{:02} [{}]",
+                   timeInfo.tm_mday, timeInfo.tm_mon + 1, timeInfo.tm_year + 1900,
+                   timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec, levelName(level));
 
-}  // namespace
-
-std::string_view toString(const LogLevel level) noexcept { return kLevelNames[levelIndex(level)]; }
-
-void setLogLevel(const LogLevel level) noexcept { g_level.store(level, std::memory_order_relaxed); }
-
-LogLevel logLevel() noexcept { return g_level.load(std::memory_order_relaxed); }
-
-bool logEnabled(const LogLevel level) noexcept {
-    return level != LogLevel::off && level >= g_level.load(std::memory_order_relaxed);
-}
-
-void setLogCallback(const LogCallback callback, void* userData) noexcept {
-    const std::lock_guard lock(g_mutex);
-    g_callback = callback;
-    g_callbackUser = userData;
-}
-
-Status setLogFile(const std::string_view path) {
-    const std::lock_guard lock(g_mutex);
-
-    if (g_file.is_open()) {
-        g_file.close();
+    if (!filename.empty()) {
+      std::format_to(std::back_inserter(out), " file[{}] line [{:6}]", filename, line);
     }
 
-    g_file.open(std::string{path}, std::ios::out | std::ios::trunc);
-    if (!g_file.is_open()) {
-        return std::unexpected(
-            makeError(ErrorCode::ioFailure, std::format("Log file '{}' is not writable", path)));
+    out.push_back(' ');
+    out.append(message);
+
+    if (callback != nullptr) {
+      callback(level, out, callbackUserData);
+      return;
     }
 
-    return {};
-}
-
-void closeLogFile() noexcept {
-    const std::lock_guard lock(g_mutex);
-
-    if (g_file.is_open()) {
-        g_file.close();
-    }
-}
-
-void logMessage(const LogLevel level, const std::string_view message) {
-    if (!logEnabled(level)) {
-        return;
-    }
-
-    ensureConsoleSetup();
-
-    const std::size_t index = levelIndex(level);
-
-    std::string line;
-    line.reserve(message.size() + 40);
-    line.push_back('[');
-    appendTimestamp(line);
-    line.append("] [");
-    line.append(kLevelNames[index]);
-    line.append("] ");
-    line.append(message);
-
-    const std::lock_guard lock(g_mutex);
-
-    if (g_file.is_open()) {
-        g_file << line << '\n';
-        g_file.flush();
-    }
-
-    if (g_callback != nullptr) {
-        g_callback(level, line, g_callbackUser);
-        return;
-    }
-
-    std::fputs(kLevelColors[index], stderr);
-    std::fwrite(line.data(), 1, line.size(), stderr);
-    std::fputs(kColorReset, stderr);
-    std::fputc('\n', stderr);
-    std::fflush(stderr);
+    const char *color = levelColor(level);
+    if (*color != '\0') std::cout << color;
+    std::cout << out;
+    if (*color != '\0') std::cout << "\033[0m";
+    std::cout << std::endl;
+  }
 }
