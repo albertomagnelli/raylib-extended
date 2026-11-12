@@ -59,11 +59,11 @@ i32 main()
 
     // Define environment elements (platforms)
     EnvElement envElements[MAX_ENVIRONMENT_ELEMENTS] = {
-        {{ 0, 0, 1000, 400 }, 0, LIGHTGRAY },
-        {{ 0, 400, 1000, 200 }, 1, GRAY },
-        {{ 300, 200, 400, 10 }, 1, GRAY },
-        {{ 250, 300, 100, 10 }, 1, GRAY },
-        {{ 650, 300, 100, 10 }, 1, GRAY }
+        {Rectangle{ 0, 0, 1000, 400 }, 0, LIGHTGRAY },
+        {Rectangle{ 0, 400, 1000, 200 }, 1, GRAY },
+        {Rectangle{ 300, 200, 400, 10 }, 1, GRAY },
+        {Rectangle{ 250, 300, 100, 10 }, 1, GRAY },
+        {Rectangle{ 650, 300, 100, 10 }, 1, GRAY }
     };
 
     // Define camera

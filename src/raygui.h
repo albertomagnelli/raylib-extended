@@ -1743,7 +1743,7 @@ i32 GuiWindowBox(Rectangle bounds, const char *title)
 
     const f32 vPadding = statusBarHeight/2.0f - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT/2.0f;
     auto windowPanel = Rectangle{ bounds.x, bounds.y + (f32)statusBarHeight - (f32)statusBorderWidth, bounds.width, bounds.height - (f32)statusBarHeight + (f32)statusBorderWidth };
-    Rectangle closeButtonRec = { statusBar.x + statusBar.width - (f32)statusBorderWidth - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT - vPadding,
+    Rectangle closeButtonRec { statusBar.x + statusBar.width - (f32)statusBorderWidth - RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT - vPadding,
                                  statusBar.y + vPadding, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT, RAYGUI_WINDOWBOX_CLOSEBUTTON_HEIGHT };
 
     // Update control
@@ -1903,13 +1903,13 @@ i32 GuiScrollPanel(Rectangle bounds, const char *text, const Rectangle content, 
 
     i32 horizontalScrollBarWidth = hasHorizontalScrollBar? GuiGetStyle(LISTVIEW, SCROLLBAR_WIDTH) : 0;
     i32 verticalScrollBarWidth =  hasVerticalScrollBar? GuiGetStyle(LISTVIEW, SCROLLBAR_WIDTH) : 0;
-    Rectangle horizontalScrollBar = {
+    Rectangle horizontalScrollBar {
         (f32)((GuiGetStyle(LISTVIEW, SCROLLBAR_SIDE) == SCROLLBAR_LEFT_SIDE)? (f32)bounds.x + verticalScrollBarWidth : (f32)bounds.x) + GuiGetStyle(DEFAULT, BORDER_WIDTH),
         (f32)bounds.y + bounds.height - horizontalScrollBarWidth - GuiGetStyle(DEFAULT, BORDER_WIDTH),
         (f32)bounds.width - verticalScrollBarWidth - 2*GuiGetStyle(DEFAULT, BORDER_WIDTH),
         (f32)horizontalScrollBarWidth
     };
-    Rectangle verticalScrollBar = {
+    Rectangle verticalScrollBar {
         (f32)((GuiGetStyle(LISTVIEW, SCROLLBAR_SIDE) == SCROLLBAR_LEFT_SIDE)? (f32)bounds.x + GuiGetStyle(DEFAULT, BORDER_WIDTH) : (f32)bounds.x + bounds.width - verticalScrollBarWidth - GuiGetStyle(DEFAULT, BORDER_WIDTH)),
         (f32)bounds.y + GuiGetStyle(DEFAULT, BORDER_WIDTH),
         (f32)verticalScrollBarWidth,
@@ -2271,7 +2271,7 @@ i32 GuiToggleSlider(const Rectangle bounds, const char *text, i32 *active)
 
     if (text != NULL) items = GuiTextSplit(text, ';', &itemCount);
 
-    Rectangle slider = {
+    Rectangle slider {
         0,      // Calculated later depending on the active toggle
         bounds.y + GuiGetStyle(SLIDER, BORDER_WIDTH) + GuiGetStyle(SLIDER, SLIDER_PADDING),
         (bounds.width - 2*GuiGetStyle(SLIDER, BORDER_WIDTH) - (itemCount + 1)*GuiGetStyle(SLIDER, SLIDER_PADDING))/itemCount,
@@ -2356,7 +2356,7 @@ i32 GuiCheckBox(const Rectangle bounds, const char *text, bool *checked)
     {
         Vector2 mousePoint = GUI_POINTER_POSITION;
 
-        Rectangle totalBounds = {
+        Rectangle totalBounds {
             (GuiGetStyle(CHECKBOX, TEXT_ALIGNMENT) == TEXT_ALIGN_LEFT)? textBounds.x : bounds.x,
             bounds.y,
             bounds.width + textBounds.width + GuiGetStyle(CHECKBOX, TEXT_PADDING),
@@ -2385,7 +2385,7 @@ i32 GuiCheckBox(const Rectangle bounds, const char *text, bool *checked)
 
     if (*checked)
     {
-        Rectangle check = { bounds.x + GuiGetStyle(CHECKBOX, BORDER_WIDTH) + GuiGetStyle(CHECKBOX, CHECK_PADDING),
+        Rectangle check { bounds.x + GuiGetStyle(CHECKBOX, BORDER_WIDTH) + GuiGetStyle(CHECKBOX, CHECK_PADDING),
                             bounds.y + GuiGetStyle(CHECKBOX, BORDER_WIDTH) + GuiGetStyle(CHECKBOX, CHECK_PADDING),
                             bounds.width - 2*(GuiGetStyle(CHECKBOX, BORDER_WIDTH) + GuiGetStyle(CHECKBOX, CHECK_PADDING)),
                             bounds.height - 2*(GuiGetStyle(CHECKBOX, BORDER_WIDTH) + GuiGetStyle(CHECKBOX, CHECK_PADDING)) };
@@ -2410,7 +2410,7 @@ i32 GuiComboBox(Rectangle bounds, const char *text, i32 *active)
 
     bounds.width -= (GuiGetStyle(COMBOBOX, COMBO_BUTTON_WIDTH) + GuiGetStyle(COMBOBOX, COMBO_BUTTON_SPACING));
 
-    Rectangle selector = { (f32)bounds.x + bounds.width + GuiGetStyle(COMBOBOX, COMBO_BUTTON_SPACING),
+    Rectangle selector { (f32)bounds.x + bounds.width + GuiGetStyle(COMBOBOX, COMBO_BUTTON_SPACING),
                            (f32)bounds.y, (f32)GuiGetStyle(COMBOBOX, COMBO_BUTTON_WIDTH), (f32)bounds.height };
 
     // Get substrings items from text (items pointers, lengths and count)
@@ -2624,7 +2624,7 @@ i32 GuiTextBox(const Rectangle bounds, char *text, const i32 textSize, const boo
 
     // Cursor rectangle
     // NOTE: Position X value should be updated
-    Rectangle cursor = {
+    Rectangle cursor {
         textBounds.x + textWidth + GuiGetStyle(DEFAULT, TEXT_SPACING),
         textBounds.y + textBounds.height/2 - GuiGetStyle(DEFAULT, TEXT_SIZE),
         2,
@@ -3079,12 +3079,12 @@ i32 GuiSpinner(const Rectangle bounds, const char *text, i32 *value, const i32 m
 
     i32 tempValue = *value;
 
-    Rectangle valueBoxBounds = {
+    Rectangle valueBoxBounds {
         bounds.x + GuiGetStyle(VALUEBOX, SPINNER_BUTTON_WIDTH) + GuiGetStyle(VALUEBOX, SPINNER_BUTTON_SPACING),
         bounds.y,
         bounds.width - 2*(GuiGetStyle(VALUEBOX, SPINNER_BUTTON_WIDTH) + GuiGetStyle(VALUEBOX, SPINNER_BUTTON_SPACING)), bounds.height };
     auto leftButtonBound = Rectangle{ (f32)bounds.x, (f32)bounds.y, (f32)GuiGetStyle(VALUEBOX, SPINNER_BUTTON_WIDTH), (f32)bounds.height };
-    Rectangle rightButtonBound = { (f32)bounds.x + bounds.width - GuiGetStyle(VALUEBOX, SPINNER_BUTTON_WIDTH), (f32)bounds.y,
+    Rectangle rightButtonBound { (f32)bounds.x + bounds.width - GuiGetStyle(VALUEBOX, SPINNER_BUTTON_WIDTH), (f32)bounds.y,
         (f32)GuiGetStyle(VALUEBOX, SPINNER_BUTTON_WIDTH), (f32)bounds.height };
 
     auto textBounds = Rectangle{};
@@ -3281,7 +3281,7 @@ i32 GuiValueBox(const Rectangle bounds, const char *text, i32 *value, const i32 
     if (editMode)
     {
         // NOTE: ValueBox internal text is always centered
-        Rectangle cursor = { bounds.x + GuiGetTextWidth(textValue)/2 + bounds.width/2 + 1,
+        Rectangle cursor { bounds.x + GuiGetTextWidth(textValue)/2 + bounds.width/2 + 1,
             bounds.y + GuiGetStyle(TEXTBOX, BORDER_WIDTH) + 2,
             2, bounds.height - GuiGetStyle(TEXTBOX, BORDER_WIDTH)*2 - 4 };
         if (cursor.height > bounds.height) cursor.height = bounds.height - GuiGetStyle(TEXTBOX, BORDER_WIDTH)*2;
@@ -3420,7 +3420,7 @@ i32 GuiValueBoxFloat(const Rectangle bounds, const char *text, char *textValue, 
     if (editMode)
     {
         // NOTE: ValueBox internal text is always centered
-        Rectangle cursor = {bounds.x + GuiGetTextWidth(textValue)/2 + bounds.width/2 + 1,
+        Rectangle cursor {bounds.x + GuiGetTextWidth(textValue)/2 + bounds.width/2 + 1,
                             bounds.y + 2*GuiGetStyle(VALUEBOX, BORDER_WIDTH), 4,
                             bounds.height - 4*GuiGetStyle(VALUEBOX, BORDER_WIDTH)};
         GuiDrawRectangle(cursor, 0, BLANK, GetColor(GuiGetStyle(VALUEBOX, BORDER_COLOR_PRESSED)));
@@ -3448,7 +3448,7 @@ i32 GuiSlider(const Rectangle bounds, const char *textLeft, const char *textRigh
 
     i32 sliderWidth = GuiGetStyle(SLIDER, SLIDER_WIDTH);
 
-    Rectangle slider = { bounds.x, bounds.y + GuiGetStyle(SLIDER, BORDER_WIDTH) + GuiGetStyle(SLIDER, SLIDER_PADDING),
+    Rectangle slider { bounds.x, bounds.y + GuiGetStyle(SLIDER, BORDER_WIDTH) + GuiGetStyle(SLIDER, SLIDER_PADDING),
                          0, bounds.height - 2*GuiGetStyle(SLIDER, BORDER_WIDTH) - 2*GuiGetStyle(SLIDER, SLIDER_PADDING) };
 
     // Update control
@@ -3574,7 +3574,7 @@ i32 GuiProgressBar(const Rectangle bounds, const char *textLeft, const char *tex
     f32 prevValue = *value;
 
     // Progress bar
-    Rectangle progress = { bounds.x + GuiGetStyle(PROGRESSBAR, BORDER_WIDTH),
+    Rectangle progress { bounds.x + GuiGetStyle(PROGRESSBAR, BORDER_WIDTH),
                            bounds.y + GuiGetStyle(PROGRESSBAR, BORDER_WIDTH) + GuiGetStyle(PROGRESSBAR, PROGRESS_PADDING), 0,
                            bounds.height - GuiGetStyle(PROGRESSBAR, BORDER_WIDTH) - 2*GuiGetStyle(PROGRESSBAR, PROGRESS_PADDING) -1 };
 
@@ -3851,7 +3851,7 @@ i32 GuiListViewEx(const Rectangle bounds, const char **text, const i32 count, i3
 
     if (useScrollBar)
     {
-        Rectangle scrollBarBounds = {
+        Rectangle scrollBarBounds {
             bounds.x + bounds.width - GuiGetStyle(LISTVIEW, BORDER_WIDTH) - GuiGetStyle(LISTVIEW, SCROLLBAR_WIDTH),
             bounds.y + GuiGetStyle(LISTVIEW, BORDER_WIDTH), (f32)GuiGetStyle(LISTVIEW, SCROLLBAR_WIDTH),
             bounds.height - 2*GuiGetStyle(DEFAULT, BORDER_WIDTH)
@@ -4023,7 +4023,7 @@ i32 GuiColorBarAlpha(const Rectangle bounds, const char *text, f32 *alpha)
     GuiState state = guiState;
 
     f32 prevAlpha = *alpha;
-    Rectangle selector = { (f32)bounds.x + (*alpha)*bounds.width - GuiGetStyle(COLORPICKER, HUEBAR_SELECTOR_HEIGHT)/2,
+    Rectangle selector { (f32)bounds.x + (*alpha)*bounds.width - GuiGetStyle(COLORPICKER, HUEBAR_SELECTOR_HEIGHT)/2,
         (f32)bounds.y - GuiGetStyle(COLORPICKER, HUEBAR_SELECTOR_OVERFLOW),
         (f32)GuiGetStyle(COLORPICKER, HUEBAR_SELECTOR_HEIGHT),
         (f32)bounds.height + GuiGetStyle(COLORPICKER, HUEBAR_SELECTOR_OVERFLOW)*2 };
@@ -5333,7 +5333,7 @@ void GuiDrawIcon(const i32 iconId, const i32 posX, const i32 posY, const i32 pix
         i32 x = iconId%maxIconsPerLine;
         i32 y = iconId/maxIconsPerLine;
 
-        Rectangle srcRec = { (f32)x*(RAYGUI_ICON_SIZE + 2*RAYGUI_ICON_FONT_ATLAS_PADDING) + RAYGUI_ICON_FONT_ATLAS_PADDING,
+        Rectangle srcRec { (f32)x*(RAYGUI_ICON_SIZE + 2*RAYGUI_ICON_FONT_ATLAS_PADDING) + RAYGUI_ICON_FONT_ATLAS_PADDING,
             guiIconFontOffsetY + (f32)y*(RAYGUI_ICON_SIZE + 2*RAYGUI_ICON_FONT_ATLAS_PADDING) + RAYGUI_ICON_FONT_ATLAS_PADDING,
             RAYGUI_ICON_SIZE, RAYGUI_ICON_SIZE };
         auto dstRec = Rectangle{ (f32)posX, (f32)posY, (f32)pixelSize*RAYGUI_ICON_SIZE, (f32)pixelSize*RAYGUI_ICON_SIZE };

@@ -110,7 +110,7 @@ i32 main()
                             mesh.vertices[i*3 + 1],
                             mesh.vertices[i*3 + 2],
                         };
-                        const Color color = {
+                        const Color color{
                             mesh.colors[i*4 + 0],
                             mesh.colors[i*4 + 1],
                             mesh.colors[i*4 + 2],

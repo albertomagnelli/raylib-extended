@@ -96,7 +96,7 @@ i32 main()
     }
 
     // A simple scrollbar on the side to show how far we have read into the file
-    Rectangle scrollBar = {
+    Rectangle scrollBar{
         static_cast<f32>(screenWidth) - 5, 0, 5,
         screenHeight*100.0f/(textHeight - screenHeight) // Scrollbar height is just a percentage
     };

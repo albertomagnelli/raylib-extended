@@ -468,7 +468,7 @@ static void DrawTextCodepoint3D(Font font, i32 codepoint, vec3 position, f32 fon
 
     // Character source rectangle from font texture atlas
     // NOTE: We consider chars padding when drawing, it could be required for outline/glow shader effects
-    const Rectangle srcRec = { font.recs[index].x - static_cast<f32>(font.glyphPadding), font.recs[index].y - static_cast<f32>(font.glyphPadding),
+    const Rectangle srcRec{ font.recs[index].x - static_cast<f32>(font.glyphPadding), font.recs[index].y - static_cast<f32>(font.glyphPadding),
                          font.recs[index].width + 2.0f*font.glyphPadding, font.recs[index].height + 2.0f*font.glyphPadding };
 
     const f32 width = (font.recs[index].width + 2.0f*font.glyphPadding)*scale;

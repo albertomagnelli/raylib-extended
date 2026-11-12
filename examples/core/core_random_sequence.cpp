@@ -123,7 +123,7 @@ i32 main()
 //------------------------------------------------------------------------------------
 static Color GenerateRandomColor(void)
 {
-    Color color = {
+    Color color{
         static_cast<u8>(GetRandomValue(0, 255)),
         static_cast<u8>(GetRandomValue(0, 255)),
         static_cast<u8>(GetRandomValue(0, 255)),

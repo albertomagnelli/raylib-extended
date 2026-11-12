@@ -54,8 +54,8 @@ constexpr int shadowSize = 2048;
 constexpr int shadowUnit = 15;
 constexpr float shadowExtent = 10.0f;
 
-const Color background = { 4, 5, 8, 255 };
-const Color panelColor = { 0, 0, 0, 140 };
+const Color background{ 4, 5, 8, 255 };
+const Color panelColor{ 0, 0, 0, 140 };
 
 static const char *shadowVertexShader = R"glsl(
 #version 330
@@ -528,7 +528,7 @@ int main()
 
             // --- Overlay --------------------------------------------------------
 
-            DrawRectangleRec({ 24.0f, 24.0f, 760.0f, 152.0f }, panelColor);
+            DrawRectangleRec(Rectangle{ 24.0f, 24.0f, 760.0f, 152.0f }, panelColor);
             DrawText("raylib-extended - Phase 9: Schattenwurf", 40, 38, 24, RAYWHITE);
             DrawText(TextFormat("Directional Light | Shadow Map %ix%i | 3x3 PCF | %i FPS",
                                 shadowSize, shadowSize, GetFPS()), 40, 76, 17, SKYBLUE);

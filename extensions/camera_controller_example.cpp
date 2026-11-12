@@ -62,7 +62,7 @@ int main()
     const char *modeNames[] = { "FIRST_PERSON", "THIRD_PERSON", "ORBIT", "FREE" };
     constexpr int modeCount = 4;
 
-    const Color backgroundColor = { 24, 24, 32, 255 };
+    const Color backgroundColor{ 24, 24, 32, 255 };
 
     while (!WindowShouldClose())
     {

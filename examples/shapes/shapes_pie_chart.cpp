@@ -62,7 +62,7 @@ i32 main()
     };
 
     // UI Panel rectangle
-    const Rectangle panelRect = {
+    const Rectangle panelRect{
         panelPos.x, panelPos.y,
         static_cast<f32>(panelWidth),
         static_cast<f32>(screenHeight) - 2.0f*panelMargin

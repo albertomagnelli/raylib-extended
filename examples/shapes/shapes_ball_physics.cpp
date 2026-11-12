@@ -126,7 +126,7 @@ i32 main()
                     .radius = 20.0f + static_cast<f32>(GetRandomValue(0, 30)),
                     .friction = 0.99f,
                     .elasticity = 0.9f,
-                    .color = { static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), 255 },
+                    .color = Color{ static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), static_cast<u8>(GetRandomValue(0, 255)), 255 },
                     .grabbed = false
                 };
             }

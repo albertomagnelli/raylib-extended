@@ -428,7 +428,7 @@ Font LoadFontFromImage(Image image, const Color key, const i32 firstChar)
     // Allocate a temporal arrays for glyphs data measures,
     // once the actual number of glyphs is obtained, copy data to a sized array
     i32 tempCharValues[MAX_GLYPHS_FROM_IMAGE] = { 0 };
-    Rectangle tempCharRecs[MAX_GLYPHS_FROM_IMAGE] = { 0 };
+    Rectangle tempCharRecs[MAX_GLYPHS_FROM_IMAGE]{};
 
     auto pixels = LoadImageColors(image);
 
@@ -1312,14 +1312,14 @@ void DrawTextCodepoint(const Font font, const i32 codepoint, const vec2 position
 
     // Character destination rectangle on screen
     // NOTE: Considering glyph padding on drawing
-    const Rectangle dstRec = { position.x + static_cast<f32>(font.glyphs[index].offsetX)*scaleFactor - static_cast<f32>(font.glyphPadding)*scaleFactor,
+    const Rectangle dstRec{ position.x + static_cast<f32>(font.glyphs[index].offsetX)*scaleFactor - static_cast<f32>(font.glyphPadding)*scaleFactor,
                       position.y + static_cast<f32>(font.glyphs[index].offsetY)*scaleFactor - static_cast<f32>(font.glyphPadding)*scaleFactor,
                       (font.recs[index].width + 2.0f*static_cast<f32>(font.glyphPadding))*scaleFactor,
                       (font.recs[index].height + 2.0f*static_cast<f32>(font.glyphPadding))*scaleFactor };
 
     // Character source rectangle from font texture atlas
     // NOTE: Considering glyphs padding when drawing, it could be required for outline/glow shader effects
-    const Rectangle srcRec = { font.recs[index].x - static_cast<f32>(font.glyphPadding), font.recs[index].y - static_cast<f32>(font.glyphPadding),
+    const Rectangle srcRec{ font.recs[index].x - static_cast<f32>(font.glyphPadding), font.recs[index].y - static_cast<f32>(font.glyphPadding),
                          font.recs[index].width + 2.0f*static_cast<f32>(font.glyphPadding), font.recs[index].height + 2.0f*static_cast<f32>(font.glyphPadding) };
 
     // Draw the character texture on the screen

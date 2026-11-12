@@ -276,7 +276,7 @@ TextParticle CreateTextParticle(std::string_view text, f32 x, f32 y, Color color
 {
     TextParticle tp = {
         .text = "",
-        .rect = { x, y, 30, 30 },
+        .rect = Rectangle{ x, y, 30, 30 },
         .vel = { static_cast<f32>(GetRandomValue(-200, 200)), static_cast<f32>(GetRandomValue(-200, 200)) },
         .ppos = {},
         .padding = 5.0f,

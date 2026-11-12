@@ -26,7 +26,8 @@ Locked decisions for the C→C++ migration. Applies to `src/`, `examples/` and `
   `dvec*`, `mat2`/`mat3`/`mat4`, `quat`, plus the fixed-width integers `i8`…`u64` and `f32`/`f64`.
   Use those short names, not `glm::vec3`/`glm::mat4`/`glm::quat`, in declarations and signatures.
   `Color` and `Rectangle` are plain structs with constructors (defaulted components keep the old
-  C partial-init semantics: `Color c = { 255 }`).
+  C partial-init semantics via direct-list-initialization: `Color c{ 255 }`). Their converting
+  constructors are `explicit`, so copy-list-initialization (`Color c = { 255 }`) is not allowed.
 - New code uses glm vocabulary directly: `a + b`, `glm::normalize(v)`, `glm::cross(a, b)`,
   `glm::lookAt(...)`, `q * v`, `m * v`, `glm::inverse(m)`.
 - `raymath.h` is a small residue of helpers that glm does not express directly: raylib's Euler

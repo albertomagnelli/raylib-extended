@@ -49,7 +49,7 @@ i32 main()
         //----------------------------------------------------------------------------------
         const f32 width = GetScreenWidth()/2.0f;
         const f32 height = GetScreenHeight()/6.0f;
-        Rectangle rec = {
+        Rectangle rec{
             GetScreenWidth()/2.0f - width/2,
             GetScreenHeight()/2.0f - 5*(height/2),
             width, height

@@ -4088,7 +4088,7 @@ void ImageDrawRectangleGradientEx(const Image *dst, const Rectangle rec, const C
             const f32 w3 = tx*ty;
             const f32 w4 = tx*(1.0f - ty);
 
-            const Color color = {
+            const Color color{
                 static_cast<u8>(static_cast<f32>(col1.r)*w1 + static_cast<f32>(col2.r)*w2 + static_cast<f32>(col3.r)*w3 + static_cast<f32>(col4.r)*w4),
                 static_cast<u8>(static_cast<f32>(col1.g)*w1 + static_cast<f32>(col2.g)*w2 + static_cast<f32>(col3.g)*w3 + static_cast<f32>(col4.g)*w4),
                 static_cast<u8>(static_cast<f32>(col1.b)*w1 + static_cast<f32>(col2.b)*w2 + static_cast<f32>(col3.b)*w3 + static_cast<f32>(col4.b)*w4),
@@ -4202,7 +4202,7 @@ void ImageDrawCircleGradient(const Image *dst, const vec2 center, const f32 radi
             // Linear interpolation from inner to outer color
             // TODO: Consider other types of interpolation for better results?
             const f32 t = sqrtf(distSq)/radius;
-            const Color color = {
+            const Color color{
                 static_cast<u8>(static_cast<f32>(inner.r) + static_cast<f32>((outer.r - inner.r))*t),
                 static_cast<u8>(static_cast<f32>(inner.g) + static_cast<f32>((outer.g - inner.g))*t),
                 static_cast<u8>(static_cast<f32>(inner.b) + static_cast<f32>((outer.b - inner.b))*t),
@@ -4587,7 +4587,7 @@ TextureCubemap LoadTextureCubemap(const Image image, i32 layout)
         const i32 size = cubemap.width;
 
         auto faces = Image{ nullptr };                // Vertical column image
-        Rectangle faceRecs[6] = { 0 };            // Face source rectangles
+        Rectangle faceRecs[6]{};                  // Face source rectangles
 
         for (i32 i = 0; i < 6; i++) faceRecs[i] = Rectangle{ 0, 0, static_cast<f32>(size), static_cast<f32>(size) };
 

@@ -64,11 +64,11 @@ i32 main()
     player.speed = 0;
     player.canJump = false;
     EnvItem envItems[] = {
-        {{ 0, 0, 1000, 400 }, 0, LIGHTGRAY },
-        {{ 0, 400, 1000, 200 }, 1, GRAY },
-        {{ 300, 200, 400, 10 }, 1, GRAY },
-        {{ 250, 300, 100, 10 }, 1, GRAY },
-        {{ 650, 300, 100, 10 }, 1, GRAY }
+        {Rectangle{ 0, 0, 1000, 400 }, 0, LIGHTGRAY },
+        {Rectangle{ 0, 400, 1000, 200 }, 1, GRAY },
+        {Rectangle{ 300, 200, 400, 10 }, 1, GRAY },
+        {Rectangle{ 250, 300, 100, 10 }, 1, GRAY },
+        {Rectangle{ 650, 300, 100, 10 }, 1, GRAY }
     };
 
     const i32 envItemsLength = sizeof(envItems)/sizeof(envItems[0]);

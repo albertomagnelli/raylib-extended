@@ -46,20 +46,20 @@ struct Particle
     Color color = RAYWHITE;
 };
 
-const Color backgroundTop = { 12, 14, 30, 255 };
-const Color backgroundBottom = { 28, 12, 44, 255 };
-const Color accent = { 0, 210, 255, 255 };
-const Color accentWarm = { 255, 90, 160, 255 };
-const Color textPrimary = { 235, 240, 255, 255 };
-const Color textSecondary = { 150, 160, 200, 255 };
-const Color panelColor = { 8, 10, 22, 255 };
+const Color backgroundTop{ 12, 14, 30, 255 };
+const Color backgroundBottom{ 28, 12, 44, 255 };
+const Color accent{ 0, 210, 255, 255 };
+const Color accentWarm{ 255, 90, 160, 255 };
+const Color textPrimary{ 235, 240, 255, 255 };
+const Color textSecondary{ 150, 160, 200, 255 };
+const Color panelColor{ 8, 10, 22, 255 };
 
 const Color palette[5] = {
-    { 0, 220, 255, 255 },
-    { 90, 140, 255, 255 },
-    { 200, 90, 255, 255 },
-    { 255, 90, 160, 255 },
-    { 255, 190, 80, 255 },
+    Color{ 0, 220, 255, 255 },
+    Color{ 90, 140, 255, 255 },
+    Color{ 200, 90, 255, 255 },
+    Color{ 255, 90, 160, 255 },
+    Color{ 255, 190, 80, 255 },
 };
 
 static std::mt19937 &RandomGenerator()
@@ -90,7 +90,7 @@ static Color MixColor(Color first, Color second, float t)
 {
     t = std::clamp(t, 0.0f, 1.0f);
 
-    Color result = {
+    Color result{
         static_cast<unsigned char>(static_cast<float>(first.r) + static_cast<float>(second.r - first.r)*t),
         static_cast<unsigned char>(static_cast<float>(first.g) + static_cast<float>(second.g - first.g)*t),
         static_cast<unsigned char>(static_cast<float>(first.b) + static_cast<float>(second.b - first.b)*t),
@@ -270,7 +270,7 @@ static void DrawHud(Font font, vec2 size, int particleCount, float time, float d
 {
     const float alpha = std::clamp(time*0.8f, 0.0f, 1.0f);
 
-    DrawPanel({ 28.0f, 28.0f, 430.0f, 152.0f }, alpha);
+    DrawPanel(Rectangle{ 28.0f, 28.0f, 430.0f, 152.0f }, alpha);
 
     DrawTextEx(font, "raylib-extended - Partikel-Demo", { 48.0f, 46.0f }, 26.0f, 1.0f, WithAlpha(textPrimary, alpha));
     DrawTextEx(font, "Linke Maustaste: Teilchen anziehen", { 48.0f, 88.0f }, 18.0f, 1.0f, WithAlpha(textSecondary, alpha));
